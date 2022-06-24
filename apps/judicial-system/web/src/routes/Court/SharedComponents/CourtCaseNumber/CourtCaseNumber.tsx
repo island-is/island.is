@@ -43,13 +43,9 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
-    const isValid =
-      validate([
-        {
-          value: update.courtCaseNumber,
-          validations: ['empty', 'court-case-number'],
-        },
-      ]).length === 0
+    const isValid = validate([
+      [update.courtCaseNumber, ['empty', 'court-case-number']],
+    ]).isValid
 
     if (!isValid) {
       return

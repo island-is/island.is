@@ -38,7 +38,7 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const isValid = validate([{ value, validations }]).length === 0
+  const isValid = validate([[value, validations]]).isValid
 
   if (errorMessage !== '' && errorMessageSetter && isValid) {
     errorMessageSetter('')
@@ -50,10 +50,10 @@ export const validateAndSetErrorMessage = (
   value: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const error = validate([{ value, validations }])
+  const validation = validate([[value, validations]])
 
-  if (error.length > 0 && errorMessageSetter) {
-    errorMessageSetter(error[0].errorMessage)
+  if (!validation.isValid && errorMessageSetter) {
+    errorMessageSetter(validation.errorMessage)
     return
   }
 }
@@ -93,9 +93,7 @@ export const validateAndSetTime = (
     }
 
     const paddedTime = padTimeWithZero(time)
-
-    const isValid = validate([{ value: paddedTime, validations }]).length === 0
-
+    const isValid = validate([[paddedTime, validations]]).isValid
     const arrestDateMinutes = parseTime(currentValue, paddedTime)
 
     if (errorMessage !== '' && setErrorMessage && isValid) {
@@ -168,10 +166,10 @@ export const validateAndSendTimeToServer = (
   if (currentValue) {
     const paddedTime = padTimeWithZero(time)
 
-    const errors = validate([{ value: paddedTime, validations }])
+    const validation = validate([[paddedTime, validations]])
 
-    if (errors.length > 0 && setErrorMessage) {
-      setErrorMessage(errors[0].errorMessage)
+    if (!validation.isValid && setErrorMessage) {
+      setErrorMessage(validation.errorMessage)
       return
     }
 

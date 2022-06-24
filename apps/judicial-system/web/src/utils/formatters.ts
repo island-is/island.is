@@ -9,6 +9,7 @@ export const parseTime = (date: string, time: string) => {
   const timeWithoutColon = time.replace(':', '')
   const hours = timeWithoutColon.slice(0, 2)
   const minutes = timeWithoutColon.slice(2, 4)
+  const isValidTime = validate([[time, ['empty', 'time-format']]]).isValid
 
   const dateHours = setHours(new Date(date), parseInt(hours))
 
@@ -17,10 +18,7 @@ export const parseTime = (date: string, time: string) => {
    * The user can't input the date by hand and can't input the time before selecting
    * a date.
    * */
-  if (
-    validate([{ value: time, validations: ['empty', 'time-format'] }])
-      .length === 0
-  ) {
+  if (isValidTime) {
     const dateMinutes = formatISO(
       setSeconds(setMinutes(dateHours, parseInt(minutes)), 0),
     )
