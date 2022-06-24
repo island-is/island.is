@@ -136,7 +136,7 @@ export const RadioButton = ({
             <Tooltip text={tooltip} />
           </div>
         )}
-        {tag && (
+        {tag && large && (
           <Box
             display="flex"
             justifyContent="flexEnd"
