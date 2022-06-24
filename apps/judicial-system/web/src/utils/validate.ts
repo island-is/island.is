@@ -194,7 +194,7 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
     [workingCase.requestedValidToDate, ['empty', 'date-format']],
     workingCase.legalProvisions && workingCase.legalProvisions.length > 0
       ? 'valid'
-      : [workingCase.lawsBroken, ['empty']],
+      : [workingCase.legalBasis, ['empty']],
   ]).isValid
 }
 
