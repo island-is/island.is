@@ -1,9 +1,6 @@
-const cognitoUsername = Cypress.env('COGNITO_USERNAME')
-const cognitoPassword = Cypress.env('COGNITO_PASSWORD')
-
-describe('Home page', () => {
-  before(() => {
-    cy.cognitoLogin({ cognitoUsername, cognitoPassword })
+describe('Front page', () => {
+  beforeEach(() => {
+    cy.cognitoLogin()
   })
 
   it('has expected sections', () => {
@@ -13,7 +10,7 @@ describe('Home page', () => {
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
-
+  // dummy change
   it('should have life events', () => {
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
@@ -26,7 +23,7 @@ describe('Home page', () => {
   it('should navigate to featured link', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
-      .should('have.length.at.least', 8)
+      .should('have.length.at.least', 3)
       .each((link) => cy.visit(link.prop('href')))
   })
 
@@ -42,5 +39,19 @@ describe('Home page', () => {
         cy.get('[data-testid="link-back-home"]').click()
         cy.location('pathname', locationOptions).should('equal', '/')
       })
+  })
+
+  it.only('should change welcome message on language toggle', () => {
+    cy.visit('/')
+    cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
+      cy.get('button[data-testid="language-toggler"]:visible')
+        .click()
+        .as('clicked')
+      cy.waitFor('@clicked')
+      cy.get('h1[data-testid="home-heading"]').should(
+        'not.have.text',
+        previousHeading.text(),
+      )
+    })
   })
 })
