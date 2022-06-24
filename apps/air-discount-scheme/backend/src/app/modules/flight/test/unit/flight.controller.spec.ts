@@ -42,10 +42,10 @@ describe('PublicFlightController', () => {
   let nationalRegistryService: NationalRegistryService
 
   const airline = 'ernir'
-  const nationalId = '1234567890'
+  const nationalId = '0101302399'
   const flight = {
     id: '70de7be1-6b6d-4ec3-8063-be55e241d488',
-    nationalId: '123456xxx0',
+    nationalId: '010130xxx9',
     bookingDate: new Date('2020-10-05T14:48:00.000Z'),
     flightLegs: [
       {
@@ -202,7 +202,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 400,
           error: 'Bad Request',
@@ -211,13 +211,10 @@ describe('PublicFlightController', () => {
       }
     })
 
-    it('should fail if user is not found', async () => {
+    it('should fail if discount is invalid', async () => {
       const request: any = { airline }
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      jest
-        .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(null))
 
       try {
@@ -227,15 +224,19 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
-          statusCode: 404,
-          error: 'Not Found',
-          message: `User not found`,
+          statusCode: 400,
+          error: 'Bad Request',
+          message: `Discount code is invalid`,
         })
       }
     })
 
+    // AIRTODO: Determine where to move this test
+    //        : since isADSPostalCode gets triggered somewhere else now
+
+    /*
     it('should fail if user postalcode does not meet conditions', async () => {
       const request: any = { airline }
       jest
@@ -255,7 +256,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 403,
           error: 'Forbidden',
@@ -263,6 +264,7 @@ describe('PublicFlightController', () => {
         })
       }
     })
+    */
 
     it('should fail if user does not have flight quota', async () => {
       const request: any = { airline }
@@ -286,7 +288,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 403,
           error: 'Forbidden',
@@ -323,7 +325,7 @@ describe('PublicFlightController', () => {
       try {
         await publicFlightController.delete({ flightId: flight.id }, request)
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -361,7 +363,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
@@ -385,7 +387,7 @@ describe('PublicFlightController', () => {
           request,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
+      } catch (e: any) {
         expect(e.response).toEqual({
           statusCode: 404,
           error: 'Not Found',
