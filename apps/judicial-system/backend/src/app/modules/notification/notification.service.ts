@@ -505,8 +505,6 @@ export class NotificationService {
     recipients?: string,
   ): Promise<void> {
     try {
-      return // Temporarily stop trying to upload emails to court
-
       await this.courtService.createEmail(
         user,
         theCase.id,
@@ -520,8 +518,7 @@ export class NotificationService {
       )
     } catch (error) {
       // Tolerate failure, but log error
-      // TODO: Log as error when implemented in the court system
-      this.logger.info(
+      this.logger.error(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )
