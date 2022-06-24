@@ -129,6 +129,16 @@ export const ExampleForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'assignee',
+          title: m.assigneeTitle,
+          children: [
+            buildTextField({
+              id: 'assigneeEmail',
+              title: m.assignee,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
