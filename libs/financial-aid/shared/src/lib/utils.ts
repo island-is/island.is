@@ -1,8 +1,9 @@
-import { months } from './const'
+import { months, monthsEnglish } from './const'
 
 import React from 'react'
 import { DirectTaxPayment, NationalRegistryData } from './interfaces'
 import { StaffRole, UserType } from './enums'
+import { Locale } from '@island.is/shared/types'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -28,8 +29,11 @@ export const firstDateOfMonth = () => {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
-export const currentMonth = () => {
-  return months[new Date().getMonth()].toLowerCase()
+export const currentMonth = (lang: Locale = 'is') => {
+  if (lang === 'is') {
+    return months[new Date().getMonth()].toLowerCase()
+  }
+  return monthsEnglish[new Date().getMonth()]
 }
 
 export const insertAt = (str: string, sub: string, pos: number) =>
