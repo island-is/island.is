@@ -105,7 +105,7 @@ describe('UserService', () => {
         auth,
       )
 
-      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
@@ -136,7 +136,7 @@ describe('UserService', () => {
         auth,
       )
 
-      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
         user.nationalId,
       )
@@ -160,7 +160,7 @@ describe('UserService', () => {
         auth,
       )
 
-      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
       expect(result).toBe(null)
     })
   })
