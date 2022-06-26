@@ -10,6 +10,7 @@ import { SubArticle, mapSubArticle } from './subArticle.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { SystemMetadata } from '@island.is/shared/types'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 export class Article {
@@ -78,6 +79,9 @@ export class Article {
 
   @Field({ nullable: true })
   showTableOfContents?: boolean
+
+  @Field(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner | null
 }
 
 export const mapArticle = ({
@@ -125,4 +129,5 @@ export const mapArticle = ({
   relatedContent: (fields.relatedContent ?? []).map(mapLink),
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   showTableOfContents: fields.showTableOfContents ?? false,
+  alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
 })

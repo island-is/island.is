@@ -16,7 +16,6 @@ import {
   GridRow,
   Input,
   Button,
-  AlertBanner,
 } from '@island.is/island-ui/core'
 import isEqual from 'lodash/isEqual'
 import { VehicleCard } from '../../components/VehicleCard'
@@ -57,7 +56,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
-  const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
+  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
   const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
@@ -118,7 +117,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
                   size="xs"
                   value={filterValue.searchQuery}
                   onChange={(ev) => handleSearchChange(ev.target.value)}
-                  name="rafraen-skjol-leit"
+                  name="okutaeki-leit"
                   label={formatMessage(m.searchLabel)}
                   placeholder={formatMessage(m.searchPlaceholder)}
                 />

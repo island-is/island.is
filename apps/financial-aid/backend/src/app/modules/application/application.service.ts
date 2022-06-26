@@ -34,6 +34,8 @@ import {
   UserType,
   applicationPageSize,
   Routes,
+  calculatePersonalTaxAllowanceFromAmount,
+  getNavEmploymentStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -49,7 +51,7 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
-import { AmountModel, AmountService } from '../amount'
+import { AmountModel, AmountService, CreateAmountDto } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
@@ -445,6 +447,19 @@ export class ApplicationService {
       update.staffId = null
     }
 
+    if (update.event === ApplicationEventType.APPROVED) {
+      update.navSuccess = await this.sendToNav(id, update.amount)
+    } else if (
+      [
+        ApplicationEventType.NEW,
+        ApplicationEventType.INPROGRESS,
+        ApplicationEventType.DATANEEDED,
+        ApplicationEventType.REJECTED,
+      ].includes(update.event)
+    ) {
+      update.navSuccess = null
+    }
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -510,6 +525,86 @@ export class ApplicationService {
     await Promise.all([events, files, directTaxPayments])
 
     return updatedApplication
+  }
+
+  async sendToNav(applicationId: string, amount: CreateAmountDto) {
+    try {
+      const application = await this.findById(applicationId, true)
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        application.municipalityCode,
+      )
+
+      if (!municipality.usingNav) {
+        return null
+      }
+
+      const calculateNavAmount = (amount: CreateAmountDto) => {
+        return amount.deductionFactors
+          ?.map((d) => d.amount)
+          .reduce(
+            (previousValue, currentValue) => previousValue - currentValue,
+            amount.aidAmount - (amount.income ?? 0),
+          )
+      }
+
+      const token = await fetch(
+        new URL('Authentication/Login', municipality.navUrl).href,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: municipality.navUsername,
+            password: municipality.navPassword,
+          }),
+        },
+      ).then((response) => response.text())
+
+      const createdDate = application.created
+      return await fetch(
+        new URL(
+          'WebApplication/CreateFinancialAssistanceApplication',
+          municipality.navUrl,
+        ).href,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'FJST',
+            status: 'Umsókn',
+            id: application.nationalId,
+            phoneNo: application.phoneNumber,
+            email: application.email,
+            bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
+            grantAmount: calculateNavAmount(amount),
+            referenceNo: application.id,
+            employmentStatus: getNavEmploymentStatus[application.employment],
+            personalTaxCredit: calculatePersonalTaxAllowanceFromAmount(
+              amount.tax,
+              amount.personalTaxCredit,
+              amount.spousePersonalTaxCredit,
+            ),
+            housingCode: application.homeCircumstances,
+            dateFrom: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth(),
+              1,
+            ), // First day of created month
+            dateTo: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth() + 1,
+              0,
+            ), // Last day of created month
+          }),
+        },
+      ).then((response) => response.ok)
+    } catch {
+      return false
+    }
   }
 
   async filter(
