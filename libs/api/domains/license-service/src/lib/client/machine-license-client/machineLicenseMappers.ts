@@ -13,7 +13,7 @@ export const parseMachineLicensePayload = (
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
-  const data = [
+  const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
       label: 'Skírteini nr. ',
@@ -89,5 +89,5 @@ const parseVvrRights = (
     })
   }
 
-  return fields ?? undefined
+  return fields?.length ? fields : undefined
 }

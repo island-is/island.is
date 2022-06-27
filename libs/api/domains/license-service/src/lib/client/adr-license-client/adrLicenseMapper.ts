@@ -1,9 +1,13 @@
 import { AdrDto } from '@island.is/clients/adr-and-machine-license'
 import {
+  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import { FlattenedAdrDto } from './genericAdrLicense.type'
+import {
+  FlattenedAdrDto,
+  FlattenedAdrRightsDto,
+} from './genericAdrLicense.type'
 
 export const parseAdrLicensePayload = (
   license: AdrDto,
@@ -40,7 +44,7 @@ export const parseAdrLicensePayload = (
 
   //TODO: Null check fields and filter!
 
-  const data = [
+  const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1. Númer skírteinis',
@@ -71,32 +75,45 @@ export const parseAdrLicensePayload = (
       label: '8. Gildir til/Valid to',
       value: parsedResponse.gildirTil ?? '',
     },
-    {
-      type: GenericLicenseDataFieldType.Group,
-      label: '9. Tankar ',
-      fields: (parsedResponse.adrRettindi ?? [])
-        .filter((field) => field.tankar && field.grunn)
-        .map((field) => ({
-          type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur ?? '',
-          label: field.heiti ?? '',
-        })),
-    },
-    {
-      type: GenericLicenseDataFieldType.Group,
-      label: '10. Annað en í tanki ',
-      fields: (parsedResponse.adrRettindi ?? [])
-        .filter((field) => !field.tankar && field.grunn)
-        .map((field) => ({
-          type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur ?? '',
-          label: field.heiti ?? '',
-        })),
-    },
   ]
+
+  const adrRights = (parsedResponse.adrRettindi ?? []).filter(
+    (field) => field.grunn,
+  )
+  const tankar = parseRights(
+    '9. Tankar',
+    adrRights.filter((field) => field.tankar),
+  )
+
+  if (tankar) data.push(tankar)
+
+  const notTankar = parseRights(
+    '10. Annað en í tanki ',
+    adrRights.filter((field) => !field.tankar),
+  )
+  if (notTankar) data.push(notTankar)
 
   return {
     data,
     rawData: JSON.stringify(license),
+  }
+}
+
+const parseRights = (
+  label: string,
+  data: FlattenedAdrRightsDto[],
+): GenericLicenseDataField | undefined => {
+  if (!data.length) {
+    return
+  }
+
+  return {
+    type: GenericLicenseDataFieldType.Group,
+    label: label,
+    fields: data.map((field) => ({
+      type: GenericLicenseDataFieldType.Category,
+      name: field.flokkur ?? '',
+      label: field.heiti ?? '',
+    })),
   }
 }

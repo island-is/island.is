@@ -5,12 +5,12 @@ export interface FlattenedAdrDto {
   faedingarDagur?: string | null
   rikisfang?: string | null
   gildirTil?: string | null
-  adrRettindi?:
-    | {
-        flokkur?: string | null
-        grunn?: boolean | null
-        tankar?: boolean | null
-        heiti?: string | null
-      }[]
-    | null
+  adrRettindi?: FlattenedAdrRightsDto[] | null
+}
+
+export interface FlattenedAdrRightsDto {
+  flokkur?: string | null
+  grunn?: boolean | null
+  tankar?: boolean | null
+  heiti?: string | null
 }
