@@ -13,7 +13,7 @@ describe('Parental leave', () => {
     })
   })
 
-  it('should navigate serviceportal', () => {
+  it('should create an application', () => {
     cy.visit('/umsoknir/faedingarorlof')
 
     cy.get('body').then((body) => {
