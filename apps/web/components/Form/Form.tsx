@@ -249,7 +249,6 @@ export const Form = ({ form, namespace }: FormProps) => {
   const success = !!result?.genericForm?.sent
   const failure = result?.genericForm?.sent === false || !!error
 
-  console.log(failure)
   return (
     <Box background="blue100" paddingY={8} paddingX={12} borderRadius="large">
       {success && (
@@ -263,7 +262,7 @@ export const Form = ({ form, namespace }: FormProps) => {
       {failure && (
         <>
           <Text variant="h3" marginBottom={2} color="blue600">
-            {n('formErrorTitle', 'Úps, eitthvað fór útskeiðis')}
+            {n('formErrorTitle', 'Úps, eitthvað fór úrskeiðis')}
           </Text>
           <Text marginBottom={2}>
             {n(
@@ -296,9 +295,9 @@ export const Form = ({ form, namespace }: FormProps) => {
               onChange={(e) => onChange('name', e.target.value)}
             />
             <Input
-              placeholder={n('formEmail', 'Email')}
+              placeholder={n('formEmail', 'Netfang')}
               name="email"
-              label={n('formEmail', 'Email')}
+              label={n('formEmail', 'Netfang')}
               required={true}
               value={data['email'] ?? ''}
               hasError={!!errors.find((error) => error.field === 'email')}

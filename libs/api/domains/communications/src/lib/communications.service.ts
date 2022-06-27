@@ -153,6 +153,7 @@ export class CommunicationsService {
       await this.emailService.sendEmail(emailOptions)
       return true
     } catch (error) {
+      this.logger.error('Failed to send email', { message: error.message })
       return false
     }
   }
