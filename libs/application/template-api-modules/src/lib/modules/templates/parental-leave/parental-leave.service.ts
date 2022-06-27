@@ -33,6 +33,7 @@ import {
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  assignLinkEmployerSMS,
 } from './emailGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
@@ -187,24 +188,11 @@ export class ParentalLeaveService {
 
     // send confirmation sms to employer
     if (employerPhoneNumber) {
-      const token = createAssignTokenWithoutNonce(
-        application,
-        getConfigValue(this.configService, 'jwtSecret'),
-        SIX_MONTHS_IN_SECONDS_EXPIRES,
-      )
-
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-
-      const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
-
       await this.smsService.sendSms(
         employerPhoneNumber,
         `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
         Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${assignLink}`,
+        ${assignLinkEmployerSMS}`,
       )
     }
   }
