@@ -17,7 +17,9 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
   const appleLink = n('mobileAppLinkApple')
   const androidLink = n('mobileAppLinkAndroid')
 
-  const [hidden, setHidden] = useState<boolean>(!!Cookies.get(COOKIE_NAME))
+  const [hidden, setHidden] = useState<boolean>(
+    !!Cookies.get(COOKIE_NAME) || !appleLink || !androidLink,
+  )
   const [isApple, setIsApple] = useState<boolean>(false)
 
   const getMobilePlatform = (): string => {
