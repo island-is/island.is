@@ -33,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
-import { useCase, useLawyers } from '../../utils/hooks'
+import { useCase, useGetLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -63,7 +63,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
-  const lawyers = useLawyers()
+  const lawyers = useGetLawyers()
 
   const handleDefenderChange = useCallback(
     async (selectedOption: ValueType<ReactSelectOption>) => {
