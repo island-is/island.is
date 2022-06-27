@@ -142,7 +142,7 @@ const FieldRender = ({ data, level = 1, licenseType }: any) => {
 
             case 'Category':
               return (
-                <FieldCard key={key} code={name} title={label} type={licenseType}>
+                <FieldCard key={key} code={name} title={label} type={licenseType} hasFields={!!fields}>
                   <FieldRow>{FieldRender({ data: fields, level: 3 })}</FieldRow>
                 </FieldCard>
               )

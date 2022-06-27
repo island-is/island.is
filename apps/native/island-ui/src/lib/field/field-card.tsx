@@ -25,10 +25,10 @@ const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Header = styled.View`
+const Header = styled.View<{ hideBorder: boolean}>`
   align-items: center;
   flex-direction: row;
-  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-width: ${({ theme, hideBorder }) => hideBorder ? 0 : theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
     ({ theme }) => ({
       dark: theme.shades.dark.shade500,
@@ -71,6 +71,7 @@ interface FieldCardProps {
   title: string
   children: React.ReactNode
   type: LicenseCardType
+  hasFields?: boolean
 }
 
 export function FieldCard(props: FieldCardProps) {
@@ -117,12 +118,12 @@ export function FieldCard(props: FieldCardProps) {
   }
   return (
     <Host>
-      <Header>
+      <Header hideBorder={!props.hasFields}>
         <HeaderTextBold>{props.code}</HeaderTextBold>
         <HeaderText>{props.title}</HeaderText>
         {icon && <IconWrap>{icon}</IconWrap>}
       </Header>
-      <ChildrenWrap>{props.children}</ChildrenWrap>
+      {props.hasFields && <ChildrenWrap>{props.children}</ChildrenWrap>}
     </Host>
   )
 }
