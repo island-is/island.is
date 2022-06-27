@@ -755,6 +755,9 @@ export interface IFormFields {
 
   /** Fields */
   fields?: IFormField[] | undefined
+
+  /** Success Text */
+  successText?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {

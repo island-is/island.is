@@ -130,7 +130,9 @@ const SubPage: Screen<SubPageProps> = ({
                   >
                     {richText(subpage.description as SliceType[], {
                       renderComponent: {
-                        Form: (slice) => <Form form={slice} />,
+                        Form: (slice) => (
+                          <Form form={slice} namespace={namespace} />
+                        ),
                       },
                     })}
                   </GridColumn>

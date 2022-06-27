@@ -26,7 +26,7 @@ export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   id: sys.id,
   title: fields.title ?? '',
   placeholder: fields.placeholder ?? '',
-  type: fields.type ?? '',
+  type: fields.type ?? 'input',
   required: fields.required ?? false,
   options: fields.options ?? [],
 })

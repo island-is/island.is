@@ -485,6 +485,7 @@ export const slices = gql`
       required
       options
     }
+    successText
   }
 
   fragment BaseSlices on Slice {

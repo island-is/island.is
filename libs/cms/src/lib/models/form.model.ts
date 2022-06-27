@@ -19,6 +19,9 @@ export class Form {
 
   @Field(() => [FormField])
   fields?: Array<FormField>
+
+  @Field()
+  successText!: string
 }
 
 export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
@@ -28,4 +31,5 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
   intro: fields.intro ?? '',
   recipient: fields.recipient ?? '',
   fields: (fields.fields ?? []).map(mapFormField),
+  successText: fields.successText ?? '',
 })

@@ -21,6 +21,8 @@ import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
 import * as styles from './Form.css'
+import { Namespace } from '@island.is/api/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface FormFieldProps {
   field: FormType['fields'][0]
@@ -32,6 +34,7 @@ interface FormFieldProps {
 
 interface FormProps {
   form: FormType
+  namespace: Namespace
 }
 
 const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
@@ -129,9 +132,8 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
               {error}
             </Text>
           )}
-          <Text>{field.placeholder}</Text>
           <Checkbox
-            label={'Ég samþykki skilmálana'}
+            label={field.placeholder}
             checked={value === 'Já'}
             onChange={(e) => onChange(slug, e.target.checked ? 'Já' : 'Nei')}
           />
@@ -145,7 +147,9 @@ type ErrorData = {
   error?: string
 }
 
-export const Form = ({ form }: FormProps) => {
+export const Form = ({ form, namespace }: FormProps) => {
+  const n = useNamespace(namespace)
+
   const [data, setData] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       form.fields
@@ -175,11 +179,17 @@ export const Form = ({ form }: FormProps) => {
         // Handle name and email
         if (!field) {
           if (slug === 'name' && !data['name']) {
-            return { field: slug, error: 'Þennan reit þarf að fylla út' }
+            return {
+              field: slug,
+              error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+            }
           }
 
           if (slug === 'email' && !isEmailValid(data['email'])) {
-            return { field: slug, error: 'Þetta er ekki gilt netfang' }
+            return {
+              field: slug,
+              error: n('formInvalidEmail', 'Þetta er ekki gilt netfang.'),
+            }
           }
 
           return null
@@ -193,7 +203,10 @@ export const Form = ({ form }: FormProps) => {
           (field.required && !data[slug]) ||
           (field.type === 'acceptTerms' && data[slug] !== 'Já')
         ) {
-          return { field: slug, error: 'Þennan reit þarf að fylla út' }
+          return {
+            field: slug,
+            error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
+          }
         }
       })
       .filter((x) => !!x)
@@ -204,11 +217,11 @@ export const Form = ({ form }: FormProps) => {
   }
 
   const formatBody = () => {
-    return `Sendandi\n${data['name']} <${data['email']}>\n\n`.concat(
+    return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
       form.fields
         .map(
           (field) =>
-            `${field.title}: ${field.placeholder}\nSvar: ${
+            `${field.title}\nSvar: ${
               data[slugify(field.title)] ?? 'Ekkert svar'
             }\n\n`,
         )
@@ -217,7 +230,6 @@ export const Form = ({ form }: FormProps) => {
   }
 
   const onSubmit = () => {
-    console.log(formatBody())
     const valid = validate()
 
     if (valid) {
@@ -234,57 +246,92 @@ export const Form = ({ form }: FormProps) => {
     }
   }
 
+  const success = !!result?.genericForm?.sent
+  const failure = result?.genericForm?.sent === false || !!error
+
+  console.log(failure)
   return (
     <Box background="blue100" paddingY={8} paddingX={12} borderRadius="large">
-      <Text variant="h2" marginBottom={2} color="blue600">
-        {form.title}
-      </Text>
-      <Text marginBottom={2}>{form.intro}</Text>
-      <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
-        Segðu okkur frá þér
-      </Text>
-      <Stack space={4}>
-        <Input
-          placeholder="Nafnið þitt"
-          name="name"
-          label="Fullt nafn"
-          required={true}
-          value={data['name'] ?? ''}
-          hasError={!!errors.find((error) => error.field === 'name')}
-          errorMessage={errors.find((error) => error.field === 'name')?.error}
-          onChange={(e) => onChange('name', e.target.value)}
-        />
-        <Input
-          placeholder="Netfang"
-          name="email"
-          label="Netfang"
-          required={true}
-          value={data['email'] ?? ''}
-          hasError={!!errors.find((error) => error.field === 'email')}
-          errorMessage={errors.find((error) => error.field === 'email')?.error}
-          onChange={(e) => onChange('email', e.target.value)}
-        />
-      </Stack>
-      <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
-        Spurningar
-      </Text>
-      <Stack space={4}>
-        {form.fields.map((field) => {
-          const slug = slugify(field.title)
-          return (
-            <FormField
-              field={field}
-              slug={slug}
-              value={data[slug] ?? ''}
-              error={errors.find((error) => error.field === slug)?.error}
-              onChange={onChange}
+      {success && (
+        <>
+          <Text variant="h3" marginBottom={2} color="blue600">
+            {n('formSuccessTitle', 'Sending tókst!')}
+          </Text>
+          <Text marginBottom={2}>{form.successText}</Text>
+        </>
+      )}
+      {failure && (
+        <>
+          <Text variant="h3" marginBottom={2} color="blue600">
+            {n('formErrorTitle', 'Úps, eitthvað fór útskeiðis')}
+          </Text>
+          <Text marginBottom={2}>
+            {n(
+              'formEmailUnknownError',
+              'Villa kom upp við sendingu. Reynið aftur síðar.',
+            )}
+          </Text>
+        </>
+      )}
+      {!success && !failure && (
+        <>
+          <Text variant="h2" marginBottom={2} color="blue600">
+            {form.title}
+          </Text>
+          <Text marginBottom={2}>{form.intro}</Text>
+          <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
+            {n('formAboutYouTitle', 'Segðu okkur frá þér')}
+          </Text>
+          <Stack space={4}>
+            <Input
+              placeholder={n('formAboutYouTitle', 'Nafnið þitt')}
+              name="name"
+              label={n('formFullName', 'Fullt nafn')}
+              required={true}
+              value={data['name'] ?? ''}
+              hasError={!!errors.find((error) => error.field === 'name')}
+              errorMessage={
+                errors.find((error) => error.field === 'name')?.error
+              }
+              onChange={(e) => onChange('name', e.target.value)}
             />
-          )
-        })}
-        <Button onClick={() => onSubmit()} loading={loading}>
-          Senda
-        </Button>
-      </Stack>
+            <Input
+              placeholder={n('formEmail', 'Email')}
+              name="email"
+              label={n('formEmail', 'Email')}
+              required={true}
+              value={data['email'] ?? ''}
+              hasError={!!errors.find((error) => error.field === 'email')}
+              errorMessage={
+                errors.find((error) => error.field === 'email')?.error
+              }
+              onChange={(e) => onChange('email', e.target.value)}
+            />
+          </Stack>
+          <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
+            {n('formQuestions', 'Spurningar')}
+          </Text>
+          <Stack space={4}>
+            {form.fields.map((field) => {
+              const slug = slugify(field.title)
+              return (
+                <FormField
+                  field={field}
+                  slug={slug}
+                  value={data[slug] ?? ''}
+                  error={errors.find((error) => error.field === slug)?.error}
+                  onChange={onChange}
+                />
+              )
+            })}
+            <Box display="flex" justifyContent="flexEnd">
+              <Button onClick={() => onSubmit()} loading={loading}>
+                {n('formSend', 'Senda')}
+              </Button>
+            </Box>
+          </Stack>
+        </>
+      )}
     </Box>
   )
 }
