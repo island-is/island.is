@@ -6,6 +6,7 @@ export type Events =
   | { type: DefaultEvents.PAYMENT }
 
 export enum States {
+  PREREQUISITES = 'prerequistites',
   DRAFT = 'draft',
   DONE = 'done',
   PAYMENT = 'payment',

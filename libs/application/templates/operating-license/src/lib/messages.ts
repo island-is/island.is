@@ -44,7 +44,7 @@ export const m = defineMessages({
   },
   operationTitle: {
     id: 'ol.application:applicationInfo.operationTitle',
-    defaultMessage: 'Upplýsingar um umsókn',
+    defaultMessage: 'Leyfisumsókn',
     description: 'Some description',
   },
   operationSubtitle: {
@@ -113,35 +113,84 @@ export const m = defineMessages({
     description: 'Some description',
   },
   infoTitle: {
-    id: 'ol.application:personalInfo.infoTitle',
+    id: 'ol.application:info.infoTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Some description',
   },
-  personalInfoSubtitle: {
-    id: 'ol.application:personalInfo.personalInfoSubtitle',
-    defaultMessage:
-      'Vinsamlegast farðu yfir þínar upplýsingar og gakktu úr skugga um að þær séu réttar.',
+  operationInfoTitle: {
+    id: 'ol.application:info.operationInfoTitle',
+    defaultMessage: 'Rekstrarstaður',
+    description: 'Some description',
+  },
+  infoSubtitle: {
+    id: 'ol.application:info.infoSubtitle',
+    defaultMessage: 'Upplýsingar um umsækjanda leyfis og rekstrarstað.',
     description: 'Some description',
   },
   name: {
-    id: 'ol.application:personalInfo.name',
+    id: 'ol.application:info.name',
     defaultMessage: 'Nafn',
     description: 'Some description',
   },
-  nationalId: {
-    id: 'ol.application:personalInfo.nationalId',
-    defaultMessage: 'Kennitala',
-    description: 'Some description',
-  },
   phoneNumber: {
-    id: 'ol.application:personalInfo.phoneNumber',
+    id: 'ol.application:info.phoneNumber',
     defaultMessage: 'Símanúmer',
     description: 'Some description',
   },
   email: {
-    id: 'ol.application:personalInfo.email',
+    id: 'ol.application:info.email',
     defaultMessage: 'Netfang',
     description: 'Some description',
+  },
+  operationName: {
+    id: 'ol.application:info.operationName',
+    defaultMessage: 'Heiti veitinga-/ gististaðar',
+    description: 'Some description',
+  },
+  vskNr: {
+    id: 'ol.application:info.vskNr',
+    defaultMessage: 'Virðisaukaskattsnúmer',
+    description: 'Some description',
+  },
+  propertyInfoTitle: {
+    id: 'ol.application:propertyInfo.title',
+    defaultMessage: 'Hámarksfjöldi gesta',
+    description: 'Some description',
+  },
+  propertyInfoSubtitle: {
+    id: 'ol.application:propertyInfo.subtitle',
+    defaultMessage: 'Hámarksfjöldi gesta í rými',
+    description: 'Some description',
+  },
+  propertyInfoDescription: {
+    id: 'ol.application:propertyInfo.description',
+    defaultMessage: 'Vinsamlegast fyllið út reitina hér að neðan',
+    description: 'Some description',
+  },
+  propertyNumber: {
+    id: 'ol.application:propertyInfo.propertyNumber',
+    defaultMessage: 'Fasteignanúmer',
+    description: 'Some description',
+  },
+  address: {
+    id: 'ol.application:propertyInfo.address',
+    defaultMessage: 'Heimilisfang',
+    description: 'Some description',
+  },
+  spaceNumber: {
+    id: 'ol.application:propertyInfo.spaceNumber',
+    defaultMessage: 'Rýmisnúmer úr fasteignaskrá',
+    description: 'Some description',
+  },
+  customerCount: {
+    id: 'ol.application:propertyInfo.customerCount',
+    defaultMessage: 'Hámarksfjöldi gesta í rými',
+    description: 'Some description',
+  },
+  addProperty: {
+    id: 'ol.application:propertyInfoaddProperty',
+    defaultMessage: 'Bæta við rými',
+    description: 'Add property',
   },
   overview: {
     id: 'ol.application:overview.title',

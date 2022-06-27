@@ -16,8 +16,9 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildCheckboxField,
+  buildSubSection,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import {
   APPLICATION_TYPES,
@@ -27,10 +28,13 @@ import {
   HotelTypes,
   Operation,
   OPERATION_CATEGORY,
-} from '../lib/constants'
+} from '../../lib/constants'
 import { DefaultEvents, Answer } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
+import { applicationInfo } from './sectionApplicationInfo'
+import { subSectionOperationInfo } from './subSectionOperationInfo'
+import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
 
 export const Draft: Form = buildForm({
   id: 'OperatingLicenseApplicationDraftForm',
@@ -67,124 +71,12 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'applicationInfo',
       title: m.operationTitle,
-      children: [
-        buildMultiField({
-          id: 'applicationInfo',
-          title: m.operationTitle,
-
-          children: [
-            buildRadioField({
-              id: 'applicationInfo.operation',
-              title: '',
-              description: m.operationSubtitle,
-              options: [
-                { value: APPLICATION_TYPES.HOTEL, label: m.operationHotel },
-                {
-                  value: APPLICATION_TYPES.RESTURANT,
-                  label: m.operationResturant,
-                },
-              ],
-              width: 'half',
-              largeButtons: true,
-            }),
-
-            buildCheckboxField({
-              id: 'hotel.category',
-              title: '',
-              description: m.operationCategoryHotelTitle,
-              backgroundColor: 'white',
-              doesNotRequireAnswer: true,
-              large: false,
-              options: [
-                {
-                  value: OPERATION_CATEGORY.ONE,
-                  label: m.operationCategoryHotelOne,
-                },
-                {
-                  value: OPERATION_CATEGORY.TWO,
-                  label: m.operationCategoryHotelTwo,
-                },
-              ],
-              condition: (answers) =>
-                (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.HOTEL,
-            }),
-            buildRadioField({
-              id: 'resturant.category',
-              title: '',
-              description: m.operationCategoryResturantTitle,
-              options: [
-                {
-                  value: OPERATION_CATEGORY.ONE,
-                  label: m.operationCategoryResturantOne,
-                },
-                {
-                  value: OPERATION_CATEGORY.TWO,
-                  label: m.operationCategoryResturantTwo,
-                },
-              ],
-              width: 'half',
-              largeButtons: true,
-              condition: (answers) =>
-                (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.RESTURANT,
-            }),
-            buildSelectField({
-              id: 'hotel.type',
-              title: m.operationTypeHotelTitle,
-              description: m.operationTypeHotelDescription,
-              options: HotelTypes,
-              backgroundColor: 'blue',
-              condition: (answers) =>
-                (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.HOTEL,
-            }),
-            buildSelectField({
-              id: 'resturant.type',
-              title: m.operationTypeResturantTitle,
-              description: m.operationTypeResturantDescription,
-              backgroundColor: 'blue',
-              options: ResturantTypes,
-              condition: (answers) =>
-                (answers.applicationInfo as Operation)?.operation ===
-                APPLICATION_TYPES.RESTURANT,
-            }),
-          ],
-        }),
-      ],
+      children: [applicationInfo],
     }),
     buildSection({
       id: 'info',
       title: m.infoTitle,
-      children: [
-        buildMultiField({
-          id: 'info',
-          title: m.infoTitle,
-          description: m.personalInfoSubtitle,
-          children: [
-            buildTextField({
-              id: 'info.email',
-              title: m.email,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'info.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-          ],
-        }),
-      ],
+      children: [subSectionOperationInfo, subSectionPropertyRepeater],
     }),
     buildSection({
       id: 'overview',

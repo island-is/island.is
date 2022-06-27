@@ -33,7 +33,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: m.formName.defaultMessage,
           progress: 0.33,
@@ -42,7 +42,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Draft').then((val) =>
+                import('../forms/draft/index').then((val) =>
                   Promise.resolve(val.Draft),
                 ),
               actions: [
