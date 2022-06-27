@@ -19,7 +19,6 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
-import set from 'lodash/set'
 
 const States = {
   prerequisites: 'prerequisites',
