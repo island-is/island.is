@@ -140,6 +140,7 @@
     - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
+  - [Application Types](libs/application/types/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth](libs/auth/README.md)
