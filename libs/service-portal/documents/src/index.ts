@@ -14,24 +14,16 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
-const enabled = (userInfo: User) => {
-  const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
-  const dateOfBirth = userInfo.profile?.dateOfBirth
-  const isLegalGuardian = userInfo.profile.delegationType?.includes(
-    'LegalGuardian',
-  )
-  const isOver15 = dateOfBirth
-    ? differenceInYears(new Date(), dateOfBirth) > 15
-    : false
-  if (isLegalGuardian && isOver15) {
-    return false
+const isLegalAndOver15 = (userInfo: User) => {
+  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
+  const dateOfBirth = userInfo?.profile.dateOfBirth
+  let isOver15 = false
+  if (dateOfBirth) {
+    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
   }
-  if (hasScope) {
-    return true
-  } else {
-    return false
-  }
+  return isLegal && isOver15
 }
+
 export const documentsModule: ServicePortalModule = {
   name: rootName,
   widgets: () => [],
@@ -39,8 +31,13 @@ export const documentsModule: ServicePortalModule = {
     {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
-      enabled: enabled(userInfo),
-      render: () => lazy(() => import('./screens/Overview/Overview')),
+      enabled:
+        !isLegalAndOver15(userInfo) ||
+        userInfo.scopes?.includes(DocumentsScope.main),
+      render: isLegalAndOver15(userInfo)
+        ? () =>
+            lazy(() => import('./screens/AccessDeniedLegal/AccessDeniedLegal'))
+        : () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],
 }
