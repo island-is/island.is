@@ -75,6 +75,13 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
+  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
+  // await sequelize.sync()
+  execSync('yarn nx run judicial-system-backend:migrate')
+
+  // Seed the database
+  execSync('yarn nx run judicial-system-backend:seed')
+
   app = await testServer({
     appModule: AppModule,
     override: (builder) =>
@@ -92,13 +99,6 @@ beforeAll(async () => {
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-
-  // Need to use sequelize-cli becuase sequelize.sync does not keep track of completed migrations
-  // await sequelize.sync()
-  execSync('yarn nx run judicial-system-backend:migrate')
-
-  // Seed the database
-  execSync('yarn nx run judicial-system-backend:seed')
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
@@ -476,9 +476,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   }
 }
 
-function getCase(id: string): Case | PromiseLike<Case> {
+function getCase(id: string): PromiseLike<Case> {
   return Case.findOne({
     where: { id },
+    rejectOnEmpty: true,
     include: [
       {
         model: Institution,

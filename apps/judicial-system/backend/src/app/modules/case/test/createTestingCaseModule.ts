@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
 import { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
@@ -83,7 +84,13 @@ export const createTestingCaseModule = async () => {
       CaseService,
       LimitedAccessCaseService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
 
