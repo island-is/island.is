@@ -474,4 +474,8 @@ export const messages = defineMessages({
     id: 'sp.vehicles:date-of-sold-to',
     defaultMessage: 'Söludagsetning til',
   },
+  recycleCar: {
+    id: 'sp.vehicles:recycle-car',
+    defaultMessage: 'Skilavottorð',
+  },
 })
