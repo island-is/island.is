@@ -299,6 +299,9 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/firearm-license": [
+        "libs/clients/firearm-license/src/index.ts"
+      ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],
