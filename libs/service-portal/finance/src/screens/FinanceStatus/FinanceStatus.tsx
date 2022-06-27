@@ -116,13 +116,12 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
-          </GridColumn>
-          {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            {financeStatusData.organizations?.length > 0 ||
+            financeStatusZero ? (
               <Box
                 display="flex"
-                justifyContent="flexEnd"
-                marginTop={1}
+                justifyContent="flexStart"
+                marginTop={6}
                 printHidden
               >
                 {!isDelegation && scheduleButtonVisible && (
@@ -193,10 +192,10 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   ]}
                 />
               </Box>
-            </GridColumn>
-          ) : null}
+            ) : null}
+          </GridColumn>
         </GridRow>
-        <Box marginTop={[3, 4, 4, 4, 5]}>
+        <Box marginTop={2}>
           {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />

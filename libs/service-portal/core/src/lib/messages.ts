@@ -201,10 +201,21 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
-
+  vehiclesHistory: {
+    id: 'service.portal:vehicles-history',
+    defaultMessage: 'Ökutækjaferill',
+  },
+  vehiclesLookup: {
+    id: 'service.portal:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
+  },
+  myVehicles: {
+    id: 'service.portal:my-vehicles',
+    defaultMessage: 'Ökutækin mín',
   },
   incoming: {
     id: 'service.portal:incoming',
@@ -672,5 +683,9 @@ export const m = defineMessages({
   mortageCertificate: {
     id: 'service.portal:mortage-certificate',
     defaultMessage: 'Veðbókarvottorð',
+  },
+  companyTitle: {
+    id: 'service.portal:company-title',
+    defaultMessage: 'Um fyrirtæki',
   },
 })

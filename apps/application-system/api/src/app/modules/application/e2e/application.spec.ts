@@ -192,6 +192,11 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const newStateResponse = await server
       .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -247,7 +252,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
-    expect(newStateResponse.body.state).toBe('inReview')
+    expect(newStateResponse.body.state).toBe('waitingToAssign')
     expect(newStateResponse.body.answers).toEqual({
       careerHistoryCompanies: ['advania', 'aranja'],
       dreamJob: 'pilot',
@@ -275,6 +280,13 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+      })
+      .expect(200)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'SUBMIT',
       })
       .expect(200)
 
@@ -357,6 +369,11 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['government'],
         },
       })
+      .expect(200)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
       .expect(200)
 
     const newStateResponse = await server
@@ -741,6 +758,11 @@ describe('Application system API', () => {
     expect(draftStateResponse.body.state).toBe('draft')
     expect(draftStateResponse.body.externalData).toEqual({})
 
+    await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const inReviewStateResponse = await server
       .put(`/applications/${draftStateResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -778,7 +800,7 @@ describe('Application system API', () => {
     ).toEqual({ id: 1337 })
   })
 
-  const mockParentalLeaveInAssignableState = async (
+  const mockExampleApplicationInAssignableState = async (
     includeNonce = true,
   ): Promise<{
     token: string
@@ -793,11 +815,18 @@ describe('Application system API', () => {
     const creationResponse = await server
       .post('/applications')
       .send({
-        typeId: ApplicationTypes.PARENTAL_LEAVE,
+        typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(201)
     const answers = {
-      employer: { isSelfEmployed: 'no' },
+      assigneeEmail: 'email@email.com',
+      person: {
+        age: '3123',
+        name: '123123',
+        email: 'another@email.com',
+        nationalId: '123',
+        phoneNumber: '5555555',
+      },
     }
 
     await server
@@ -818,7 +847,17 @@ describe('Application system API', () => {
     const token = jwt.sign(
       {
         applicationId: creationResponse.body.id,
-        state: 'employerWaitingToAssign',
+        state: 'waitingToAssign',
+        ...(includeNonce && { nonce }),
+      },
+      secret,
+      { expiresIn: 100 },
+    )
+
+    console.log(
+      {
+        applicationId: creationResponse.body.id,
+        state: 'waitingToAssign',
         ...(includeNonce && { nonce }),
       },
       secret,
@@ -833,9 +872,7 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
-    expect(employerWaitingToAssignResponse.body.state).toBe(
-      'employerWaitingToAssign',
-    )
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
     expect(employerWaitingToAssignResponse.body.assignNonces).toStrictEqual([
       nonce,
     ])
@@ -844,7 +881,7 @@ describe('Application system API', () => {
   }
 
   it('PUT applications/assign should work just once', async () => {
-    const { token } = await mockParentalLeaveInAssignableState()
+    const { token } = await mockExampleApplicationInAssignableState()
 
     await server
       .put('/applications/assign')
@@ -866,7 +903,10 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
-    const { token, applicationId } = await mockParentalLeaveInAssignableState()
+    const {
+      token,
+      applicationId,
+    } = await mockExampleApplicationInAssignableState()
 
     await server
       .put(`/applications/${applicationId}/submit`)
@@ -878,9 +918,7 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
-    expect(employerWaitingToAssignResponse.body.state).toBe(
-      'employerWaitingToAssign',
-    )
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
 
     const assignAgain = await server
       .put('/applications/assign')
@@ -893,7 +931,7 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign supports legacy tokens', async () => {
-    const { token } = await mockParentalLeaveInAssignableState(false)
+    const { token } = await mockExampleApplicationInAssignableState(false)
 
     await server
       .put('/applications/assign')

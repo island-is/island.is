@@ -33,8 +33,8 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
           options: (application) => getOtherParentOptions(application),
           onSelect: (s: string) => {
             if (s === SPOUSE || s === NO) {
-              setValue('otherParent.otherParentName', '')
-              setValue('otherParent.otherParentId', '')
+              setValue('otherParentObj.otherParentName', '')
+              setValue('otherParentObj.otherParentId', '')
             }
           },
         }}

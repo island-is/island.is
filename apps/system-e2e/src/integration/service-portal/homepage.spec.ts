@@ -1,10 +1,24 @@
 describe('Home page', () => {
-  before(() => {
-    cy.ensureLoggedIn({ url: '/minarsidur/' })
+  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
+  const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
+  const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+
+  beforeEach(() => {
+    cy.log('fakeUsers', fakeUsers)
+    cy.log('authUrl', authUrl)
+    cy.log('testEnvironment', testEnvironment)
+    cy.idsLogin({
+      phoneNumber: fakeUsers[0].phoneNumber,
+    })
   })
-  it('should navigate serviceportal', () => {
+
+  it(`should have user ${fakeUsers[0].name} logged in`, () => {
     cy.visit('/minarsidur/')
-    // TODO: IDS login
-    cy.contains('Skráðu þig inn')
+    cy.contains(fakeUsers[0].name)
+  })
+
+  it('should have Pósthólf', () => {
+    cy.visit('/minarsidur/')
+    cy.contains('Pósthólf')
   })
 })

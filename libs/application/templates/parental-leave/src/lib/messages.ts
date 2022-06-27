@@ -1074,6 +1074,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    attachmentMaxSizeError: {
+      id: 'pl.application:selfEmployed.attachment.maxSizeError',
+      defaultMessage: 'Hámark 10 MB á skrá',
+      description: 'Max 10 MB per file',
+    },
   }),
 
   ratio: defineMessages({
