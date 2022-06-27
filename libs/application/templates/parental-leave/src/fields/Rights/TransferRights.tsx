@@ -7,7 +7,7 @@ import {
   FieldComponents,
   CustomField,
   FieldTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'

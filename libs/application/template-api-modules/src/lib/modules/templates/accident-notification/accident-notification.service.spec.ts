@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import {
-  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'

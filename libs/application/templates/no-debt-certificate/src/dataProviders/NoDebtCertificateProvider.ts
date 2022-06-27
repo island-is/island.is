@@ -3,7 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   ProviderErrorReason,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { DebtLessCertificateModel } from '../types/schema'
 export class NoDebtCertificateProvider extends BasicDataProvider {

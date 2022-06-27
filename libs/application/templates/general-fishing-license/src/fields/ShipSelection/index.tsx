@@ -1,8 +1,5 @@
-import {
-  FieldBaseProps,
-  getErrorViaPath,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,

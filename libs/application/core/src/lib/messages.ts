@@ -1,5 +1,5 @@
 import { defineMessages } from 'react-intl'
-import { ApplicationTypes } from '../types/ApplicationTypes'
+import { ApplicationTypes } from '@island.is/application/types'
 
 export const coreInstitutionMessages = defineMessages({
   [ApplicationTypes.EXAMPLE]: {

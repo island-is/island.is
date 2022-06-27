@@ -9,12 +9,13 @@ import {
   StaticText,
   StaticTextObject,
   ValidationRecord,
-} from '../types/Form'
-import { FormatMessage } from '../types/external'
-import { Answer, FormValue } from '../types/Application'
+  FormatMessage,
+  Answer,
+  FormValue,
+  RecordObject,
+} from '@island.is/application/types'
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
-import { RecordObject } from '../types/Fields'
 
 function populateError(
   currentError: ValidationRecord = {},

@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
-  formatText,
   FormText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'

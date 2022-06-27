@@ -1,6 +1,6 @@
 import set from 'lodash/set'
 
-import { Application, FormValue } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/types'
 
 import { ParentalRelations } from '../../constants'
 import {

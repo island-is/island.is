@@ -1,17 +1,19 @@
 import {
   buildMultiField,
-  Application,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
-  DefaultEvents,
   buildSection,
-  Field,
   buildCustomField,
-  Answer,
   buildTextField,
 } from '@island.is/application/core'
+import {
+  Application,
+  DefaultEvents,
+  Field,
+  Answer,
+} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '../../utils/index'

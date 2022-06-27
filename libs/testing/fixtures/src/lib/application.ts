@@ -3,7 +3,7 @@ import { MessageDescriptor } from 'react-intl'
 import {
   ApplicationTypes,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 type RecordObject<T = unknown> = Record<string, T>
 

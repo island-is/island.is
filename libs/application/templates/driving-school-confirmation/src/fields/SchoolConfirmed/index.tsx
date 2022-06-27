@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,

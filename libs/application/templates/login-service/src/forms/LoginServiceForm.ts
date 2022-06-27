@@ -1,17 +1,19 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildTextField,
   buildSubmitField,
-  DefaultEvents,
   buildCheckboxField,
   buildCompanySearchField,
-  Application,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
 import {
   section,
   application,

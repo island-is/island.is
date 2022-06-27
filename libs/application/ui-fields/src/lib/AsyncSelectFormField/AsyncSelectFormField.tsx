@@ -1,10 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import {
-  AsyncSelectField,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   SelectController,

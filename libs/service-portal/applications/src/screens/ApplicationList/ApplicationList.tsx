@@ -22,11 +22,8 @@ import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 import { ValueType } from 'react-select'
-import {
-  Application,
-  ApplicationStatus,
-  getInstitutionMapper,
-} from '@island.is/application/core'
+import { getInstitutionMapper } from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')

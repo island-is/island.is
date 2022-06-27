@@ -1,4 +1,5 @@
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { YES } from '../constants'

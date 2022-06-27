@@ -1,5 +1,4 @@
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import { FormatMessage } from '../types/external'
+import { ApplicationTypes, FormatMessage } from '@island.is/application/types'
 import { coreInstitutionMessages } from './messages'
 
 export const getInstitutionMapper = (formatMessage: FormatMessage) => {

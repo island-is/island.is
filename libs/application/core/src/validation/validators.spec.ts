@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { StaticText } from '../types/Form'
 import { coreErrorMessages } from '../lib/messages'
 

@@ -1,15 +1,17 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
