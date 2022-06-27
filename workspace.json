@@ -8538,6 +8538,7 @@
           "outputs": ["coverage/apps/services/endorsements/api"],
           "options": {
             "jestConfig": "apps/services/endorsements/api/jest.config.js",
+            "runInBand": true,
             "passWithNoTests": true
           }
         },
