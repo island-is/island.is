@@ -17,10 +17,8 @@ const useNationalRegistry = (nationalId?: string) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
 
   const isMounted = useRef(false)
-  const { isValid: isValidNationalId } = validate(
-    nationalId ?? '',
-    'national-id',
-  )
+
+  const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
