@@ -1,4 +1,4 @@
-mport { createContext } from 'react'
+import { createContext } from 'react'
 
 import { SkilavottordUser } from '@island.is/skilavottord-web/graphql/schema'
 
