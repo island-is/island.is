@@ -21,6 +21,7 @@ export const GET_ARTICLES_QUERY = gql`
       }
       slug
       title
+      processEntryButtonText
       processEntry {
         id
       }
