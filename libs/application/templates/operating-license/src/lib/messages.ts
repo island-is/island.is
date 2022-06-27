@@ -192,6 +192,73 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við rými',
     description: 'Add property',
   },
+  openingHoursTitle: {
+    id: 'ol.application:openingHours.title',
+    defaultMessage: 'Afgreiðslutímar',
+    description: 'Some description',
+  },
+  openingHoursAlcohol: {
+    id: 'ol.application:openingHours.alcohol',
+    defaultMessage: 'Afgreiðslutími áfengis',
+    description: 'Some description',
+  },
+  from: {
+    id: 'ol.application:openingHours.from',
+    defaultMessage: 'Frá',
+    description: 'Some description',
+  },
+  to: {
+    id: 'ol.application:openingHours.to',
+    defaultMessage: 'Til',
+    description: 'Some description',
+  },
+  weekdays: {
+    id: 'ol.application:openingHours.weekdays',
+    defaultMessage: 'Virka daga',
+    description: 'Some description',
+  },
+  holidays: {
+    id: 'ol.application:openingHours.holidays',
+    defaultMessage: 'Aðfaranætur frídaga',
+    description: 'Some description',
+  },
+  openingHoursOutside: {
+    id: 'ol.application:openingHours.outside',
+    defaultMessage: 'Er sótt um útiveitingaleyfi?',
+    description: 'Some description',
+  },
+  openingHoursOutsideCheck: {
+    id: 'ol.application:openingHours.outsideCheck',
+    defaultMessage: 'Já, sótt er um útiveitingaleyfi',
+    description: 'Some description',
+  },
+  otherInfoTitle: {
+    id: 'ol.application:otherInfo.title',
+    defaultMessage: 'Aðrar upplýsingar',
+    description: 'Some description',
+  },
+  temporaryLicenseTitle: {
+    id: 'ol.application:otherInfo.temporaryLicenseTitle',
+    defaultMessage: 'Bráðabirgðarleyfi',
+    description: 'Some description',
+  },
+  temporaryLicenseCheck: {
+    id: 'ol.application:otherInfo.temporaryLicenseCheck',
+    defaultMessage:
+      'Ég óska eftir leyfi til bráðabirgðar á meðan umsókn er til meðferðar',
+    description: 'Some description',
+  },
+  debtClaimTitle: {
+    id: 'ol.application:otherInfo.debtClaimTitle',
+    defaultMessage: 'Yfirlýsing um skuldastöðu',
+    description: 'Some description',
+  },
+  debtClaimCheck: {
+    id: 'ol.application:otherInfo.debtClaimCheck',
+    defaultMessage:
+      'Ég lýsi því yfir sem umsækjandi að skuldastaða mín vegna skatta, opinberra gjalda eða iðgjalda í lífeyrissjóð nemur samanlegt ekki hærri fjárhæð en 1.000.000 kr.',
+    description: 'Some description',
+  },
   overview: {
     id: 'ol.application:overview.title',
     defaultMessage: 'Yfirlit',

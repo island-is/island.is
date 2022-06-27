@@ -35,6 +35,8 @@ import { useFormContext } from 'react-hook-form'
 import { applicationInfo } from './sectionApplicationInfo'
 import { subSectionOperationInfo } from './subSectionOperationInfo'
 import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
+import { subSectionOpeningHours } from './subSectionOpeningHours'
+import { subSectionOtherInfo } from './subSectionOtherInfo'
 
 export const Draft: Form = buildForm({
   id: 'OperatingLicenseApplicationDraftForm',
@@ -76,7 +78,12 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'info',
       title: m.infoTitle,
-      children: [subSectionOperationInfo, subSectionPropertyRepeater],
+      children: [
+        subSectionOperationInfo,
+        subSectionPropertyRepeater,
+        subSectionOpeningHours,
+        subSectionOtherInfo,
+      ],
     }),
     buildSection({
       id: 'overview',

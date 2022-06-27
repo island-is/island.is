@@ -1,13 +1,15 @@
 import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './error'
-import { APPLICATION_TYPES, OPERATION_CATEGORY } from './constants'
+import { APPLICATION_TYPES, OPERATION_CATEGORY, YES } from './constants'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const vskNrRegex = /([0-9]){6}/
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
 const isValidEmail = (value: string) => emailRegex.test(value)
 const isValidVskNr = (value: string) => vskNrRegex.test(value)
+const isValidTime = (value: string) => timeRegex.test(value)
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
@@ -93,6 +95,42 @@ export const dataSchema = z.object({
       customerCount: z.string(),
     })
     .array(),
+  openingHours: z.object({
+    alcohol: z.object({
+      weekdays: z.object({
+        from: z.string(),
+        // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+        to: z.string(),
+        // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+      }),
+      holidays: z.object({
+        from: z.string(),
+        // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+        to: z.string(),
+        // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+      }),
+    }),
+    willServe: z.enum([YES]).optional(),
+    outside: z
+      .object({
+        weekdays: z.object({
+          from: z.string().optional(),
+          // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+          to: z.string().optional(),
+          // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+        }),
+        holidays: z.object({
+          from: z.string().optional(),
+          // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+          to: z.string().optional(),
+          // .refine((v) => isValidTime(v), { params: error.invalidValue }),
+        }),
+      })
+      .optional(),
+  }),
+  temporaryLicense: z.enum([YES]).optional(),
+  debtClaim: z.enum([YES]).optional(),
+  otherInfoText: z.string().optional(),
 })
 
 export type PassportSchema = z.TypeOf<typeof dataSchema>

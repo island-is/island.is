@@ -80,3 +80,20 @@ export type Operation = {
   operation: APPLICATION_TYPES
   category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
 }
+
+export type OpeningHour = {
+  from: string
+  tp: string
+}
+
+export type OpeningHours = {
+  alcohol: {
+    weekdays: OpeningHour
+    holidays: OpeningHour
+  }
+  willServe: string[]
+  outside?: {
+    weekdays: OpeningHour
+    holidays: OpeningHour
+  }
+}
