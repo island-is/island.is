@@ -110,8 +110,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   }
 
   function clearAllFilters() {
-    setDropdownSelect([allChargeTypes.value])
-    setDropdownValue(allChargeTypes.value)
+    onDropdownSelect(allChargeTypes.value)
     setFromDate(backInTheDay)
     setToDate(new Date())
     setQ('')
@@ -206,8 +205,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     onDropdownSelect(selected[0])
                   }}
                   onClear={() => {
-                    setDropdownSelect([allChargeTypes.value])
-                    setDropdownValue(allChargeTypes.value)
+                    onDropdownSelect(allChargeTypes.value)
                   }}
                   categories={[
                     {
