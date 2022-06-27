@@ -174,16 +174,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
     commitDecision,
   ])
 
-  const renderSuccessText = (caseType: CaseType): string => {
-    return isInvestigationCase(caseType)
-      ? formatMessage(icConfirmation.modal.text)
-      : formatMessage(rcConfirmation.modal.rulingNotification.textV2, {
-          summarySentToPrison:
-            caseType === CaseType.CUSTODY ||
-            caseType === CaseType.ADMISSION_TO_FACILITY,
-        })
-  }
-
   const signingProcess = getSigningProcess(
     data?.rulingSignatureConfirmation,
     error,
