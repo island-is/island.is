@@ -60,7 +60,7 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
   }).as('sameSitePatch')
 })
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber, url }) => {
+Cypress.Commands.add('idsLogin', ({ phoneNumber, url='/' }) => {
   cy.log('foobar', testEnvironment)
   if (testEnvironment !== 'local') {
     cy.session('idsLogin', () => {
