@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import {
   ApplicationStatus,
   ApplicationTypes,
