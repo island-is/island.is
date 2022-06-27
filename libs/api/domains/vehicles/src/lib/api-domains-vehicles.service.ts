@@ -8,9 +8,12 @@ import {
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
   PersidnoLookup,
+  VehicleSearch,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'vehicles-service'
@@ -41,12 +44,20 @@ export class VehiclesService {
     return this.handleError(error, detail)
   }
 
+  private getVehiclesWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getVehiclesForUser(
-    nationalId: string,
+    auth: User,
+    showDeregistered: boolean,
+    showHistory: boolean,
   ): Promise<PersidnoLookup | null | ApolloError> {
     try {
-      const res = await this.vehiclesApi.vehicleHistoryGet({
-        requestedPersidno: nationalId,
+      const res = await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+        requestedPersidno: auth.nationalId,
+        showDeregistered: showDeregistered,
+        showHistory: showHistory,
       })
       const { data } = res
       if (!data) return {}
@@ -56,11 +67,40 @@ export class VehiclesService {
     }
   }
 
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearch | null | ApolloError> {
+    try {
+      const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+        search,
+      })
+      const { data } = res
+      if (!data) return null
+      return data[0]
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle search')
+    }
+  }
+
+  async getSearchLimit(auth: User): Promise<number | null | ApolloError> {
+    try {
+      const res = await this.getVehiclesWithAuth(auth).searchesRemainingGet()
+      if (!res) return null
+      return res
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle search limit')
+    }
+  }
+
   async getVehicleDetail(
+    auth: User,
     input: BasicVehicleInformationGetRequest,
   ): Promise<VehiclesDetail | null | ApolloError> {
     try {
-      const res = await this.vehiclesApi.basicVehicleInformationGet({
+      const res = await this.getVehiclesWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
         clientPersidno: input.clientPersidno,
         permno: input.permno,
         regno: input.regno,

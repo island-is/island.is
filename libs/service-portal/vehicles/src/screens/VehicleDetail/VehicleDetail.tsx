@@ -129,7 +129,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        {/* <UserInfoLine
+        <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -141,7 +141,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider /> */}
+        <Divider />
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}
@@ -159,7 +159,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.nedc)}
-              content={String(mainInfo.co2)}
+              content={displayWithUnit(String(mainInfo.co2), 'g/km')}
               loading={loading}
             />
             <Divider />
@@ -170,7 +170,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.nedcWeighted)}
-              content={String(mainInfo.weightedCo2)}
+              content={displayWithUnit(String(mainInfo.weightedCo2), 'g/km')}
               loading={loading}
             />
             <Divider />
@@ -181,7 +181,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.wltp)}
-              content={String(mainInfo.co2Wltp)}
+              content={displayWithUnit(String(mainInfo.co2Wltp), 'g/km')}
               loading={loading}
             />
             <Divider />
@@ -192,7 +192,10 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.wltpWeighted)}
-              content={String(mainInfo.weightedCo2Wltp)}
+              content={displayWithUnit(
+                String(mainInfo.weightedCo2Wltp),
+                'g/km',
+              )}
               loading={loading}
             />
             <Divider />

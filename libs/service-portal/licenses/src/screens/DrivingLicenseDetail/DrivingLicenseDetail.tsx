@@ -68,16 +68,20 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       {data && (
         <Stack space={2}>
-          <Box display="flex" flexDirection="row" alignItems="center">
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            alignItems={['flexStart', 'center']}
+          >
             <PkPass
               expireDate={toDate(
                 loading ? '' : new Date(data.gildirTil).getTime().toString(),
               )}
             />
-            <Box className={styles.line} marginX={3} />
+            <Box marginX={[0, 1]} marginY={[1, 0]} />
             <Link href={renewalLink}>
               <Button
-                variant="text"
+                variant="utility"
                 size="small"
                 icon="open"
                 iconType="outline"
