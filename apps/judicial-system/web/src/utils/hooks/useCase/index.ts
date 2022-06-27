@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 import type {
   NotificationType,
@@ -320,7 +321,15 @@ const useCase = () => {
 
     const flatEntries = Object.assign(
       {},
-      ...validEntries.map((entry) => ({ [entry.key]: entry.value })),
+      ...validEntries.map((entry) => ({
+        [entry.key]:
+          // Ensure dates are saved on a correct format
+          entry.value instanceof Date
+            ? formatISO(entry.value, {
+                representation: 'complete',
+              })
+            : entry.value,
+      })),
     )
 
     if (Object.keys(flatEntries).length === 0) {
