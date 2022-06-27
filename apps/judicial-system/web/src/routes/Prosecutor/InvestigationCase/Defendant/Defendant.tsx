@@ -30,7 +30,6 @@ import {
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
@@ -49,7 +48,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const handleNextButtonClick = async (theCase: Case) => {
@@ -240,12 +239,17 @@ const Defendant = () => {
                     m.sections.investigationType.type.placeholder,
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                    setAndSendToServer(
-                      'type',
-                      (selectedOption as ReactSelectOption).value as string,
+                    autofill(
+                      [
+                        {
+                          key: 'type',
+                          value: (selectedOption as ReactSelectOption)
+                            .value as string,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }
                   value={
@@ -287,12 +291,16 @@ const Defendant = () => {
                   })
                 }}
                 onBlur={(evt) =>
-                  setAndSendToServer(
-                    'description',
-                    evt.target.value,
+                  autofill(
+                    [
+                      {
+                        key: 'description',
+                        value: evt.target.value,
+                        force: true,
+                      },
+                    ],
                     workingCase,
                     setWorkingCase,
-                    updateCase,
                   )
                 }
               />

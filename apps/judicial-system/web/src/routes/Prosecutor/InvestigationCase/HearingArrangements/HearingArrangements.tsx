@@ -134,6 +134,7 @@ const HearingArrangements = () => {
 
   const handleCourtChange = (courtId: string) => {
     if (workingCase) {
+      autofill
       setAndSendToServer(
         'courtId',
         courtId,

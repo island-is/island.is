@@ -43,7 +43,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
   setAndSendDateToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
@@ -375,12 +374,16 @@ export const CourtRecord: React.FC = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                autofill(
+                  [
+                    {
+                      key: 'isClosedCourtHidden',
+                      value: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
