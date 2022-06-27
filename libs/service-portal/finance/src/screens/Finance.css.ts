@@ -7,7 +7,6 @@ export const dateFilter = style({
 })
 
 export const dateFilterSingle = style({
-  // paddingTop: theme.spacing[3],
   paddingBottom: theme.spacing[2],
 })
 
