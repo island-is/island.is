@@ -19,7 +19,6 @@ export const sidebar = style({
   display: 'flex',
   justifyContent: 'flex-start',
   flexDirection: 'column',
-  paddingBottom: theme.spacing['3'],
 })
 
 export const sidebarScroll = style({

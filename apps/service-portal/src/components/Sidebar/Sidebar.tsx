@@ -18,34 +18,35 @@ import * as styles from './Sidebar.css'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
-  const [{ sidebarState }, dispatch] = useStore()
-  const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
-  const { width } = useWindowSize()
+  //const [{ sidebarState }, dispatch] = useStore()
+  const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
+  // const { width } = useWindowSize()
   const { signOut } = useAuth()
-  const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
-  const isMobile = width < theme.breakpoints.md
+  // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
+  // const isMobile = width < theme.breakpoints.md
   const { unreadCounter } = useListDocuments('')
   const { formatMessage } = useLocale()
 
-  useEffect(() => {
-    if (isTablet) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'closed',
-      })
-      setCollapsed(true)
-    }
-  }, [isTablet])
+  /* This is commented out because this will be revisited next fall (2022) */
+  // useEffect(() => {
+  //   if (isTablet) {
+  //     dispatch({
+  //       type: ActionType.SetSidebarMenuState,
+  //       payload: 'closed',
+  //     })
+  //     setCollapsed(true)
+  //   }
+  // }, [isTablet])
 
-  useEffect(() => {
-    if (isMobile) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'open',
-      })
-      setCollapsed(false)
-    }
-  }, [isMobile])
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     dispatch({
+  //       type: ActionType.SetSidebarMenuState,
+  //       payload: 'open',
+  //     })
+  //     setCollapsed(false)
+  //   }
+  // }, [isMobile])
 
   return (
     <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
@@ -63,7 +64,8 @@ export const Sidebar: FC<{}> = () => {
           )}
         </Link>
       </Box>
-      <Box
+      {/* This is commented out because this will be revisited next fall (2022) */}
+      {/* <Box
         className={styles.navIcon}
         borderRadius="circle"
         display="flex"
@@ -85,7 +87,7 @@ export const Sidebar: FC<{}> = () => {
           size="medium"
           color="blue400"
         />
-      </Box>
+      </Box> */}
 
       <Box
         display="flex"
@@ -116,7 +118,7 @@ export const Sidebar: FC<{}> = () => {
           </Stack>
         ))}
 
-        <Box marginTop={1} background="white" width="full" paddingBottom={2}>
+        <Box marginTop={1} background="white" width="full">
           <NavItem
             onClick={() => signOut()}
             active={false}
