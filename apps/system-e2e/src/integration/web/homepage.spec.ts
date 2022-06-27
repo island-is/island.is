@@ -1,3 +1,5 @@
+import { rmSync } from "fs"
+
 describe('Front page', () => {
   beforeEach(() => {
     cy.cognitoLogin()
@@ -46,8 +48,7 @@ describe('Front page', () => {
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
       cy.get('button[data-testid="language-toggler"]:visible')
         .click()
-        .as('clicked')
-      cy.waitFor('@clicked')
+      cy.location('pathname').should('eq', '/en')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
         previousHeading.text(),
