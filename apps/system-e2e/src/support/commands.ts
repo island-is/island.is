@@ -23,21 +23,20 @@ const cognitoLogin = (creds: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-const idsLogin = (phoneNumber: string, url: string) => {
+const idsLogin = (phoneNumber: string, urlPath: string) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
       authUrl: authUrl,
-      minarSidur: `${Cypress.config().baseUrl}${url}`,
     },
   }
   cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
-  cy.visit(url, { log: true })
+  cy.visit(urlPath, { log: true })
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
-  cy.url().should('contain', `${Cypress.config().baseUrl}${url}`)
+  cy.url().should('contain', `${Cypress.config().baseUrl}${urlPath}`)
 }
 
 Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
