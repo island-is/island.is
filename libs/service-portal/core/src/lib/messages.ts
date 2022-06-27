@@ -705,23 +705,23 @@ export const m = defineMessages({
     defaultMessage: 'Veldu dagsetningu',
   },
   clearFilter: {
-    id: 'sp.documents:clear-filter',
+    id: 'service.portal:clear-filter',
     defaultMessage: 'Hreinsa síu',
   },
   clearAllFilters: {
-    id: 'sp.documents:clear-all-filters',
+    id: 'service.portal:clear-all-filters',
     defaultMessage: 'Hreinsa allar síur',
   },
   openFilter: {
-    id: 'sp.documents:open-filter',
+    id: 'service.portal:open-filter',
     defaultMessage: 'Opna síu',
   },
   closeFilter: {
-    id: 'sp.documents:close-filter',
+    id: 'service.portal:close-filter',
     defaultMessage: 'Loka síu',
   },
   clearSelected: {
-    id: 'sp.documents:clear-selected',
+    id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
   },
 })
