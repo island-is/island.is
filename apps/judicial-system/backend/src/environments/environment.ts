@@ -61,7 +61,7 @@ const devConfig = {
       'http://localhost:4200/krafa/stadfesta/',
     prosecutorInvestigationCaseOverviewUrl:
       'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
-    defenderCompletedCaseOverviewUrl: 'http://localhost:4200/verjandi/',
+    defenderCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -218,8 +218,7 @@ const prodConfig = {
       process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
     prosecutorInvestigationCaseOverviewUrl:
       process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
-    defenderCompletedCaseOverviewUrl:
-      process.env.DEFENDER_COMPLETED_CASE_OVERVIEW_URL,
+    defenderCaseOverviewUrl: process.env.DEFENDER_CASE_OVERVIEW_URL,
   },
 }
 

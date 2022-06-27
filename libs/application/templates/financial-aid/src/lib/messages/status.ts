@@ -198,6 +198,13 @@ export const spouseAlert = defineMessages({
       'Umsóknin verður tekin til úrvinnslu þegar maki skilar inn gögnum. Maki hefur fengið tölvupóst þess efnis.',
     description: 'Message of alert',
   },
+  messageCopyUrl: {
+    id: 'fa.application:section.spouseAlert.messageCopyUrl',
+    defaultMessage:
+      'Umsóknin verður tekin til úrvinnslu þegar maki hefur fylgt hlekknum hér að neðan til að skila inn gögnum',
+    description:
+      'Message of alert to tell the spouse to follow the upload link',
+  },
 })
 
 export const spouseApproved = defineMessages({
@@ -206,5 +213,13 @@ export const spouseApproved = defineMessages({
     defaultMessage:
       'Umsóknin maka þíns um fjárhagsaðstoð í {month} er samþykkt. Maki þinn fær frekari upplýsingar um veitta aðstoð.',
     description: 'Message for spouse when application is apporoved',
+  },
+})
+
+export const approvedAlert = defineMessages({
+  title: {
+    id: 'fa.application:section.approvedAlert.title',
+    defaultMessage: 'Skýring frá vinnsluaðila',
+    description: 'Title of accepted alert box',
   },
 })

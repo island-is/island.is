@@ -12,6 +12,8 @@ import { Application, ActionCardTag } from './Application'
 import { PerformActionResult } from './TemplateApiModuleTypes'
 import { ProviderErrorReason } from './DataProviderResult'
 import { ProblemType } from '@island.is/shared/problem'
+import { Condition } from './Condition'
+
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export enum DefaultEvents {
@@ -48,6 +50,7 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
+  condition?: Condition
 }
 
 export interface ApplicationTemplateAPIAction {

@@ -8,6 +8,7 @@ import {
   makeCourt,
   makeProsecutor,
   intercept,
+  Operation,
 } from '../../../utils'
 
 describe(`${STEP_TWO_ROUTE}/:id`, () => {
@@ -83,7 +84,7 @@ describe(`${STEP_TWO_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       court: makeCourt(),
     }
-    const shouldFail = true
+    const shouldFail = Operation.SendNotificationMutation
 
     intercept(caseDataAddition, shouldFail)
 

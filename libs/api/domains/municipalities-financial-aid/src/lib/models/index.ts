@@ -12,3 +12,4 @@ export {
   DirectTaxPaymentsResponse,
   DirectTaxPaymentModel,
 } from './directTaxPayments.response'
+export { SpouseEmailResponse } from './spouseEmail.response'

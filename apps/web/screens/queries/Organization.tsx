@@ -146,6 +146,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         title
         content
         type
+        image {
+          url
+          title
+          width
+          height
+        }
         link {
           text
           url
@@ -201,6 +207,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }

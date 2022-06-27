@@ -49,11 +49,14 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         prod:
           'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
       },
-      DEFENDER_COMPLETED_CASE_OVERVIEW_URL: {
+      DEFENDER_CASE_OVERVIEW_URL: {
         dev: 'https://judicial-system.dev01.devland.is/verjandi/',
         staging: 'https://judicial-system.staging01.devland.is/verjandi/',
         prod: 'https://rettarvorslugatt.island.is/verjandi/',
       },
+      SQS_QUEUE_NAME: 'sqs-judicial-system',
+      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
+      SQS_REGION: 'eu-west-1',
     })
     .xroad(Base, JudicialSystem)
     .secrets({

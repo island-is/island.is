@@ -4,8 +4,6 @@ import { useIntl } from 'react-intl'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   aidCalculator,
-  MartialStatusType,
-  martialStatusTypeFromMartialCode,
   estimatedBreakDown,
   showSpouseData,
   Application,

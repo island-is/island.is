@@ -63,7 +63,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -177,7 +177,7 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
 
   const isModifyingRuling = router.pathname.includes(
-    Constants.MODIFY_RULING_ROUTE,
+    constants.MODIFY_RULING_ROUTE,
   )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -283,6 +283,7 @@ export const Ruling: React.FC = () => {
               type="warning"
               title={formatMessage(m.sections.alertMessage.title)}
               message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
             />
           </Box>
         )}
@@ -504,7 +505,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -715,6 +715,7 @@ export const Ruling: React.FC = () => {
                       }),
                     )}
                     checked={workingCase.isCustodyIsolation}
+                    disabled={isModifyingRuling}
                     onChange={() => {
                       let conclusion = undefined
 
@@ -872,6 +873,7 @@ export const Ruling: React.FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
@@ -879,8 +881,8 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
@@ -889,7 +891,7 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}

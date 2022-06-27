@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useState, useEffect } from 'react'
 import { NotFound } from '../NotFound/NotFound'
 
 import { useRouteMatch } from 'react-router-dom'
@@ -10,14 +10,20 @@ interface Props {
 }
 
 export const DynamicWrapper: FC<Props> = ({ children }) => {
+  const [noMatch, setNoMatch] = useState(false)
   const { activeDynamicRoutes, loading } = useDynamicRoutes()
-
   const matches = useRouteMatch(activeDynamicRoutes)
+
+  useEffect(() => {
+    if (!loading && !matches) {
+      setNoMatch(true)
+    }
+  }, [loading, matches])
 
   if (matches) {
     return <>{children}</>
   }
-  if (!loading && !matches) {
+  if (noMatch) {
     return <NotFound />
   }
   return <SkeletonLoader space={1} height={30} repeat={4} />

@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
@@ -17,17 +17,33 @@ import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import {
   ErrorShell,
+  DelegationsScreen,
   useApplicationNamespaces,
 } from '@island.is/application/ui-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+
+  const { search } = useLocation()
+
+  const query = React.useMemo(() => new URLSearchParams(search), [search])
+
+  const [delegationsChecked, setDelegationsChecked] = useState(
+    !!query.get('delegationChecked'),
+  )
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
 
   useApplicationNamespaces(type)
 
@@ -40,7 +56,7 @@ export const Applications: FC = () => {
     variables: {
       input: { typeId: type },
     },
-    skip: !type,
+    skip: !type && !delegationsChecked,
   })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
@@ -63,16 +79,37 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (type && data && isEmpty(data.applicationApplications)) {
+    if (
+      type &&
+      data &&
+      isEmpty(data.applicationApplications) &&
+      delegationsChecked
+    ) {
       createApplication()
     }
-  }, [type, data])
+  }, [type, data, delegationsChecked])
 
   if (loading) {
     return <ApplicationLoading />
   }
 
   if (!type || applicationsError) {
+    const foundError = findProblemInApolloError(applicationsError as any, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
+      return (
+        <DelegationsScreen
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={checkDelegation}
+        />
+      )
+    }
     return (
       <ErrorShell
         title={formatMessage(coreMessages.notFoundApplicationType)}
@@ -94,15 +131,31 @@ export const Applications: FC = () => {
     )
   }
 
+  if (!delegationsChecked && type) {
+    return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
+  }
+
   return (
     <Page>
       <GridContainer>
         {!loading && !isEmpty(data?.applicationApplications) && (
           <Box>
-            <Box marginTop={5} marginBottom={5}>
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              justifyContent="spaceBetween"
+              display="flex"
+              flexDirection={['column', 'row']}
+            >
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
+
+              <Box marginTop={[2, 0]}>
+                <Button onClick={createApplication}>
+                  {formatMessage(coreMessages.newApplication)}
+                </Button>
+              </Box>
             </Box>
 
             {data?.applicationApplications && (
@@ -114,17 +167,6 @@ export const Applications: FC = () => {
                 refetch={refetch}
               />
             )}
-
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-            >
-              <Button onClick={createApplication}>
-                {formatMessage(coreMessages.newApplication)}
-              </Button>
-            </Box>
           </Box>
         )}
       </GridContainer>

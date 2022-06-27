@@ -1,4 +1,4 @@
-import { toggleInArray } from './formHelper'
+import { hasDateChanged, toggleInArray } from './formHelper'
 
 describe('toggleInArray', () => {
   it.each`
@@ -39,5 +39,35 @@ describe('toggleInArray', () => {
     const res = toggleInArray(values, item)
 
     expect(res.includes(item)).toEqual(true)
+  })
+})
+
+describe('hasDateChanged', () => {
+  it('should return false when dates are equal', () => {
+    const currentDate = '2020-10-24T13:37:00Z'
+    expect(hasDateChanged(currentDate, new Date('2020-10-24T13:37:00Z'))).toBe(
+      false,
+    )
+  })
+
+  it('should return true when current date is undefined', () => {
+    const currentDate = undefined
+    expect(hasDateChanged(currentDate, new Date('2020-10-24T13:37:00Z'))).toBe(
+      true,
+    )
+  })
+
+  it('should return true when current date is null', () => {
+    const currentDate = null
+    expect(hasDateChanged(currentDate, new Date('2020-10-24T13:37:00Z'))).toBe(
+      true,
+    )
+  })
+
+  it('should return if true when dates are not equal', () => {
+    const currentDate = '2020-10-24T13:36:00Z'
+    expect(hasDateChanged(currentDate, new Date('2020-10-24T13:37:00Z'))).toBe(
+      true,
+    )
   })
 })

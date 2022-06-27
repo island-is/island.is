@@ -107,6 +107,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       decision: CaseDecision.ACCEPTING,
       courtDate: '2020-09-16T19:50:08.033Z',
       conclusion: faker.lorem.words(5),
+      ruling: faker.lorem.words(5),
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
@@ -130,6 +131,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
       decision: CaseDecision.ACCEPTING,
+      conclusion: undefined,
     }
 
     cy.stubAPIResponses()
@@ -137,7 +139,10 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('continueButton').should('not.exist')
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
   })
 
   it('should not allow users to continue if decision is not set', () => {
@@ -148,6 +153,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
       conclusion: faker.lorem.words(5),
+      decision: undefined,
     }
 
     cy.stubAPIResponses()
@@ -155,7 +161,30 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('continueButton').should('not.exist')
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
+  })
+
+  it('should not allow users to continue if ruling is not set', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      courtDate: '2021-12-16T10:50:04.033Z',
+      conclusion: faker.lorem.words(5),
+      decision: CaseDecision.ACCEPTING,
+      ruling: undefined,
+    }
+
+    cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
+    intercept(caseDataAddition)
+
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
@@ -167,6 +196,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       decision: CaseDecision.ACCEPTING,
       courtDate: '2020-09-16T19:50:08.033Z',
       conclusion: faker.lorem.words(5),
+      ruling: faker.lorem.words(5),
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)

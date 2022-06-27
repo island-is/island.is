@@ -15,8 +15,6 @@ import {
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 
-const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
-
 @Injectable()
 export class DrivingLicenseApi {
   constructor(private readonly v1: v1.ApiV1, private readonly v2: v2.ApiV2) {}
@@ -189,7 +187,6 @@ export class DrivingLicenseApi {
         kennitala: params.nationalId,
       },
     )
-
     return {
       result: !!response.result,
       errorCode: response.errorCode
@@ -222,27 +219,44 @@ export class DrivingLicenseApi {
     email: string
     phone: string
   }) {
-    const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost({
-      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
-      postTemporaryLicenseV2: {
-        kemurMedLaeknisvottord: params.willBringHealthCertificate,
-        kennitala: params.nationalIdApplicant,
-        kemurMedNyjaMynd: params.willBringQualityPhoto,
-        embaetti: params.juristictionId,
-        kennitalaOkukennara: params.nationalIdTeacher,
-        sendaSkirteiniIPosti: params.sendLicenseInMail,
-        netfang: params.email,
-        farsimaNumer: params.phone,
-      },
-    })
+    try {
+      const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost(
+        {
+          apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+          postTemporaryLicenseV2: {
+            kemurMedLaeknisvottord: params.willBringHealthCertificate,
+            kennitala: params.nationalIdApplicant,
+            kemurMedNyjaMynd: params.willBringQualityPhoto,
+            embaetti: params.juristictionId,
+            kennitalaOkukennara: params.nationalIdTeacher,
+            sendaSkirteiniIPosti: params.sendLicenseInMail,
+            netfang: params.email,
+            farsimaNumer: params.phone,
+          },
+        },
+      )
+      if (!response.result) {
+        throw new Error(
+          `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
+        )
+      }
 
-    if (!response.result) {
+      return response.result
+    } catch (e) {
+      // In cases where first submit fails then resubmission gets 400 response
+      // The generated api does not map the error correctly so we check if the canApply status has changed to "HAS_B_Category"
+      if ((e as { status: number })?.status === 400) {
+        const hasTemp = await this.getCanApplyForCategoryTemporary({
+          nationalId: params.nationalIdApplicant,
+        })
+        return hasTemp.errorCode === 'HAS_B_CATEGORY'
+      }
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
+        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${
+          (e as { status: number })?.status
+        }`,
       )
     }
-
-    return response.result
   }
 
   async postCreateDrivingLicenseFull(params: {

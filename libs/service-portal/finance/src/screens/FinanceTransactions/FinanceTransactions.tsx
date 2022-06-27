@@ -32,6 +32,7 @@ import {
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import * as styles from '../Finance.css'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
@@ -123,31 +124,34 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
           </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default">
+              <Text variant="default" marginBottom={6}>
                 {formatMessage({
                   id: 'sp.finance-transactions:intro',
                   defaultMessage:
                     'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-            </GridColumn>
-            {recordsDataArray.length > 0 ? (
-              <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
-                <GridColumn>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                </GridColumn>
-                <GridColumn>
+              {recordsDataArray.length > 0 ? (
+                <Box
+                  display="flex"
+                  marginLeft="auto"
+                  paddingRight={2}
+                  printHidden
+                >
+                  <Box paddingRight={2}>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </Box>
                   <DropdownExport
                     onGetCSV={() =>
                       exportHreyfingarFile(recordsDataArray, 'csv')
@@ -156,9 +160,9 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                       exportHreyfingarFile(recordsDataArray, 'xlsx')
                     }
                   />
-                </GridColumn>
-              </Box>
-            ) : null}
+                </Box>
+              ) : null}
+            </GridColumn>
           </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
@@ -181,6 +185,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 <GridColumn
                   paddingTop={[2, 2, 2, 2, 0]}
                   span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
                 >
                   <DatePicker
                     backgroundColor="blue"
@@ -197,6 +202,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 <GridColumn
                   paddingTop={[2, 2, 2, 2, 0]}
                   span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
                 >
                   <DatePicker
                     backgroundColor="blue"

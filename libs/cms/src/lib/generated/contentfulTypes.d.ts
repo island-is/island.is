@@ -166,6 +166,15 @@ export interface IArticleFields {
 
   /** Featured image */
   featuredImage?: Asset | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Process Entry Button Text */
+  processEntryButtonText?: 'application' | 'stepByStep' | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1146,6 +1155,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1755,6 +1767,9 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -1915,6 +1930,9 @@ export interface IOrganizationFields {
 
   /** Service Web Featured Image */
   serviceWebFeaturedImage?: Asset | undefined
+
+  /** Service Web Popular Question Count */
+  serviceWebPopularQuestionCount?: number | undefined
 
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
@@ -2447,6 +2465,9 @@ export interface ISidebarCardFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface ISidebarCard extends Entry<ISidebarCardFields> {
@@ -3246,6 +3267,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {

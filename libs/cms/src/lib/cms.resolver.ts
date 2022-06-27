@@ -85,6 +85,9 @@ import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
+import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
+import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
+import { Locale } from '@island.is/shared/types'
 
 const { cacheTime } = environment
 
@@ -347,13 +350,17 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
-  getSingleArticle(
+  async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
-  ): Promise<Article | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+  ): Promise<Partial<Article> & { lang: Locale }> {
+    const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
+    return {
+      ...article,
+      lang,
+    }
   }
 
   @Directive(cacheControlDirective())
@@ -420,6 +427,28 @@ export class CmsResolver {
     @Args('input') input: GetSubpageHeaderInput,
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SupportQNA, { nullable: true })
+  getSingleSupportQNA(
+    @Args('input') { lang, slug }: GetSingleSupportQNAInput,
+  ): Promise<SupportQNA | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<SupportQNA>(
+      getElasticsearchIndex(lang),
+      { type: 'webQNA', slug },
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getFeaturedSupportQNAs(
+    @Args('input') input: GetFeaturedSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -497,7 +526,12 @@ export class ArticleResolver {
 
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
-  async relatedArticles(@Parent() article: Article) {
-    return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
+  async relatedArticles(
+    @Parent() article: Article & { lang?: Locale },
+  ): Promise<Article[]> {
+    return this.cmsContentfulService.getRelatedArticles(
+      article.slug,
+      article?.lang ?? 'is',
+    )
   }
 }

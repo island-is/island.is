@@ -147,6 +147,7 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
 }
 
 export interface UpdateAdmin {
@@ -168,6 +169,10 @@ export interface Municipality {
   numberOfUsers?: number
   adminUsers?: Staff[]
   allAdminUsers?: UpdateAdmin[]
+  usingNav: boolean
+  navUrl?: string
+  navUsername?: string
+  navPassword?: string
 }
 
 export interface UpdateMunicipalityActivity {
@@ -308,6 +313,7 @@ export interface Application {
   hasFetchedDirectTaxPayment: boolean
   spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
+  navSuccess?: boolean
 }
 
 export interface GetSignedUrlForId {

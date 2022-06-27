@@ -74,6 +74,7 @@ interface OrganizationSliceProps {
   namespace?: Namespace
   fullWidth?: boolean
   organizationPageSlug?: string
+  renderedOnOrganizationSubpage?: boolean
 }
 
 const fullWidthSlices = [
@@ -81,9 +82,13 @@ const fullWidthSlices = [
   'LogoListSlice',
   'MailingListSignupSlice',
 ]
-const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace, organizationPageSlug) => {
+const renderSlice = (
+  slice,
+  namespace,
+  organizationPageSlug,
+  renderedOnOrganizationSubpage = false,
+) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -118,6 +123,7 @@ const renderSlice = (slice, namespace, organizationPageSlug) => {
         <LatestNewsSlice
           slice={slice}
           organizationPageSlug={organizationPageSlug}
+          renderedOnOrganizationSubpage={renderedOnOrganizationSubpage}
         />
       )
     case 'MailingListSignupSlice':
@@ -132,8 +138,9 @@ export const OrganizationSlice = ({
   namespace,
   fullWidth = false,
   organizationPageSlug = '',
+  renderedOnOrganizationSubpage = false,
 }: OrganizationSliceProps) => {
-  return !(fullWidth && slicesWithContainer.includes(slice.__typename)) ? (
+  return !fullWidth ? (
     <GridContainer>
       <GridRow>
         <GridColumn
@@ -149,11 +156,21 @@ export const OrganizationSlice = ({
               : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, organizationPageSlug)}
+          {renderSlice(
+            slice,
+            namespace,
+            organizationPageSlug,
+            renderedOnOrganizationSubpage,
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
   ) : (
-    renderSlice(slice, namespace, organizationPageSlug)
+    renderSlice(
+      slice,
+      namespace,
+      organizationPageSlug,
+      renderedOnOrganizationSubpage,
+    )
   )
 }

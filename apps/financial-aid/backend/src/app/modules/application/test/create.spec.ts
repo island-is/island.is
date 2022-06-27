@@ -208,6 +208,7 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     const appModel = {
@@ -232,6 +233,7 @@ describe('ApplicationController - Create', () => {
       expect(mockApplicationEventService.create).toHaveBeenCalledWith({
         applicationId: id,
         eventType: 'New',
+        emailSent: true,
       })
     })
 
@@ -313,7 +315,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       hasFetchedDirectTaxPayment: false,
-      applicationSystemId: '',
+      applicationSystemId: null,
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
     }
@@ -327,6 +329,7 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     const appModel = {

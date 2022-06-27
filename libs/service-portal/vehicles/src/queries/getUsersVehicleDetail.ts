@@ -9,6 +9,9 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         regno
         year
         co2
+        weightedCo2
+        co2Wltp
+        weightedCo2Wltp
         cubicCapacity
         trailerWithBrakesWeight
         trailerWithoutBrakesWeight
@@ -32,10 +35,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         vehicleGroup
         color
         reggroup
+        reggroupName
         passengers
         useGroup
         driversPassengers
         standingPassengers
+        plateLocation
+        specialName
+        plateStatus
       }
       currentOwnerInfo {
         owner
@@ -49,7 +56,6 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         type
         date
         result
-        plateStatus
         nextInspectionDate
         lastInspectionDate
         insuranceStatus

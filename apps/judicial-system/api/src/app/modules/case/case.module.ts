@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
 import { CaseResolver } from './case.resolver'
-import { RestrictedCaseResolver } from './restrictedCase.resolver'
+import { LimitedAccessCaseResolver } from './limitedAccessCase.resolver'
 
 @Module({
-  providers: [CaseResolver, RestrictedCaseResolver],
+  providers: [CaseResolver, LimitedAccessCaseResolver],
 })
 export class CaseModule {}

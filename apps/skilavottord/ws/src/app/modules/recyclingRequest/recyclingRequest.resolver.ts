@@ -83,9 +83,13 @@ export class RecyclingRequestResolver {
   })
   @Query(() => VehicleModel)
   async skilavottordVehicleReadyToDeregistered(
+    @CurrentUser() user: User,
     @Args('permno') permno: string,
   ): Promise<VehicleModel> {
-    return this.recyclingRequestService.getVehicleInfoToDeregistered(permno)
+    return this.recyclingRequestService.getVehicleInfoToDeregistered(
+      user,
+      permno,
+    )
   }
 
   @Mutation(() => RecyclingRequestResponse)

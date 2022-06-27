@@ -3,6 +3,7 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
@@ -11,6 +12,7 @@ interface Props {
   firstStepText?: MessageDescriptor
   missingIncomeFiles: boolean
   hasSpouse?: boolean
+  spouseEmailSuccess?: boolean
   municipalityHomepage?: string
 }
 
@@ -18,9 +20,11 @@ const Confirmation = ({
   firstStepText,
   missingIncomeFiles,
   hasSpouse,
+  spouseEmailSuccess,
   municipalityHomepage,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   return (
     <>
@@ -51,7 +55,10 @@ const Confirmation = ({
                 confirmation.alertMessagesInRelationship.dataNeeded,
               )}
               message={formatMessage(
-                confirmation.alertMessagesInRelationship.dataNeededText,
+                spouseEmailSuccess
+                  ? confirmation.alertMessagesInRelationship.dataNeededText
+                  : confirmation.alertMessagesInRelationship
+                      .dataNeededAlternativeText,
               )}
             />
           </Box>
@@ -62,15 +69,13 @@ const Confirmation = ({
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
       <Box marginTop={2}>
-        <DescriptionText text={confirmation.nextSteps.content} />
-      </Box>
-
-      {firstStepText && <DescriptionText text={firstStepText} />}
-      <Box marginTop={2}>
-        <DescriptionText
-          text={confirmation.nextSteps.content}
-          format={{ nextMonth: getNextPeriod.month }}
-        />
+        {firstStepText && <DescriptionText text={firstStepText} />}
+        <Box marginTop={2}>
+          <DescriptionText
+            text={confirmation.nextSteps.content}
+            format={{ nextMonth: getNextPeriod(lang).month }}
+          />
+        </Box>
       </Box>
 
       {hasSpouse && (

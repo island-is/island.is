@@ -21,6 +21,7 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
+  removeCountryCode,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -264,7 +265,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: NO,
     }
 
@@ -274,7 +275,7 @@ describe('getOtherParentId', () => {
   it('should return answers.otherParentId if manual is selected', () => {
     const expectedId = '1234567899'
 
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: MANUAL,
       otherParentId: expectedId,
     }
@@ -295,7 +296,7 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: 'spouse',
     }
 
@@ -326,7 +327,7 @@ describe('getOtherParentName', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: NO,
     }
 
@@ -336,7 +337,7 @@ describe('getOtherParentName', () => {
   it('should return answers.otherParentName if manual is selected', () => {
     const expectedName = '1234567899'
 
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: MANUAL,
       otherParentName: expectedName,
     }
@@ -357,7 +358,7 @@ describe('getOtherParentName', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: 'spouse',
     }
 
@@ -496,5 +497,31 @@ describe('applicantIsMale', () => {
     set(application.externalData, 'person.data.genderCode', '1')
 
     expect(applicantIsMale(application)).toBe(true)
+  })
+})
+
+describe('removeCountryCode', () => {
+  it('should return the last 7 digits of the phone number', () => {
+    const application = buildApplication()
+    set(
+      application.externalData,
+      'userProfile.data.mobilePhoneNumber',
+      '+3541234567',
+    )
+    expect(removeCountryCode(application)).toEqual('1234567')
+  })
+  it('should return the last 7 digits of the phone number', () => {
+    const application = buildApplication()
+    set(
+      application.externalData,
+      'userProfile.data.mobilePhoneNumber',
+      '003541234567',
+    )
+    expect(removeCountryCode(application)).toEqual('1234567')
+  })
+  it("should return null if phone number wouldn't exist", () => {
+    const application = buildApplication()
+    set(application.externalData, 'userProfile', null)
+    expect(removeCountryCode(application)).toEqual(undefined)
   })
 })

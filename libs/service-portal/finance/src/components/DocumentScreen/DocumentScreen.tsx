@@ -29,6 +29,7 @@ import { dateFormat } from '@island.is/shared/constants'
 
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
+import * as styles from '../../screens/Finance.css'
 
 const ITEMS_ON_PAGE = 20
 
@@ -111,11 +112,13 @@ const DocumentScreen: FC<Props> = ({
         <Text variant="h3" as="h1">
           {title}
         </Text>
-        <GridRow>
+        <GridRow marginBottom={4}>
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
+        </GridRow>
+        <GridRow>
+          <Box display="flex" printHidden padding={0}>
             <GridColumn>
               <Button
                 colorScheme="default"
@@ -133,7 +136,7 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
+          <Box marginTop={[1, 1, 2, 4]}>
             <GridRow>
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
@@ -154,6 +157,7 @@ const DocumentScreen: FC<Props> = ({
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 order={[1, 1, 1, 1, 1]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"
@@ -171,6 +175,7 @@ const DocumentScreen: FC<Props> = ({
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 paddingTop={[2, 2, 0, 0, 0]}
                 order={[2, 2, 2, 2, 2]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"

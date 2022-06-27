@@ -44,6 +44,9 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
+  formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -365,6 +368,24 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
+  private sendResubmittedToCourtEmailToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
+      this.formatMessage,
+      theCase.policeCaseNumber || '',
+      `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
+    )
+
+    return this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+  }
+
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
@@ -421,6 +442,14 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+        if (
+          theCase.courtDate &&
+          theCase.sendRequestToDefender &&
+          theCase.defenderName &&
+          theCase.defenderEmail
+        ) {
+          promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
+        }
       }
 
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
@@ -489,8 +518,7 @@ export class NotificationService {
       )
     } catch (error) {
       // Tolerate failure, but log error
-      // TODO: Log as error when implemented in the court system
-      this.logger.info(
+      this.logger.error(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )
@@ -590,11 +618,12 @@ export class NotificationService {
     return recipient
   }
 
-  private async sendCourtDateEmailNotificationToDefender(
+  private sendCourtDateEmailNotificationToDefender(
     theCase: Case,
     user: User,
-  ): Promise<Recipient> {
+  ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
+    const linkSubject = `Gögn í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
@@ -606,33 +635,63 @@ export class NotificationService {
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
       theCase.sessionArrangements,
-      theCase.sendRequestToDefender,
+    )
+    const linkHtml = formatDefenderCourtDateLinkEmailNotification(
+      this.formatMessage,
       theCase.defenderNationalId &&
-        `${environment.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}`,
+        `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
+      theCase.courtCaseNumber,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
-    const recipient = await this.sendEmail(
-      subject,
-      html,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      attachments,
-    )
-
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
+    const promises = [
+      this.sendEmail(
         subject,
         html,
+        theCase.defenderName,
         theCase.defenderEmail,
+        attachments,
+      ).then((recipient) => {
+        if (recipient.success) {
+          // No need to wait
+          this.uploadEmailToCourt(
+            theCase,
+            user,
+            subject,
+            html,
+            theCase.defenderEmail,
+          )
+        }
+        return recipient
+      }),
+    ]
+
+    if (theCase.sendRequestToDefender) {
+      promises.push(
+        this.sendEmail(
+          linkSubject,
+          linkHtml,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ).then((recipient) => {
+          if (recipient.success) {
+            // No need to wait
+            this.uploadEmailToCourt(
+              theCase,
+              user,
+              linkSubject,
+              linkHtml,
+              theCase.defenderEmail,
+            )
+          }
+          return recipient
+        }),
       )
     }
 
-    return recipient
+    return promises
   }
 
   private async sendCourtDateNotifications(
@@ -658,7 +717,7 @@ export class NotificationService {
       theCase.defenderEmail
     ) {
       promises.push(
-        this.sendCourtDateEmailNotificationToDefender(theCase, user),
+        ...this.sendCourtDateEmailNotificationToDefender(theCase, user),
       )
     }
 
@@ -729,23 +788,18 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
+    const { subject, body } = formatPrisonAdministrationRulingNotification(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      theCase.court?.name,
+      `${environment.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
+    )
     return this.sendEmail(
-      theCase.courtCaseNumber ?? '',
-      'Sjá viðhengi',
+      subject,
+      body,
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
-      [
-        {
-          filename: this.formatMessage(
-            notifications.signedRuling.courtRecordAttachment,
-            { courtCaseNumber: theCase.courtCaseNumber },
-          ),
-          content: courtRecordPdf,
-          encoding: 'binary',
-        },
-      ],
     )
   }
 
@@ -764,10 +818,7 @@ export class NotificationService {
     )
 
     const recipients = [
-      await this.sendRulingEmailNotificationToPrisonAdministration(
-        theCase,
-        courtRecordPdf,
-      ),
+      await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
     ]
 
     if (
@@ -798,30 +849,29 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
-    const html = `${
-      theCase.isCustodyIsolation
-        ? this.formatMessage(notifications.modified.isolationHtml, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-        : this.formatMessage(notifications.modified.html, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-          })
-    }`
+    const html = theCase.isCustodyIsolation
+      ? this.formatMessage(notifications.modified.isolationHtml, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+        })
+      : this.formatMessage(notifications.modified.html, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+        })
+
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
       theCase,
       this.formatMessage,

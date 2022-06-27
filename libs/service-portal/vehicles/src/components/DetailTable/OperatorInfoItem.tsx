@@ -23,12 +23,6 @@ const OperatorInfoItem = ({ data }: PropTypes) => {
         />
       </Row>
       <Row>
-        <Column label={messages.address} value={data.address} />
-        <Column label={messages.postalCode} value={data.postalcode} />
-      </Row>
-      <Row>
-        <Column label={messages.city} value={data.city} />
-
         <Column
           label={messages.dateFrom}
           value={

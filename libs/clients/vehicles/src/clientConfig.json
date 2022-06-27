@@ -24,26 +24,41 @@
     }
   ],
   "paths": {
+    "/SearchesRemaining": {
+      "get": {
+        "tags": ["VehicleSearch"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
     "/VehicleSearch": {
       "get": {
         "tags": ["VehicleSearch"],
         "parameters": [
           {
-            "name": "permno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "regno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vin",
+            "name": "search",
             "in": "query",
             "schema": {
               "type": "string"
@@ -393,13 +408,11 @@
             "nullable": true
           },
           "btGjald1": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "bkGjald1": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "timabil2": {
@@ -407,13 +420,11 @@
             "nullable": true
           },
           "btGjald2": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "bkGjald2": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           }
         },
@@ -1450,6 +1461,11 @@
             "format": "int32",
             "nullable": true
           },
+          "maxNetPower": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "atmin": {
             "type": "integer",
             "format": "int32",
@@ -2080,6 +2096,22 @@
         },
         "additionalProperties": false
       },
+      "SGSVehiNextInsp": {
+        "type": "object",
+        "properties": {
+          "nextinspectiondate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextinspectiondateIfPassedInspectionToday": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Vehicle": {
         "type": "object",
         "properties": {
@@ -2167,6 +2199,23 @@
           "plateStatus": {
             "type": "string",
             "nullable": true
+          },
+          "nextInspection": {
+            "$ref": "#/components/schemas/SGSVehiNextInsp"
+          },
+          "deregistrationDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxTrailerWeightBreaked": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxTrailerWeightUnbraked": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2200,6 +2249,54 @@
           },
           "latestregistration": {
             "type": "string",
+            "nullable": true
+          },
+          "nextInspection": {
+            "$ref": "#/components/schemas/SGSVehiNextInsp"
+          },
+          "currentOwner": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentOwnerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "useGroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "regtype": {
+            "type": "string",
+            "nullable": true
+          },
+          "mass": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "massLaden": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vehicleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "co": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "co2Wltp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "weightedco2Wltp": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
-import { generateApplicationApprovedEmail } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
 import { ProblemType } from '@island.is/shared/problem'
 import { ProblemError } from '@island.is/nest/problem'
+import {
+  generateApplicationApprovedEmail,
+  generateAssignApplicationEmail,
+} from './emailGenerators'
 
+const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService {
   constructor(
@@ -55,9 +58,15 @@ export class ReferenceTemplateService {
     throw new Error('This is the message that caused the failure')
   }
 
-  async createApplication() {
+  async createApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
+      generateAssignApplicationEmail,
+      application,
+      TWO_HOURS_IN_SECONDS,
+    )
 
     return {
       id: 1337,

@@ -250,6 +250,14 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
+      explanation: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.explanantion',
+        defaultMessage:
+          '{date} kl. {time} - {userName} {userTitle}, {institutionName}<br/>Ástæða: {explanation}',
+        description:
+          'Notaður sem beinagrind af texta í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála..',
+      },
     }),
     modifyRulingInfo: defineMessages({
       title: {

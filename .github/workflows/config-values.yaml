@@ -10,6 +10,9 @@ on:
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
+  create:
+    branches:
+      - 'release/**'
   pull_request:
     paths:
       - 'charts/**'

@@ -300,7 +300,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
-            label="Greiðsluáætlun skuldar"
+            label={formatMessage(paymentPlan.labels.distributionDataMainTitle)}
             visibleContent={formatMessage(
               paymentPlan.labels.distributionDataTitle,
             )}

@@ -139,6 +139,29 @@ export function formatCourtResubmittedToCourtSmsNotification(
   })
 }
 
+export function formatDefenderResubmittedToCourtEmailNotification(
+  formatMessage: FormatMessage,
+  policeCaseNumber: string,
+  overviewUrl: string,
+  courtName?: string,
+) {
+  const subject = formatMessage(
+    notifications.defenderResubmittedToCourt.subject,
+    {
+      policeCaseNumber,
+    },
+  )
+
+  const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
+    policeCaseNumber,
+    court: courtName?.replace('dómur', 'dómi') || '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
+}
+
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   caseType?: CaseType,
@@ -318,8 +341,6 @@ export function formatDefenderCourtDateEmailNotification(
   prosecutorName?: string,
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
-  sendRequestToDefender?: boolean,
-  overviewUrl?: string,
 ): string {
   /** contentful strings */
   const cf = notifications.defenderCourtDateEmail
@@ -353,7 +374,7 @@ export function formatDefenderCourtDateEmailNotification(
     prosecutorInstitution: prosecutorInstitution,
   })
 
-  const body = formatMessage(cf.body, {
+  return formatMessage(cf.body, {
     courtCaseNumberText,
     courtDateText,
     courtRoomText,
@@ -362,15 +383,25 @@ export function formatDefenderCourtDateEmailNotification(
     registrarText: registrarText || 'NONE',
     sessionArrangementsText,
   })
+}
 
-  const link = sendRequestToDefender
-    ? formatMessage(cf.link, {
-        defenderHasAccessToRvg: Boolean(overviewUrl),
-        courtName: court?.replace('dómur', 'dómi'),
-        linkStart: `<a href="${overviewUrl}">`,
-        linkEnd: '</a>',
-      })
-    : ''
+export function formatDefenderCourtDateLinkEmailNotification(
+  formatMessage: FormatMessage,
+  overviewUrl?: string,
+  court?: string,
+  courtCaseNumber?: string,
+): string {
+  const cf = notifications.defenderCourtDateEmail
+  const body = formatMessage(cf.linkBody, {
+    courtCaseNumber,
+  })
+
+  const link = formatMessage(cf.link, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: court?.replace('dómur', 'dómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
 
   return `${body}${link}`
 }
@@ -386,6 +417,25 @@ export function formatPrisonRulingEmailNotification(
     courtEndTime: courtEndTime ? formatDate(courtEndTime, 'PPP') : 'NONE',
     caseType: type,
   })
+}
+
+export function formatPrisonAdministrationRulingNotification(
+  formatMessage: FormatMessage,
+  courtCaseNumber: string | undefined,
+  courtName: string | undefined,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.signedRuling.subject, {
+    courtCaseNumber,
+  })
+  const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
+    courtCaseNumber: courtCaseNumber ?? '',
+    courtName: courtName?.replace('dómur', 'dómi') ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: `</a>`,
+  })
+
+  return { subject, body }
 }
 
 export function formatCourtRevokedSmsNotification(

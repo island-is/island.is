@@ -8,6 +8,7 @@
       "institution": {
         "id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
         "name": "Lögreglustjórinn á höfuðborgarsvæðinu",
+        "type": "PROSECUTORS_OFFICE",
         "__typename": "Institution"
       },
       "__typename": "User"

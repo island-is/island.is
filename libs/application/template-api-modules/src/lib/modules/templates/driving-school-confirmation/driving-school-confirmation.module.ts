@@ -4,10 +4,10 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 
 export class DrivingSchoolConfirmationModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
+  static register(): DynamicModule {
     return {
       module: DrivingSchoolConfirmationModule,
-      imports: [DrivingLicenseBookModule.register(config.drivingLicense)],
+      imports: [DrivingLicenseBookModule],
       providers: [DrivingSchoolConfirmationService],
       exports: [DrivingSchoolConfirmationService],
     }

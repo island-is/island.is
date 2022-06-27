@@ -201,10 +201,21 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
-
+  vehiclesHistory: {
+    id: 'service.portal:vehicles-history',
+    defaultMessage: 'Ökutækjaferill',
+  },
+  vehiclesLookup: {
+    id: 'service.portal:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
+  },
+  myVehicles: {
+    id: 'service.portal:my-vehicles',
+    defaultMessage: 'Ökutækin mín',
   },
   incoming: {
     id: 'service.portal:incoming',
@@ -240,10 +251,6 @@ export const m = defineMessages({
     defaultMessage:
       'Á Mínum síðum Ísland.is er markmiðið að auka þægindi og gegnsæi upplýsinga fyrir einstaklinga og fyrirtæki. Hér má finna sundurliðun skulda hjá ríkissjóði, upplýsingar úr fasteignaskrá, upplýsingar úr ökutækjaskrá og fleira sem nálgast má í valmyndinni hér til hliðar.',
     id: 'service.portal:greeting-intro',
-  },
-  olderVersion: {
-    defaultMessage: 'Eldri útgáfa',
-    id: 'service.portal:older-version',
   },
   menu: {
     defaultMessage: 'Valmynd',
@@ -469,7 +476,7 @@ export const m = defineMessages({
   },
   accessDenied: {
     id: 'service.portal:accessDenied',
-    defaultMessage: 'Aðgangur læstur',
+    defaultMessage: 'Ekki með aðgang',
   },
 
   accessNeeded: {
@@ -672,5 +679,13 @@ export const m = defineMessages({
   yourLicenses: {
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
+  },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
+  },
+  companyTitle: {
+    id: 'service.portal:company-title',
+    defaultMessage: 'Um fyrirtæki',
   },
 })

@@ -409,7 +409,7 @@ export const m = defineMessages({
   },
   applicationForDrivingLicense: {
     id: 'dl.application:applicationForDrivingLicense',
-    defaultMessage: 'Umsókn um skírteini',
+    defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
@@ -767,6 +767,12 @@ export const requirementsMessages = defineMessages({
     id: 'dl.application:requirementunmet.localResidencyDescription',
     defaultMessage:
       'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
+  currentLocalResidencyDescription: {
+    id: 'dl.application:requirementunmet.currentLocalResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
 })

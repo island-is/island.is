@@ -387,10 +387,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
-    'otherParent.chooseOtherParent',
-  ) as string
+    'otherParentObj.chooseOtherParent',
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,19 +424,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(
+  const otherParentName = (getValueViaPath(
     answers,
-    'otherParent.otherParentName',
-  ) as string
+    'otherParentObj.otherParentName',
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  const otherParentId = getValueViaPath(
+  const otherParentId = (getValueViaPath(
     answers,
-    'otherParent.otherParentId',
-  ) as string
+    'otherParentObj.otherParentId',
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -474,6 +479,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -543,6 +553,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
@@ -551,6 +562,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -768,4 +780,22 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
+}
+
+export const removeCountryCode = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber?.startsWith('+354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(4)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.startsWith('00354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(5)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber
 }

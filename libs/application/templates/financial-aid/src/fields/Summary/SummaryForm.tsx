@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
@@ -7,12 +8,12 @@ import {
   aidCalculator,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
+import { useLocale } from '@island.is/localization'
 
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
   FAFieldBaseProps,
-  Spouse,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
@@ -28,10 +29,18 @@ import {
 } from './index'
 
 import { DirectTaxPaymentsModal } from '..'
-import { findFamilyStatus } from '../../lib/utils'
+import { findFamilyStatus, hasSpouse } from '../../lib/utils'
+import { useEmail } from '../../lib/hooks/useEmail'
+import withLogo from '../Logo/Logo'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
+
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
@@ -52,6 +61,17 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     }
   }, [externalData.nationalRegistry?.data?.municipality])
 
+  const { sendSpouseEmail } = useEmail(application)
+
+  if (hasSpouse(answers, externalData)) {
+    setBeforeSubmitCallback &&
+      setBeforeSubmitCallback(async () => {
+        const response = await sendSpouseEmail()
+        application.answers.spouseEmailSuccess = response
+        return [true, null]
+      })
+  }
+
   return (
     <>
       <Box display="flex" alignItems="center" flexWrap="wrap">
@@ -63,7 +83,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
         <Text variant="small">
           {formatMessage(m.summaryForm.general.descriptionSubtitle, {
-            nextMonth: getNextPeriod.month,
+            nextMonth: getNextPeriod(lang).month,
           })}
         </Text>
       </Box>
@@ -153,4 +173,4 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default SummaryForm
+export default withLogo(SummaryForm)

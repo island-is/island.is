@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { Input } from '@island.is/island-ui/core'
+import React from 'react'
 import { useIntl } from 'react-intl'
 
+import { Input } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
 
@@ -15,15 +15,13 @@ import useDeb from '../../utils/hooks/useDeb'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isRequired: boolean
   rows?: number
 }
 
 const RulingInput: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isRequired, rows } = props
+  const { workingCase, setWorkingCase, rows } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
-  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
   useDeb(workingCase, 'ruling')
 
@@ -34,28 +32,22 @@ const RulingInput: React.FC<Props> = (props) => {
       label={formatMessage(m.label)}
       placeholder={formatMessage(m.placeholder)}
       value={workingCase.ruling || ''}
-      errorMessage={rulingErrorMessage}
-      hasError={rulingErrorMessage !== ''}
-      required={isRequired}
       onChange={(event) =>
         removeTabsValidateAndSet(
           'ruling',
           event.target.value,
-          ['empty'],
+          [],
           workingCase,
           setWorkingCase,
-          rulingErrorMessage,
-          setRulingErrorMessage,
         )
       }
       onBlur={(event) =>
         validateAndSendToServer(
           'ruling',
           event.target.value,
-          ['empty'],
+          [],
           workingCase,
           updateCase,
-          setRulingErrorMessage,
         )
       }
       textarea

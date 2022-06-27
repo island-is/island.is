@@ -29,48 +29,6 @@ describe(`${RULING_ROUTE}/:id`, () => {
     )
   })
 
-  it('should require a valid introduction', () => {
-    const caseData = makeRestrictionCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      courtDate: '2020-12-22T11:23:00.000Z',
-    }
-
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
-
-    cy.wait('@gqlCaseQuery')
-    cy.getByTestid('introduction').invoke('val').should('not.be.empty')
-    cy.getByTestid('introduction').clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('introduction').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
-  it('should require a valid ruling', () => {
-    const caseData = makeRestrictionCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      caseFacts: 'lorem ipsum',
-      legalArguments: 'lorem ipsum',
-      demands:
-        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    }
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
-
-    cy.wait('@gqlCaseQuery')
-    cy.getByTestid('ruling').invoke('val').should('not.be.empty')
-    cy.getByTestid('ruling').clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
   it('should show appropriate valid to dates based on decision', () => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
@@ -121,10 +79,46 @@ describe(`${RULING_ROUTE}/:id`, () => {
     cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.wait('@gqlCaseQuery')
 
-    cy.getByTestid('ruling').type('lorem')
+    // Introduction validation
+    cy.getByTestid('introduction').invoke('val').should('not.be.empty')
+    cy.getByTestid('introduction').clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('introduction').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+
+    // Prosecutor demands validation
+    cy.getByTestid('prosecutorDemands').invoke('val').should('not.be.empty')
+    cy.getByTestid('prosecutorDemands').clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('prosecutorDemands').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+
+    // Court case facts validation
+    cy.getByTestid('courtCaseFacts').invoke('val').should('not.be.empty')
+    cy.getByTestid('courtCaseFacts').clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('courtCaseFacts').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+
+    // Legal arguments validation
+    cy.getByTestid('courtLegalArguments').invoke('val').should('not.be.empty')
+    cy.getByTestid('courtLegalArguments').clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('courtLegalArguments').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+
+    // Ruling should be autofilled but not required
+    cy.getByTestid('ruling').invoke('val').should('not.be.empty')
+    cy.getByTestid('ruling').clear()
+
     cy.get('#case-decision-accepting').check()
-    cy.getByTestid('continueButton').click()
+    cy.getByTestid('continueButton').should('not.be.disabled').click()
     cy.url().should('include', COURT_RECORD_ROUTE)
   })
 })

@@ -46,7 +46,7 @@ const OwnersTable = ({ data, title }: PropTypes) => {
           {data?.map((owner: VehiclesOwners | null, index: number) => {
             return (
               <T.Row key={index + 'owners table'}>
-                <T.Data>{index + 1}</T.Data>
+                <T.Data>{data.length - index}</T.Data>
                 <T.Data>{owner?.name}</T.Data>
                 <T.Data>{owner?.address}</T.Data>
                 <T.Data>

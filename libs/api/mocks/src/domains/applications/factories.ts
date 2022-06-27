@@ -12,12 +12,12 @@ export const application = factory<Application>({
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),
   assignees: [],
+  applicantActors: [],
   state: 'draft',
   typeId: 'ExampleForm',
   answers: [],
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
-  applicantActors: [],
 })
 
 export const externalData = factory<DataProviderResult>({
