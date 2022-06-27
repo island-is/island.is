@@ -497,7 +497,7 @@ export class NotificationService {
 
   /* COURT_DATE notifications */
 
-  private async uploadEmailToCourt(
+  private async uploadCourtDateInvitationEmailToCourt(
     theCase: Case,
     user: User,
     subject: string,
@@ -543,31 +543,30 @@ export class NotificationService {
     )
     const calendarInvite = this.createICalAttachment(theCase)
 
-    const recipient = await this.sendEmail(
+    return this.sendEmail(
       subject,
       html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
-    )
+    ).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadCourtDateInvitationEmailToCourt(
+          theCase,
+          user,
+          subject,
+          html,
+          theCase.prosecutor?.email,
+        )
+      }
 
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        subject,
-        html,
-        theCase.prosecutor?.email,
-      )
-    }
-
-    return recipient
+      return recipient
+    })
   }
 
   private async sendCourtDateEmailNotificationToPrison(
     theCase: Case,
-    user: User,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonCourtDateEmail.subject,
@@ -597,25 +596,12 @@ export class NotificationService {
       theCase.sessionArrangements,
     )
 
-    const recipient = await this.sendEmail(
+    return this.sendEmail(
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
       environment.notifications.prisonEmail,
     )
-
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        subject,
-        html,
-        environment.notifications.prisonEmail,
-      )
-    }
-
-    return recipient
   }
 
   private sendCourtDateEmailNotificationToDefender(
@@ -644,7 +630,6 @@ export class NotificationService {
       theCase.courtCaseNumber,
     )
     const calendarInvite = this.createICalAttachment(theCase)
-    const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
     const promises = [
       this.sendEmail(
@@ -652,11 +637,11 @@ export class NotificationService {
         html,
         theCase.defenderName,
         theCase.defenderEmail,
-        attachments,
+        calendarInvite ? [calendarInvite] : undefined,
       ).then((recipient) => {
         if (recipient.success) {
           // No need to wait
-          this.uploadEmailToCourt(
+          this.uploadCourtDateInvitationEmailToCourt(
             theCase,
             user,
             subject,
@@ -675,19 +660,7 @@ export class NotificationService {
           linkHtml,
           theCase.defenderName,
           theCase.defenderEmail,
-        ).then((recipient) => {
-          if (recipient.success) {
-            // No need to wait
-            this.uploadEmailToCourt(
-              theCase,
-              user,
-              linkSubject,
-              linkHtml,
-              theCase.defenderEmail,
-            )
-          }
-          return recipient
-        }),
+        ),
       )
     }
 
@@ -725,7 +698,7 @@ export class NotificationService {
       theCase.type === CaseType.CUSTODY ||
       theCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
-      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase, user))
+      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
     const recipients = await Promise.all(promises)
