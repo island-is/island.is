@@ -14,10 +14,24 @@ describe('Home page', () => {
       phoneNumber: fakeUsers['María'].phoneNumber,
       authDomain: `https://${authDomain}`,
     })
+    cy.visit('/')
+  })
+
+  it('should have clickable navigation bar', () => {
     cy.contains(fakeUsers['María'].name)
     cy.get('div[data-testid^="nav-"]').each((el) => {
       el.click()
       cy.url().should('eq', el)
     })
+  })
+
+  it(`should have user María logged in`, () => {
+    cy.visit('/minarsidur/')
+    cy.contains(fakeUsers['María'].name)
+  })
+
+  it('should have Pósthólf', () => {
+    cy.visit('/minarsidur/')
+    cy.contains('Pósthólf')
   })
 })
