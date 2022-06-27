@@ -131,7 +131,7 @@ export const useS3Upload = () => {
         })
         return
       }
-      const location = `${presignedPost.url}/${key}`
+      const location = `https://files.reglugerd.is/${key}`
       setUploadLocation(location)
       setUploadStatus({ uploading: false })
     })
