@@ -40,6 +40,7 @@ export const TextFormField: FC<Props> = ({
     required,
     readOnly,
     maxLength,
+    dataTestId,
     onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()
@@ -58,6 +59,7 @@ export const TextFormField: FC<Props> = ({
           disabled={disabled}
           readOnly={readOnly}
           id={id}
+          dataTestId={dataTestId}
           placeholder={formatText(
             placeholder || '',
             application,

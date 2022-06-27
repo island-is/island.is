@@ -243,10 +243,12 @@ export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
+      dataTestId: 'no-other-parent',
       label: parentalLeaveFormMessages.shared.noOtherParent,
     },
     {
       value: MANUAL,
+      dataTestId: 'other-parent',
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]

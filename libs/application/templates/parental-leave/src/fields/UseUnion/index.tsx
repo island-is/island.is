@@ -39,10 +39,12 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,
+              dataTestId: 'use-union',
               value: YES,
             },
             {
               label: parentalLeaveFormMessages.shared.noOptionLabel,
+              dataTestId: 'dont-use-union',
               value: NO,
             },
           ],

@@ -42,10 +42,12 @@ export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,
+              dataTestId: 'use-private-pension-fund',
               value: YES,
             },
             {
               label: parentalLeaveFormMessages.shared.noOptionLabel,
+              dataTestId: 'dont-use-private-pension-fund',
               value: NO,
             },
           ],

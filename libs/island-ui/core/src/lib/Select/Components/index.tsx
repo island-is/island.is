@@ -41,6 +41,7 @@ export const Option = (props: OptionProps<ReactSelectOption>) => {
         {props.children}
         {!!description && (
           <div
+            data-testid={props.data?.dataTestId}
             className={cn(
               styles.optionDescription,
               styles.optionDescriptionSizes[size],
@@ -130,6 +131,7 @@ export const Input: ComponentType<InputProps> = (
       className={cn(styles.input, styles.inputSize[size])}
       {...props}
       {...ariaError}
+      data-testid={props?.selectProps?.dataTestId}
     />
   )
 }
