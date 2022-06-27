@@ -35,9 +35,9 @@ export class CommunicationsResolver {
   async genericForm(
     @Args('input') input: GenericFormInput,
   ): Promise<CommunicationResponse> {
-    console.log(input)
+    const result = await this.communicationsService.sendFormResponseEmail(input)
     return {
-      sent: true,
+      sent: result,
     }
   }
 
