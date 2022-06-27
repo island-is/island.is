@@ -44,7 +44,6 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
   validateAndSetTime,
@@ -253,14 +252,19 @@ const CourtRecord = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'courtStartDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (valid) {
+                    autofill(
+                      [
+                        {
+                          key: 'courtStartDate',
+                          value: date,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 blueBox={false}
                 required

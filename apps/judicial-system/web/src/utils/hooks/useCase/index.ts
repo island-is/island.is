@@ -27,7 +27,12 @@ import { ExtendCaseMutation } from './extendCaseGql'
 
 export type autofillEntry = {
   key: keyof Case
-  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
+  value?:
+    | string
+    | boolean
+    | SessionArrangements
+    | CaseCustodyRestrictions[]
+    | Date
   force?: boolean
 }
 

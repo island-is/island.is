@@ -2,7 +2,6 @@ import React, { useMemo, useCallback } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { CaseType, Case } from '@island.is/judicial-system/types'
-import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -14,20 +13,25 @@ interface Props {
 
 const ArrestDate: React.FC<Props> = (props) => {
   const { title, workingCase, setWorkingCase } = props
-  const { updateCase } = useCase()
+  const { autofill } = useCase()
 
   const onChange = useCallback(
     (date: Date | undefined, valid: boolean) => {
-      setAndSendDateToServer(
-        'arrestDate',
-        date,
-        valid,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
+      if (valid) {
+        autofill(
+          [
+            {
+              key: 'arrestDate',
+              value: date,
+              force: true,
+            },
+          ],
+          workingCase,
+          setWorkingCase,
+        )
+      }
     },
-    [workingCase, setWorkingCase, updateCase],
+    [autofill, workingCase, setWorkingCase],
   )
 
   const caseType = workingCase.type

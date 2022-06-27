@@ -31,7 +31,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   removeTabsValidateAndSet,
-  setAndSendDateToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -282,16 +281,21 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={5}>
               <RequestCourtDate
                 workingCase={workingCase}
-                onChange={(date: Date | undefined, valid: boolean) =>
-                  setAndSendDateToServer(
-                    'requestedCourtDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  if (valid) {
+                    autofill(
+                      [
+                        {
+                          key: 'requestedCourtDate',
+                          value: date,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                }}
               />
             </Box>
             <Box component="section" marginBottom={10}>

@@ -1,4 +1,3 @@
-import formatISO from 'date-fns/formatISO'
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -111,38 +110,6 @@ export const validateAndSetTime = (
     setCase({
       ...theCase,
       [field]: arrestDateMinutes,
-    })
-  }
-}
-
-export const setAndSendDateToServer = (
-  field: keyof UpdateCase,
-  date: Date | undefined,
-  isValid: boolean,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  if (!isValid) {
-    return
-  }
-
-  let formattedDate = null
-
-  if (date !== undefined) {
-    formattedDate = formatISO(date, {
-      representation: 'complete',
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
     })
   }
 }

@@ -43,7 +43,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendDateToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -320,14 +319,19 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'courtStartDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (valid) {
+                    autofill(
+                      [
+                        {
+                          key: 'courtStartDate',
+                          value: date,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 blueBox={false}
                 required
