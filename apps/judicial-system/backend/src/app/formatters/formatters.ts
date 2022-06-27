@@ -309,19 +309,19 @@ export function formatPrisonCourtDateEmailNotification(
   )
 
   const isolationText = formatMessage(
-    notifications.prisonCourtDateEmail.isolationText,
-    { isolation: isolation ? 'TRUE' : 'FALSE' },
+    notifications.prisonCourtDateEmail.isolationTextV2,
+    { isolation: isolation },
   )
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.body, {
+  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension: isExtension,
     courtDateText,
     requestText,
     isolationText,
@@ -501,10 +501,10 @@ export function formatPrisonRevokedEmailNotification(
   const defenderText = formatMessage(cf.defender, {
     defenderName: defenderName || 'NONE',
   })
-  const revokedCaseText = formatMessage(cf.revokedCase, {
+  const revokedCaseText = formatMessage(cf.revokedCaseV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension: isExtension,
     courtText,
     courtDateText,
   })
