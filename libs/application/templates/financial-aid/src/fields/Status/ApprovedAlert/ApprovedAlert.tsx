@@ -22,6 +22,9 @@ const ApprovedAlert = ({ events }: Props) => {
         ?.comment
     }
   }, [events])
+    ?.split('\n')
+    .slice(1)
+    .join('\n')
 
   if (!approvedComment) {
     return null

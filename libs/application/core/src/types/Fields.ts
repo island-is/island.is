@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
+  SpanType,
 } from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
@@ -54,6 +55,7 @@ export interface BaseField extends FormItem {
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth
+  colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
@@ -123,9 +125,11 @@ export interface DateField extends BaseField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description: FormText
+  readonly description?: FormText
   tooltip?: FormText
+  titleTooltip?: FormText
   space?: BoxProps['paddingTop']
+  marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
 }
 
@@ -154,6 +158,7 @@ export interface CompanySearchField extends BaseField {
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -195,6 +200,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: FormText
   readonly forImageUpload?: boolean
 }
 

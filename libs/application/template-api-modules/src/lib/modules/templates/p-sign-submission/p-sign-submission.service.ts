@@ -93,7 +93,20 @@ export class PSignSubmissionService {
       signed: true,
       type: PersonType.Plaintiff,
     }
-    const persons: Person[] = [person]
+
+    const actors: Person[] = application.applicantActors.map((actor) => ({
+      name: '',
+      ssn: actor,
+      phoneNumber: '',
+      email: '',
+      homeAddress: '',
+      postalCode: '',
+      city: '',
+      signed: true,
+      type: PersonType.CounterParty,
+    }))
+
+    const persons: Person[] = [person, ...actors]
 
     const extraData: { [key: string]: string } =
       application.answers.deliveryMethod === 'sendHome'

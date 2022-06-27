@@ -14,13 +14,19 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
+  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
   noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+  passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
+
+  // Application System Delegations active
+  applicationSystemDelegations = 'applicationSystemDelegations',
 }
 
 export enum ServerSideFeature {
   testing = 'do-not-remove-for-testing-only',
-  drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms'
+  drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms',
+  inaoClient = 'INAO_Client',
 }

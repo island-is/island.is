@@ -94,6 +94,25 @@ export class ApplicationService {
     })
   }
 
+  async findByApplicantActor(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { applicantActors: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+      },
+    })
+  }
+
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,
@@ -187,7 +206,14 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
+      Pick<
+        Application,
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'pruned'
+        | 'applicantActors'
+      >
     >,
   ) {
     const [

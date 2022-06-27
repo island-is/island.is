@@ -47,6 +47,9 @@ export class Organization {
   @Field(() => Boolean, { nullable: true })
   serviceWebEnabled?: boolean
 
+  @Field(() => Number, { nullable: true })
+  serviceWebPopularQuestionCount?: number
+
   @Field(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
@@ -78,6 +81,7 @@ export const mapOrganization = ({
     email: fields.email ?? '',
     serviceWebTitle: fields.serviceWebTitle ?? '',
     serviceWebEnabled: Boolean(fields.serviceWebEnabled),
+    serviceWebPopularQuestionCount: fields.serviceWebPopularQuestionCount ?? 0,
     namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)

@@ -22,6 +22,9 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         prod: 'https://innskra.island.is/admin/api/auth',
       },
     })
+    .secrets({
+      IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET',
+    })
     .ingress({
       primary: {
         host: {
@@ -37,7 +40,6 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
           staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
@@ -63,7 +65,11 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         memory: '128Mi',
       },
     })
-    .targetPort(4200)
     .readiness('/liveness')
     .liveness('/liveness')
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 1200 },
+      staging: { progressDeadlineSeconds: 1200 },
+      prod: { progressDeadlineSeconds: 1200 },
+    })
 }

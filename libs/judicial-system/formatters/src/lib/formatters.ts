@@ -41,7 +41,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text: string): string => {
+export const capitalize = (text?: string): string => {
   if (!text) {
     return ''
   }
@@ -64,6 +64,21 @@ export const formatNationalId = (nationalId: string): string => {
   } else {
     return nationalId
   }
+}
+
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
 }
 
 export const laws = {

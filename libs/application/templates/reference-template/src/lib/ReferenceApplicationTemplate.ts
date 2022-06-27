@@ -8,14 +8,16 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
-
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -23,6 +25,7 @@ const States = {
   inReview: 'inReview',
   approved: 'approved',
   rejected: 'rejected',
+  waitingToAssign: 'waitingToAssign',
 }
 
 type ReferenceTemplateEvent =
@@ -30,6 +33,7 @@ type ReferenceTemplateEvent =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -74,7 +78,6 @@ const ExampleSchema = z.object({
     .nonempty(),
   dreamJob: z.string().optional(),
 })
-
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -145,9 +148,44 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.inReview,
+          SUBMIT: [
+            {
+              target: States.waitingToAssign,
+            },
+          ],
+        },
+      },
+      [States.waitingToAssign]: {
+        meta: {
+          name: 'Waiting to assign',
+          progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createApplication,
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: States.inReview },
+          ASSIGN: { target: States.inReview },
+          EDIT: { target: States.draft },
         },
       },
       [States.inReview]: {
@@ -155,9 +193,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'In Review',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
-          },
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
           },
@@ -194,7 +229,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -211,7 +246,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.rejected]: {
         meta: {
           name: 'Rejected',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -225,14 +260,29 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (application.assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
+    }
     if (application.applicant === nationalId) {
       if (application.state === 'inReview') {
         return Roles.ASSIGNEE
       }
+
       return Roles.APPLICANT
     }
   },

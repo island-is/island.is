@@ -15,6 +15,7 @@ import {
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 import { YesOrNo } from '../types'
 
@@ -106,6 +107,16 @@ export const OtherParentApproval: Form = buildForm({
                 return `${spouseUsage}%`
               },
             }),
+            buildDescriptionField({
+              id: 'final',
+              title: otherParentApprovalFormMessages.warning,
+              titleVariant: 'h4',
+              description: otherParentApprovalFormMessages.startDateInThePast,
+              condition: (answers) =>
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() < currentDateStartTime(),
+            }),
             buildSubmitField({
               id: 'submit',
               title: coreMessages.buttonSubmit,
@@ -120,6 +131,10 @@ export const OtherParentApproval: Form = buildForm({
                   name: coreMessages.buttonApprove,
                   type: 'primary',
                   event: 'APPROVE',
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() >= currentDateStartTime(),
                 },
               ],
             }),

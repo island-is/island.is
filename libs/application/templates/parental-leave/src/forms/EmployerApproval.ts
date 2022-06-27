@@ -13,7 +13,12 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages } from '../lib/messages'
+import {
+  employerFormMessages,
+  otherParentApprovalFormMessages,
+} from '../lib/messages'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
@@ -65,6 +70,17 @@ export const EmployerApproval: Form = buildForm({
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
+                }),
                 buildSubmitField({
                   id: 'submit',
                   title: coreMessages.buttonSubmit,
@@ -79,17 +95,21 @@ export const EmployerApproval: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: 'APPROVE',
+                      condition: (answers) =>
+                        new Date(
+                          getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() >= currentDateStartTime(),
                     },
                   ],
                 }),
               ],
             }),
-            buildDescriptionField({
-              id: 'final.approve',
-              title: coreMessages.thanks,
-              description: coreMessages.thanksDescription,
-            }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'final.approve',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

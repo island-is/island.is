@@ -362,11 +362,11 @@ describe('User profile API', () => {
         .expect(204)
 
       const verification = await EmailVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: { nationalId: mockProfile.nationalId, email: mockProfile.email },
       })
 
       /**
-       * Omitting email as input to bypass the email confirmation within userprofile controller.
+       * Omitting tel as input to bypass the mobilephonenumber confirmation within userprofile controller.
        * Otherwise this test will always fail as confirmEmail/ would be called, and it will delete
        * the verification before it can be checked by this test.
        */
@@ -380,6 +380,7 @@ describe('User profile API', () => {
         .post(`/confirmEmail/${mockProfile.nationalId}`)
         .send({
           hash: verification.hash,
+          email: mockProfile.email,
         })
         .expect(200)
 
@@ -415,9 +416,47 @@ describe('User profile API', () => {
         .post(`/confirmEmail/${invalidNationalId}`)
         .send({
           hash: verification.hash,
+          email: mockProfile.email,
         })
         // Assert
         .expect(403)
+    })
+
+    it('POST /confirmEmail/ returns confirmed: false for non-matching emails', async () => {
+      //Arrange
+      await request(app.getHttpServer())
+        .post('/emailVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          email: mockProfile.email,
+        })
+        .expect(204)
+
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId, email: mockProfile.email },
+      })
+
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({ ...mockProfileNoEmailNoPhone, emailCode: verification.hash })
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/confirmEmail/${mockProfile.nationalId}`)
+        .send({
+          hash: verification.hash,
+          email: 'wrong-email@example.com',
+        })
+        .expect(200)
+
+      // Assert
+      expect(response.body).toMatchInlineSnapshot(`
+        Object {
+          "confirmed": false,
+          "message": "Email verification does not exist for this user",
+        }
+      `)
     })
   })
 
@@ -434,7 +473,10 @@ describe('User profile API', () => {
         .expect(204)
       expect(spy).toHaveBeenCalled()
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
 
       // Assert
@@ -454,13 +496,19 @@ describe('User profile API', () => {
         })
         .expect(204)
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
 
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
-        .send({ code: verification.smsCode })
+        .send({
+          code: verification.smsCode,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
         .expect(200)
 
       // Assert
@@ -483,7 +531,10 @@ describe('User profile API', () => {
         })
         .expect(204)
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
 
       // Act
@@ -491,6 +542,7 @@ describe('User profile API', () => {
         .post(`/confirmSms/${invalidNationalId}`)
         .send({
           code: verification.smsCode,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         })
         // Assert
         .expect(403)
@@ -500,7 +552,10 @@ describe('User profile API', () => {
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
-        .send({ code: '123456' })
+        .send({
+          code: '123456',
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
         // Assert
         .expect(200)
 
@@ -524,14 +579,20 @@ describe('User profile API', () => {
         })
         .expect(204)
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
       jest.setSystemTime(new Date(2020, 5, 2))
 
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
-        .send({ code: verification.smsCode })
+        .send({
+          code: verification.smsCode,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
         .expect(200)
 
       // Assert
@@ -553,14 +614,17 @@ describe('User profile API', () => {
         })
         .expect(204)
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
 
       // Act
       for (let i = 0; i < SMS_VERIFICATION_MAX_TRIES; i++) {
         const response = await request(app.getHttpServer())
           .post(`/confirmSms/${mockProfile.nationalId}`)
-          .send({ code: '1' })
+          .send({ code: '1', mobilePhoneNumber: mockProfile.mobilePhoneNumber })
           .expect(200)
         expect(response.body).toMatchObject({
           confirmed: false,
@@ -572,7 +636,10 @@ describe('User profile API', () => {
       }
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
-        .send({ code: verification.smsCode })
+        .send({
+          code: verification.smsCode,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
         .expect(200)
 
       // Assert
@@ -599,7 +666,7 @@ describe('User profile API', () => {
       for (let i = 0; i < SMS_VERIFICATION_MAX_TRIES; i++) {
         await request(app.getHttpServer())
           .post(`/confirmSms/${mockProfile.nationalId}`)
-          .send({ code: '1' })
+          .send({ code: '1', mobilePhoneNumber: mockProfile.mobilePhoneNumber })
       }
 
       // Expire verification.
@@ -614,11 +681,17 @@ describe('User profile API', () => {
         })
         .expect(204)
       const verification = await SmsVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
       })
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
-        .send({ code: verification.smsCode })
+        .send({
+          code: verification.smsCode,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
         .expect(200)
 
       // Assert
@@ -628,6 +701,41 @@ describe('User profile API', () => {
           "message": "SMS confirmed",
         }
       `)
+    })
+
+    it('POST /confirmSms/ returns confirmed: false for non-matching mobile numbers', async () => {
+      //Arrange
+      await request(app.getHttpServer())
+        .post('/smsVerification/')
+        .send({
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        })
+        .expect(204)
+
+      const verification = await SmsVerification.findOne({
+        where: {
+          nationalId: mockProfile.nationalId,
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+        },
+      })
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/confirmSms/${mockProfile.nationalId}`)
+        .send({
+          code: verification.smsCode,
+          mobilePhoneNumber: '1234567',
+        })
+        .expect(200)
+
+      // Assert
+      expect(response.body).toMatchInlineSnapshot(`
+          Object {
+            "confirmed": false,
+            "message": "Sms verification does not exist for this user",
+          }
+        `)
     })
   })
 

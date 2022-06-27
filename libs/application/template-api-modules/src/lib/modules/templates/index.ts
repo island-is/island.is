@@ -14,11 +14,13 @@ import { CriminalRecordSubmissionModule } from './criminal-record-submission/cri
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
+import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
+import { PassportModule } from './passport/passport.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -37,11 +39,13 @@ export const modules = [
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PSignSubmissionModule,
+  AnnouncementOfDeathModule,
   ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
+  PassportModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -60,8 +64,10 @@ export { CriminalRecordSubmissionService } from './criminal-record-submission/cr
 export { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
+export { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
+export { PassportService } from './passport/passport.service'

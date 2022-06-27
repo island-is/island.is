@@ -304,4 +304,11 @@ export class ApplicationModel extends Model {
   })
   @ApiProperty()
   spouseHasFetchedDirectTaxPayment: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  navSuccess: boolean
 }

@@ -3,7 +3,7 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
@@ -12,7 +12,7 @@ import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
-
+import * as styles from './Sidebar.css'
 interface Props {
   nav: ServicePortalNavigationItem
   badge?: boolean
@@ -21,12 +21,15 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
-  const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const navChildren = nav?.children?.filter((child) => !child.navHide)
+  const hasEnabledChildren = navChildren?.some((item) => item.enabled)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
+  const enabledNav = navArray
+    ? nav.enabled && hasEnabledChildren !== false
+    : nav.enabled
   const collapsed = sidebarState === 'closed'
 
   const isModuleActive =
@@ -52,17 +55,9 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box
-      position="relative"
-      onMouseOver={() => {
-        setHover(true)
-      }}
-      onMouseLeave={() => {
-        setHover(false)
-      }}
-    >
-      {navArray && nav.enabled !== false && collapsed && (
-        <SubNavModal active={hover}>
+    <Box position="relative" className={styles.itemWrapper}>
+      {navArray && enabledNav !== false && collapsed && (
+        <SubNavModal>
           <SubNav
             collapsed
             navChildren={navChildren}
@@ -71,30 +66,13 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
           />
         </SubNavModal>
       )}
-      {nav.heading && (
-        <Text
-          variant="eyebrow"
-          color="blue400"
-          fontWeight="semiBold"
-          marginBottom={2}
-          marginTop={2}
-        >
-          {formatMessage(nav.heading)}
-        </Text>
-      )}
-      {nav.divider && (
-        <Box paddingBottom={3}>
-          <Divider />
-        </Box>
-      )}
       <NavItem
         path={nav.path}
         icon={nav.icon}
-        hover={hover}
         active={isModuleActive}
         expanded={expand}
         hasArray={navArray}
-        enabled={nav.enabled}
+        enabled={enabledNav}
         external={nav.external}
         onClick={() => {
           !collapsed && handleRootItemClick(nav.external)
@@ -106,7 +84,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
       >
         {formatMessage(nav.name)}
       </NavItem>
-      {!collapsed && navArray && nav.enabled !== false && (
+      {!collapsed && navArray && enabledNav !== false && (
         <AnimateHeight duration={300} height={expand ? 'auto' : 0}>
           <SubNav
             navChildren={navChildren}
