@@ -347,10 +347,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             variant="popover"
             align="left"
             reverse
-            labelClear={formatMessage(messages.clearFilter)}
-            labelClearAll={formatMessage(messages.clearAllFilters)}
-            labelOpen={formatMessage(messages.openFilter)}
-            labelClose={formatMessage(messages.closeFilter)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -384,7 +384,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear={formatMessage(messages.clearSelected)}
+              labelClear={formatMessage(m.clearSelected)}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -446,15 +446,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <AccordionItem
                     key="date-accordion-item"
                     id="date-accordion-item"
-                    label={formatMessage(messages.datesLabel)}
+                    label={formatMessage(m.datesLabel)}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
                   >
                     <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage(messages.datepickerFromLabel)}
-                        placeholderText={formatMessage(messages.datepickLabel)}
+                        label={formatMessage(m.datepickerFromLabel)}
+                        placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
@@ -463,10 +463,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                       <Box marginTop={3}>
                         <DatePicker
-                          label={formatMessage(messages.datepickerToLabel)}
-                          placeholderText={formatMessage(
-                            messages.datepickLabel,
-                          )}
+                          label={formatMessage(m.datepickerToLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
                           locale="is"
                           backgroundColor="blue"
                           size="xs"
@@ -523,7 +521,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateFromInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerFromLabel,
+                            m.datepickerFromLabel,
                           )} - ${format(filterValue.dateFrom, dateFormat.is)}`}
                         />
                       )}
@@ -531,7 +529,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateToInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerToLabel,
+                            m.datepickerToLabel,
                           )} - ${format(filterValue.dateTo, dateFormat.is)}`}
                         />
                       )}
@@ -549,7 +547,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         variant="text"
                         onClick={handleClearFilters}
                       >
-                        {formatMessage(messages.clearFilter)}
+                        {formatMessage(m.clearFilter)}
                       </Button>
                     </Box>
                   </Box>

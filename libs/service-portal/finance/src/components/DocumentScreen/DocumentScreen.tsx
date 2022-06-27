@@ -4,14 +4,17 @@ import sub from 'date-fns/sub'
 import React, { FC, useEffect, useState } from 'react'
 
 import {
+  Accordion,
+  AccordionItem,
   AlertBanner,
   Box,
   Button,
   DatePicker,
+  Filter,
+  FilterInput,
   GridColumn,
   GridRow,
   Hidden,
-  Input,
   Pagination,
   SkeletonLoader,
   Stack,
@@ -69,6 +72,9 @@ const DocumentScreen: FC<Props> = ({
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
+  const backInTheDay = sub(new Date(), {
+    months: defaultDateRangeMonths,
+  })
 
   const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
     getFinanceDocumentsListQuery,
@@ -83,6 +89,12 @@ const DocumentScreen: FC<Props> = ({
     billsDataArray.length > ITEMS_ON_PAGE
       ? Math.ceil(billsDataArray.length / ITEMS_ON_PAGE)
       : 0
+
+  function clearAllFilters() {
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+    setQ('')
+  }
 
   useEffect(() => {
     if (toDate && fromDate) {
@@ -99,9 +111,6 @@ const DocumentScreen: FC<Props> = ({
   }, [toDate, fromDate])
 
   useEffect(() => {
-    const backInTheDay = sub(new Date(), {
-      months: defaultDateRangeMonths,
-    })
     setFromDate(backInTheDay)
     setToDate(new Date())
   }, [])
@@ -137,59 +146,74 @@ const DocumentScreen: FC<Props> = ({
         </GridRow>
         <Hidden print={true}>
           <Box marginTop={[1, 1, 2, 4]}>
-            <GridRow>
-              <GridColumn
-                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
-                order={[3, 3, 3, 3, 0]}
-                paddingTop={[2, 2, 2, 2, 0]}
-              >
-                <Input
-                  backgroundColor="blue"
-                  label={formatMessage(m.searchLabel)}
-                  name="Search"
-                  icon="search"
+            <Filter
+              resultCount={0}
+              variant="popover"
+              align="left"
+              reverse
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              filterInput={
+                <FilterInput
                   placeholder={formatMessage(m.searchPlaceholder)}
-                  size="xs"
-                  onChange={(e) => setQ(e.target.value)}
+                  name="rafraen-skjol-input"
                   value={q}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
-                order={[1, 1, 1, 1, 1]}
-                className={styles.dateColumn}
-              >
-                <DatePicker
+                  onChange={(e) => setQ(e)}
                   backgroundColor="blue"
-                  handleChange={(d) => setFromDate(d)}
-                  icon="calendar"
-                  iconType="outline"
-                  size="xs"
-                  label={formatMessage(m.dateFrom)}
-                  selected={fromDate}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
                 />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
-                paddingTop={[2, 2, 0, 0, 0]}
-                order={[2, 2, 2, 2, 2]}
-                className={styles.dateColumn}
-              >
-                <DatePicker
-                  backgroundColor="blue"
-                  handleChange={(d) => setToDate(d)}
-                  icon="calendar"
-                  iconType="outline"
-                  size="xs"
-                  label={formatMessage(m.dateTo)}
-                  selected={toDate}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
-                />
-              </GridColumn>
-            </GridRow>
+              }
+              onFilterClear={clearAllFilters}
+            >
+              <Box className={styles.dateFilterSingle} paddingX={3}>
+                <Box width="full" />
+                <Box marginTop={1}>
+                  <Accordion
+                    dividerOnBottom={false}
+                    dividerOnTop={false}
+                    singleExpand={false}
+                  >
+                    <AccordionItem
+                      key="date-accordion-item"
+                      id="date-accordion-item"
+                      label={formatMessage(m.datesLabel)}
+                      labelColor="blue400"
+                      labelUse="h5"
+                      labelVariant="h5"
+                      iconVariant="small"
+                    >
+                      <Box
+                        className={styles.accordionBoxSingle}
+                        display="flex"
+                        flexDirection="column"
+                      >
+                        <DatePicker
+                          label={formatMessage(m.datepickerFromLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
+                          locale="is"
+                          backgroundColor="blue"
+                          size="xs"
+                          handleChange={(d) => setFromDate(d)}
+                          selected={fromDate}
+                        />
+                        <Box marginTop={3}>
+                          <DatePicker
+                            label={formatMessage(m.datepickerToLabel)}
+                            placeholderText={formatMessage(m.datepickLabel)}
+                            locale="is"
+                            backgroundColor="blue"
+                            size="xs"
+                            handleChange={(d) => setToDate(d)}
+                            selected={toDate}
+                          />
+                        </Box>
+                      </Box>
+                    </AccordionItem>
+                  </Accordion>
+                </Box>
+              </Box>
+            </Filter>
           </Box>
         </Hidden>
         <Box marginTop={2}>
