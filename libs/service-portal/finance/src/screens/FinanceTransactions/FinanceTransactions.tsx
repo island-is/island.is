@@ -39,27 +39,6 @@ import * as styles from '../Finance.css'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
-/**
- * TODO: RE-USE THIS AND MORE FROM DOCUMENTS OVERVIEW
- */
-type FilterCategory = {
-  /** Id for the category. */
-  id: string
-  /** The category label to display on screen. */
-  label: string
-  /** The array of currently selected active filters. */
-  selected: Array<string>
-  /** Array of available filters in this category. */
-  filters: {
-    value: string
-    label: string
-  }[]
-  /** Display checkboxes inline */
-  inline?: boolean
-  /** Allow only one option at a time */
-  singleOption?: boolean
-}
-
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
@@ -230,18 +209,16 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     setDropdownSelect([allChargeTypes.value])
                     setDropdownValue(allChargeTypes.value)
                   }}
-                  categories={
-                    [
-                      {
-                        id: 'flokkur',
-                        label: formatMessage(m.transactionsLabel),
-                        selected: [dropdownValue] ?? [],
-                        filters: [allChargeTypes, ...chargeTypeSelect],
-                        inline: false,
-                        singleOption: true,
-                      },
-                    ] as FilterCategory[]
-                  }
+                  categories={[
+                    {
+                      id: 'flokkur',
+                      label: formatMessage(m.transactionsLabel),
+                      selected: [dropdownValue] ?? [],
+                      filters: [allChargeTypes, ...chargeTypeSelect],
+                      inline: false,
+                      singleOption: true,
+                    },
+                  ]}
                 />
                 <Box className={styles.dateFilter} paddingX={3}>
                   <Box

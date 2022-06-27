@@ -88,24 +88,6 @@ type GroupsValue = {
   label: string
 }
 
-type FilterCategory = {
-  /** Id for the category. */
-  id: string
-  /** The category label to display on screen. */
-  label: string
-  /** The array of currently selected active filters. */
-  selected: Array<string>
-  /** Array of available filters in this category. */
-  filters: {
-    value: string
-    label: string
-  }[]
-  /** Display checkboxes inline */
-  inline?: boolean
-  /** Allow only one option at a time */
-  singleOption?: boolean
-}
-
 const getFilteredDocuments = (
   documents: Document[],
   filterValues: FilterValues,
@@ -408,28 +390,26 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   }))
                 }
               }}
-              categories={
-                [
-                  {
-                    id: 'institution',
-                    label: formatMessage(messages.institutionLabel),
-                    selected: [...filterValue.activeCategories],
-                    filters: categories,
-                    inline: false,
-                    singleOption: false,
-                  },
-                  {
-                    id: 'group',
-                    label: formatMessage(messages.groupLabel),
-                    selected: [...filterValue.activeGroups],
-                    filters: Array.isArray(groupsAvailable)
-                      ? groupsAvailable
-                      : [],
-                    inline: false,
-                    singleOption: false,
-                  },
-                ] as FilterCategory[]
-              }
+              categories={[
+                {
+                  id: 'institution',
+                  label: formatMessage(messages.institutionLabel),
+                  selected: [...filterValue.activeCategories],
+                  filters: categories,
+                  inline: false,
+                  singleOption: false,
+                },
+                {
+                  id: 'group',
+                  label: formatMessage(messages.groupLabel),
+                  selected: [...filterValue.activeGroups],
+                  filters: Array.isArray(groupsAvailable)
+                    ? groupsAvailable
+                    : [],
+                  inline: false,
+                  singleOption: false,
+                },
+              ]}
             ></FilterMultiChoice>
             <Box className={styles.dateFilter} paddingX={3}>
               <Box
