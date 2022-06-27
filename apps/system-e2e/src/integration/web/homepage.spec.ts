@@ -1,4 +1,4 @@
-import { rmSync } from "fs"
+import { rmSync } from 'fs'
 
 describe('Front page', () => {
   beforeEach(() => {
@@ -46,8 +46,7 @@ describe('Front page', () => {
   it.only('should change welcome message on language toggle', () => {
     cy.visit('/')
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
-      cy.get('button[data-testid="language-toggler"]:visible')
-        .click()
+      cy.get('button[data-testid="language-toggler"]:visible').click()
       cy.location('pathname').should('eq', '/en')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
