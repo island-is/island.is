@@ -9,7 +9,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useApolloClient } from '@apollo/client/react'
-import { Option } from '@island.is/application/core'
+import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
 

@@ -6,8 +6,10 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
-import { CompanySearchController } from '@island.is/application/ui-components'
-import { selectCompanySearchField } from '@island.is/application/ui-components'
+import {
+  CompanySearchController,
+  selectCompanySearchField,
+} from '@island.is/application/ui-components'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField
