@@ -14,6 +14,18 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
+const enabled = (userInfo: User) => {
+  const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
+
+  if (isLegalAndOver15(userInfo)) {
+    return false
+  }
+  if (hasScope) {
+    return true
+  } else {
+    return false
+  }
+}
 const isLegalAndOver15 = (userInfo: User) => {
   const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
   const dateOfBirth = userInfo?.profile.dateOfBirth
@@ -31,9 +43,7 @@ export const documentsModule: ServicePortalModule = {
     {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
-      enabled:
-        !isLegalAndOver15(userInfo) ||
-        userInfo.scopes?.includes(DocumentsScope.main),
+      enabled: enabled(userInfo),
       render: isLegalAndOver15(userInfo)
         ? () =>
             lazy(() => import('./screens/AccessDeniedLegal/AccessDeniedLegal'))
