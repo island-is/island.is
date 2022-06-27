@@ -21,6 +21,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
+  historyIntro: {
+    id: 'sp.vehicles:vehicles-history-intro',
+    defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
+  },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
     defaultMessage: 'Hreinsa filter',
@@ -461,5 +465,13 @@ export const messages = defineMessages({
   noVehicleFound: {
     id: 'sp.vehicles:no-vehicle-found',
     defaultMessage: 'Ekkert ökutæki fannst',
+  },
+  dateOfPurchase: {
+    id: 'sp.vehicles:date-of-purchase-from',
+    defaultMessage: 'Kaupdagsetning frá',
+  },
+  dateOfSale: {
+    id: 'sp.vehicles:date-of-sold-to',
+    defaultMessage: 'Söludagsetning til',
   },
 })
