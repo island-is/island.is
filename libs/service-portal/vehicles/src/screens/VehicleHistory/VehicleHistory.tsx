@@ -107,15 +107,25 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
                 {formatMessage(messages.historyTitle)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage(messages.intro)}
+                {formatMessage(messages.historyIntro)}
               </Text>
             </Stack>
           </GridColumn>
         </GridRow>
       </Box>
 
+      {error && (
+        <Box>
+          <EmptyState description={m.errorFetch} />
+        </Box>
+      )}
+      {!loading && !error && vehicles.length === 0 && (
+        <Box marginTop={8}>
+          <EmptyState />
+        </Box>
+      )}
       <Stack space={2}>
-        {!loading && !error && (
+        {!loading && !error && vehicles.length > 0 && (
           <GridRow marginTop={4}>
             <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
               <DatePicker
@@ -124,7 +134,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
                 icon="calendar"
                 iconType="outline"
                 size="xs"
-                label={formatMessage(m.dateFrom)}
+                label={formatMessage(messages.dateOfPurchase)}
                 selected={fromDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
@@ -141,7 +151,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
                 icon="calendar"
                 iconType="outline"
                 size="xs"
-                label={formatMessage(m.dateTo)}
+                label={formatMessage(messages.dateOfSale)}
                 selected={toDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
@@ -170,16 +180,17 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
             </GridColumn>
           </GridRow>
         )}
-        {error && (
-          <Box>
-            <EmptyState description={m.errorFetch} />
-          </Box>
-        )}
-        {!loading && !error && filteredVehicles.length === 0 && (
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        )}
+
+        {!loading &&
+          !error &&
+          vehicles.length > 0 &&
+          filteredVehicles.length === 0 && (
+            <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+              <Text variant="h3" as="h3">
+                {formatMessage(messages.noVehiclesFound)}
+              </Text>
+            </Box>
+          )}
 
         {loading && (
           <Box
