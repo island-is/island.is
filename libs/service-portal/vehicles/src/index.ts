@@ -30,11 +30,11 @@ export const vehiclesModule: ServicePortalModule = {
       render: () =>
         lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
     },
-    {
-      name: m.vehiclesLookup,
-      path: ServicePortalPath.AssetsVehiclesLookup,
-      enabled: Boolean(!userInfo.profile.actor), // block if user is logged in as other
-      render: () => lazy(() => import('./screens/Lookup/Lookup')),
-    },
+    // {
+    //   name: m.vehiclesLookup,
+    //   path: ServicePortalPath.AssetsVehiclesLookup,
+    //   enabled: userInfo.scopes.includes(ApiScope.vehicles),
+    //   render: () => lazy(() => import('./screens/Lookup/Lookup')),
+    // },
   ],
 }
