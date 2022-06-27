@@ -220,14 +220,15 @@ describe('UserMenu', () => {
     })
     const dialog = await openMenu()
     const delegationButton = getByRole(dialog, 'button', {
-      name: delegation.name,
+      name: 'Skipta um umboð',
     })
 
     // Act
-    fireEvent.click(delegationButton)
+    act(() => {
+      fireEvent.click(delegationButton)
+    })
 
     // Assert
-    expect(screen.queryByRole('dialog', { name: /útskráning/i })).toBeNull()
-    expect(switchUser).toHaveBeenCalledWith(delegation.nationalId)
+    expect(switchUser).toHaveBeenCalled()
   })
 })

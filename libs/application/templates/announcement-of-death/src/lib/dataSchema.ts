@@ -11,12 +11,16 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const asset = z.object({
-  share: z.number().optional(),
-  initial: z.boolean().optional(),
-  assetNumber: z.string().nonempty(),
-  description: z.string().optional(),
-})
+const asset = z
+  .object({
+    share: z.number().optional(),
+    initial: z.boolean().optional(),
+    dummy: z.boolean().optional(),
+    assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
+    description: z.string().optional(),
+  })
+  .array()
+  .optional()
 
 // todo: set message strings for the error messages
 export const dataSchema = z.object({
@@ -96,10 +100,11 @@ export const dataSchema = z.object({
         ),
         share: z.number().optional(),
         initial: z.boolean().optional(),
+        dummy: z.boolean().optional(),
         description: z.string().optional(),
       })
-      .partial()
-      .array(),
+      .array()
+      .optional(),
     encountered: z.boolean().optional(),
   }),
   estateMembers: z.object({
@@ -112,14 +117,16 @@ export const dataSchema = z.object({
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
+        dummy: z.boolean().optional(),
       })
-      .array(),
+      .array()
+      .optional(),
     encountered: z.boolean().optional(),
   }),
-  flyers: asset.partial().array(),
-  ships: asset.partial().array(),
+  flyers: asset,
+  ships: asset,
   vehicles: z.object({
-    vehicles: asset.partial().array(),
+    vehicles: asset,
     encountered: z.boolean().optional(),
   }),
 })
