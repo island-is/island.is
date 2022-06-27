@@ -179,85 +179,44 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
-}
-
-export interface CreateCase {
-  type: CaseType
-  description?: string
-  policeCaseNumber: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  leadInvestigator?: string
-}
-
-export interface UpdateCase {
-  type?: string
-  description?: string
-  policeCaseNumber?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
-  isHeightenedSecurityLevel?: boolean
   courtId?: string
-  leadInvestigator?: string
-  arrestDate?: string
-  requestedCourtDate?: string
-  translator?: string
-  requestedValidToDate?: string
-  demands?: string
-  lawsBroken?: string
-  legalBasis?: string
-  legalProvisions?: CaseLegalProvisions[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  requestedOtherRestrictions?: string
-  caseFacts?: string
-  legalArguments?: string
-  requestProsecutorOnlySession?: boolean
-  prosecutorOnlySessionRequest?: string
-  comments?: string
-  caseFilesComments?: string
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string
-  courtCaseNumber?: string
-  sessionArrangements?: SessionArrangements
-  courtDate?: string
-  courtLocation?: string
-  courtRoom?: string
-  courtStartDate?: string
-  courtEndTime?: string
-  isClosedCourtHidden?: boolean
-  courtAttendees?: string
-  prosecutorDemands?: string
-  courtDocuments?: CourtDocument[]
-  sessionBookings?: string
-  courtCaseFacts?: string
-  introduction?: string
-  courtLegalArguments?: string
-  ruling?: string
-  decision?: CaseDecision
-  validToDate?: string
-  isCustodyIsolation?: boolean
-  isolationToDate?: string
-  conclusion?: string
-  endOfSessionBookings?: string
-  accusedAppealDecision?: CaseAppealDecision
-  accusedAppealAnnouncement?: string
-  prosecutorAppealDecision?: CaseAppealDecision
-  prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
-  prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
-  caseModifiedExplanation?: string
-  rulingModifiedHistory?: string
-  caseResentExplanation?: string
-  seenByDefender?: string
+}
+
+export type CreateCase = Pick<
+  Case,
+  | 'type'
+  | 'description'
+  | 'policeCaseNumber'
+  | 'defenderName'
+  | 'defenderNationalId'
+  | 'defenderEmail'
+  | 'defenderPhoneNumber'
+  | 'sendRequestToDefender'
+  | 'leadInvestigator'
+>
+
+export interface UpdateCase
+  extends Omit<
+    Case,
+    | 'id'
+    | 'type'
+    | 'created'
+    | 'modified'
+    | 'origin'
+    | 'state'
+    | 'policeCaseNumber'
+  > {
+  id?: string
+  type?: CaseType
+  created?: string
+  modified?: string
+  origin?: CaseOrigin
+  state?: CaseState
+  policeCaseNumber?: string
 }
 
 export interface TransitionCase {

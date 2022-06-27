@@ -7,7 +7,6 @@ import { FormContentContainer } from '@island.is/judicial-system-web/src/compone
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages'
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
@@ -39,7 +38,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
     users,
   } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { autofill } = useCase()
 
   const judges = (users ?? [])
     .filter(
@@ -71,7 +70,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
 
   const setJudge = (id: string) => {
     if (workingCase) {
-      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
+      autofill([{ key: 'judgeId', value: id, force: true }], workingCase)
 
       const judge = users?.find((j) => j.id === id)
 
@@ -81,13 +80,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
 
   const setRegistrar = (id?: string) => {
     if (workingCase) {
-      setAndSendToServer(
-        'registrarId',
-        id,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
+      autofill([{ key: 'registrarId', value: id, force: true }], workingCase)
 
       const registrar = users?.find((r) => r.id === id)
 

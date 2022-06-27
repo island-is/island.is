@@ -26,7 +26,6 @@ import {
 import {
   removeTabsValidateAndSet,
   setAndSendDateToServer,
-  setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -76,6 +75,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
+    autofill,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
@@ -127,24 +127,32 @@ export const HearingArrangements: React.FC = () => {
 
   const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
-      return setAndSendToServer(
-        'prosecutorId',
-        prosecutorId,
+      return autofill(
+        [
+          {
+            key: 'prosecutorId',
+            value: prosecutorId,
+            force: true,
+          },
+        ],
         workingCase,
         setWorkingCase,
-        updateCase,
       )
     }
   }
 
   const handleCourtChange = (courtId: string) => {
     if (workingCase) {
-      setAndSendToServer(
-        'courtId',
-        courtId,
+      autofill(
+        [
+          {
+            key: 'courtId',
+            value: courtId,
+            force: true,
+          },
+        ],
         workingCase,
         setWorkingCase,
-        updateCase,
       )
 
       return true
@@ -227,12 +235,16 @@ export const HearingArrangements: React.FC = () => {
                   }
                   checked={workingCase.isHeightenedSecurityLevel}
                   onChange={(event) =>
-                    setAndSendToServer(
-                      'isHeightenedSecurityLevel',
-                      event.target.checked,
+                    autofill(
+                      [
+                        {
+                          key: 'isHeightenedSecurityLevel',
+                          value: event.target.checked,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }
                   large

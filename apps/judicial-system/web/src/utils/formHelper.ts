@@ -191,27 +191,6 @@ export const validateAndSendTimeToServer = (
   }
 }
 
-export const setAndSendToServer = (
-  field: keyof UpdateCase,
-  value: string | boolean | undefined,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  const newCase = { ...theCase, [field]: value }
-  setCase(newCase)
-
-  if (theCase.id !== '') {
-    if (typeof value === 'string' || typeof value === 'boolean') {
-      updateCase(theCase.id, { [field]: value })
-      return newCase
-    } else {
-      updateCase(newCase.id, { [field]: null })
-      return newCase
-    }
-  }
-}
-
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
