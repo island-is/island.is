@@ -9824,6 +9824,27 @@
           }
         }
       }
+    },
+    "clients-smartsolutions": {
+      "root": "libs/clients/smartsolutions",
+      "sourceRoot": "libs/clients/smartsolutions/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/smartsolutions/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/smartsolutions"],
+          "options": {
+            "jestConfig": "libs/clients/smartsolutions/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

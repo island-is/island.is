@@ -210,5 +210,6 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/libs/clients/smartsolutions',
   ],
 }
