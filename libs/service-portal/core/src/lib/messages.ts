@@ -201,10 +201,21 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
-
+  vehiclesHistory: {
+    id: 'service.portal:vehicles-history',
+    defaultMessage: 'Ökutækjaferill',
+  },
+  vehiclesLookup: {
+    id: 'service.portal:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
+  },
+  myVehicles: {
+    id: 'service.portal:my-vehicles',
+    defaultMessage: 'Ökutækin mín',
   },
   incoming: {
     id: 'service.portal:incoming',

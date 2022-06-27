@@ -166,6 +166,15 @@ export interface IArticleFields {
 
   /** Featured image */
   featuredImage?: Asset | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Process Entry Button Text */
+  processEntryButtonText?: 'application' | 'stepByStep' | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1146,6 +1155,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
 }
 
 /** Slice to show latest news entries */
