@@ -137,6 +137,7 @@ module.exports = {
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/libs/clients/documents',
     '<rootDir>/libs/clients/finance',
+    '<rootDir>/libs/clients/firearm-license',
     '<rootDir>/libs/clients/fishing-license',
     '<rootDir>/libs/clients/health-insurance-v2',
     '<rootDir>/libs/clients/middlewares',
