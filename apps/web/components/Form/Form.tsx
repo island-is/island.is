@@ -19,8 +19,8 @@ import {
 import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
-import { CONTACT_US_ZENDESK_TICKET_MUTATION } from '@island.is/web/screens/queries'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
+import * as styles from './Form.css'
 
 interface FormFieldProps {
   field: FormType['fields'][0]
@@ -89,6 +89,11 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
         <Box>
           <Text variant="h5" color="blue600">
             {field.title}
+            {field.required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                *
+              </span>
+            )}
           </Text>
           {!!error && (
             <Text variant="eyebrow" color="red600" marginY={2}>
@@ -113,6 +118,11 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
         <Stack space={2}>
           <Text variant="h5" color="blue600">
             {field.title}
+            {field.required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                *
+              </span>
+            )}
           </Text>
           {!!error && (
             <Text variant="eyebrow" color="red600">
@@ -179,7 +189,10 @@ export const Form = ({ form }: FormProps) => {
           return null
         }
 
-        if (field.required && !data[slug]) {
+        if (
+          (field.required && !data[slug]) ||
+          (field.type === 'acceptTerms' && data[slug] !== 'Já')
+        ) {
           return { field: slug, error: 'Þennan reit þarf að fylla út' }
         }
       })
