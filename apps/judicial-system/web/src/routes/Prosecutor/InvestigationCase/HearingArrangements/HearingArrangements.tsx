@@ -5,6 +5,10 @@ import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 
 import {
+  BlueBox,
+  CaseInfo,
+  FormContentContainer,
+  FormFooter,
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -25,7 +29,12 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   errors,
@@ -33,10 +42,14 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Box, Input, Checkbox, Text } from '@island.is/island-ui/core'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import HearingArrangementsForms from './HearingArrangementsForm'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 
 const HearingArrangements = () => {
   const router = useRouter()
@@ -134,7 +147,6 @@ const HearingArrangements = () => {
 
   const handleCourtChange = (courtId: string) => {
     if (workingCase) {
-      autofill
       setAndSendToServer(
         'courtId',
         courtId,
@@ -193,18 +205,125 @@ const HearingArrangements = () => {
       />
       {user && prosecutors && courts && (
         <>
-          <HearingArrangementsForms
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            user={user}
-            prosecutors={prosecutors}
-            courts={courts}
-            isLoading={isLoadingWorkingCase || isTransitioningCase}
-            onNextButtonClick={handleNextButtonClick}
-            onProsecutorChange={handleProsecutorChange}
-            onCourtChange={handleCourtChange}
-            updateCase={updateCase}
-          />
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                {formatMessage(m.heading)}
+              </Text>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <CaseInfo workingCase={workingCase} userRole={user.role} />
+            </Box>
+            {prosecutors && (
+              <Box component="section" marginBottom={5}>
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <SelectProsecutor
+                      workingCase={workingCase}
+                      prosecutors={prosecutors}
+                      onChange={handleProsecutorChange}
+                    />
+                  </Box>
+                  <Checkbox
+                    name="isHeightenedSecurityLevel"
+                    label={formatMessage(
+                      m.sections.prosecutor.heightenSecurityLevelLabel,
+                    )}
+                    tooltip={formatMessage(
+                      m.sections.prosecutor.heightenSecurityLevelInfo,
+                    )}
+                    disabled={
+                      user.id !== workingCase.creatingProsecutor?.id &&
+                      user.id !==
+                        (((workingCase as unknown) as { prosecutorId: string })
+                          .prosecutorId === undefined
+                          ? workingCase.prosecutor?.id
+                          : ((workingCase as unknown) as {
+                              prosecutorId: string
+                            }).prosecutorId)
+                    }
+                    checked={workingCase.isHeightenedSecurityLevel}
+                    onChange={(event) =>
+                      setAndSendToServer(
+                        'isHeightenedSecurityLevel',
+                        event.target.checked,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                    filled
+                  />
+                </BlueBox>
+              </Box>
+            )}
+            {courts && (
+              <Box component="section" marginBottom={5}>
+                <SelectCourt
+                  workingCase={workingCase}
+                  courts={courts}
+                  onChange={handleCourtChange}
+                />
+              </Box>
+            )}
+            <Box component="section" marginBottom={5}>
+              <RequestCourtDate
+                workingCase={workingCase}
+                onChange={(date: Date | undefined, valid: boolean) =>
+                  setAndSendDateToServer(
+                    'requestedCourtDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  {formatMessage(m.sections.translator.heading)}
+                </Text>
+              </Box>
+              <Input
+                data-testid="translator"
+                name="translator"
+                autoComplete="off"
+                label={formatMessage(m.sections.translator.label)}
+                placeholder={formatMessage(m.sections.translator.placeholder)}
+                value={workingCase.translator || ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'translator',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'translator',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={async () => await handleNextButtonClick()}
+              nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
+              nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
+            />
+          </FormContentContainer>
           {isNotificationModalVisible && (
             <Modal
               title={formatMessage(m.modal.heading)}
