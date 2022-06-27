@@ -114,6 +114,11 @@ const devConfig = {
       password: process.env.SOFFIA_PASS ?? '',
       host: 'soffiaprufa.skra.is',
     },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+    },
   },
 
   application: {
@@ -230,6 +235,11 @@ const prodConfig = {
       user: process.env.SOFFIA_USER,
       password: process.env.SOFFIA_PASS,
       host: process.env.SOFFIA_HOST_URL,
+    },
+    islykill: {
+      cert: process.env.ISLYKILL_CERT,
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
     },
   },
   application: {

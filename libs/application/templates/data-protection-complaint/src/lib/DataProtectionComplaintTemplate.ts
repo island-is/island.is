@@ -52,7 +52,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               api: [
                 {
                   ...SharedDataProviders.userProfileProvider,
-                  useMockData: true,
                 },
                 SharedDataProviders.nationalRegistryProvider,
               ],

@@ -1,45 +1,48 @@
+import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { IslyklarApi } from '@island.is/clients/islykill'
+import { UserProfile, UserProfileApi } from '@island.is/clients/user-profile'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import differenceInMonths from 'date-fns/differenceInMonths'
 import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
+
+export const MAX_OUT_OF_DATE_MONTHS = 6
+
 @Injectable()
 export class UserProfileService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly userProfileApi: UserProfileApi,
+    private readonly islyklarApi: IslyklarApi,
   ) {}
 
-  userProfileApiWithAuth(auth: Auth) {
+  userProfileApiWithAuth(auth: Auth): UserProfileApi {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getUserProfile({ auth }: TemplateApiModuleActionProps) {
-    try {
-      //TODO finish this
-      const profile = await this.userProfileApiWithAuth(
-        auth,
-      ).userProfileControllerFindOneByNationalId({
-        nationalId: auth.nationalId,
-      })
+    // Temporary solution while we still run the old user profile service.
+    return this.islyklarApi
+      .islyklarGet({ ssn: auth.nationalId })
 
-      return {
-        email: profile.email,
-        emailVerified: profile.emailVerified,
-        mobilePhoneNumber: profile.mobilePhoneNumber,
-        mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
-      }
-    } catch (e) {
-      if (isRunningOnEnvironment('local')) {
+      .then((results) => {
         return {
-          email: 'mockEmail@island.is',
-          mobilePhoneNumber: '9999999',
+          mobilePhoneNumber: results?.mobile,
+          email: results?.email,
         }
-      }
-      throw e
-    }
+      })
+      .catch((error) => {
+        if (isRunningOnEnvironment('local')) {
+          return {
+            email: 'mockEmail@island.is',
+            mobilePhoneNumber: '9999999',
+          }
+        }
+        throw error
+      })
   }
 }

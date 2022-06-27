@@ -17,6 +17,7 @@ export const application = factory<Application>({
   answers: [],
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
+  applicantActors: [],
 })
 
 export const externalData = factory<DataProviderResult>({

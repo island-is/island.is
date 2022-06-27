@@ -11,6 +11,7 @@ import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedu
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { Injectable, Type } from '@nestjs/common'
+import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -54,6 +55,7 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
     host: string
   }
+  islykill: IslykillApiModuleConfig
 }
 
 export interface TemplateApiModuleActionProps {
