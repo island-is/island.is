@@ -128,7 +128,7 @@ export function getConclusionAutofill(
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
-        isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate,
+        isolationEndsBeforeValidToDate,
         isolationToDate: formatDate(isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),

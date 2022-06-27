@@ -504,7 +504,7 @@ export function formatPrisonRevokedEmailNotification(
   const revokedCaseText = formatMessage(cf.revokedCaseV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
-    isExtension: isExtension,
+    isExtension,
     courtText,
     courtDateText,
   })
