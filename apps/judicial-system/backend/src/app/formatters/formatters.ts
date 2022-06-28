@@ -321,7 +321,7 @@ export function formatPrisonCourtDateEmailNotification(
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
-    isExtension: isExtension,
+    isExtension,
     courtDateText,
     requestText,
     isolationText,
