@@ -73,7 +73,7 @@ export const parseDrivingLicensePayload = (
       fields: (license.rettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: (field.nr ?? '').trim(),
-        label: (field.nr ?? '').trim(),
+        label: '',
         fields: [
           {
             type: GenericLicenseDataFieldType.Value,

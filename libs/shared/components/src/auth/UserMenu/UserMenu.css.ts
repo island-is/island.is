@@ -164,15 +164,6 @@ export const companyIconSize = style({
   width: 40,
   height: 40,
 })
-export const userDelegationWrapper = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      overflowY: 'auto',
-      overflowX: 'hidden',
-      maxHeight: 210,
-    },
-  }),
-})
 export const userDelegationsText = style({
   fontSize: 16,
   lineHeight: '21px',

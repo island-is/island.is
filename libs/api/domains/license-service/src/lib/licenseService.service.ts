@@ -45,11 +45,11 @@ export class LicenseServiceService {
 
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
-    nationalId: string,
+    user: User,
     fetch: () => Promise<GenericLicenseUserdataExternal | null>,
     ttl = 0,
   ): Promise<GenericLicenseCached> {
-    const cacheKey = `${CACHE_KEY}_${license.type}_${nationalId}`
+    const cacheKey = `${CACHE_KEY}_${license.type}_${user.nationalId}`
 
     if (ttl > 0) {
       const cachedData = await this.cacheManager.get(cacheKey)
@@ -148,7 +148,7 @@ export class LicenseServiceService {
         } else {
           licenseDataFromService = await this.getCachedOrCache(
             license,
-            user.nationalId,
+            user,
             async () => await licenseService.getLicense(user),
             force ? 0 : license.timeout,
           )

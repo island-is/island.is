@@ -16,7 +16,6 @@ import {
   GenericLicenseType,
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
-import { User } from '@island.is/auth-nest-tools'
 import {
   AdrApi,
   VinnuvelaApi,
@@ -54,7 +53,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.AdrLicense,
     provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
+      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,
@@ -63,7 +62,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.MachineLicense,
     provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
+      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,

@@ -9,16 +9,18 @@ import {
   PkPassVerification,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { VinnuvelaApi } from '@island.is/clients/adr-and-machine-license'
+import {
+  VinnuvelaApi,
+  VinnuvelaDto,
+} from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
-import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
 export class GenericMachineLicenseApi
-  implements GenericLicenseClient<GenericMachineLicenseResponse> {
+  implements GenericLicenseClient<VinnuvelaDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
@@ -38,8 +40,7 @@ export class GenericMachineLicenseApi
       })
       return null
     }
-
-    return license as GenericMachineLicenseResponse
+    return license as VinnuvelaDto
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
@@ -66,12 +67,15 @@ export class GenericMachineLicenseApi
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user)
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     return null
   }

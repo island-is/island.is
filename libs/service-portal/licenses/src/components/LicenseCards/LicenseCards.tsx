@@ -5,7 +5,7 @@ interface Props {
   children?: React.ReactNode
 }
 
-const LicenseCards: FC<Props> = ({ children }) => {
+const LicenseCards: FC<Props> = ({ data }) => {
   useNamespaces('sp.license')
   return (
     <GridRow>

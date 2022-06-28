@@ -1,69 +1,68 @@
 import {
+  VinnuvelaDto,
+  VinnuvelaRettindiDto,
+} from '@island.is/clients/adr-and-machine-license'
+import {
+  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
 export const parseMachineLicensePayload = (
-  license: GenericMachineLicenseResponse,
+  license: VinnuvelaDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
-  const data = [
+
+  const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Vinnuvélaskírteini Nr: ',
+      label: 'Skírteini nr. ',
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1. Fullt nafn',
-      value: license?.fulltNafn,
+      value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '2. Kennitala',
-      value: license.kennitala,
+      value: license.kennitala ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '3. Útgáfustaður',
-      value: license.utgafuStadur,
-    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4. Fyrsti útgáfustaður',
+      value: license.utgafuStadur ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: '4. Útgáfudagur',
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '6. Ökuskírteini nr.',
-      value: license.okuskirteinisNumer,
+      label: '5. Gildir til.',
+      value: 'Sjá réttindi',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '7. Útgáfustaður',
-      value: license.utgafuLand,
+      label: '6. Ökuskírteini nr',
+      value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Vinnuvélaréttindi',
-      fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
-        type: GenericLicenseDataFieldType.Category,
-        name: field.flokkur,
-        label: field.fulltHeiti ?? field.stuttHeiti,
-        fields: [
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Stjórna',
-            value: field.stjorna,
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Kenna',
-            value: field.kenna,
-          },
-        ],
-      })),
+      label: 'Réttindaflokkar',
+      fields: (license.vinnuvelaRettindi ?? [])
+        .filter((field) => field.kenna || field.stjorna)
+        .map((field) => ({
+          type: GenericLicenseDataFieldType.Category,
+          name: field.flokkur ?? '',
+          label: field.fulltHeiti ?? field.stuttHeiti ?? '',
+          fields: parseVvrRights(field),
+        })),
     },
   ]
 
@@ -71,4 +70,27 @@ export const parseMachineLicensePayload = (
     data,
     rawData: JSON.stringify(license),
   }
+}
+
+const parseVvrRights = (
+  rights: VinnuvelaRettindiDto,
+): Array<GenericLicenseDataField> | undefined => {
+  const fields = new Array<GenericLicenseDataField>()
+
+  if (rights.stjorna) {
+    fields.push({
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Stjórna',
+      value: rights.stjorna,
+    })
+  }
+  if (rights.kenna) {
+    fields.push({
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Kenna',
+      value: rights.kenna,
+    })
+  }
+
+  return fields?.length ? fields : undefined
 }

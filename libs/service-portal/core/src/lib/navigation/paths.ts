@@ -81,6 +81,7 @@ export enum ServicePortalPath {
   AssetsMyVehicles = '/okutaeki/min-okutaeki',
   AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
   AssetsVehiclesLookup = '/okutaeki/leit',
+  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
 
   // Messages
   MessagesRoot = '/skilabod',

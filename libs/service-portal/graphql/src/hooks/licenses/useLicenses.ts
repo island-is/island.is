@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { ApolloError, useQuery } from '@apollo/client'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -13,10 +13,11 @@ import {
   GET_GENERIC_LICENSE,
   GET_GENERIC_LICENSES,
 } from '../../lib/queries/getLicenses'
+
 interface Props {
   data?: Array<GenericUserLicense>
   loading?: boolean
-  error?: any
+  error?: ApolloError | undefined
 }
 
 export const useLicenses = (type?: GenericLicenseType): Props => {
@@ -46,26 +47,13 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
     error,
   }
 }
-
-//Still used by the "fancy" driving license UI.
-// TODO: Remove when generic display is ready.
-interface GetLicenseProps {
-  data?: DrivingLicenseType
-  status: GenericUserLicenseStatus | ''
-  loading?: boolean
-  error?: any
-}
-export const useDriversLicense = (
-  licenseType: GenericLicenseType,
-): GetLicenseProps => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSE, {
     variables: {
       locale,
       input: {
-        //CHANGE THIS BACK!
-        licenseType,
+        licenseType: 'DriversLicense',
       },
     },
   })
