@@ -88,24 +88,6 @@ type GroupsValue = {
   label: string
 }
 
-type FilterCategory = {
-  /** Id for the category. */
-  id: string
-  /** The category label to display on screen. */
-  label: string
-  /** The array of currently selected active filters. */
-  selected: Array<string>
-  /** Array of available filters in this category. */
-  filters: {
-    value: string
-    label: string
-  }[]
-  /** Display checkboxes inline */
-  inline?: boolean
-  /** Allow only one option at a time */
-  singleOption?: boolean
-}
-
 const getFilteredDocuments = (
   documents: Document[],
   filterValues: FilterValues,
@@ -347,10 +329,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             variant="popover"
             align="left"
             reverse
-            labelClear={formatMessage(messages.clearFilter)}
-            labelClearAll={formatMessage(messages.clearAllFilters)}
-            labelOpen={formatMessage(messages.openFilter)}
-            labelClose={formatMessage(messages.closeFilter)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -384,7 +366,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear={formatMessage(messages.clearSelected)}
+              labelClear={formatMessage(m.clearSelected)}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -408,28 +390,26 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   }))
                 }
               }}
-              categories={
-                [
-                  {
-                    id: 'institution',
-                    label: formatMessage(messages.institutionLabel),
-                    selected: [...filterValue.activeCategories],
-                    filters: categories,
-                    inline: false,
-                    singleOption: false,
-                  },
-                  {
-                    id: 'group',
-                    label: formatMessage(messages.groupLabel),
-                    selected: [...filterValue.activeGroups],
-                    filters: Array.isArray(groupsAvailable)
-                      ? groupsAvailable
-                      : [],
-                    inline: false,
-                    singleOption: false,
-                  },
-                ] as FilterCategory[]
-              }
+              categories={[
+                {
+                  id: 'institution',
+                  label: formatMessage(messages.institutionLabel),
+                  selected: [...filterValue.activeCategories],
+                  filters: categories,
+                  inline: false,
+                  singleOption: false,
+                },
+                {
+                  id: 'group',
+                  label: formatMessage(messages.groupLabel),
+                  selected: [...filterValue.activeGroups],
+                  filters: Array.isArray(groupsAvailable)
+                    ? groupsAvailable
+                    : [],
+                  inline: false,
+                  singleOption: false,
+                },
+              ]}
             ></FilterMultiChoice>
             <Box className={styles.dateFilter} paddingX={3}>
               <Box
@@ -446,15 +426,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <AccordionItem
                     key="date-accordion-item"
                     id="date-accordion-item"
-                    label={formatMessage(messages.datesLabel)}
+                    label={formatMessage(m.datesLabel)}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
                   >
                     <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage(messages.datepickerFromLabel)}
-                        placeholderText={formatMessage(messages.datepickLabel)}
+                        label={formatMessage(m.datepickerFromLabel)}
+                        placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
@@ -463,10 +443,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                       <Box marginTop={3}>
                         <DatePicker
-                          label={formatMessage(messages.datepickerToLabel)}
-                          placeholderText={formatMessage(
-                            messages.datepickLabel,
-                          )}
+                          label={formatMessage(m.datepickerToLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
                           locale="is"
                           backgroundColor="blue"
                           size="xs"
@@ -523,7 +501,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateFromInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerFromLabel,
+                            m.datepickerFromLabel,
                           )} - ${format(filterValue.dateFrom, dateFormat.is)}`}
                         />
                       )}
@@ -531,7 +509,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateToInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerToLabel,
+                            m.datepickerToLabel,
                           )} - ${format(filterValue.dateTo, dateFormat.is)}`}
                         />
                       )}
@@ -549,7 +527,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         variant="text"
                         onClick={handleClearFilters}
                       >
-                        {formatMessage(messages.clearFilter)}
+                        {formatMessage(m.clearFilter)}
                       </Button>
                     </Box>
                   </Box>

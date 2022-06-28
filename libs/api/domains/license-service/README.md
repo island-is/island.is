@@ -6,11 +6,17 @@
 
 A license has the following parts: ...
 
+Licenses that are currently accepted are Driving, ADR and Machine license.
+
 ### Driving license
 
 Uses RLS API via xroad to get drivers licenses by national id.
 
 Uses [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/) to generate pkpass for digital drivers licenses.
+
+### ADR and Machine Licenses
+
+Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License. Uses the national id of the currently logged in user to retreive the correct licenses.
 
 #### Digital
 
