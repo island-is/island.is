@@ -103,6 +103,7 @@
 /libs/api/domains/vehicles/                                                                         @island-is/hugsmidjan
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
+/libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
