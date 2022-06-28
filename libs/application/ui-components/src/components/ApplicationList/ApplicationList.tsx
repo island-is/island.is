@@ -83,7 +83,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 }
 
 interface Props {
-  organizations: Organization[]
+  organizations?: Organization[]
   applications: Pick<
     Application,
     'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'

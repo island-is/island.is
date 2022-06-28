@@ -336,7 +336,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   }
 
   const renderLogo = () => {
-    if (!logo) return null
+    if (!logo || logo.length === 0) return null
     return (
       <Box
         padding={2}
