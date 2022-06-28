@@ -13,7 +13,6 @@ import {
   Text,
   GridColumn,
   GridRow,
-  Table as T,
   LoadingDots,
   DatePicker,
   Checkbox,
@@ -22,6 +21,8 @@ import {
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
 import TabContent from './TabContent'
+import isAfter from 'date-fns/isAfter'
+import isEqual from 'lodash/isEqual'
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
@@ -35,18 +36,25 @@ const getFilteredVehicles = (
 
   if (fromDate) {
     filteredVehicles = filteredVehicles.filter((x: VehiclesVehicle) => {
-      return (
+      const startDate =
         x.operatorStartDate &&
-        new Date(x.operatorStartDate).getTime() >= fromDate.getTime()
+        new Date(x.operatorStartDate).setHours(0, 0, 0, 0)
+      return (
+        startDate &&
+        (isAfter(startDate, fromDate.getTime()) ||
+          isEqual(startDate, fromDate.getTime()))
       )
     })
   }
 
   if (toDate) {
     filteredVehicles = filteredVehicles.filter((x: VehiclesVehicle) => {
+      const endDate =
+        x.operatorEndDate && new Date(x.operatorEndDate).setHours(0, 0, 0, 0)
       return (
-        x.operatorEndDate &&
-        new Date(x.operatorEndDate).getTime() <= toDate.getTime()
+        endDate &&
+        (isAfter(toDate.getTime(), endDate) ||
+          isEqual(endDate, toDate.getTime()))
       )
     })
   }

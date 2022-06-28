@@ -27,22 +27,16 @@ export const FilesRecipientCard: FC<
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
   let options =
-    application.answers?.estateMembers.members.length !== 0
-      ? application.answers?.estateMembers?.members.map((estateMember) => ({
-          label: estateMember.name,
-          value: estateMember.nationalId,
-        }))
-      : [
-          {
-            label: application.answers.applicantName,
-            value: application.applicant,
-          },
-        ]
+    application.answers?.estateMembers?.members?.length &&
+    application.answers.estateMembers.members.length !== 0
+      ? application.answers?.estateMembers?.members
+          .filter((member) => !member?.dummy)
+          .map((estateMember) => ({
+            label: estateMember.name,
+            value: estateMember.nationalId,
+          }))
+      : []
 
-  // Notifier is not allowed to give finances permission
-  if (field.id === 'financesDataCollectionPermission') {
-    options = options.filter((member) => member.value !== application.applicant)
-  }
   options = options.filter((member) => isPerson(member.value))
 
   // Add the option for selecting noone
@@ -50,6 +44,13 @@ export const FilesRecipientCard: FC<
     label: formatMessage(m.selectOptionNobody),
     value: '',
   })
+
+  if (field.id !== 'financesDataCollectionPermission') {
+    options.push({
+      label: application.answers.applicantName,
+      value: application.applicant,
+    })
+  }
 
   return (
     <Box
