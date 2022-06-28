@@ -137,11 +137,7 @@ export const RadioButton = ({
           </div>
         )}
         {tag && large && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            style={{ width: '-webkit-fill-available' }}
-          >
+          <Box display="flex" justifyContent="flexEnd" width="full">
             <Tag outlined={tag.outlined} variant={tag.variant} disabled>
               {tag.label}
             </Tag>

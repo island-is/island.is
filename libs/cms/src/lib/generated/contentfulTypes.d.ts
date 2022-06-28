@@ -167,8 +167,14 @@ export interface IArticleFields {
   /** Featured image */
   featuredImage?: Asset | undefined
 
+  /** Stepper */
+  stepper?: IStepper | undefined
+
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Process Entry Button Text */
+  processEntryButtonText?: 'application' | 'stepByStep' | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
