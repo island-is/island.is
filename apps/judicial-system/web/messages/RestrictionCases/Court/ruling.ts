@@ -302,13 +302,6 @@ export const rcRuling = {
         description:
           'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
-      modifyRulingBackButtonLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_back_button_label',
-        defaultMessage: 'Hætta við',
-        description:
-          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
-      },
     }),
   },
 }
