@@ -92,7 +92,12 @@ interface Props {
   refetch?: (() => void) | undefined
 }
 
-const AppList = ({ organizations, applications, onClick, refetch }: Props) => {
+const ApplicationList = ({
+  organizations,
+  applications,
+  onClick,
+  refetch,
+}: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
@@ -103,6 +108,9 @@ const AppList = ({ organizations, applications, onClick, refetch }: Props) => {
   }
 
   const getLogo = (typeId: ApplicationTypes): string => {
+    if (!organizations) {
+      return ''
+    }
     const institutionSlug = institutionMapper[typeId]
     const institution = organizations.find((x) => x.slug === institutionSlug)
     return getOrganizationLogoUrl(
@@ -171,4 +179,4 @@ const AppList = ({ organizations, applications, onClick, refetch }: Props) => {
   )
 }
 
-export default AppList
+export default ApplicationList
