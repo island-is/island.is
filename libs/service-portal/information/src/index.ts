@@ -10,52 +10,46 @@ import {
 export const informationModule: ServicePortalModule = {
   name: 'Upplýsingar',
   widgets: () => [],
-  routes: ({ userInfo }) => {
-    console.log(
-      'userInfo.scopes.includes(ApiScope.meDetails)',
-      userInfo.scopes.includes(ApiScope.meDetails),
-    )
-    return [
-      {
-        name: 'Mínar upplýsingar',
-        path: ServicePortalPath.MyInfoRoot,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () =>
-          lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
-      },
-      {
-        name: m.userInfo,
-        path: ServicePortalPath.UserInfo,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
-      },
-      {
-        name: m.family,
-        path: ServicePortalPath.FamilyRoot,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () =>
-          lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
-      },
-      {
-        name: 'Family Member',
-        path: ServicePortalPath.FamilyMember,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
-      },
-      {
-        name: 'Child',
-        path: ServicePortalPath.Child,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () => lazy(() => import('./screens/FamilyMember/Child')),
-      },
-      {
-        name: 'Spouse',
-        path: ServicePortalPath.Spouse,
-        enabled: userInfo.scopes.includes(ApiScope.meDetails),
-        render: () => lazy(() => import('./screens/Spouse/Spouse')),
-      },
-    ]
-  },
+  routes: ({ userInfo }) => [
+    {
+      name: 'Mínar upplýsingar',
+      path: ServicePortalPath.MyInfoRoot,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () =>
+        lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
+    },
+    {
+      name: m.userInfo,
+      path: ServicePortalPath.UserInfo,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
+    },
+    {
+      name: m.family,
+      path: ServicePortalPath.FamilyRoot,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () =>
+        lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
+    },
+    {
+      name: 'Family Member',
+      path: ServicePortalPath.FamilyMember,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
+    },
+    {
+      name: 'Child',
+      path: ServicePortalPath.Child,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/FamilyMember/Child')),
+    },
+    {
+      name: 'Spouse',
+      path: ServicePortalPath.Spouse,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/Spouse/Spouse')),
+    },
+  ],
   companyRoutes: ({ userInfo }) => [
     {
       name: 'Um fyrirtæki',
