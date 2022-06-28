@@ -109,7 +109,7 @@ export const LoginServiceForm: Form = buildForm({
               defaultValue: (application: Application) => {
                 return getValueViaPath(
                   application.answers,
-                  'selectCompany.label',
+                  'selectCompany.searchField.label',
                   '',
                 )
               },
@@ -125,7 +125,7 @@ export const LoginServiceForm: Form = buildForm({
               defaultValue: (application: Application) => {
                 return getValueViaPath(
                   application.answers,
-                  'selectCompany.nationalId',
+                  'selectCompany.searchField.nationalId',
                   '',
                 )
               },
@@ -139,7 +139,7 @@ export const LoginServiceForm: Form = buildForm({
               defaultValue: (application: Application) => {
                 return getValueViaPath(
                   application.answers,
-                  'selectCompany.isat',
+                  'selectCompany.searchField.isat',
                   '',
                 )
               },
@@ -152,7 +152,7 @@ export const LoginServiceForm: Form = buildForm({
               condition: (formValue) => {
                 const isatNr = getValueViaPath(
                   formValue,
-                  'selectCompany.isat',
+                  'selectCompany.searchField.isat',
                   '',
                 )
                 if (isatNr !== undefined) {
