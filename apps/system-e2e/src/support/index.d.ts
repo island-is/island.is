@@ -36,5 +36,10 @@ declare namespace Cypress {
     idsLogin({ phoneNumber: string, url: string }): Chainable<void>
     cognitoLogin(): Chainable<void>
     patchSameSiteCookie(interceptUrl: string): void
+    pathUuid(): Chainable<string>
+    gqlRequest(
+      op: string,
+      query: string | DocumentNode,
+    ): Chainable<Cypress.Response>
   }
 }

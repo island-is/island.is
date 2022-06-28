@@ -1,3 +1,5 @@
+import { gql } from "@apollo/client"
+
 export const cypressError = (msg: string) => {
   throw new Error(msg)
 }
@@ -14,3 +16,13 @@ export const getCognitoCredentials = () => {
 }
 
 export const testEnvironment = process.env.TEST_ENVIRONMENT || 'local'
+
+export const getApplicationQuery = (id: string) => {
+  return gql`{
+    getApplication(input: {id: "${id}"}) {
+      id
+      created
+      applicant
+    }
+  }`
+}

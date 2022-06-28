@@ -1,3 +1,5 @@
+import { DocumentNode } from '@apollo/client'
+
 console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
 const testEnvironment = Cypress.env('testEnvironment')
 const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
@@ -87,3 +89,22 @@ Cypress.Commands.add('cognitoLogin', () => {
     cy.log('skipLogin', 'On localhost, skip Cognito login')
   }
 })
+
+Cypress.Commands.add('pathUuid', () => {
+  return cy
+    .location('pathname')
+    .then((path: string) => path.split('/').pop()?.split('?').shift())
+})
+
+Cypress.Commands.add(
+  'gqlRequest',
+  (op: string, query: string | DocumentNode) => {
+    return cy.request({
+      url: `${baseUrl}?op=${op}`,
+      body: {
+        query,
+      },
+      method: 'POST',
+    })
+  },
+)
