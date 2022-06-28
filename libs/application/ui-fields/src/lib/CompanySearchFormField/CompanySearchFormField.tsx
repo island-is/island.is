@@ -23,8 +23,9 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   } = field
   const { formatMessage } = useLocale()
 
-  const { searchField } = application.answers
-    .selectCompany as selectCompanySearchField
+  const { searchField } =
+    application.answers.selectCompany ??
+    ('' as selectCompanySearchField | string)
   const defaultAnswer = {
     value: searchField.nationalId,
     label: searchField.label,

@@ -107,8 +107,9 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
+                const { searchField } =
+                  application.answers.selectCompany ??
+                  ('' as selectCompanySearchField | string)
                 return searchField.label
               },
             }),
@@ -121,8 +122,9 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
+                const { searchField } =
+                  application.answers.selectCompany ??
+                  ('' as selectCompanySearchField | string)
                 return searchField.nationalId
               },
             }),
@@ -133,8 +135,9 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
+                const { searchField } =
+                  application.answers.selectCompany ??
+                  ('' as selectCompanySearchField | string)
                 return searchField.isat
               },
             }),
@@ -144,9 +147,9 @@ export const LoginServiceForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'IsatInvalid',
               condition: (formValue) => {
-                const {
-                  searchField,
-                } = formValue.selectCompany as selectCompanySearchField
+                const { searchField } =
+                  formValue.selectCompany ??
+                  ('' as selectCompanySearchField | string)
                 return searchField.isat.slice(0, 2) !== '84'
               },
             }),
