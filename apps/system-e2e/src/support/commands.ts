@@ -23,21 +23,20 @@ const cognitoLogin = (creds: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-const idsLogin = (phoneNumber: string) => {
+const idsLogin = (phoneNumber: string, urlPath: string) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
       authUrl: authUrl,
-      minarSidur: `${Cypress.config().baseUrl}/minarsidur/`,
     },
   }
   cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
-  cy.visit('/minarsidur/', { log: true })
+  cy.visit(urlPath, { log: true })
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
-  cy.url().should('contain', `${Cypress.config().baseUrl}/minarsidur/`)
+  cy.url().should('contain', `${Cypress.config().baseUrl}${urlPath}`)
 }
 
 Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
@@ -60,18 +59,18 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
   }).as('sameSitePatch')
 })
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber }) => {
+Cypress.Commands.add('idsLogin', ({ phoneNumber, url = '/' }) => {
   cy.log('foobar', testEnvironment)
   if (testEnvironment !== 'local') {
     cy.session('idsLogin', () => {
       cy.session('cognitoLogin', () =>
         cognitoLogin({ cognitoUsername, cognitoPassword }),
       )
-      idsLogin(phoneNumber)
+      idsLogin(phoneNumber, url)
     })
   } else {
     cy.session('idsLogin', () => {
-      idsLogin(phoneNumber)
+      idsLogin(phoneNumber, url)
     })
   }
 })
