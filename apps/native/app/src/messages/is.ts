@@ -36,7 +36,7 @@ export const is = {
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
-  'onboarding.biometrics.type.facialRecognition': 'andlitsgreiningu',
+  'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',

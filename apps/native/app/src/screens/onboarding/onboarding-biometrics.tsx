@@ -30,18 +30,27 @@ export function useBiometricType(type: AuthenticationType[] = []) {
     } else {
       return {
         text: intl.formatMessage({
-          id: 'onboarding.biometrics.type.facialRecognition',
+          id: 'onboarding.biometrics.type.biometrics',
         }),
         icon: iris,
       }
     }
   } else if (type.includes(AuthenticationType.FINGERPRINT)) {
+    if (Platform.OS === 'ios') {
+      return {
+        text: intl.formatMessage({
+          id: 'onboarding.biometrics.type.fingerprint',
+        }),
+        icon: finger,
+      }
+   } else {
     return {
       text: intl.formatMessage({
-        id: 'onboarding.biometrics.type.fingerprint',
+        id: 'onboarding.biometrics.type.biometrics',
       }),
       icon: finger,
     }
+   }
   } else if (type.includes(AuthenticationType.IRIS)) {
     return {
       text: intl.formatMessage({ id: 'onboarding.biometrics.type.iris' }),

@@ -38,7 +38,7 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
   'onboarding.biometrics.type.faceId': 'Face ID',
-  'onboarding.biometrics.type.facialRecognition': 'facial recognition',
+  'onboarding.biometrics.type.biometrics': 'biometrics',
   'onboarding.biometrics.type.fingerprint': 'fingerprint',
   'onboarding.biometrics.type.iris': 'iris scanner',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
