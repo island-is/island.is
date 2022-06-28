@@ -210,7 +210,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         />
       )}
 
-      {applications && orgData && !loading && (
+      {applications && orgData && !loading && !error && (
         <>
           <Box paddingBottom={[3, 5]}>
             <GridRow alignItems="flexEnd">
