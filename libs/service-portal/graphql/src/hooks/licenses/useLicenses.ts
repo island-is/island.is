@@ -47,6 +47,8 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
     error,
   }
 }
+
+export const useDrivingLicense = () => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSE, {

@@ -32,6 +32,7 @@ export const parseMachineLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '3. Útgáfustaður',
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4. Fyrsti útgáfustaður',
