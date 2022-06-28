@@ -11,6 +11,7 @@ import {
   buildCheckboxField,
   buildCompanySearchField,
   Application,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   section,
@@ -23,7 +24,6 @@ import {
   selectCompany,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
-import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -107,9 +107,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.label
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.label',
+                  '',
+                )
               },
             }),
             buildTextField({
@@ -121,9 +123,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.nationalId
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.nationalId',
+                  '',
+                )
               },
             }),
             buildTextField({
@@ -133,9 +137,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.isat
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.isat',
+                  '',
+                )
               },
             }),
             buildCustomField({
@@ -144,10 +150,15 @@ export const LoginServiceForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'IsatInvalid',
               condition: (formValue) => {
-                const {
-                  searchField,
-                } = formValue.selectCompany as selectCompanySearchField
-                return searchField.isat.slice(0, 2) !== '84'
+                const isatNr = getValueViaPath(
+                  formValue,
+                  'selectCompany.isat',
+                  '',
+                )
+                if (isatNr !== undefined) {
+                  return isatNr.slice(0, 2) !== '84'
+                }
+                return false
               },
             }),
             buildCustomField(
