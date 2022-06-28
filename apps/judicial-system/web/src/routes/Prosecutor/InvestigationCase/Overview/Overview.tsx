@@ -35,7 +35,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
-  icOverview,
   icOverview as m,
   requestCourtDate,
   titles,
@@ -50,9 +49,10 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 import * as styles from './Overview.css'
-import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
+import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -130,8 +130,8 @@ export const Overview: React.FC = () => {
             data-testid="ic-overview-info-panel"
           >
             <AlertMessage
-              title={formatMessage(icOverview.receivedAlert.title)}
-              message={formatMessage(icOverview.receivedAlert.message)}
+              title={formatMessage(m.receivedAlert.title)}
+              message={formatMessage(m.receivedAlert.message)}
               type="info"
             />
           </Box>
@@ -150,7 +150,7 @@ export const Overview: React.FC = () => {
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(icOverview.heading)}
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
@@ -335,6 +335,9 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
+          <CopyLinkForDefenderButton caseId={workingCase.id}>
+            {formatMessage(m.sections.copyLinkForDefenderButton)}
+          </CopyLinkForDefenderButton>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
