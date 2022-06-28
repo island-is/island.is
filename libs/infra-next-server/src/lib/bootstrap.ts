@@ -78,10 +78,11 @@ export const bootstrap = async (options: BootstrapOptions) => {
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
 
-  setupHealthchecks(expressApp, options.externalEndpointDependencies)
   expressApp.all('*', (req, res) => handle(req, res))
 
   startServer(expressApp, options.port)
 
   await nextApp.prepare()
+
+  setupHealthchecks(expressApp, options.externalEndpointDependencies)
 }
