@@ -161,13 +161,6 @@ export const rcRuling = {
         description:
           'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      partiallyAcceptLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.decision.partially_accept_label',
-        defaultMessage: 'Krafa um gæsluvarðhald tekin til greina að hluta',
-        description:
-          'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhaldsmálum.',
-      },
       partiallyAcceptLabelV2: {
         id:
           'judicial.system.restriction_cases:ruling.decision.partially_accept_label_v2',
@@ -186,13 +179,6 @@ export const rcRuling = {
         defaultMessage: 'Kröfu um {caseType} vísað frá',
         description:
           'Notaður sem texti við radio takka með vali um að vísa máli frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      acceptingAlternativeTravelBanLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.decision.accepting_alternative_travel_ban_label',
-        defaultMessage: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
-        description:
-          'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhaldsmálum.',
       },
       acceptingAlternativeTravelBanLabelV2: {
         id:
@@ -245,14 +231,6 @@ export const rcRuling = {
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      dismissingAutofill: {
-        id:
-          'judicial.system.restriction_cases:ruling.conclusion.dismissing_autofill',
-        defaultMessage:
-          'Kröfu um að {genderedAccused}, {accusedName}, sæti{extensionSuffix} {caseType} er vísað frá.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       dismissingAutofillV2: {
         id:
           'judicial.system.restriction_cases:ruling.conclusion.dismissing_autofill_v2',
@@ -261,14 +239,6 @@ export const rcRuling = {
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
-      rejectingAutofill: {
-        id:
-          'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofillv1',
-        defaultMessage:
-          'Kröfu um að {genderedAccused}, {accusedName}{accusedNationalId}sæti{extensionSuffix} {caseType} er hafnað.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       rejectingAutofillV2: {
         id:
           'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofill_v2',
@@ -276,14 +246,6 @@ export const rcRuling = {
           'Kröfu um að {genderedAccused}, {accusedName}{accusedNationalId}sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbanni} other {gæsluvarðhaldi}} er hafnað.',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      acceptingAutofill: {
-        id:
-          'judicial.system.restriction_cases:ruling.conclusion.accepting_autofillv1',
-        defaultMessage:
-          '{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
-        description:
-          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       acceptingAutofillV2: {
         id:
