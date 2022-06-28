@@ -63,6 +63,12 @@ export const childsOverview = buildMultiField({
       description: '',
       space: 'gutter',
     }),
+    buildDescriptionField({
+      id: 'overviewChild.space2',
+      title: '',
+      description: '',
+      space: 'gutter',
+    }),
     buildKeyValueField({
       label: m.name,
       width: 'half',
@@ -80,7 +86,7 @@ export const childsOverview = buildMultiField({
         })?.nationalId,
     }),*/
     buildDescriptionField({
-      id: 'overviewChild.space2',
+      id: 'overviewChild.space3',
       title: '',
       description: '',
       space: 'gutter',
@@ -105,11 +111,23 @@ export const childsOverview = buildMultiField({
         return formatPhoneNumber(phone as string)
       },
     }),
+    buildDescriptionField({
+      id: 'overviewChild.space4',
+      title: '',
+      description: '',
+      space: 'gutter',
+    }),
     buildDividerField({}),
     buildDescriptionField({
       id: 'overviewChild.infoTitle3',
       title: 'Forráðamaður 2',
       titleVariant: 'h3',
+      description: '',
+      space: 'gutter',
+    }),
+    buildDescriptionField({
+      id: 'overviewChild.space5',
+      title: '',
       description: '',
       space: 'gutter',
     }),
@@ -130,7 +148,7 @@ export const childsOverview = buildMultiField({
         })?.nationalId,
     }),*/
     buildDescriptionField({
-      id: 'overviewChild.space3',
+      id: 'overviewChild.space6',
       title: '',
       description: '',
       space: 'gutter',
@@ -155,6 +173,12 @@ export const childsOverview = buildMultiField({
         return formatPhoneNumber(phone as string)
       },
     }),
+    buildDescriptionField({
+      id: 'overviewChild.space7',
+      title: '',
+      description: '',
+      space: 'gutter',
+    }),
     buildDividerField({}),
     buildDescriptionField({
       id: 'overview.dropLocationTitle',
@@ -164,7 +188,7 @@ export const childsOverview = buildMultiField({
       space: 'gutter',
     }),
     buildDescriptionField({
-      id: 'overview.space4',
+      id: 'overview.space8',
       title: '',
       description: '',
       space: 'gutter',

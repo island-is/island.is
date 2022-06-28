@@ -50,12 +50,25 @@ export const childsPersonalInfo = buildMultiField({
       title: 'Forráðamaður 1',
       titleVariant: 'h3',
       space: 'gutter',
+      marginBottom: 'smallGutter',
+    }),
+    buildTextField({
+      id: 'childsPersonalInfo.guardian1.nationalId',
+      title: m.name,
+      backgroundColor: 'white',
+      width: 'half',
+      readOnly: true,
+      defaultValue: (application: Application) =>
+        (application.externalData.nationalRegistry?.data as {
+          nationalId?: string
+        })?.nationalId,
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.name',
       title: m.name,
-      backgroundColor: 'blue',
+      backgroundColor: 'white',
       width: 'half',
+      readOnly: true,
       defaultValue: (application: Application) =>
         (application.externalData.nationalRegistry?.data as {
           fullName?: string
@@ -85,14 +98,23 @@ export const childsPersonalInfo = buildMultiField({
       id: 'childsPersonalInfo.guardian2',
       title: 'Forráðamaður 2',
       titleVariant: 'h3',
-      space: 'gutter',
+      space: 'containerGutter',
+      marginBottom: 'smallGutter',
+    }),
+    buildTextField({
+      id: 'childsPersonalInfo.guardian2.nationalId',
+      title: m.name,
+      backgroundColor: 'white',
+      width: 'half',
+      readOnly: true,
+      defaultValue: '222222-2222',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.name',
       title: m.name,
-      backgroundColor: 'blue',
+      backgroundColor: 'white',
       width: 'half',
-      defaultValue: '',
+      defaultValue: 'Lolla Guacamolla',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.email',

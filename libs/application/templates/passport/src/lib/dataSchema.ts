@@ -44,6 +44,9 @@ export const dataSchema = z.object({
     hasDisabilityDiscount: z.array(z.string()).optional(),
     guardian1: z.object({
       name: z.string().nonempty(),
+      nationalId: z
+        .string()
+        .refine((x) => (x ? nationalIdRegex.test(x) : false)),
       email: z
         .string()
         .refine((v) => isValidEmail(v), { params: error.invalidValue }),
@@ -54,6 +57,9 @@ export const dataSchema = z.object({
     }),
     guardian2: z.object({
       name: z.string().nonempty(),
+      nationalId: z
+        .string()
+        .refine((x) => (x ? nationalIdRegex.test(x) : false)),
       email: z
         .string()
         .refine((v) => isValidEmail(v), { params: error.invalidValue }),
