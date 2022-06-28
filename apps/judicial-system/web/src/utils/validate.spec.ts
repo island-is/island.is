@@ -3,10 +3,10 @@ import { validate } from './validate'
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
     // Arrange
-    const LOKE = 'INCORRECT FORMAT'
+    const value = 'INCORRECT FORMAT'
 
     // Act
-    const r = validate(LOKE, 'police-casenumber-format')
+    const r = validate([[value, ['police-casenumber-format']]])
 
     // Assert
     expect(r.isValid).toEqual(false)
@@ -20,7 +20,7 @@ describe('Validate time format', () => {
     const time = '99:00'
 
     // Act
-    const r = validate(time, 'time-format')
+    const r = validate([[time, ['time-format']]])
 
     // Assert
     expect(r.isValid).toEqual(false)
@@ -32,7 +32,7 @@ describe('Validate time format', () => {
     const time = '1:00'
 
     // Act
-    const r = validate(time, 'time-format')
+    const r = validate([[time, ['time-format']]])
 
     // Assert
     expect(r.isValid).toEqual(true)
@@ -45,7 +45,7 @@ describe('Validate national id format', () => {
     const nid = '999999-9999'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([[nid, ['national-id']]])
 
     // Assert
     expect(r.isValid).toEqual(true)
@@ -56,7 +56,7 @@ describe('Validate national id format', () => {
     const nid = '010101'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([[nid, ['national-id']]])
 
     // Assert
     expect(r.isValid).toEqual(true)
@@ -68,7 +68,7 @@ describe('Validate national id format', () => {
     const nid = '99120'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([[nid, ['national-id']]])
 
     // Assert
     expect(r.isValid).toEqual(false)
@@ -80,7 +80,7 @@ describe('Validate national id format', () => {
     const nid = '991201-22'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([[nid, ['national-id']]])
 
     // Assert
     expect(r.isValid).toEqual(false)
@@ -94,7 +94,7 @@ describe('Validate email format', () => {
     const invalidEmail = 'testATtest.is'
 
     // Act
-    const validation = validate(invalidEmail, 'email-format')
+    const validation = validate([[invalidEmail, ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(false)
@@ -106,7 +106,7 @@ describe('Validate email format', () => {
     const invalidEmail = 'testATtest.i'
 
     // Act
-    const validation = validate(invalidEmail, 'email-format')
+    const validation = validate([[invalidEmail, ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(false)
@@ -117,7 +117,7 @@ describe('Validate email format', () => {
     // Arrange
 
     // Act
-    const validation = validate('', 'email-format')
+    const validation = validate([['', ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(true)
@@ -128,7 +128,7 @@ describe('Validate email format', () => {
     const validEmail = 'garfield.lasagne-lover@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([[validEmail, ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(true)
@@ -139,7 +139,7 @@ describe('Validate email format', () => {
     const validEmail = 'garfield@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([[validEmail, ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(true)
@@ -150,7 +150,7 @@ describe('Validate email format', () => {
     const validEmail = 'garfield+test@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([[validEmail, ['email-format']]])
 
     // Assert
     expect(validation.isValid).toEqual(true)
@@ -163,7 +163,7 @@ describe('Validate phonenumber format', () => {
     const phonenumber = '00292'
 
     // Act
-    const r = validate(phonenumber, 'phonenumber')
+    const r = validate([[phonenumber, ['phonenumber']]])
 
     // Assert
     expect(r.isValid).toEqual(false)
@@ -175,7 +175,7 @@ describe('Validate phonenumber format', () => {
     const phonenumber = '555-5555'
 
     // Act
-    const r = validate(phonenumber, 'phonenumber')
+    const r = validate([[phonenumber, ['phonenumber']]])
 
     // Assert
     expect(r.isValid).toEqual(true)
@@ -200,7 +200,7 @@ describe('Validate court case number', () => {
   `(
     'should pass when case as correct format $courtCaseNumber',
     ({ courtCaseNumber }) => {
-      const result = validate(courtCaseNumber, 'court-case-number')
+      const result = validate([[courtCaseNumber, ['court-case-number']]])
       expect(result.isValid).toEqual(true)
     },
   )
@@ -219,7 +219,7 @@ describe('Validate court case number', () => {
   `(
     'should fail if case number as wrong format $courtCaseNumber',
     ({ courtCaseNumber }) => {
-      const result = validate(courtCaseNumber, 'court-case-number')
+      const result = validate([[courtCaseNumber, ['court-case-number']]])
       expect(result.isValid).toEqual(false)
       expect(result.errorMessage).toEqual('Dæmi: R-1234/2020')
     },
