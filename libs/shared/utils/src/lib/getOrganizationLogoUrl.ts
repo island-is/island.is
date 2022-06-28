@@ -1,16 +1,6 @@
-interface Organization {
-  id: string
-  title: string
-  logo: null | {
-    id: string
-    url: string
-    title: string
-    width: number
-    height: number
-  }
-}
+import { Organization } from '@island.is/shared/types'
 
-const getOrganizationLogoUrl = (
+export const getOrganizationLogoUrl = (
   forName: string,
   orgs: Array<Organization>,
 ): string => {
@@ -28,5 +18,3 @@ const getOrganizationLogoUrl = (
   }
   return ''
 }
-
-export default getOrganizationLogoUrl
