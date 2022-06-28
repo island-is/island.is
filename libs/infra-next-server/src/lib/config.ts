@@ -1,3 +1,5 @@
+import { resolve } from 'path'
+
 /* eslint @typescript-eslint/no-var-requires: "off" */
 export const getNextConfig = async (appDir: string, dev: boolean) => {
   const config = { dev }
@@ -20,6 +22,8 @@ export const getNextConfig = async (appDir: string, dev: boolean) => {
       'phase-development-server',
       options,
       context as any,
+      [],
+      resolve('libs'),
     )
     Object.assign(config, { conf, dir: appDir })
   }
