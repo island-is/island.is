@@ -6996,7 +6996,7 @@
       "prefix": "judicial-system-message-handler",
       "architect": {
         "build": {
-          "builder": "@irdnis/esbuildnx:build",
+          "builder": "@anatine/esbuildnx:build",
           "outputs": [
             "{options.outputPath}"
           ],
@@ -9387,7 +9387,7 @@
       "prefix": "services-contentful-entry-tagger",
       "architect": {
         "build": {
-          "builder": "@irdnis/esbuildnx:build",
+          "builder": "@anatine/esbuildnx:build",
           "outputs": [
             "{options.outputPath}"
           ],
