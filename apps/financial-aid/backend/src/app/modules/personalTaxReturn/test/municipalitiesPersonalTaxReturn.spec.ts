@@ -21,7 +21,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   let mockFileService: FileService
   let mockPersonalTaxReturnApi: PersonalTaxReturnApi
 
-  let folderId = uuid()
+  const folderId = uuid()
 
   beforeEach(async () => {
     const {

@@ -11,7 +11,7 @@ import {
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
+import { DataProviderTypes } from '../types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'

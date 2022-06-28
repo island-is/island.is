@@ -2,7 +2,6 @@ import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 import {
   Application,
@@ -17,6 +16,7 @@ import {
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,

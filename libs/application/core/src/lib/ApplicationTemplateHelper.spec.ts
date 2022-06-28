@@ -15,7 +15,8 @@ import {
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
 } from '../types/StateMachine'
-import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+import { buildForm } from './formBuilders'
+import { DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {

@@ -61,7 +61,7 @@ const municipalitySeeds = `[
     "created" : "2021-10-20 11:43:08.168002+00",
     "email" : "hafnarfjordur@hafnarfjordur.is",
     "modified" : "2021-10-20 11:43:08.168002+00",
-    "homepage" : "https:\/\/www.hafnarfjordur.is",
+    "homepage" : "https://www.hafnarfjordur.is",
     "name" : "hfj",
     "individual_aid_id" : "c88bab0e-813d-40b8-85b8-1371f94daeb8"
   }

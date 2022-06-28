@@ -5,22 +5,18 @@ import {
   getValueViaPath,
   mergeAnswers,
 } from './formUtils'
+import { buildForm, buildMultiField, buildSection } from './formBuilders'
 import {
-  Application,
-  ApplicationTypes,
   buildCheckboxField,
-  buildForm,
   buildDescriptionField,
-  buildMultiField,
   buildRadioField,
-  buildSection,
   buildTextField,
-  Comparators,
-  Form,
-  StaticText,
-  TextField,
-  ApplicationStatus,
-} from '@island.is/application/core'
+} from './fieldBuilders'
+import { ApplicationTypes } from '../types/ApplicationTypes'
+import { Form, StaticText } from '../types/Form'
+import { Comparators } from '../types/Condition'
+import { Application, ApplicationStatus } from '../types/Application'
+import { TextField } from '../types/Fields'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,

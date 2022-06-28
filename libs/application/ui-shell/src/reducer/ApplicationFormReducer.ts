@@ -12,7 +12,7 @@ import {
   getNavigableSectionsInForm,
   moveToScreen,
 } from './reducerUtils'
-import { FormScreen } from '@island.is/application/ui-shell'
+import { FormScreen } from '../types'
 
 export function initializeReducer(
   state: ApplicationUIState,
