@@ -1,4 +1,4 @@
-import { setup } from '../../../../../../test/setup'
+import { setup } from '@island.is/air-discount-scheme-test'
 import request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import {

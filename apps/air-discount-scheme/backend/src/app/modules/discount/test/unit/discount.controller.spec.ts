@@ -11,8 +11,8 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { FlightService } from '../../../flight'
-import { Fund, User } from '@island.is/air-discount-scheme/types'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { createTestUser } from '@island.is/air-discount-scheme-test'
 import { UserService } from '../../../user/user.service'
 import {
   NationalRegistryClientConfig,
@@ -21,28 +21,6 @@ import {
 import { CACHE_MANAGER } from '@nestjs/common'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
-
-function createTestUser(
-  postalCode: number = 600,
-  fund: Fund = {
-    credit: 6,
-    total: 6,
-    used: 0,
-  },
-  nationalId: string = '0101302399',
-): User {
-  return {
-    postalcode: postalCode,
-    address: 'Testvík 2',
-    city: 'Prufuborg',
-    firstName: 'Prófi',
-    fund,
-    gender: 'kk',
-    lastName: 'Prófsson',
-    middleName: 'Júnitt',
-    nationalId: nationalId,
-  }
-}
 
 const auth: AuthUser = {
   nationalId: '1326487905',

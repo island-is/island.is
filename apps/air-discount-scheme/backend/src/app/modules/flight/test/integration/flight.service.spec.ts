@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common'
 
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
-import { setup } from '../../../../../../test/setup'
+import { setup } from '@island.is/air-discount-scheme-test'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
 import { CreateFlightBody } from '../../dto'

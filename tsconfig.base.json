@@ -20,6 +20,9 @@
     "strict": true,
     "paths": {
       "*": ["libs/shared/types/src/lib/*"],
+      "@island.is/air-discount-scheme-test": [
+        "apps/air-discount-scheme/backend/test/index.ts"
+      ],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],

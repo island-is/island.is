@@ -11,29 +11,7 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { CACHE_MANAGER } from '@nestjs/common'
-import { Fund, User } from '@island.is/air-discount-scheme/types'
-
-function createTestUser(
-  postalCode: number = 600,
-  fund: Fund = {
-    credit: 6,
-    total: 6,
-    used: 0,
-  },
-  nationalId: string = '0101302399',
-): User {
-  return {
-    postalcode: postalCode,
-    address: 'Testvík 2',
-    city: 'Prufuborg',
-    firstName: 'Prófi',
-    fund: fund,
-    gender: 'kk',
-    lastName: 'Prófsson',
-    middleName: 'Júnitt',
-    nationalId: nationalId,
-  }
-}
+import { createTestUser } from '@island.is/air-discount-scheme-test'
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController

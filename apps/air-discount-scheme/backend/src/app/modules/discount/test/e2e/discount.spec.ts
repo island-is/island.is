@@ -1,4 +1,4 @@
-import { setup } from '../../../../../../test/setup'
+import { setup } from '@island.is/air-discount-scheme-test'
 import request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import {
@@ -6,6 +6,7 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/air-discount-scheme/types'
 
 let app: INestApplication
 let cacheManager: CacheManager
@@ -19,6 +20,15 @@ const user: NationalRegistryUser = {
   address: 'Bessastaðir 1',
   postalcode: 900,
   city: 'Vestmannaeyjar',
+}
+
+const discountUser: User = {
+  ...user,
+  fund: {
+    credit: 0,
+    total: 6,
+    used: 0,
+  },
 }
 
 const mockAuthGuard = new MockAuthGuard({
@@ -66,5 +76,47 @@ describe('Create DiscountCode', () => {
       },
     })
     expect(spy).toHaveBeenCalled()
+  })
+  it(`GET /api/public/discounts/:discountCode/user should return data`, async () => {
+    Date.now = () => 1640995200000 // 2022
+    const nationalId = '1326487905'
+    const spy1 = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId, user: discountUser }),
+      )
+    const spy2 = jest
+      .spyOn(nationalRegistryService, 'getUser')
+      .mockImplementation(() =>
+        Promise.resolve({
+          nationalId: '1326487905',
+          firstName: 'Jón',
+          gender: 'kk',
+          lastName: 'Jónsson',
+          middleName: 'Gunnar',
+          address: 'Bessastaðir 1',
+          postalcode: 225,
+          city: 'Álftanes',
+        }),
+      )
+    const response = await request(app.getHttpServer())
+      .get(`/api/public/discounts/12345678/user`)
+      .set('Authorization', 'Bearer ernir')
+      .expect(200)
+    spy1.mockRestore()
+    spy2.mockRestore()
+
+    expect(response.body).toEqual({
+      nationalId: '132648xxx5',
+      firstName: 'Jón',
+      gender: 'kk',
+      lastName: 'Jónsson',
+      middleName: 'Gunnar',
+      fund: {
+        credit: 0,
+        used: 0,
+        total: 6,
+      },
+    })
   })
 })
