@@ -140,7 +140,7 @@ export const RadioButton = ({
           <Box
             display="flex"
             justifyContent="flexEnd"
-            style={{ width: '-webkit-fill-available' }}
+            width='full'
           >
             <Tag outlined={tag.outlined} variant={tag.variant} disabled>
               {tag.label}
