@@ -30,6 +30,7 @@ import {
   formatRulingModifiedHistory,
   formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
 } from './formatters'
 
@@ -1121,7 +1122,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = false
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1135,47 +1135,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
-      sendRequestToDefender,
     )
 
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
-    )
-  })
-
-  test('should format defender court date notification with RVG link', () => {
-    // Arrange
-    const court = 'Héraðsdómur Norðurlands'
-    const courtCaseNumber = 'R-77/2021'
-    const courtDate = new Date('2020-12-19T10:19')
-    const courtRoom = '101'
-    const judgeName = 'Judy'
-    const registrarName = 'Robin'
-    const prosecutor = makeProsecutor()
-    const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = true
-    const overviewUrl = 'https://www.rvg.is/verjandi/case-id'
-
-    // Act
-    const res = formatDefenderCourtDateEmailNotification(
-      formatMessage,
-      court,
-      courtCaseNumber,
-      courtDate,
-      courtRoom,
-      judgeName,
-      registrarName,
-      prosecutor.name,
-      prosecutor.institution?.name,
-      sessionArrangements,
-      sendRequestToDefender,
-      overviewUrl,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).<br /><br />Þú getur nálgast gögn málsins í <a href="https://www.rvg.is/verjandi/case-id">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
   })
 
@@ -1189,7 +1153,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = true
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1203,12 +1166,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
-      sendRequestToDefender,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).<br /><br />Þú getur nálgast gögn málsins hjá Héraðsdómi Norðurlands ef þau hafa ekki þegar verið afhent.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -1301,6 +1263,34 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+})
+
+describe('formatDefenderCourtDateLinkEmailNotification', () => {
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
+  })
+
+  test('should format defender court date link notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const overviewUrl = 'https://example.com/overview'
+
+    // Act
+    const res = formatDefenderCourtDateLinkEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
   })
 })
@@ -1522,7 +1512,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const courtDate = new Date('2021-01-24T08:15')
     const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
-    const isExtension = false
+    const isExtension = true
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1538,7 +1528,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 })

@@ -45,6 +45,8 @@ import {
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
   formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -53,7 +55,6 @@ import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
-import { formatDefenderResubmittedToCourtEmailNotification } from '../../formatters/formatters'
 
 interface Recipient {
   address?: string
@@ -496,7 +497,7 @@ export class NotificationService {
 
   /* COURT_DATE notifications */
 
-  private async uploadEmailToCourt(
+  private async uploadCourtDateInvitationEmailToCourt(
     theCase: Case,
     user: User,
     subject: string,
@@ -504,8 +505,6 @@ export class NotificationService {
     recipients?: string,
   ): Promise<void> {
     try {
-      return // Temporarily stop trying to upload emails to court
-
       await this.courtService.createEmail(
         user,
         theCase.id,
@@ -519,8 +518,7 @@ export class NotificationService {
       )
     } catch (error) {
       // Tolerate failure, but log error
-      // TODO: Log as error when implemented in the court system
-      this.logger.info(
+      this.logger.error(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )
@@ -545,31 +543,30 @@ export class NotificationService {
     )
     const calendarInvite = this.createICalAttachment(theCase)
 
-    const recipient = await this.sendEmail(
+    return this.sendEmail(
       subject,
       html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
-    )
+    ).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadCourtDateInvitationEmailToCourt(
+          theCase,
+          user,
+          subject,
+          html,
+          theCase.prosecutor?.email,
+        )
+      }
 
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        subject,
-        html,
-        theCase.prosecutor?.email,
-      )
-    }
-
-    return recipient
+      return recipient
+    })
   }
 
   private async sendCourtDateEmailNotificationToPrison(
     theCase: Case,
-    user: User,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonCourtDateEmail.subject,
@@ -599,32 +596,20 @@ export class NotificationService {
       theCase.sessionArrangements,
     )
 
-    const recipient = await this.sendEmail(
+    return this.sendEmail(
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
       environment.notifications.prisonEmail,
     )
-
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        subject,
-        html,
-        environment.notifications.prisonEmail,
-      )
-    }
-
-    return recipient
   }
 
-  private async sendCourtDateEmailNotificationToDefender(
+  private sendCourtDateEmailNotificationToDefender(
     theCase: Case,
     user: User,
-  ): Promise<Recipient> {
+  ): Promise<Recipient>[] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
+    const linkSubject = `Gögn í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
@@ -636,33 +621,50 @@ export class NotificationService {
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
       theCase.sessionArrangements,
-      theCase.sendRequestToDefender,
+    )
+    const linkHtml = formatDefenderCourtDateLinkEmailNotification(
+      this.formatMessage,
       theCase.defenderNationalId &&
         `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
+      theCase.courtCaseNumber,
     )
     const calendarInvite = this.createICalAttachment(theCase)
-    const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
-    const recipient = await this.sendEmail(
-      subject,
-      html,
-      theCase.defenderName,
-      theCase.defenderEmail,
-      attachments,
-    )
-
-    if (recipient.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
+    const promises = [
+      this.sendEmail(
         subject,
         html,
+        theCase.defenderName,
         theCase.defenderEmail,
+        calendarInvite ? [calendarInvite] : undefined,
+      ).then((recipient) => {
+        if (recipient.success) {
+          // No need to wait
+          this.uploadCourtDateInvitationEmailToCourt(
+            theCase,
+            user,
+            subject,
+            html,
+            theCase.defenderEmail,
+          )
+        }
+        return recipient
+      }),
+    ]
+
+    if (theCase.sendRequestToDefender) {
+      promises.push(
+        this.sendEmail(
+          linkSubject,
+          linkHtml,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
       )
     }
 
-    return recipient
+    return promises
   }
 
   private async sendCourtDateNotifications(
@@ -688,7 +690,7 @@ export class NotificationService {
       theCase.defenderEmail
     ) {
       promises.push(
-        this.sendCourtDateEmailNotificationToDefender(theCase, user),
+        ...this.sendCourtDateEmailNotificationToDefender(theCase, user),
       )
     }
 
@@ -696,7 +698,7 @@ export class NotificationService {
       theCase.type === CaseType.CUSTODY ||
       theCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
-      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase, user))
+      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
     const recipients = await Promise.all(promises)

@@ -82,6 +82,7 @@ export const ApplicationQuery = gql`
         year
         userType
       }
+      navSuccess
     }
   }
 `
@@ -240,6 +241,7 @@ export const ApplicationEventMutation = gql`
         year
         userType
       }
+      navSuccess
     }
   }
 `
@@ -347,6 +349,7 @@ export const UpdateApplicationMutation = gql`
           amount
         }
       }
+      navSuccess
     }
   }
 `
@@ -414,6 +417,10 @@ export const UpdateMunicipalityMutation = gql`
       municipalityId
       email
       rulesHomepage
+      usingNav
+      navUrl
+      navUsername
+      navPassword
       individualAid {
         ownPlace
         registeredRenting

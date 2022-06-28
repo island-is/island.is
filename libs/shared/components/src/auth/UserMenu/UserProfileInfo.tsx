@@ -14,19 +14,11 @@ export const UserProfileInfo = ({ onClick }: UserProfileInfoProps) => {
   const baseUrl = `${origin}/minarsidur/stillingar`
 
   return (
-    <Box paddingY={2}>
-      <Box marginBottom={1}>
-        <Text variant="small">{formatMessage(m.settings)}</Text>
-      </Box>
-
-      <Box>
-        <UserDropdownItem
-          text={formatMessage(m.personalInformation)}
-          link={`${baseUrl}/minar-stillingar`}
-          icon={{ type: 'outline', icon: 'person' }}
-          onClick={() => onClick()}
-        />
-      </Box>
-    </Box>
+    <UserDropdownItem
+      text={formatMessage(m.personalInformation)}
+      link={`${baseUrl}/minar-stillingar`}
+      icon={{ type: 'outline', icon: 'settings' }}
+      onClick={() => onClick()}
+    />
   )
 }
