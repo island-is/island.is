@@ -40,9 +40,12 @@ import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import addMonths from 'date-fns/addMonths'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
+import FilterTag from '../../components/FilterTag/FilterTag'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -85,24 +88,6 @@ type GroupsValue = {
   label: string
 }
 
-type FilterCategory = {
-  /** Id for the category. */
-  id: string
-  /** The category label to display on screen. */
-  label: string
-  /** The array of currently selected active filters. */
-  selected: Array<string>
-  /** Array of available filters in this category. */
-  filters: {
-    value: string
-    label: string
-  }[]
-  /** Display checkboxes inline */
-  inline?: boolean
-  /** Allow only one option at a time */
-  singleOption?: boolean
-}
-
 const getFilteredDocuments = (
   documents: Document[],
   filterValues: FilterValues,
@@ -115,24 +100,24 @@ const getFilteredDocuments = (
     activeCategories,
     activeGroups,
   } = filterValues
-  let filteredDocuments = documents.filter((document) => {
+  let filteredDocuments = documents.filter((doc) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || addMonths(new Date(), 3)
-    return isWithinInterval(new Date(document.date), {
+    return isWithinInterval(new Date(doc.date), {
       start: isBefore(maxDate, minDate) ? maxDate : minDate,
       end: isAfter(minDate, maxDate) ? minDate : maxDate,
     })
   })
 
   if (activeCategories && activeCategories.length > 0) {
-    filteredDocuments = filteredDocuments.filter((document) =>
-      activeCategories.includes(document.senderNatReg),
+    filteredDocuments = filteredDocuments.filter((doc) =>
+      activeCategories.includes(doc.senderNatReg),
     )
   }
 
   if (activeGroups && activeGroups.length > 0) {
-    filteredDocuments = filteredDocuments.filter((document) =>
-      activeGroups.includes(document?.categoryId || 'NO_ID'),
+    filteredDocuments = filteredDocuments.filter((doc) =>
+      activeGroups.includes(doc?.categoryId || 'NO_ID'),
     )
   }
 
@@ -234,19 +219,25 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(filteredDocuments.length / pageSize),
   }
-  const handleDateFromInput = useCallback((value: Date) => {
+  const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => {
       const { dateTo } = oldState
+      const dateToValue = () => {
+        if (!value) {
+          return dateTo
+        }
+        return dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo
+      }
       return {
         ...oldState,
-        dateTo: dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo,
+        dateTo: dateToValue(),
         dateFrom: value,
       }
     })
   }, [])
 
-  const handleDateToInput = useCallback((value: Date) => {
+  const handleDateToInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => ({
       ...oldState,
@@ -289,15 +280,28 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
-  const handleShowUnread = useCallback((eh) => {
+  const handleShowUnread = useCallback((showUnread: boolean) => {
     setPage(1)
     setFilterValue((prevFilter) => ({
       ...prevFilter,
-      showUnread: eh.target.checked,
+      showUnread,
     }))
   }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
+
+  const getCategoryTitle = (id: string) => {
+    const category = categories?.find((item) => item.value === id)
+    return category?.label || ''
+  }
+
+  const getGroupTitle = (id: string) => {
+    if (groupsAvailable === NO_GROUPS_AVAILABLE) {
+      return ''
+    }
+    const group = groupsAvailable?.find((item) => item.value === id)
+    return group?.label || ''
+  }
 
   const documentsFoundText = () =>
     filteredDocuments.length === 1 ||
@@ -323,11 +327,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           <Filter
             resultCount={0}
             variant="popover"
-            align="right"
-            labelClear={formatMessage(messages.clearFilter)}
-            labelClearAll={formatMessage(messages.clearAllFilters)}
-            labelOpen={formatMessage(messages.openFilter)}
-            labelClose={formatMessage(messages.closeFilter)}
+            align="left"
+            reverse
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -351,7 +356,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   id="show-unread"
                   label={formatMessage(messages.onlyShowUnread)}
                   checked={filterValue.showUnread}
-                  onChange={handleShowUnread}
+                  onChange={(e) => handleShowUnread(e.target.checked)}
                 />
               </Box>
               <Box
@@ -361,7 +366,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear={formatMessage(messages.clearSelected)}
+              labelClear={formatMessage(m.clearSelected)}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -385,28 +390,26 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   }))
                 }
               }}
-              categories={
-                [
-                  {
-                    id: 'institution',
-                    label: formatMessage(messages.institutionLabel),
-                    selected: [...filterValue.activeCategories],
-                    filters: categories,
-                    inline: false,
-                    singleOption: false,
-                  },
-                  {
-                    id: 'group',
-                    label: formatMessage(messages.groupLabel),
-                    selected: [...filterValue.activeGroups],
-                    filters: Array.isArray(groupsAvailable)
-                      ? groupsAvailable
-                      : [],
-                    inline: false,
-                    singleOption: false,
-                  },
-                ] as FilterCategory[]
-              }
+              categories={[
+                {
+                  id: 'institution',
+                  label: formatMessage(messages.institutionLabel),
+                  selected: [...filterValue.activeCategories],
+                  filters: categories,
+                  inline: false,
+                  singleOption: false,
+                },
+                {
+                  id: 'group',
+                  label: formatMessage(messages.groupLabel),
+                  selected: [...filterValue.activeGroups],
+                  filters: Array.isArray(groupsAvailable)
+                    ? groupsAvailable
+                    : [],
+                  inline: false,
+                  singleOption: false,
+                },
+              ]}
             ></FilterMultiChoice>
             <Box className={styles.dateFilter} paddingX={3}>
               <Box
@@ -423,15 +426,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <AccordionItem
                     key="date-accordion-item"
                     id="date-accordion-item"
-                    label={formatMessage(messages.datesLabel)}
+                    label={formatMessage(m.datesLabel)}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
                   >
                     <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage(messages.datepickerFromLabel)}
-                        placeholderText={formatMessage(messages.datepickLabel)}
+                        label={formatMessage(m.datepickerFromLabel)}
+                        placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
@@ -440,10 +443,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                       <Box marginTop={3}>
                         <DatePicker
-                          label={formatMessage(messages.datepickerToLabel)}
-                          placeholderText={formatMessage(
-                            messages.datepickLabel,
-                          )}
+                          label={formatMessage(m.datepickerToLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
                           locale="is"
                           backgroundColor="blue"
                           size="xs"
@@ -466,19 +467,78 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   alignItems="center"
                   justifyContent="spaceBetween"
                 >
-                  <Text variant="h5" as="h3">{`${
+                  <Box display="flex">
+                    <Box display="flex">
+                      {filterValue.activeCategories.length > 0 &&
+                        filterValue.activeCategories.map((activecat) => (
+                          <FilterTag
+                            onClick={() =>
+                              handleCategoriesChange(
+                                filterValue.activeCategories.filter(
+                                  (item) => item !== activecat,
+                                ),
+                              )
+                            }
+                            key={`cat-${activecat}`}
+                            title={getCategoryTitle(activecat)}
+                          />
+                        ))}
+                      {filterValue.activeGroups.length > 0 &&
+                        filterValue.activeGroups.map((activeGroup) => (
+                          <FilterTag
+                            onClick={() =>
+                              handleGroupChange(
+                                filterValue.activeGroups.filter(
+                                  (item) => item !== activeGroup,
+                                ),
+                              )
+                            }
+                            key={`group-${activeGroup}`}
+                            title={getGroupTitle(activeGroup)}
+                          />
+                        ))}
+                      {filterValue.dateFrom && (
+                        <FilterTag
+                          onClick={() => handleDateFromInput(null)}
+                          title={`${formatMessage(
+                            m.datepickerFromLabel,
+                          )} - ${format(filterValue.dateFrom, dateFormat.is)}`}
+                        />
+                      )}
+                      {filterValue.dateTo && (
+                        <FilterTag
+                          onClick={() => handleDateToInput(null)}
+                          title={`${formatMessage(
+                            m.datepickerToLabel,
+                          )} - ${format(filterValue.dateTo, dateFormat.is)}`}
+                        />
+                      )}
+                      {filterValue.showUnread && (
+                        <FilterTag
+                          onClick={() => handleShowUnread(false)}
+                          title={formatMessage(messages.onlyShowUnreadShort)}
+                        />
+                      )}
+                    </Box>
+                    <Box marginLeft={1}>
+                      <Button
+                        icon="reload"
+                        size="small"
+                        variant="text"
+                        onClick={handleClearFilters}
+                      >
+                        {formatMessage(m.clearFilter)}
+                      </Button>
+                    </Box>
+                  </Box>
+                  <Text variant="eyebrow" as="h3">{`${
                     filteredDocuments.length
                   } ${formatMessage(documentsFoundText())}`}</Text>
-                  <div>
-                    <Button variant="text" onClick={handleClearFilters}>
-                      {formatMessage(messages.clearAllFilters)}
-                    </Button>
-                  </div>
                 </Box>
               </Box>
             )}
           </Hidden>
-          <Box marginTop={[0, 4]}>
+          <Box marginTop={[0, 3]}>
             <Hidden below="sm">
               <Box
                 className={styles.tableHeading}
@@ -501,7 +561,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                     </Box>
                   </GridColumn>
-                  <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
+                  <GridColumn span={['1/1', '4/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
                         active={sortState?.key === 'subject'}
@@ -516,7 +576,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                     </Box>
                   </GridColumn>
-                  <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
+                  <GridColumn span={['1/1', '3/12']}>
+                    <Box paddingX={2}>
+                      <HeaderArrow
+                        active={sortState?.key === 'senderName'}
+                        direction={sortState?.direction}
+                        title={formatMessage(messages.tableHeaderGroup)}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'senderName',
+                          })
+                        }
+                      />
+                    </Box>
+                  </GridColumn>
+                  <GridColumn span={['1/1', '3/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
                         active={sortState?.key === 'senderName'}
@@ -556,14 +631,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             <Box marginTop={[2, 0]}>
               {filteredDocuments
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
-                .map((document, index) => (
-                  <Box key={document.id} ref={index === 0 ? scrollToRef : null}>
+                .map((doc, index) => (
+                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
                     <DocumentLine
                       img={getOrganizationLogoUrl(
-                        document.senderName,
+                        doc.senderName,
                         organizations,
                       )}
-                      documentLine={document}
+                      documentLine={doc}
+                      documentCategories={
+                        groupData?.getDocumentCategories ?? []
+                      }
                     />
                   </Box>
                 ))}

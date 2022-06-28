@@ -51,7 +51,7 @@ export const NoDataScreen: FC<Props> = ({
           <Text variant="h1" as="h1" marginBottom={3}>
             {title}
           </Text>
-          <Text variant="default" as="p">
+          <Text variant="default" as="div">
             {children}
           </Text>
           {button && (
