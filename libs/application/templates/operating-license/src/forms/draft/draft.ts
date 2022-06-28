@@ -17,6 +17,7 @@ import {
   buildKeyValueField,
   buildCheckboxField,
   buildSubSection,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
@@ -28,6 +29,7 @@ import {
   HotelTypes,
   Operation,
   OPERATION_CATEGORY,
+  UPLOAD_ACCEPT,
 } from '../../lib/constants'
 import { DefaultEvents, Answer } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
@@ -83,6 +85,32 @@ export const Draft: Form = buildForm({
         subSectionPropertyRepeater,
         subSectionOpeningHours,
         subSectionOtherInfo,
+      ],
+    }),
+    buildSection({
+      id: 'attachmentsScreen',
+      title: m.attachments,
+      children: [
+        buildMultiField({
+          id: 'attachmentsScreen',
+          title: m.attachments,
+          description: m.attachmentsDescription,
+          children: [
+            buildCustomField({
+              id: 'bullets',
+              title: '',
+              component: 'Bullets',
+            }),
+            buildFileUploadField({
+              id: 'attachments',
+              title: '',
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadButtonLabel: m.uploadButtonLabel,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({

@@ -6,7 +6,7 @@ import {
   buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
+import { NO, YES } from '../../lib/constants'
 
 export const subSectionOtherInfo = buildSubSection({
   id: 'otherInfo',
@@ -21,16 +21,19 @@ export const subSectionOtherInfo = buildSubSection({
           id: 'temporaryLicense',
           title: m.temporaryLicenseTitle,
           options: [{ value: YES, label: m.temporaryLicenseCheck }],
+          defaultValue: [NO],
         }),
         buildCheckboxField({
           id: 'debtClaim',
           title: m.debtClaimTitle,
           options: [{ value: YES, label: m.debtClaimCheck }],
+          defaultValue: [NO],
         }),
         buildTextField({
           id: 'otherInfoText',
           title: 'Annað',
           variant: 'textarea',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

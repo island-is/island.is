@@ -117,6 +117,7 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Some description',
   },
+  // Operation info screen
   operationInfoTitle: {
     id: 'ol.application:info.operationInfoTitle',
     defaultMessage: 'Rekstrarstaður',
@@ -152,6 +153,7 @@ export const m = defineMessages({
     defaultMessage: 'Virðisaukaskattsnúmer',
     description: 'Some description',
   },
+  // Property screen
   propertyInfoTitle: {
     id: 'ol.application:propertyInfo.title',
     defaultMessage: 'Hámarksfjöldi gesta',
@@ -192,6 +194,7 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við rými',
     description: 'Add property',
   },
+  // Opening Hours screen
   openingHoursTitle: {
     id: 'ol.application:openingHours.title',
     defaultMessage: 'Afgreiðslutímar',
@@ -232,6 +235,7 @@ export const m = defineMessages({
     defaultMessage: 'Já, sótt er um útiveitingaleyfi',
     description: 'Some description',
   },
+  // Other info screen
   otherInfoTitle: {
     id: 'ol.application:otherInfo.title',
     defaultMessage: 'Aðrar upplýsingar',
@@ -259,6 +263,54 @@ export const m = defineMessages({
       'Ég lýsi því yfir sem umsækjandi að skuldastaða mín vegna skatta, opinberra gjalda eða iðgjalda í lífeyrissjóð nemur samanlegt ekki hærri fjárhæð en 1.000.000 kr.',
     description: 'Some description',
   },
+  // Attachments screen
+  attachments: {
+    id: 'ol.application:attachments.title',
+    defaultMessage: 'Fylgiskjöl',
+    description: 'Some description',
+  },
+  attachmentsDescription: {
+    id: 'ol.application:attachments.description',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp eftirtalin fylgiskjöl til að klára umsóknarferlið',
+    description: 'Some description',
+  },
+  attachmentsBulletOne: {
+    id: 'ol.application:attachments.bulletOne',
+    defaultMessage: 'Starfsleyfi heilbrigðisnefndar',
+    description: 'Some description',
+  },
+  attachmentsBulletTwo: {
+    id: 'ol.application:attachments.bulletTwo',
+    defaultMessage: 'Staðsetning fyrri leyfishafa',
+    description: 'Some description',
+  },
+  attachmentsBulletThree: {
+    id: 'ol.application:attachments.bulletThree',
+    defaultMessage: 'Nákvæm teikning af húsnæði',
+    description: 'Some description',
+  },
+  attachmentsBulletFour: {
+    id: 'ol.application:attachments.bulletFour',
+    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    description: 'Some description',
+  },
+  uploadHeader: {
+    id: 'ol.application:attachments.uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Some description',
+  },
+  uploadDescription: {
+    id: 'ol.application:attachments.uploadDescription',
+    defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+    description: 'Some description',
+  },
+  uploadButtonLabel: {
+    id: 'ol.application:attachments.uploadButtonLabel',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Some description',
+  },
+  // Overview screen
   overview: {
     id: 'ol.application:overview.title',
     defaultMessage: 'Yfirlit',

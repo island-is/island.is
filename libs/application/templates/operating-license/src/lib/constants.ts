@@ -78,7 +78,14 @@ export enum OPERATION_CATEGORY {
 
 export type Operation = {
   operation: APPLICATION_TYPES
-  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+  hotel: {
+    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+    type: string
+  }
+  resturant: {
+    category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+    type: string
+  }
 }
 
 export type OpeningHour = {
@@ -97,3 +104,5 @@ export type OpeningHours = {
     holidays: OpeningHour
   }
 }
+
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'

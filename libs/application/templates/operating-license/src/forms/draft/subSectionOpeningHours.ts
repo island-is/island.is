@@ -3,14 +3,13 @@ import {
   buildMultiField,
   buildSubSection,
   buildTextField,
+  buildKeyValueField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
-  buildKeyValueField,
-  buildCheckboxField,
-} from '../../../../../core/src/lib/fieldBuilders'
-import {
   APPLICATION_TYPES,
+  NO,
   OpeningHours,
   Operation,
   OPERATION_CATEGORY,
@@ -24,7 +23,7 @@ export const subSectionOpeningHours = buildSubSection({
   condition: (answers) =>
     (answers.applicationInfo as Operation)?.operation ===
       APPLICATION_TYPES.RESTURANT ||
-    (answers.applicationInfo as Operation)?.category?.includes(
+    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
       OPERATION_CATEGORY.TWO,
     ) ||
     false,
@@ -57,14 +56,14 @@ export const subSectionOpeningHours = buildSubSection({
           value: m.holidays,
         }),
         buildTextField({
-          id: 'openingHours.alcohol.holidays.from',
+          id: 'openingHours.alcohol.weekends.from',
           title: m.from,
           width: 'half',
           format: '##:##',
           placeholder: '00:00',
         }),
         buildTextField({
-          id: 'openingHours.alcohol.holidays.to',
+          id: 'openingHours.alcohol.weekends.to',
           title: m.to,
           width: 'half',
           format: '##:##',
@@ -74,6 +73,7 @@ export const subSectionOpeningHours = buildSubSection({
           id: 'openingHours.willServe',
           title: m.openingHoursOutside,
           options: [{ value: YES, label: m.openingHoursOutsideCheck }],
+          defaultValue: [NO],
         }),
         buildKeyValueField({
           label: '',
@@ -106,7 +106,7 @@ export const subSectionOpeningHours = buildSubSection({
             hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
         }),
         buildTextField({
-          id: 'openingHours.outside.holidays.from',
+          id: 'openingHours.outside.weekends.from',
           title: m.from,
           width: 'half',
           format: '##:##',
@@ -115,7 +115,7 @@ export const subSectionOpeningHours = buildSubSection({
             hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
         }),
         buildTextField({
-          id: 'openingHours.outside.holidays.to',
+          id: 'openingHours.outside.weekends.to',
           title: m.to,
           width: 'half',
           format: '##:##',
