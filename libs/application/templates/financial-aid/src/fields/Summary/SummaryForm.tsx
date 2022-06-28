@@ -8,6 +8,7 @@ import {
   aidCalculator,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
+import { useLocale } from '@island.is/localization'
 
 import * as m from '../../lib/messages'
 import {
@@ -38,6 +39,8 @@ const SummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
+
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
@@ -80,7 +83,7 @@ const SummaryForm = ({
 
         <Text variant="small">
           {formatMessage(m.summaryForm.general.descriptionSubtitle, {
-            nextMonth: getNextPeriod.month,
+            nextMonth: getNextPeriod(lang).month,
           })}
         </Text>
       </Box>

@@ -15,7 +15,13 @@ export const financeModule: ServicePortalModule = {
       {
         name: m.finance,
         path: ServicePortalPath.FinanceRoot,
-        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+        enabled: [
+          ApiScope.financeOverview,
+          ApiScope.financeSalary,
+          // The finance schedule module is nested under the Finance Root menu item,
+          // but it is a separate module: libs/service-portal/finance-schedule
+          ApiScope.financeSchedule,
+        ].some((scope) => userInfo.scopes.includes(scope)),
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
