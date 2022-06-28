@@ -22,7 +22,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
     shouldIncludeIsatNumber,
   } = field
   const { formatMessage } = useLocale()
-  const searchField = getValueViaPath(application.answers, 'selectCompany', {
+  const searchField = getValueViaPath(application.answers, id, {
     nationalId: '',
     label: '',
   })
