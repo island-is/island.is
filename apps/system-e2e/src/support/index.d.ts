@@ -33,7 +33,7 @@ declare namespace Cypress {
      * Custom command to log in using cognito and island.is SSO
      * @example cy.login()
      */
-    idsLogin({ phoneNumber: string }): Chainable<void>
+    idsLogin({ phoneNumber: string, url: string }): Chainable<void>
     cognitoLogin(): Chainable<void>
     patchSameSiteCookie(interceptUrl: string): void
   }
