@@ -102,7 +102,7 @@ export const createTestingCaseModule = async () => {
       if (typeof token === 'function') {
         return mock()
       }
-  })
+    })
     .overrideProvider(LOGGER_PROVIDER)
     .useValue({
       debug: jest.fn(),
