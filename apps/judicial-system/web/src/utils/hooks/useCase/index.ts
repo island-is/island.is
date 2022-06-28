@@ -13,6 +13,8 @@ import type {
   SessionArrangements,
   CreateCase,
   CaseCustodyRestrictions,
+  Institution,
+  User,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -26,14 +28,44 @@ import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
+type ChildKeys = Pick<
+  UpdateCase,
+  | 'courtId'
+  | 'prosecutorId'
+  | 'sharedWithProsecutorsOfficeId'
+  | 'registrarId'
+  | 'judgeId'
+>
+
+function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
+  return [
+    'courtId',
+    'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
+    'registrarId',
+    'judgeId',
+  ].includes(key)
+}
+
+const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
+  courtId: 'court',
+  prosecutorId: 'prosecutor',
+  sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
+  registrarId: 'registrar',
+  judgeId: 'judge',
+}
+
 export type autofillEntry = {
-  key: keyof Case
+  key: keyof UpdateCase
   value?:
     | string
     | boolean
     | SessionArrangements
     | CaseCustodyRestrictions[]
     | Date
+    | Institution
+    | User
+    | null
   force?: boolean
 }
 
@@ -313,16 +345,22 @@ const useCase = () => {
     const validEntries = entries.filter(
       (item) =>
         item.value !== undefined &&
-        item.value !== null &&
         (item.force ||
-          workingCase[item.key] === undefined ||
-          workingCase[item.key] === null),
+          (isChildKey(item.key)
+            ? workingCase[childof[item.key]] === undefined ||
+              workingCase[childof[item.key]] === null
+            : workingCase[item.key] === undefined ||
+              workingCase[item.key] === null)),
     )
 
-    const flatEntries = Object.assign(
+    if (validEntries.length === 0) {
+      return
+    }
+
+    const setEntries = Object.assign(
       {},
       ...validEntries.map((entry) => ({
-        [entry.key]:
+        [isChildKey(entry.key) ? childof[entry.key] : entry.key]:
           // Ensure dates are saved on a correct format
           entry.value instanceof Date
             ? formatISO(entry.value, {
@@ -332,15 +370,25 @@ const useCase = () => {
       })),
     )
 
-    if (Object.keys(flatEntries).length === 0) {
-      return
-    }
-
     if (setWorkingCase) {
-      setWorkingCase({ ...workingCase, ...flatEntries })
+      setWorkingCase({ ...workingCase, ...setEntries })
     }
 
-    updateCase(workingCase.id, flatEntries)
+    const updateEntries = Object.assign(
+      {},
+      ...validEntries.map((entry) => ({
+        [entry.key]: isChildKey(entry.key)
+          ? (entry.value as Institution | User)?.id ?? null
+          : // Ensure dates are saved on a correct format
+          entry.value instanceof Date
+          ? formatISO(entry.value, {
+              representation: 'complete',
+            })
+          : entry.value,
+      })),
+    )
+
+    updateCase(workingCase.id, updateEntries)
   }
 
   return {

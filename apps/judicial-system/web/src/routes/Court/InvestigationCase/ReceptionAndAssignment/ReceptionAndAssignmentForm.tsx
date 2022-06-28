@@ -11,6 +11,9 @@ import { icReceptionAndAssignment as m } from '@island.is/judicial-system-web/me
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 
+type JudgeSelectOption = ReactSelectOption & { judge: User }
+type RegistrarSelectOption = ReactSelectOption & { registrar: User }
+
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
@@ -47,7 +50,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
         user.institution?.id === workingCase?.court?.id,
     )
     .map((judge: User) => {
-      return { label: judge.name, value: judge.id }
+      return { label: judge.name, value: judge.id, judge }
     })
 
   const registrars = (users ?? [])
@@ -57,7 +60,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
         user.institution?.id === workingCase?.court?.id,
     )
     .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id }
+      return { label: registrar.name, value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
@@ -68,23 +71,18 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
 
-  const setJudge = (id: string) => {
+  const setJudge = (judge: User) => {
     if (workingCase) {
-      autofill([{ key: 'judgeId', value: id, force: true }], workingCase)
-
-      const judge = users?.find((j) => j.id === id)
-
-      setWorkingCase({ ...workingCase, judge: judge })
+      autofill([{ key: 'judgeId', value: judge, force: true }], workingCase)
     }
   }
 
-  const setRegistrar = (id?: string) => {
+  const setRegistrar = (registrar?: User) => {
     if (workingCase) {
-      autofill([{ key: 'registrarId', value: id, force: true }], workingCase)
-
-      const registrar = users?.find((r) => r.id === id)
-
-      setWorkingCase({ ...workingCase, registrar })
+      autofill(
+        [{ key: 'registrarId', value: registrar ?? null, force: true }],
+        workingCase,
+      )
     }
   }
 
@@ -122,7 +120,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
           value={defaultJudge}
           options={judges}
           onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-            setJudge((selectedOption as ReactSelectOption).value.toString())
+            setJudge((selectedOption as JudgeSelectOption).judge)
           }
           required
         />
@@ -142,9 +140,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
           options={registrars}
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             if (selectedOption) {
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+              setRegistrar((selectedOption as RegistrarSelectOption).registrar)
             } else {
               setRegistrar(undefined)
             }

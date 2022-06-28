@@ -1,19 +1,18 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
   CaseState,
   CaseTransition,
+  Institution,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
   ProsecutorSubsections,
   Sections,
-  ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
@@ -61,7 +60,7 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
+  const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
   const [
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
@@ -84,17 +83,13 @@ export const HearingArrangements: React.FC = () => {
 
   const { courts, loading: institutionLoading } = useInstitution()
 
-  const prosecutors = userData?.users
-    .filter(
-      (aUser: User) =>
-        aUser.role === UserRole.PROSECUTOR &&
-        (!workingCase?.creatingProsecutor ||
-          aUser.institution?.id ===
-            workingCase?.creatingProsecutor?.institution?.id),
-    )
-    .map((prosecutor: User, _: number) => {
-      return { label: prosecutor.name, value: prosecutor.id }
-    })
+  const prosecutors = userData?.users.filter(
+    (aUser: User) =>
+      aUser.role === UserRole.PROSECUTOR &&
+      (!workingCase?.creatingProsecutor ||
+        aUser.institution?.id ===
+          workingCase?.creatingProsecutor?.institution?.id),
+  )
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -124,13 +119,13 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const setProsecutor = async (prosecutorId: string) => {
+  const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
       return autofill(
         [
           {
             key: 'prosecutorId',
-            value: prosecutorId,
+            value: prosecutor,
             force: true,
           },
         ],
@@ -140,13 +135,13 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const handleCourtChange = (courtId: string) => {
+  const handleCourtChange = (court: Institution) => {
     if (workingCase) {
       autofill(
         [
           {
             key: 'courtId',
-            value: courtId,
+            value: court,
             force: true,
           },
         ],
@@ -160,25 +155,24 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
-  const handleProsecutorChange = (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    if (!workingCase) return false
+  const handleProsecutorChange = (prosecutor: User) => {
+    if (!workingCase) {
+      return false
+    }
 
-    const option = selectedOption as ReactSelectOption
     const isRemovingCaseAccessFromSelf =
       user?.id !== workingCase.creatingProsecutor?.id
 
     if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
-      setSubstituteProsecutorId(option.value.toString())
+      setSubstituteProsecutor(prosecutor)
       setIsProsecutorAccessModalVisible(true)
 
       return false
-    } else {
-      setProsecutor(option.value.toString())
-
-      return true
     }
+
+    setProsecutor(prosecutor)
+
+    return true
   }
 
   return (
@@ -228,9 +222,7 @@ export const HearingArrangements: React.FC = () => {
                   )}
                   disabled={
                     user?.id !== workingCase.creatingProsecutor?.id &&
-                    user?.id !==
-                      (((workingCase as unknown) as { prosecutorId: string })
-                        .prosecutorId ?? workingCase.prosecutor?.id)
+                    user?.id !== workingCase.prosecutor?.id
                   }
                   checked={workingCase.isHeightenedSecurityLevel}
                   onChange={(event) =>
@@ -388,8 +380,8 @@ export const HearingArrangements: React.FC = () => {
                   .secondaryButtonText,
               )}
               handlePrimaryButtonClick={async () => {
-                if (substituteProsecutorId) {
-                  await setProsecutor(substituteProsecutorId)
+                if (substituteProsecutor) {
+                  await setProsecutor(substituteProsecutor)
                   router.push(constants.CASE_LIST_ROUTE)
                 }
               }}

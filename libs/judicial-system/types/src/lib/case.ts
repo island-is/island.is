@@ -179,11 +179,6 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
-  courtId?: string
-  prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string
-  registrarId?: string
-  judgeId?: string
 }
 
 export type CreateCase = Pick<
@@ -200,23 +195,74 @@ export type CreateCase = Pick<
 >
 
 export interface UpdateCase
-  extends Omit<
+  extends Pick<
     Case,
-    | 'id'
-    | 'type'
-    | 'created'
-    | 'modified'
-    | 'origin'
-    | 'state'
-    | 'policeCaseNumber'
+    | 'description'
+    | 'defenderName'
+    | 'defenderNationalId'
+    | 'defenderEmail'
+    | 'defenderPhoneNumber'
+    | 'sendRequestToDefender'
+    | 'defenderIsSpokesperson'
+    | 'isHeightenedSecurityLevel'
+    | 'leadInvestigator'
+    | 'arrestDate'
+    | 'requestedCourtDate'
+    | 'translator'
+    | 'requestedValidToDate'
+    | 'demands'
+    | 'lawsBroken'
+    | 'legalBasis'
+    | 'legalProvisions'
+    | 'requestedCustodyRestrictions'
+    | 'requestedOtherRestrictions'
+    | 'caseFacts'
+    | 'legalArguments'
+    | 'requestProsecutorOnlySession'
+    | 'prosecutorOnlySessionRequest'
+    | 'comments'
+    | 'caseFilesComments'
+    | 'courtCaseNumber'
+    | 'sessionArrangements'
+    | 'courtDate'
+    | 'courtLocation'
+    | 'courtRoom'
+    | 'courtStartDate'
+    | 'courtEndTime'
+    | 'isClosedCourtHidden'
+    | 'courtAttendees'
+    | 'prosecutorDemands'
+    | 'courtDocuments'
+    | 'sessionBookings'
+    | 'courtCaseFacts'
+    | 'introduction'
+    | 'courtLegalArguments'
+    | 'ruling'
+    | 'decision'
+    | 'validToDate'
+    | 'isCustodyIsolation'
+    | 'isolationToDate'
+    | 'conclusion'
+    | 'endOfSessionBookings'
+    | 'accusedAppealDecision'
+    | 'accusedAppealAnnouncement'
+    | 'prosecutorAppealDecision'
+    | 'prosecutorAppealAnnouncement'
+    | 'accusedPostponedAppealDate'
+    | 'prosecutorPostponedAppealDate'
+    | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
+    | 'caseResentExplanation'
+    | 'seenByDefender'
   > {
-  id?: string
   type?: CaseType
-  created?: string
-  modified?: string
-  origin?: CaseOrigin
   state?: CaseState
   policeCaseNumber?: string
+  courtId?: string
+  prosecutorId?: string
+  sharedWithProsecutorsOfficeId?: string
+  registrarId?: string
+  judgeId?: string
 }
 
 export interface TransitionCase {

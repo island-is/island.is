@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 
 import {
@@ -14,12 +13,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   ProsecutorSubsections,
-  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
   CaseState,
   CaseTransition,
+  Institution,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -75,7 +74,7 @@ const HearingArrangements = () => {
     errorPolicy: 'all',
   })
 
-  const [prosecutors, setProsecutors] = useState<ReactSelectOption[]>()
+  const [prosecutors, setProsecutors] = useState<User[]>()
   const [
     isNotificationModalVisible,
     setIsNotificationModalVisible,
@@ -84,22 +83,18 @@ const HearingArrangements = () => {
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
+  const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
 
   useEffect(() => {
     if (userData?.users && workingCase) {
       setProsecutors(
-        userData.users
-          .filter(
-            (aUser: User) =>
-              aUser.role === UserRole.PROSECUTOR &&
-              (!workingCase.creatingProsecutor ||
-                aUser.institution?.id ===
-                  workingCase.creatingProsecutor?.institution?.id),
-          )
-          .map((prosecutor: User) => {
-            return { label: prosecutor.name, value: prosecutor.id }
-          }),
+        userData.users.filter(
+          (aUser: User) =>
+            aUser.role === UserRole.PROSECUTOR &&
+            (!workingCase.creatingProsecutor ||
+              aUser.institution?.id ===
+                workingCase.creatingProsecutor?.institution?.id),
+        ),
       )
     }
   }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
@@ -132,13 +127,13 @@ const HearingArrangements = () => {
     }
   }
 
-  const setProsecutor = async (prosecutorId: string) => {
+  const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
       return autofill(
         [
           {
             key: 'prosecutorId',
-            value: prosecutorId,
+            value: prosecutor,
             force: true,
           },
         ],
@@ -148,13 +143,13 @@ const HearingArrangements = () => {
     }
   }
 
-  const handleCourtChange = (courtId: string) => {
+  const handleCourtChange = (court: Institution) => {
     if (workingCase) {
       autofill(
         [
           {
             key: 'courtId',
-            value: courtId,
+            value: court,
             force: true,
           },
         ],
@@ -168,30 +163,24 @@ const HearingArrangements = () => {
     return false
   }
 
-  const handleProsecutorChange = (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    if (workingCase) {
-      const option = selectedOption as ReactSelectOption
-      const isRemovingCaseAccessFromSelf =
-        user?.id !== workingCase.creatingProsecutor?.id
-
-      if (
-        workingCase.isHeightenedSecurityLevel &&
-        isRemovingCaseAccessFromSelf
-      ) {
-        setSubstituteProsecutorId(option.value.toString())
-        setIsProsecutorAccessModalVisible(true)
-
-        return false
-      } else {
-        setProsecutor(option.value.toString())
-
-        return true
-      }
+  const handleProsecutorChange = (prosecutor: User) => {
+    if (!workingCase) {
+      return false
     }
 
-    return false
+    const isRemovingCaseAccessFromSelf =
+      user?.id !== workingCase.creatingProsecutor?.id
+
+    if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
+      setSubstituteProsecutor(prosecutor)
+      setIsProsecutorAccessModalVisible(true)
+
+      return false
+    }
+
+    setProsecutor(prosecutor)
+
+    return true
   }
 
   return (
@@ -241,13 +230,7 @@ const HearingArrangements = () => {
                     )}
                     disabled={
                       user.id !== workingCase.creatingProsecutor?.id &&
-                      user.id !==
-                        (((workingCase as unknown) as { prosecutorId: string })
-                          .prosecutorId === undefined
-                          ? workingCase.prosecutor?.id
-                          : ((workingCase as unknown) as {
-                              prosecutorId: string
-                            }).prosecutorId)
+                      user.id !== workingCase.prosecutor?.id
                     }
                     checked={workingCase.isHeightenedSecurityLevel}
                     onChange={(event) =>
@@ -383,8 +366,8 @@ const HearingArrangements = () => {
                 m.prosecutorAccessModal.secondaryButtonText,
               )}
               handlePrimaryButtonClick={async () => {
-                if (substituteProsecutorId) {
-                  await setProsecutor(substituteProsecutorId)
+                if (substituteProsecutor) {
+                  await setProsecutor(substituteProsecutor)
                   router.push(constants.CASE_LIST_ROUTE)
                 }
               }}
