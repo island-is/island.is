@@ -57,6 +57,7 @@ export default {
     'namespace',
     'timeline',
     'timelineEvent',
+    'stepperSlice',
   ],
   contentful: {
     space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',

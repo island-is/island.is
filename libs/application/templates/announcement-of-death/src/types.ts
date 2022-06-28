@@ -19,7 +19,7 @@ export enum OtherPropertiesEnum {
   ASSETS_ABROAD = 'assetsAbroad',
 }
 
-export type Asset = Partial<EstateAsset & { initial: boolean }>
+export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
 
 export type Answers = {
   additionalInfo: string
@@ -70,6 +70,7 @@ export interface EstateMember {
   dateOfBirth?: string
   custodian?: string
   foreignCitizenship?: ('yes' | 'no')[]
+  dummy: boolean
 }
 
 export interface Property {

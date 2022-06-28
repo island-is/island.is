@@ -13,3 +13,4 @@ export { InputImageUpload } from './components/InputImageUpload/InputImageUpload
 export { PaymentPending } from './components/PaymentPending/PaymentPending'
 export { CompanySearchController } from './components/CompanySearchController/CompanySearchController'
 export * from './types'
+export { Markdown } from './components/Markdown/Markdown'
