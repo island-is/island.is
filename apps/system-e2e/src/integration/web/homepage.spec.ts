@@ -1,9 +1,8 @@
+import { rmSync } from 'fs'
+
 describe('Front page', () => {
   beforeEach(() => {
-    cy.cognitoLogin({
-      cognitoUsername: Cypress.env('cognitoUsername'),
-      cognitoPassword: Cypress.env('cognitoPassword'),
-    })
+    cy.cognitoLogin()
   })
 
   it('has expected sections', () => {
@@ -13,7 +12,7 @@ describe('Front page', () => {
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
-
+  // dummy change
   it('should have life events', () => {
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
@@ -47,10 +46,8 @@ describe('Front page', () => {
   it.only('should change welcome message on language toggle', () => {
     cy.visit('/')
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
-      cy.get('button[data-testid="language-toggler"]:visible')
-        .click()
-        .as('clicked')
-      cy.waitFor('@clicked')
+      cy.get('button[data-testid="language-toggler"]:visible').click()
+      cy.location('pathname').should('eq', '/en')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
         previousHeading.text(),

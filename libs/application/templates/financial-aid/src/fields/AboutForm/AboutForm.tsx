@@ -1,21 +1,24 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
-import { aboutForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
+import { Text, Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
+
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
 import withLogo from '../Logo/Logo'
+import { aboutForm } from '../../lib/messages'
 
 const AboutForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   return (
     <>
       <Text variant="h3" fontWeight="light" marginBottom={3}>
         {formatMessage(aboutForm.general.description, {
-          currentMonth: currentMonth(),
+          currentMonth: currentMonth(lang),
         })}
       </Text>
       <Box marginBottom={5}>

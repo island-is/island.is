@@ -413,7 +413,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.json",
+            "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.config.ts",
             "tsConfig": "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json",
             "baseUrl": "http://localhost:4200",
             "devServerTarget": "air-discount-scheme-web:serve"
@@ -2021,7 +2021,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/application-system/form-e2e/cypress.json",
+            "cypressConfig": "apps/application-system/form-e2e/cypress.config.ts",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
             "devServerTarget": "application-system-form:serve",
             "baseUrl": "http://localhost:4242"
@@ -3335,7 +3335,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
+            "cypressConfig": "apps/auth-admin-web-e2e/cypress.config.ts",
             "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
             "baseUrl": "http://localhost:4200",
             "devServerTarget": "auth-admin-web:serve"
@@ -5179,7 +5179,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.json",
+            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
             "tsConfig": "apps/financial-aid/web-osk-e2e/tsconfig.e2e.json",
             "devServerTarget": "",
             "baseUrl": "http://localhost:4200"
@@ -5193,7 +5193,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.json",
+            "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
             "command": "yarn e2e-ci -n financial-aid-web-osk-e2e -c -d dist/apps/financial-aid/web-osk"
           }
         },
@@ -6447,7 +6447,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
+            "cypressConfig": "apps/judicial-system/web-e2e/cypress.config.ts",
             "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
             "devServerTarget": "",
             "baseUrl": "http://localhost:4200"
@@ -6461,7 +6461,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
+            "cypressConfig": "apps/judicial-system/web-e2e/cypress.config.ts",
             "command": "yarn e2e-ci -n judicial-system-web-e2e -c -d dist/apps/judicial-system/web"
           }
         },
@@ -7441,7 +7441,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/service-portal-e2e/cypress.json",
+            "cypressConfig": "apps/service-portal-e2e/cypress.config.ts",
             "tsConfig": "apps/service-portal-e2e/tsconfig.e2e.json",
             "devServerTarget": "service-portal:serve",
             "baseUrl": "http://localhost:4200"
@@ -9451,7 +9451,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
+            "cypressConfig": "apps/skilavottord/web-e2e/cypress.config.ts",
             "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
             "devServerTarget": "skilavottord-web:serve",
             "baseUrl": "http://localhost:4200"
@@ -9612,7 +9612,7 @@
         "system-test": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/system-e2e/cypress.json",
+            "cypressConfig": "apps/system-e2e/cypress.config.ts",
             "tsConfig": "apps/system-e2e/tsconfig.json"
           }
         },
@@ -9798,7 +9798,7 @@
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/web-e2e/cypress.json",
+            "cypressConfig": "apps/web-e2e/cypress.config.ts",
             "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
             "baseUrl": "http://localhost:4200",
             "devServerTarget": "web:serve"
