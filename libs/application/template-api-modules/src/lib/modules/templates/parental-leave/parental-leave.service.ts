@@ -33,11 +33,12 @@ import {
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  assignLinkEmployerSMS,
+  linkOtherParentSMS,
 } from './emailGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
-  createAssignTokenWithoutNonce,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
@@ -96,24 +97,11 @@ export class ParentalLeaveService {
     )
 
     if (otherParentPhoneNumber) {
-      const token = createAssignTokenWithoutNonce(
-        application,
-        getConfigValue(this.configService, 'jwtSecret'),
-        SIX_MONTHS_IN_SECONDS_EXPIRES,
-      )
-
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-
-      const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
-
       await this.smsService.sendSms(
         otherParentPhoneNumber,
         `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
         Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${assignLink}`,
+        ${linkOtherParentSMS}`,
       )
     }
   }
@@ -187,24 +175,11 @@ export class ParentalLeaveService {
 
     // send confirmation sms to employer
     if (employerPhoneNumber) {
-      const token = createAssignTokenWithoutNonce(
-        application,
-        getConfigValue(this.configService, 'jwtSecret'),
-        SIX_MONTHS_IN_SECONDS_EXPIRES,
-      )
-
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-
-      const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
-
       await this.smsService.sendSms(
         employerPhoneNumber,
         `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
         Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${assignLink}`,
+        ${assignLinkEmployerSMS}`,
       )
     }
   }

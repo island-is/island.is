@@ -223,10 +223,13 @@ const inheritance: Field[] = [
           name: string
           nationalId: string
           relation: string
-        }[]).map((member) => ({
-          title: member.name,
-          description: [formatNationalId(member.nationalId), member.relation],
-        })),
+          dummy?: boolean
+        }[])
+          .filter((member) => !member?.dummy)
+          .map((member) => ({
+            title: member.name,
+            description: [formatNationalId(member.nationalId), member.relation],
+          })),
     },
   ),
 ]
@@ -249,15 +252,17 @@ const properties: Field[] = [
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.assets as { assets: Asset[] }).assets.map((property) => ({
-          title: property.description,
-          description: (formatMessage: FormatMessage) => [
-            `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
-            property.share
-              ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
-              : '',
-          ],
-        })),
+        (answers?.assets as { assets: Asset[] }).assets
+          .filter((asset) => !asset?.dummy)
+          .map((property) => ({
+            title: property.description,
+            description: (formatMessage: FormatMessage) => [
+              `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
+              property.share
+                ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
+                : '',
+            ],
+          })),
     },
   ),
   buildDescriptionField({
@@ -274,16 +279,16 @@ const properties: Field[] = [
       component: 'InfoCard',
       width: 'full',
       condition: (application) =>
-        (application?.vehicles as { vehicles: Asset[] })?.vehicles.length > 0,
+        (application?.vehicles as { vehicles: Asset[] })?.vehicles?.length > 0,
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.vehicles as { vehicles: Asset[] })?.vehicles.map(
-          (vehicle) => ({
+        (answers?.vehicles as { vehicles: Asset[] })?.vehicles
+          .filter((vehicle) => !vehicle?.dummy)
+          .map((vehicle) => ({
             title: vehicle.assetNumber,
             description: [vehicle.description],
-          }),
-        ),
+          })),
     },
   ),
 ]
