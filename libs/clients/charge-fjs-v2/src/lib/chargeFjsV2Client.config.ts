@@ -17,7 +17,6 @@ export const ChargeFjsV2ClientConfig = defineConfig({
         'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
       ),
       fetchTimeout: env.optionalJSON('XROAD_CHARGE_FJS_V2_TIMEOUT') ?? 20000,
-      //TODOx hvaða scope á að vera hér?
       tokenExchangeScope: env.optionalJSON('XROAD_CHARGE_FJS_V2_SCOPE') ?? [
         '@fjs.is/finance',
         // TODO: Remove when fjs has migrated to the scope above.

@@ -8,7 +8,7 @@ import type {
   PaymentServiceOptions,
   Item,
 } from '@island.is/clients/payment'
-import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
@@ -134,5 +134,29 @@ export class PaymentService {
       Promise.reject('Failed to find application').catch()
     }
     return application[0] as ApplicationModel
+  }
+
+  async delete(applicationId: string, @CurrentUser() user: User) {
+    const { nationalId } = user
+    const application = await ApplicationModel.findOne({
+      where: {
+        id: applicationId,
+        [Op.or]: [
+          { applicant: nationalId },
+          { assignees: { [Op.contains]: [nationalId] } },
+        ],
+      },
+    })
+
+    // Make sure applicationId belongs to CurrentUser
+    if (!application || application.id !== applicationId) {
+      return
+    }
+
+    return this.paymentModel.destroy({
+      where: {
+        application_id: applicationId,
+      },
+    })
   }
 }

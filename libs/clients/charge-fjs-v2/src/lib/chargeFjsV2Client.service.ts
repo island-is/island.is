@@ -5,27 +5,17 @@ import { DefaultApi } from '../../gen/fetch'
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async deleteCharge(requestId: string): Promise<string> {
+  async deleteCharge(chargeId: string): Promise<string> {
     const response = await this.api.chargerequestIDDELETE2({
-      requestID: requestId,
+      requestID: chargeId,
     })
 
-    return response.receptionID //TODOx what should be returned
+    if (!response.receptionID) {
+      throw new Error(
+        `DELETE chargerequestIDDELETE2 was not successful, response was: ${response.error?.code}`,
+      )
+    }
+
+    return response.receptionID
   }
 }
-
-// import { Injectable } from '@nestjs/common'
-// import { DefaultApi } from '../../gen/fetch'
-
-// @Injectable()
-// export class ChargeFjsV2Api {
-//   constructor(private readonly api: DefaultApi) {}
-
-//   public async deleteCharge(requestId: string): Promise<string> {
-//     const response = await this.api.chargerequestIDDELETE2({
-//       requestID: requestId,
-//     })
-
-//     return response.receptionID //TODOx what should be returned
-//   }
-// }

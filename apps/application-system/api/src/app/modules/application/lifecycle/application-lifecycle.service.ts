@@ -3,10 +3,13 @@ import {
   ApplicationService,
   Application,
 } from '@island.is/application/api/core'
+import { ExternalData } from '@island.is/application/core'
 import { AwsService } from '@island.is/nest/aws'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { PaymentService } from '../../payment/payment.service'
 
 export interface AttachmentMetaData {
   s3key: string
@@ -33,6 +36,8 @@ export class ApplicationLifeCycleService {
     private logger: Logger,
     private applicationService: ApplicationService,
     private awsService: AwsService,
+    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentService: PaymentService,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
   }
@@ -41,6 +46,7 @@ export class ApplicationLifeCycleService {
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
+    await this.pruneApplicationCharge()
     await this.pruneApplicationData()
     this.reportResults()
     this.logger.info(`Application pruning done.`)
@@ -98,6 +104,44 @@ export class ApplicationLifeCycleService {
             )
           }
         }
+      }
+    }
+  }
+
+  private async pruneApplicationCharge() {
+    for (const prune of this.processingApplications) {
+      try {
+        const payment = await this.paymentService.findPaymentByApplicationId(
+          prune.application.id,
+        )
+
+        // No need to delete charge if already paid or never existed
+        if (!payment || payment.fulfilled) {
+          return
+        }
+
+        // Make sure createCharge exists in externalData
+        const externalData = prune.application.externalData as
+          | ExternalData
+          | undefined
+          | null
+        if (!externalData?.createCharge?.data) {
+          return
+        }
+
+        // Delete the charge, using the ID we got from FJS
+        const { id: chargeId } = externalData.createCharge.data as {
+          id: string
+        }
+        if (chargeId) {
+          await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        }
+      } catch (error) {
+        prune.pruned = false
+        this.logger.error(
+          `Application charge prune error on id ${prune.application.id}`,
+          error,
+        )
       }
     }
   }

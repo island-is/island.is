@@ -93,6 +93,8 @@ import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
+import { PaymentService } from '../payment/payment.service'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -115,6 +117,8 @@ export class ApplicationController {
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
+    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentService: PaymentService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -1128,6 +1132,47 @@ export class ApplicationController {
         'Users role does not have permission to delete this application in this state',
       )
     }
+
+    // delete charge in FJS
+    //this.deleteApplicationCharge(existingApplication)
+
+    // delete the entry in Payment table to prevent FK error
+    await this.paymentService.delete(existingApplication.id, user)
+
     await this.applicationService.delete(existingApplication.id)
+  }
+
+  private async deleteApplicationCharge(application: BaseApplication) {
+    try {
+      const payment = await this.paymentService.findPaymentByApplicationId(
+        application.id,
+      )
+
+      // No need to delete charge if already paid or never existed
+      if (!payment || payment.fulfilled) {
+        return
+      }
+
+      // Make sure createCharge exists in externalData
+      const externalData = application.externalData as
+        | ExternalData
+        | undefined
+        | null
+      if (!externalData?.createCharge?.data) {
+        return
+      }
+
+      // Delete the charge, using the ID we got from FJS
+      const { id: chargeId } = externalData.createCharge.data as {
+        id: string
+      }
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    } catch (error) {
+      throw new NotFoundException(
+        `Application charge delete error on id ${application.id}`,
+      )
+    }
   }
 }
