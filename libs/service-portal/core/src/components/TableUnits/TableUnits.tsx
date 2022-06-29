@@ -13,7 +13,7 @@ interface Props {
   paginateCallback?: () => void
 }
 
-const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
+export const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
   const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {
@@ -79,5 +79,3 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
     </>
   )
 }
-
-export default TableUnits
