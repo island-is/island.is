@@ -77,12 +77,16 @@ export const bootstrap = async (options: BootstrapOptions) => {
   const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
+  const readyPromise = nextApp.prepare()
 
+  setupHealthchecks(
+    expressApp,
+    readyPromise,
+    options.externalEndpointDependencies,
+  )
   expressApp.all('*', (req, res) => handle(req, res))
 
   startServer(expressApp, options.port)
 
-  await nextApp.prepare()
-
-  setupHealthchecks(expressApp, options.externalEndpointDependencies)
+  await readyPromise
 }

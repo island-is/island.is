@@ -24,17 +24,20 @@ export type ExternalEndpointDependencies =
  * Note: This must be loaded after the Next app has been initialised as it depends on loading the next.config.js.
  *
  * @param app Express app to add the readiness and liveness routes.
+ * @param readyPromise Promise which resolves when the server is ready.
  * @param externalEndpointDependencies Array or callback function to provide string[] of external endpoint dependencies.
  */
 export const setupHealthchecks = (
   app: Express,
+  readyPromise: Promise<unknown>,
   externalEndpointDependencies: ExternalEndpointDependencies = [],
 ) => {
   const nextConfig = getNextConfig()
-  const dependencies =
+  const getDependencies = readyPromise.then(() =>
     typeof externalEndpointDependencies === 'function'
       ? externalEndpointDependencies(nextConfig)
-      : externalEndpointDependencies
+      : externalEndpointDependencies,
+  )
 
   app.use('/readiness', async (_, res) => {
     /*
@@ -43,6 +46,7 @@ export const setupHealthchecks = (
     If we make this app depend on external service we risk it going down with those external dependecies.
     e.g the web app should render the error page for users if the api goes offline, the web app should not go offline.
     */
+    const dependencies = await getDependencies
     // check if we can resolve the provided url hostnames in DNS
     const externalDnsRequests = dependencies.map((externalUrl) => {
       const url = new URL(externalUrl)
