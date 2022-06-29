@@ -17,7 +17,7 @@ export const AdrAndMachineLicenseClientConfig = defineConfig<
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_ADR_MACHINE_LICENSE_PATH',
-      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
+      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
     ),
     fetch: {
       timeout: 10000,

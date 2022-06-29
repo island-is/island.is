@@ -34,6 +34,7 @@ const dataSchema = z.object({
     institution: z.object({
       nationalId: z.string().nonempty(),
       label: z.string().nonempty(),
+      isat: z.string().optional(),
     }),
   }),
   contact: contactSchema,
