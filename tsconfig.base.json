@@ -318,6 +318,7 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"

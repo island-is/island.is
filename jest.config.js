@@ -143,6 +143,7 @@ module.exports = {
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/national-registry',
+    '<rootDir>/libs/clients/passports',
     '<rootDir>/libs/clients/payment',
     '<rootDir>/libs/clients/regulations',
     '<rootDir>/libs/clients/rsk-company-info',
