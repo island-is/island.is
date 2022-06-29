@@ -302,8 +302,6 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              // description:
-              //       parentalLeaveFormMessages.selectChild.screenDescription,
               condition: (_, externalData) =>
                 isEligibleForParentalLeave(externalData),
               children: [

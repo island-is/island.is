@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
 import format from 'date-fns/format'
 import * as styles from './index.css'
@@ -176,25 +176,6 @@ const ChildSelector: FC<FieldBaseProps> = ({
               ),
             )}
           </Stack>
-
-          {/* <Box marginY={3}>
-            {existingApplications.map(
-              ({ applicationId, expectedDateOfBirth }) => (
-                <Button
-                  key={applicationId}
-                  onClick={() => selectExistingApplication(applicationId)}
-                  icon="arrowForward"
-                  variant="primary"
-                  colorScheme="light"
-                  size="small"
-                >
-                  {formatMessage(parentalLeaveFormMessages.selectChild.baby, {
-                    dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
-                  })}
-                </Button>
-              ),
-            )}
-          </Box> */}
         </>
       )}
     </Box>
