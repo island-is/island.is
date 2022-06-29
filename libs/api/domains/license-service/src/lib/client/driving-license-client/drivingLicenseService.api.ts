@@ -254,8 +254,8 @@ export class GenericDrivingLicenseApi
     return this.pkpassClient.getPkPassUrl(payload)
   }
 
-  async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
-    return this.getPkPassUrlByNationalId(nationalId)
+  async getPkPassUrl(user: User): Promise<string | null> {
+    return this.getPkPassUrlByNationalId(user.nationalId)
   }
 
   async getPkPassQRCodeByNationalId(
@@ -292,10 +292,8 @@ export class GenericDrivingLicenseApi
     return this.pkpassClient.getPkPassQRCode(payload)
   }
 
-  async getPkPassQRCode(
-    nationalId: User['nationalId'],
-  ): Promise<string | null> {
-    return this.getPkPassQRCodeByNationalId(nationalId)
+  async getPkPassQRCode(user: User): Promise<string | null> {
+    return this.getPkPassQRCodeByNationalId(user.nationalId)
   }
 
   /**
@@ -304,10 +302,8 @@ export class GenericDrivingLicenseApi
    * @param nationalId NationalId to fetch drivers licence for.
    * @return {Promise<GenericLicenseUserdataExternal | null>} Latest driving license or null if an error occured.
    */
-  async getLicense(
-    nationalId: User['nationalId'],
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    const licenses = await this.requestFromXroadApi(nationalId)
+  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+    const licenses = await this.requestFromXroadApi(user.nationalId)
 
     if (!licenses) {
       this.logger.warn('Missing licenses, null from x-road', {
@@ -335,9 +331,9 @@ export class GenericDrivingLicenseApi
   }
 
   async getLicenseDetail(
-    nationalId: User['nationalId'],
+    user: User,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(nationalId)
+    return this.getLicense(user)
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

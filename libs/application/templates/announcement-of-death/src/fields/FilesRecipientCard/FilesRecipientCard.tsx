@@ -39,18 +39,23 @@ export const FilesRecipientCard: FC<
 
   options = options.filter((member) => isPerson(member.value))
 
-  // Add the option for selecting noone
-  options.push({
-    label: formatMessage(m.selectOptionNobody),
-    value: '',
-  })
-
-  if (field.id !== 'financesDataCollectionPermission') {
+  if (
+    field.id !== 'financesDataCollectionPermission' &&
+    !application.answers?.estateMembers?.members.find(
+      (member) => member.nationalId === application.applicant,
+    )
+  ) {
     options.push({
       label: application.answers.applicantName,
       value: application.applicant,
     })
   }
+
+  // Add the option for selecting noone
+  options.push({
+    label: formatMessage(m.selectOptionNobody),
+    value: '',
+  })
 
   return (
     <Box

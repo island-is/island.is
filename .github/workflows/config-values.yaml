@@ -40,7 +40,8 @@ jobs:
         id: select_envs
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          ENVS=("dev" "staging")
+          # ENVS=("dev" "staging")
+          ENVS=("dev" "staging" "prod")
           if [[ $GIT_BRANCH =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
@@ -140,6 +141,19 @@ jobs:
           AWS_MAX_ATTEMPTS: '6'
         run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
         working-directory: infra
+
+      - name: Configure AWS Credentials for IDS Prod
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::567113216315:role/list-ssm-parameters
+
+      - name: Get secrets in IDS Prod AWS
+        env:
+          AWS_RETRY_MODE: standard
+          AWS_MAX_ATTEMPTS: '6'
+        run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
+        working-directory: infra
+
       - name: Compare secrets
         working-directory: infra
         shell: /bin/bash {0}
