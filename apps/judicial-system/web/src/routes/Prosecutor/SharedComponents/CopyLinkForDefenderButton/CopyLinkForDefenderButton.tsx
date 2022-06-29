@@ -20,7 +20,7 @@ const CopyLinkForDefenderButton: React.FC<Props> = ({ caseId, children }) => {
     <Button
       size="small"
       variant="ghost"
-      icon="links"
+      icon="link"
       data-testid="copyLinkToCase"
       onClick={() => {
         const copied = copyToClipboard(
