@@ -9,6 +9,7 @@ import { ParentalRelations } from '../../constants'
 import {
   getChildrenAndExistingApplications,
   applicationsToExistingChildApplication,
+  applicationsToChildInformation,
 } from './Children-utils'
 import {
   ChildInformationWithoutRights,
@@ -53,6 +54,25 @@ const createApplicationWithChildren = (
     typeId: 'ParentalLeave' as Application['typeId'],
   }
 }
+
+describe('applicationsToChildInformation', () => {
+  it('should return empty array with no applicant', () => {
+    const applicationsWhereApplicant: Application[] = []
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual([])
+  })
+  it('should return children of applicant', () => {
+    const children: ChildInformationWithoutRights[] = [
+      {
+        expectedDateOfBirth: '2020-10-10',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ]
+    const applicationsWhereApplicant: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+    ]
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(children)
+  })
+})
 
 describe('getChildrenAndExistingApplications', () => {
   it('should return an empty list for both if no children pregnancy', () => {
