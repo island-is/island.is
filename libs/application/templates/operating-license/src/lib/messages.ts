@@ -44,12 +44,17 @@ export const m = defineMessages({
   },
   operationTitle: {
     id: 'ol.application:applicationInfo.operationTitle',
-    defaultMessage: 'Leyfisumsókn',
+    defaultMessage: 'Upplýsingar um leyfisumsókn',
     description: 'Some description',
   },
   operationSubtitle: {
     id: 'ol.application:applicationInfo.operationSubtitle',
-    defaultMessage: 'Veldu hvað er verið að sækja um fyrir',
+    defaultMessage: 'Vinsamlegast fyllið út reitina hér að neðan',
+    description: 'Some description',
+  },
+  operationSelectionTitle: {
+    id: 'ol.application:applicationInfo.operationSelectionTitle',
+    defaultMessage: 'Veldu tegund reksturs',
     description: 'Some description',
   },
   operationCategoryHotelTitle: {
@@ -205,6 +210,11 @@ export const m = defineMessages({
     defaultMessage: 'Afgreiðslutími áfengis',
     description: 'Some description',
   },
+  openingHoursOutsideTitle: {
+    id: 'ol.application:openingHours.outsideTitle',
+    defaultMessage: 'Afgreiðslutími útiveitinga',
+    description: 'Some description',
+  },
   from: {
     id: 'ol.application:openingHours.from',
     defaultMessage: 'Frá',
@@ -320,6 +330,21 @@ export const m = defineMessages({
     id: 'ol.application:overview.description',
     defaultMessage:
       'Endilega lestu yfir til að vera viss um að réttar upplýsingar hafi verið gefnar.',
+    description: 'Some description',
+  },
+  availableService: {
+    id: 'ol.application:overview.availableService',
+    defaultMessage: 'Þjónusta í boði:',
+    description: 'Some description',
+  },
+  temporaryLicense: {
+    id: 'ol.application:overview.temporaryLicense',
+    defaultMessage: 'Óskað eftir bráðabirgðarleyfi',
+    description: 'Some description',
+  },
+  other: {
+    id: 'ol.application:overview.other',
+    defaultMessage: 'Annað',
     description: 'Some description',
   },
   proceedToPayment: {

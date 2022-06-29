@@ -31,7 +31,7 @@ export const subSectionOtherInfo = buildSubSection({
         }),
         buildTextField({
           id: 'otherInfoText',
-          title: 'Annað',
+          title: m.other,
           variant: 'textarea',
           doesNotRequireAnswer: true,
         }),

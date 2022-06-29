@@ -1,20 +1,13 @@
 import * as z from 'zod'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './error'
 import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
-import { hasYes } from './utils'
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-const vskNrRegex = /([0-9]){6}/
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
-const isValidEmail = (value: string) => emailRegex.test(value)
-const isValidVskNr = (value: string) => vskNrRegex.test(value)
-const isValidTime = (value: string) => timeRegex.test(value)
-const isValidPhoneNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
-}
+import {
+  hasYes,
+  isValid24HFormatTime,
+  isValidEmail,
+  isValidPhoneNumber,
+  isValidVskNr,
+} from './utils'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -23,8 +16,12 @@ const FileSchema = z.object({
 })
 
 const Time = z.object({
-  from: z.string().nonempty(),
-  to: z.string().nonempty(),
+  from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
+    params: error.invalidValue,
+  }),
+  to: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
+    params: error.invalidValue,
+  }),
 })
 
 const OpeningHours = z.object({

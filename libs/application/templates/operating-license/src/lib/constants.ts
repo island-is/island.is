@@ -90,19 +90,25 @@ export type Operation = {
 
 export type OpeningHour = {
   from: string
-  tp: string
+  to: string
 }
 
 export type OpeningHours = {
   alcohol: {
     weekdays: OpeningHour
-    holidays: OpeningHour
+    weekends: OpeningHour
   }
   willServe: string[]
   outside?: {
     weekdays: OpeningHour
-    holidays: OpeningHour
+    weekends: OpeningHour
   }
 }
 
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+
+export type FileSchema = {
+  name: string
+  key: string
+  url: string
+}

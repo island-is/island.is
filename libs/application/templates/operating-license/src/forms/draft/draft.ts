@@ -2,43 +2,28 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubmitField,
-  buildTextField,
   Form,
   FormModes,
-  Application,
   buildCustomField,
-  buildDividerField,
-  buildKeyValueField,
-  buildCheckboxField,
-  buildSubSection,
   buildFileUploadField,
+  Application,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
 import {
   APPLICATION_TYPES,
-  YES,
-  NO,
-  ResturantTypes,
-  HotelTypes,
   Operation,
-  OPERATION_CATEGORY,
   UPLOAD_ACCEPT,
 } from '../../lib/constants'
-import { DefaultEvents, Answer } from '@island.is/application/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { useFormContext } from 'react-hook-form'
+import { DefaultEvents } from '@island.is/application/core'
 import { applicationInfo } from './sectionApplicationInfo'
 import { subSectionOperationInfo } from './subSectionOperationInfo'
 import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'
 import { subSectionOpeningHours } from './subSectionOpeningHours'
 import { subSectionOtherInfo } from './subSectionOtherInfo'
+import { sectionOverview } from './sectionOverview'
 
 export const Draft: Form = buildForm({
   id: 'OperatingLicenseApplicationDraftForm',
@@ -116,48 +101,8 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.overview,
-      children: [
-        buildMultiField({
-          id: 'overview',
-          title: m.overview,
-          description: m.overviewDescription,
-          children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overview.infoTitle',
-              title: m.infoTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.info as {
-                  email?: string
-                })?.email,
-            }),
-            buildKeyValueField({
-              label: m.phoneNumber,
-              width: 'half',
-              value: (application: Application) => {
-                const phone = (application.answers.info as {
-                  phoneNumber?: string
-                })?.phoneNumber
 
-                return formatPhoneNumber(phone as string)
-              },
-            }),
-          ],
-        }),
-      ],
+      children: [sectionOverview],
     }),
     buildSection({
       id: 'payment',

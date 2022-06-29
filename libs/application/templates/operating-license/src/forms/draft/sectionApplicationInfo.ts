@@ -16,11 +16,11 @@ import {
 export const applicationInfo = buildMultiField({
   id: 'applicationInfo',
   title: m.operationTitle,
+  description: m.operationSubtitle,
   children: [
     buildRadioField({
       id: 'applicationInfo.operation',
-      title: '',
-      description: m.operationSubtitle,
+      title: m.operationSelectionTitle,
       options: [
         { value: APPLICATION_TYPES.HOTEL, label: m.operationHotel },
         {
