@@ -32,6 +32,7 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     } catch (e) {
       this.logger.error('ADR license fetch failed', {
         exception: e,
+        message: (e as Error)?.message,
         category: LOG_CATEGORY,
       })
       return null
