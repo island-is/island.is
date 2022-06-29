@@ -187,8 +187,10 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       ios: PassKit,
       android: NativeModules.IslandModule,
     })
+
     const canAddPass = await canAddPasses()
-    if (canAddPass) {
+
+    if (canAddPass || Platform.OS === 'android') {
       try {
         setAddingToWallet(true)
         const { data } = await client.mutate({
@@ -210,7 +212,15 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           const pkPassContentUri = await FileSystem.getContentUriAsync(
             pkPassUri,
           )
-          addPass(pkPassContentUri, 'com.snjallveskid')
+          addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
+            if (!canAddPass) {
+              alert(
+                'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+              )
+            } else {
+              alert('Failed to fetch or add pass')
+            }
+          })
           setAddingToWallet(false)
           return
         }
@@ -229,18 +239,18 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           setAddingToWallet(false)
         }
       } catch (err) {
-        alert('Failed to fetch or add pass')
+        if (!canAddPass) {
+          alert(
+            'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+          )
+        } else {
+          alert('Failed to fetch or add pass')
+        }
         setAddingToWallet(false)
         console.error(err)
       }
     } else {
-      if (Platform.OS === 'android') {
-        alert(
-          'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
-        )
-      } else {
-        alert('You cannot add passes on this device')
-      }
+      alert('You cannot add passes on this device')
     }
   }
 
