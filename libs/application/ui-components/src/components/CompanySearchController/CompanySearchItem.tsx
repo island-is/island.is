@@ -7,10 +7,15 @@ interface CompanySearchItemProps extends ItemCmpProps {
   query: string
 }
 
+const escapeRegexp = (query: string) => {
+  return query.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
+}
+
 export const CompanySearchItem: FC<
   CompanySearchItemProps & { loading?: boolean }
 > = ({ active, nationalId, query, name }): ReactElement => {
-  const splitCompanyName = name.split(new RegExp(query, 'i'))
+  const cleanedQuery = escapeRegexp(query)
+  const splitCompanyName = name.split(new RegExp(cleanedQuery, 'i'))
   let cleanNationalId = nationalId.replace(/(\D)+/g, '')
   cleanNationalId =
     cleanNationalId.substring(0, 6) + '-' + cleanNationalId.substring(6, 10)
