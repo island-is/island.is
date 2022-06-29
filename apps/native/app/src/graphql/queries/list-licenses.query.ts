@@ -3,8 +3,8 @@ import { GenericLicenseDataFieldFragment, GenericUserLicenseFragment, IGenericUs
 import { GenericLicenseType } from './get-license.query';
 
 export const LIST_GENERIC_LICENSES_QUERY = gql`
-  query genericLicenses {
-    genericLicenses {
+  query genericLicenses($input: GetGenericLicensesInput!, $locale: String) {
+    genericLicenses(input: $input, locale: $locale) {
       ...GenericUserLicenseFragment
     }
   }

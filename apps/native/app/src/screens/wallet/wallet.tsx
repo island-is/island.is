@@ -42,6 +42,7 @@ import { LicenseStatus, LicenseType } from '../../types/license-type'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { GenericLicenseType } from '../../graphql/queries/get-license.query'
 
 const {
   useNavigationOptions,
@@ -135,7 +136,15 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const res = useQuery<ListGenericLicensesResponse>(
     LIST_GENERIC_LICENSES_QUERY,
-    { client, fetchPolicy: 'network-only' },
+    {
+      client,
+      fetchPolicy: 'network-only',
+      variables: {
+        input: {
+          includedTypes: [GenericLicenseType.DriversLicense, GenericLicenseType.AdrLicense, GenericLicenseType.MachineLicense]
+        }
+      }
+    },
   )
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
@@ -155,7 +164,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useEffect(() => {
     if (!res.loading) {
       if (!res.error) {
-        setLicenseItems(res.data?.genericLicenses || [])
+        const license = res.data?.genericLicenses || []
+        setLicenseItems(license.filter((item) => item.license.status !== 'Unknown'))
       }
     }
   }, [res])

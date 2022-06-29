@@ -21,6 +21,8 @@ export interface GetLicenseResponse {
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
+  MachineLicense = 'MachineLicense',
+  AdrLicense = 'AdrLicense',
   HuntingLicense = 'HuntingLicense',
 }
 
