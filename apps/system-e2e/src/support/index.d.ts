@@ -2,6 +2,16 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
+interface CypressFn {
+  (): Cypress.Chainable<JQuery<HTMLElement>>
+}
+
+interface IDSLogin {
+  phoneNumber: string
+  urlPath?: string
+  fn?: CypressFn
+}
+
 type TestEnvironment = 'local' | 'dev' | 'staging' | 'prod'
 
 type TestConfig = {
@@ -33,7 +43,7 @@ declare namespace Cypress {
      * Custom command to log in using cognito and island.is SSO
      * @example cy.login()
      */
-    idsLogin({ phoneNumber: string, url: string }): Chainable<void>
+    idsLogin(params: IDSLogin): Chainable<void>
     cognitoLogin(): Chainable<void>
     patchSameSiteCookie(interceptUrl: string): void
   }

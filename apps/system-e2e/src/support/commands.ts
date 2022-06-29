@@ -1,4 +1,4 @@
-console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
+import { cypressError } from '../support/utils'
 const testEnvironment = Cypress.env('testEnvironment')
 const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
 const { baseUrl } = Cypress.config()
@@ -23,7 +23,7 @@ const cognitoLogin = (creds: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-const idsLogin = (phoneNumber: string, urlPath: string) => {
+export const idsLogin = ({ phoneNumber, urlPath, fn }: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
@@ -31,7 +31,15 @@ const idsLogin = (phoneNumber: string, urlPath: string) => {
     },
   }
   cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
-  cy.visit(urlPath, { log: true })
+  cy.visit('/')
+  if (fn) {
+    fn()
+  } else if (urlPath) {
+    cy.visit(urlPath, { log: true })
+  } else {
+    cypressError('authUrl and Cypress callback are mutually exclusive!')
+  }
+
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
@@ -46,9 +54,14 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
         return
       }
       const disableSameSite = (headerContent: string): string => {
-        return headerContent.replace(/samesite=(lax|strict)/gi, 'samesite=none')
+        const replacedHeaderContent = headerContent.replace(
+          /samesite=(lax|strict)/gi,
+          'samesite=none',
+        )
+        return replacedHeaderContent
       }
       if (Array.isArray(res.headers['set-cookie'])) {
+        console.log(res.headers)
         res.headers['set-cookie'] = res.headers['set-cookie'].map(
           disableSameSite,
         )
@@ -60,7 +73,6 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
 })
 
 Cypress.Commands.add('idsLogin', ({ phoneNumber, url = '/' }) => {
-  cy.log('foobar', testEnvironment)
   if (testEnvironment !== 'local') {
     cy.session('idsLogin', () => {
       cy.session('cognitoLogin', () =>

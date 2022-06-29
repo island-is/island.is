@@ -41,6 +41,7 @@ export interface ButtonProps {
   tabIndex?: number
   rounded?: boolean
   id?: string
+  dataTestId?: string
 }
 
 export const Button = forwardRef<
@@ -66,6 +67,7 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
+      dataTestId,
       ...rest
     },
     ref,
@@ -116,11 +118,24 @@ export const Button = forwardRef<
     }
 
     return href ? (
-      <a ref={ref} href={href} role="button" {...anchorProps} {...sharedProps}>
+      <a
+        data-testid={dataTestId}
+        ref={ref}
+        href={href}
+        role="button"
+        {...anchorProps}
+        {...sharedProps}
+      >
         <ButtonContent {...buttonContent} />
       </a>
     ) : (
-      <button ref={ref} type={htmlType} disabled={disabled} {...sharedProps}>
+      <button
+        data-testid={dataTestId}
+        ref={ref}
+        type={htmlType}
+        disabled={disabled}
+        {...sharedProps}
+      >
         <ButtonContent {...buttonContent} />
       </button>
     )
