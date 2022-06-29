@@ -88,7 +88,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       return
     }
 
-    const nextCursor= data?.getApiCatalogue?.pageInfo.nextCursor
+    const nextCursor = data?.getApiCatalogue?.pageInfo.nextCursor
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },

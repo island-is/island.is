@@ -3,10 +3,7 @@ import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { Child } from '../../types'
-import {
-  DescriptionText,
-  InfoBanner,
-} from '../../components'
+import { DescriptionText, InfoBanner } from '../../components'
 import { sortChildrenByAge } from '../../utils'
 
 const shouldBeDisabled = (

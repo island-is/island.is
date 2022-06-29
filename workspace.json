@@ -24,9 +24,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -35,7 +33,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/air-discount-scheme/api/**/*.{ts,tsx,js,jsx}"
@@ -48,9 +46,7 @@
             "jestConfig": "apps/air-discount-scheme/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/api"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -107,9 +103,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -118,7 +112,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/air-discount-scheme/backend/**/*.{ts,tsx,js,jsx}"
@@ -132,9 +126,7 @@
             "runInBand": true,
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/backend"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/backend"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -189,7 +181,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/air-discount-scheme/consts/**/*.{ts,tsx,js,jsx}"
@@ -202,9 +194,7 @@
             "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/air-discount-scheme/consts"
-          ]
+          "outputs": ["coverage/libs/air-discount-scheme/consts"]
         }
       },
       "tags": []
@@ -216,7 +206,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/air-discount-scheme/types/**/*.{ts,tsx,js,jsx}"
@@ -229,9 +219,7 @@
             "jestConfig": "libs/air-discount-scheme/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/air-discount-scheme/types"
-          ]
+          "outputs": ["coverage/libs/air-discount-scheme/types"]
         }
       },
       "tags": []
@@ -266,9 +254,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -286,9 +272,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -303,7 +287,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/air-discount-scheme/web/**/*.{ts,tsx,js,jsx}"
@@ -316,9 +300,7 @@
             "jestConfig": "apps/air-discount-scheme/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/web"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/web"]
         },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
@@ -357,7 +339,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/air-discount-scheme/web-e2e/**/*.{ts,tsx,js,jsx}"
@@ -366,9 +348,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "air-discount-scheme-web"
-      ]
+      "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
       "root": "apps/api",
@@ -393,9 +373,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -404,11 +382,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/api/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -417,9 +393,7 @@
             "jestConfig": "apps/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/api"
-          ]
+          "outputs": ["coverage/apps/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -458,7 +432,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api-catalogue/consts/**/*.{ts,tsx,js,jsx}"
@@ -471,9 +445,7 @@
             "jestConfig": "libs/api-catalogue/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/consts"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/consts"]
         }
       },
       "tags": []
@@ -485,7 +457,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api-catalogue/elastic/**/*.{ts,tsx,js,jsx}"
@@ -498,9 +470,7 @@
             "jestConfig": "libs/api-catalogue/elastic/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/elastic"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/elastic"]
         }
       },
       "tags": []
@@ -512,7 +482,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api-catalogue/services/**/*.{ts,tsx,js,jsx}"
@@ -525,9 +495,7 @@
             "jestConfig": "libs/api-catalogue/services/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/services"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/services"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -549,7 +517,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api-catalogue/types/**/*.{ts,tsx,js,jsx}"
@@ -562,9 +530,7 @@
             "jestConfig": "libs/api-catalogue/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/types"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/types"]
         }
       },
       "tags": []
@@ -576,7 +542,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/api-catalogue/**/*.{ts,tsx,js,jsx}"
@@ -589,9 +555,7 @@
             "jestConfig": "libs/api/domains/api-catalogue/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/api-catalogue"
-          ]
+          "outputs": ["coverage/libs/api/domains/api-catalogue"]
         }
       },
       "tags": []
@@ -603,7 +567,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/application/**/*.{ts,tsx,js,jsx}"
@@ -616,9 +580,7 @@
             "jestConfig": "libs/api/domains/application/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/application"
-          ]
+          "outputs": ["coverage/libs/api/domains/application"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -636,18 +598,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/api/domains/assets/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/api/domains/assets/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/assets"
-          ],
+          "outputs": ["coverage/libs/api/domains/assets"],
           "options": {
             "jestConfig": "libs/api/domains/assets/jest.config.js",
             "passWithNoTests": true
@@ -662,18 +620,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/api/domains/auth/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/api/domains/auth/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/auth"
-          ],
+          "outputs": ["coverage/libs/api/domains/auth"],
           "options": {
             "jestConfig": "libs/api/domains/auth/jest.config.js",
             "passWithNoTests": true
@@ -689,7 +643,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/communications/**/*.{ts,tsx,js,jsx}"
@@ -702,9 +656,7 @@
             "jestConfig": "libs/api/domains/communications/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/communications"
-          ]
+          "outputs": ["coverage/libs/api/domains/communications"]
         }
       },
       "tags": []
@@ -716,7 +668,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/company-registry/**/*.{ts,tsx,js,jsx}"
@@ -729,9 +681,7 @@
             "jestConfig": "libs/api/domains/company-registry/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/company-registry"
-          ]
+          "outputs": ["coverage/libs/api/domains/company-registry"]
         }
       },
       "tags": []
@@ -743,7 +693,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/content-search/**/*.{ts,tsx,js,jsx}"
@@ -756,9 +706,7 @@
             "jestConfig": "libs/api/domains/content-search/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/content-search"
-          ]
+          "outputs": ["coverage/libs/api/domains/content-search"]
         }
       },
       "tags": []
@@ -769,7 +717,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/criminal-record/**/*.{ts,tsx,js,jsx}"
@@ -778,9 +726,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/criminal-record"
-          ],
+          "outputs": ["coverage/libs/api/domains/criminal-record"],
           "options": {
             "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
             "passWithNoTests": true
@@ -796,7 +742,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/directorate-of-labour/**/*.{ts,tsx,js,jsx}"
@@ -809,9 +755,7 @@
             "jestConfig": "libs/api/domains/directorate-of-labour/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/directorate-of-labour"
-          ]
+          "outputs": ["coverage/libs/api/domains/directorate-of-labour"]
         }
       },
       "tags": []
@@ -823,7 +767,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/document-provider/**/*.{ts,tsx,js,jsx}"
@@ -836,9 +780,7 @@
             "jestConfig": "libs/api/domains/document-provider/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/document-provider"
-          ]
+          "outputs": ["coverage/libs/api/domains/document-provider"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -857,7 +799,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/documents/**/*.{ts,tsx,js,jsx}"
@@ -870,9 +812,7 @@
             "jestConfig": "libs/api/domains/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/documents"
-          ]
+          "outputs": ["coverage/libs/api/domains/documents"]
         }
       },
       "tags": []
@@ -884,7 +824,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/driving-license/**/*.{ts,tsx,js,jsx}"
@@ -897,16 +837,12 @@
             "jestConfig": "libs/api/domains/driving-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/driving-license"
-          ]
+          "outputs": ["coverage/libs/api/domains/driving-license"]
         },
         "dev": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "scripts/run-xroad-proxy.sh"
-            ],
+            "commands": ["scripts/run-xroad-proxy.sh"],
             "parallel": true
           }
         }
@@ -920,7 +856,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/driving-license-book/**/*.{ts,tsx,js,jsx}"
@@ -933,9 +869,7 @@
             "jestConfig": "libs/api/domains/driving-license-book/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/driving-license-book"
-          ]
+          "outputs": ["coverage/libs/api/domains/driving-license-book"]
         }
       },
       "tags": []
@@ -947,7 +881,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/education/**/*.{ts,tsx,js,jsx}"
@@ -960,9 +894,7 @@
             "jestConfig": "libs/api/domains/education/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/education"
-          ]
+          "outputs": ["coverage/libs/api/domains/education"]
         }
       },
       "tags": []
@@ -974,7 +906,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/endorsement-system/**/*.{ts,tsx,js,jsx}"
@@ -987,9 +919,7 @@
             "jestConfig": "libs/api/domains/endorsement-system/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/endorsement-system"
-          ]
+          "outputs": ["coverage/libs/api/domains/endorsement-system"]
         },
         "dev/init": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1029,7 +959,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/file-upload/**/*.{ts,tsx,js,jsx}"
@@ -1042,9 +972,7 @@
             "jestConfig": "libs/api/domains/file-upload/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/file-upload"
-          ]
+          "outputs": ["coverage/libs/api/domains/file-upload"]
         }
       },
       "tags": []
@@ -1055,7 +983,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/finance/**/*.{ts,tsx,js,jsx}"
@@ -1064,9 +992,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/finance"
-          ],
+          "outputs": ["coverage/libs/api/domains/finance"],
           "options": {
             "jestConfig": "libs/api/domains/finance/jest.config.js",
             "passWithNoTests": true
@@ -1081,7 +1007,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/financial-statements-inao/**/*.{ts,tsx,js,jsx}"
@@ -1090,9 +1016,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/financial-statements-inao"
-          ],
+          "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
           "options": {
             "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
             "passWithNoTests": true
@@ -1107,7 +1031,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/fishing-license/**/*.{ts,tsx,js,jsx}"
@@ -1116,9 +1040,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/fishing-license"
-          ],
+          "outputs": ["coverage/libs/api/domains/fishing-license"],
           "options": {
             "jestConfig": "libs/api/domains/fishing-license/jest.config.js",
             "passWithNoTests": true
@@ -1134,7 +1056,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/health-insurance/**/*.{ts,tsx,js,jsx}"
@@ -1147,9 +1069,7 @@
             "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/health-insurance"
-          ]
+          "outputs": ["coverage/libs/api/domains/health-insurance"]
         }
       },
       "tags": []
@@ -1161,7 +1081,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/icelandic-names-registry/**/*.{ts,tsx,js,jsx}"
@@ -1174,9 +1094,7 @@
             "jestConfig": "libs/api/domains/icelandic-names-registry/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/icelandic-names-registry"
-          ]
+          "outputs": ["coverage/libs/api/domains/icelandic-names-registry"]
         }
       },
       "tags": []
@@ -1187,7 +1105,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/identity/**/*.{ts,tsx,js,jsx}"
@@ -1196,9 +1114,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/identity"
-          ],
+          "outputs": ["coverage/libs/api/domains/identity"],
           "options": {
             "jestConfig": "libs/api/domains/identity/jest.config.js",
             "passWithNoTests": true
@@ -1213,7 +1129,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/license-service/**/*.{ts,tsx,js,jsx}"
@@ -1222,9 +1138,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/license-service"
-          ],
+          "outputs": ["coverage/libs/api/domains/license-service"],
           "options": {
             "jestConfig": "libs/api/domains/license-service/jest.config.js",
             "passWithNoTests": true
@@ -1239,7 +1153,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/mortgage-certificate/**/*.{ts,tsx,js,jsx}"
@@ -1248,9 +1162,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/mortgage-certificate"
-          ],
+          "outputs": ["coverage/libs/api/domains/mortgage-certificate"],
           "options": {
             "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
             "passWithNoTests": true
@@ -1266,7 +1178,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/municipalities-financial-aid/**/*.{ts,tsx,js,jsx}"
@@ -1279,9 +1191,7 @@
             "jestConfig": "libs/api/domains/municipalities-financial-aid/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/municipalities-financial-aid"
-          ]
+          "outputs": ["coverage/libs/api/domains/municipalities-financial-aid"]
         }
       },
       "tags": []
@@ -1293,7 +1203,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/national-registry/**/*.{ts,tsx,js,jsx}"
@@ -1306,9 +1216,7 @@
             "jestConfig": "libs/api/domains/national-registry/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/national-registry"
-          ]
+          "outputs": ["coverage/libs/api/domains/national-registry"]
         }
       },
       "tags": []
@@ -1320,7 +1228,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/national-registry-x-road/**/*.{ts,tsx,js,jsx}"
@@ -1333,9 +1241,7 @@
             "jestConfig": "libs/api/domains/national-registry-x-road/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/national-registry-x-road"
-          ]
+          "outputs": ["coverage/libs/api/domains/national-registry-x-road"]
         }
       },
       "tags": []
@@ -1347,7 +1253,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/payment/**/*.{ts,tsx,js,jsx}"
@@ -1360,9 +1266,7 @@
             "jestConfig": "libs/api/domains/payment/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/payment"
-          ]
+          "outputs": ["coverage/libs/api/domains/payment"]
         }
       },
       "tags": []
@@ -1373,7 +1277,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/payment-schedule/**/*.{ts,tsx,js,jsx}"
@@ -1382,9 +1286,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/payment-schedule"
-          ],
+          "outputs": ["coverage/libs/api/domains/payment-schedule"],
           "options": {
             "jestConfig": "libs/api/domains/payment-schedule/jest.config.js",
             "passWithNoTests": true
@@ -1400,7 +1302,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/regulations/**/*.{ts,tsx,js,jsx}"
@@ -1413,9 +1315,7 @@
             "jestConfig": "libs/api/domains/regulations/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/regulations"
-          ]
+          "outputs": ["coverage/libs/api/domains/regulations"]
         }
       },
       "tags": []
@@ -1427,7 +1327,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/syslumenn/**/*.{ts,tsx,js,jsx}"
@@ -1440,9 +1340,7 @@
             "jestConfig": "libs/api/domains/syslumenn/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/syslumenn"
-          ]
+          "outputs": ["coverage/libs/api/domains/syslumenn"]
         }
       },
       "tags": []
@@ -1454,7 +1352,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/user-profile/**/*.{ts,tsx,js,jsx}"
@@ -1467,9 +1365,7 @@
             "jestConfig": "libs/api/domains/user-profile/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/user-profile"
-          ]
+          "outputs": ["coverage/libs/api/domains/user-profile"]
         }
       },
       "tags": []
@@ -1480,7 +1376,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/api/domains/vehicles/**/*.{ts,tsx,js,jsx}"
@@ -1489,9 +1385,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/domains/vehicles"
-          ],
+          "outputs": ["coverage/libs/api/domains/vehicles"],
           "options": {
             "jestConfig": "libs/api/domains/vehicles/jest.config.js",
             "passWithNoTests": true
@@ -1507,11 +1401,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/api/mocks/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/api/mocks/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -1520,9 +1412,7 @@
             "jestConfig": "libs/api/mocks/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/mocks"
-          ]
+          "outputs": ["coverage/libs/api/mocks"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1543,11 +1433,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/api/schema/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/api/schema/**/*.{ts,tsx,js,jsx}"]
           }
         }
       },
@@ -1559,7 +1447,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/api/core/**/*.{ts,tsx,js,jsx}"
@@ -1568,9 +1456,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/application/api/core"
-          ],
+          "outputs": ["coverage/libs/application/api/core"],
           "options": {
             "jestConfig": "libs/application/api/core/jest.config.js",
             "passWithNoTests": true
@@ -1586,11 +1472,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/application/core/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/application/core/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -1599,9 +1483,7 @@
             "jestConfig": "libs/application/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/core"
-          ]
+          "outputs": ["coverage/libs/application/core"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1619,7 +1501,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/data-providers/**/*.{ts,tsx,js,jsx}"
@@ -1632,9 +1514,7 @@
             "jestConfig": "libs/application/data-providers/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/data-providers"
-          ]
+          "outputs": ["coverage/libs/application/data-providers"]
         }
       },
       "tags": []
@@ -1646,7 +1526,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/graphql/**/*.{ts,tsx,js,jsx}"
@@ -1659,9 +1539,7 @@
             "jestConfig": "libs/application/graphql/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/graphql"
-          ]
+          "outputs": ["coverage/libs/application/graphql"]
         }
       },
       "tags": []
@@ -1731,9 +1609,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -1742,7 +1618,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/application-system/api/**/*.{ts,tsx,js,jsx}"
@@ -1756,18 +1632,13 @@
             "runInBand": true,
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/application-system/api"
-          ]
+          "outputs": ["coverage/apps/application-system/api"]
         },
         "worker": {
           "builder": "@nrwl/node:node",
           "options": {
             "buildTarget": "application-system-api:build",
-            "args": [
-              "--job",
-              "worker"
-            ]
+            "args": ["--job", "worker"]
           }
         },
         "dev-services": {
@@ -1855,9 +1726,7 @@
               "apps/application-system/form/src/mockServiceWorker.js",
               "apps/application-system/form/src/assets"
             ],
-            "styles": [
-              "apps/application-system/form/src/styles.css"
-            ],
+            "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js",
             "maxWorkers": 2
@@ -1880,9 +1749,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -1897,7 +1764,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/application-system/form/**/*.{ts,tsx,js,jsx}"
@@ -1910,9 +1777,7 @@
             "jestConfig": "apps/application-system/form/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/application-system/form"
-          ]
+          "outputs": ["coverage/apps/application-system/form"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1950,7 +1815,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/application-system/form-e2e/**/*.{ts,tsx,js,jsx}"
@@ -1959,9 +1824,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "application-system-form"
-      ]
+      "implicitDependencies": ["application-system-form"]
     },
     "application-template-api-modules": {
       "root": "libs/application/template-api-modules",
@@ -1970,7 +1833,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/template-api-modules/**/*.{ts,tsx,js,jsx}"
@@ -1983,9 +1846,7 @@
             "jestConfig": "libs/application/template-api-modules/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/template-api-modules"
-          ]
+          "outputs": ["coverage/libs/application/template-api-modules"]
         }
       },
       "tags": []
@@ -1997,7 +1858,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/template-loader/**/*.{ts,tsx,js,jsx}"
@@ -2010,9 +1871,7 @@
             "jestConfig": "libs/application/template-loader/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/template-loader"
-          ]
+          "outputs": ["coverage/libs/application/template-loader"]
         }
       },
       "tags": []
@@ -2024,7 +1883,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/accident-notification/**/*.{ts,tsx,js,jsx}"
@@ -2057,7 +1916,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/announcement-of-death/**/*.{ts,tsx,js,jsx}"
@@ -2086,7 +1945,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/family-matters/children-residence-change/**/*.{ts,tsx,js,jsx}"
@@ -2109,7 +1968,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/complaints-to-althingi-ombudsman/**/*.{ts,tsx,js,jsx}"
@@ -2132,7 +1991,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/criminal-record/**/*.{ts,tsx,js,jsx}"
@@ -2141,9 +2000,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/application/templates/criminal-record"
-          ],
+          "outputs": ["coverage/libs/application/templates/criminal-record"],
           "options": {
             "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
             "passWithNoTests": true
@@ -2171,7 +2028,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/data-protection-complaint/**/*.{ts,tsx,js,jsx}"
@@ -2204,7 +2061,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/document-provider-onboarding/**/*.{ts,tsx,js,jsx}"
@@ -2237,7 +2094,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/driving-assessment-approval/**/*.{ts,tsx,js,jsx}"
@@ -2266,7 +2123,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/driving-instructor-registrations/**/*.{ts,tsx,js,jsx}"
@@ -2295,7 +2152,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/driving-license/**/*.{ts,tsx,js,jsx}"
@@ -2308,9 +2165,7 @@
             "jestConfig": "libs/application/templates/driving-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/driving-license"
-          ]
+          "outputs": ["coverage/libs/application/templates/driving-license"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2334,7 +2189,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/driving-school-confirmation/**/*.{ts,tsx,js,jsx}"
@@ -2362,7 +2217,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/example-payment/**/*.{ts,tsx,js,jsx}"
@@ -2371,9 +2226,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/application/templates/example-payment"
-          ],
+          "outputs": ["coverage/libs/application/templates/example-payment"],
           "options": {
             "jestConfig": "libs/application/templates/example-payment/jest.config.js",
             "passWithNoTests": false
@@ -2401,7 +2254,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/family-matters/core/**/*.{ts,tsx,js,jsx}"
@@ -2418,7 +2271,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/financial-aid/**/*.{ts,tsx,js,jsx}"
@@ -2427,9 +2280,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/application/templates/financial-aid"
-          ],
+          "outputs": ["coverage/libs/application/templates/financial-aid"],
           "options": {
             "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
           }
@@ -2450,7 +2301,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/financial-statements-inao/**/*.{ts,tsx,js,jsx}"
@@ -2478,7 +2329,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/funding-government-projects/**/*.{ts,tsx,js,jsx}"
@@ -2511,7 +2362,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/general-fishing-license/**/*.{ts,tsx,js,jsx}"
@@ -2534,7 +2385,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/general-petition/**/*.{ts,tsx,js,jsx}"
@@ -2547,9 +2398,7 @@
             "jestConfig": "libs/application/templates/general-petition/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/general-petition"
-          ]
+          "outputs": ["coverage/libs/application/templates/general-petition"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2617,7 +2466,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/health-insurance/**/*.{ts,tsx,js,jsx}"
@@ -2630,9 +2479,7 @@
             "jestConfig": "libs/application/templates/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/health-insurance"
-          ]
+          "outputs": ["coverage/libs/application/templates/health-insurance"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2650,7 +2497,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/institution-collaboration/**/*.{ts,tsx,js,jsx}"
@@ -2679,7 +2526,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/login-service/**/*.{ts,tsx,js,jsx}"
@@ -2688,9 +2535,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/application/templates/login-service"
-          ],
+          "outputs": ["coverage/libs/application/templates/login-service"],
           "options": {
             "jestConfig": "libs/application/templates/login-service/jest.config.js",
             "passWithNoTests": true
@@ -2711,7 +2556,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/mortgage-certificate/**/*.{ts,tsx,js,jsx}"
@@ -2749,7 +2594,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/no-debt-certificate/**/*.{ts,tsx,js,jsx}"
@@ -2788,7 +2633,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/p-sign/**/*.{ts,tsx,js,jsx}"
@@ -2817,7 +2662,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/parental-leave/**/*.{ts,tsx,js,jsx}"
@@ -2830,9 +2675,7 @@
             "jestConfig": "libs/application/templates/parental-leave/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/parental-leave"
-          ]
+          "outputs": ["coverage/libs/application/templates/parental-leave"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2856,7 +2699,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/passport/**/*.{ts,tsx,js,jsx}"
@@ -2869,9 +2712,7 @@
             "jestConfig": "libs/application/templates/passport/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/passport"
-          ]
+          "outputs": ["coverage/libs/application/templates/passport"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2888,7 +2729,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/public-debt-payment-plan/**/*.{ts,tsx,js,jsx}"
@@ -2921,7 +2762,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/templates/reference-template/**/*.{ts,tsx,js,jsx}"
@@ -2934,9 +2775,7 @@
             "jestConfig": "libs/application/templates/reference-template/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/reference-template"
-          ]
+          "outputs": ["coverage/libs/application/templates/reference-template"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2954,7 +2793,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/ui-components/**/*.{ts,tsx,js,jsx}"
@@ -2967,9 +2806,7 @@
             "jestConfig": "libs/application/ui-components/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/ui-components"
-          ]
+          "outputs": ["coverage/libs/application/ui-components"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2988,7 +2825,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/ui-fields/**/*.{ts,tsx,js,jsx}"
@@ -3001,9 +2838,7 @@
             "jestConfig": "libs/application/ui-fields/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/ui-fields"
-          ]
+          "outputs": ["coverage/libs/application/ui-fields"]
         }
       },
       "tags": []
@@ -3015,7 +2850,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/application/ui-shell/**/*.{ts,tsx,js,jsx}"
@@ -3028,9 +2863,7 @@
             "jestConfig": "libs/application/ui-shell/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/ui-shell"
-          ]
+          "outputs": ["coverage/libs/application/ui-shell"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3071,9 +2904,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -3091,9 +2922,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -3108,11 +2937,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3121,9 +2948,7 @@
             "jestConfig": "apps/auth-admin-web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/auth-admin-web"
-          ]
+          "outputs": ["coverage/apps/auth-admin-web"]
         },
         "docker-next": {}
       },
@@ -3155,18 +2980,14 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/auth-admin-web-e2e/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/auth-admin-web-e2e/**/*.{ts,tsx,js,jsx}"]
           }
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "auth-admin-web"
-      ]
+      "implicitDependencies": ["auth-admin-web"]
     },
     "auth-api-lib": {
       "root": "libs/auth-api-lib",
@@ -3175,11 +2996,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/auth-api-lib/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/auth-api-lib/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3188,9 +3007,7 @@
             "jestConfig": "libs/auth-api-lib/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth-api-lib"
-          ]
+          "outputs": ["coverage/libs/auth-api-lib"]
         }
       },
       "tags": []
@@ -3202,11 +3019,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/auth-nest-tools/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/auth-nest-tools/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3215,9 +3030,7 @@
             "jestConfig": "libs/auth-nest-tools/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth-nest-tools"
-          ]
+          "outputs": ["coverage/libs/auth-nest-tools"]
         }
       },
       "tags": []
@@ -3228,18 +3041,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/auth/react/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/auth/react"
-          ],
+          "outputs": ["coverage/libs/auth/react"],
           "options": {
             "jestConfig": "libs/auth/react/jest.config.js",
             "passWithNoTests": true
@@ -3254,18 +3063,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/auth/scopes/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/auth/scopes/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/auth/scopes"
-          ],
+          "outputs": ["coverage/libs/auth/scopes"],
           "options": {
             "jestConfig": "libs/auth/scopes/jest.config.js",
             "passWithNoTests": true
@@ -3281,11 +3086,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/cache/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/cache/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3294,9 +3097,7 @@
             "jestConfig": "libs/cache/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/cache"
-          ]
+          "outputs": ["coverage/libs/cache"]
         }
       },
       "tags": []
@@ -3307,7 +3108,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/adr-and-machine-license/**/*.{ts,tsx,js,jsx}"
@@ -3328,9 +3129,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/adr-and-machine-license"
-          ],
+          "outputs": ["coverage/libs/clients/adr-and-machine-license"],
           "options": {
             "jestConfig": "libs/clients/adr-and-machine-license/jest.config.js",
             "passWithNoTests": true
@@ -3351,18 +3150,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/assets/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/assets/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/assets"
-          ],
+          "outputs": ["coverage/libs/clients/assets"],
           "options": {
             "jestConfig": "libs/clients/assets/jest.config.js",
             "passWithNoTests": true
@@ -3383,7 +3178,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/auth-public-api/**/*.{ts,tsx,js,jsx}"
@@ -3392,9 +3187,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/auth-public-api"
-          ],
+          "outputs": ["coverage/libs/clients/auth-public-api"],
           "options": {
             "jestConfig": "libs/clients/auth-public-api/jest.config.js",
             "passWithNoTests": true
@@ -3409,9 +3202,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "services-auth-public-api"
-      ]
+      "implicitDependencies": ["services-auth-public-api"]
     },
     "clients-criminal-record": {
       "root": "libs/clients/criminal-record",
@@ -3419,7 +3210,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/criminal-record/**/*.{ts,tsx,js,jsx}"
@@ -3428,9 +3219,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/criminal-record"
-          ],
+          "outputs": ["coverage/libs/clients/criminal-record"],
           "options": {
             "jestConfig": "libs/clients/criminal-record/jest.config.js",
             "passWithNoTests": true
@@ -3463,7 +3252,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/data-protection-complaint/**/*.{ts,tsx,js,jsx}"
@@ -3478,9 +3267,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/data-protection-complaint"
-          ],
+          "outputs": ["coverage/libs/clients/data-protection-complaint"],
           "options": {
             "jestConfig": "libs/clients/data-protection-complaint/jest.config.js",
             "passWithNoTests": true
@@ -3495,7 +3282,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/document-provider/**/*.{ts,tsx,js,jsx}"
@@ -3504,9 +3291,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/document-provider"
-          ],
+          "outputs": ["coverage/libs/clients/document-provider"],
           "options": {
             "jestConfig": "libs/clients/document-provider/jest.config.js",
             "passWithNoTests": true
@@ -3527,18 +3312,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/documents/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/documents/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/documents"
-          ],
+          "outputs": ["coverage/libs/clients/documents"],
           "options": {
             "jestConfig": "libs/clients/documents/jest.config.js",
             "passWithNoTests": true
@@ -3553,7 +3334,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/driving-license/**/*.{ts,tsx,js,jsx}"
@@ -3562,9 +3343,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/driving-license"
-          ],
+          "outputs": ["coverage/libs/clients/driving-license"],
           "options": {
             "jestConfig": "libs/clients/driving-license/jest.config.js",
             "passWithNoTests": true
@@ -3611,7 +3390,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/driving-license-book/**/*.{ts,tsx,js,jsx}"
@@ -3620,9 +3399,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/driving-license-book"
-          ],
+          "outputs": ["coverage/libs/clients/driving-license-book"],
           "options": {
             "jestConfig": "libs/clients/driving-license-book/jest.config.js",
             "passWithNoTests": true
@@ -3657,18 +3434,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/finance/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/finance/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/finance"
-          ],
+          "outputs": ["coverage/libs/clients/finance"],
           "options": {
             "jestConfig": "libs/clients/finance/jest.config.js",
             "passWithNoTests": true
@@ -3683,7 +3456,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/fishing-license/**/*.{ts,tsx,js,jsx}"
@@ -3692,9 +3465,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/fishing-license"
-          ],
+          "outputs": ["coverage/libs/clients/fishing-license"],
           "options": {
             "jestConfig": "libs/clients/fishing-license/jest.config.js",
             "passWithNoTests": true
@@ -3727,7 +3498,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/health-insurance-v2/**/*.{ts,tsx,js,jsx}"
@@ -3736,9 +3507,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/health-insurance-v2"
-          ],
+          "outputs": ["coverage/libs/clients/health-insurance-v2"],
           "options": {
             "jestConfig": "libs/clients/health-insurance-v2/jest.config.js",
             "passWithNoTests": true
@@ -3760,11 +3529,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/islykill/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/islykill/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3773,9 +3540,7 @@
             "jestConfig": "libs/clients/islykill/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/clients/islykill"
-          ]
+          "outputs": ["coverage/libs/clients/islykill"]
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3792,7 +3557,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/middlewares/**/*.{ts,tsx,js,jsx}"
@@ -3801,9 +3566,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/middlewares"
-          ],
+          "outputs": ["coverage/libs/clients/middlewares"],
           "options": {
             "jestConfig": "libs/clients/middlewares/jest.config.js",
             "passWithNoTests": true
@@ -3818,18 +3581,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/mms/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/mms/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/mms"
-          ],
+          "outputs": ["coverage/libs/clients/mms"],
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
             "passWithNoTests": true
@@ -3844,7 +3603,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/municipalities-financial-aid/**/*.{ts,tsx,js,jsx}"
@@ -3853,9 +3612,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/municipalities-financial-aid"
-          ],
+          "outputs": ["coverage/libs/clients/municipalities-financial-aid"],
           "options": {
             "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.js",
             "passWithNoTests": true
@@ -3880,7 +3637,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/national-registry/v1/**/*.{ts,tsx,js,jsx}"
@@ -3889,9 +3646,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/national-registry/v1"
-          ],
+          "outputs": ["coverage/libs/clients/national-registry/v1"],
           "options": {
             "jestConfig": "libs/clients/national-registry/v1/jest.config.js",
             "passWithNoTests": true
@@ -3906,7 +3661,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/national-registry/v2/**/*.{ts,tsx,js,jsx}"
@@ -3915,9 +3670,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/national-registry/v2"
-          ],
+          "outputs": ["coverage/libs/clients/national-registry/v2"],
           "options": {
             "jestConfig": "libs/clients/national-registry/v2/jest.config.js",
             "passWithNoTests": true
@@ -3951,11 +3704,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/payment/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/payment/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -3964,9 +3715,7 @@
             "jestConfig": "libs/clients/payment/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/clients/payment"
-          ]
+          "outputs": ["coverage/libs/clients/payment"]
         }
       },
       "tags": []
@@ -3977,7 +3726,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/payment-schedule/**/*.{ts,tsx,js,jsx}"
@@ -3992,9 +3741,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/payment-schedule"
-          ],
+          "outputs": ["coverage/libs/clients/payment-schedule"],
           "options": {
             "jestConfig": "libs/clients/payment-schedule/jest.config.js",
             "passWithNoTests": true
@@ -4010,7 +3757,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/regulations/**/*.{ts,tsx,js,jsx}"
@@ -4023,9 +3770,7 @@
             "jestConfig": "libs/clients/regulations/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/clients/regulations"
-          ]
+          "outputs": ["coverage/libs/clients/regulations"]
         }
       },
       "tags": []
@@ -4036,7 +3781,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/rsk/company-registry/**/*.{ts,tsx,js,jsx}"
@@ -4045,9 +3790,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/rsk/company-registry"
-          ],
+          "outputs": ["coverage/libs/clients/rsk/company-registry"],
           "options": {
             "jestConfig": "libs/clients/rsk/company-registry/jest.config.js",
             "passWithNoTests": true
@@ -4080,7 +3823,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/rsk/personal-tax-return/**/*.{ts,tsx,js,jsx}"
@@ -4089,9 +3832,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/rsk/personal-tax-return"
-          ],
+          "outputs": ["coverage/libs/clients/rsk/personal-tax-return"],
           "options": {
             "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.js",
             "passWithNoTests": true
@@ -4106,7 +3847,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/rsk/procuring/**/*.{ts,tsx,js,jsx}"
@@ -4115,9 +3856,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/rsk/procuring"
-          ],
+          "outputs": ["coverage/libs/clients/rsk/procuring"],
           "options": {
             "jestConfig": "libs/clients/rsk/procuring/jest.config.js",
             "passWithNoTests": true
@@ -4150,18 +3889,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/syslumenn/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/syslumenn/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/syslumenn"
-          ],
+          "outputs": ["coverage/libs/clients/syslumenn"],
           "options": {
             "jestConfig": "libs/clients/syslumenn/jest.config.js",
             "passWithNoTests": true
@@ -4195,7 +3930,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/clients/user-profile/**/*.{ts,tsx,js,jsx}"
@@ -4204,9 +3939,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/user-profile"
-          ],
+          "outputs": ["coverage/libs/clients/user-profile"],
           "options": {
             "jestConfig": "libs/clients/user-profile/jest.config.js",
             "passWithNoTests": true
@@ -4225,9 +3958,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "services-user-profile"
-      ]
+      "implicitDependencies": ["services-user-profile"]
     },
     "clients-vehicles": {
       "root": "libs/clients/vehicles",
@@ -4235,18 +3966,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/vehicles/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/vehicles/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/vehicles"
-          ],
+          "outputs": ["coverage/libs/clients/vehicles"],
           "options": {
             "jestConfig": "libs/clients/vehicles/jest.config.js",
             "passWithNoTests": true
@@ -4272,11 +3999,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/vmst/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/vmst/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4285,9 +4010,7 @@
             "jestConfig": "libs/clients/vmst/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/clients/vmst"
-          ]
+          "outputs": ["coverage/libs/clients/vmst"]
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4304,18 +4027,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/clients/zendesk/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/clients/zendesk/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/clients/zendesk"
-          ],
+          "outputs": ["coverage/libs/clients/zendesk"],
           "options": {
             "jestConfig": "libs/clients/zendesk/jest.config.js",
             "passWithNoTests": true
@@ -4331,11 +4050,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/cms/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/cms/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4344,9 +4061,7 @@
             "jestConfig": "libs/cms/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/cms"
-          ]
+          "outputs": ["coverage/libs/cms"]
         }
       },
       "tags": []
@@ -4358,11 +4073,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/cms-translations/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/cms-translations/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4371,9 +4084,7 @@
             "jestConfig": "libs/cms-translations/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/cms-translations"
-          ]
+          "outputs": ["coverage/libs/cms-translations"]
         }
       },
       "tags": []
@@ -4385,7 +4096,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/content-search-index-manager/**/*.{ts,tsx,js,jsx}"
@@ -4398,9 +4109,7 @@
             "jestConfig": "libs/content-search-index-manager/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-index-manager"
-          ]
+          "outputs": ["coverage/libs/content-search-index-manager"]
         }
       },
       "tags": []
@@ -4412,7 +4121,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/content-search-indexer/**/*.{ts,tsx,js,jsx}"
@@ -4425,9 +4134,7 @@
             "jestConfig": "libs/content-search-indexer/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-indexer"
-          ]
+          "outputs": ["coverage/libs/content-search-indexer"]
         }
       },
       "tags": []
@@ -4439,7 +4146,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/content-search-indexer/types/**/*.{ts,tsx,js,jsx}"
@@ -4452,9 +4159,7 @@
             "jestConfig": "libs/content-search-indexer/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-indexer/types"
-          ]
+          "outputs": ["coverage/libs/content-search-indexer/types"]
         }
       },
       "tags": []
@@ -4466,7 +4171,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/content-search-metrics/**/*.{ts,tsx,js,jsx}"
@@ -4479,9 +4184,7 @@
             "jestConfig": "libs/content-search-metrics/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-metrics"
-          ]
+          "outputs": ["coverage/libs/content-search-metrics"]
         }
       },
       "tags": []
@@ -4493,7 +4196,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/content-search-toolkit/**/*.{ts,tsx,js,jsx}"
@@ -4506,9 +4209,7 @@
             "jestConfig": "libs/content-search-toolkit/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-toolkit"
-          ]
+          "outputs": ["coverage/libs/content-search-toolkit"]
         }
       },
       "tags": []
@@ -4525,9 +4226,7 @@
             "jestConfig": "libs/contentful-extensions/mideind-translation/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/contentful-mideind-extension"
-          ]
+          "outputs": ["coverage/libs/contentful-mideind-extension"]
         }
       },
       "tags": []
@@ -4544,9 +4243,7 @@
             "jestConfig": "libs/contentful-extensions/parent-slug/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/contentful-parent-slug-extension"
-          ]
+          "outputs": ["coverage/libs/contentful-parent-slug-extension"]
         }
       },
       "tags": []
@@ -4563,9 +4260,7 @@
             "jestConfig": "libs/contentful-extensions/translation/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/contentful-translation-extension"
-          ]
+          "outputs": ["coverage/libs/contentful-translation-extension"]
         },
         "serve": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4594,11 +4289,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/dokobit-signing/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/dokobit-signing/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4607,9 +4300,7 @@
             "jestConfig": "libs/dokobit-signing/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/dokobit-signing"
-          ]
+          "outputs": ["coverage/libs/dokobit-signing"]
         }
       },
       "tags": []
@@ -4622,16 +4313,12 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/download-service",
             "main": "apps/download-service/src/main.ts",
             "tsConfig": "apps/download-service/tsconfig.app.json",
-            "assets": [
-              "apps/download-service/src/assets"
-            ]
+            "assets": ["apps/download-service/src/assets"]
           },
           "configurations": {
             "production": {
@@ -4648,18 +4335,14 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/download-service/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/download-service/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/download-service"
-          ],
+          "outputs": ["coverage/apps/download-service"],
           "options": {
             "jestConfig": "apps/download-service/jest.config.js",
             "passWithNoTests": true
@@ -4676,11 +4359,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/email-service/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/email-service/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "generate-html": {
@@ -4695,9 +4376,7 @@
             "jestConfig": "libs/email-service/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/email-service"
-          ]
+          "outputs": ["coverage/libs/email-service"]
         }
       },
       "tags": []
@@ -4710,7 +4389,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/external-contracts-tests/**/*.{ts,tsx,js,jsx}"
@@ -4719,9 +4398,7 @@
         },
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/external-contracts-tests",
             "main": "apps/external-contracts-tests/main.spec.ts",
@@ -4741,9 +4418,7 @@
             "jestConfig": "apps/external-contracts-tests/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/external-contracts-tests"
-          ]
+          "outputs": ["coverage/apps/external-contracts-tests"]
         },
         "docker-jest": {}
       },
@@ -4756,11 +4431,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/feature-flags/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/feature-flags/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4769,9 +4442,7 @@
             "jestConfig": "libs/feature-flags/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/feature-flags"
-          ]
+          "outputs": ["coverage/libs/feature-flags"]
         }
       },
       "tags": []
@@ -4783,11 +4454,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/file-storage/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/file-storage/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4796,9 +4465,7 @@
             "jestConfig": "libs/file-storage/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/file-storage"
-          ]
+          "outputs": ["coverage/libs/file-storage"]
         }
       },
       "tags": []
@@ -4826,9 +4493,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -4837,11 +4502,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/financial-aid/api/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/financial-aid/api/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -4850,9 +4513,7 @@
             "jestConfig": "apps/financial-aid/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/financial-aid/api"
-          ]
+          "outputs": ["coverage/apps/financial-aid/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4909,9 +4570,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -4920,7 +4579,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/financial-aid/backend/**/*.{ts,tsx,js,jsx}"
@@ -4934,9 +4593,7 @@
             "runInBand": true,
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/financial-aid/backend"
-          ]
+          "outputs": ["coverage/apps/financial-aid/backend"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4990,7 +4647,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/financial-aid/shared/**/*.{ts,tsx,js,jsx}"
@@ -5003,9 +4660,7 @@
             "jestConfig": "libs/financial-aid/shared/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/financial-aid/shared"
-          ]
+          "outputs": ["coverage/libs/financial-aid/shared"]
         }
       },
       "tags": []
@@ -5047,9 +4702,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -5067,9 +4720,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -5084,7 +4735,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/financial-aid/web-osk/**/*.{ts,tsx,js,jsx}"
@@ -5097,9 +4748,7 @@
             "jestConfig": "apps/financial-aid/web-osk/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/financial-aid/web-osk"
-          ]
+          "outputs": ["coverage/apps/financial-aid/web-osk"]
         },
         "docker-next": {}
       },
@@ -5132,7 +4781,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/financial-aid/web-osk-e2e/**/*.{ts,tsx,js,jsx}"
@@ -5141,9 +4790,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "financial-aid-web-osk"
-      ]
+      "implicitDependencies": ["financial-aid-web-osk"]
     },
     "financial-aid-web-veita": {
       "root": "apps/financial-aid/web-veita",
@@ -5182,9 +4829,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -5202,9 +4847,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -5219,7 +4862,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/financial-aid/web-veita/**/*.{ts,tsx,js,jsx}"
@@ -5232,9 +4875,7 @@
             "jestConfig": "apps/financial-aid/web-veita/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/financial-aid/web-veita"
-          ]
+          "outputs": ["coverage/apps/financial-aid/web-veita"]
         },
         "docker-next": {}
       },
@@ -5248,16 +4889,12 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/github-actions-cache",
             "main": "apps/github-actions-cache/src/main.ts",
             "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
-            "assets": [
-              "apps/github-actions-cache/src/assets"
-            ]
+            "assets": ["apps/github-actions-cache/src/assets"]
           },
           "configurations": {
             "production": {
@@ -5274,7 +4911,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/github-actions-cache/**/*.{ts,tsx,js,jsx}"
@@ -5283,9 +4920,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/github-actions-cache"
-          ],
+          "outputs": ["coverage/apps/github-actions-cache"],
           "options": {
             "jestConfig": "apps/github-actions-cache/jest.config.js",
             "passWithNoTests": true
@@ -5302,11 +4937,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/health-insurance/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/health-insurance/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5315,9 +4948,7 @@
             "jestConfig": "libs/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/health-insurance"
-          ]
+          "outputs": ["coverage/libs/health-insurance"]
         }
       },
       "tags": []
@@ -5330,9 +4961,7 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/icelandic-names-registry/backend",
             "main": "apps/icelandic-names-registry/backend/src/main.ts",
@@ -5382,7 +5011,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/icelandic-names-registry/backend/**/*.{ts,tsx,js,jsx}"
@@ -5391,9 +5020,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/icelandic-names-registry/backend"
-          ],
+          "outputs": ["coverage/apps/icelandic-names-registry/backend"],
           "options": {
             "jestConfig": "apps/icelandic-names-registry/backend/jest.config.js",
             "passWithNoTests": true
@@ -5445,7 +5072,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/icelandic-names-registry/types/**/*.{ts,tsx,js,jsx}"
@@ -5458,9 +5085,7 @@
             "jestConfig": "libs/icelandic-names-registry/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/icelandic-names-registry/types"
-          ]
+          "outputs": ["coverage/libs/icelandic-names-registry/types"]
         }
       },
       "tags": []
@@ -5472,7 +5097,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/infra-express-server/**/*.{ts,tsx,js,jsx}"
@@ -5485,9 +5110,7 @@
             "jestConfig": "libs/infra-express-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-express-server"
-          ]
+          "outputs": ["coverage/libs/infra-express-server"]
         }
       },
       "tags": []
@@ -5499,11 +5122,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/infra-metrics/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/infra-metrics/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5512,9 +5133,7 @@
             "jestConfig": "libs/infra-metrics/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-metrics"
-          ]
+          "outputs": ["coverage/libs/infra-metrics"]
         }
       },
       "tags": []
@@ -5526,11 +5145,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/infra-nest-server/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/infra-nest-server/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5539,9 +5156,7 @@
             "jestConfig": "libs/infra-nest-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-nest-server"
-          ]
+          "outputs": ["coverage/libs/infra-nest-server"]
         }
       },
       "tags": []
@@ -5553,11 +5168,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/infra-next-server/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/infra-next-server/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5566,9 +5179,7 @@
             "jestConfig": "libs/infra-next-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-next-server"
-          ]
+          "outputs": ["coverage/libs/infra-next-server"]
         }
       },
       "tags": []
@@ -5580,11 +5191,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/infra-tracing/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/infra-tracing/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5593,9 +5202,7 @@
             "jestConfig": "libs/infra-tracing/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-tracing"
-          ]
+          "outputs": ["coverage/libs/infra-tracing"]
         }
       },
       "tags": []
@@ -5607,7 +5214,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/island-ui/contentful/**/*.{ts,tsx,js,jsx}"
@@ -5620,9 +5227,7 @@
             "jestConfig": "libs/island-ui/contentful/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/contentful"
-          ]
+          "outputs": ["coverage/libs/island-ui/contentful"]
         }
       },
       "tags": []
@@ -5634,11 +5239,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/island-ui/core/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/island-ui/core/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5647,15 +5250,11 @@
             "jestConfig": "libs/island-ui/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/core"
-          ]
+          "outputs": ["coverage/libs/island-ui/core"]
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "island-ui-theme"
-      ]
+      "implicitDependencies": ["island-ui-theme"]
     },
     "island-ui-fonts": {
       "root": "libs/island-ui/fonts",
@@ -5670,7 +5269,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/island-ui/storybook/**/*.{ts,tsx,js,jsx}"
@@ -5711,17 +5310,12 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "docker-static": {}
       },
       "tags": [],
-      "implicitDependencies": [
-        "island-ui-core",
-        "application-ui-fields"
-      ]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "root": "libs/island-ui/theme",
@@ -5730,11 +5324,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/island-ui/theme/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/island-ui/theme/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5743,9 +5335,7 @@
             "jestConfig": "libs/island-ui/theme/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/theme"
-          ]
+          "outputs": ["coverage/libs/island-ui/theme"]
         }
       },
       "tags": []
@@ -5757,11 +5347,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/island-ui/utils/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/island-ui/utils/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -5770,9 +5358,7 @@
             "jestConfig": "libs/island-ui/utils/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/utils"
-          ]
+          "outputs": ["coverage/libs/island-ui/utils"]
         }
       },
       "tags": []
@@ -5783,7 +5369,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/island-ui/vanilla-extract-utils/**/*.{ts,tsx,js,jsx}"
@@ -5792,9 +5378,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/island-ui/vanilla-extract-utils"
-          ],
+          "outputs": ["coverage/libs/island-ui/vanilla-extract-utils"],
           "options": {
             "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.js",
             "passWithNoTests": true
@@ -5826,9 +5410,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -5837,7 +5419,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/api/**/*.{ts,tsx,js,jsx}"
@@ -5850,9 +5432,7 @@
             "jestConfig": "apps/judicial-system/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/api"
-          ]
+          "outputs": ["coverage/apps/judicial-system/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5877,7 +5457,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/audit-trail/**/*.{ts,tsx,js,jsx}"
@@ -5890,9 +5470,7 @@
             "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/audit-trail"
-          ]
+          "outputs": ["coverage/libs/judicial-system/audit-trail"]
         }
       },
       "tags": []
@@ -5904,7 +5482,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/auth/**/*.{ts,tsx,js,jsx}"
@@ -5917,9 +5495,7 @@
             "jestConfig": "libs/judicial-system/auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/auth"
-          ]
+          "outputs": ["coverage/libs/judicial-system/auth"]
         }
       },
       "tags": []
@@ -5963,9 +5539,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -5974,7 +5548,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/backend/**/*.{ts,tsx,js,jsx}"
@@ -5987,9 +5561,7 @@
             "jestConfig": "apps/judicial-system/backend/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/backend"
-          ]
+          "outputs": ["coverage/apps/judicial-system/backend"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -6050,7 +5622,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/consts/**/*.{ts,tsx,js,jsx}"
@@ -6063,9 +5635,7 @@
             "jestConfig": "libs/judicial-system/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/consts"
-          ]
+          "outputs": ["coverage/libs/judicial-system/consts"]
         }
       },
       "tags": []
@@ -6077,7 +5647,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/court-client/**/*.{ts,tsx,js,jsx}"
@@ -6090,9 +5660,7 @@
             "jestConfig": "libs/judicial-system/court-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/court-client"
-          ]
+          "outputs": ["coverage/libs/judicial-system/court-client"]
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -6110,7 +5678,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/formatters/**/*.{ts,tsx,js,jsx}"
@@ -6123,9 +5691,7 @@
             "jestConfig": "libs/judicial-system/formatters/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/formatters"
-          ]
+          "outputs": ["coverage/libs/judicial-system/formatters"]
         }
       },
       "tags": []
@@ -6136,7 +5702,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/message/**/*.{ts,tsx,js,jsx}"
@@ -6145,9 +5711,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/judicial-system/message"
-          ],
+          "outputs": ["coverage/libs/judicial-system/message"],
           "options": {
             "jestConfig": "libs/judicial-system/message/jest.config.js",
             "passWithNoTests": true
@@ -6164,9 +5728,7 @@
       "architect": {
         "build": {
           "builder": "@irdnis/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/judicial-system/message-handler",
             "main": "apps/judicial-system/message-handler/src/main.ts",
@@ -6194,7 +5756,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/message-handler/**/*.{ts,tsx,js,jsx}"
@@ -6203,9 +5765,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/judicial-system/message-handler"
-          ],
+          "outputs": ["coverage/apps/judicial-system/message-handler"],
           "options": {
             "jestConfig": "apps/judicial-system/message-handler/jest.config.js",
             "passWithNoTests": true
@@ -6230,9 +5790,7 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/judicial-system/scheduler",
             "main": "apps/judicial-system/scheduler/src/main.ts",
@@ -6254,7 +5812,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/scheduler/**/*.{ts,tsx,js,jsx}"
@@ -6263,9 +5821,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/judicial-system/scheduler"
-          ],
+          "outputs": ["coverage/apps/judicial-system/scheduler"],
           "options": {
             "jestConfig": "apps/judicial-system/scheduler/jest.config.js",
             "passWithNoTests": true
@@ -6281,7 +5837,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/judicial-system/types/**/*.{ts,tsx,js,jsx}"
@@ -6294,9 +5850,7 @@
             "jestConfig": "libs/judicial-system/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/types"
-          ]
+          "outputs": ["coverage/libs/judicial-system/types"]
         }
       },
       "tags": []
@@ -6331,9 +5885,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -6351,9 +5903,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -6368,7 +5918,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"
@@ -6381,9 +5931,7 @@
             "jestConfig": "apps/judicial-system/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/web"
-          ]
+          "outputs": ["coverage/apps/judicial-system/web"]
         },
         "docker-next": {},
         "extract-strings": {
@@ -6422,7 +5970,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/web-e2e/**/*.{ts,tsx,js,jsx}"
@@ -6431,9 +5979,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "judicial-system-web"
-      ]
+      "implicitDependencies": ["judicial-system-web"]
     },
     "judicial-system-xrd-api": {
       "root": "apps/judicial-system/xrd-api",
@@ -6466,7 +6012,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/judicial-system/xrd-api/**/*.{ts,tsx,js,jsx}"
@@ -6498,11 +6044,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/localization/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/localization/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6511,9 +6055,7 @@
             "jestConfig": "libs/localization/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/localization"
-          ]
+          "outputs": ["coverage/libs/localization"]
         }
       },
       "tags": []
@@ -6525,11 +6067,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/logging/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/logging/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6538,9 +6078,7 @@
             "jestConfig": "libs/logging/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/logging"
-          ]
+          "outputs": ["coverage/libs/logging"]
         }
       },
       "tags": []
@@ -6552,11 +6090,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/message-queue/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/message-queue/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6566,9 +6102,7 @@
             "passWithNoTests": true,
             "runInBand": true
           },
-          "outputs": [
-            "coverage/libs/message-queue"
-          ]
+          "outputs": ["coverage/libs/message-queue"]
         }
       },
       "tags": []
@@ -6579,18 +6113,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/audit/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/audit/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/audit"
-          ],
+          "outputs": ["coverage/libs/nest/audit"],
           "options": {
             "jestConfig": "libs/nest/audit/jest.config.js",
             "passWithNoTests": true
@@ -6605,18 +6135,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/aws/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/aws/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/aws"
-          ],
+          "outputs": ["coverage/libs/nest/aws"],
           "options": {
             "jestConfig": "libs/nest/aws/jest.config.js",
             "passWithNoTests": true
@@ -6631,18 +6157,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/config/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/config/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/config"
-          ],
+          "outputs": ["coverage/libs/nest/config"],
           "options": {
             "jestConfig": "libs/nest/config/jest.config.js",
             "passWithNoTests": true
@@ -6657,18 +6179,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/feature-flags/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/feature-flags/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/feature-flags"
-          ],
+          "outputs": ["coverage/libs/nest/feature-flags"],
           "options": {
             "jestConfig": "libs/nest/feature-flags/jest.config.js",
             "passWithNoTests": true
@@ -6683,18 +6201,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/pagination/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/pagination/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/pagination"
-          ],
+          "outputs": ["coverage/libs/nest/pagination"],
           "options": {
             "jestConfig": "libs/nest/pagination/jest.config.js",
             "passWithNoTests": true
@@ -6709,18 +6223,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/problem/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/problem/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/problem"
-          ],
+          "outputs": ["coverage/libs/nest/problem"],
           "options": {
             "jestConfig": "libs/nest/problem/jest.config.js",
             "passWithNoTests": true
@@ -6735,18 +6245,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/sequelize/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/sequelize/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/sequelize"
-          ],
+          "outputs": ["coverage/libs/nest/sequelize"],
           "options": {
             "jestConfig": "libs/nest/sequelize/jest.config.js",
             "passWithNoTests": true
@@ -6761,18 +6267,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/swagger/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/swagger/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/swagger"
-          ],
+          "outputs": ["coverage/libs/nest/swagger"],
           "options": {
             "jestConfig": "libs/nest/swagger/jest.config.js",
             "passWithNoTests": true
@@ -6787,18 +6289,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nest/validators/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nest/validators/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/nest/validators"
-          ],
+          "outputs": ["coverage/libs/nest/validators"],
           "options": {
             "jestConfig": "libs/nest/validators/jest.config.js",
             "passWithNoTests": true
@@ -6814,11 +6312,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/next-ids-auth/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/next-ids-auth/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6827,9 +6323,7 @@
             "jestConfig": "libs/next-ids-auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/next-ids-auth"
-          ]
+          "outputs": ["coverage/libs/next-ids-auth"]
         }
       },
       "tags": []
@@ -6841,11 +6335,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/nova-sms/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/nova-sms/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6854,9 +6346,7 @@
             "jestConfig": "libs/nova-sms/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/nova-sms"
-          ]
+          "outputs": ["coverage/libs/nova-sms"]
         }
       },
       "tags": []
@@ -6868,11 +6358,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/plausible/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/plausible/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6881,9 +6369,7 @@
             "jestConfig": "libs/plausible/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/plausible"
-          ]
+          "outputs": ["coverage/libs/plausible"]
         }
       },
       "tags": []
@@ -6894,7 +6380,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"
@@ -6903,9 +6389,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/react/feature-flags"
-          ],
+          "outputs": ["coverage/libs/react/feature-flags"],
           "options": {
             "jestConfig": "libs/react/feature-flags/jest.config.js",
             "passWithNoTests": true
@@ -6953,9 +6437,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -6964,11 +6446,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/reference-backend/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/reference-backend/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -6977,9 +6457,7 @@
             "jestConfig": "apps/reference-backend/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/reference-backend"
-          ]
+          "outputs": ["coverage/apps/reference-backend"]
         },
         "docker-express": {},
         "dev-services": {
@@ -7043,9 +6521,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -7062,9 +6538,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -7079,11 +6553,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/reference-next-app/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/reference-next-app/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -7092,9 +6564,7 @@
             "jestConfig": "apps/reference-next-app/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/reference-next-app"
-          ]
+          "outputs": ["coverage/apps/reference-next-app"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7111,18 +6581,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/regulations/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/regulations/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/regulations"
-          ],
+          "outputs": ["coverage/libs/regulations"],
           "options": {
             "jestConfig": "libs/regulations/jest.config.js",
             "passWithNoTests": true
@@ -7137,18 +6603,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/residence-history/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/residence-history/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/residence-history"
-          ],
+          "outputs": ["coverage/libs/residence-history"],
           "options": {
             "jestConfig": "libs/residence-history/jest.config.js",
             "passWithNoTests": true
@@ -7177,9 +6639,7 @@
               "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
-            "styles": [
-              "apps/service-portal/src/styles.css"
-            ],
+            "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
             "maxWorkers": 2
@@ -7202,9 +6662,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -7218,11 +6676,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/service-portal/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/service-portal/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -7231,9 +6687,7 @@
             "jestConfig": "apps/service-portal/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/service-portal"
-          ]
+          "outputs": ["coverage/apps/service-portal"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7252,7 +6706,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/applications/**/*.{ts,tsx,js,jsx}"
@@ -7265,9 +6719,7 @@
             "jestConfig": "libs/service-portal/applications/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/applications"
-          ]
+          "outputs": ["coverage/libs/service-portal/applications"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7286,7 +6738,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/assets/**/*.{ts,tsx,js,jsx}"
@@ -7299,9 +6751,7 @@
             "jestConfig": "libs/service-portal/assets/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/assets"
-          ]
+          "outputs": ["coverage/libs/service-portal/assets"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7319,7 +6769,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/constants/**/*.{ts,tsx,js,jsx}"
@@ -7332,9 +6782,7 @@
             "jestConfig": "libs/service-portal/constants/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/constants"
-          ]
+          "outputs": ["coverage/libs/service-portal/constants"]
         }
       },
       "tags": []
@@ -7346,7 +6794,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/core/**/*.{ts,tsx,js,jsx}"
@@ -7359,9 +6807,7 @@
             "jestConfig": "libs/service-portal/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/core"
-          ]
+          "outputs": ["coverage/libs/service-portal/core"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7379,7 +6825,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/document-provider/**/*.{ts,tsx,js,jsx}"
@@ -7392,9 +6838,7 @@
             "jestConfig": "libs/service-portal/document-provider/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/document-provider"
-          ]
+          "outputs": ["coverage/libs/service-portal/document-provider"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7412,7 +6856,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/documents/**/*.{ts,tsx,js,jsx}"
@@ -7425,9 +6869,7 @@
             "jestConfig": "libs/service-portal/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/documents"
-          ]
+          "outputs": ["coverage/libs/service-portal/documents"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7464,18 +6906,14 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/service-portal-e2e/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/service-portal-e2e/**/*.{ts,tsx,js,jsx}"]
           }
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "service-portal"
-      ]
+      "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
       "root": "libs/service-portal/education",
@@ -7484,7 +6922,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/education/**/*.{ts,tsx,js,jsx}"
@@ -7497,9 +6935,7 @@
             "jestConfig": "libs/service-portal/education/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/education"
-          ]
+          "outputs": ["coverage/libs/service-portal/education"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7542,7 +6978,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/education-career/**/*.{ts,tsx,js,jsx}"
@@ -7555,9 +6991,7 @@
             "jestConfig": "libs/service-portal/education-career/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/education-career"
-          ]
+          "outputs": ["coverage/libs/service-portal/education-career"]
         }
       },
       "tags": []
@@ -7569,7 +7003,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/education-degree/**/*.{ts,tsx,js,jsx}"
@@ -7582,9 +7016,7 @@
             "jestConfig": "libs/service-portal/education-degree/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/education-degree"
-          ]
+          "outputs": ["coverage/libs/service-portal/education-degree"]
         }
       },
       "tags": []
@@ -7596,7 +7028,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/education-license/**/*.{ts,tsx,js,jsx}"
@@ -7609,9 +7041,7 @@
             "jestConfig": "libs/service-portal/education-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/education-license"
-          ]
+          "outputs": ["coverage/libs/service-portal/education-license"]
         }
       },
       "tags": []
@@ -7623,7 +7053,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/education-student-assessment/**/*.{ts,tsx,js,jsx}"
@@ -7650,7 +7080,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/eligibility/**/*.{ts,tsx,js,jsx}"
@@ -7663,9 +7093,7 @@
             "jestConfig": "libs/service-portal/eligibility/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/eligibility"
-          ]
+          "outputs": ["coverage/libs/service-portal/eligibility"]
         }
       },
       "tags": []
@@ -7677,7 +7105,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/endorsements/**/*.{ts,tsx,js,jsx}"
@@ -7690,9 +7118,7 @@
             "jestConfig": "libs/service-portal/eligibility/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/eligibility"
-          ]
+          "outputs": ["coverage/libs/service-portal/eligibility"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7710,7 +7136,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/finance/**/*.{ts,tsx,js,jsx}"
@@ -7723,9 +7149,7 @@
             "jestConfig": "libs/service-portal/finance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/finance"
-          ]
+          "outputs": ["coverage/libs/service-portal/finance"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7742,7 +7166,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/finance-schedule/**/*.{ts,tsx,js,jsx}"
@@ -7751,9 +7175,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/service-portal/finance-schedule"
-          ],
+          "outputs": ["coverage/libs/service-portal/finance-schedule"],
           "options": {
             "jestConfig": "libs/service-portal/finance-schedule/jest.config.js",
             "passWithNoTests": true
@@ -7775,7 +7197,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/graphql/**/*.{ts,tsx,js,jsx}"
@@ -7788,9 +7210,7 @@
             "jestConfig": "libs/service-portal/graphql/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/graphql"
-          ]
+          "outputs": ["coverage/libs/service-portal/graphql"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7809,7 +7229,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/health/**/*.{ts,tsx,js,jsx}"
@@ -7822,9 +7242,7 @@
             "jestConfig": "libs/service-portal/health/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/health"
-          ]
+          "outputs": ["coverage/libs/service-portal/health"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7842,7 +7260,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/icelandic-names-registry/**/*.{ts,tsx,js,jsx}"
@@ -7855,9 +7273,7 @@
             "jestConfig": "libs/service-portal/icelandic-names-registry/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/icelandic-names-registry"
-          ]
+          "outputs": ["coverage/libs/service-portal/icelandic-names-registry"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -7881,7 +7297,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
@@ -7890,9 +7306,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/service-portal/information"
-          ],
+          "outputs": ["coverage/libs/service-portal/information"],
           "options": {
             "jestConfig": "libs/service-portal/information/jest.config.js",
             "passWithNoTests": true
@@ -7913,7 +7327,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
@@ -7922,9 +7336,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/service-portal/licenses"
-          ],
+          "outputs": ["coverage/libs/service-portal/licenses"],
           "options": {
             "jestConfig": "libs/service-portal/licenses/jest.config.js",
             "passWithNoTests": true
@@ -7945,7 +7357,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/settings/access-control/**/*.{ts,tsx,js,jsx}"
@@ -7954,9 +7366,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/service-portal/settings/access-control"
-          ],
+          "outputs": ["coverage/libs/service-portal/settings/access-control"],
           "options": {
             "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
             "passWithNoTests": true
@@ -7978,7 +7388,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/settings/personal-information/**/*.{ts,tsx,js,jsx}"
@@ -8010,7 +7420,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/service-portal/vehicles/**/*.{ts,tsx,js,jsx}"
@@ -8019,9 +7429,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/service-portal/vehicles"
-          ],
+          "outputs": ["coverage/libs/service-portal/vehicles"],
           "options": {
             "jestConfig": "libs/service-portal/vehicles/jest.config.js",
             "passWithNoTests": true
@@ -8049,9 +7457,7 @@
             "outputPath": "dist/apps/services/auth-admin-api",
             "main": "apps/services/auth-admin-api/src/main.ts",
             "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
-            "assets": [
-              "apps/services/auth-admin-api/src/assets"
-            ],
+            "assets": ["apps/services/auth-admin-api/src/assets"],
             "maxWorkers": 2
           },
           "configurations": {
@@ -8061,9 +7467,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -8072,7 +7476,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/auth-admin-api/**/*.{ts,tsx,js,jsx}"
@@ -8085,9 +7489,7 @@
             "jestConfig": "apps/services/auth-admin-api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/auth-admin-api"
-          ]
+          "outputs": ["coverage/apps/services/auth-admin-api"]
         },
         "docker-express": {}
       },
@@ -8157,9 +7559,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -8168,11 +7568,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/services/auth-api/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/services/auth-api/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -8181,9 +7579,7 @@
             "jestConfig": "apps/services/auth-api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/auth-api"
-          ]
+          "outputs": ["coverage/apps/services/auth-api"]
         },
         "docker-express": {},
         "dev-services": {
@@ -8235,16 +7631,12 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/auth-public-api",
             "main": "apps/services/auth-public-api/src/main.ts",
             "tsConfig": "apps/services/auth-public-api/tsconfig.app.json",
-            "assets": [
-              "apps/services/auth-public-api/src/assets"
-            ]
+            "assets": ["apps/services/auth-public-api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -8261,7 +7653,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/auth-public-api/**/*.{ts,tsx,js,jsx}"
@@ -8270,9 +7662,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/auth-public-api"
-          ],
+          "outputs": ["coverage/apps/services/auth-public-api"],
           "options": {
             "jestConfig": "apps/services/auth-public-api/jest.config.js",
             "passWithNoTests": true
@@ -8297,16 +7687,12 @@
       "architect": {
         "build": {
           "builder": "@irdnis/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/contentful-entry-tagger",
             "main": "apps/services/contentful-entry-tagger/src/main.ts",
             "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
-            "assets": [
-              "apps/services/contentful-entry-tagger/src/assets"
-            ]
+            "assets": ["apps/services/contentful-entry-tagger/src/assets"]
           },
           "configurations": {
             "production": {
@@ -8323,7 +7709,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/contentful-entry-tagger/**/*.{ts,tsx,js,jsx}"
@@ -8332,9 +7718,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/contentful-entry-tagger"
-          ],
+          "outputs": ["coverage/apps/services/contentful-entry-tagger"],
           "options": {
             "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
             "passWithNoTests": true
@@ -8384,9 +7768,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -8395,11 +7777,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/services/documents/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/services/documents/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -8408,9 +7788,7 @@
             "jestConfig": "apps/services/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/documents"
-          ]
+          "outputs": ["coverage/apps/services/documents"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -8452,9 +7830,7 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/endorsements/api",
             "main": "apps/services/endorsements/api/src/main.ts",
@@ -8497,7 +7873,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/endorsements/api/**/*.{ts,tsx,js,jsx}"
@@ -8506,9 +7882,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/endorsements/api"
-          ],
+          "outputs": ["coverage/apps/services/endorsements/api"],
           "options": {
             "jestConfig": "apps/services/endorsements/api/jest.config.js",
             "runInBand": true,
@@ -8597,16 +7971,12 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative",
             "main": "apps/services/personal-representative/src/main.ts",
             "tsConfig": "apps/services/personal-representative/tsconfig.app.json",
-            "assets": [
-              "apps/services/personal-representative/src/assets"
-            ]
+            "assets": ["apps/services/personal-representative/src/assets"]
           },
           "configurations": {
             "production": {
@@ -8623,7 +7993,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/personal-representative/**/*.{ts,tsx,js,jsx}"
@@ -8632,9 +8002,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/personal-representative"
-          ],
+          "outputs": ["coverage/apps/services/personal-representative"],
           "options": {
             "jestConfig": "apps/services/personal-representative/jest.config.js",
             "passWithNoTests": true
@@ -8659,9 +8027,7 @@
       "architect": {
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/personal-representative-public",
             "main": "apps/services/personal-representative-public/src/main.ts",
@@ -8685,7 +8051,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/personal-representative-public/**/*.{ts,tsx,js,jsx}"
@@ -8694,9 +8060,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/personal-representative-public"
-          ],
+          "outputs": ["coverage/apps/services/personal-representative-public"],
           "options": {
             "jestConfig": "apps/services/personal-representative-public/jest.config.js",
             "passWithNoTests": true
@@ -8748,9 +8112,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -8777,7 +8139,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
@@ -8790,9 +8152,7 @@
             "jestConfig": "apps/services/search-indexer/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/search-indexer"
-          ]
+          "outputs": ["coverage/apps/services/search-indexer"]
         },
         "docker-express": {}
       },
@@ -8812,16 +8172,12 @@
         },
         "build": {
           "builder": "@anatine/esbuildnx:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/user-notification",
             "main": "apps/services/user-notification/src/main.ts",
             "tsConfig": "apps/services/user-notification/tsconfig.app.json",
-            "assets": [
-              "apps/services/user-notification/src/assets"
-            ]
+            "assets": ["apps/services/user-notification/src/assets"]
           },
           "configurations": {
             "production": {
@@ -8847,14 +8203,11 @@
           "builder": "@nrwl/node:node",
           "options": {
             "buildTarget": "services-user-notification:build",
-            "args": [
-              "--job",
-              "worker"
-            ]
+            "args": ["--job", "worker"]
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"
@@ -8863,9 +8216,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/services/user-notification"
-          ],
+          "outputs": ["coverage/apps/services/user-notification"],
           "options": {
             "jestConfig": "apps/services/user-notification/jest.config.js",
             "passWithNoTests": true
@@ -8934,9 +8285,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -8945,7 +8294,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/user-profile/**/*.{ts,tsx,js,jsx}"
@@ -8958,9 +8307,7 @@
             "jestConfig": "apps/services/user-profile/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/user-profile"
-          ]
+          "outputs": ["coverage/apps/services/user-profile"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -9013,9 +8360,7 @@
             "outputPath": "dist/apps/services/xroad-collector",
             "main": "apps/services/xroad-collector/src/main.ts",
             "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-            "assets": [
-              "apps/services/xroad-collector/src/assets"
-            ],
+            "assets": ["apps/services/xroad-collector/src/assets"],
             "maxWorkers": 2
           },
           "configurations": {
@@ -9025,9 +8370,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -9036,7 +8379,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/services/xroad-collector/**/*.{ts,tsx,js,jsx}"
@@ -9049,15 +8392,11 @@
             "jestConfig": "apps/services/xroad-collector/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/xroad-collector"
-          ]
+          "outputs": ["coverage/apps/services/xroad-collector"]
         },
         "docker-express": {}
       },
-      "tags": [
-        "api-catalogue-services"
-      ]
+      "tags": ["api-catalogue-services"]
     },
     "shared-babel": {
       "root": "libs/shared/babel",
@@ -9066,11 +8405,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/babel/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/babel/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9079,9 +8416,7 @@
             "jestConfig": "libs/shared/babel/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/babel"
-          ]
+          "outputs": ["coverage/libs/shared/babel"]
         }
       },
       "tags": []
@@ -9092,18 +8427,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/components/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/components/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/components"
-          ],
+          "outputs": ["coverage/libs/shared/components"],
           "options": {
             "jestConfig": "libs/shared/components/jest.config.js",
             "passWithNoTests": true
@@ -9126,11 +8457,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/connected/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/connected/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9139,9 +8468,7 @@
             "jestConfig": "libs/shared/connected/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/connected"
-          ]
+          "outputs": ["coverage/libs/shared/connected"]
         }
       },
       "tags": []
@@ -9152,18 +8479,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/constants/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/constants/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/constants"
-          ],
+          "outputs": ["coverage/libs/shared/constants"],
           "options": {
             "jestConfig": "libs/shared/constants/jest.config.js",
             "passWithNoTests": true
@@ -9179,11 +8502,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/form-fields/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/form-fields/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9192,9 +8513,7 @@
             "jestConfig": "libs/shared/form-fields/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/form-fields"
-          ]
+          "outputs": ["coverage/libs/shared/form-fields"]
         }
       },
       "tags": []
@@ -9206,11 +8525,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/mocking/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/mocking/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9219,9 +8536,7 @@
             "jestConfig": "libs/shared/mocking/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/mocking"
-          ]
+          "outputs": ["coverage/libs/shared/mocking"]
         }
       },
       "tags": []
@@ -9232,18 +8547,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/pii/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/pii/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/pii"
-          ],
+          "outputs": ["coverage/libs/shared/pii"],
           "options": {
             "jestConfig": "libs/shared/pii/jest.config.js",
             "passWithNoTests": true
@@ -9258,18 +8569,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/problem/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/problem/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/problem"
-          ],
+          "outputs": ["coverage/libs/shared/problem"],
           "options": {
             "jestConfig": "libs/shared/problem/jest.config.js",
             "passWithNoTests": true
@@ -9284,7 +8591,7 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/shared/translations/**/*.{ts,tsx,js,jsx}"
@@ -9293,9 +8600,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/translations"
-          ],
+          "outputs": ["coverage/libs/shared/translations"],
           "options": {
             "jestConfig": "libs/shared/translations/jest.config.js",
             "passWithNoTests": true
@@ -9317,11 +8622,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/types/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/types/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9330,9 +8633,7 @@
             "jestConfig": "libs/shared/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/types"
-          ]
+          "outputs": ["coverage/libs/shared/types"]
         }
       },
       "tags": []
@@ -9343,18 +8644,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/shared/utils/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/shared/utils/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/shared/utils"
-          ],
+          "outputs": ["coverage/libs/shared/utils"],
           "options": {
             "jestConfig": "libs/shared/utils/jest.config.js",
             "passWithNoTests": true
@@ -9370,7 +8667,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "libs/skilavottord/consts/**/*.{ts,tsx,js,jsx}"
@@ -9383,9 +8680,7 @@
             "jestConfig": "libs/skilavottord/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/skilavottord/consts"
-          ]
+          "outputs": ["coverage/libs/skilavottord/consts"]
         }
       },
       "tags": []
@@ -9397,11 +8692,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/skilavottord/types/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/skilavottord/types/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9410,9 +8703,7 @@
             "jestConfig": "libs/skilavottord/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/skilavottord/types"
-          ]
+          "outputs": ["coverage/libs/skilavottord/types"]
         }
       },
       "tags": []
@@ -9447,9 +8738,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -9467,9 +8756,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -9484,11 +8771,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/skilavottord/web/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/skilavottord/web/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9497,9 +8782,7 @@
             "jestConfig": "apps/skilavottord/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/skilavottord/web"
-          ]
+          "outputs": ["coverage/apps/skilavottord/web"]
         },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
@@ -9538,7 +8821,7 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": [
               "apps/skilavottord/web-e2e/**/*.{ts,tsx,js,jsx}"
@@ -9547,9 +8830,7 @@
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "skilavottord-web"
-      ]
+      "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
       "root": "apps/skilavottord/ws",
@@ -9597,9 +8878,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -9608,11 +8887,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9621,9 +8898,7 @@
             "jestConfig": "apps/skilavottord/ws/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/skilavottord/ws"
-          ]
+          "outputs": ["coverage/apps/skilavottord/ws"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -9677,11 +8952,9 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "system-test": {
@@ -9701,18 +8974,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/testing/containers/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/testing/containers/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/testing/containers"
-          ],
+          "outputs": ["coverage/libs/testing/containers"],
           "options": {
             "jestConfig": "libs/testing/containers/jest.config.js",
             "passWithNoTests": true
@@ -9727,18 +8996,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/testing/fixtures/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/testing/fixtures/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/testing/fixtures"
-          ],
+          "outputs": ["coverage/libs/testing/fixtures"],
           "options": {
             "jestConfig": "libs/testing/fixtures/jest.config.js",
             "passWithNoTests": true
@@ -9753,18 +9018,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/testing/nest/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/testing/nest/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/testing/nest"
-          ],
+          "outputs": ["coverage/libs/testing/nest"],
           "options": {
             "jestConfig": "libs/testing/nest/jest.config.js",
             "passWithNoTests": true
@@ -9779,18 +9040,14 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "libs/user-monitoring/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/user-monitoring"
-          ],
+          "outputs": ["coverage/libs/user-monitoring"],
           "options": {
             "jestConfig": "libs/user-monitoring/jest.config.js",
             "passWithNoTests": true
@@ -9809,10 +9066,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/apps/web",
-            "commands": [
-              "yarn nx build-next web",
-              "yarn nx build-server web"
-            ]
+            "commands": ["yarn nx build-next web", "yarn nx build-server web"]
           },
           "configurations": {
             "production": {
@@ -9829,9 +9083,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:webpack",
@@ -9849,9 +9101,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:node",
@@ -9866,11 +9116,9 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/web/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
           }
         },
         "test": {
@@ -9879,9 +9127,7 @@
             "jestConfig": "apps/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/web"
-          ]
+          "outputs": ["coverage/apps/web"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -9919,18 +9165,14 @@
           }
         },
         "lint": {
-          "executor": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/web-e2e/**/*.{ts,tsx,js,jsx}"
-            ]
+            "lintFilePatterns": ["apps/web-e2e/**/*.{ts,tsx,js,jsx}"]
           }
         }
       },
       "tags": [],
-      "implicitDependencies": [
-        "web"
-      ]
+      "implicitDependencies": ["web"]
     }
   }
 }

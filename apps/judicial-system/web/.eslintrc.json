@@ -1,1 +1,29 @@
-{   "extends": [     "plugin:@nrwl/nx/react",     "plugin:jsx-a11y/strict",     "../../../.eslintrc.json"   ],   "ignorePatterns": [     "!**/*"   ],   "rules": {     "@nrwl/nx/enforce-module-boundaries": [       "error",       {         "enforceBuildableLibDependency": true,         "allowCircularSelfDependency": true,         "allow": [],         "depConstraints": [           {             "sourceTag": "*",             "onlyDependOnLibsWithTags": [               "*"             ]           }         ]       }     ]   },   "plugins": [     "jsx-a11y"   ],   "overrides": [     {       "files": [         "*.ts",         "*.tsx",         "*.js",         "*.jsx"       ],       "rules": {}     },     {       "files": [         "*.spec.ts",         "*.spec.tsx"       ],       "rules": {         "@typescript-eslint/no-var-requires": "off"       }     }   ] }
+{
+  "extends": [
+    "plugin:@nrwl/nx/react",
+    "plugin:jsx-a11y/strict",
+    "../../../.eslintrc.json"
+  ],
+  "ignorePatterns": ["!**/*"],
+  "rules": {
+    "@nrwl/nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allowCircularSelfDependency": true,
+        "allow": [],
+        "depConstraints": [
+          { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
+        ]
+      }
+    ]
+  },
+  "plugins": ["jsx-a11y"],
+  "overrides": [
+    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx"],
+      "rules": { "@typescript-eslint/no-var-requires": "off" }
+    }
+  ]
+}
