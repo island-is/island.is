@@ -260,10 +260,6 @@ export class NationalRegistryService {
     return 'óvíst'
   }
 
-  private getCacheKey(nationalId: string, suffix: 'user' | 'children'): string {
-    return `${CACHE_KEY}_${nationalId}_${suffix}`
-  }
-
   private createNationalRegistryUser(
     response: Einstaklingsupplysingar,
   ): NationalRegistryUser {
