@@ -5,6 +5,7 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetchTimeout: z.number().int(),
   tokenExchangeScope: z.array(z.string()),
+  requestActorToken: z.boolean(),
 })
 
 export const ChargeFjsV2ClientConfig = defineConfig({
@@ -22,6 +23,8 @@ export const ChargeFjsV2ClientConfig = defineConfig({
         // TODO: Remove when fjs has migrated to the scope above.
         'api_resource.scope',
       ],
+      requestActorToken:
+        env.optionalJSON('XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN') ?? false,
     }
   },
 })

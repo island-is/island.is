@@ -15,6 +15,7 @@ import {
   UnauthorizedException,
   Delete,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -95,6 +96,8 @@ import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -119,7 +122,11 @@ export class ApplicationController {
     private intlService: IntlService,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private paymentService: PaymentService,
-  ) {}
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {
+    this.logger = logger.child({ context: 'ApplicationController' })
+  }
 
   @Scopes(ApplicationScope.read)
   @Get('applications/:id')
@@ -1134,7 +1141,7 @@ export class ApplicationController {
     }
 
     // delete charge in FJS
-    //this.deleteApplicationCharge(existingApplication)
+    this.deleteApplicationCharge(existingApplication)
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
@@ -1170,8 +1177,9 @@ export class ApplicationController {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
     } catch (error) {
-      throw new NotFoundException(
-        `Application charge delete error on id ${application.id}`,
+      this.logger.error(
+        `Application data prune error on id ${application.id}`,
+        error,
       )
     }
   }
