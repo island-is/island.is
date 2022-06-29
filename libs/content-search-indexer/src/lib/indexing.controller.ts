@@ -37,7 +37,11 @@ export class IndexingController {
     }
 
     const syncStatus = await this.indexingService.getSyncStatus(locale)
-    if (syncStatus?.running) {
+
+    // We allow a new sync if there is no lock or if the current one has been running for too long
+    const secondsFromLastStart =
+      (new Date().getTime() - Number(syncStatus?.lastStart) ?? 0) / 1000
+    if (syncStatus?.running && secondsFromLastStart < environment.lockTime) {
       logger.info('Sync is already running, request ignored')
       return {
         acknowledge: true,
