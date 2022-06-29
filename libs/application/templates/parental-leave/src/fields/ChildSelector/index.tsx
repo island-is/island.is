@@ -155,7 +155,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
                       justifyContent={'spaceBetween'}
                       paddingTop={[1, 0]}
                     >
-                      <Box className={styles.flexShrink}>
+                      <Box>
                         <Text>{applicationId}</Text>
                       </Box>
                       <Box
