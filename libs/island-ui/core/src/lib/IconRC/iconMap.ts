@@ -36,6 +36,7 @@ export type Icon =
   | 'heart'
   | 'home'
   | 'informationCircle'
+  | 'links'
   | 'lockClosed'
   | 'logOut'
   | 'mail'
@@ -100,6 +101,7 @@ export default {
     heart: 'Heart',
     home: 'Home',
     informationCircle: 'InformationCircle',
+    links: 'Links',
     lockClosed: 'LockClosed',
     logOut: 'LogOut',
     mail: 'Mail',
@@ -163,6 +165,7 @@ export default {
     heart: 'HeartOutline',
     home: 'HomeOutline',
     informationCircle: 'InformationCircleOutline',
+    links: 'LinksOutline',
     lockClosed: 'LockClosedOutline',
     logOut: 'LogOutOutline',
     mail: 'MailOutline',

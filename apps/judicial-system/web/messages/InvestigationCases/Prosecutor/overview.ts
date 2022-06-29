@@ -40,7 +40,7 @@ export const icOverview = {
   sections: {
     copyLinkForDefenderButton: defineMessage({
       id:
-        'judicial.system.restriction_cases:overview.copy_link_for_defender_button',
+        'judicial.system.investigation_cases:overview.copy_link_for_defender_button',
       defaultMessage: 'Afrita hlekk fyrir verjanda',
       description:
         'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
