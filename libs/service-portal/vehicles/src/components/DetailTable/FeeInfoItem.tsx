@@ -27,7 +27,7 @@ const FeeInfoItem = ({ data }: PropTypes) => {
           }
         />
 
-        <Column
+        {/* <Column
           label={messages.insured}
           value={
             data.insuranceStatus === true
@@ -36,7 +36,7 @@ const FeeInfoItem = ({ data }: PropTypes) => {
               ? formatMessage(messages.no)
               : ''
           }
-        />
+        /> */}
         <Column
           label={messages.negligence}
           value={
