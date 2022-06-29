@@ -46,6 +46,13 @@ export const rcOverview = {
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    copyLinkForDefenderButton: defineMessage({
+      id:
+        'judicial.system.restriction_cases:overview.copy_link_for_defender_button',
+      defaultMessage: 'Afrita hlekk fyrir verjanda',
+      description:
+        'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
+    }),
     modal: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:overview.modal.heading',
