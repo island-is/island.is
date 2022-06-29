@@ -10,7 +10,6 @@ import {
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
-
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
