@@ -10,7 +10,7 @@ import {
   PersonType,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 

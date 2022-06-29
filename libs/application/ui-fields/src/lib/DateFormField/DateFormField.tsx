@@ -1,13 +1,12 @@
 import React, { FC, useMemo } from 'react'
 
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   DateField,
-  formatText,
   MaybeWithApplicationAndField,
   Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   DatePickerController,
@@ -34,11 +33,6 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
     onChange,
   } = field
   const { formatMessage, lang } = useLocale()
-
-  const computedDefaultValue =
-    typeof defaultValue === 'function'
-      ? defaultValue(application, field)
-      : defaultValue
 
   const computeMinDate = (
     maybeMinDate: MaybeWithApplicationAndField<Date>,

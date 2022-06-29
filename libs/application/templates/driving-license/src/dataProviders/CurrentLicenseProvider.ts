@@ -1,10 +1,10 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'

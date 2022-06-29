@@ -25,11 +25,8 @@ import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 import { ValueType } from 'react-select'
-import {
-  Application,
-  ApplicationStatus,
-  institutionMapper,
-} from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
+import { institutionMapper } from '@island.is/application/core'
 import { useQuery } from '@apollo/client'
 import { Organization } from '@island.is/shared/types'
 

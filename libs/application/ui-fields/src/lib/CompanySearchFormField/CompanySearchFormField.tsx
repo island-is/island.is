@@ -1,14 +1,12 @@
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   CompanySearchField,
   FieldBaseProps,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { CompanySearchController } from '@island.is/application/ui-components'
-import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField

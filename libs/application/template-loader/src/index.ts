@@ -1,3 +1,4 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationTemplate,
@@ -5,11 +6,10 @@ import {
   ApplicationContext,
   ApplicationStateMeta,
   ApplicationStateSchema,
-  ApplicationTemplateHelper,
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
