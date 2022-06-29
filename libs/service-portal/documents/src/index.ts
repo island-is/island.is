@@ -44,10 +44,7 @@ export const documentsModule: ServicePortalModule = {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
       enabled: enabled(userInfo),
-      render: isLegalAndOver15(userInfo)
-        ? () =>
-            lazy(() => import('./screens/AccessDeniedLegal/AccessDeniedLegal'))
-        : () => lazy(() => import('./screens/Overview/Overview')),
+      render: () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],
 }
