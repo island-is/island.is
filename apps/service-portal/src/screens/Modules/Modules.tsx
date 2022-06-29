@@ -49,35 +49,29 @@ const RouteLoader: FC<{
   routes: ServicePortalRoute[]
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
-}> = React.memo(({ routes, userInfo, client }) => {
-  return (
-    <Switch>
-      {routes.map((route) =>
-        route.enabled === false ? (
-          <Route
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
-            path={route.path}
-            component={AccessDenied}
-          />
-        ) : (
-          <Route
-            path={route.path}
-            exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
-            render={() => (
-              <RouteComponent
-                route={route}
-                userInfo={userInfo}
-                client={client}
-              />
-            )}
-          />
-        ),
-      )}
-      {routes.length > 0 && <Route component={NotFound} />}
-    </Switch>
-  )
-})
+}> = React.memo(({ routes, userInfo, client }) => (
+  <Switch>
+    {routes.map((route) =>
+      route.enabled === false ? (
+        <Route
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
+          path={route.path}
+          component={AccessDenied}
+        />
+      ) : (
+        <Route
+          path={route.path}
+          exact
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
+          render={() => (
+            <RouteComponent route={route} userInfo={userInfo} client={client} />
+          )}
+        />
+      ),
+    )}
+    {routes.length > 0 && <Route component={NotFound} />}
+  </Switch>
+))
 
 const Modules: FC<{}> = () => {
   const [{ routes }] = useStore()
