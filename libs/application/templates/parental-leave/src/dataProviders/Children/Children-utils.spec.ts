@@ -56,8 +56,15 @@ const createApplicationWithChildren = (
 }
 
 describe('applicationsToChildInformation', () => {
-  it('should return empty array with no applicant', () => {
+  it('should return empty array when no applicant', () => {
     const applicationsWhereApplicant: Application[] = []
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual([])
+  })
+  it('should return empty array when no children', () => {
+    const children: ChildInformationWithoutRights[] = []
+    const applicationsWhereApplicant: Application[] = [
+      createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
+    ]
     expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual([])
   })
   it('should return children of applicant', () => {
