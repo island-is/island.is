@@ -594,8 +594,11 @@ describe('calculateMaxPercentageForPeriod', () => {
     it('should calculate 2% for a full year', () => {
       expect(calculateMinPercentageForPeriod(new Date(2020, 2, 14), new Date(2021, 2, 13))).toBe(0.02)
     })
-    it('should calculate 2% for half a year', () => {
+    it('should calculate 2% for 180 days', () => {
       expect(calculateMinPercentageForPeriod(new Date(2020, 1, 1), new Date(2020, 6, 30))).toBe(0.02)
+    })
+    it('should calculate 2% for 180 - 45 days', () => {
+      expect(calculateMinPercentageForPeriod(new Date(2020, 1, 1), new Date(2020, 5, 15))).toBe(0.02)
     })
   })
 })
