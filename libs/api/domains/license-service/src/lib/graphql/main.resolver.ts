@@ -93,7 +93,7 @@ export class MainResolver {
       user,
       locale,
       {
-        includedTypes: input?.includedTypes,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
         excludedTypes: input?.excludedTypes,
         force: input?.force,
         onlyList: input?.onlyList,

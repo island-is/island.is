@@ -11,6 +11,7 @@ import {
   buildCheckboxField,
   buildCompanySearchField,
   Application,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   section,
@@ -107,9 +108,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.label
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.label',
+                  '',
+                )
               },
             }),
             buildTextField({
@@ -121,9 +124,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.nationalId
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.nationalId',
+                  '',
+                )
               },
             }),
             buildTextField({
@@ -133,9 +138,11 @@ export const LoginServiceForm: Form = buildForm({
               required: true,
               disabled: true,
               defaultValue: (application: Application) => {
-                const { searchField } = application.answers
-                  .selectCompany as selectCompanySearchField
-                return searchField.isat
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
               },
             }),
             buildCustomField({
@@ -144,10 +151,15 @@ export const LoginServiceForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'IsatInvalid',
               condition: (formValue) => {
-                const {
-                  searchField,
-                } = formValue.selectCompany as selectCompanySearchField
-                return searchField.isat.slice(0, 2) !== '84'
+                const isatNr = getValueViaPath(
+                  formValue,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+                if (isatNr !== undefined) {
+                  return isatNr.slice(0, 2) !== '84'
+                }
+                return false
               },
             }),
             buildCustomField(

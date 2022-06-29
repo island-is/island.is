@@ -32,6 +32,18 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export type TagVariant =
+  | 'blue'
+  | 'darkerBlue'
+  | 'purple'
+  | 'white'
+  | 'red'
+  | 'rose'
+  | 'blueberry'
+  | 'dark'
+  | 'mint'
+  | 'disabled'
+
 export interface Option {
   value: string
   label: FormText
@@ -40,6 +52,11 @@ export interface Option {
   excludeOthers?: boolean
   illustration?: React.FC
   disabled?: boolean
+  tag?: {
+    label: string
+    variant?: TagVariant
+    outlined?: boolean
+  }
 }
 
 export interface SelectOption<T = string | number> {
