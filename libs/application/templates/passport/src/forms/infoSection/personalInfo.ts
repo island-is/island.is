@@ -9,13 +9,13 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { YES } from '../../lib/constants'
+import { YES, Passport } from '../../lib/constants'
 
 export const personalInfo = buildMultiField({
   id: 'personalInfo',
   title: m.infoTitle,
   description: m.personalInfoSubtitle,
-  condition: (answers) => (answers.passport as any)?.userPassport !== '',
+  condition: (answers) => (answers.passport as Passport)?.userPassport !== '',
   children: [
     buildTextField({
       id: 'personalInfo.name',
@@ -26,7 +26,7 @@ export const personalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.nationalRegistry?.data as {
           fullName?: string
-        })?.fullName,
+        })?.fullName ?? '',
     }),
     buildTextField({
       id: 'personalInfo.nationalId',
@@ -50,7 +50,7 @@ export const personalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
-        })?.email,
+        })?.email ?? '',
     }),
     buildTextField({
       id: 'personalInfo.phoneNumber',
@@ -61,7 +61,7 @@ export const personalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           mobilePhoneNumber?: string
-        })?.mobilePhoneNumber,
+        })?.mobilePhoneNumber ?? '',
     }),
     buildDescriptionField({
       id: 'personalInfo.space',

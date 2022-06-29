@@ -121,6 +121,11 @@ export const m = defineMessages({
     defaultMessage: 'Í pöntun',
     description: 'Some description',
   },
+  children: {
+    id: 'pa.application:selectPassport.childrenHeader',
+    defaultMessage: 'Börn',
+    description: 'Some description',
+  },
 
   /* Information Section */
   formName: {
@@ -189,12 +194,17 @@ export const m = defineMessages({
   },
   serviceTypeRegularSublabel: {
     id: 'pa.application:service.regular.sublabel',
-    defaultMessage: 'Innan 10 virkra daga frá myndaöku.',
+    defaultMessage: 'Innan 10 virkra daga frá myndatöku',
     description: 'Some description',
   },
   serviceTypeRegularPrice: {
     id: 'pa.application:service.type.regular.price',
     defaultMessage: '13.000 kr.',
+    description: 'Some description',
+  },
+  serviceTypeRegularPriceWithDiscount: {
+    id: 'pa.application:service.type.regular.price.withDiscount',
+    defaultMessage: '5.600kr',
     description: 'Some description',
   },
   serviceTypeExpress: {
@@ -210,6 +220,11 @@ export const m = defineMessages({
   serviceTypeExpressPrice: {
     id: 'pa.application:service.type.express.price',
     defaultMessage: '26.000 kr.',
+    description: 'Some description',
+  },
+  serviceTypeExpressPriceWithDiscount: {
+    id: 'pa.application:service.type.express.price.withDiscount',
+    defaultMessage: '11.000 kr.',
     description: 'Some description',
   },
   dropLocation: {

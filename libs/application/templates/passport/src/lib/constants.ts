@@ -45,3 +45,28 @@ export type SubmitResponse = {
   success: boolean
   orderId?: string
 }
+
+export type Passport = {
+  userPassport: string
+  childPassport: string
+}
+
+export type Guardian = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+}
+
+export type ChildsPersonalInfo = {
+  name: string
+  nationalId: string
+  hasDisabilityDiscount: Array<string>
+  guardian1: Guardian
+  guardian2: Guardian
+}
+
+export type IdentityDocument = {
+  number: string
+  expirationDate: Date
+}

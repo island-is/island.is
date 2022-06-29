@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
+import { IdentityDocument } from '../../lib/constants'
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,
@@ -22,8 +23,10 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
+  const identityDocument = application.externalData.identityDocument
+    .data as IdentityDocument
+  const identityDocumentNumber = identityDocument?.number
 
-  /* TODO: replace all any with correct types when service is ready! */
   return (
     <Box>
       <RadioFormField
@@ -43,17 +46,13 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                 ?.fullName,
               value: '1',
               subLabel:
-                formatMessage(m.passportNumber) +
-                (application.externalData.identityDocument.data as any)?.number,
+                formatMessage(m.passportNumber) + identityDocumentNumber,
               tag: {
                 variant: 'red',
                 label:
                   formatMessage(m.validTag) +
                   format(
-                    new Date(
-                      (application.externalData.identityDocument
-                        .data as any)?.expirationDate,
-                    ),
+                    new Date(identityDocument?.expirationDate),
                     'dd/MM/yy',
                   ),
                 outlined: true,
@@ -65,7 +64,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
           },
         }}
       />
-      <Text variant="h3">Börn</Text>
+      <Text variant="h3">{formatMessage(m.children)}</Text>
       <RadioFormField
         error={fieldErros}
         application={application}
@@ -82,8 +81,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 1',
               subLabel:
-                formatMessage(m.passportNumber) +
-                (application.externalData.identityDocument.data as any)?.number,
+                formatMessage(m.passportNumber) + identityDocumentNumber,
               tag: {
                 variant: 'red',
                 outlined: true,
@@ -103,8 +101,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 3',
               subLabel:
-                formatMessage(m.passportNumber) +
-                (application.externalData.identityDocument.data as any)?.number,
+                formatMessage(m.passportNumber) + identityDocumentNumber,
               value: '3',
               tag: {
                 variant: 'blue',
@@ -116,8 +113,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 4',
               subLabel:
-                formatMessage(m.passportNumber) +
-                (application.externalData.identityDocument.data as any)?.number,
+                formatMessage(m.passportNumber) + identityDocumentNumber,
               value: '4',
               tag: {
                 variant: 'mint',

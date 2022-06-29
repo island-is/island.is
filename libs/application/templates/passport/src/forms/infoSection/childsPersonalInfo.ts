@@ -8,13 +8,14 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
+import { format as formatKennitala } from 'kennitala'
+import { YES, Passport } from '../../lib/constants'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
   title: m.infoTitle,
   description: m.personalInfoSubtitle,
-  condition: (answers) => (answers.passport as any)?.childPassport !== '',
+  condition: (answers) => (answers.passport as Passport)?.childPassport !== '',
   children: [
     buildTextField({
       id: 'childsPersonalInfo.name',
@@ -32,19 +33,6 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       defaultValue: '111111-1111',
     }),
-    buildCheckboxField({
-      id: 'childsPersonalInfo.hasDisabilityDiscount',
-      title: '',
-      large: false,
-      backgroundColor: 'white',
-      defaultValue: [],
-      options: [
-        {
-          value: YES,
-          label: m.hasDisabilityDiscount,
-        },
-      ],
-    }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian1',
       title: 'Forráðamaður 1',
@@ -54,14 +42,16 @@ export const childsPersonalInfo = buildMultiField({
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.nationalId',
-      title: m.name,
+      title: m.nationalId,
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        (application.externalData.nationalRegistry?.data as {
-          nationalId?: string
-        })?.nationalId,
+        formatKennitala(
+          (application.externalData.nationalRegistry?.data as {
+            nationalId?: string
+          })?.nationalId ?? '',
+        ),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.name',
@@ -72,7 +62,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.nationalRegistry?.data as {
           fullName?: string
-        })?.fullName,
+        })?.fullName ?? '',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.email',
@@ -81,7 +71,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
-        })?.email,
+        })?.email ?? '',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.phoneNumber',
@@ -92,7 +82,7 @@ export const childsPersonalInfo = buildMultiField({
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           mobilePhoneNumber?: string
-        })?.mobilePhoneNumber,
+        })?.mobilePhoneNumber ?? '',
     }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian2',
@@ -103,7 +93,7 @@ export const childsPersonalInfo = buildMultiField({
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.nationalId',
-      title: m.name,
+      title: m.nationalId,
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,

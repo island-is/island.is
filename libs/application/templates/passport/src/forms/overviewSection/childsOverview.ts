@@ -11,13 +11,15 @@ import {
   Services,
   Service,
   DistrictCommissionerAgencies,
+  Passport,
+  ChildsPersonalInfo,
 } from '../../lib/constants'
 
 export const childsOverview = buildMultiField({
   id: 'overviewChildsInfo',
   title: m.overview,
   description: m.overviewDescription,
-  condition: (answers) => (answers.passport as any)?.childPassport !== '',
+  condition: (answers) => (answers.passport as Passport)?.childPassport !== '',
   children: [
     buildDividerField({}),
     buildDescriptionField({
@@ -26,12 +28,7 @@ export const childsOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overviewChild.space',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.name,
@@ -62,6 +59,25 @@ export const childsOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
+      marginBottom: 'gutter',
+    }),
+    buildKeyValueField({
+      label: m.name,
+      width: 'half',
+      value: (application: Application) =>
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian1 as {
+          name?: string
+        })?.name,
+    }),
+    buildKeyValueField({
+      label: m.nationalId,
+      width: 'half',
+      value: (application: Application) =>
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian1 as {
+          nationalId?: string
+        })?.nationalId,
     }),
     buildDescriptionField({
       id: 'overviewChild.space2',
@@ -70,32 +86,11 @@ export const childsOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: m.name,
-      width: 'half',
-      value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian1 as {
-          name?: string
-        })?.name,
-    }),
-    /*buildKeyValueField({
-      label: m.nationalId,
-      width: 'half',
-      value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian1 as {
-          nationalId?: string
-        })?.nationalId,
-    }),*/
-    buildDescriptionField({
-      id: 'overviewChild.space3',
-      title: '',
-      description: '',
-      space: 'gutter',
-    }),
-    buildKeyValueField({
       label: m.email,
       width: 'half',
       value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian1 as {
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian1 as {
           email?: string
         })?.email,
     }),
@@ -103,8 +98,8 @@ export const childsOverview = buildMultiField({
       label: m.phoneNumber,
       width: 'half',
       value: (application: Application) => {
-        const phone = ((application.answers.childsPersonalInfo as any)
-          .guardian1 as {
+        const phone = ((application.answers
+          .childsPersonalInfo as ChildsPersonalInfo).guardian1 as {
           phoneNumber?: string
         })?.phoneNumber
 
@@ -112,7 +107,7 @@ export const childsOverview = buildMultiField({
       },
     }),
     buildDescriptionField({
-      id: 'overviewChild.space4',
+      id: 'overviewChild.space3',
       title: '',
       description: '',
       space: 'gutter',
@@ -124,31 +119,28 @@ export const childsOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overviewChild.space5',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.name,
       width: 'half',
       value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian2 as {
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian2 as {
           name?: string
         })?.name,
     }),
-    /*buildKeyValueField({
+    buildKeyValueField({
       label: m.nationalId,
       width: 'half',
       value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian2 as {
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian2 as {
           nationalId?: string
         })?.nationalId,
-    }),*/
+    }),
     buildDescriptionField({
-      id: 'overviewChild.space6',
+      id: 'overviewChild.space4',
       title: '',
       description: '',
       space: 'gutter',
@@ -157,7 +149,8 @@ export const childsOverview = buildMultiField({
       label: m.email,
       width: 'half',
       value: (application: Application) =>
-        ((application.answers.childsPersonalInfo as any).guardian2 as {
+        ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
+          .guardian2 as {
           email?: string
         })?.email,
     }),
@@ -165,8 +158,8 @@ export const childsOverview = buildMultiField({
       label: m.phoneNumber,
       width: 'half',
       value: (application: Application) => {
-        const phone = ((application.answers.childsPersonalInfo as any)
-          .guardian2 as {
+        const phone = ((application.answers
+          .childsPersonalInfo as ChildsPersonalInfo).guardian2 as {
           phoneNumber?: string
         })?.phoneNumber
 
@@ -174,7 +167,7 @@ export const childsOverview = buildMultiField({
       },
     }),
     buildDescriptionField({
-      id: 'overviewChild.space7',
+      id: 'overviewChild.space5',
       title: '',
       description: '',
       space: 'gutter',
@@ -186,12 +179,7 @@ export const childsOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space8',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.serviceTypeTitle,

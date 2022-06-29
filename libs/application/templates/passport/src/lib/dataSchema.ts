@@ -34,14 +34,12 @@ export const dataSchema = z.object({
       .refine((v) => isValidEmail(v), { params: error.invalidValue }),
     phoneNumber: z
       .string()
-      .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
     hasDisabilityDiscount: z.array(z.string()).optional(),
   }),
   childsPersonalInfo: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    hasDisabilityDiscount: z.array(z.string()).optional(),
     guardian1: z.object({
       name: z.string().nonempty(),
       nationalId: z

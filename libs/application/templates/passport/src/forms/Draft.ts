@@ -11,9 +11,16 @@ import {
   Form,
   FormModes,
   buildCustomField,
+  buildKeyValueField,
+  Application,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { Services, DistrictCommissionerAgencies } from '../lib/constants'
+import {
+  Services,
+  DistrictCommissionerAgencies,
+  YES,
+  Passport,
+} from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
@@ -29,7 +36,7 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'introSection',
-      title: m.infoTitle,
+      title: m.introTitle,
       children: [
         buildMultiField({
           id: 'intro',
@@ -130,24 +137,39 @@ export const Draft: Form = buildForm({
               title: '',
               width: 'half',
               space: 'none',
-              options: [
-                {
-                  value: Services.REGULAR,
-                  label:
-                    m.serviceTypeRegular.defaultMessage +
-                    ' - ' +
-                    m.serviceTypeRegularPrice.defaultMessage,
-                  subLabel: m.serviceTypeRegularSublabel.defaultMessage,
-                },
-                {
-                  value: Services.EXPRESS,
-                  label:
-                    m.serviceTypeExpress.defaultMessage +
-                    ' - ' +
-                    m.serviceTypeExpressPrice.defaultMessage,
-                  subLabel: m.serviceTypeExpressSublabel.defaultMessage,
-                },
-              ],
+              options: (application: Application) => {
+                const withDiscount =
+                  ((application.answers.passport as Passport)?.userPassport !==
+                    '' &&
+                    (application.answers
+                      .personalInfo as any)?.hasDisabilityDiscount.includes(
+                      YES,
+                    )) ||
+                  (application.answers.passport as Passport)?.childPassport !==
+                    ''
+                return [
+                  {
+                    value: Services.REGULAR,
+                    label:
+                      m.serviceTypeRegular.defaultMessage +
+                      ' - ' +
+                      (withDiscount === true
+                        ? m.serviceTypeRegularPriceWithDiscount.defaultMessage
+                        : m.serviceTypeRegularPrice.defaultMessage),
+                    subLabel: m.serviceTypeRegularSublabel.defaultMessage,
+                  },
+                  {
+                    value: Services.EXPRESS,
+                    label:
+                      m.serviceTypeExpress.defaultMessage +
+                      ' - ' +
+                      (withDiscount === true
+                        ? m.serviceTypeExpressPriceWithDiscount.defaultMessage
+                        : m.serviceTypeExpressPrice.defaultMessage),
+                    subLabel: m.serviceTypeExpressSublabel.defaultMessage,
+                  },
+                ]
+              },
             }),
             buildDescriptionField({
               id: 'service.dropLocationDescription',
@@ -155,12 +177,7 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 2,
               description: m.dropLocationDescription,
-            }),
-            buildDescriptionField({
-              id: 'service.space',
-              title: '',
-              description: '',
-              space: 'gutter',
+              marginBottom: 'gutter',
             }),
             buildSelectField({
               id: 'service.dropLocation',

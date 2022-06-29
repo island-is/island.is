@@ -11,6 +11,7 @@ import {
   Services,
   Service,
   DistrictCommissionerAgencies,
+  Passport,
 } from '../../lib/constants'
 import format from 'date-fns/format'
 
@@ -18,7 +19,7 @@ export const personalOverview = buildMultiField({
   id: 'overviewPersonalInfo',
   title: m.overview,
   description: m.overviewDescription,
-  condition: (answers) => (answers.passport as any)?.userPassport !== '',
+  condition: (answers) => (answers.passport as Passport)?.userPassport !== '',
   children: [
     buildDividerField({}),
     buildDescriptionField({
@@ -27,12 +28,7 @@ export const personalOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.name,
@@ -109,12 +105,7 @@ export const personalOverview = buildMultiField({
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
-    }),
-    buildDescriptionField({
-      id: 'overview.space4',
-      title: '',
-      description: '',
-      space: 'gutter',
+      marginBottom: 'gutter',
     }),
     buildKeyValueField({
       label: m.serviceTypeTitle,
