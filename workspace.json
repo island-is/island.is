@@ -4227,6 +4227,22 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/contentful-mideind-extension"]
+        },
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/contentful-mideind-extension",
+            "command": "contentful-extension-scripts build --input libs/contentful-extensions/mideind-translation --output dist/contentful-mideind-extension"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts start --input libs/contentful-extensions/mideind-translation --output dist/contentful-mideind-extension --id mideind-translation --name mideind-translation --space-id 8k0h54kbe6bj --field-types Object"
+          }
         }
       },
       "tags": []
@@ -4244,6 +4260,22 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/contentful-parent-slug-extension"]
+        },
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/contentful-parent-slug-extension",
+            "command": "contentful-extension-scripts build --input libs/contentful-extensions/parent-slug --output dist/contentful-parent-slug-extension"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts start --input libs/contentful-extensions/parent-slug --output dist/contentful-parent-slug-extension --id parent-slug --name parent-slug --space-id 8k0h54kbe6bj --field-types Object"
+          }
         }
       },
       "tags": []
