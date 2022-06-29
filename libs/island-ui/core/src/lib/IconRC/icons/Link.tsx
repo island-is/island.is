@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { SvgProps as SVGRProps } from '../Icon'
 
-const SvgLinks = ({
+const SvgLink = ({
   title,
   titleId,
   ...props
 }: React.SVGProps<SVGSVGElement> & SVGRProps) => {
   return (
     <svg
-      className="links_svg__ionicon"
+      className="link_svg__ionicon"
       viewBox="0 0 30 16"
       aria-labelledby={titleId}
       {...props}
@@ -21,4 +21,4 @@ const SvgLinks = ({
   )
 }
 
-export default SvgLinks
+export default SvgLink
