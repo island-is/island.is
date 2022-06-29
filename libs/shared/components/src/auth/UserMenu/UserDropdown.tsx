@@ -16,13 +16,10 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { AuthDelegationType } from '@island.is/api/schema'
 
 interface UserDropdownProps {
   user: User
@@ -55,7 +52,7 @@ export const UserDropdown = ({
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
   const isProcurationHolder = user.profile.delegationType?.includes(
-    AuthDelegationType['ProcurationHolder'],
+    'ProcurationHolder',
   )
 
   const [isMobile, setIsMobile] = useState(false)
