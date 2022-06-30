@@ -25,12 +25,7 @@ import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
-import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
-import {
-  ChargeFjsV2ClientConfig,
-  ChargeFjsV2ClientModule,
-} from '@island.is/clients/charge-fjs-v2'
+import { ApplicationChargeModule } from './charge/application-charge.module'
 
 let BullModule: DynamicModule
 
@@ -72,11 +67,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     CmsTranslationsModule,
     FeatureFlagModule,
     LoggingModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [XRoadConfig, ChargeFjsV2ClientConfig],
-    }),
-    ChargeFjsV2ClientModule,
+    ApplicationChargeModule,
   ],
   controllers: [ApplicationController],
   providers: [
