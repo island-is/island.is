@@ -3,9 +3,9 @@ import { defineMessages } from 'react-intl'
 export const rcCourtOverview = {
   sections: {
     title: {
-      id: 'judicial.system.restriction_cases:court_overview.sections.title',
+      id: 'rcCourtOverview.sections.title',
       defaultMessage:
-        'Yfirlit kröfu um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} other {gæsluvarðhald}}',
+        'Yfirlit {caseType, select, ADMISSION_TO_FACILITY {kröfu um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfu} other {gæsluvarðhaldskröfu}}',
       description:
         'Notaður sem titill á yfirlitssíðu í gæsluvarðhalds-, vistunar- og farbannsmálum.',
     },

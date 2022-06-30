@@ -1,5 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 
 export const isUniqueAssignee = (
   formValue: FormValue,

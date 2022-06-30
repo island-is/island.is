@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useFormContext } from 'react-hook-form'
 

@@ -1,5 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'

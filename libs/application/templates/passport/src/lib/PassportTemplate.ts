@@ -6,7 +6,7 @@ import {
   Application,
   DefaultEvents,
   ApplicationRole,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'

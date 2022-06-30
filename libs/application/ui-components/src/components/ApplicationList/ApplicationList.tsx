@@ -3,19 +3,18 @@ import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
 import { ActionCard, Stack } from '@island.is/island-ui/core'
-import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
+  Answer,
+  FormValue,
   ApplicationStatus,
+  coreMessages,
+  getSlugFromType,
   ActionCardTag,
-  ApplicationTypes,
-} from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { useDeleteApplication } from './hooks/useDeleteApplication'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { Organization } from '@island.is/shared/types'
 
 interface DefaultStateData {
   tag: {
@@ -82,7 +81,6 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 }
 
 interface Props {
-  organizations?: Organization[]
   applications: Pick<
     Application,
     'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
@@ -91,12 +89,7 @@ interface Props {
   refetch?: (() => void) | undefined
 }
 
-const ApplicationList = ({
-  organizations,
-  applications,
-  onClick,
-  refetch,
-}: Props) => {
+const ApplicationList = ({ applications, onClick, refetch }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
@@ -104,18 +97,6 @@ const ApplicationList = ({
 
   const handleDeleteApplication = (applicationId: string) => {
     deleteApplication(applicationId)
-  }
-
-  const getLogo = (typeId: ApplicationTypes): string => {
-    if (!organizations) {
-      return ''
-    }
-    const institutionSlug = institutionMapper[typeId]
-    const institution = organizations.find((x) => x.slug === institutionSlug)
-    return getOrganizationLogoUrl(
-      institution?.title ?? 'stafraent-island',
-      organizations,
-    )
   }
 
   return (
@@ -133,7 +114,6 @@ const ApplicationList = ({
 
         return (
           <ActionCard
-            logo={getLogo(application.typeId)}
             key={`${application.id}-${index}`}
             date={format(new Date(application.modified), formattedDate)}
             tag={{

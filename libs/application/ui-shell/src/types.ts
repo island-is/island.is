@@ -5,7 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 type ScreenAttributes = {
   isNavigable?: boolean

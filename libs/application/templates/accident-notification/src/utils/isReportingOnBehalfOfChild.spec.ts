@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { isReportingOnBehalfOfChild } from './isReportingOnBehalfOfChild'
 describe('isReportingOnBehalfOfChild', () => {

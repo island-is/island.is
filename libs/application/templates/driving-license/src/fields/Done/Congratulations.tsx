@@ -7,8 +7,11 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
-import { CustomField, FieldBaseProps } from '@island.is/application/types'
+import {
+  CustomField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
 import { hasYes } from '../../lib/utils'

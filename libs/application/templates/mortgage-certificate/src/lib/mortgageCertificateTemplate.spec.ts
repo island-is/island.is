@@ -1,10 +1,10 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
+  ApplicationTemplateHelper,
   ApplicationTypes,
   DefaultEvents,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { States } from './constants'
 import MortgageCertificateTemplate from './mortgageCertificateTemplate'
 

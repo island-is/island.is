@@ -1,5 +1,3 @@
-import { Locale } from '@island.is/shared/types'
-
 const formRoutes = '/umsokn/'
 
 export const Routes = {
@@ -58,40 +56,18 @@ export const months = [
   'desember',
 ]
 
-export const monthsEnglish = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
-
-export const getMonth = (month: number, lang: Locale = 'is') => {
-  if (lang === 'is') {
-    return months[month]
-  }
-  return monthsEnglish[month]
+export const getMonth = (month: number) => {
+  return months[month]
 }
 
 export const nextMonth = (month?: number) => {
   return (month ?? new Date().getMonth() + 1) % 12
 }
 
-export const getNextPeriod = (lang: Locale = 'is') => {
-  return {
-    month: getMonth(nextMonth(), lang),
-    year:
-      nextMonth() === 0
-        ? new Date().getFullYear() + 1
-        : new Date().getFullYear(),
-  }
+export const getNextPeriod = {
+  month: getMonth(nextMonth()),
+  year:
+    nextMonth() === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
 }
 
 export const apiBasePath = 'api/financial-aid'

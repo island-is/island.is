@@ -14,7 +14,6 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Webreader } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -56,8 +55,6 @@ interface StepperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
   namespace: GetNamespaceQuery['getNamespace']
-  showWebReader?: boolean
-  webReaderClassName?: string
 }
 
 interface StepOptionSelectItem {
@@ -158,8 +155,6 @@ const Stepper = ({
   optionsFromNamespace,
   namespace,
   scrollUpWhenNextStepAppears = true,
-  showWebReader = false,
-  webReaderClassName = 'rs_read',
 }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -264,7 +259,6 @@ const Stepper = ({
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
       accumulatedAnswers.push(slug)
       const query = {
-        ...router.query,
         answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
         previousAnswer: slug,
       }
@@ -277,24 +271,23 @@ const Stepper = ({
           className={styles.answerRowContainer}
         >
           <Box marginRight={2}>
-            <Text variant="h4" color="purple600">
-              {question}
-            </Text>
+            <Text variant="h4">{question}</Text>
           </Box>
           <Box marginRight={2}>
-            <Text color="purple600">{answer}</Text>
+            <Text>{answer}</Text>
           </Box>
-          <Box textAlign="right">
+          <Box>
             <Link
+              underline="small"
+              underlineVisibility="always"
+              color="blue400"
               shallow={true}
               href={{
                 pathname: urlWithoutQueryParams,
                 query: query,
               }}
             >
-              <Button variant="text" icon="pencil" size="small" nowrap={true}>
-                {n('changeSelection', 'Breyta')}
-              </Button>
+              {n('changeSelection', 'Breyta')}
             </Link>
           </Box>
         </Box>
@@ -334,7 +327,6 @@ const Stepper = ({
               .push({
                 pathname: pathnameWithoutQueryParams,
                 query: {
-                  ...router.query,
                   answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
@@ -363,13 +355,8 @@ const Stepper = ({
     </Box>
   )
 
-  const QuestionTitle = ({
-    containerClassName,
-  }: {
-    containerClassName: string
-  }) => (
+  const QuestionTitle = () => (
     <Box
-      className={containerClassName}
       marginBottom={3}
       marginTop={1}
       onClick={(ev) => {
@@ -442,15 +429,7 @@ const Stepper = ({
 
   return (
     <Box className={styles.container}>
-      {currentStepType !== STEP_TYPES.ANSWER && (
-        <QuestionTitle containerClassName={webReaderClassName} />
-      )}
-      {showWebReader && (
-        <Webreader readId={null} readClass={webReaderClassName} />
-      )}
-      {currentStepType === STEP_TYPES.ANSWER && (
-        <QuestionTitle containerClassName={webReaderClassName} />
-      )}
+      {currentStep && <QuestionTitle />}
 
       {renderCurrentStepOptions()}
       {transitionErrorMessage && (
@@ -461,24 +440,22 @@ const Stepper = ({
       {stepOptions?.length > 0 && <ContinueButton />}
 
       {!isOnFirstStep && (
-        <Box
-          marginTop={10}
-          background="purple100"
-          borderRadius="large"
-          padding="containerGutter"
-        >
-          <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-            <Text variant="h3" marginBottom={3} color="purple600">
-              {n('yourAnswers', 'Svörin þín')}
-            </Text>
-            <Box marginBottom={3} textAlign="right">
-              <Link shallow={true} href={router.asPath.split('?')[0]}>
-                <Button variant="text" icon="reload" size="small" nowrap={true}>
-                  {n('startAgain', 'Byrja aftur')}
-                </Button>
-              </Link>
-            </Box>
+        <Box marginTop={10}>
+          <Text variant="h3" marginBottom={2}>
+            {n('yourAnswers', 'Svörin þín')}
+          </Text>
+          <Box marginBottom={3}>
+            <Link
+              shallow={true}
+              underline="small"
+              underlineVisibility="always"
+              color="blue400"
+              href={router.asPath.split('?')[0]}
+            >
+              {n('startAgain', 'Byrja aftur')}
+            </Link>
           </Box>
+
           {renderQuestionsAndAnswers(
             questionsAndAnswers,
             router.asPath.split('?')[0],

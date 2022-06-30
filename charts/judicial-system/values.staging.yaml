@@ -18,7 +18,6 @@ judicial-system-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     AUTH_AUDIENCE: 'judicial-system.staging01.devland.is'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: ''
     NODE_OPTIONS: '--max-old-space-size=208'

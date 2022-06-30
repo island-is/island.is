@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationWithAttachments,
   Application,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   BaseTemplateApiApplicationService,
   TemplateAPIConfig,

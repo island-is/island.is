@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

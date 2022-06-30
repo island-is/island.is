@@ -1,12 +1,12 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
+  ApplicationTemplateHelper,
   ApplicationTypes,
   ExternalData,
   FormValue,
   DefaultEvents,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
   NO,
@@ -71,7 +71,7 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentObj: {
+            otherParent: {
               otherParentId,
             },
             selectedChild: '0',
@@ -94,7 +94,7 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'no',
             },
-            otherParentObj: {
+            otherParent: {
               otherParentId,
             },
             employer: {
@@ -121,7 +121,7 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentObj: {
+            otherParent: {
               otherParentId,
             },
             employer: {
@@ -164,7 +164,7 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentObj: {
+            otherParent: {
               otherParentId,
             },
             employer: {
@@ -219,7 +219,7 @@ describe('Parental Leave Application Template', () => {
                 },
               },
               answers: {
-                otherParentObj: {
+                otherParent: {
                   chooseOtherParent: SPOUSE,
                 },
                 employer: {
@@ -235,9 +235,7 @@ describe('Parental Leave Application Template', () => {
           })
           expect(hasChanged).toBe(true)
           expect(newState).toBe('vinnumalastofnunApproval')
-          expect(newApplication.answers.otherParentObj.otherParentId).toEqual(
-            otherParentId,
-          )
+          expect(newApplication.answers.otherParentId).toEqual(otherParentId)
         })
       })
     })

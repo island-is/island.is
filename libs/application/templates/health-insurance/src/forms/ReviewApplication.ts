@@ -5,8 +5,9 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({

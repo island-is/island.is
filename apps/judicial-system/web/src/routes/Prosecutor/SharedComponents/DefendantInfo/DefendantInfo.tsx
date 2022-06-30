@@ -11,11 +11,11 @@ import {
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
-  Button,
   Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Input,
   Select,
   Text,
@@ -134,15 +134,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
     <BlueBox>
       <Box marginBottom={2} display="flex" justifyContent="flexEnd">
         {onDelete && (
-          <Button
+          <button
             onClick={() => onDelete(defendant)}
-            colorScheme="destructive"
-            variant="text"
-            size="small"
-            data-testid="deleteDefendantButton"
+            aria-label="Remove defendant"
           >
-            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
-          </Button>
+            <Icon icon="close" color="blue400" />
+          </button>
         )}
       </Box>
       <Box marginBottom={2}>

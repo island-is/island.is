@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { DataProviderTypes, Applicant } from '../lib/types'
 

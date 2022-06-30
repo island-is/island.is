@@ -1,4 +1,4 @@
-import { Answer } from '@island.is/application/types'
+import { Answer } from '@island.is/application/core'
 import { YES, NO } from '../constants'
 import { hasYes } from './hasYes'
 

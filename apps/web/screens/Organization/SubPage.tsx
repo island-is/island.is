@@ -58,19 +58,17 @@ const SubPage: Screen<SubPageProps> = ({
 
   useContentfulId(organizationPage.id, subpage.id)
 
-  const pathWithoutHash = router.asPath.split('#')[0]
-
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pathWithoutHash ||
-        childrenLinks.some((link) => link.url === pathWithoutHash),
+        primaryLink.url === router.asPath ||
+        childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pathWithoutHash,
+        active: url === router.asPath,
       })),
     }),
   )
@@ -178,7 +176,6 @@ const renderSlices = (
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}
-          renderedOnOrganizationSubpage={true}
         />
       ))
   }

@@ -1,7 +1,7 @@
 import {
-  ApplicationConfigurations,
   ApplicationTypes,
-} from '@island.is/application/types'
+  ApplicationConfigurations,
+} from '@island.is/application/core'
 import { useNamespaces } from '@island.is/localization'
 
 export const useApplicationNamespaces = (type?: ApplicationTypes) => {

@@ -2,8 +2,11 @@ import {
   PaymentScheduleEmployer,
   PaymentSchedulePayment,
 } from '@island.is/api/schema'
-import { coreMessages, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  coreMessages,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import {
   AccordionItem,

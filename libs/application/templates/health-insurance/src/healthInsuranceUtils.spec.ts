@@ -1,4 +1,4 @@
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/core'
 import { faker } from '@island.is/shared/mocking'
 import { Applications } from './dataProviders/APIDataTypes'
 import {
@@ -26,7 +26,7 @@ describe('Health insurance utils', () => {
     applicationState = 'draft',
     id = faker.datatype.uuid(),
     externalData?: any,
-    createDate?: Date,
+    createDate?: string,
   ) =>
     (({
       id: id,

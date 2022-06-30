@@ -21,14 +21,14 @@ The API is used by the authentication administration user interface, but shares 
 To run the API locally, you first need to start the database container:
 
 ```bash
-yarn dev-services services-auth-api
+yarn dev-services services-auth-admin-api
 ```
 
 Then run the migration and seed scripts:
 
 ```bash
-yarn nx run services-auth-api:migrate
-yarn nx run services-auth-api:seed
+yarn nx run services-auth-admin-api:migrate
+yarn nx run services-auth-admin-api:seed
 ```
 
 Finally, start the service:

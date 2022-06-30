@@ -8,7 +8,7 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ParentalLeaveApi,

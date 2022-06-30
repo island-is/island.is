@@ -19,9 +19,6 @@ export const CurrentUserQuery = gql`
       name
       title
       role
-      email
-      mobileNumber
-      nationalId
       institution {
         id
         name

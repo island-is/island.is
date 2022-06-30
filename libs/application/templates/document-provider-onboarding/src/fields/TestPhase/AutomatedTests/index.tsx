@@ -1,8 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import { formatText, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Box,
   GridColumn,

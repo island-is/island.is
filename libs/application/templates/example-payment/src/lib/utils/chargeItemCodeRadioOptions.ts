@@ -1,5 +1,5 @@
 /* eslint-disable local-rules/disallow-kennitalas */
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import { PaymentCatalogItem } from '../../types/schema'
 
 const orgIdToName = (orgId: string): string => {

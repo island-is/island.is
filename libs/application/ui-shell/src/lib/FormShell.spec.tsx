@@ -4,13 +4,14 @@ import '@testing-library/jest-dom'
 import * as z from 'zod'
 
 import { FormShell } from './FormShell'
-import { buildForm, buildDescriptionField } from '@island.is/application/core'
 import {
   Application,
   ApplicationTypes,
+  buildForm,
+  buildDescriptionField,
   Form,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { initializeClient } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 import { LocaleProvider } from '@island.is/localization'

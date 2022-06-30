@@ -348,13 +348,7 @@ const Category: Screen<CategoryProps> = ({
                   )}
                   <Stack space={2}>
                     {sortedArticles.map(
-                      ({
-                        __typename: typename,
-                        title,
-                        slug,
-                        processEntry,
-                        processEntryButtonText,
-                      }) => {
+                      ({ __typename: typename, title, slug, processEntry }) => {
                         return (
                           <FocusableBox key={slug} borderRadius="large">
                             <TopicCard
@@ -365,11 +359,8 @@ const Category: Screen<CategoryProps> = ({
                                 ).href
                               }
                               tag={
-                                (!!processEntry || processEntryButtonText) &&
-                                n(
-                                  processEntryButtonText || 'application',
-                                  'Umsókn',
-                                )
+                                !!processEntry &&
+                                n('applicationProcess', 'Umsókn')
                               }
                             >
                               {title}

@@ -37,6 +37,7 @@ interface WrapperProps {
   organizationTitle?: string
   smallBackground?: boolean
   searchPlaceholder?: string
+  searchTags?: Tag[]
   showLogoTitle?: boolean
   pageDescription?: string
   indexableBySearchEngine?: boolean
@@ -52,6 +53,7 @@ export const Wrapper: FC<WrapperProps> = ({
   organizationTitle,
   smallBackground,
   searchPlaceholder,
+  searchTags,
   showLogoTitle,
   pageDescription,
   indexableBySearchEngine = false,
@@ -94,6 +96,7 @@ export const Wrapper: FC<WrapperProps> = ({
           title={headerTitle}
           textMode={textMode}
           searchPlaceholder={searchPlaceholder}
+          searchTags={searchTags}
         />
         <ServiceWebBackground
           variation={
@@ -111,6 +114,7 @@ export const Wrapper: FC<WrapperProps> = ({
               title={searchTitle}
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
+              searchTags={searchTags}
             />
           </Box>
         )}

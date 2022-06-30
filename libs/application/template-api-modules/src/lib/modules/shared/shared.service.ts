@@ -5,7 +5,7 @@ import {
   Application,
   ApplicationWithAttachments,
   GraphqlGatewayResponse,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,

@@ -105,7 +105,7 @@ export let Envs: EnvironmentConfigs = {
     },
   },
   'prod-ids': {
-    auroraHost: 'postgres-ids.internal',
+    auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
     featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],

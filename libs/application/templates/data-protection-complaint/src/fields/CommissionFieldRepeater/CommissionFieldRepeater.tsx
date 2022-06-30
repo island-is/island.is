@@ -1,7 +1,10 @@
 import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
-import { formatText, getErrorViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,

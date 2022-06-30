@@ -1,5 +1,4 @@
-import { buildForm } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { buildForm, Form, FormModes } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { application } from '../../lib/messages'
 

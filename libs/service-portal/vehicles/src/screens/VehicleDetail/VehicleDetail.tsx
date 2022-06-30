@@ -159,7 +159,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.nedc)}
-              content={displayWithUnit(String(mainInfo.co2), 'g/km')}
+              content={String(mainInfo.co2)}
               loading={loading}
             />
             <Divider />
@@ -170,7 +170,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.nedcWeighted)}
-              content={displayWithUnit(String(mainInfo.weightedCo2), 'g/km')}
+              content={String(mainInfo.weightedCo2)}
               loading={loading}
             />
             <Divider />
@@ -181,7 +181,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.wltp)}
-              content={displayWithUnit(String(mainInfo.co2Wltp), 'g/km')}
+              content={String(mainInfo.co2Wltp)}
               loading={loading}
             />
             <Divider />
@@ -192,10 +192,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           <>
             <UserInfoLine
               label={formatMessage(messages.wltpWeighted)}
-              content={displayWithUnit(
-                String(mainInfo.weightedCo2Wltp),
-                'g/km',
-              )}
+              content={String(mainInfo.weightedCo2Wltp)}
               loading={loading}
             />
             <Divider />

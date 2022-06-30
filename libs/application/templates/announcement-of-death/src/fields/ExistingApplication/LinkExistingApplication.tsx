@@ -2,13 +2,14 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
-import { getValueViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
+  getValueViaPath,
+  formatText,
   Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { useHistory } from 'react-router-dom'

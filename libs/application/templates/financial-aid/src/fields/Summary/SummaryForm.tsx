@@ -8,7 +8,6 @@ import {
   aidCalculator,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
-import { useLocale } from '@island.is/localization'
 
 import * as m from '../../lib/messages'
 import {
@@ -31,7 +30,6 @@ import {
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus, hasSpouse } from '../../lib/utils'
 import { useEmail } from '../../lib/hooks/useEmail'
-import withLogo from '../Logo/Logo'
 
 const SummaryForm = ({
   application,
@@ -39,8 +37,6 @@ const SummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { lang } = useLocale()
-
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
@@ -83,7 +79,7 @@ const SummaryForm = ({
 
         <Text variant="small">
           {formatMessage(m.summaryForm.general.descriptionSubtitle, {
-            nextMonth: getNextPeriod(lang).month,
+            nextMonth: getNextPeriod.month,
           })}
         </Text>
       </Box>
@@ -173,4 +169,4 @@ const SummaryForm = ({
   )
 }
 
-export default withLogo(SummaryForm)
+export default SummaryForm

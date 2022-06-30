@@ -1,8 +1,5 @@
-import React from 'react'
-import {
-  GenericLicenseType,
-  useDrivingLicense,
-} from '@island.is/service-portal/graphql'
+import React, { useState } from 'react'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -26,6 +23,7 @@ import { mapCategory } from '../../utils/dataMapper'
 import ReactHtmlParser from 'react-html-parser'
 import ExpandableLine from './ExpandableLine'
 import * as styles from './DrivingLicenseDetail.css'
+import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
 import { info } from 'kennitala'
 import { m } from '../../lib/messages'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
@@ -34,6 +32,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useDrivingLicense()
+
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const { age } = info(data?.kennitala ?? userInfo.profile.nationalId)
@@ -69,20 +68,16 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       {data && (
         <Stack space={2}>
-          <Box
-            display="flex"
-            flexDirection={['column', 'row']}
-            alignItems={['flexStart', 'center']}
-          >
+          <Box display="flex" flexDirection="row" alignItems="center">
             <PkPass
               expireDate={toDate(
                 loading ? '' : new Date(data.gildirTil).getTime().toString(),
               )}
             />
-            <Box marginX={[0, 1]} marginY={[1, 0]} />
+            <Box className={styles.line} marginX={3} />
             <Link href={renewalLink}>
               <Button
-                variant="utility"
+                variant="text"
                 size="small"
                 icon="open"
                 iconType="outline"

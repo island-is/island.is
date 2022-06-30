@@ -7,26 +7,34 @@ import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
-import Chevron from './Chevron'
+
+interface ChevronProps {
+  expanded?: boolean
+  enabled?: boolean
+  active: boolean
+  onChevronClick?: () => void
+}
 
 interface Props {
   path?: ServicePortalPath
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
+  hover: boolean
   enabled?: boolean
   expanded?: boolean
   external?: boolean
-  hasArray?: boolean
-  badge?: boolean
   variant?: 'blue' | 'blueberry'
+  hasArray?: boolean
   onClick?: () => void
   onChevronClick?: () => void
+  badge?: boolean
 }
 
 const NavItemContent: FC<Props> = ({
   icon,
   active,
+  hover,
   enabled,
   hasArray,
   onClick,
@@ -47,15 +55,24 @@ const NavItemContent: FC<Props> = ({
     ? 'inactiveCollapsed'
     : 'inactive'
 
+  let navItemHover: keyof typeof styles.navItemHover = 'none'
+
+  if (hover && active) {
+    navItemHover = 'hoverActive'
+  } else if (hover && collapsed) {
+    navItemHover = 'hoverCollapsed'
+  } else if (hover && !active) {
+    navItemHover = 'hoverInactive'
+  } else {
+    navItemHover = 'none'
+  }
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
 
   return (
     <Box
       className={[
-        styles.navItem,
+        styles.navItemHover[navItemHover],
         styles.navItemActive[navItemActive],
-        collapsed && 'collapsed',
-        'navitem',
       ]}
       display="flex"
       alignItems="center"
@@ -91,7 +108,7 @@ const NavItemContent: FC<Props> = ({
             <Icon
               type={active ? 'filled' : 'outline'}
               icon={icon.icon}
-              color={active ? 'blue400' : 'blue600'}
+              color={active || hover ? 'blue400' : 'blue600'}
               size="medium"
               className={styles.icon}
             />
@@ -104,12 +121,40 @@ const NavItemContent: FC<Props> = ({
           type="filled"
           icon="lockClosed"
           size="small"
-          color={active ? 'blue400' : 'blue600'}
+          color={hover || active ? 'blue400' : 'blue600'}
           className={cn(styles.lock, collapsed && styles.lockCollapsed)}
         />
       )}
     </Box>
   )
+}
+
+const Chevron: FC<ChevronProps> = ({
+  expanded,
+  enabled,
+  active,
+  onChevronClick,
+}) => {
+  const chevronIcon = expanded ? 'chevronUp' : 'chevronDown'
+  const [{ sidebarState }] = useStore()
+  const showChevron = enabled && sidebarState === 'open'
+
+  return showChevron ? (
+    <Box
+      onClick={() => {
+        onChevronClick && onChevronClick()
+      }}
+      className={styles.iconWrapper}
+    >
+      <Icon
+        type="filled"
+        icon={chevronIcon}
+        size="medium"
+        color={active ? 'blue400' : 'blue600'}
+        className={styles.icon}
+      />
+    </Box>
+  ) : null
 }
 
 const NavItem: FC<Props> = (props) => {

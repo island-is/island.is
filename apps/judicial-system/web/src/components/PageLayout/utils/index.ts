@@ -30,8 +30,8 @@ export const caseResult = (
 
   let caseType = workingCase.type
   if (isRejected) {
-    return formatMessage(m.caseResults.rejectedV2, {
-      isInvestigationCase: isInvestigationCase(caseType),
+    return formatMessage(m.caseResults.rejected, {
+      isInvestigationCase: isInvestigationCase(caseType) ? 'yes' : 'no',
     })
   } else if (isAccepted) {
     if (isInvestigationCase(caseType)) {

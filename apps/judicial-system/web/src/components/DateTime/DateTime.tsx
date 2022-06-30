@@ -77,12 +77,14 @@ const DateTime: React.FC<Props> = (props) => {
   ) => {
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeIsValid = validate([[time, validations]]).isValid
+    const timeError = validations.find(
+      (v) => validate(time ?? '', v).isValid === false,
+    )
 
     return (
-      (required && date !== undefined && timeIsValid) ||
+      (required && date !== undefined && timeError === undefined) ||
       (required === false && date === undefined) ||
-      (date !== undefined && timeIsValid)
+      (date !== undefined && timeError === undefined)
     )
   }
 
@@ -111,9 +113,11 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeValidation = validate([[time, validations]])
+    const error = validations
+      .map((v) => validate(time, v))
+      .find((v) => v.isValid === false)
 
-    if (timeValidation.isValid) {
+    if (error === undefined) {
       setTimeErrorMessage(undefined)
     }
 
@@ -125,10 +129,12 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeValidation = validate([[time, validations]])
+    const error = validations
+      .map((v) => validate(time, v))
+      .find((v) => v.isValid === false)
 
-    if (!timeValidation.isValid) {
-      setTimeErrorMessage(timeValidation.errorMessage)
+    if (error) {
+      setTimeErrorMessage(error.errorMessage)
     }
   }
 

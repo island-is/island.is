@@ -20,7 +20,6 @@ export const searchQuery = (
     page = 1,
     types = [],
     tags = [],
-    excludedTags = [],
     contentfulTags = [],
     countTag = [],
     countTypes = false,
@@ -30,7 +29,6 @@ export const searchQuery = (
 ) => {
   const should = []
   const must: TagQuery[] = []
-  const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
   should.push({
@@ -62,12 +60,6 @@ export const searchQuery = (
   if (tags?.length) {
     tags.forEach((tag) => {
       must.push(tagQuery(tag))
-    })
-  }
-
-  if (excludedTags?.length) {
-    excludedTags.forEach((tag) => {
-      mustNot.push(tagQuery(tag))
     })
   }
 
@@ -105,7 +97,6 @@ export const searchQuery = (
       bool: {
         should,
         must,
-        must_not: mustNot,
         minimum_should_match: minimumShouldMatch,
       },
     },

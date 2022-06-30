@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 

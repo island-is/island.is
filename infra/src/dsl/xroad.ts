@@ -95,7 +95,7 @@ export const DrivingLicense = new XroadConf({
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       staging:
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
     },
   },
   secrets: {
@@ -191,17 +191,6 @@ export const Properties = new XroadConf({
   secrets: {
     XROAD_PROPERTIES_CLIENT_SECRET:
       '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
-  },
-})
-
-export const AdrAndMachine = new XroadConf({
-  env: {
-    XROAD_ADR_MACHINE_LICENSE_PATH: {
-      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
-      staging:
-        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
-      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
-    },
   },
 })
 

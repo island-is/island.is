@@ -671,7 +671,7 @@ jobs:
           BODY
       - name: Trigger Deployment for IDS-Services
         env:
-          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+          DOCKER_TAG: ${{ needs.pre-checks.outputs.DOCKER_TAG }}
           GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
@@ -685,8 +685,8 @@ jobs:
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
-              "dependency_docker_tag": "$DOCKER_TAG",
-              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
+              "dependency_docker_tag": "$DOCKER_TAG"
+              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG",
             }
           }
           BODY

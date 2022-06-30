@@ -17,7 +17,6 @@ interface UserDropdownProps {
   language?: string
   dropdownItems?: ReactNode
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
-
   switchLanguage?: (...args: any[]) => void
   onLogout?: () => void
 }
@@ -75,23 +74,21 @@ export const UserDropdown = ({
                   </Box>
                 </Box>
 
-                {switchLanguage && (
-                  <Select
-                    name="language-switcher"
-                    size="sm"
-                    value={
-                      language === 'en'
-                        ? { label: 'English', value: 'en' }
-                        : { label: 'Íslenska', value: 'is' }
-                    }
-                    onChange={switchLanguage}
-                    label={language === 'is' ? 'Tungumál' : 'Language'}
-                    options={[
-                      { label: 'Íslenska', value: 'is' },
-                      { label: 'English', value: 'en' },
-                    ]}
-                  />
-                )}
+                <Select
+                  name="language-switcher"
+                  size="sm"
+                  value={
+                    language === 'en'
+                      ? { label: 'English', value: 'en' }
+                      : { label: 'Íslenska', value: 'is' }
+                  }
+                  onChange={switchLanguage}
+                  label={language === 'is' ? 'Tungumál' : 'Language'}
+                  options={[
+                    { label: 'Íslenska', value: 'is' },
+                    { label: 'English', value: 'en' },
+                  ]}
+                />
 
                 {dropdownItems}
 

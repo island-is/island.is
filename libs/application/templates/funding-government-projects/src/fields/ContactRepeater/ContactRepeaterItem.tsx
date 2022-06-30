@@ -1,5 +1,9 @@
-import { formatText, getErrorViaPath } from '@island.is/application/core'
-import { Application, RecordObject } from '@island.is/application/types'
+import {
+  Application,
+  formatText,
+  getErrorViaPath,
+  RecordObject,
+} from '@island.is/application/core'
 import { Box, Button, Stack } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import React, { FC } from 'react'

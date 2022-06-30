@@ -3,8 +3,7 @@ import {
   PaymentScheduleConditions,
   PaymentScheduleDebts,
 } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   AlertMessage,
   Box,

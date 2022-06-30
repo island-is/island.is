@@ -78,12 +78,12 @@ describe('Ingress definitions', () => {
       },
     })
   })
-  it('MissingSetting value for ingress host skips rendering it', () => {
+  it('Ingress missing generates errors', () => {
     const sut = service('api').ingress({
       primary: {
         host: {
           dev: MissingSetting,
-          staging: 'notmissing-staging01.devland.is',
+          staging: MissingSetting,
           prod: MissingSetting,
         },
         paths: ['/api'],
@@ -100,16 +100,12 @@ describe('Ingress definitions', () => {
     const result = serializeService(
       sut,
       new UberChart(Staging),
-    ) as SerializeSuccess
+    ) as SerializeErrors
 
-    expect(result.serviceDef.ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-        },
-        hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
-      },
-    })
+    expect(result.errors).toEqual([
+      'Missing ingress host info for service:api, ingress:primary in env:staging',
+      'Missing ingress host info for service:api, ingress:secondary in env:staging',
+    ])
   })
   it('Internal ingress basic', () => {
     const sut = service('api').ingress({

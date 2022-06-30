@@ -1,4 +1,4 @@
-import { ExternalData } from '@island.is/application/types'
+import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { NordicCountriesCountryCode } from './shared'

@@ -10,13 +10,11 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-} from '@island.is/application/core'
-import {
   DefaultEvents,
   Form,
   FormModes,
   FormValue,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,

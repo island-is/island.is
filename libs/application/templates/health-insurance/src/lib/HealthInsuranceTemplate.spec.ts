@@ -1,12 +1,12 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
+  ApplicationTemplateHelper,
   ApplicationTypes,
   ExternalData,
   DefaultEvents,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import HealthInsuranceTemplate from './HealthInsuranceTemplate'
 
 function buildApplication(data: {
@@ -23,7 +23,7 @@ function buildApplication(data: {
     created: new Date(),
     status: ApplicationStatus.IN_PROGRESS,
     modified: new Date(),
-    applicantActors: [],
+    attachments: {},
     answers,
     state,
     externalData,

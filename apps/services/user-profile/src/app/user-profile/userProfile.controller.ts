@@ -117,7 +117,7 @@ export class UserProfileController {
 
     if (userProfileDto.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileDto.emailCode, email: userProfileDto.email },
+        { hash: userProfileDto.emailCode },
         user.nationalId,
       )
 
@@ -136,10 +136,7 @@ export class UserProfileController {
 
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        {
-          code: userProfileDto.smsCode,
-          mobilePhoneNumber: userProfileDto.mobilePhoneNumber,
-        },
+        { code: userProfileDto.smsCode },
         user.nationalId,
       )
 
@@ -217,10 +214,7 @@ export class UserProfileController {
 
     if (userProfileToUpdate.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        {
-          code: userProfileToUpdate.smsCode,
-          mobilePhoneNumber: userProfileToUpdate.mobilePhoneNumber,
-        },
+        { code: userProfileToUpdate.smsCode },
         user.nationalId,
       )
 
@@ -239,10 +233,7 @@ export class UserProfileController {
 
     if (userProfileToUpdate.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        {
-          hash: userProfileToUpdate.emailCode,
-          email: userProfileToUpdate.email,
-        },
+        { hash: userProfileToUpdate.emailCode },
         user.nationalId,
       )
 

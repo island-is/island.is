@@ -1,9 +1,11 @@
 import {
+  ApplicationTypes,
   buildCustomField,
   buildForm,
   buildMultiField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
-import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,

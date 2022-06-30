@@ -19,7 +19,6 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
 
 import * as styles from './SearchSection.css'
-import { TestSupport } from '@island.is/island-ui/utils'
 
 const DefaultIllustration = dynamic(() => import('./Illustration'), {
   ssr: false,
@@ -74,12 +73,7 @@ export const SearchSection = ({
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <Box display="flex" height="full" alignItems="center">
               <Stack space={[3, 3, 5]}>
-                <Text
-                  as="h1"
-                  variant="h1"
-                  id={headingId}
-                  dataTestId="home-heading"
-                >
+                <Text as="h1" variant="h1" id={headingId}>
                   {heading ?? ''}
                 </Text>
                 <SearchInput
@@ -103,12 +97,7 @@ export const SearchSection = ({
                         {...(cardUrl.href.startsWith('/')
                           ? {
                               CustomLink: ({ children, ...props }) => (
-                                <Link
-                                  key={title}
-                                  {...props}
-                                  {...cardUrl}
-                                  dataTestId="featured-link"
-                                >
+                                <Link key={title} {...props} {...cardUrl}>
                                   {children}
                                 </Link>
                               ),
@@ -147,7 +136,6 @@ export const SearchSection = ({
                   <Video
                     name="desktop"
                     title={imageAlternativeText}
-                    dataTestId="home-banner"
                     sources={videos.map(({ url, contentType }) => {
                       return {
                         src: url,
@@ -186,7 +174,6 @@ export const SearchSection = ({
             <Video
               name="mobile"
               title={imageAlternativeText}
-              dataTestId="home-banner"
               sources={videosMobile.map(({ url, contentType }) => {
                 return {
                   src: url,
@@ -226,13 +213,7 @@ type VideoProps = {
   fallback: ReactNode
 }
 
-const Video = ({
-  name,
-  title,
-  sources,
-  fallback,
-  dataTestId,
-}: VideoProps & TestSupport) => {
+const Video = ({ name, title, sources, fallback }: VideoProps) => {
   const id = `front_page_video_${name}`
 
   return (
@@ -241,7 +222,6 @@ const Video = ({
       id={id}
       title={title}
       className={styles.mediaItem}
-      data-testid={dataTestId}
       autoPlay
       loop
       muted

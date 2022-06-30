@@ -36,8 +36,3 @@ export const button = style({
     },
   }),
 })
-
-export const logo = style({
-  backgroundSize: 'contain',
-  backgroundRepeat: 'no-repeat',
-})

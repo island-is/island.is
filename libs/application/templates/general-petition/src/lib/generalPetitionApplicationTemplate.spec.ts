@@ -1,10 +1,10 @@
-import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationStateSchema,
+  ApplicationTemplateHelper,
   DefaultEvents,
   ExternalData,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
 import { createApplication } from '@island.is/testing/fixtures'
 

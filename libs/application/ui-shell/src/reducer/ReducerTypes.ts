@@ -1,9 +1,4 @@
-import {
-  Application,
-  Form,
-  Schema,
-  Section,
-} from '@island.is/application/types'
+import { Application, Form, Schema, Section } from '@island.is/application/core'
 import { FormScreen } from '../types'
 
 export interface ApplicationUIState {

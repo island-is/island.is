@@ -3,8 +3,8 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  Form,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
 import { Logo } from '../assets'
 import { conclusion } from '../lib/messages'
 

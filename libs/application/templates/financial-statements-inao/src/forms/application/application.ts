@@ -1,11 +1,12 @@
 import {
   buildForm,
   buildSection,
+  Form,
+  FormModes,
   buildFileUploadField,
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { clientInfoSection } from './personalElection/clientInfoSection'
 import { m } from '../../lib/messages'
 import { keyNumbersSection } from './shared/keyNumbers/keyNumbersSection'

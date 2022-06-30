@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
-import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
@@ -109,7 +108,7 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId, email: confirmEmailDto.email },
+      where: { nationalId },
       order: [['created', 'DESC']],
     })
 
@@ -176,14 +175,8 @@ export class VerificationService {
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
-    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
-    const mobileNumber =
-      phoneNumber.country === 'IS'
-        ? (phoneNumber.nationalNumber as string)
-        : confirmSmsDto.mobilePhoneNumber
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: mobileNumber },
-      order: [['created', 'DESC']],
+      where: { nationalId },
     })
 
     if (!verification) {

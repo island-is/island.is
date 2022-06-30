@@ -21,7 +21,6 @@ import {
   CaseAppealDecision,
   isAcceptingCaseDecision,
   UpdateCase,
-  User,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -94,104 +93,6 @@ function showCustodyNotice(
   )
 }
 
-export const titleForCase = (
-  formatMessage: IntlShape['formatMessage'],
-  theCase: Case,
-) => {
-  const isTravelBan =
-    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TRAVEL_BAN
-
-  if (theCase.state === CaseState.REJECTED) {
-    if (isInvestigationCase(theCase.type)) {
-      return 'Kröfu um rannsóknarheimild hafnað'
-    } else {
-      return 'Kröfu hafnað'
-    }
-  }
-
-  if (theCase.state === CaseState.DISMISSED) {
-    return formatMessage(m.dismissedTitle)
-  }
-
-  if (theCase.isValidToDateInThePast) {
-    return formatMessage(m.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-    })
-  }
-
-  return isInvestigationCase(theCase.type)
-    ? formatMessage(m.investigationAccepted)
-    : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-      })
-}
-
-export const rulingDateLabel = (
-  formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
-) => {
-  return formatMessage(m.rulingDateLabel, {
-    courtEndTime: `${formatDate(
-      workingCase.courtEndTime,
-      'PPP',
-    )} kl. ${formatDate(workingCase.courtEndTime, constants.TIME_FORMAT)}`,
-  })
-}
-
-export const shouldHideNextButton = (workingCase: Case, user?: User) =>
-  user?.role !== UserRole.PROSECUTOR ||
-  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-  workingCase.state === CaseState.REJECTED ||
-  workingCase.state === CaseState.DISMISSED ||
-  workingCase.isValidToDateInThePast ||
-  Boolean(workingCase.childCase)
-
-export const getExtensionInfoText = (
-  formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
-  user?: User,
-): string | undefined => {
-  if (user?.role !== UserRole.PROSECUTOR) {
-    // Only prosecutors should see the explanation.
-    return undefined
-  }
-
-  let rejectReason:
-    | 'rejected'
-    | 'dismissed'
-    | 'isValidToDateInThePast'
-    | 'acceptingAlternativeTravelBan'
-    | 'hasChildCase'
-    | 'none' = 'none'
-
-  if (workingCase.state === CaseState.REJECTED) {
-    rejectReason = 'rejected'
-  } else if (workingCase.state === CaseState.DISMISSED) {
-    rejectReason = 'dismissed'
-  } else if (
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-  ) {
-    rejectReason = 'acceptingAlternativeTravelBan'
-  } else if (workingCase.childCase) {
-    rejectReason = 'hasChildCase'
-  } else if (workingCase.isValidToDateInThePast) {
-    // This must be after the rejected and alternatice decision cases as the custody
-    // end date only applies to cases that were accepted by the judge. This must also
-    // be after the already extended case as the custody end date may expire after
-    // the case has been extended.
-    rejectReason = 'isValidToDateInThePast'
-  }
-
-  return rejectReason === 'none'
-    ? undefined
-    : formatMessage(m.sections.caseExtension.extensionInfoV2, {
-        hasChildCase: Boolean(workingCase.childCase),
-        caseType: workingCase.type,
-        rejectReason,
-      })
-}
-
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
@@ -248,14 +149,42 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
+  const titleForCase = (theCase: Case) => {
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type === CaseType.TRAVEL_BAN
+
+    if (theCase.state === CaseState.REJECTED) {
+      if (isInvestigationCase(theCase.type)) {
+        return 'Kröfu um rannsóknarheimild hafnað'
+      } else {
+        return 'Kröfu hafnað'
+      }
+    }
+
+    if (theCase.state === CaseState.DISMISSED) {
+      return formatMessage(m.dismissedTitle)
+    }
+
+    if (theCase.isValidToDateInThePast) {
+      return formatMessage(m.validToDateInThePast, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
+    }
+
+    return isInvestigationCase(theCase.type)
+      ? formatMessage(m.investigationAccepted)
+      : formatMessage(m.restrictionActive, {
+          caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+        })
+  }
 
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
         user.role,
-      ) ||
-        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
+      ) &&
       (workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.ADMISSION_TO_FACILITY)
     )
@@ -329,6 +258,50 @@ export const SignedVerdictOverview: React.FC = () => {
         })
       }
     }
+  }
+
+  const getExtensionInfoText = (
+    workingCase: Case,
+    formatMessage: IntlShape['formatMessage'],
+  ): string | undefined => {
+    if (user?.role !== UserRole.PROSECUTOR) {
+      // Only prosecutors should see the explanation.
+      return undefined
+    }
+
+    let rejectReason:
+      | 'rejected'
+      | 'dismissed'
+      | 'isValidToDateInThePast'
+      | 'acceptingAlternativeTravelBan'
+      | 'hasChildCase'
+      | 'none' = 'none'
+
+    if (workingCase.state === CaseState.REJECTED) {
+      rejectReason = 'rejected'
+    } else if (workingCase.state === CaseState.DISMISSED) {
+      rejectReason = 'dismissed'
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      rejectReason = 'acceptingAlternativeTravelBan'
+    } else if (workingCase.childCase) {
+      rejectReason = 'hasChildCase'
+    } else if (workingCase.isValidToDateInThePast) {
+      // This must be after the rejected and alternatice decision cases as the custody
+      // end date only applies to cases that were accepted by the judge. This must also
+      // be after the already extended case as the custody end date may expire after
+      // the case has been extended.
+      rejectReason = 'isValidToDateInThePast'
+    }
+
+    return rejectReason === 'none'
+      ? undefined
+      : formatMessage(m.sections.caseExtension.extensionInfo, {
+          hasChildCase: workingCase.childCase ? 'yes' : 'no',
+          caseType: workingCase.type,
+          rejectReason,
+        })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -455,18 +428,14 @@ export const SignedVerdictOverview: React.FC = () => {
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
-    if (!updatedCase) {
-      return false
+    if (updatedCase) {
+      await sendNotification(workingCase.id, NotificationType.MODIFIED)
     }
-
-    await sendNotification(workingCase.id, NotificationType.MODIFIED)
 
     setWorkingCase({
       ...workingCase,
       ...(update as Case),
     })
-
-    return true
   }
 
   return (
@@ -492,12 +461,20 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box>
               <Box marginBottom={1}>
                 <Text as="h1" variant="h1">
-                  {titleForCase(formatMessage, workingCase)}
+                  {titleForCase(workingCase)}
                 </Text>
               </Box>
               <Box>
                 <Text variant="h5">
-                  {rulingDateLabel(formatMessage, workingCase)}
+                  {formatMessage(m.rulingDateLabel, {
+                    courtEndTime: `${formatDate(
+                      workingCase.courtEndTime,
+                      'PPP',
+                    )} kl. ${formatDate(
+                      workingCase.courtEndTime,
+                      constants.TIME_FORMAT,
+                    )}`,
+                  })}
                 </Text>
               </Box>
             </Box>
@@ -830,13 +807,21 @@ export const SignedVerdictOverview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASE_LIST_ROUTE}
-          hideNextButton={shouldHideNextButton(workingCase, user)}
+          hideNextButton={
+            user?.role !== UserRole.PROSECUTOR ||
+            workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            workingCase.state === CaseState.REJECTED ||
+            workingCase.state === CaseState.DISMISSED ||
+            workingCase.isValidToDateInThePast ||
+            Boolean(workingCase.childCase)
+          }
           nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
             caseType: workingCase.type,
           })}
           onNextButtonClick={() => handleCaseExtension()}
           nextIsLoading={isExtendingCase}
-          infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
+          infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
         />
       </FormContentContainer>
       {shareCaseModal?.open && (

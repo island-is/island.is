@@ -8,7 +8,7 @@ import {
   SubSection,
   DataProviderItem,
   DataProviderPermissionItem,
-} from '@island.is/application/types'
+} from '../types/Form'
 
 export function buildForm(data: Omit<Form, 'type'>): Form {
   return { ...data, type: FormItemTypes.FORM }

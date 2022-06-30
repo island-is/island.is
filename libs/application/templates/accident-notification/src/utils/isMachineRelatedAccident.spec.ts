@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/core'
 import { NO, YES } from '../constants'
 import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
 import { isMachineRelatedAccident } from './isMachineRelatedAccident'

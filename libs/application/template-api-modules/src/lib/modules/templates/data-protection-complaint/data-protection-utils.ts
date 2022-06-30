@@ -14,7 +14,7 @@ import {
   yesNoValueLabelMapper,
   messages,
 } from '@island.is/application/templates/data-protection-complaint'
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import {
   CreateCaseRequest,

@@ -5,6 +5,7 @@ import {
   InputError,
   GridRow,
   GridColumn,
+  Stack,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 

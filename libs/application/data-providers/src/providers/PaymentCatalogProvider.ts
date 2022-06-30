@@ -1,5 +1,5 @@
 import { PaymentCatalogItem } from '@island.is/api/schema'
-import { BasicDataProvider } from '@island.is/application/types'
+import { BasicDataProvider } from '@island.is/application/core'
 
 export abstract class PaymentCatalogProvider extends BasicDataProvider {
   async getCatalogForOrganization(

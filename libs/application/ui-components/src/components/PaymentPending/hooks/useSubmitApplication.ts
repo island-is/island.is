@@ -1,5 +1,5 @@
 import { MutationTuple, useMutation } from '@apollo/client'
-import { DefaultEvents, Application } from '@island.is/application/types'
+import { DefaultEvents, Application } from '@island.is/application/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 export interface UseSubmitApplication {

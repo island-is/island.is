@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react'
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
   Text,

@@ -1,4 +1,4 @@
-import { Answer } from '@island.is/application/types'
+import { Answer } from '@island.is/application/core'
 import { shared } from './lib/messages'
 import {
   ComplainedForTypes,

@@ -1,5 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import React, { useState } from 'react'

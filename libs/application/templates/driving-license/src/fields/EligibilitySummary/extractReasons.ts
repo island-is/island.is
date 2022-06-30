@@ -66,11 +66,6 @@ const requirementKeyToStep = (
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.localResidencyDescription,
       }
-    case RequirementKey.CurrentLocalResidency:
-      return {
-        title: requirementsMessages.localResidencyTitle,
-        description: requirementsMessages.currentLocalResidencyDescription,
-      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }

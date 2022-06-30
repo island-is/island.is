@@ -106,10 +106,7 @@ paths:
           x-nullable: true
       responses:
         '200':
-          x-nullable: false
           description: ''
-          schema:
-            $ref: '#/definitions/PublicUser'
         '400':
           x-nullable: false
           description: ''

@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -20,9 +20,7 @@ import { m } from '../../lib/messages'
 export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
-  errors,
 }) => {
-  const error = (errors as any)?.vehicles?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({
@@ -40,7 +38,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.vehicles?.encountered) &&
       externalData.estate.vehicles
     ) {
-      append(externalData.estate.vehicles)
+      for (const vehicle of externalData.estate.vehicles) {
+        fields.push(vehicle)
+      }
       setValue('vehicles.encountered', true)
     }
   }, [])
@@ -92,27 +92,19 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
-        const dummyField = `${fieldIndex}.dummy`
-        const fieldError = error && error[index] ? error[index] : null
 
         return (
           <Box
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={field.initial}
           >
             <Controller
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
             />
-            <Controller
-              name={dummyField}
-              control={control}
-              defaultValue={field.dummy || false}
-            />
-
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -130,7 +122,6 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.vehicleNumberLabel)}
                   backgroundColor="blue"
                   defaultValue={field.assetNumber}
-                  error={fieldError?.assetNumber}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

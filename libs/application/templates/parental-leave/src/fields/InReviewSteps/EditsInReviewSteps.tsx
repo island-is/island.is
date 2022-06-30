@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 

@@ -32,6 +32,15 @@ export enum CaseType {
   OTHER = 'OTHER',
 }
 
+export const caseTypesWithMultipleDefendants = [
+  CaseType.SEARCH_WARRANT,
+  CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.PHONE_TAPPING,
+  CaseType.TRACKING_EQUIPMENT,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
+]
+
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
@@ -310,6 +319,10 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
+export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
+  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

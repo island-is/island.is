@@ -1,4 +1,5 @@
 import {
+  Application,
   buildDescriptionField,
   buildMultiField,
   buildSection,
@@ -7,7 +8,6 @@ import {
   buildTextField,
   buildRadioField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../types/schema'
 import { m } from '../../../lib/messages'

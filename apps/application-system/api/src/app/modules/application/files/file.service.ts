@@ -6,7 +6,7 @@ import {
   RequestTimeoutException,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { PdfTypes } from '@island.is/application/types'
+import { PdfTypes } from '@island.is/application/core'
 import { Application } from '@island.is/application/api/core'
 import { SigningService } from '@island.is/dokobit-signing'
 import {

@@ -1,7 +1,11 @@
 import React, { FC, useMemo } from 'react'
 
-import { formatText, buildFieldOptions } from '@island.is/application/core'
-import { FieldBaseProps, SelectField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  SelectField,
+  buildFieldOptions,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   SelectController,

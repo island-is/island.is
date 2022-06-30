@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/core'
 import { TemplateApiModuleActionProps } from '../types'
 import {
   ParentalLeaveService,

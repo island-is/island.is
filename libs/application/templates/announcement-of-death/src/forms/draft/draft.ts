@@ -1,5 +1,9 @@
-import { buildForm, buildSection } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  buildForm,
+  buildSection,
+  Form,
+  FormModes,
+} from '@island.is/application/core'
 import { subSectionInfo } from './subSectionInfo'
 import { subSectionInheritance } from './subSectionInheritance'
 import { subSectionWillAndTrade } from './subSectionWillAndTrade'

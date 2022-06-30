@@ -278,9 +278,7 @@ export class HealthInsuranceAPI {
       // call 'functionName' function/endpoint
       client[functionName](args, function (err: any, result: any) {
         if (err) {
-          logger.error(
-            err?.response?.body?.Fault?.faultstring ?? 'Unknown error',
-          )
+          logger.error(JSON.stringify(err, null, 2))
           reject(err)
         } else {
           logger.info(`Successful call ${functionName} function`)

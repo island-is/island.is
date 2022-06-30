@@ -6,7 +6,6 @@ import {
   Button,
   toast,
   ToastContainer,
-  Checkbox,
 } from '@island.is/island-ui/core'
 
 import {
@@ -27,8 +26,6 @@ interface Props {
 }
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [state, setState] = useState(currentMunicipality)
-
-  const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
@@ -39,7 +36,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const COHABITATION = 'cohabitation'
   const aidNames = Object.values(AidName).map(String)
 
-  const errorCheckAid = (aid: Aid, prefix: string, scrollToError: boolean) => {
+  const errorCheck = (aid: Aid, prefix: string) => {
     const firstErrorAid = Object.entries(aid).find(
       (a) => aidNames.includes(a[0]) && a[1] <= 0,
     )
@@ -49,32 +46,15 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     }
 
     setHasAidError(true)
-    if (scrollToError) {
-      scrollToId(`${prefix}${firstErrorAid[0]}`)
-    }
+    scrollToId(`${prefix}${firstErrorAid[0]}`)
     return true
   }
 
-  const errorCheckNav = () => {
-    if (
-      state.usingNav &&
-      (!state.navUrl || !state.navUsername || !state.navPassword)
-    ) {
-      setHasNavError(true)
-      scrollToId('navSettings')
-      return true
-    }
-
-    return false
-  }
-
   const submit = () => {
-    const errorNav = errorCheckNav()
-    const errorAid =
-      errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
-      errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
-
-    if (errorNav || errorAid) {
+    if (
+      errorCheck(state.individualAid, INDIVIDUAL) ||
+      errorCheck(state.cohabitationAid, COHABITATION)
+    ) {
       return
     }
     updateMunicipality()
@@ -82,11 +62,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   const aidChangeHandler = (update: () => void) => {
     setHasAidError(false)
-    update()
-  }
-
-  const navChangeHandler = (update: () => void) => {
-    setHasNavError(false)
     update()
   }
 
@@ -100,12 +75,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           rulesHomepage: state.rulesHomepage,
           email: state.email,
           municipalityId: state.municipalityId,
-          usingNav: state.usingNav,
-          navUrl: state.navUrl
-            ? `${state.navUrl}${state.navUrl.endsWith('/') ? '' : '/'}`
-            : state.navUrl,
-          navUsername: state.navUsername,
-          navPassword: state.navPassword,
         },
       },
     })
@@ -123,7 +92,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   }
 
   //This is because of animation on select doesnt work stand alone
-  const navAndMultiSelectContent = [
+  const rulesAndMultiSelectContent = [
     {
       headline: 'Veldu sveitarfélag til að breyta stillingum',
       component: (
@@ -135,92 +104,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         />
       ),
     },
-    {
-      headline: 'Tenging við ytri kerfi',
-      component: (
-        <>
-          <Box marginBottom={3} id="navSettings">
-            <Checkbox
-              name="usingNav"
-              label="Virkja tengingu við Navision"
-              checked={state.usingNav}
-              onChange={(event) =>
-                navChangeHandler(() => {
-                  setState({
-                    ...state,
-                    usingNav: event.target.checked,
-                  })
-                })
-              }
-            />
-          </Box>
-          <Input
-            label="Slóð"
-            name="navUrl"
-            value={state.navUrl ?? ''}
-            backgroundColor="blue"
-            hasError={hasNavError && !state.navUrl}
-            disabled={!state.usingNav}
-            onChange={(event) =>
-              navChangeHandler(() => {
-                setState({
-                  ...state,
-                  navUrl: event.currentTarget.value,
-                })
-              })
-            }
-          />
-          <Text marginTop={1} marginBottom={3} variant="small">
-            Þetta er slóð á vefþjónustu Navision sem þið fáið frá Wise þegar
-            vefþjónustan hefur verið sett upp fyrir sveitafélagið.
-          </Text>
-          <Input
-            label="Notendanafn"
-            name="navUsername"
-            value={state.navUsername ?? ''}
-            backgroundColor="blue"
-            hasError={hasNavError && !state.navUsername}
-            disabled={!state.usingNav}
-            onChange={(event) =>
-              navChangeHandler(() => {
-                setState({
-                  ...state,
-                  navUsername: event.currentTarget.value,
-                })
-              })
-            }
-          />
-          <Text marginTop={1} marginBottom={3} variant="small">
-            Þetta er notendanafn að Navision vefþjónustunni sem þið fáið frá
-            Wise þegar vefþjónustan hefur verið sett upp fyrir sveitarfélagið.
-          </Text>
-          <Input
-            label="Lykilorð"
-            name="navPassword"
-            value={state.navPassword ?? ''}
-            backgroundColor="blue"
-            hasError={hasNavError && !state.navPassword}
-            disabled={!state.usingNav}
-            autoComplete="off"
-            onChange={(event) =>
-              navChangeHandler(() => {
-                setState({
-                  ...state,
-                  navPassword: event.currentTarget.value,
-                })
-              })
-            }
-          />
-          <Text marginTop={1} marginBottom={3} variant="small">
-            Þetta er lykilorð að Navision vefþjónustunni sem þið fáið frá Wise
-            þegar vefþjónustan hefur verið sett upp fyrir sveitarfélagið.
-          </Text>
-        </>
-      ),
-    },
-  ]
-
-  const EmailSiteAidContent = [
     {
       headline: `Reglur um fjárhagsaðstoð ${state.name}`,
       smallText:
@@ -240,6 +123,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         />
       ),
     },
+  ]
+
+  const EmailSiteAidContent = [
     {
       headline: 'Almennt netfang sveitarfélagsins (félagsþjónusta)',
       smallText:
@@ -342,11 +228,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       </Box>
 
       <Box className={`contentUp delay-25`}>
-        {navAndMultiSelectContent.map((el, index) => {
+        {rulesAndMultiSelectContent.map((el, index) => {
           return (
             <Box
               marginBottom={[2, 2, 7]}
-              key={`navAndMultiSelectContent-${index}`}
+              key={`rulesAndMultiSelectContent-${index}`}
             >
               <Text
                 as="h3"
@@ -357,6 +243,12 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
                 {el.headline}
               </Text>
               {el.component}
+
+              {el.smallText && (
+                <Text marginTop={1} variant="small">
+                  {el.smallText}
+                </Text>
+              )}
             </Box>
           )
         })}

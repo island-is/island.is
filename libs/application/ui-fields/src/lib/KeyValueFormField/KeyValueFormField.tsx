@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
 
-import { formatText } from '@island.is/application/core'
-import { KeyValueField, Application } from '@island.is/application/types'
+import {
+  KeyValueField,
+  formatText,
+  Application,
+} from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 

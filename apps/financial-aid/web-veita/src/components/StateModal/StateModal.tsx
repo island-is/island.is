@@ -166,7 +166,7 @@ const StateModal = ({
             headline="Skrifaðu hvaða gögn vantar"
             submitButtonText="Senda á umsækjanda"
             errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
-            prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
+            prefixText="Til að klára umsóknina verður þú að senda okkur"
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
             municipalityEmail={applicationMunicipality?.email}
           />

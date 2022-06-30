@@ -82,18 +82,20 @@ export function getConclusionAutofill(
   const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
 
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
+    ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
+          isAcceptingCaseDecision(workingCase.parentCase.decision)
+            ? 'yes'
+            : 'no',
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
+    ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
@@ -103,10 +105,12 @@ export function getConclusionAutofill(
           : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
         isExtended:
           workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
+          isAcceptingCaseDecision(workingCase.parentCase.decision)
+            ? 'yes'
+            : 'no',
         caseType: workingCase.type,
       })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
+    : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
         genderedAccused: capitalize(
           formatMessage(core.accused, {
             suffix: accusedSuffix,
@@ -119,7 +123,9 @@ export function getConclusionAutofill(
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? 'yes'
+            : '',
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
@@ -127,8 +133,13 @@ export function getConclusionAutofill(
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
-        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
-        isolationEndsBeforeValidToDate,
+        hasIsolation:
+          isAcceptingCaseDecision(decision) && isCustodyIsolation
+            ? 'yes'
+            : 'no',
+        isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
+          ? 'yes'
+          : 'no',
         isolationToDate: formatDate(isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),

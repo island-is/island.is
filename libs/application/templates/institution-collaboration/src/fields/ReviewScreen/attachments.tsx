@@ -1,5 +1,8 @@
-import { formatText, getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Box,
   Bullet,

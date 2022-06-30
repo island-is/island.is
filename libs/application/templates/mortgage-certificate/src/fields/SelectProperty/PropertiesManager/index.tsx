@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '../../../types/schema'

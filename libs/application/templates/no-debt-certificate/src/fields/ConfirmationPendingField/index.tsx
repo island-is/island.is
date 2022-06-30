@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps, DefaultEvents } from '@island.is/application/types'
+import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 

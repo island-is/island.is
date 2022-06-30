@@ -1,7 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { formatText } from '@island.is/application/core'
-import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
+import {
+  AsyncSelectField,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   SelectController,
@@ -9,7 +12,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useApolloClient } from '@apollo/client/react'
-import { Option } from '@island.is/application/types'
+import { Option } from '@island.is/application/core'
 
 import { getDefaultValue } from '../../getDefaultValue'
 

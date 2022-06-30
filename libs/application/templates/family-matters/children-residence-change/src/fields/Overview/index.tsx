@@ -4,7 +4,7 @@ import { useMutation, ApolloError } from '@apollo/client'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
-import { PdfTypes } from '@island.is/application/types'
+import { PdfTypes } from '@island.is/application/core'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import {

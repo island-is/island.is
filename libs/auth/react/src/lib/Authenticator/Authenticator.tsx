@@ -82,7 +82,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
               prompt: 'none',
             }
           : {
-              prompt: 'select_account',
+              login_hint: 'delegations',
             }
 
       dispatch({

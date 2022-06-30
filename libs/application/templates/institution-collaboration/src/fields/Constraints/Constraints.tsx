@@ -1,6 +1,9 @@
 import React, { FC } from 'react'
-import { getValueViaPath, formatText } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  formatText,
+} from '@island.is/application/core'
 import { Box, Stack } from '@island.is/island-ui/core'
 import ConstraintController from './ConstraintController'
 import { useLocale } from '@island.is/localization'

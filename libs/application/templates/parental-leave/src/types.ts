@@ -53,8 +53,8 @@ export interface Payments {
   union: string
 }
 
-export interface OtherParentObj {
+export interface OtherParent {
   chooseOtherParent: string
-  otherParentName?: string
+  otherParentName: string
   otherParentId: string
 }

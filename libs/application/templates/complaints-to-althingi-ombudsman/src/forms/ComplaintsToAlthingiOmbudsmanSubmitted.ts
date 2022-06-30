@@ -2,8 +2,9 @@ import {
   buildCustomField,
   buildForm,
   buildSection,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { confirmation } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanSubmitted: Form = buildForm({

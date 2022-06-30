@@ -1,4 +1,4 @@
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
 import React, { FC } from 'react'
 import { PaymentPending } from '@island.is/application/ui-components'
 

@@ -250,7 +250,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
-          content: `Til þess að hægt sé að meta umsóknina þarft þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
+          content: `Til að klára umsóknina verður þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
@@ -284,7 +284,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
           header: 'Umsóknin þín er samþykkt og lokaupphæð er tilbúin',
-          content: `Umsókn þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt. Þú getur skoðað lokaupphæð fjárhagsaðstoðarinnar með því að ýta á hnappinn hér að neðan. Ef þú hefur einhverjar athugasemdir hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>.`,
+          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
           applicationLinkText: 'Skoða lokaupphæð',
           applicationChange: 'Umsóknin er samþykkt',
           applicationMonth: getPeriod.month,
@@ -472,11 +472,4 @@ export const aidDescriptionFromName: KeyMapping<AidName, string> = {
   withOthers: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
   livesWithParents: 'Býr hjá foreldrum',
   unknown: 'Annað',
-}
-
-export const getNavEmploymentStatus: KeyMapping<Employment, number> = {
-  Working: 1,
-  Unemployed: 4,
-  CannotWork: 6,
-  Other: 10,
 }

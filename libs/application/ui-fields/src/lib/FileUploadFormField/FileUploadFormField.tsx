@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
 
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FileUploadField,
+  formatText,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
@@ -27,7 +30,6 @@ export const FileUploadFormField: FC<Props> = ({
     uploadMultiple,
     uploadAccept,
     maxSize,
-    maxSizeErrorText,
     forImageUpload,
   } = field
 
@@ -60,10 +62,6 @@ export const FileUploadFormField: FC<Props> = ({
           multiple={uploadMultiple}
           accept={uploadAccept}
           maxSize={maxSize}
-          maxSizeErrorText={
-            maxSizeErrorText &&
-            formatText(maxSizeErrorText, application, formatMessage)
-          }
           forImageUpload={forImageUpload}
         />
       </Box>

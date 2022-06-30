@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { m } from '../../forms/messages'
-import { getSlugFromType } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getSlugFromType } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import SummaryItem from './SummaryItem'
 import {

@@ -15,18 +15,20 @@ import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { useBoxStyles } from '../Box/useBoxStyles'
 
-type LinkBase = {
+type RenderLinkObj = {
+  className: string
   text: string
   href: any
 }
 
-type RenderLinkObj = LinkBase & {
-  className: string
+type Link = {
+  text: string
+  href: any
 }
 
-type Link = LinkBase & { dataTestId?: string }
-
-type LinkWithSub = LinkBase & {
+type LinkWithSub = {
+  text: string
+  href: any
   sub?: Link[]
 }
 
@@ -99,13 +101,11 @@ export interface MenuProps {
   renderDisclosure?: ModalBaseProps['renderDisclosure']
 }
 
-const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => {
-  return (
-    <a href={href} className={className}>
-      {text}
-    </a>
-  )
-}
+const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => (
+  <a href={href} className={className}>
+    {text}
+  </a>
+)
 
 const defaultRenderLogo: MenuProps['renderLogo'] = (logo) => logo
 const defaultRenderSearch: MenuProps['renderSearch'] = (search) => search
@@ -199,24 +199,18 @@ export const Menu = ({
     </Button>,
   )
   const mainLinksRender = (closeModal: () => void) =>
-    mainLinks.map(({ text, href, dataTestId }, index) => {
-      return (
-        <div
-          className={styles.mainLinkOuter}
-          key={index}
-          data-testid={dataTestId}
-        >
-          {renderLink(
-            {
-              className: cn(getTextStyles({}), styles.mainLink),
-              text: text,
-              href: href,
-            },
-            closeModal,
-          )}
-        </div>
-      )
-    })
+    mainLinks.map(({ text, href }, index) => (
+      <div className={styles.mainLinkOuter} key={index}>
+        {renderLink(
+          {
+            className: cn(getTextStyles({}), styles.mainLink),
+            text: text,
+            href: href,
+          },
+          closeModal,
+        )}
+      </div>
+    ))
   return (
     <ModalBase
       baseId={baseId}

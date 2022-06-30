@@ -1,7 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import CryptoJS from 'crypto-js'
-import { uuid } from 'uuidv4'
 
 import { MunicipalityModel } from './models'
 import { AidType, Staff } from '@island.is/financial-aid/shared/lib'
@@ -17,7 +15,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { StaffService } from '../staff'
 import { CreateStaffDto } from '../staff/dto'
-import { environment } from '../../../environments'
 
 @Injectable()
 export class MunicipalityService {
@@ -34,29 +31,27 @@ export class MunicipalityService {
   async findByMunicipalityId(
     municipalityId: string,
   ): Promise<MunicipalityModel> {
-    return this.decryptNavPassword(
-      await this.municipalityModel.findOne({
-        where: { municipalityId },
-        include: [
-          {
-            model: AidModel,
-            as: 'individualAid',
-            where: {
-              municipalityId,
-              type: AidType.INDIVIDUAL,
-            },
+    return await this.municipalityModel.findOne({
+      where: { municipalityId },
+      include: [
+        {
+          model: AidModel,
+          as: 'individualAid',
+          where: {
+            municipalityId,
+            type: AidType.INDIVIDUAL,
           },
-          {
-            model: AidModel,
-            as: 'cohabitationAid',
-            where: {
-              municipalityId,
-              type: AidType.COHABITATION,
-            },
+        },
+        {
+          model: AidModel,
+          as: 'cohabitationAid',
+          where: {
+            municipalityId,
+            type: AidType.COHABITATION,
           },
-        ],
-      }),
-    )
+        },
+      ],
+    })
   }
 
   async findByMunicipalityIds(
@@ -66,38 +61,36 @@ export class MunicipalityService {
       staffNationalId,
     )
     if (currentStaffMuncipalities.municipalityIds) {
-      return (
-        await this.municipalityModel.findAll({
-          where: {
-            municipalityId: {
-              [Op.in]: currentStaffMuncipalities.municipalityIds,
+      return this.municipalityModel.findAll({
+        where: {
+          municipalityId: {
+            [Op.in]: currentStaffMuncipalities.municipalityIds,
+          },
+        },
+        order: ['name'],
+        include: [
+          {
+            model: AidModel,
+            as: 'individualAid',
+            where: {
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
+              },
+              type: AidType.INDIVIDUAL,
             },
           },
-          order: ['name'],
-          include: [
-            {
-              model: AidModel,
-              as: 'individualAid',
-              where: {
-                municipalityId: {
-                  [Op.in]: currentStaffMuncipalities.municipalityIds,
-                },
-                type: AidType.INDIVIDUAL,
+          {
+            model: AidModel,
+            as: 'cohabitationAid',
+            where: {
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
               },
+              type: AidType.COHABITATION,
             },
-            {
-              model: AidModel,
-              as: 'cohabitationAid',
-              where: {
-                municipalityId: {
-                  [Op.in]: currentStaffMuncipalities.municipalityIds,
-                },
-                type: AidType.COHABITATION,
-              },
-            },
-          ],
-        })
-      ).map((m) => this.decryptNavPassword(m))
+          },
+        ],
+      })
     }
     return []
   }
@@ -161,14 +154,6 @@ export class MunicipalityService {
     currentUser: Staff,
   ): Promise<MunicipalityModel[]> {
     try {
-      if (municipality.navPassword) {
-        municipality.navPassword = CryptoJS.AES.encrypt(
-          municipality.navPassword,
-          environment.navEncryptionKey,
-          { iv: CryptoJS.enc.Hex.parse(uuid()) },
-        ).toString()
-      }
-
       await this.sequelize.transaction((t) => {
         return Promise.all([
           this.municipalityModel.update(municipality, {
@@ -214,15 +199,5 @@ export class MunicipalityService {
     })
 
     return { numberOfAffectedRows, updatedMunicipality }
-  }
-
-  decryptNavPassword(municipality: MunicipalityModel) {
-    if (municipality.navPassword) {
-      municipality.navPassword = CryptoJS.AES.decrypt(
-        municipality.navPassword,
-        environment.navEncryptionKey,
-      ).toString(CryptoJS.enc.Utf8)
-    }
-    return municipality
   }
 }

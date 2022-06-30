@@ -1,8 +1,6 @@
-import {
-  StaticText,
-  RecordObject,
-  Application,
-} from '@island.is/application/types'
+import { Application } from '../types/Application'
+import { RecordObject } from '../types/Fields'
+import { StaticText } from '../types/Form'
 
 export type AnswerValidationError =
   | { message: StaticText; path: string; values?: RecordObject<any> }

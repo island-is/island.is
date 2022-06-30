@@ -1,4 +1,4 @@
-import { ApplicationContext } from '@island.is/application/types'
+import { ApplicationContext } from '@island.is/application/core'
 
 export function existsAndKMarking(context: ApplicationContext): boolean {
   const { validation } =

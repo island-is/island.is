@@ -2,7 +2,6 @@ import { assign } from 'xstate'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -11,7 +10,8 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
-} from '@island.is/application/types'
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =

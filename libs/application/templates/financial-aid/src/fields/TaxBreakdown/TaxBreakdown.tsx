@@ -12,7 +12,6 @@ import { directTaxPaymentModal } from '../../lib/messages'
 
 import * as styles from './TaxBreakdown.css'
 import { useIntl } from 'react-intl'
-import { useLocale } from '@island.is/localization'
 
 interface Dictionary<T> {
   [index: string]: T
@@ -32,7 +31,6 @@ interface Props {
 
 const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
   const { formatMessage } = useIntl()
-  const { lang } = useLocale()
 
   const date = dateDataWasFetched ? new Date(dateDataWasFetched) : new Date()
 
@@ -93,7 +91,6 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
                   key={`${month}-taxHeadline`}
                   headline={`${getMonth(
                     monthNumber < 0 ? 12 + monthNumber : monthNumber,
-                    lang,
                   )} ${monthItems[0].year}`}
                 />
                 {monthItems.map((item, index) =>

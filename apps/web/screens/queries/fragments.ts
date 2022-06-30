@@ -95,9 +95,6 @@ export const slices = gql`
       }
     }
     readMoreText
-    readMoreLink {
-      url
-    }
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -403,7 +400,6 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
-      ...AssetFields
     }
     dividerOnTop
   }
@@ -418,7 +414,6 @@ export const slices = gql`
       title
       content {
         ...HtmlFields
-        ...AssetFields
       }
       link {
         url

@@ -5,8 +5,6 @@ import { Message } from '@island.is/email-service'
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 
-export let assignLinkEmployerSMS = ''
-
 // TODO handle translations
 export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGenerator = (
   props,
@@ -16,8 +14,6 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
     application,
     options: { email },
   } = props
-
-  assignLinkEmployerSMS = assignLink
 
   const employerEmail = get(application.answers, 'employer.email')
   const applicantName = get(application.externalData, 'person.data.fullName')

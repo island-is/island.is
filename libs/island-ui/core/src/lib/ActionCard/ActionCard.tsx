@@ -21,7 +21,6 @@ type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
-  logo?: string
   backgroundColor?: 'white' | 'blue' | 'red'
   tag?: {
     label: string
@@ -115,7 +114,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   progressMeter: _progressMeter,
   deleteButton: _delete,
   avatar,
-  logo,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -198,19 +196,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
         marginBottom={[0, 2]}
       >
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Box display="flex" marginRight={1} justifyContent="center">
-            <Icon icon="time" size="medium" type="outline" color="blue400" />
-          </Box>
-          <Box display="flex" justifyContent="center">
-            <Text variant="small">{date}</Text>
-          </Box>
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <Text variant="small">{date}</Text>
         </Box>
+
         <Inline alignY="center" space={1}>
           {!eyebrow && renderTag()}
           {!eyebrow && renderDelete()}
@@ -335,18 +324,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
-  const renderLogo = () => {
-    if (!logo || logo.length === 0) return null
-    return (
-      <Box
-        padding={2}
-        marginRight={2}
-        className={styles.logo}
-        style={{ backgroundImage: `url(${logo})` }}
-      ></Box>
-    )
-  }
-
   return (
     <Box
       display="flex"
@@ -381,17 +358,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Box display="flex" flexDirection="row" alignItems="center">
-                {renderLogo()}
-                <Text
-                  variant={headingVariant}
-                  color={
-                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
-                  }
-                >
-                  {heading}
-                </Text>
-              </Box>
+              <Text
+                variant={headingVariant}
+                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
+              >
+                {heading}
+              </Text>
               <Hidden above="xs">
                 <Box>{!date && !eyebrow && renderTag()}</Box>
               </Hidden>

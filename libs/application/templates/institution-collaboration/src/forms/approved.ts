@@ -2,9 +2,10 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  Form,
+  FormModes,
   buildCustomField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const approved: Form = buildForm({

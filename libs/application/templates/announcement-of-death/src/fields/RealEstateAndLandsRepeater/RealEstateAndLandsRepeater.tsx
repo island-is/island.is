@@ -8,7 +8,7 @@ import {
 } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   GridColumn,
@@ -50,7 +50,9 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.assets?.encountered) &&
       externalData.estate.assets
     ) {
-      append(externalData.estate.assets)
+      for (const asset of externalData.estate.assets) {
+        fields.push(asset)
+      }
       setValue('assets.encountered', true)
     }
   }, [])
@@ -104,7 +106,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+        <Box key={field.id} hidden={field.initial}>
           <Item
             field={field}
             fieldName={`${id}.assets`}
@@ -151,13 +153,12 @@ const Item = ({
   const addressField = `${fieldIndex}.description`
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
-  const dummyField = `${fieldIndex}.dummy`
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [
     getProperty,
-    { loading: queryLoading, error: _queryError },
+    { loading: _queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
     SEARCH_FOR_PROPERTY_QUERY,
     {
@@ -167,7 +168,6 @@ const Item = ({
           data.searchForProperty?.defaultAddress?.display ?? '',
         )
       },
-      fetchPolicy: 'network-only',
     },
   )
 
@@ -176,16 +176,14 @@ const Item = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/[Ff]{0,1}\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/F\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
       getProperty({
         variables: {
           input: {
-            propertyNumber: propertyNumberInput.trim().toUpperCase(),
+            propertyNumber: propertyNumberInput,
           },
         },
       })
-    } else {
-      setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
@@ -195,11 +193,6 @@ const Item = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
-      />
-      <Controller
-        name={dummyField}
-        control={control}
-        defaultValue={field.dummy || false}
       />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
@@ -226,7 +219,6 @@ const Item = ({
             id={addressField}
             name={addressField}
             label={formatMessage(m.address)}
-            loading={queryLoading}
             readOnly
             defaultValue={field.description}
           />

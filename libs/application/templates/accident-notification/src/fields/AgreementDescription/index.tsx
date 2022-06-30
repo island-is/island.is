@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Bullet, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'

@@ -1,5 +1,4 @@
-import { formatText } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from '@formatjs/intl'
 

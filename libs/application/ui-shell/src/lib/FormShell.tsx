@@ -2,13 +2,13 @@ import React, { FC, useEffect, useReducer } from 'react'
 import cn from 'classnames'
 import * as Sentry from '@sentry/react'
 
-import { coreMessages } from '@island.is/application/core'
 import {
   Application,
+  coreMessages,
   Form,
   FormModes,
   Schema,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   Box,
   GridColumn,

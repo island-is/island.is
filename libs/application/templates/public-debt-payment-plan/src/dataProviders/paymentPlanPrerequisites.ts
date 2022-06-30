@@ -4,14 +4,14 @@ import {
   PaymentScheduleEmployer,
   PaymentScheduleInitialSchedule,
 } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   BasicDataProvider,
   FailedDataProviderResult,
+  getValueViaPath,
   ProviderErrorReason,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   queryPaymentScheduleConditions,
   queryPaymentScheduleDebts,

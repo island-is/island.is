@@ -10,7 +10,6 @@ export type UnderlineVariants = 'normal' | 'small'
 
 export interface LinkProps extends NextLinkProps {
   color?: LinkColor
-  dataTestId?: string
   className?: string
   underline?: UnderlineVariants
   underlineVisibility?: UnderlineVisibility
@@ -36,7 +35,6 @@ export const Link: React.FC<LinkProps> = ({
   underlineVisibility = 'hover',
   pureChildren,
   newTab = false,
-  dataTestId = undefined,
   ...linkProps
 }) => {
   const isInternal = !shouldLinkOpenInNewWindow(href as string)
@@ -70,14 +68,12 @@ export const Link: React.FC<LinkProps> = ({
         scroll={scroll}
         passHref
         prefetch={prefetch}
-        data-testid={dataTestId}
       >
         {pureChildren ? (
           children
         ) : (
           <a
             className={classNames}
-            data-testid={dataTestId}
             {...linkProps}
             {...(newTab && { target: '_blank' })}
             tabIndex={skipTab ? -1 : undefined}
@@ -94,7 +90,6 @@ export const Link: React.FC<LinkProps> = ({
         target="_blank"
         rel="noopener noreferrer"
         className={classNames}
-        data-testid={dataTestId}
         {...linkProps}
         tabIndex={skipTab ? -1 : undefined}
       >

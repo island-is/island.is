@@ -6,7 +6,28 @@ import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { intercept, makeCourt, makeRestrictionCase } from '../../../utils'
 
-describe('Signed verdict overview - Court - Accepted restriction cases', () => {
+describe('Signed verdict overview - Court - Restriction cases', () => {
+  beforeEach(() => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+    }
+
+    cy.login(UserRole.JUDGE)
+    cy.stubAPIResponses()
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
+    intercept(caseDataAddition)
+  })
+
+  // TODO: The button is currently under feature flag. Remove .skip() when feature flag is removed.
+  it.skip('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
+    cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
+    cy.url().should('include', MODIFY_RULING_ROUTE)
+  })
+})
+
+describe('Modify valid to date', () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
@@ -22,15 +43,6 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.stubAPIResponses()
     cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
-  })
-
-  it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', MODIFY_RULING_ROUTE)
-  })
-
-  it.only('should display appropriate components on page', () => {
-    cy.get('[aria-controls="caseFilesAccordionItem"]')
   })
 
   it('should be able to extend custody valid to date', () => {

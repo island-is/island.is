@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import { DataValue } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'

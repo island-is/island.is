@@ -11,37 +11,8 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
-      processEntryButtonText
-      alertBanner {
-        showAlertBanner
-        bannerVariant
-        title
-        description
-        linkTitle
-        link {
-          slug
-          type
-        }
-        isDismissable
-        dismissedForDays
-      }
       body {
         ...AllSlices
-      }
-      stepper {
-        id
-        title
-        steps {
-          id
-          title
-          slug
-          stepType
-          subtitle {
-            ...HtmlFields
-          }
-          config
-        }
-        config
       }
       processEntry {
         id
@@ -123,6 +94,21 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
         showTableOfContents
+        stepper {
+          id
+          title
+          steps {
+            id
+            title
+            slug
+            stepType
+            subtitle {
+              ...HtmlFields
+            }
+            config
+          }
+          config
+        }
       }
       featuredImage {
         url

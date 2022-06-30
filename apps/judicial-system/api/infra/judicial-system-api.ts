@@ -28,11 +28,6 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      CONTENTFUL_ENVIRONMENT: {
-        dev: 'test',
-        staging: 'test',
-        prod: 'master',
-      },
       HIDDEN_FEATURES: {
         dev: '',
         staging: '',

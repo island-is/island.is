@@ -37,7 +37,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Company
       {
-        name: m.companyTitle,
+        name: 'Um fyriræki',
         path: ServicePortalPath.Company,
         icon: {
           icon: 'business',
@@ -227,22 +227,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'car',
         },
-        children: [
-          {
-            name: m.myVehicles,
-            path: ServicePortalPath.AssetsMyVehicles,
-          },
-          // {
-          //   name: m.vehiclesLookup,
-          //   path: ServicePortalPath.AssetsVehiclesLookup,
-          // },
-          {
-            name: m.vehiclesHistory,
-            path: ServicePortalPath.AssetsVehiclesHistory,
-          },
-        ],
+        // children: [
+        //   {
+        //     name: 'Ökutækin mín',
+        //     path: ServicePortalPath.AssetsMyVehicles,
+        //   },
+        // {
+        //   name: 'Uppfletting í ökutækjaskrá',
+        //   path: ServicePortalPath.AssetsVehiclesLookup,
+        // },
+        // ],
       },
-
       // Stillingar - hidden from nav
       {
         name: m.settings,

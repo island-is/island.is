@@ -18,14 +18,14 @@ export const licensesModule: ServicePortalModule = {
         defaultMessage: 'Þín skírteini',
       }),
       path: ServicePortalPath.LicensesRoot,
-      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () =>
         lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
     },
     {
       name: m.drivingLicense,
       path: ServicePortalPath.LicensesDrivingDetail,
-      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () =>
         lazy(() =>
           import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),

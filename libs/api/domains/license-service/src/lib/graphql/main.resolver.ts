@@ -75,7 +75,7 @@ export class VerifyPkPassInput {
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal, ApiScope.licenses)
+@Scopes(ApiScope.internal)
 @Resolver()
 @Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {
@@ -90,10 +90,10 @@ export class MainResolver {
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     const licenses = await this.licenseServiceService.getAllLicenses(
-      user,
+      user.nationalId,
       locale,
       {
-        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+        includedTypes: input?.includedTypes,
         excludedTypes: input?.excludedTypes,
         force: input?.force,
         onlyList: input?.onlyList,
@@ -111,10 +111,11 @@ export class MainResolver {
     @Args('input') input: GetGenericLicenseInput,
   ) {
     const license = await this.licenseServiceService.getLicense(
-      user,
+      user.nationalId,
       locale,
       input.licenseType,
     )
+
     return license
   }
 
@@ -127,7 +128,7 @@ export class MainResolver {
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
     const { pkpassUrl } = await this.licenseServiceService.generatePkPass(
-      user,
+      user.nationalId,
       locale,
       input.licenseType,
     )
@@ -145,7 +146,7 @@ export class MainResolver {
     const {
       pkpassQRCode,
     } = await this.licenseServiceService.generatePkPassQrCode(
-      user,
+      user.nationalId,
       locale,
       input.licenseType,
     )
@@ -163,7 +164,7 @@ export class MainResolver {
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
     const verification = await this.licenseServiceService.verifyPkPass(
-      user,
+      user.nationalId,
       locale,
       input.licenseType,
       input.data,

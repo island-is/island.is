@@ -6,6 +6,8 @@ import {
   buildSection,
   buildSubmitField,
   buildCheckboxField,
+  Form,
+  FormModes,
   buildExternalDataProvider,
   buildKeyValueField,
   buildTextField,
@@ -13,7 +15,6 @@ import {
   buildCustomField,
   buildDividerField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 

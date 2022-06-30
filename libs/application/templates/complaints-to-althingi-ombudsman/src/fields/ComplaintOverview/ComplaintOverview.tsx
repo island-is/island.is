@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'

@@ -8,15 +8,13 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  buildFileUploadField,
-  buildRedirectToServicePortalField,
-} from '@island.is/application/core'
-import {
   Comparators,
   Form,
   FormModes,
   FormValue,
-} from '@island.is/application/types'
+  buildFileUploadField,
+  buildRedirectToServicePortalField,
+} from '@island.is/application/core'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
@@ -128,16 +126,6 @@ export const ExampleForm: Form = buildForm({
             buildTextField({
               id: 'dreamJob',
               title: m.dreamJob,
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'assignee',
-          title: m.assigneeTitle,
-          children: [
-            buildTextField({
-              id: 'assigneeEmail',
-              title: m.assignee,
             }),
           ],
         }),

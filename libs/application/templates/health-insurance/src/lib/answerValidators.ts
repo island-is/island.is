@@ -1,9 +1,9 @@
 import {
+  Application,
   AnswerValidator,
   getValueViaPath,
   buildValidationError,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { Status, FormerInsurance, Applicant } from '../types'
 import { NO, YES, StatusTypes } from '../shared'
 import {

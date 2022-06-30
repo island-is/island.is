@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 /**
  * This provider uses the new national registry API to fetch basic information

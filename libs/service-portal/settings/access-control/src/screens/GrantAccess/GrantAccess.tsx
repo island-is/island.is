@@ -23,7 +23,6 @@ import {
   IntroHeader,
   ServicePortalPath,
   m,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -51,7 +50,7 @@ const IdentityQuery = gql`
   }
 `
 
-const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
+function GrantAccess() {
   useNamespaces('sp.settings-access-control')
 
   const noUserFoundToast = () => {
@@ -140,20 +139,10 @@ const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <Box>
       <IntroHeader
-        title={
-          userInfo?.profile?.name
-            ? formatMessage(
-                {
-                  id: 'sp.settings-access-control:grant-intro-title-w-name',
-                  defaultMessage: '{name} veitir umboð',
-                },
-                { name: userInfo.profile.name },
-              )
-            : defineMessage({
-                id: 'sp.settings-access-control:grant-intro-title',
-                defaultMessage: 'Veita aðgang',
-              })
-        }
+        title={defineMessage({
+          id: 'sp.settings-access-control:grant-intro-title',
+          defaultMessage: 'Veita aðgang',
+        })}
         intro={defineMessage({
           id: 'sp.settings-access-control:grant-intro',
           defaultMessage:

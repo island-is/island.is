@@ -2,7 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
+import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Button,

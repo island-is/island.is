@@ -91,7 +91,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           linkResolver('servicewebcategory', [
             item.organization.slug,
             item.category.slug,
-          ]).href + `/${item.slug}`,
+          ]).href + `?&q=${item.slug}`,
       },
       categorySlug: item.category.slug,
       category: item.category.title,
@@ -108,6 +108,9 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
     'mannaudstorg',
   )
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
@@ -136,6 +139,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       institutionSlug={institutionSlug}
       organization={organization}
       smallBackground
+      searchTags={searchTags}
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
@@ -206,6 +210,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
+                  tags={searchTags}
                 />
 
                 {!!q &&
@@ -322,9 +327,10 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = ServiceWebModifySearchTerms(q)
 
   const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
-  const mannaudstorgTag = [
-    { key: 'mannaudstorg', type: SearchableTags.Organization },
-  ]
+
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
 
   const [
     organization,
@@ -350,9 +356,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
-          [institutionSlugBelongsToMannaudstorg
-            ? 'tags'
-            : 'excludedTags']: mannaudstorgTag,
+          tags: searchTags,
           size: PERPAGE,
           page,
         },

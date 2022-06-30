@@ -7,7 +7,6 @@ import {
   GridColumn,
   InputError,
   InputBackgroundColor,
-  TagVariant,
 } from '@island.is/island-ui/core'
 
 interface Option {
@@ -15,11 +14,6 @@ interface Option {
   label: React.ReactNode
   subLabel?: string
   tooltip?: React.ReactNode
-  tag?: {
-    label: string
-    variant?: TagVariant
-    outlined?: boolean
-  }
   excludeOthers?: boolean
   illustration?: React.FC
   disabled?: boolean
@@ -69,7 +63,6 @@ export const RadioController: FC<Props> = ({
               <RadioButton
                 large={largeButtons}
                 tooltip={option.tooltip}
-                tag={option.tag}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
                   clearErrors(id)

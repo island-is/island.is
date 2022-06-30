@@ -1,13 +1,11 @@
+import { FormItem } from '../types/Form'
+import { Answer, ExternalData, FormValue } from '../types/Application'
 import {
   AllOrAny,
-  FormItem,
-  Answer,
-  ExternalData,
-  FormValue,
   Comparators,
   SingleConditionCheck,
   StaticCheck,
-} from '@island.is/application/types'
+} from '../types/Condition'
 import { getValueViaPath } from './formUtils'
 
 function applyStaticConditionalCheck(

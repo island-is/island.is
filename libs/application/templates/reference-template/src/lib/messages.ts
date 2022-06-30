@@ -102,16 +102,6 @@ export const m = defineMessages({
     defaultMessage: 'Einhver draumavinnustaður?',
     description: 'Some description',
   },
-  assigneeTitle: {
-    id: 'example.application:assigneeTitle',
-    defaultMessage: 'Hver á að fara yfir?',
-    description: 'Some description',
-  },
-  assignee: {
-    id: 'example.application:assignee',
-    defaultMessage: 'Assignee email',
-    description: 'Some description',
-  },
   yesOptionLabel: {
     id: 'example.application:yes.option.label',
     defaultMessage: 'Já',

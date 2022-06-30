@@ -1,8 +1,8 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { Box } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { AlertBanner, Box } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
@@ -10,11 +10,12 @@ import {
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
-import { m } from '../../lib/messages'
 import { useDrivingLicense } from '@island.is/service-portal/graphql'
+import { m } from '../../lib/messages'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
+  const { formatMessage } = useLocale()
   const { data, status, loading, error } = useDrivingLicense()
 
   return (

@@ -1,10 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import {
+  Application,
   ApplicationTemplateHelper,
+  FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,

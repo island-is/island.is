@@ -72,7 +72,7 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {getNextPeriod().month})
+          (til útgreiðslu í byrjun {getNextPeriod.month})
         </Text>
       </Box>
 
