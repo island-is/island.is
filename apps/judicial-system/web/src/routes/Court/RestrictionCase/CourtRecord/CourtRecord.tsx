@@ -88,7 +88,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -235,7 +235,7 @@ export const CourtRecord: React.FC = () => {
         }
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
             courtStartDate: workingCase.courtDate,
@@ -267,7 +267,7 @@ export const CourtRecord: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -308,7 +308,7 @@ export const CourtRecord: React.FC = () => {
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           courtStartDate: formatDateForServer(date),
@@ -365,7 +365,7 @@ export const CourtRecord: React.FC = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                autofill(
+                setAndSendToServer(
                   [
                     {
                       isClosedCourtHidden: isVisible,

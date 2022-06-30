@@ -51,7 +51,11 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const {
     courtDate,
     setCourtDate,
@@ -70,7 +74,7 @@ const HearingArrangements = () => {
         setInitialAutoFillDone(true)
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
             sessionArrangements: workingCase.defenderName
@@ -85,7 +89,7 @@ const HearingArrangements = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -98,7 +102,7 @@ const HearingArrangements = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    autofill(
+    setAndSendToServer(
       [
         {
           courtDate: courtDate
@@ -116,7 +120,13 @@ const HearingArrangements = () => {
     } else {
       setModalVisible(true)
     }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout
@@ -188,7 +198,7 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
                             sessionArrangements:
@@ -217,7 +227,7 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
                             sessionArrangements:
@@ -244,7 +254,7 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           sessionArrangements:

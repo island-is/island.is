@@ -74,7 +74,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    autofill,
+    setAndSendToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
@@ -122,7 +122,7 @@ export const HearingArrangements: React.FC = () => {
 
   const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
-      return autofill(
+      return setAndSendToServer(
         [
           {
             prosecutorId: prosecutor.id,
@@ -137,7 +137,7 @@ export const HearingArrangements: React.FC = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      autofill(
+      setAndSendToServer(
         [
           {
             courtId: court.id,
@@ -225,7 +225,7 @@ export const HearingArrangements: React.FC = () => {
                   }
                   checked={workingCase.isHeightenedSecurityLevel}
                   onChange={(event) =>
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           isHeightenedSecurityLevel: event.target.checked,
@@ -262,7 +262,7 @@ export const HearingArrangements: React.FC = () => {
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           requestedCourtDate: formatDateForServer(date),

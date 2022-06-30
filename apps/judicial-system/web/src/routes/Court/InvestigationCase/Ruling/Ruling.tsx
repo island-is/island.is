@@ -61,7 +61,7 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { autofill, updateCase } = useCase()
+  const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -92,7 +92,7 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
             introduction: formatMessage(m.sections.introduction.autofill, {
@@ -121,7 +121,7 @@ const Ruling = () => {
     }
   }, [
     isCaseUpToDate,
-    autofill,
+    setAndSendToServer,
     workingCase,
     formatMessage,
     setWorkingCase,
@@ -391,7 +391,7 @@ const Ruling = () => {
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
               disabled={isModifyingRuling}
               onChange={(decision) => {
-                autofill(
+                setAndSendToServer(
                   [
                     {
                       conclusion:

@@ -48,7 +48,11 @@ export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -65,7 +69,7 @@ export const HearingArrangements: React.FC = () => {
         setInitialAutoFillDone(true)
       }
 
-      autofill(
+      setAndSendToServer(
         [
           // validToDate, isolationToDate and isCustodyIsolation are autofilled here
           // so they are ready for conclusion autofill later
@@ -93,7 +97,7 @@ export const HearingArrangements: React.FC = () => {
       )
     }
   }, [
-    autofill,
+    setAndSendToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -106,7 +110,7 @@ export const HearingArrangements: React.FC = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    autofill(
+    setAndSendToServer(
       [
         {
           courtDate: courtDate
@@ -124,7 +128,13 @@ export const HearingArrangements: React.FC = () => {
     } else {
       setModalVisible(true)
     }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout

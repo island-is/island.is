@@ -43,7 +43,7 @@ export type autofillEntry = Partial<UpdateCase> & {
 export type autofillFunc = (
   entries: Array<autofillEntry>,
   workingCase: Case,
-  setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -377,7 +377,7 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill = async (
+  const setAndSendToServer = async (
     updates: autofillEntry[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,

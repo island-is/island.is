@@ -48,7 +48,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, autofill } = useCase()
+  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const handleNextButtonClick = async (theCase: Case) => {
@@ -239,7 +239,7 @@ const Defendant = () => {
                     m.sections.investigationType.type.placeholder,
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           type: (selectedOption as ReactSelectOption)
@@ -290,7 +290,7 @@ const Defendant = () => {
                   })
                 }}
                 onBlur={(evt) =>
-                  autofill(
+                  setAndSendToServer(
                     [
                       {
                         description: evt.target.value,

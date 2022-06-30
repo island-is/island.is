@@ -172,7 +172,7 @@ export const Ruling: React.FC = () => {
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'prosecutorDemands')
@@ -190,7 +190,7 @@ export const Ruling: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
             introduction: formatMessage(m.sections.introduction.autofill, {
@@ -547,7 +547,7 @@ export const Ruling: React.FC = () => {
                   )
                 }
 
-                autofill(
+                setAndSendToServer(
                   [{ conclusion, decision, force: true }],
                   workingCase,
                   setWorkingCase,
@@ -628,7 +628,7 @@ export const Ruling: React.FC = () => {
                     )
                   }
 
-                  autofill(
+                  setAndSendToServer(
                     [
                       {
                         validToDate,
@@ -695,7 +695,7 @@ export const Ruling: React.FC = () => {
                         )
                       }
 
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
                             isCustodyIsolation: !workingCase.isCustodyIsolation,
@@ -759,7 +759,7 @@ export const Ruling: React.FC = () => {
                       )
                     }
 
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           isolationToDate,

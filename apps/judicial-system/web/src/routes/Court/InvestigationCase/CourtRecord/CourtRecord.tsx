@@ -95,7 +95,7 @@ const getSessionBookingsAutofill = (
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { autofill, updateCase } = useCase()
+  const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -161,7 +161,7 @@ const CourtRecord = () => {
         }
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
             courtStartDate: workingCase.courtDate,
@@ -206,7 +206,7 @@ const CourtRecord = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -247,7 +247,7 @@ const CourtRecord = () => {
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
                           courtStartDate: formatDateForServer(date),
@@ -304,7 +304,7 @@ const CourtRecord = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                autofill(
+                setAndSendToServer(
                   [
                     {
                       isClosedCourtHidden: isVisible,

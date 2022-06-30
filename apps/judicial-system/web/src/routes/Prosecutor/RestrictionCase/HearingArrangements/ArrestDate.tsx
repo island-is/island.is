@@ -14,12 +14,12 @@ interface Props {
 
 const ArrestDate: React.FC<Props> = (props) => {
   const { title, workingCase, setWorkingCase } = props
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
 
   const onChange = useCallback(
     (date: Date | undefined, valid: boolean) => {
       if (date && valid) {
-        autofill(
+        setAndSendToServer(
           [
             {
               arrestDate: formatDateForServer(date),
@@ -31,7 +31,7 @@ const ArrestDate: React.FC<Props> = (props) => {
         )
       }
     },
-    [autofill, workingCase, setWorkingCase],
+    [setAndSendToServer, workingCase, setWorkingCase],
   )
 
   const caseType = workingCase.type

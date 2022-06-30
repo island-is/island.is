@@ -48,7 +48,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [
@@ -384,7 +384,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             }
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
-              autofill(
+              setAndSendToServer(
                 [{ sendRequestToDefender: event.target.checked, force: true }],
                 workingCase,
                 setWorkingCase,
