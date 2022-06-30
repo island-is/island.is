@@ -125,17 +125,23 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   return validUpdates
 }
 
-export const auto = (updates: Array<autofillEntry>, workingCase: Case) => {
-  const u: UpdateCase[] = updates.map((entry) => {
+export const formatUpdates = (
+  updates: Array<autofillEntry>,
+  workingCase: Case,
+) => {
+  const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
     }
     return update(entry, workingCase)
   })
 
-  const newWorkingCase = u.reduce<UpdateCase>((currentUpdates, nextUpdates) => {
-    return { ...currentUpdates, ...nextUpdates }
-  }, {} as UpdateCase)
+  const newWorkingCase = changes.reduce<UpdateCase>(
+    (currentUpdates, nextUpdates) => {
+      return { ...currentUpdates, ...nextUpdates }
+    },
+    {} as UpdateCase,
+  )
 
   return newWorkingCase
 }
@@ -383,7 +389,7 @@ const useCase = () => {
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
   ) => {
     try {
-      const updatesToCase: autofillEntry = auto(updates, workingCase)
+      const updatesToCase: autofillEntry = formatUpdates(updates, workingCase)
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {

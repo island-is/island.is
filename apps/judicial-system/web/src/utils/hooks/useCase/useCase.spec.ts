@@ -1,6 +1,6 @@
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 
-import { update, auto } from './'
+import { update, formatUpdates } from './'
 
 describe('useCase', () => {
   describe('update', () => {
@@ -41,7 +41,7 @@ describe('useCase', () => {
     test('should not autofill when field has value in working case and force is not set', () => {
       const workingCase = { ruling: 'ruling1' } as Case
 
-      const res = auto([{ ruling: 'ruling2' }], workingCase)
+      const res = formatUpdates([{ ruling: 'ruling2' }], workingCase)
 
       expect(res.ruling).toBe(undefined)
     })
@@ -49,7 +49,10 @@ describe('useCase', () => {
     test('should overwrite value in workingCase if force is set', () => {
       const workingCase = { ruling: 'ruling1' } as Case
 
-      const res = auto([{ ruling: 'ruling2', force: true }], workingCase)
+      const res = formatUpdates(
+        [{ ruling: 'ruling2', force: true }],
+        workingCase,
+      )
 
       expect(res.ruling).toBe('ruling2')
     })
@@ -60,7 +63,7 @@ describe('useCase', () => {
         description: 'description1',
       } as Case
 
-      const res = auto(
+      const res = formatUpdates(
         [{ ruling: 'ruling2', force: true }, { description: 'description2' }],
         workingCase,
       )
@@ -76,7 +79,7 @@ describe('useCase', () => {
         },
       } as Case
 
-      const res = auto([{ registrarId: null }], workingCase)
+      const res = formatUpdates([{ registrarId: null }], workingCase)
 
       expect(res.registrarId).toBe(undefined)
     })
@@ -88,7 +91,10 @@ describe('useCase', () => {
         },
       } as Case
 
-      const res = auto([{ registrarId: null, force: true }], workingCase)
+      const res = formatUpdates(
+        [{ registrarId: null, force: true }],
+        workingCase,
+      )
 
       expect(res.registrarId).toBe(null)
     })
