@@ -183,6 +183,8 @@
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
+/libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+
 # DevOps
 /.github/actions/                                                                                   @island-is/devops
 /.github/workflows/                                                                                 @island-is/devops
