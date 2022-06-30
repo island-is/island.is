@@ -154,6 +154,10 @@ export const useS3Upload = () => {
     const presignedPost = await createPresignedPost(file.name, regId, hash)
 
     if (!presignedPost) {
+      setUploadStatus({
+        uploading: false,
+        error: `Upload failed: presignedPost creation failed`,
+      })
       return
     }
     uploadToS3(file, presignedPost.fields.key, presignedPost)
