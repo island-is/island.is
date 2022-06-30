@@ -72,3 +72,6 @@ export type IdentityDocument = {
   number: string
   expirationDate: Date
 }
+
+export const twoDays = 24 * 3600 * 1000 * 2
+export const sixtyDays = 24 * 3600 * 1000 * 60

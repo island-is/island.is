@@ -8,13 +8,17 @@ import {
   ApplicationRole,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
-import { Roles, States, Events, ApiActions } from './constants'
+import {
+  Roles,
+  States,
+  Events,
+  ApiActions,
+  twoDays,
+  sixtyDays,
+} from './constants'
 import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
 import { assign } from 'xstate'
-
-const twoDays = 24 * 3600 * 1000 * 2
-const sixtyDays = 24 * 3600 * 1000 * 60
 
 const pruneAfter = (time: number) => {
   return {
