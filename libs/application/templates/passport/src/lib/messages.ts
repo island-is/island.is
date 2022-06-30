@@ -309,6 +309,31 @@ export const m = defineMessages({
     description: 'Oops! Something went wrong when fetching your data',
   },
 
+  /* Waiting For Confirmation Section */
+  waitingForConfirmationTitle: {
+    id: 'pa.application:waitingForConfirmation.title',
+    defaultMessage: 'Title',
+    description: 'Some description',
+  },
+  waitingForConfirmationDescription: {
+    id: 'pa.application:waitingForConfirmation.description',
+    defaultMessage: 'Description',
+    description: 'Some description',
+  },
+
+  /* ParentB Intro Section */
+  parentBIntro: {
+    id: 'pa.application:parentBIntro',
+    defaultMessage: 'sendi inn umsókn um vegabréf',
+    description: 'Some description',
+  },
+  parentBIntroPart2: {
+    id: 'pa.application:parentBIntro.part2',
+    defaultMessage:
+      'Til þess að halda áfram með ferlið þurfa bæði forráðamenn að senda frá sér persónuupplýsingar til samþykktar af sýslumanni.',
+    description: 'Some description',
+  },
+
   /* Done Section */
   applicationCompleteTitle: {
     id: 'pa.application:complete.title',

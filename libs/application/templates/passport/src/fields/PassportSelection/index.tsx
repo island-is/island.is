@@ -7,8 +7,8 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
+import { getErrorViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import { IdentityDocument } from '../../lib/constants'

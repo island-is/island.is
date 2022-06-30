@@ -2,9 +2,9 @@ import {
   buildDividerField,
   buildForm,
   buildMultiField,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const WaitingForParentBConfirmation: Form = buildForm({
   id: 'PassportApplicationWaitingForParentB',
@@ -12,9 +12,9 @@ export const WaitingForParentBConfirmation: Form = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildMultiField({
-      id: 'guardian2',
-      title: 'Hello Hello Parent A',
-      description: 'Þú ert að bíða eftir að ParentB confirmi',
+      id: 'waitingForConfirmation',
+      title: m.waitingForConfirmationTitle,
+      description: m.waitingForConfirmationDescription,
       children: [buildDividerField({ title: ' ' })],
     }),
   ],

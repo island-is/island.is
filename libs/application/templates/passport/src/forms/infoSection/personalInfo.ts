@@ -1,12 +1,11 @@
 import {
-  Application,
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSubmitField,
   buildTextField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { YES, Passport } from '../../lib/constants'

@@ -1,10 +1,10 @@
 import {
-  Application,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
   buildMultiField,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import {

@@ -2,15 +2,17 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  Form,
-  FormModes,
   buildDividerField,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildSubmitField,
-  DefaultEvents,
-  Application,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  Application,
+  DefaultEvents,
+} from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import format from 'date-fns/format'
@@ -34,11 +36,14 @@ export const ParentB: Form = buildForm({
           description: (application: Application) =>
             (application.answers.childsPersonalInfo as ChildsPersonalInfo)
               .guardian1.name +
-            ' sendi inn umsókn um vegabréf ' +
+            ' ' +
+            m.parentBIntro.defaultMessage +
+            ' ' +
             format(new Date(application.created), 'dd.MMMM, yyyy', {
               locale: localeIS,
             }) +
-            '. Til þess að halda áfram með ferlið þurfa bæði forráðamenn að senda frá sér persónuupplýsingar til samþykktar af sýslumanni.',
+            '. ' +
+            m.parentBIntroPart2.defaultMessage,
           children: [
             buildDividerField({
               title: ' ',
