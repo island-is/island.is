@@ -94,7 +94,9 @@ export const EditSignature = () => {
   }
 
   useEffect(() => {
-    updateState('signedDocumentUrl', uploadLocation as URLString)
+    if (uploadLocation) {
+      updateState('signedDocumentUrl', uploadLocation as URLString)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadLocation])
 
@@ -103,7 +105,6 @@ export const EditSignature = () => {
       <Box marginBottom={4}>
         <DownloadDraftButton draftId={draft.id} />
       </Box>
-
       <Box marginBottom={4}>
         <InputFileUpload
           fileList={[]}
@@ -122,15 +123,18 @@ export const EditSignature = () => {
           <AlertMessage type="error" title={uploadStatus.error} />
         )}
       </Box>
-
-      {uploadLocation != null && (
+      {draft.signedDocumentUrl.value != null && (
         <>
           <Box marginBottom={3} display="flex" flexWrap="wrap">
             <Inline space={2} flexWrap="wrap">
-              <strong>{uploadLocation.split('/').pop()}</strong>
+              <strong>
+                {String(draft.signedDocumentUrl.value).split('/').pop()}
+              </strong>
 
               <Button
-                onClick={() => downloadUrl(uploadLocation)}
+                onClick={() =>
+                  downloadUrl(String(draft.signedDocumentUrl.value))
+                }
                 variant="text"
                 size="small"
                 as="button"
