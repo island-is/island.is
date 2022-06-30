@@ -1,10 +1,10 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  coreErrorMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { NationalRegistryUser } from '@island.is/api/schema'
 
 export class NationalRegistryProvider extends BasicDataProvider {

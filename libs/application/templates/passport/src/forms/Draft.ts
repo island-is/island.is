@@ -9,14 +9,17 @@ import {
   buildSelectField,
   buildSubmitField,
   buildTextField,
-  Form,
-  FormModes,
-  Application,
   buildCustomField,
   buildDividerField,
   buildKeyValueField,
   buildCheckboxField,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  Application,
+  DefaultEvents,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import {
@@ -26,7 +29,6 @@ import {
   DistrictCommissionerAgencies,
   YES,
 } from '../lib/constants'
-import { DefaultEvents } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const Draft: Form = buildForm({

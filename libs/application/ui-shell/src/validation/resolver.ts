@@ -1,4 +1,5 @@
-import { FormValue, validateAnswers } from '@island.is/application/core'
+import { validateAnswers } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 import { ResolverError, ResolverResult } from 'react-hook-form/dist/types/form'
 

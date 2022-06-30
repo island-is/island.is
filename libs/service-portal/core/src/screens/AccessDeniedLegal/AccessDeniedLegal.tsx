@@ -1,12 +1,12 @@
 import React from 'react'
-import { Box, Link, LinkContext, Tag, Text } from '@island.is/island-ui/core'
+import { Box, LinkContext, Tag, Text } from '@island.is/island-ui/core'
 import * as styles from './AccessDenied.css'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { theme } from '@island.is/island-ui/theme'
 
-const AccessDeniedLegal: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.documents')
+export const AccessDeniedLegal: ServicePortalModuleComponent = () => {
+  useNamespaces('service.portal')
   const { formatMessage } = useLocale()
   return (
     <LinkContext.Provider
@@ -42,20 +42,20 @@ const AccessDeniedLegal: ServicePortalModuleComponent = () => {
           <Box marginBottom={4}>
             <Tag variant={'red'}>
               {formatMessage({
-                id: 'sp.documents:error-tag-legal',
+                id: 'service.portal:error-tag-legal',
                 defaultMessage: 'Pósthólf',
               })}
             </Tag>
           </Box>
           <Text variant="h1" as="h1" marginBottom={3}>
             {formatMessage({
-              id: 'sp.documents:error-title-legal-no-access',
+              id: 'service.portal:error-title-legal-no-access',
               defaultMessage: 'Aðgangur læstur',
             })}
           </Text>
           <Text variant="default" as="p">
             {formatMessage({
-              id: 'sp.documents:error-text-legal-no-access',
+              id: 'service.portal:error-text-legal-no-access',
               defaultMessage:
                 'Því miður hefur þú ekki aðgang að þessari síðu. ',
             })}
@@ -66,12 +66,12 @@ const AccessDeniedLegal: ServicePortalModuleComponent = () => {
               rel="noopener noreferrer"
             >
               {formatMessage({
-                id: 'sp.documents:error-link-legal-no-access',
+                id: 'service.portal:error-link-legal-no-access',
                 defaultMessage: 'Samkvæmt 16. grein Barnasáttmálans',
               })}
             </a>
             {formatMessage({
-              id: 'sp.documents:error-text-legal-no-access-2',
+              id: 'service.portal:error-text-legal-no-access-2',
               defaultMessage:
                 ' þá eiga öll börn eiga rétt á einkalífi. Lögin eiga að vernda einkalíf barna, fjölskyldur og heimili. Börn eiga líka rétt á því að samskipti þeirra við aðra, orðspor þeirra og fjölskyldna þeirra sé verndað með lögum.',
             })}
