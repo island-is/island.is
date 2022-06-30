@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { ApiScope, AuthScope } from '@island.is/auth/scopes'
+import { AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
 import { DelegationType } from '../entities/dto/delegation.dto'
 
@@ -39,14 +39,6 @@ export const DelegationConfig = defineConfig({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
         scopeName: AuthScope.writeDelegations,
-        onlyForDelegationType: ['ProcurationHolder'],
-      },
-      {
-        scopeName: ApiScope.financeSalary,
-        onlyForDelegationType: ['ProcurationHolder'],
-      },
-      {
-        scopeName: ApiScope.company,
         onlyForDelegationType: ['ProcurationHolder'],
       },
     ],

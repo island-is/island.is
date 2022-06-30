@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { NoBenefits, CodeCard } from '../'
 
-const ONE_MINUTE = 1000 * 60 // milli-seconds
+const TEN_SECONDS = 10000 // milli-seconds
 
 interface PropTypes {
   misc: string
@@ -52,7 +52,7 @@ const DiscountsQuery = gql`
 function Benefits({ misc }: PropTypes) {
   const { data, loading, called } = useQuery(DiscountsQuery, {
     ssr: false,
-    pollInterval: ONE_MINUTE,
+    pollInterval: TEN_SECONDS,
   })
   const { user: authUser } = useContext(UserContext)
   const { discounts = [] } = data || {}

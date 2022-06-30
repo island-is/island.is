@@ -7,7 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'

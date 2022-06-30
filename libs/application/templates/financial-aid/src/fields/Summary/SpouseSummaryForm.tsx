@@ -20,7 +20,6 @@ import {
   Files,
   DirectTaxPaymentCell,
 } from './index'
-import withLogo from '../Logo/Logo'
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
@@ -111,4 +110,4 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SpouseSummaryForm)
+export default SpouseSummaryForm

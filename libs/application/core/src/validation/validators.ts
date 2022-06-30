@@ -1,6 +1,4 @@
 import { ZodSuberror } from 'zod/lib/src/ZodError'
-import { ZodUnion } from 'zod/lib/src/types/union'
-import { ZodTypeAny } from 'zod/lib/src/types/base'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
 import set from 'lodash/set'
@@ -11,13 +9,12 @@ import {
   StaticText,
   StaticTextObject,
   ValidationRecord,
-  FormatMessage,
-  Answer,
-  FormValue,
-  RecordObject,
-} from '@island.is/application/types'
+} from '../types/Form'
+import { FormatMessage } from '../types/external'
+import { Answer, FormValue } from '../types/Application'
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'
+import { RecordObject } from '../types/Fields'
 
 function populateError(
   currentError: ValidationRecord = {},
@@ -95,20 +92,10 @@ function partialSchemaValidation(
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
-            let schemaShape = trimmedSchema?.shape[key]?._def?.type
-
-            // z.array().optional(), f.x, is a union type rather than a simple array type
-            if (!schemaShape && trimmedSchema?.shape[key]?._def?.options) {
-              const arrayOption = (trimmedSchema.shape[key] as ZodUnion<
-                [ZodTypeAny, ZodTypeAny]
-              >)._def.options.find((opt) => opt?._def?.t === 'array')
-              schemaShape = arrayOption?._def?.type
-            }
-
             if (el !== null && typeof el === 'object') {
               partialSchemaValidation(
                 el as FormValue,
-                schemaShape,
+                trimmedSchema?.shape[key]?._def?.type,
                 error,
                 `${constructedErrorPath}[${index}]`,
                 true,

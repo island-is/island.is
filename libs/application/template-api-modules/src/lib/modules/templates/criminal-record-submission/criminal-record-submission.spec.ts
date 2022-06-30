@@ -7,7 +7,7 @@ import {
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
 import { CriminalRecordSubmissionService } from './criminal-record-submission.service'
 import {

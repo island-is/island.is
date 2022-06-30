@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import { generateComplaintPdf } from '../../pdfGenerators/templates/complaintPdf'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 import { Injectable } from '@nestjs/common'

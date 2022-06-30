@@ -27,8 +27,7 @@ export const missingFiles = {
     },
     message: {
       id: 'fa.application:section.missingFiles.alert.message',
-      defaultMessage:
-        '„Til þess að hægt sé að meta umsóknina þarft þú að senda {comment}.“',
+      defaultMessage: '„Til að klára umsóknina verður þú að senda {comment}.“',
       description: 'Message of the alert box',
     },
   }),

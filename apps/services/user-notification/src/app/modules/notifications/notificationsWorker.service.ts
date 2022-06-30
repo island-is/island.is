@@ -45,8 +45,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         if (!profile) {
           this.logger.info('No user profile found for user', { messageId })
           return
-        } else {
-          this.logger.info('User found for message', { messageId })
         }
 
         // don't send message unless user wants this type of notification
@@ -58,10 +56,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             { messageId },
           )
           return
-        } else {
-          this.logger.info('User has notifications enabled this message type', {
-            messageId,
-          })
         }
 
         const notification = await this.messageProcessor.convertToNotification(

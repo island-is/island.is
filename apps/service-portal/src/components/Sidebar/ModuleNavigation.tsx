@@ -3,7 +3,7 @@ import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import { useLocale } from '@island.is/localization'
@@ -12,7 +12,7 @@ import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
-import * as styles from './Sidebar.css'
+
 interface Props {
   nav: ServicePortalNavigationItem
   badge?: boolean
@@ -21,6 +21,7 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
+  const [hover, setHover] = useState(false)
   const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -51,9 +52,17 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box position="relative" className={styles.itemWrapper}>
+    <Box
+      position="relative"
+      onMouseOver={() => {
+        setHover(true)
+      }}
+      onMouseLeave={() => {
+        setHover(false)
+      }}
+    >
       {navArray && nav.enabled !== false && collapsed && (
-        <SubNavModal>
+        <SubNavModal active={hover}>
           <SubNav
             collapsed
             navChildren={navChildren}
@@ -65,6 +74,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
       <NavItem
         path={nav.path}
         icon={nav.icon}
+        hover={hover}
         active={isModuleActive}
         expanded={expand}
         hasArray={navArray}

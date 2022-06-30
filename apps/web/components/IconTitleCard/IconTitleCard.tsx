@@ -30,9 +30,8 @@ export const IconTitleCard = ({
     height="full"
     className={styles.container}
     color="purple"
-    data-testid={dataTestId}
   >
-    <span className={styles.iconContainer}>
+    <span className={styles.iconContainer} data-testid={dataTestId}>
       <img src={imgSrc} alt={alt} className={styles.icon} />
     </span>
     <div className={styles.titleContainer}>

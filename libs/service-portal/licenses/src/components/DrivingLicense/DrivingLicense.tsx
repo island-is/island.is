@@ -114,7 +114,6 @@ export const DrivingLicense = ({
           >
             <PkPass
               expireDate={toDate(new Date(expireDate).getTime().toString())}
-              textButton
             />
             <Hidden below="sm">
               <Box className={styles.line} marginLeft={2} marginRight={2} />

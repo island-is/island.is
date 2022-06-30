@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/core'
 import { AccidentTypeEnum } from '../types'
 import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
 describe('isHomeActivitiesAccident', () => {

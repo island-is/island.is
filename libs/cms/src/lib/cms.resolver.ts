@@ -85,8 +85,6 @@ import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
-import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
-import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
 
 const { cacheTime } = environment
@@ -427,28 +425,6 @@ export class CmsResolver {
     @Args('input') input: GetSubpageHeaderInput,
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => SupportQNA, { nullable: true })
-  getSingleSupportQNA(
-    @Args('input') { lang, slug }: GetSingleSupportQNAInput,
-  ): Promise<SupportQNA | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<SupportQNA>(
-      getElasticsearchIndex(lang),
-      { type: 'webQNA', slug },
-    )
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => [SupportQNA])
-  getFeaturedSupportQNAs(
-    @Args('input') input: GetFeaturedSupportQNAsInput,
-  ): Promise<SupportQNA[]> {
-    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
-      getElasticsearchIndex(input.lang),
-      input,
-    )
   }
 
   @Directive(cacheControlDirective())

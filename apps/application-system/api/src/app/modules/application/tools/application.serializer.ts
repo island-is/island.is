@@ -7,11 +7,11 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
-  ApplicationTypes,
   Application as BaseApplication,
-} from '@island.is/application/types'
+  ApplicationTemplateHelper,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,

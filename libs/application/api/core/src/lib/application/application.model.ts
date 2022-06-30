@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   ApplicationTypes,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 @Table({
   tableName: 'application',

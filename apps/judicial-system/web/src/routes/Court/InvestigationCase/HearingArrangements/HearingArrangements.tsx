@@ -187,17 +187,13 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      autofill(
-                        [
-                          {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+                      setWorkingCase({
+                        ...workingCase,
+                        sessionArrangements: SessionArrangements.ALL_PRESENT,
+                      })
+                      updateCase(workingCase.id, {
+                        sessionArrangements: SessionArrangements.ALL_PRESENT,
+                      })
                     }}
                     large
                     backgroundColor="white"
@@ -216,17 +212,15 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      autofill(
-                        [
-                          {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+                      setWorkingCase({
+                        ...workingCase,
+                        sessionArrangements:
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                      })
+                      updateCase(workingCase.id, {
+                        sessionArrangements:
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                      })
                     }}
                     large
                     backgroundColor="white"
@@ -243,16 +237,12 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    autofill(
-                      [
-                        {
-                          key: 'sessionArrangements',
-                          value: SessionArrangements.PROSECUTOR_PRESENT,
-                          force: true,
-                        },
-                      ],
+                    setAndSendToServer(
+                      'sessionArrangements',
+                      SessionArrangements.PROSECUTOR_PRESENT,
                       workingCase,
                       setWorkingCase,
+                      updateCase,
                     )
                   }}
                   large

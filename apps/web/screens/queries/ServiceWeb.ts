@@ -48,28 +48,6 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
         description
         slug
       }
-    }
-  }
-`
-
-export const GET_SINGLE_SUPPORT_QNA = gql`
-  query GetSingleSupportQNA($input: GetSingleSupportQNAInput!) {
-    getSingleSupportQNA(input: $input) {
-      id
-      title
-      slug
-      importance
-      subCategory {
-        title
-        description
-        slug
-        importance
-      }
-      category {
-        title
-        description
-        slug
-      }
       answer {
         ...AllSlices
       }
@@ -81,19 +59,6 @@ export const GET_SINGLE_SUPPORT_QNA = gql`
     }
   }
   ${slices}
-`
-
-export const GET_FEATURED_SUPPORT_QNAS = gql`
-  query GetFeaturedSupportQNAs($input: GetFeaturedSupportQNAsInput!) {
-    getFeaturedSupportQNAs(input: $input) {
-      id
-      title
-      slug
-      category {
-        slug
-      }
-    }
-  }
 `
 
 export const GET_SUPPORT_CATEGORY = gql`
@@ -204,7 +169,6 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       email
       serviceWebTitle
       serviceWebEnabled
-      serviceWebPopularQuestionCount
       namespace {
         fields
       }

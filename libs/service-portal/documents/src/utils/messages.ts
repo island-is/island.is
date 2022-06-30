@@ -18,13 +18,29 @@ export const messages = defineMessages({
     defaultMessage:
       'Hér getur þú fundið skjöl sem send hafa verið til þín frá opinberum aðilum.',
   },
+  clearFilter: {
+    id: 'sp.documents:clear-filter',
+    defaultMessage: 'Hreinsa síu',
+  },
+  clearAllFilters: {
+    id: 'sp.documents:clear-all-filters',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  openFilter: {
+    id: 'sp.documents:open-filter',
+    defaultMessage: 'Opna síu',
+  },
+  closeFilter: {
+    id: 'sp.documents:close-filter',
+    defaultMessage: 'Loka síu',
+  },
   onlyShowUnread: {
     id: 'sp.documents:only-show-unread',
     defaultMessage: 'Sýna einungis ólesið',
   },
-  onlyShowUnreadShort: {
-    id: 'sp.documents:only-show-unread-short',
-    defaultMessage: 'Sýna ólesið',
+  clearSelected: {
+    id: 'sp.documents:clear-selected',
+    defaultMessage: 'Hreinsa val',
   },
   institutionLabel: {
     id: 'sp.documents:institution-label',
@@ -33,6 +49,22 @@ export const messages = defineMessages({
   groupLabel: {
     id: 'sp.documents:group-label',
     defaultMessage: 'Flokkur',
+  },
+  datesLabel: {
+    id: 'sp.documents:dates-label',
+    defaultMessage: 'Dagsetningar',
+  },
+  datepickerFromLabel: {
+    id: 'sp.documents:datepicker-dateFrom-label',
+    defaultMessage: 'Dagsetning frá',
+  },
+  datepickerToLabel: {
+    id: 'sp.documents:datepicker-dateTo-label',
+    defaultMessage: 'Dagsetning til',
+  },
+  datepickLabel: {
+    id: 'sp.documents:datepicker-placeholder',
+    defaultMessage: 'Veldu dagsetningu',
   },
   clearFilters: {
     id: 'sp.documents:clear-filters',
@@ -49,10 +81,6 @@ export const messages = defineMessages({
   tableHeaderInstitution: {
     id: 'sp.documents:table-header-institution',
     defaultMessage: 'Stofnun',
-  },
-  tableHeaderGroup: {
-    id: 'sp.documents:table-header-group',
-    defaultMessage: 'Flokkur',
   },
   notFound: {
     id: 'sp.documents:not-found',

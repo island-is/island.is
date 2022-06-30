@@ -1,6 +1,4 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
-  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -8,7 +6,9 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-} from '@island.is/application/types'
+  DefaultStateLifeCycle,
+  ApplicationConfigurations,
+} from '@island.is/application/core'
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
 

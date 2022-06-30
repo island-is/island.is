@@ -4,7 +4,7 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   getSelectedChild,
   NO,

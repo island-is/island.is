@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, formatText } from '@island.is/application/core'
 import { gql, useQuery } from '@apollo/client'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'

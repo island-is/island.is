@@ -5,7 +5,7 @@ import {
   ExternalData,
   FormItemTypes,
   FormValue,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 import { FieldDef, MultiFieldScreen } from '../types'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'

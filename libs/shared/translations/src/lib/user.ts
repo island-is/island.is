@@ -18,11 +18,6 @@ export const userMessages = defineMessages({
     defaultMessage: `Aðgangar`,
   },
 
-  switchUser: {
-    id: 'global:switchUser',
-    defaultMessage: `Skipta um umboð`,
-  },
-
   delegationError: {
     id: 'global:userDelegationError',
     defaultMessage: `Tókst ekki að sækja aðgangslista.`,

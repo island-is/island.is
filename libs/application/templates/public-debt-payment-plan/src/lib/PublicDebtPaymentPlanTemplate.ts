@@ -1,14 +1,14 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  ApplicationConfigurations,
-} from '@island.is/application/types'
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
 

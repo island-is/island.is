@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,

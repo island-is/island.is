@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { DataProviderTypes, NationalRegistry } from '../types/index'
 
 export class NationalRegistryProvider extends BasicDataProvider {

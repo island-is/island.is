@@ -1,12 +1,10 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/types'
+import { ApplicationConfigurations } from '@island.is/application/core'
 import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
-
-export let linkOtherParentSMS = ''
 
 // TODO handle translations
 export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator = (
@@ -26,8 +24,6 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
 
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
   const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
-
-  linkOtherParentSMS = link
 
   return {
     from: {

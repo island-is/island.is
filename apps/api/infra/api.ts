@@ -17,7 +17,6 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   Vehicles,
-  AdrAndMachine,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -185,7 +184,6 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(
-      AdrAndMachine,
       Base,
       Client,
       HealthInsurance,
@@ -226,8 +224,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '200m', memory: '512Mi' },
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
     })
     .grantNamespaces(
       'nginx-ingress-external',

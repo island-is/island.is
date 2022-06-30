@@ -6,9 +6,4 @@ export class ConfirmSmsDto {
   @IsString()
   @ApiProperty()
   readonly code!: string
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly mobilePhoneNumber!: string
 }

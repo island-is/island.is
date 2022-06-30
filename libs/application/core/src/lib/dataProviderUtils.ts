@@ -1,15 +1,17 @@
+import { Application } from '../types/Application'
+import {
+  DataProviderResult,
+  ProviderErrorReason,
+} from '../types/DataProviderResult'
+import {
+  BasicDataProvider,
+  CustomTemplateFindQuery,
+} from '../types/BasicDataProvider'
+import { StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
 import isObject from 'lodash/isObject'
 import isString from 'lodash/isString'
-import {
-  FormatMessage,
-  StaticText,
-  BasicDataProvider,
-  CustomTemplateFindQuery,
-  DataProviderResult,
-  ProviderErrorReason,
-  Application,
-} from '@island.is/application/types'
+import { FormatMessage } from '../types/external'
 
 export const isTranslationObject = (text?: StaticText) => {
   if (!isObject(text)) {
@@ -45,7 +47,6 @@ export const getErrorReasonIfPresent = (
       return {
         title: reason.title,
         summary: reason.summary,
-        hideSubmitError: reason.hideSubmitError,
       }
     }
     if (isTranslationObject(reason) || isString(reason)) {
@@ -84,9 +85,7 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      const { title, summary, hideSubmitError } = getErrorReasonIfPresent(
-        error.reason,
-      )
+      const { title, summary } = getErrorReasonIfPresent(error.reason)
       return Promise.resolve(
         provider.onProvideError({
           ...error,
@@ -95,7 +94,6 @@ function callProvider(
               ? formatMessage(summary)
               : summary,
             title: isTranslationObject(title) ? formatMessage(title) : title,
-            hideSubmitError: hideSubmitError,
           },
         }),
       )

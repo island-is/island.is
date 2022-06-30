@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react'
 import InfoCard from './InfoCard'
 import { LocaleProvider } from '@island.is/localization'
 import { MockedProvider } from '@apollo/client/testing'
-import { SessionArrangements } from '@island.is/judicial-system/types'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {
@@ -12,11 +11,7 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCard
-            data={[]}
-            defender={{ name: 'Joe' }}
-            sessionArrangement={SessionArrangements.ALL_PRESENT}
-          />
+          <InfoCard data={[]} defender={{ name: 'Joe' }} />
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -33,7 +28,6 @@ describe('InfoCard', () => {
           <InfoCard
             data={[]}
             defender={{ name: 'Joe', phoneNumber: '555-5555' }}
-            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -55,7 +49,6 @@ describe('InfoCard', () => {
               email: 'joe@joe.is',
               phoneNumber: '455-5544',
             }}
-            sessionArrangement={SessionArrangements.ALL_PRESENT}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -70,10 +63,7 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCard
-            data={[]}
-            sessionArrangement={SessionArrangements.ALL_PRESENT}
-          />
+          <InfoCard data={[]} />
         </LocaleProvider>
       </MockedProvider>,
     )

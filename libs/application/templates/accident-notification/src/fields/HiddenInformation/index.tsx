@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { AccidentNotification } from '../../lib/dataSchema'

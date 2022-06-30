@@ -3,8 +3,8 @@ import {
   Comparators,
   Condition,
   SingleConditionCheck,
-  FormValue,
-} from '@island.is/application/types'
+} from '../types/Condition'
+import { FormValue } from '../types/Application'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormItem } from './conditionUtils'
 import { buildSection, buildSubSection } from '@island.is/application/core'

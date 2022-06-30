@@ -1,19 +1,17 @@
 import {
   buildMultiField,
+  Application,
   buildDescriptionField,
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
+  DefaultEvents,
   buildSection,
+  Field,
   buildCustomField,
+  Answer,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  Field,
-  Answer,
-} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '../../utils/index'
@@ -223,13 +221,10 @@ const inheritance: Field[] = [
           name: string
           nationalId: string
           relation: string
-          dummy?: boolean
-        }[])
-          .filter((member) => !member?.dummy)
-          .map((member) => ({
-            title: member.name,
-            description: [formatNationalId(member.nationalId), member.relation],
-          })),
+        }[]).map((member) => ({
+          title: member.name,
+          description: [formatNationalId(member.nationalId), member.relation],
+        })),
     },
   ),
 ]
@@ -252,17 +247,15 @@ const properties: Field[] = [
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.assets as { assets: Asset[] }).assets
-          .filter((asset) => !asset?.dummy)
-          .map((property) => ({
-            title: property.description,
-            description: (formatMessage: FormatMessage) => [
-              `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
-              property.share
-                ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
-                : '',
-            ],
-          })),
+        (answers?.assets as { assets: Asset[] }).assets.map((property) => ({
+          title: property.description,
+          description: (formatMessage: FormatMessage) => [
+            `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
+            property.share
+              ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
+              : '',
+          ],
+        })),
     },
   ),
   buildDescriptionField({
@@ -279,16 +272,16 @@ const properties: Field[] = [
       component: 'InfoCard',
       width: 'full',
       condition: (application) =>
-        (application?.vehicles as { vehicles: Asset[] })?.vehicles?.length > 0,
+        (application?.vehicles as { vehicles: Asset[] })?.vehicles.length > 0,
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.vehicles as { vehicles: Asset[] })?.vehicles
-          .filter((vehicle) => !vehicle?.dummy)
-          .map((vehicle) => ({
+        (answers?.vehicles as { vehicles: Asset[] })?.vehicles.map(
+          (vehicle) => ({
             title: vehicle.assetNumber,
             description: [vehicle.description],
-          })),
+          }),
+        ),
     },
   ),
 ]

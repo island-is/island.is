@@ -7,8 +7,8 @@ import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.css'
 import { useListDocuments } from '@island.is/service-portal/graphql'
+import LogOutItem from '../Sidebar/NavItem/LogOutItem'
 import { useAuth } from '@island.is/auth/react'
-import NavItem from '../Sidebar/NavItem/NavItem'
 
 const MobileMenu = (): ReactElement | null => {
   const ref = useRef(null)
@@ -59,11 +59,7 @@ const MobileMenu = (): ReactElement | null => {
         </Box>
       ))}
       <Box marginTop={2} marginBottom={2}>
-        <NavItem
-          onClick={() => signOut()}
-          active={false}
-          icon={{ icon: 'logOut', type: 'outline' }}
-        />
+        <LogOutItem onClick={() => signOut()} />
       </Box>
     </Box>
   )

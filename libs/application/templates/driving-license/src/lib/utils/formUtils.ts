@@ -1,9 +1,9 @@
-import { getValueViaPath } from '@island.is/application/core'
 import {
+  getValueViaPath,
   FormValue,
   ApplicationContext,
   ExternalData,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { m } from '../messages'
 import { ConditionFn } from '../types'
 import { YES } from '../constants'

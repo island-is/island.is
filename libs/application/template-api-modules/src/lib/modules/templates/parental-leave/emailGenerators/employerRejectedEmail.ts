@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/types'
+import { ApplicationConfigurations } from '@island.is/application/core'
 
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
@@ -42,7 +42,7 @@ export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Image',
           context: {
-            src: pathToAsset('reject.jpeg'),
+            src: pathToAsset('reject.jpg'),
             alt: 'Barn myndskreyting',
           },
         },

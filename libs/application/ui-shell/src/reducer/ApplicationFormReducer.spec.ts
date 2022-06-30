@@ -1,11 +1,9 @@
 import {
+  Application,
   buildForm,
   buildRepeater,
   buildSection,
   buildTextField,
-} from '@island.is/application/core'
-import {
-  Application,
   ExternalData,
   Form,
   ApplicationTypes,
@@ -13,7 +11,7 @@ import {
   FormModes,
   FormItemTypes,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'

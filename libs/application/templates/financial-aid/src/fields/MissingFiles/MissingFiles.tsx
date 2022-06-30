@@ -8,8 +8,7 @@ import {
   FileType,
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
-import { getValueViaPath } from '@island.is/application/core'
-import { RecordObject } from '@island.is/application/types'
+import { getValueViaPath, RecordObject } from '@island.is/application/core'
 
 import { filesText, missingFiles } from '../../lib/messages'
 import { Files } from '..'

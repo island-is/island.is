@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Text, Hidden } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
+import { Tag } from '@island.is/web/graphql/schema'
 import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'
@@ -11,6 +12,7 @@ interface SearchSectionProps {
   logoUrl?: string
   textMode?: TextModes
   searchPlaceholder?: string
+  searchTags?: Tag[]
 }
 
 export const SearchSection = ({
@@ -19,6 +21,7 @@ export const SearchSection = ({
   logoUrl,
   textMode,
   searchPlaceholder,
+  searchTags,
 }: SearchSectionProps) => {
   const dark = textMode === 'dark'
 
@@ -60,7 +63,10 @@ export const SearchSection = ({
           </Box>
         </>
       )}
-      <ServiceWebSearchInput placeholder={searchPlaceholder} />
+      <ServiceWebSearchInput
+        placeholder={searchPlaceholder}
+        tags={searchTags}
+      />
     </Box>
   )
 }

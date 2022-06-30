@@ -237,9 +237,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 <LinkCard
                   isFocused={isFocused}
                   tag={
-                    (!!article.processEntry ||
-                      article.processEntryButtonText) &&
-                    n(article.processEntryButtonText || 'application', 'Umsókn')
+                    !!article.processEntry && n('applicationProcess', 'Umsókn')
                   }
                 >
                   {article.title}

@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text, Stack, Icon, Button } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { YES, NO } from '../../constants'

@@ -184,7 +184,7 @@ export const makeProsecutor = (): User => {
     active: true,
     title: 'aðstoðarsaksóknari',
     institution: {
-      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
+      id: '',
       created: '',
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,

@@ -2,11 +2,12 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
+  FieldBaseProps,
   formatText,
   getValueViaPath,
+  RadioField,
   buildFieldOptions,
 } from '@island.is/application/core'
-import { FieldBaseProps, RadioField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
 import {

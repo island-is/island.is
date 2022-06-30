@@ -2,25 +2,27 @@ import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import has from 'lodash/has'
+import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 import {
   Application,
   ApplicationStatus,
   ExternalData,
   FormValue,
-  StaticText,
-  FormatMessage,
+} from '../types/Application'
+import { FormatMessage } from '../types/external'
+import {
   ApplicationContext,
   ApplicationRole,
-  ApplicationTemplate,
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
-  ApplicationTemplateAPIAction,
-} from '@island.is/application/types'
+} from '../types/StateMachine'
+import { ApplicationTemplate } from '../types/ApplicationTemplate'
+import { StaticText } from '../types/Form'
 
 enum FinalStates {
   REJECTED = 'rejected',

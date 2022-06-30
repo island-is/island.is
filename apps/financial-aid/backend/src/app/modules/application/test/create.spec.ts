@@ -208,7 +208,6 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
-      usingNav: false,
     }
 
     const appModel = {
@@ -329,7 +328,6 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
-      usingNav: false,
     }
 
     const appModel = {

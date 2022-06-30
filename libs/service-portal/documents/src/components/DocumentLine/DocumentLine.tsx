@@ -3,7 +3,7 @@ import format from 'date-fns/format'
 import React, { FC } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Document, DocumentCategory } from '@island.is/api/schema'
+import { Document } from '@island.is/api/schema'
 import { getAccessToken } from '@island.is/auth/react'
 import {
   Box,
@@ -21,10 +21,9 @@ import * as styles from './DocumentLine.css'
 interface Props {
   documentLine: Document
   img?: string
-  documentCategories?: DocumentCategory[]
 }
 
-const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
+const DocumentLine: FC<Props> = ({ documentLine, img }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
@@ -87,17 +86,6 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
       {documentLine.subject}
     </button>
   )
-
-  const group = (variant: 'eyebrow' | 'medium') => {
-    const categoryGroup = documentCategories?.find(
-      (item) => item.id === documentLine.categoryId,
-    )
-    return (
-      <Text variant={variant} id="groupName">
-        {categoryGroup?.name || ''}
-      </Text>
-    )
-  }
 
   const sender = (variant: 'eyebrow' | 'medium') => (
     <Text variant={variant} id="senderName">
@@ -165,7 +153,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
               {date('medium')}
             </Box>
           </GridColumn>
-          <GridColumn span={['1/1', '4/12']}>
+          <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
             <Box
               display="flex"
               alignItems="center"
@@ -177,18 +165,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
               {subject}
             </Box>
           </GridColumn>
-          <GridColumn span={['1/1', '3/12']}>
-            <Box
-              display="flex"
-              alignItems="center"
-              height="full"
-              paddingX={[0, 2]}
-              className={styles.sender}
-            >
-              {group('medium')}
-            </Box>
-          </GridColumn>
-          <GridColumn span={['1/1', '3/12']}>
+          <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
             <Box
               display="flex"
               alignItems="center"

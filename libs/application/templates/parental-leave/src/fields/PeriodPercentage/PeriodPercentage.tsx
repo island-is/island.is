@@ -3,7 +3,6 @@ import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
-import { extractRepeaterIndexFromField } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -11,7 +10,8 @@ import {
   FieldTypes,
   SelectOption,
   StaticTextObject,
-} from '@island.is/application/types'
+  extractRepeaterIndexFromField,
+} from '@island.is/application/core'
 import { SelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'

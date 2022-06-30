@@ -8,7 +8,6 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
-  QueryGetSingleSupportQnaArgs,
   QueryGetSupportQnAsInCategoryArgs,
   SearchableTags,
   SupportQna,
@@ -16,7 +15,6 @@ import {
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
-  GET_SINGLE_SUPPORT_QNA,
   GET_SUPPORT_QNAS_IN_CATEGORY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -52,7 +50,6 @@ interface SubPageProps {
   organization?: Organization
   namespace: Query['getNamespace']
   supportQNAs: Query['getSupportQNAsInCategory']
-  singleSupportQNA: Query['getSingleSupportQNA']
   questionSlug: string
   organizationNamespace: Record<string, string>
 }
@@ -60,7 +57,6 @@ interface SubPageProps {
 const SubPage: Screen<SubPageProps> = ({
   organization,
   supportQNAs,
-  singleSupportQNA,
   questionSlug,
   namespace,
   organizationNamespace,
@@ -70,7 +66,9 @@ const SubPage: Screen<SubPageProps> = ({
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   const organizationSlug = organization.slug
-  const question = singleSupportQNA
+  const question = supportQNAs.find(
+    (supportQNA) => supportQNA.slug === questionSlug,
+  )
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
@@ -315,7 +313,7 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/adstod/${organizationSlug}/${categorySlug}/${slug}`}
+                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
                                             >
                                               {title}
                                             </TopicCard>
@@ -349,29 +347,13 @@ const SubPage: Screen<SubPageProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
+SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const slugs = query.slugs as string
   const organizationSlug = slugs[0]
   const categorySlug = slugs[1]
-  const questionSlug = slugs[2] ?? undefined
+  const questionSlug = single(query.q) ?? undefined
 
-  if (single(query.q)) {
-    if (res) {
-      res.writeHead(302, {
-        Location: `/adstod/${organizationSlug}/${categorySlug}/${single(
-          query.q,
-        )}`,
-      })
-      res.end()
-    }
-  }
-
-  const [
-    organization,
-    namespace,
-    supportQNAs,
-    singleSupportQNA,
-  ] = await Promise.all([
+  const [organization, namespace, supportQNAs] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -407,16 +389,6 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
           },
         },
       }),
-    !!questionSlug &&
-      apolloClient.query<Query, QueryGetSingleSupportQnaArgs>({
-        query: GET_SINGLE_SUPPORT_QNA,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            slug: questionSlug,
-          },
-        },
-      }),
   ])
 
   const organizationNamespace = JSON.parse(
@@ -428,7 +400,6 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
     organizationNamespace,
     organization: organization?.data?.getOrganization,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
-    singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
   }
 }

@@ -1,8 +1,11 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import { formatText, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'

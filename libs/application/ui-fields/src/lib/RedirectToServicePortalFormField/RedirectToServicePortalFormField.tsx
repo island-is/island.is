@@ -3,7 +3,7 @@ import React, { FC, useEffect } from 'react'
 import {
   RedirectToServicePortalField,
   FieldBaseProps,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 

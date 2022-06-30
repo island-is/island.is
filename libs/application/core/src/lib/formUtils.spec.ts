@@ -6,6 +6,8 @@ import {
   mergeAnswers,
 } from './formUtils'
 import {
+  Application,
+  ApplicationTypes,
   buildCheckboxField,
   buildForm,
   buildDescriptionField,
@@ -13,16 +15,12 @@ import {
   buildRadioField,
   buildSection,
   buildTextField,
-} from '@island.is/application/core'
-import {
-  Application,
-  ApplicationTypes,
   Comparators,
   Form,
   StaticText,
   TextField,
   ApplicationStatus,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,

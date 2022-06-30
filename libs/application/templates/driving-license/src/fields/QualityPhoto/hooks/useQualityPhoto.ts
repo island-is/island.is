@@ -1,5 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import { QUALITY_PHOTO } from './queries.graphql'
 import { useQuery, ApolloError } from '@apollo/client'
 

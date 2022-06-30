@@ -74,9 +74,4 @@ export class UpdateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly spouseHasFetchedDirectTaxPayment?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty()
-  navSuccess?: boolean
 }

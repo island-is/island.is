@@ -1,11 +1,12 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
-import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-} from '@island.is/application/types'
+  getValueViaPath,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import {
   CheckboxFormField,

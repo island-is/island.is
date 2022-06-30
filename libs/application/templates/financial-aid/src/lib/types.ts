@@ -1,4 +1,4 @@
-import { Application, FieldBaseProps } from '@island.is/application/types'
+import { Application, FieldBaseProps } from '@island.is/application/core'
 import {
   DirectTaxPayment,
   Municipality,

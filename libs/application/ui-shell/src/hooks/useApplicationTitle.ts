@@ -2,8 +2,9 @@ import { useLocale } from '@island.is/localization'
 import {
   formatText,
   getSubSectionsInSection,
+  Section,
+  SubSection,
 } from '@island.is/application/core'
-import { Section, SubSection } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
 
 import { ApplicationUIState } from '../reducer/ReducerTypes'

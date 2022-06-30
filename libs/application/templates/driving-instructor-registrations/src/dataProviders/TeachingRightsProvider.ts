@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { HasTeachingRights } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 

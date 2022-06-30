@@ -4,13 +4,14 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  Form,
+  FormModes,
   buildSubmitField,
   buildTextField,
   buildDescriptionField,
   buildSubSection,
   buildRadioField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import { betaTestSection } from './BetaTestSection'
 import { Logo } from '../assets'
 

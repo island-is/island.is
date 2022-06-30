@@ -2,12 +2,13 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { getErrorViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-} from '@island.is/application/types'
+  getErrorViaPath,
+  formatText,
+} from '@island.is/application/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 

@@ -1,8 +1,4 @@
-import {
-  Application,
-  BaseField,
-  FieldTypes,
-} from '@island.is/application/types'
+import { Application, BaseField, FieldTypes } from '@island.is/application/core'
 
 export const getDefaultValue = (field: BaseField, application: Application) => {
   const { defaultValue, type } = field

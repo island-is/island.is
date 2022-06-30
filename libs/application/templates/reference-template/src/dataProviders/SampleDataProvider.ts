@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 interface SampleProviderData {
   value: string

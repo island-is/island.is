@@ -1,13 +1,13 @@
-import { getValueViaPath } from '@island.is/application/core'
 import {
   DataProviderItem,
   ExternalData,
   FieldTypes,
   FormItemTypes,
   FormValue,
+  getValueViaPath,
   RecordObject,
   SubmitField,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { FormScreen } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
@@ -20,23 +20,6 @@ export function verifyExternalData(
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
-      return false
-    }
-  }
-  return true
-}
-
-export function hideSubmitErrorExternalData(
-  externalData: ExternalData,
-  dataProviders: DataProviderItem[],
-): boolean {
-  for (let i = 0; i < dataProviders.length; i++) {
-    const { id } = dataProviders[i]
-    const dataProviderResult = externalData[id]
-    if (
-      (!dataProviderResult || dataProviderResult.status === 'failure') &&
-      !dataProviderResult.hideSubmitError
-    ) {
       return false
     }
   }

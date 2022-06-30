@@ -3,8 +3,8 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 import { overview } from '../../lib/messages'
 
 export const overviewSection = buildSection({

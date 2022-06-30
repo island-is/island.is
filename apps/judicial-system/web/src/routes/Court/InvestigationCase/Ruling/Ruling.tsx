@@ -414,7 +414,8 @@ const Ruling = () => {
                       value:
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
-                          : workingCase.conclusion,
+                          : '',
+                      force: true,
                     },
                     {
                       key: 'decision',

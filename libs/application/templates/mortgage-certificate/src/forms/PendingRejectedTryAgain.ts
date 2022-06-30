@@ -1,12 +1,14 @@
 import {
   buildForm,
   buildCustomField,
+  Form,
+  FormModes,
+  DefaultEvents,
   buildSubmitField,
   buildSection,
   buildDescriptionField,
   buildMultiField,
 } from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const PendingRejectedTryAgain: Form = buildForm({

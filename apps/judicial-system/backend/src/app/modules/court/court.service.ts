@@ -301,6 +301,7 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject,
+            body,
             recipients,
             fromEmail,
             fromName,

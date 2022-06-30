@@ -1,5 +1,4 @@
-import { buildCustomField, buildForm } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
+import { buildCustomField, buildForm, Form } from '@island.is/application/core'
 import { Routes } from '../lib/constants'
 
 import * as m from '../lib/messages'

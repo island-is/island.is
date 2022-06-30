@@ -1,6 +1,5 @@
 import { PaymentScheduleEmployer } from '@island.is/api/schema'
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import * as Sentry from '@sentry/react'
 import { format as formatKennitala } from 'kennitala'

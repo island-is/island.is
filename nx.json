@@ -276,6 +276,9 @@
     "application-templates-no-debt-certificate": {
       "tags": []
     },
+    "application-templates-operating-license": {
+      "tags": []
+    },
     "application-templates-p-sign": {
       "tags": []
     },
@@ -289,9 +292,6 @@
       "tags": []
     },
     "application-templates-reference-template": {
-      "tags": []
-    },
-    "application-types": {
       "tags": []
     },
     "application-ui-components": {
@@ -323,9 +323,6 @@
       "tags": []
     },
     "cache": {
-      "tags": []
-    },
-    "clients-adr-and-machine-license": {
       "tags": []
     },
     "clients-assets": {
@@ -550,9 +547,6 @@
       "tags": []
     },
     "judicial-system-formatters": {
-      "tags": []
-    },
-    "judicial-system-message": {
       "tags": []
     },
     "judicial-system-message-handler": {

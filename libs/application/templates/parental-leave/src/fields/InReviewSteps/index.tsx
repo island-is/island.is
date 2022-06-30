@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'

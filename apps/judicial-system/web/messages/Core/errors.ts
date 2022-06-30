@@ -76,9 +76,4 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
   },
-  copyLink: {
-    id: 'judicial.system.core:errors.copy_link',
-    defaultMessage: 'Ekki tókst að afrita hlekk',
-    description: 'Notaður sem villuskilaboð þegar ekki gengur að afrita hlekk',
-  },
 })

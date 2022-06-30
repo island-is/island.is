@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Text } from '@island.is/island-ui/core'
 import { complaint } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'

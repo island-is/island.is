@@ -1,4 +1,4 @@
-import { PdfTypes } from '@island.is/application/types'
+import { PdfTypes } from '@island.is/application/core'
 import { KeyMapping } from './types'
 
 export const PdfConstants = {

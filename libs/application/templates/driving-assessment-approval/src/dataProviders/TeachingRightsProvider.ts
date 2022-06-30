@@ -3,7 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { HasTeachingRights } from '@island.is/api/schema'
 
 export class TeachingRightsProvider extends BasicDataProvider {

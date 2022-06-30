@@ -59,7 +59,7 @@ export class VehiclesVehicle {
   otherOwners?: boolean
 
   @Field({ nullable: true })
-  termination?: string
+  termination?: boolean
 
   @Field({ nullable: true })
   buyerPersidno?: string
@@ -81,9 +81,6 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   nextInspection?: NextInspection
-
-  @Field({ nullable: true })
-  deregistrationDate?: string
 }
 
 @ObjectType()

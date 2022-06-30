@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import { Dispatch, SetStateAction, useState } from 'react'
 
 import {

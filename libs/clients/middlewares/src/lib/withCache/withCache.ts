@@ -188,15 +188,12 @@ export function withCache({
     try {
       revalidationResponse = await fetch(revalidationRequest)
     } catch (fetchError) {
-      if (fetchError instanceof FetchError && fetchError.status === 304) {
-        revalidationResponse = fetchError.response
-      } else if (cacheResponse.policy._useStaleIfError()) {
+      if (cacheResponse.policy._useStaleIfError()) {
         cacheResponse.cacheStatus.hit = true
         debugLog('Revalidate error, return stale', cacheResponse)
         return cacheResponse
-      } else {
-        throw fetchError
       }
+      throw fetchError
     }
 
     const {

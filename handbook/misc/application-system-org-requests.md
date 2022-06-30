@@ -38,29 +38,10 @@ In the Application template map the orginasation's nationalId like so
 
 For the org to be able to interact we need to add the role permission to a relevant state for the them to interact with the application.
 
-Add an entry action:
-
-```typescript
-stateMachineOptions: {
-  actions: {
-    assignToInstitution: assign((context) => {
-      const { application } = context
-      const institution_ID = 'xxxxxx-xxxx'
-
-      set(application, 'assignees', [institution_ID])
-
-      return context
-    })
-  }
-}
-```
-
-An example of an approve/reject state from an orginisation. Add your state with entry and exit that handles the assign of the institution
+Example approve/reject state from an orginisation:
 
 ```typescript
   [States.ORGINISATION_APPROVAL]: {
-    entry: 'assignToInstitution',
-    exit: ['clearAssignees'], //ideally you would clear the assignees here
     meta: {
         name: States.ORGINISATION_APPROVAL,
         ...
@@ -88,7 +69,7 @@ An example of an approve/reject state from an orginisation. Add your state with 
 
 To invoke a state change the machine client would for approving make a PUT request like so:
 
-```bash
+```
 curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submit' \
 --header 'authorization: xxx' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -98,13 +79,3 @@ curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submi
   "message": ""
 }'
 ```
-
-#### Postman local testing setup
-
-Log in to the [IDS admin panel](https://beta.dev01.devland.is/admin) on dev using Gervimaður Útlönd 010-7789. Find the client you created earlier, create a new secret and copy it to your clipboard:
-
-![image](./assets/client-secret.png)
-
-Choose Oauth 2.0 and use the settings below. Insert your Client id, client secret and the Scope should be `@island.is/applications:read @island.is/applications:write` press "Get New Access Token" and you have your token.
-
-![image](./assets/postman.png)

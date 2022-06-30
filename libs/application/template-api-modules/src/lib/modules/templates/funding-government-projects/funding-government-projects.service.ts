@@ -10,8 +10,10 @@ import {
 import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
 import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FileStorageService } from '@island.is/file-storage'
-import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { FundingAttachment } from './types'
 
 @Injectable()

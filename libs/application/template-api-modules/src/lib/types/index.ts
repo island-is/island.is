@@ -1,7 +1,7 @@
 import {
   Application,
   ApplicationWithAttachments,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'

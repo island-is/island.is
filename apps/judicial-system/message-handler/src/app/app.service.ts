@@ -6,13 +6,16 @@ import type { ConfigType } from '@island.is/nest/config'
 import { logger } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 
-import { MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseFile,
+  CaseFileState,
+  MessageType,
+} from '@island.is/judicial-system/types'
 import type {
-  Message,
+  Case,
   CaseCompletedMessage,
-} from '@island.is/judicial-system/message'
-import { CaseFileState } from '@island.is/judicial-system/types'
-import type { CaseFile } from '@island.is/judicial-system/types'
+  Message,
+} from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 

@@ -14,8 +14,9 @@ import {
   buildMultiField,
   buildRepeater,
   buildTextField,
+  Field,
+  FormValue,
 } from '@island.is/application/core'
-import { Field, FormValue } from '@island.is/application/types'
 
 describe('ui-shell-utils', () => {
   describe('extractAnswersOnScreen', () => {

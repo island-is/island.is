@@ -2,7 +2,7 @@ import { PaymentCatalogItem } from '@island.is/api/schema'
 import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 import { m } from '../lib/messages'
 

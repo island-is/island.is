@@ -1,4 +1,4 @@
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents } from '@island.is/application/core'
 
 export type Events =
   | { type: DefaultEvents.APPROVE }

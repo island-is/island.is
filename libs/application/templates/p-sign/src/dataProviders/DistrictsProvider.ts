@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { DistrictCommissionerAgencies } from '../types/schema'
 import { m } from '../lib/messages'
 

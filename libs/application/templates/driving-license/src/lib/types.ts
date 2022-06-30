@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/core'
 
 export type HasQualityPhotoData = {
   data: {

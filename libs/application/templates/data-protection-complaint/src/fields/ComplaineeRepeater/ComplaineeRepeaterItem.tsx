@@ -1,13 +1,11 @@
 import {
+  Application,
   formatText,
+  FormValue,
   getErrorViaPath,
   getValueViaPath,
-} from '@island.is/application/core'
-import {
-  Application,
-  FormValue,
   RecordObject,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   AlertMessage,
   Box,

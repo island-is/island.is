@@ -30,7 +30,7 @@ import {
   DeleteDrivingLesson,
   EditDrivingLesson,
 } from '../../graphql/mutations'
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 import Skeleton from './Skeleton'
 
 interface Props {

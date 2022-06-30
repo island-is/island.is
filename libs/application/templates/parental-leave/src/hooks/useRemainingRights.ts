@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 
 import { getAvailableRightsInDays } from '../lib/parentalLeaveUtils'
 import { useDaysAlreadyUsed } from './useDaysAlreadyUsed'

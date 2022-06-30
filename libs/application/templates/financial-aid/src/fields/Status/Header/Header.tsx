@@ -6,8 +6,6 @@ import {
   ApplicationState,
   getNextPeriod,
 } from '@island.is/financial-aid/shared/lib'
-import { useLocale } from '@island.is/localization'
-
 import { getStateMessageAndColor } from '../../../lib/formatters'
 
 interface Props {
@@ -16,7 +14,6 @@ interface Props {
 
 const Header = ({ state }: Props) => {
   const { formatMessage } = useIntl()
-  const { lang } = useLocale()
 
   if (!state) {
     return null
@@ -30,8 +27,8 @@ const Header = ({ state }: Props) => {
       marginBottom={[4, 4, 5]}
     >
       {formatMessage(getStateMessageAndColor[state][0], {
-        month: getNextPeriod(lang).month,
-        year: getNextPeriod(lang).year,
+        month: getNextPeriod.month,
+        year: getNextPeriod.year,
       })}
     </Text>
   )

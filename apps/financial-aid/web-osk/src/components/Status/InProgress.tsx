@@ -31,9 +31,7 @@ const InProgress = ({ application, isApplicant = true }: Props) => {
   const header = () => {
     return application.state === ApplicationState.NEW
       ? 'Umsókn móttekin'
-      : `Umsókn í vinnslu til útgreiðslu í ${getNextPeriod().month} ${
-          getNextPeriod().year
-        }`
+      : `Umsókn í vinnslu til útgreiðslu í ${getNextPeriod.month} ${getNextPeriod.year}`
   }
 
   return (

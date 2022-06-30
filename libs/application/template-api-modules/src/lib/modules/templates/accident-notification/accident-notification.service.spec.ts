@@ -1,9 +1,10 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import {
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
@@ -13,10 +14,7 @@ import { AccidentNotificationAttachmentProvider } from './attachments/applicatio
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
 
 import get from 'lodash/get'
@@ -38,6 +36,51 @@ class MockEmailService {
     return sendMail()
   }
 }
+
+const createApplication = (): Application => ({
+  answers: {
+    applicant: {
+      email: 'applicant@applicant.test',
+      phoneNumber: '8888888',
+    },
+    accidentStatus: {
+      recievedAttachments: {},
+    },
+    attachments: {},
+  },
+  applicant: nationalId,
+  assignees: [],
+  applicantActors: [],
+  attachments: {
+    attachment1: 'somattachment',
+  },
+  created: new Date(),
+  modified: new Date(),
+  externalData: {
+    submitApplication: {
+      data: {
+        documentId: 123456789,
+        sendtDocuments: [''],
+      },
+      date: new Date('2021-06-10T11:31:02.641Z'),
+      status: 'success',
+    },
+    addAdditionalAttachment: {
+      data: {
+        sentDocuments: [
+          '9fe9172af1528d46bcac061f910bc89fa801ca031b35ee25ee6a31ee1d0365b3',
+        ],
+      },
+      date: new Date('2021-06-10T11:31:02.641Z'),
+      status: 'success',
+    },
+  },
+  id: (id++).toString(),
+  state: '',
+  typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
+  name: '',
+  status: ApplicationStatus.IN_PROGRESS,
+})
 
 const S3Instance = {
   upload: jest.fn().mockReturnThis(),
@@ -114,50 +157,7 @@ describe('AccidentNotificationService', () => {
 
   describe('addAdditionalAttachment', () => {
     it('should send 2 files and no files on second call', async () => {
-      const application = createApplication({
-        answers: {
-          applicant: {
-            email: 'applicant@applicant.test',
-            phoneNumber: '8888888',
-          },
-          accidentStatus: {
-            recievedAttachments: {},
-          },
-          attachments: {},
-        },
-        applicant: nationalId,
-        assignees: [],
-        applicantActors: [],
-        attachments: {
-          attachment1: 'somattachment',
-        },
-        created: new Date(),
-        modified: new Date(),
-        externalData: {
-          submitApplication: {
-            data: {
-              documentId: 123456789,
-              sendtDocuments: [''],
-            },
-            date: new Date('2021-06-10T11:31:02.641Z'),
-            status: 'success',
-          },
-          addAdditionalAttachment: {
-            data: {
-              sentDocuments: [
-                '9fe9172af1528d46bcac061f910bc89fa801ca031b35ee25ee6a31ee1d0365b3',
-              ],
-            },
-            date: new Date('2021-06-10T11:31:02.641Z'),
-            status: 'success',
-          },
-        },
-        id: (id++).toString(),
-        state: '',
-        typeId: ApplicationTypes.ACCIDENT_NOTIFICATION,
-        name: '',
-        status: ApplicationStatus.IN_PROGRESS,
-      })
+      const application = createApplication()
       const user = createCurrentUser()
 
       const answerAttachments = get(

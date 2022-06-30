@@ -33,10 +33,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import {
-  hasLocalResidence,
-  hasResidenceHistory,
-} from './util/hasResidenceHistory'
+import { hasResidenceHistory } from './util/hasResidenceHistory'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -153,8 +150,7 @@ export class DrivingLicenseService {
       user,
       nationalId,
     )
-    const localRecidencyHistory = hasResidenceHistory(residenceHistory)
-    const localRecidency = hasLocalResidence(residenceHistory)
+    const localRecidency = hasResidenceHistory(residenceHistory)
 
     const canApply = await this.canApplyFor(nationalId, type)
 
@@ -171,17 +167,13 @@ export class DrivingLicenseService {
               key: RequirementKey.drivingSchoolMissing,
               requirementMet: hasFinishedSchool,
             },
-            {
-              key: RequirementKey.currentLocalResidency,
-              requirementMet: localRecidency,
-            },
           ]
         : []),
       ...(type === 'B-temp'
         ? [
             {
               key: RequirementKey.localResidency,
-              requirementMet: localRecidencyHistory,
+              requirementMet: localRecidency,
             },
           ]
         : []),

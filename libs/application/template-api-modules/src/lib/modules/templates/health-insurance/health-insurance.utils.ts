@@ -3,7 +3,7 @@ import parse from 'date-fns/parse'
 import parseISO from 'date-fns/parseISO'
 import { logger } from '@island.is/logging'
 
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import {
   ApplyHealthInsuranceInputs,
   VistaSkjalInput,

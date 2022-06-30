@@ -14,7 +14,6 @@ import {
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { isValidEmail, isValidNationalId } from '../../lib/utils'
-import withLogo from '../Logo/Logo'
 
 type validationType = 'email' | 'nationalId' | 'approveItems'
 const errorIdForSpouse = 'relationshipStatus'
@@ -155,4 +154,4 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(UnknownRelationshipForm)
+export default UnknownRelationshipForm

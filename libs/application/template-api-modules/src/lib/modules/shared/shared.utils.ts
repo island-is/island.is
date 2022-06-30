@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
 
-import { Application } from '@island.is/application/types'
+import { Application } from '@island.is/application/core'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
 

@@ -1,5 +1,8 @@
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'

@@ -21,7 +21,6 @@ interface TabInterface {
   selected?: string
   tabs: TabType[]
   contentBackground?: Colors
-  size?: 'xs' | 'sm' | 'md'
 }
 
 export const Tabs: FC<TabInterface> = ({
@@ -29,7 +28,6 @@ export const Tabs: FC<TabInterface> = ({
   selected = '0',
   tabs,
   contentBackground = 'purple100',
-  size = 'md',
 }) => {
   const { loop, wrap, ...tab } = useTabState({
     selectedId: selected,
@@ -66,7 +64,6 @@ export const Tabs: FC<TabInterface> = ({
         {isMobile && (
           <div className={styles.select}>
             <Select
-              size={size}
               name={label}
               label={label}
               onChange={onChange}

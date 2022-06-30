@@ -54,7 +54,6 @@ export enum RequirementKey {
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
   localResidency = 'LocalResidency',
-  currentLocalResidency = 'CurrentLocalResidency',
   noTempLicense = 'NoTempLicense',
   noLicenseFound = 'NoLicenseFound',
   personNot17YearsOld = 'PersonNot17YearsOld',

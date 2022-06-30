@@ -32,27 +32,13 @@ export const rcOverview = {
         'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
-  // TODO: remove
   headingV2: defineMessage({
     id: 'judicial.system.restriction_cases:overview.heading_v2',
     defaultMessage:
       'Yfirlit kröfu um {caseType, select, ADMISSION_TO_FACILITY {{isExtended, select, yes {framlengingu á } other {}}vistun á viðeigandi stofnun} TRAVEL_BAN {{isExtended, select, yes {farbanni} other {farbann}}} other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}',
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
-  headingV3: defineMessage({
-    id: 'judicial.system.restriction_cases:overview.heading_v3',
-    defaultMessage:
-      'Yfirlit kröfu um {caseType, select, ADMISSION_TO_FACILITY {{isExtended, select, true {framlengingu á } other {}}vistun á viðeigandi stofnun} TRAVEL_BAN {{isExtended, select, true {farbanni} other {farbann}}} other {{isExtended, select, true {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}',
-    description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
-  }),
   sections: {
-    copyLinkForDefenderButton: defineMessage({
-      id:
-        'judicial.system.restriction_cases:overview.copy_link_for_defender_button',
-      defaultMessage: 'Afrita hlekk fyrir verjanda',
-      description:
-        'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
-    }),
     modal: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:overview.modal.heading',
@@ -84,7 +70,6 @@ export const rcOverview = {
           'Notaður sem texti í modal þegar ekki tókst að senda tilkynningu til dómara og dómritara á vakt',
       },
     }),
-    // TODO: remove this 'caseResentModal' section
     caseResentModal: {
       heading: defineMessage({
         id:

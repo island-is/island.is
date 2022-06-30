@@ -1,8 +1,11 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps, TextField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  formatText,
+  TextField,
+} from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   InputController,

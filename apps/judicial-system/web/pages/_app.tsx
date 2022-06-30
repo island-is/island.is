@@ -11,8 +11,7 @@ import { ToastContainer } from '@island.is/island-ui/core'
 
 import { client } from '../graphql'
 import FormProvider from '../src/components/FormProvider/FormProvider'
-import { UserProvider, FeatureProvider } from '../src/components'
-import HeaderContainer from '../src/components/Header/Header'
+import { UserProvider, Header, FeatureProvider } from '../src/components'
 
 const getTranslationStrings = ({
   apolloClient,
@@ -79,7 +78,7 @@ class JudicialSystemApplication extends App<Props> {
             <UserProvider>
               <LocaleProvider locale="is" messages={translations || {}}>
                 <>
-                  <HeaderContainer />
+                  <Header />
                   <FormProvider>
                     <Component {...pageProps} />
                     <ToastContainer useKeyframeStyles />

@@ -60,9 +60,6 @@ module.exports = {
           '../../vanilla-extract-utils/src',
         ),
         '@island.is/application/core': rootDir('../../../application/core/src'),
-        '@island.is/application/types': rootDir(
-          '../../../application/types/src',
-        ),
         '@island.is/application/graphql': rootDir(
           '../../../application/graphql/src',
         ),

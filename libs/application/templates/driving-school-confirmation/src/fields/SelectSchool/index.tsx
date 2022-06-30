@@ -5,7 +5,7 @@ import {
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { DrivingLicenseBookSchool, DrivingSchoolType } from '../../types/schema'
 import { RadioController } from '@island.is/shared/form-fields'

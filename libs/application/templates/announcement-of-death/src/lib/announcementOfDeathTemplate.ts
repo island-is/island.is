@@ -1,4 +1,3 @@
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -7,8 +6,9 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  EphemeralStateLifeCycle,
   StateLifeCycle,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'

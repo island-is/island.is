@@ -53,6 +53,7 @@ export class NationalRegistryXRoadService {
   }
 
   async getNationalRegistryPerson(
+    user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
     const response = await this.nationalRegistryApi
@@ -112,7 +113,7 @@ export class NationalRegistryXRoadService {
 
         const parentBNationalId = parents.find((id) => id !== parentNationalId)
         const parentB = parentBNationalId
-          ? await this.getNationalRegistryPerson(parentBNationalId)
+          ? await this.getNationalRegistryPerson(user, parentBNationalId)
           : undefined
 
         const livesWithApplicant = parentAFamily.einstaklingar?.some(

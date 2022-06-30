@@ -1,12 +1,12 @@
-import { getValueViaPath } from '@island.is/application/core'
 import {
   BasicDataProvider,
-  CustomTemplateFindQuery,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
+  CustomTemplateFindQuery,
+  getValueViaPath,
   StaticText,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as Sentry from '@sentry/react'
 
@@ -135,53 +135,44 @@ export class Children extends BasicDataProvider {
     ).filter(({ state }) => state !== States.PREREQUISITES)
 
     // Applications where this parent is other parent
-    // otherParentId are in two difference places (answers.otheParentId and answers.otherParentObj.otherParentId)
-    // TODO: remove answers.otherParentId
-
-    let getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
-      'answers.otherParentObj.otherParentId': application.applicant,
-    })
-    if (getAppsWhereOtherParentHasApplied.length <= 0) {
-      getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+    const applicationsWhereOtherParentHasApplied = (
+      await customTemplateFindQuery({
         'answers.otherParentId': application.applicant,
       })
-    }
-    const applicationsWhereOtherParentHasApplied = getAppsWhereOtherParentHasApplied.filter(
-      (application) => {
-        const { state } = application
+    ).filter((application) => {
+      const { state } = application
 
-        const isInProgress =
-          state === States.PREREQUISITES ||
-          state === States.DRAFT ||
-          state === States.OTHER_PARENT_APPROVAL ||
-          state === States.OTHER_PARENT_ACTION ||
-          state === States.EMPLOYER_WAITING_TO_ASSIGN ||
-          state === States.EMPLOYER_APPROVAL ||
-          state === States.EMPLOYER_ACTION
+      const isInProgress =
+        state === States.PREREQUISITES ||
+        state === States.DRAFT ||
+        state === States.OTHER_PARENT_APPROVAL ||
+        state === States.OTHER_PARENT_ACTION ||
+        state === States.EMPLOYER_WAITING_TO_ASSIGN ||
+        state === States.EMPLOYER_APPROVAL ||
+        state === States.EMPLOYER_ACTION
 
-        if (isInProgress) {
-          // The application of the primary parent has to be completed
-          return false
-        }
+      if (isInProgress) {
+        // The application of the primary parent has to be completed
+        return false
+      }
 
-        const selectedChild = getSelectedChild(
-          application.answers,
-          application.externalData,
-        )
+      const selectedChild = getSelectedChild(
+        application.answers,
+        application.externalData,
+      )
 
-        if (!selectedChild) {
-          return false
-        }
+      if (!selectedChild) {
+        return false
+      }
 
-        // We only use applications from primary parents to allow
-        // secondary parents to apply, not the other way around
-        if (selectedChild.parentalRelation !== ParentalRelations.primary) {
-          return false
-        }
+      // We only use applications from primary parents to allow
+      // secondary parents to apply, not the other way around
+      if (selectedChild.parentalRelation !== ParentalRelations.primary) {
+        return false
+      }
 
-        return true
-      },
-    )
+      return true
+    })
 
     return getChildrenAndExistingApplications(
       applicationsWhereApplicant,

@@ -19,9 +19,8 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   const isDelegation = Boolean(actor)
 
   const isCompany = userInfo.profile.subjectType === 'legalEntity'
-  const personDelegation = isDelegation && !isCompany
 
-  if (personDelegation) {
+  if (isCompany || isDelegation) {
     return <AccessDenied userInfo={userInfo} client={client} />
   }
   return (
@@ -33,6 +32,7 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
           defaultMessage:
             'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}
+        img="./assets/images/educationDegree.svg"
       />
       <Accesses />
     </Box>

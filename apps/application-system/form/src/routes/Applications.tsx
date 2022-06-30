@@ -140,22 +140,10 @@ export const Applications: FC = () => {
       <GridContainer>
         {!loading && !isEmpty(data?.applicationApplications) && (
           <Box>
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              justifyContent="spaceBetween"
-              display="flex"
-              flexDirection={['column', 'row']}
-            >
+            <Box marginTop={5} marginBottom={5}>
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-
-              <Box marginTop={[2, 0]}>
-                <Button onClick={createApplication}>
-                  {formatMessage(coreMessages.newApplication)}
-                </Button>
-              </Box>
             </Box>
 
             {data?.applicationApplications && (
@@ -167,6 +155,17 @@ export const Applications: FC = () => {
                 refetch={refetch}
               />
             )}
+
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button onClick={createApplication}>
+                {formatMessage(coreMessages.newApplication)}
+              </Button>
+            </Box>
           </Box>
         )}
       </GridContainer>

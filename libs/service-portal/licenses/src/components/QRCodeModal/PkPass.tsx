@@ -21,9 +21,8 @@ import { useWindowSize } from 'react-use'
 
 type PkPassProps = {
   expireDate: string
-  textButton?: boolean
 }
-export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
+export const PkPass = ({ expireDate }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass] = useMutation(CREATE_PK_PASS)
@@ -95,11 +94,8 @@ export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
       {!isMobile && (
         <>
           <Button
-            colorScheme="default"
-            preTextIconType="filled"
-            size={textButton ? 'small' : 'default'}
-            type="button"
-            variant={textButton ? 'text' : 'utility'}
+            variant="text"
+            size="small"
             icon="QRCode"
             iconType="outline"
             onClick={() => {
@@ -132,9 +128,9 @@ export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
       )}
 
       {isMobile && (
-        <Box>
+        <Box className={styles.pkpassButton}>
           <Button
-            variant="utility"
+            variant="text"
             size="small"
             icon={fetched ? 'checkmark' : displayLoader ? undefined : 'QRCode'}
             iconType="outline"

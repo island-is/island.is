@@ -26,11 +26,6 @@ export const section = defineMessages({
     defaultMessage: 'Skilmálar',
     description: 'Terms Section Title',
   },
-  selectCompany: {
-    id: `ls.application:section.selectCompany`,
-    defaultMessage: 'Upplýsingar um fyrirtæki',
-    description: 'Select Copmany Section Title',
-  },
   applicant: {
     id: `ls.application:section.applicant`,
     defaultMessage: 'Upplýsingar um umsækjanda',

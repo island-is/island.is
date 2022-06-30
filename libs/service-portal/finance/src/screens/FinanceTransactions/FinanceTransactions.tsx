@@ -23,14 +23,11 @@ import {
   GridColumn,
   DatePicker,
   SkeletonLoader,
+  Select,
   AlertBanner,
   Hidden,
+  Input,
   Button,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
-  AccordionItem,
-  Accordion,
 } from '@island.is/island-ui/core'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
@@ -50,17 +47,11 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     }),
     value: ALL_CHARGE_TYPES,
   }
-  const backInTheDay = sub(new Date(), {
-    months: 3,
-  })
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
-  const [dropdownValue, setDropdownValue] = useState<string>(
-    allChargeTypes.value,
-  )
 
   const {
     data: customerChartypeData,
@@ -69,7 +60,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
     onCompleted: () => {
       if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-        onDropdownSelect(allChargeTypes.value)
+        onDropdownSelect(allChargeTypes)
       } else {
         setChargeTypesEmpty(true)
       }
@@ -97,6 +88,9 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
+    const backInTheDay = sub(new Date(), {
+      months: 3,
+    })
     setFromDate(backInTheDay)
     setToDate(new Date())
   }, [])
@@ -104,16 +98,10 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   function onDropdownSelect(selection: any) {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
     const selectedID =
-      selection === ALL_CHARGE_TYPES ? allChargeTypeValues : [selection]
+      selection.value === ALL_CHARGE_TYPES
+        ? allChargeTypeValues
+        : [selection.value]
     setDropdownSelect(selectedID)
-    setDropdownValue(selection)
-  }
-
-  function clearAllFilters() {
-    onDropdownSelect(allChargeTypes.value)
-    setFromDate(backInTheDay)
-    setToDate(new Date())
-    setQ('')
   }
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
@@ -136,34 +124,31 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
           </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default" marginBottom={6}>
+              <Text variant="default">
                 {formatMessage({
                   id: 'sp.finance-transactions:intro',
                   defaultMessage:
                     'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-              {recordsDataArray.length > 0 ? (
-                <Box
-                  display="flex"
-                  marginLeft="auto"
-                  paddingRight={2}
-                  printHidden
-                >
-                  <Box paddingRight={2}>
-                    <Button
-                      colorScheme="default"
-                      icon="print"
-                      iconType="filled"
-                      onClick={() => window.print()}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(m.print)}
-                    </Button>
-                  </Box>
+            </GridColumn>
+            {recordsDataArray.length > 0 ? (
+              <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
+                <GridColumn>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                </GridColumn>
+                <GridColumn>
                   <DropdownExport
                     onGetCSV={() =>
                       exportHreyfingarFile(recordsDataArray, 'csv')
@@ -172,104 +157,79 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                       exportHreyfingarFile(recordsDataArray, 'xlsx')
                     }
                   />
-                </Box>
-              ) : null}
-            </GridColumn>
+                </GridColumn>
+              </Box>
+            ) : null}
           </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
-              <Filter
-                resultCount={0}
-                variant="popover"
-                align="left"
-                reverse
-                labelClear={formatMessage(m.clearFilter)}
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelOpen={formatMessage(m.openFilter)}
-                labelClose={formatMessage(m.closeFilter)}
-                filterInput={
-                  <FilterInput
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                    name="rafraen-skjol-input"
-                    value={q}
-                    onChange={(e) => setQ(e)}
+              <GridRow>
+                <GridColumn
+                  paddingBottom={[1, 0]}
+                  span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+                >
+                  <Select
+                    name="faerslur"
                     backgroundColor="blue"
+                    placeholder={formatMessage(m.transactions)}
+                    label={formatMessage(m.transactionsLabel)}
+                    defaultValue={allChargeTypes}
+                    size="xs"
+                    options={[allChargeTypes, ...chargeTypeSelect]}
+                    onChange={(sel) => onDropdownSelect(sel)}
                   />
-                }
-                onFilterClear={clearAllFilters}
-              >
-                <FilterMultiChoice
-                  labelClear={formatMessage(m.clearSelected)}
-                  singleExpand={true}
-                  onChange={({ selected }) => {
-                    onDropdownSelect(selected[0])
-                  }}
-                  onClear={() => {
-                    onDropdownSelect(allChargeTypes.value)
-                  }}
-                  categories={[
-                    {
-                      id: 'flokkur',
-                      label: formatMessage(m.transactionsLabel),
-                      selected: [dropdownValue] ?? [],
-                      filters: [allChargeTypes, ...chargeTypeSelect],
-                      inline: false,
-                      singleOption: true,
-                    },
-                  ]}
-                />
-                <Box className={styles.dateFilter} paddingX={3}>
-                  <Box
-                    borderBottomWidth="standard"
-                    borderColor="blue200"
-                    width="full"
+                </GridColumn>
+                <GridColumn
+                  paddingTop={[2, 2, 2, 2, 0]}
+                  span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
+                >
+                  <DatePicker
+                    backgroundColor="blue"
+                    handleChange={(d) => setFromDate(d)}
+                    selected={fromDate}
+                    icon="calendar"
+                    iconType="outline"
+                    size="xs"
+                    label={formatMessage(m.dateFrom)}
+                    locale="is"
+                    placeholderText={formatMessage(m.chooseDate)}
                   />
-                  <Box marginTop={1}>
-                    <Accordion
-                      dividerOnBottom={false}
-                      dividerOnTop={false}
-                      singleExpand={false}
-                    >
-                      <AccordionItem
-                        key="date-accordion-item"
-                        id="date-accordion-item"
-                        label={formatMessage(m.datesLabel)}
-                        labelColor="blue400"
-                        labelUse="h5"
-                        labelVariant="h5"
-                        iconVariant="small"
-                      >
-                        <Box
-                          className={styles.accordionBox}
-                          display="flex"
-                          flexDirection="column"
-                        >
-                          <DatePicker
-                            label={formatMessage(m.datepickerFromLabel)}
-                            placeholderText={formatMessage(m.datepickLabel)}
-                            locale="is"
-                            backgroundColor="blue"
-                            size="xs"
-                            handleChange={(d) => setFromDate(d)}
-                            selected={fromDate}
-                          />
-                          <Box marginTop={3}>
-                            <DatePicker
-                              label={formatMessage(m.datepickerToLabel)}
-                              placeholderText={formatMessage(m.datepickLabel)}
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
-                              selected={toDate}
-                            />
-                          </Box>
-                        </Box>
-                      </AccordionItem>
-                    </Accordion>
+                </GridColumn>
+                <GridColumn
+                  paddingTop={[2, 2, 2, 2, 0]}
+                  span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
+                >
+                  <DatePicker
+                    backgroundColor="blue"
+                    handleChange={(d) => setToDate(d)}
+                    selected={toDate}
+                    icon="calendar"
+                    iconType="outline"
+                    size="xs"
+                    label={formatMessage(m.dateTo)}
+                    locale="is"
+                    placeholderText={formatMessage(m.chooseDate)}
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
+                  <Box marginTop={3}>
+                    <Input
+                      backgroundColor="blue"
+                      label={formatMessage(m.searchLabel)}
+                      name="Search"
+                      icon="search"
+                      placeholder={formatMessage(m.searchPlaceholder)}
+                      size="xs"
+                      onChange={(e) => setQ(e.target.value)}
+                      value={q}
+                    />
                   </Box>
-                </Box>
-              </Filter>
+                </GridColumn>
+              </GridRow>
             </Box>
           </Hidden>
 

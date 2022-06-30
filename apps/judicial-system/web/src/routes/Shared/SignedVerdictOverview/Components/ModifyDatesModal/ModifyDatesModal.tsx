@@ -26,7 +26,7 @@ interface DateTime {
 
 interface Props {
   workingCase: Case
-  onSubmit: (updateCase: UpdateCase) => Promise<boolean>
+  onSubmit: (updateCase: UpdateCase) => void
   isSendingNotification: boolean
   isUpdatingCase: boolean
   setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
@@ -196,11 +196,8 @@ const ModifyDatesModal: React.FC<Props> = ({
       ),
     }
 
-    const updated = await onSubmit(update)
-
-    if (updated) {
-      setSuccessText(modificationSuccessText)
-    }
+    onSubmit(update)
+    setSuccessText(modificationSuccessText)
   }, [
     caseModifiedExplanation,
     workingCase.caseModifiedExplanation,
@@ -286,7 +283,7 @@ const ModifyDatesModal: React.FC<Props> = ({
   ] = useState<string>('')
 
   const handleCaseModifiedExplanationChange = (reason: string) => {
-    const { isValid } = validate([[reason, ['empty']]])
+    const { isValid } = validate(reason, 'empty')
 
     setCaseModifiedExplanation(reason)
 
@@ -296,7 +293,7 @@ const ModifyDatesModal: React.FC<Props> = ({
   }
 
   const handleCaseModifiedExplanationBlur = (reason: string) => {
-    const { isValid, errorMessage } = validate([[reason, ['empty']]])
+    const { isValid, errorMessage } = validate(reason, 'empty')
 
     if (isValid) {
       setCaseModifiedExplanation(reason)

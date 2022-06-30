@@ -4,11 +4,13 @@ import * as Sentry from '@sentry/react'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
+  Application,
   ApplicationTemplateHelper,
+  Form,
+  Schema,
   coreMessages,
   getTypeFromSlug,
 } from '@island.is/application/core'
-import { Application, Form, Schema } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,

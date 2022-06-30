@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
-import { getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Input, Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { MissingInfoType } from '../../types'

@@ -9,7 +9,7 @@ import {
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import Skeleton from './Skeleton'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/core'
 import { useQuery } from '@apollo/client'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'

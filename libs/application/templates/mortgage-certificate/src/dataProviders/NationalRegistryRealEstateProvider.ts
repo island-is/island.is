@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { PropertyOverviewWithDetail } from '../types/schema'
 import { MY_PROPERTIES_QUERY } from '../graphql/queries'
 

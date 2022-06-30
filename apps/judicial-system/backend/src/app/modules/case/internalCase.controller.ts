@@ -3,6 +3,7 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { CaseEvent, EventService } from '../event'
@@ -10,6 +11,7 @@ import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
 import { CaseService } from './case.service'
+import { caseModuleConfig } from './case.config'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
@@ -19,6 +21,7 @@ export class InternalCaseController {
     private readonly caseService: CaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   @Post('case')

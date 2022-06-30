@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
-import { formatText } from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
+  formatText,
   FormText,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'
@@ -27,29 +27,23 @@ export const FilesRecipientCard: FC<
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
   let options =
-    application.answers?.estateMembers?.members?.length &&
-    application.answers.estateMembers.members.length !== 0
-      ? application.answers?.estateMembers?.members
-          .filter((member) => !member?.dummy)
-          .map((estateMember) => ({
-            label: estateMember.name,
-            value: estateMember.nationalId,
-          }))
-      : []
+    application.answers?.estateMembers.members.length !== 0
+      ? application.answers?.estateMembers?.members.map((estateMember) => ({
+          label: estateMember.name,
+          value: estateMember.nationalId,
+        }))
+      : [
+          {
+            label: application.answers.applicantName,
+            value: application.applicant,
+          },
+        ]
 
-  options = options.filter((member) => isPerson(member.value))
-
-  if (
-    field.id !== 'financesDataCollectionPermission' &&
-    !application.answers?.estateMembers?.members.find(
-      (member) => member.nationalId === application.applicant,
-    )
-  ) {
-    options.push({
-      label: application.answers.applicantName,
-      value: application.applicant,
-    })
+  // Notifier is not allowed to give finances permission
+  if (field.id === 'financesDataCollectionPermission') {
+    options = options.filter((member) => member.value !== application.applicant)
   }
+  options = options.filter((member) => isPerson(member.value))
 
   // Add the option for selecting noone
   options.push({

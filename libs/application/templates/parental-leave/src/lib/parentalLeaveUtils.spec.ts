@@ -1,12 +1,12 @@
 import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 import {
-  ApplicationWithAttachments as Application,
+  Application,
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
   FormValue,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 
 import { NO, MANUAL, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
@@ -21,7 +21,6 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
-  removeCountryCode,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -40,7 +39,6 @@ function buildApplication(data?: {
     created: new Date(),
     modified: new Date(),
     attachments: {},
-    applicantActors: [],
     answers,
     state,
     externalData,
@@ -252,7 +250,6 @@ describe('getOtherParentId', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
-    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',
@@ -267,7 +264,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: NO,
     }
 
@@ -277,7 +274,7 @@ describe('getOtherParentId', () => {
   it('should return answers.otherParentId if manual is selected', () => {
     const expectedId = '1234567899'
 
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: MANUAL,
       otherParentId: expectedId,
     }
@@ -298,7 +295,7 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: 'spouse',
     }
 
@@ -315,7 +312,6 @@ describe('getOtherParentName', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
-    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',
@@ -330,7 +326,7 @@ describe('getOtherParentName', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: NO,
     }
 
@@ -340,7 +336,7 @@ describe('getOtherParentName', () => {
   it('should return answers.otherParentName if manual is selected', () => {
     const expectedName = '1234567899'
 
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: MANUAL,
       otherParentName: expectedName,
     }
@@ -361,7 +357,7 @@ describe('getOtherParentName', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParentObj = {
+    application.answers.otherParent = {
       chooseOtherParent: 'spouse',
     }
 
@@ -500,31 +496,5 @@ describe('applicantIsMale', () => {
     set(application.externalData, 'person.data.genderCode', '1')
 
     expect(applicantIsMale(application)).toBe(true)
-  })
-})
-
-describe('removeCountryCode', () => {
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '+3541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '003541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it("should return null if phone number wouldn't exist", () => {
-    const application = buildApplication()
-    set(application.externalData, 'userProfile', null)
-    expect(removeCountryCode(application)).toEqual(undefined)
   })
 })

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import type { FieldBaseProps } from '@island.is/application/types'
+import type { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'

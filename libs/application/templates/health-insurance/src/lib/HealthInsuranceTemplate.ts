@@ -1,4 +1,3 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -7,7 +6,8 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-} from '@island.is/application/types'
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
 import { m } from '../forms/messages'

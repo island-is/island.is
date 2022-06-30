@@ -1,9 +1,10 @@
 import {
   buildForm,
+  Form,
+  FormModes,
   buildSection,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
 
 export const done: Form = buildForm({

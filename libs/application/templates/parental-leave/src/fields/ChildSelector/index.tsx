@@ -6,12 +6,12 @@ import format from 'date-fns/format'
 import {
   ApplicationConfigurations,
   FieldBaseProps,
-} from '@island.is/application/types'
+} from '@island.is/application/core'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -65,48 +65,37 @@ const ChildSelector: FC<FieldBaseProps> = ({
   return (
     <Box>
       {children.length > 0 && (
-        <>
-          <FieldDescription
-            description={formatMessage(
-              parentalLeaveFormMessages.selectChild.screenDescription,
-            )}
+        <Box marginY={3}>
+          <RadioController
+            id="selectedChild"
+            disabled={false}
+            name="selectedChild"
+            largeButtons={true}
+            defaultValue={selectedChild}
+            options={children.map((child, index) => {
+              const subLabel =
+                child.parentalRelation === ParentalRelations.secondary
+                  ? formatMessage(
+                      parentalLeaveFormMessages.selectChild.secondaryParent,
+                      {
+                        nationalId: child.primaryParentNationalRegistryId ?? '',
+                      },
+                    )
+                  : formatMessage(
+                      parentalLeaveFormMessages.selectChild.primaryParent,
+                    )
+
+              return {
+                value: `${index}`,
+                label: formatMessage(
+                  parentalLeaveFormMessages.selectChild.baby,
+                  { dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth) },
+                ),
+                subLabel,
+              }
+            })}
           />
-
-          <Box marginY={3}>
-            <RadioController
-              id="selectedChild"
-              disabled={false}
-              name="selectedChild"
-              largeButtons={true}
-              defaultValue={selectedChild}
-              options={children.map((child, index) => {
-                const subLabel =
-                  child.parentalRelation === ParentalRelations.secondary
-                    ? formatMessage(
-                        parentalLeaveFormMessages.selectChild.secondaryParent,
-                        {
-                          nationalId:
-                            child.primaryParentNationalRegistryId ?? '',
-                        },
-                      )
-                    : formatMessage(
-                        parentalLeaveFormMessages.selectChild.primaryParent,
-                      )
-
-                return {
-                  value: `${index}`,
-                  label: formatMessage(
-                    parentalLeaveFormMessages.selectChild.baby,
-                    {
-                      dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
-                    },
-                  ),
-                  subLabel,
-                }
-              })}
-            />
-          </Box>
-        </>
+        </Box>
       )}
 
       {existingApplications.length > 0 && (
@@ -117,64 +106,24 @@ const ChildSelector: FC<FieldBaseProps> = ({
             )}
           />
 
-          <Stack space={2}>
+          <Box marginY={3}>
             {existingApplications.map(
               ({ applicationId, expectedDateOfBirth }) => (
-                <Box
-                  border="standard"
-                  borderRadius="large"
-                  padding={4}
-                  display="flex"
-                  flexDirection="row"
+                <Button
+                  key={applicationId}
+                  onClick={() => selectExistingApplication(applicationId)}
+                  icon="arrowForward"
+                  variant="primary"
+                  colorScheme="light"
+                  size="small"
                 >
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    width="full"
-                    paddingLeft={[0, 2]}
-                  >
-                    <Box
-                      display="flex"
-                      flexDirection={['column', 'column', 'column', 'row']}
-                      justifyContent="spaceBetween"
-                      alignItems="flexStart"
-                    >
-                      <Text variant="h4" as="h2">
-                        {formatMessage(
-                          parentalLeaveFormMessages.selectChild.baby,
-                          {
-                            dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
-                          },
-                        )}
-                      </Text>
-                    </Box>
-                    <Box
-                      display="flex"
-                      flexDirection={['column', 'row']}
-                      justifyContent={'spaceBetween'}
-                      paddingTop={[1, 0]}
-                    >
-                      <Box>
-                        <Text>{applicationId}</Text>
-                      </Box>
-                      <Box
-                        paddingTop={[1, 0]}
-                        onClick={() => selectExistingApplication(applicationId)}
-                      >
-                        <Box display="inlineBlock">
-                          <Button size="small" colorScheme="default">
-                            {formatMessage(
-                              parentalLeaveFormMessages.selectChild.choose,
-                            )}
-                          </Button>
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
+                  {formatMessage(parentalLeaveFormMessages.selectChild.baby, {
+                    dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
+                  })}
+                </Button>
               ),
             )}
-          </Stack>
+          </Box>
         </>
       )}
     </Box>

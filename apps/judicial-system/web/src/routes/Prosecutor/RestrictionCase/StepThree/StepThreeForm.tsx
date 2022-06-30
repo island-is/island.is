@@ -67,14 +67,16 @@ export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   props: DemandsAutofillProps,
 ): string => {
-  return formatMessage(rcReportForm.sections.demands.autofillV3, {
+  return formatMessage(rcReportForm.sections.demands.autofillV2, {
     accusedName: props.defentant.name,
     accusedNationalId: props.defentant.noNationalId
       ? ' '
       : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
     isExtended:
       props.parentCaseDecision &&
-      isAcceptingCaseDecision(props.parentCaseDecision),
+      isAcceptingCaseDecision(props.parentCaseDecision)
+        ? 'yes'
+        : 'no',
     caseType: props.caseType,
     court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
     requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
@@ -82,7 +84,9 @@ export const getDemandsAutofill = (
       ?.replace(' kl.', ', kl.'),
     hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
       CaseCustodyRestrictions.ISOLATION,
-    ),
+    )
+      ? 'yes'
+      : 'no',
   })
 }
 

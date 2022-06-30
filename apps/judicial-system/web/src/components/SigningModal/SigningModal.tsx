@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { ApolloError, useMutation, useQuery } from '@apollo/client'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   CaseDecision,
@@ -102,19 +102,6 @@ export const getSigningProcess = (
   return 'error'
 }
 
-export const getSuccessText = (
-  formatMessage: IntlShape['formatMessage'],
-  caseType: CaseType,
-) => {
-  return isInvestigationCase(caseType)
-    ? formatMessage(icConfirmation.modal.text)
-    : formatMessage(rcConfirmation.modal.rulingNotification.textV2, {
-        summarySentToPrison:
-          caseType === CaseType.CUSTODY ||
-          caseType === CaseType.ADMISSION_TO_FACILITY,
-      })
-}
-
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   setWorkingCase,
@@ -174,6 +161,18 @@ const SigningModal: React.FC<SigningModalProps> = ({
     commitDecision,
   ])
 
+  const renderSuccessText = (caseType: CaseType): string => {
+    return isInvestigationCase(caseType)
+      ? formatMessage(icConfirmation.modal.text)
+      : formatMessage(rcConfirmation.modal.rulingNotification.text, {
+          summarySentToPrison:
+            caseType === CaseType.CUSTODY ||
+            caseType === CaseType.ADMISSION_TO_FACILITY
+              ? 'yes'
+              : 'no',
+        })
+  }
+
   const signingProcess = getSigningProcess(
     data?.rulingSignatureConfirmation,
     error,
@@ -196,9 +195,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
             controlCode={requestRulingSignatureResponse?.controlCode}
           />
         ) : signingProcess === 'success' ? (
-          <MarkdownWrapper
-            markdown={getSuccessText(formatMessage, workingCase.type)}
-          />
+          <MarkdownWrapper markdown={renderSuccessText(workingCase.type)} />
         ) : (
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )
