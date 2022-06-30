@@ -3,19 +3,28 @@ import { useLazyQuery } from '@apollo/client'
 import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  GetSignedUrlQueryQuery,
+  GetSignedUrlQueryQueryVariables,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Parameters {
-  caseId?: string
+  caseId: string
 }
 
 const useFileList = ({ caseId }: Parameters) => {
   const { setWorkingCase } = useContext(FormContext)
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
-  const [getSignedUrl, { error, variables }] = useLazyQuery(GetSignedUrlQuery, {
+  const [getSignedUrl, { error, variables }] = useLazyQuery<
+    GetSignedUrlQueryQuery,
+    GetSignedUrlQueryQueryVariables
+  >(GetSignedUrlQuery, {
     fetchPolicy: 'no-cache',
     onCompleted(data) {
-      window.open(data.getSignedUrl.url, '_blank')
+      if (data?.getSignedUrl?.url) {
+        window.open(data.getSignedUrl.url, '_blank')
+      }
     },
   })
 
