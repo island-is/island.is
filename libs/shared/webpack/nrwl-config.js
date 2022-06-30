@@ -97,6 +97,7 @@ const addNodeModulesPolyfill = (config) => {
 
   config.plugins.push(
     new webpack.ProvidePlugin({
+      Buffer: [require.resolve('buffer'), 'Buffer'],
       process: [require.resolve('process')],
     }),
   )
