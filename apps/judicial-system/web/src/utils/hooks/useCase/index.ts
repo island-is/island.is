@@ -2,6 +2,10 @@ import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import omitBy from 'lodash/omitBy'
+import pickBy from 'lodash/pickBy'
+import isUndefined from 'lodash/isUndefined'
+import isNil from 'lodash/isNil'
 
 import type {
   NotificationType,
@@ -55,17 +59,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   judgeId: 'judge',
 }
 
-export type autofillEntry = {
-  key: keyof UpdateCase
-  value?:
-    | string
-    | boolean
-    | SessionArrangements
-    | CaseCustodyRestrictions[]
-    | Date
-    | Institution
-    | User
-    | null
+export type autofillEntry = Partial<UpdateCase> & {
   force?: boolean
 }
 
@@ -105,6 +99,63 @@ interface RequestCourtRecordSignatureMutationResponse {
 
 interface ExtendCaseMutationResponse {
   extendCase: Case
+}
+
+const overwrite = (update: UpdateCase, workingCase: Case): Case => {
+  const validUpdates = omitBy<UpdateCase>(update, isUndefined)
+
+  return { ...workingCase, ...validUpdates }
+}
+
+export const fieldHasValue = (workingCase: Case) => (
+  value: unknown,
+  key: string,
+) => {
+  const theKey = key as keyof UpdateCase // loadash types are not better than this
+  if (
+    isChildKey(theKey) // check if key is f.example `judgeId`
+      ? isNil(workingCase[childof[theKey]])
+      : isNil(workingCase[theKey])
+  ) {
+    console.log('key', workingCase, key)
+    return value === undefined
+  }
+
+  console.log('we should return here', value, key)
+  return true
+}
+
+export const update = (update: UpdateCase, workingCase: Case): Case => {
+  const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
+  console.log('validupdates', validUpdates)
+
+  return { ...workingCase, ...validUpdates }
+}
+
+export const auto = (updates: Array<autofillEntry>, workingCase: Case) => {
+  const u: Case[] = updates.map((entry) => {
+    if (entry.force) {
+      return overwrite(entry, workingCase)
+    }
+    return update(entry, workingCase)
+  })
+
+  const newWorkingCase = u.reduce<Case>((currentUpdates, nextUpdates) => {
+    return { ...currentUpdates, ...nextUpdates }
+  }, workingCase as Case)
+
+  return newWorkingCase
+}
+
+export const autosync = async (
+  updates: autofillEntry[],
+  workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  updateCase: (id: string, update: UpdateCase) => Promise<Case | undefined>,
+) => {
+  const newWorkingCase: UpdateCase = auto(updates, workingCase)
+  updateCase(workingCase.id, newWorkingCase)
+  setWorkingCase({ ...workingCase, ...newWorkingCase })
 }
 
 const useCase = () => {
