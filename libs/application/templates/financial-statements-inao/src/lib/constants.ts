@@ -18,6 +18,8 @@ export const GREATER = 'greater'
 export const LESS = 'less'
 
 export const OPERATIONIDS = {
+  incomePrefix: 'income',
+  expensePrefix: 'expense',
   corporateDonations: 'income.corporateDonations',
   individualDonations: 'income.individualDonations',
   personalDonations: 'income.personalDonations',
@@ -31,6 +33,8 @@ export const OPERATIONIDS = {
 }
 
 export const PARTYOPERATIONIDS = {
+  incomePrefix: 'income',
+  expensePrefix: 'expense',
   applicationType: 'income.applicationType',
   publicDonations: 'income.publicDonations',
   partyDonations: 'income.partyDonations',
@@ -68,11 +72,14 @@ export const ABOUTIDS = {
 }
 
 export const EQUITIESANDLIABILITIESIDS = {
+  assetPrefix: 'asset',
   tangible: 'asset.tangible',
   current: 'asset.current',
   assetTotal: 'asset.total',
+  liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
+  equityPrefix: 'equity',
   equity: 'equity.totalEquity',
 }
 

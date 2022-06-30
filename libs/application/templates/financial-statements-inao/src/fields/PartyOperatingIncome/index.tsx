@@ -9,15 +9,22 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
-import { getTotal } from '../../lib/utils/helpers'
 import { PartyIncome } from './partyIncome'
 import { PartyExpenses } from './partyExpenses'
 import { FieldBaseProps } from '@island.is/application/core'
+import { PARTYOPERATIONIDS } from '../../lib/constants'
+import { useTotals } from '../../hooks'
 
 export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   const { getValues, errors, setError } = useFormContext()
-  const [totalIncome, setTotalIncome] = useState(0)
-  const [totalExpense, setTotalExpense] = useState(0)
+
+  const [getTotalIncome, totalIncome] = useTotals(
+    PARTYOPERATIONIDS.incomePrefix
+  )
+  const [getTotalExpense, totalExpense] = useTotals(
+    PARTYOPERATIONIDS.expensePrefix,
+  )
+
   const { formatMessage } = useLocale()
   const applicationType = application?.externalData?.currentUserType?.data?.code
   const checkIfEmpty = (fieldId: string) => {
@@ -31,24 +38,6 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
       })
     }
   }
-
-  const getTotalIncome = useCallback(() => {
-    const values = getValues()
-
-    const totalIncome: number = getTotal(values, 'income')
-    setTotalIncome(totalIncome)
-  }, [getValues])
-
-  const getTotalExpense = useCallback(() => {
-    const values = getValues()
-    const totalExpense: number = getTotal(values, 'expense')
-    setTotalExpense(totalExpense)
-  }, [getValues])
-
-  useEffect(() => {
-    getTotalExpense()
-    getTotalIncome()
-  }, [getTotalExpense, getTotalIncome])
 
   return (
     <GridContainer>

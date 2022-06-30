@@ -11,39 +11,21 @@ import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
-import { getTotal } from '../../lib/utils/helpers'
 import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
+import { useTotals } from '../../hooks'
 
-export const IndividualElectionEquities = (): JSX.Element => {
-  const { getValues } = useFormContext()
-  const [totalAssets, setTotalAssets] = useState(0)
-  const [totalEquity, setTotalEquity] = useState(0)
-  const [totalLiabilities, setTotalLiabilities] = useState(0)
+export const ElectionEquities = (): JSX.Element => {
+  const [getTotalEquity, totalEquity] = useTotals(
+    EQUITIESANDLIABILITIESIDS.equityPrefix
+  )
+  const [getTotalAssets, totalAssets] = useTotals(
+    EQUITIESANDLIABILITIESIDS.assetPrefix,
+  )
+  const [getTotalLiabilities, totalLiabilities] = useTotals(
+    EQUITIESANDLIABILITIESIDS.liabilityPrefix,
+  )
+
   const { formatMessage } = useLocale()
-
-  const getTotalEquity = useCallback(() => {
-    const values = getValues()
-    const equity: number = getTotal(values, 'equity')
-    setTotalEquity(equity)
-  }, [getValues])
-
-  const getTotalAssets = useCallback(() => {
-    const values = getValues()
-    const assets: number = getTotal(values, 'asset')
-    setTotalAssets(assets)
-  }, [getValues])
-
-  const getTotalLiabilities = useCallback(() => {
-    const values = getValues()
-    const liabilities: number = getTotal(values, 'liability')
-    setTotalLiabilities(liabilities)
-  }, [getValues])
-
-  useEffect(() => {
-    getTotalEquity()
-    getTotalAssets()
-    getTotalLiabilities()
-  }, [getTotalEquity, getTotalAssets, getTotalLiabilities])
 
   return (
     <GridContainer>

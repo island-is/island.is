@@ -18,6 +18,7 @@ import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
 import { PARTY, GREATER, LESS, INDIVIDUAL } from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
+import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -115,7 +116,7 @@ export const getApplication = (): Form => {
         ],
       }),
       cemetryKeyNumbersSection,
-      // keyNumbersSection,
+      partyKeyNumbersSection,
       buildSection({
         id: 'documents',
         title: m.financialStatement,

@@ -98,120 +98,32 @@ const cemetryExpense = z.object({
   writtenOffExpense: z.string(),
 })
 
-const income = z
-  .object({
-    applicationType: z.string(),
-    publicDonations: z.string(),
-    partyDonations: z.string(),
-    municipalityDonations: z.string(),
-    individualDonations: z.string(),
-    corporateDonations: z.string(),
-    personalDonations: z.string(),
-    otherIncome: z.string(),
-    capitalIncome: z.string(),
-    caretaking: z.string(),
-    graveIncome: z.string(),
-    cemetryFundDonations: z.string(),
-  })
-  .partial()
-  .refine(
-    ({
-      applicationType,
-      capitalIncome,
-      otherIncome,
-      individualDonations,
-      corporateDonations,
-      municipalityDonations,
-      publicDonations,
-      partyDonations,
-      caretaking,
-      cemetryFundDonations,
-      graveIncome,
-    }) => {
-      const isCemetry = applicationType === CEMETRY
-      if (applicationType === PARTY) {
-        return (
-          !!capitalIncome &&
-          !!otherIncome &&
-          !!individualDonations &&
-          !!municipalityDonations &&
-          !!publicDonations &&
-          !!partyDonations &&
-          !!corporateDonations
-        )
-      } else if (applicationType === CEMETRY) {
-        const noEmptyFields =
-          !!graveIncome &&
-          !!caretaking &&
-          !!cemetryFundDonations &&
-          !!capitalIncome &&
-          !!otherIncome
+const partyIncome = z
+.object({
+  publicDonations: z.string(),
+  partyDonations: z.string(),
+  municipalityDonations: z.string(),
+  individualDonations: z.string(),
+  corporateDonations: z.string(),
+  personalDonations: z.string(),
+  otherIncome: z.string(),
+  capitalIncome: z.string(),
+})
 
-        return noEmptyFields
-      } else return !!partyDonations
-    },
-  )
-
-const expense = z
-  .object({
-    applicationType: z.string(),
-    electionOffice: z.string(),
-    capitalCost: z.string(),
-    advertisements: z.string(),
-    otherCost: z.string(),
-    travelCost: z.string(),
-    payroll: z.string(),
-    funeralCost: z.string(),
-    chapelExpense: z.string(),
-    donationsToOther: z.string(),
-    cemeteryFundExpense: z.string(),
-    otherOperationCost: z.string(),
-    writtenOffExpense: z.string(),
-  })
-  .partial()
-  .refine((data) => {
-    const {
-      advertisements,
-      travelCost,
-      electionOffice,
-      capitalCost,
-      otherCost,
-      applicationType,
-      payroll,
-      funeralCost,
-      chapelExpense,
-      cemeteryFundExpense,
-      otherOperationCost,
-      donationsToOther,
-      writtenOffExpense,
-    } = data
-    const isCemetry = applicationType === CEMETRY
-
-    if (applicationType === PARTY) {
-      const isParty = !!electionOffice && !!capitalCost && !!otherCost
-      return isParty
-    } else if (isCemetry) {
-      const noEmptyFields =
-        !!payroll &&
-        !!funeralCost &&
-        !!chapelExpense &&
-        !!cemeteryFundExpense &&
-        !!otherOperationCost &&
-        !!writtenOffExpense &&
-        !!donationsToOther
-      return noEmptyFields
-    } else {
-      return !!electionOffice
-    }
-  })
+const partyExpense = z
+.object({
+  electionOffice: z.string(),
+  capitalCost: z.string(),
+  otherCost: z.string(),
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   conditionalAbout,
   about,
   election,
-  income,
-  expense,
+  partyIncome,
+  partyExpense,
   cemetryIncome,
   cemetryExpense,
   cemetryAsset,
