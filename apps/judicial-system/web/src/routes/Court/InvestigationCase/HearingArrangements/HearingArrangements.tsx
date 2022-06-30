@@ -38,8 +38,8 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
-import * as constants from '@island.is/judicial-system/consts'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
   const {

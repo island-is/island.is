@@ -420,7 +420,7 @@ const useCase = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
-    autofill,
+    setAndSendToServer,
   }
 }
 

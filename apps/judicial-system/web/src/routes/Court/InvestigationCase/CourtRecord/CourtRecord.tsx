@@ -54,8 +54,8 @@ import {
   formatRequestCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as constants from '@island.is/judicial-system/consts'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
