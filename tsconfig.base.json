@@ -260,6 +260,7 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
@@ -277,6 +278,9 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/adr-and-machine-license": [
+        "libs/clients/adr-and-machine-license/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
@@ -415,6 +419,9 @@
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
+      ],
+      "@island.is/judicial-system/message": [
+        "libs/judicial-system/message/src/index.ts"
       ],
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"

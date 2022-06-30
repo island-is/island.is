@@ -20,6 +20,7 @@ export const ChatBubble = ({
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
       <FocusableBox
         component="button"
+        data-testid="chatbot"
         tabIndex={0}
         className={cn(styles.message, pushUp && styles.messagePushUp)}
         onClick={onClick}

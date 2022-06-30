@@ -7,11 +7,8 @@ import {
   Application as BaseApplication,
   ApplicationService,
 } from '@island.is/application/api/core'
-import {
-  Application,
-  ApplicationTemplateHelper,
-  ApplicationTypes,
-} from '@island.is/application/core'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 @Injectable()
 export class ApplicationAccessService {

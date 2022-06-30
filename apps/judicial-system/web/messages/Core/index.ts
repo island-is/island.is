@@ -157,17 +157,6 @@ export const core = defineMessages({
       '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
     description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
-  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
-  pastCustody: {
-    id: 'judicial.system.core:past_custody',
-    defaultMessage: 'Fyrri gæsla',
-    description: 'Notað fyrir orðið Fyrri gæsla í öllum flæðum.',
-  },
-  pastTravelBan: {
-    id: 'judicial.system.core:past_travel_ban',
-    defaultMessage: 'Fyrra farbann',
-    description: 'Notað fyrir orðið Fyrra farbann í öllum flæðum.',
-  },
   arrestDate: {
     id: 'judicial.system.core:arrest_date',
     defaultMessage: 'Tími handtöku',
@@ -202,5 +191,28 @@ export const core = defineMessages({
     id: 'judicial.system.core:continue',
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
+  headerTipDisclaimer: {
+    id: 'judicial.system.core:header_tip_disclaimer',
+    defaultMessage:
+      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
+    description:
+      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
+  },
+  headerTipDisclaimerDefenders: {
+    id: 'judicial.system.core:header_tip_disclaimer_defenders',
+    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
+    description:
+      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
+  },
+  defender: {
+    id: 'judicial.system.core:defender',
+    defaultMessage: 'lögmaður',
+    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
+  },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
   },
 })

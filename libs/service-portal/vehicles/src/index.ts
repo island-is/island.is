@@ -23,10 +23,17 @@ export const vehiclesModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
     },
+    {
+      name: m.vehiclesHistory,
+      path: ServicePortalPath.AssetsVehiclesHistory,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      render: () =>
+        lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
+    },
     // {
-    //   name: 'Uppfletting í ökutækjaskrá',
+    //   name: m.vehiclesLookup,
     //   path: ServicePortalPath.AssetsVehiclesLookup,
-    //   enabled: true,
+    //   enabled: userInfo.scopes.includes(ApiScope.vehicles),
     //   render: () => lazy(() => import('./screens/Lookup/Lookup')),
     // },
   ],

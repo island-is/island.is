@@ -14,7 +14,7 @@ export const educationLicenseModule: ServicePortalModule = {
     {
       name: m.educationLicense,
       path: ServicePortalPath.EducationLicense,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.educationLicense),
       render: () => lazy(() => import('./screens/EducationLicense')),
     },
   ],

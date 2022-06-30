@@ -8,11 +8,13 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+} from '@island.is/application/core'
+import {
   CustomField,
   DefaultEvents,
   Form,
   FormModes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Logo } from '../assets'
 import {
   application,
