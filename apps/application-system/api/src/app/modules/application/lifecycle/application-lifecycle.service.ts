@@ -8,6 +8,7 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
+import { ExternalData } from '@island.is/application/types'
 
 export interface AttachmentMetaData {
   s3key: string
@@ -23,6 +24,7 @@ export interface ApplicationPruning {
     'id' | 'attachments' | 'answers' | 'externalData'
   >
   failedAttachments: object
+  failedExternalData: object
 }
 
 @Injectable()
@@ -42,8 +44,8 @@ export class ApplicationLifeCycleService {
   public async run() {
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
-    await this.pruneApplicationCharge()
     await this.pruneAttachments()
+    await this.pruneApplicationCharge()
     await this.pruneApplicationData()
     this.reportResults()
     this.logger.info(`Application pruning done.`)
@@ -66,6 +68,7 @@ export class ApplicationLifeCycleService {
         pruned: true,
         application,
         failedAttachments: {},
+        failedExternalData: {},
       }
     })
   }
@@ -107,9 +110,28 @@ export class ApplicationLifeCycleService {
 
   private async pruneApplicationCharge() {
     for (const prune of this.processingApplications) {
-      await this.applicationChargeService.deleteApplicationCharge(
-        prune.application,
-      )
+      try {
+        await this.applicationChargeService.deleteApplicationCharge(
+          prune.application,
+        )
+      } catch (error) {
+        const chargeId = this.getApplicationChargeId(prune.application)
+        if (chargeId) {
+          prune.failedExternalData = {
+            createCharge: {
+              data: {
+                id: chargeId,
+              },
+            },
+          }
+        }
+
+        prune.pruned = false
+        this.logger.error(
+          `Application charge prune error on id ${prune.application.id}`,
+          error,
+        )
+      }
     }
   }
 
@@ -120,7 +142,7 @@ export class ApplicationLifeCycleService {
           prune.application.id,
           {
             attachments: prune.failedAttachments,
-            externalData: {},
+            externalData: prune.failedExternalData,
             answers: {},
             pruned: prune.pruned,
           },
@@ -159,5 +181,23 @@ export class ApplicationLifeCycleService {
     }
 
     return keys
+  }
+
+  private getApplicationChargeId(
+    application: Pick<Application, 'externalData'>,
+  ) {
+    const externalData = application.externalData as
+      | ExternalData
+      | undefined
+      | null
+    if (!externalData?.createCharge?.data) {
+      return
+    }
+
+    const { id: chargeId } = externalData.createCharge.data as {
+      id: string
+    }
+
+    return chargeId
   }
 }

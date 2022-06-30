@@ -51,7 +51,7 @@ export class ApplicationChargeService {
       }
     } catch (error) {
       this.logger.error(
-        `Application data prune error on id ${application.id}`,
+        `Application charge delete error on id ${application.id}`,
         error,
       )
 
