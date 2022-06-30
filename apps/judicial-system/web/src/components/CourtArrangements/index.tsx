@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
-import formatISO from 'date-fns/formatISO'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
