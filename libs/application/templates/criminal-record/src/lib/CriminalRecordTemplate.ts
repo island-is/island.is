@@ -1,4 +1,5 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,8 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { ApiActions } from '../shared'

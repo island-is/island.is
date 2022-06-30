@@ -8,11 +8,14 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
+  buildCustomField,
+} from '@island.is/application/core'
+import {
   Form,
   FormModes,
-  buildCustomField,
   Application,
-} from '@island.is/application/core'
+  DefaultEvents,
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import {
   Services,
@@ -20,7 +23,6 @@ import {
   YES,
   Passport,
 } from '../lib/constants'
-import { DefaultEvents } from '@island.is/application/core'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalOverview } from './overviewSection/personalOverview'

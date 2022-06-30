@@ -1,9 +1,9 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  coreErrorMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Teacher } from '@island.is/api/schema'
 
 export class TeachersProvider extends BasicDataProvider {

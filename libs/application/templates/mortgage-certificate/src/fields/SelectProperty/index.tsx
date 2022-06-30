@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState, useRef } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, AlertMessage } from '@island.is/island-ui/core'
 import { PropertiesManager } from './PropertiesManager'
 import { useLocale } from '@island.is/localization'

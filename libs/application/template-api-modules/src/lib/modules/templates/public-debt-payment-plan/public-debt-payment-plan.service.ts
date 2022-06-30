@@ -1,4 +1,5 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DefaultApi,

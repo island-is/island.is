@@ -1,4 +1,4 @@
-import { BasicDataProvider } from '@island.is/application/core'
+import { BasicDataProvider } from '@island.is/application/types'
 
 export type HasQualityPhoto = {
   hasQualityPhoto: boolean
