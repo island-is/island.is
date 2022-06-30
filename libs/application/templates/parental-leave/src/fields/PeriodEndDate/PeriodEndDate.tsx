@@ -3,14 +3,16 @@ import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import * as Sentry from '@sentry/react'
 
 import {
+  NO_ANSWER,
+  extractRepeaterIndexFromField,
+} from '@island.is/application/core'
+import {
   FieldBaseProps,
   FieldComponents,
   CustomField,
   FieldTypes,
   MaybeWithApplicationAndField,
-  NO_ANSWER,
-  extractRepeaterIndexFromField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DateFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'

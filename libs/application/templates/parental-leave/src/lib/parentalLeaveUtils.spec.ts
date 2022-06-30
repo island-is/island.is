@@ -1,12 +1,12 @@
 import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
   FormValue,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { NO, MANUAL, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
@@ -40,6 +40,7 @@ function buildApplication(data?: {
     created: new Date(),
     modified: new Date(),
     attachments: {},
+    applicantActors: [],
     answers,
     state,
     externalData,
@@ -251,6 +252,7 @@ describe('getOtherParentId', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',
@@ -313,6 +315,7 @@ describe('getOtherParentName', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',

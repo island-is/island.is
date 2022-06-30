@@ -106,11 +106,30 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
           <EmptyState />
         </Box>
       )}
+
+      {!loading && !error && vehicles.length > 0 && (
+        <Box marginBottom={3}>
+          <a
+            href="/app/skilavottord/my-cars"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="utility"
+              size="small"
+              icon="reader"
+              iconType="outline"
+            >
+              {formatMessage(messages.recycleCar)}
+            </Button>
+          </a>
+        </Box>
+      )}
       <Stack space={2}>
         {!loading && !error && vehicles.length > 4 && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
-              <Stack space={2}>
+              <Box marginBottom={1}>
                 <Input
                   icon="search"
                   backgroundColor="blue"
@@ -121,7 +140,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
                   label={formatMessage(m.searchLabel)}
                   placeholder={formatMessage(m.searchPlaceholder)}
                 />
-              </Stack>
+              </Box>
             </GridColumn>
           </GridRow>
         )}

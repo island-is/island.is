@@ -1512,7 +1512,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const courtDate = new Date('2021-01-24T08:15')
     const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
-    const isExtension = false
+    const isExtension = true
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1528,7 +1528,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 })
