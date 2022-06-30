@@ -2,7 +2,6 @@ import React, { FC, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
 import format from 'date-fns/format'
-import * as styles from './index.css'
 
 import {
   ApplicationConfigurations,
