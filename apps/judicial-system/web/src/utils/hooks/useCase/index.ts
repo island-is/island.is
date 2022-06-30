@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
@@ -25,7 +26,6 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
-import formatISO from 'date-fns/formatISO'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -96,7 +96,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   judgeId: 'judge',
 }
 
-const overwrite = (update: UpdateCase, workingCase: Case): UpdateCase => {
+const overwrite = (update: UpdateCase): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, isUndefined)
 
   return validUpdates
@@ -128,7 +128,7 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
 export const auto = (updates: Array<autofillEntry>, workingCase: Case) => {
   const u: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
-      return overwrite(entry, workingCase)
+      return overwrite(entry)
     }
     return update(entry, workingCase)
   })
@@ -254,8 +254,7 @@ const useCase = () => {
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
       try {
-        // Only update if id has been set
-        if (!id) {
+        if (!id || Object.keys(updateCase).length === 0) {
           return
         }
 
@@ -384,7 +383,13 @@ const useCase = () => {
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
   ) => {
     try {
-      const updatesToCase: UpdateCase = auto(updates, workingCase)
+      const updatesToCase: autofillEntry = auto(updates, workingCase)
+      delete updatesToCase.force
+
+      if (Object.keys(updatesToCase).length === 0) {
+        return
+      }
+
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {

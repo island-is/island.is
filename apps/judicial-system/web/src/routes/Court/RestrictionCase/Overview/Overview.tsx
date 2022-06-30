@@ -69,9 +69,10 @@ export const JudgeOverview: React.FC = () => {
   const { autofill } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
   useEffect(() => {
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
         [
           {
@@ -87,8 +88,17 @@ export const JudgeOverview: React.FC = () => {
         workingCase,
         setWorkingCase,
       )
+
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
