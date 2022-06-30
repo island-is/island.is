@@ -54,7 +54,7 @@ export const RadioFormField: FC<Props> = ({
 
   return (
     <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
-      {true && (
+      {showFieldName && (
         <Text variant="h4" as="h4" id={id + 'title'}>
           {formatText(title, application, formatMessage)}
         </Text>

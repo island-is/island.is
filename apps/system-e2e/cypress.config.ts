@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress'
 import { getCognitoCredentials, testEnvironment } from './src/support/utils'
+import { makeEmailAccount } from './src/support/email-account'
 // import { sample } from './webpack.config'
 
 // const webpackPreprocessor = require('@cypress/webpack-preprocessor')
@@ -25,13 +26,23 @@ export default defineConfig({
     specPattern: './src/integration/**/*.ts',
     experimentalSessionAndOrigin: true,
     supportFile: './src/support/index.ts',
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       // const options = {
       //   // send in the options from your webpack.config.js, so it works the same
       //   // as your app's code
       //   webpackOptions: sample,
       // }
       // on('file:preprocessor', webpackPreprocessor(options))
+      const emailAccount = await makeEmailAccount()
+      on('task', {
+        getUserEmail: () => {
+          return emailAccount.email
+        },
+
+        getLastEmail: () => {
+          return emailAccount.getLastEmail()
+        },
+      })
       config.env.testEnvironment = testEnvironment
       if (testEnvironment !== 'local') {
         const { cognitoUsername, cognitoPassword } = getCognitoCredentials()

@@ -19,6 +19,14 @@ describe('Parental leave', () => {
   const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
   const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
   const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+  let employerEmail
+
+  before(() => {
+    cy.task('getUserEmail').then((email) => {
+      expect(email).to.be.a('string')
+      employerEmail = email
+    })
+  })
 
   beforeEach(() => {
     cy.log('fakeUsers', fakeUsers)
@@ -105,11 +113,22 @@ describe('Parental leave', () => {
     cy.get("[data-testid='use-as-much-as-possible']").click()
     cy.get('[data-testid="proceed"]').click()
 
-    cy.findByRole('section', {
+    cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.personalAllowance.useFromSpouse),
     })
-    cy.findByRole('radio', {
-      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
-    }).click()
+      .findByRole('radio', {
+        name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+      })
+      .click()
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.selfEmployed.title),
+    })
+      .findByRole('radio', {
+        name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+      })
+      .click()
+    cy.get('[data-testid="proceed"]').click()
   })
 })
