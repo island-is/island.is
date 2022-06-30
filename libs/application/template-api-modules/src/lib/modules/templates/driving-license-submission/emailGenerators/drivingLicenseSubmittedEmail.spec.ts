@@ -2,7 +2,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 import {
   createApplication,

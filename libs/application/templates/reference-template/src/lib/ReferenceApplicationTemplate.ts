@@ -1,15 +1,17 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -17,7 +19,6 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
-import set from 'lodash/set'
 
 const States = {
   prerequisites: 'prerequisites',

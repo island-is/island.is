@@ -8,13 +8,15 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  buildFileUploadField,
+  buildRedirectToServicePortalField,
+} from '@island.is/application/core'
+import {
   Comparators,
   Form,
   FormModes,
   FormValue,
-  buildFileUploadField,
-  buildRedirectToServicePortalField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 

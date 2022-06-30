@@ -11,7 +11,7 @@ import {
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import ViewStudent from '../ViewStudent/index'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'

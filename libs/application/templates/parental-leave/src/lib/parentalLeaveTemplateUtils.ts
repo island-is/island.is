@@ -1,4 +1,4 @@
-import { ApplicationContext } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
 
 import { YES, NO } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'

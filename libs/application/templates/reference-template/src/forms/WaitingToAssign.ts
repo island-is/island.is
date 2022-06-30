@@ -1,11 +1,10 @@
 import {
   buildForm,
   buildDescriptionField,
-  Form,
-  FormModes,
   buildSubmitField,
   buildMultiField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 export const PendingReview: Form = buildForm({
   id: 'ExamplePending',

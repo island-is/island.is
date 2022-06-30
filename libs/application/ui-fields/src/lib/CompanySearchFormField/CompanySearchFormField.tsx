@@ -1,13 +1,12 @@
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   CompanySearchField,
   FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { CompanySearchController } from '@island.is/application/ui-components'
-import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField
@@ -23,11 +22,13 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   } = field
   const { formatMessage } = useLocale()
 
-  const { searchField } = application.answers
-    .selectCompany as selectCompanySearchField
+  const searchField = getValueViaPath(application.answers, id, {
+    nationalId: '',
+    label: '',
+  })
   const defaultAnswer = {
-    value: searchField.nationalId,
-    label: searchField.label,
+    value: searchField?.nationalId ?? '',
+    label: searchField?.label ?? '',
   }
   const initialValue = (application.answers[id] || { ...defaultAnswer }) as {
     value: string
