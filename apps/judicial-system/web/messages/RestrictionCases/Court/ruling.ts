@@ -161,13 +161,6 @@ export const rcRuling = {
         description:
           'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      partiallyAcceptLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.decision.partially_accept_label',
-        defaultMessage: 'Krafa um gæsluvarðhald tekin til greina að hluta',
-        description:
-          'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhaldsmálum.',
-      },
       partiallyAcceptLabelV2: {
         id:
           'judicial.system.restriction_cases:ruling.decision.partially_accept_label_v2',
@@ -186,13 +179,6 @@ export const rcRuling = {
         defaultMessage: 'Kröfu um {caseType} vísað frá',
         description:
           'Notaður sem texti við radio takka með vali um að vísa máli frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      acceptingAlternativeTravelBanLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.decision.accepting_alternative_travel_ban_label',
-        defaultMessage: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
-        description:
-          'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhaldsmálum.',
       },
       acceptingAlternativeTravelBanLabelV2: {
         id:
@@ -304,13 +290,6 @@ export const rcRuling = {
         defaultMessage: 'Undirrita nýjan úrskurð',
         description:
           'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
-      },
-      modifyRulingBackButtonLabel: {
-        id:
-          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_back_button_label',
-        defaultMessage: 'Hætta við',
-        description:
-          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
     }),
   },
