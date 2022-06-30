@@ -11,6 +11,7 @@ import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
+import { assign } from 'xstate'
 
 const twoDays = 24 * 3600 * 1000 * 2
 const sixtyDays = 24 * 3600 * 1000 * 60
@@ -78,7 +79,7 @@ const PassportTemplate: ApplicationTemplate<
           actionCard: {
             description: m.payment,
           },
-          progress: 0.9,
+          progress: 0.7,
           lifecycle: pruneAfter(sixtyDays),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
@@ -89,6 +90,37 @@ const PassportTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Payment').then((val) =>
                   Promise.resolve(val.payment),
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.PARENT_B_CONFIRM },
+        },
+      },
+      [States.PARENT_B_CONFIRM]: {
+        entry: 'assignToParentB',
+        meta: {
+          name: 'ParentB',
+          progress: 0.9,
+          lifecycle: pruneAfter(sixtyDays),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingForParentBConfirmation').then((val) =>
+                  Promise.resolve(val.WaitingForParentBConfirmation),
+                ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ParentB').then((val) =>
+                  Promise.resolve(val.ParentB),
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
@@ -118,6 +150,18 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               read: {
                 externalData: ['submitPassportApplication'],
+                answers: ['passport'],
+              },
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.Done),
+                ),
+              read: {
+                externalData: ['submitPassportApplication'],
+                answers: ['passport'],
               },
             },
           ],
@@ -126,10 +170,27 @@ const PassportTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToParentB: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            // Assigning Gervimaður Útlönd for testing
+            assignees: ['0101307789'],
+          },
+        }
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (application.assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
+    }
     if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }

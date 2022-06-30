@@ -11,7 +11,6 @@ import {
   Form,
   FormModes,
   buildCustomField,
-  buildKeyValueField,
   Application,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'

@@ -71,6 +71,7 @@ export const dataSchema = z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
     dropLocation: z.string().nonempty(),
   }),
+  approveExternalDataParentB: z.boolean().refine((v) => v),
 })
 
 export type PassportSchema = z.TypeOf<typeof dataSchema>

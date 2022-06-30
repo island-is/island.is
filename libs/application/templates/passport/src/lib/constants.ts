@@ -7,10 +7,12 @@ export type Events =
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
+  PARENT_B_CONFIRM = 'parentBConfirm',
   PAYMENT = 'payment',
 }
 export enum Roles {
   APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee', //second guardian
 }
 
 export enum Services {

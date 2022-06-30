@@ -1,6 +1,5 @@
 import {
   Application,
-  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildSubmitField,
@@ -9,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { YES, Passport } from '../../lib/constants'
+import { Passport } from '../../lib/constants'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
@@ -41,6 +40,17 @@ export const childsPersonalInfo = buildMultiField({
       marginBottom: 'smallGutter',
     }),
     buildTextField({
+      id: 'childsPersonalInfo.guardian1.name',
+      title: m.name,
+      backgroundColor: 'white',
+      width: 'half',
+      readOnly: true,
+      defaultValue: (application: Application) =>
+        (application.externalData.nationalRegistry?.data as {
+          fullName?: string
+        })?.fullName ?? '',
+    }),
+    buildTextField({
       id: 'childsPersonalInfo.guardian1.nationalId',
       title: m.nationalId,
       backgroundColor: 'white',
@@ -52,17 +62,6 @@ export const childsPersonalInfo = buildMultiField({
             nationalId?: string
           })?.nationalId ?? '',
         ),
-    }),
-    buildTextField({
-      id: 'childsPersonalInfo.guardian1.name',
-      title: m.name,
-      backgroundColor: 'white',
-      width: 'half',
-      readOnly: true,
-      defaultValue: (application: Application) =>
-        (application.externalData.nationalRegistry?.data as {
-          fullName?: string
-        })?.fullName ?? '',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.email',
@@ -92,19 +91,19 @@ export const childsPersonalInfo = buildMultiField({
       marginBottom: 'smallGutter',
     }),
     buildTextField({
+      id: 'childsPersonalInfo.guardian2.name',
+      title: m.name,
+      backgroundColor: 'white',
+      width: 'half',
+      defaultValue: 'Gervimaður Útlönd',
+    }),
+    buildTextField({
       id: 'childsPersonalInfo.guardian2.nationalId',
       title: m.nationalId,
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: '222222-2222',
-    }),
-    buildTextField({
-      id: 'childsPersonalInfo.guardian2.name',
-      title: m.name,
-      backgroundColor: 'white',
-      width: 'half',
-      defaultValue: 'Lolla Guacamolla',
+      defaultValue: '010130-7789',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.email',

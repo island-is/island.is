@@ -16,13 +16,13 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const servicePriceWithDiscount = serviceTypeRegular
     ? formatMessage(m.serviceTypeRegularPriceWithDiscount)
     : formatMessage(m.serviceTypeExpressPriceWithDiscount)
-
   const withDiscount =
     ((application.answers.passport as Passport)?.userPassport !== '' &&
       (application.answers.personalInfo as any)?.hasDisabilityDiscount.includes(
         YES,
       )) ||
     (application.answers.passport as Passport)?.childPassport !== ''
+
   return (
     <Box paddingTop="smallGutter">
       <Columns alignY="bottom" space="gutter">
