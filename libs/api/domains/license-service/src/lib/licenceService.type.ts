@@ -5,6 +5,7 @@ export enum GenericLicenseType {
   HuntingLicense = 'HuntingLicense',
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
+  FirearmLicense = 'FirearmLicense',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
