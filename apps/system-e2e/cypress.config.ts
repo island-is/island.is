@@ -10,7 +10,6 @@ export default defineConfig({
   responseTimeout: 12000,
   videosFolder: '../../dist/cypress/apps/web-e2e/videos',
   screenshotsFolder: '../../dist/cypress/apps/web-e2e/screenshots',
-  chromeWebSecurity: false,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -19,18 +18,11 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
+    chromeWebSecurity: false,
     specPattern: './src/integration/**/*.ts',
     experimentalSessionAndOrigin: true,
     supportFile: './src/support/index.ts',
     setupNodeEvents(on, config) {
-      // const options = {
-      //   // send in the options from your webpack.config.js, so it works the same
-      //   // as your app's code
-      //   webpackOptions: require('../application-system/api/webpack.config'),
-      //   watchOptions: {},
-      // }
-      // on('file:preprocessor', WebpackPreprocessor(defaultOptions))
-
       config.env.testEnvironment = testEnvironment
       if (testEnvironment !== 'local') {
         const { cognitoUsername, cognitoPassword } = getCognitoCredentials()

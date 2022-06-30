@@ -1,4 +1,4 @@
-import { cypressError } from '../support/utils'
+import '@testing-library/cypress/add-commands'
 const testEnvironment = Cypress.env('testEnvironment')
 const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
 const { baseUrl } = Cypress.config()
@@ -28,61 +28,89 @@ export const idsLogin = ({ phoneNumber, urlPath, fn }: IDSLogin) => {
     args: {
       phoneNumber: phoneNumber,
       authUrl: authUrl,
+      urlPath: `${Cypress.config().baseUrl}${urlPath}`,
     },
   }
-  cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
-  cy.visit('/')
-  if (fn) {
-    fn()
-  } else if (urlPath) {
-    cy.visit(urlPath, { log: true })
-  } else {
-    cypressError('authUrl and Cypress callback are mutually exclusive!')
-  }
 
-  cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
+  // cy.patchSameSiteCookie(
+  //   'http://localhost:4200/api/auth/callback/identity-server?',
+  //   'POST',
+  // )
+  // cy.patchSameSiteCookie(
+  //   'http://localhost:4200/api/auth/signin/identity-server?',
+  //   'POST',
+  // )
+
+  cy.patchSameSiteCookie('http://localhost:4200/api/auth/csrf')
+  cy.patchSameSiteCookie('http://localhost:4200/api/auth/providers')
+  cy.patchSameSiteCookie('http://localhost:4200/api/auth/session')
+  cy.patchSameSiteCookie(`${authUrl}/login/phone/poll`)
+  cy.patchSameSiteCookie(`${authUrl}/login/phone/signIn`)
+  cy.patchSameSiteCookie(`${authUrl}/login/phone/signIn`, 'POST')
+  cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
+  cy.patchSameSiteCookie(`${authUrl}/login/phone?*`)
+  cy.patchSameSiteCookie(`${authUrl}/login/clientName?*`)
+  cy.patchSameSiteCookie(`${authUrl}/login/idprestrictions?*`)
+
+  cy.patchSameSiteCookie(`${authUrl}/login/phone/authenticate`)
+
+  cy.patchSameSiteCookie(
+    `http://localhost:4200/api/auth/signin/identity-server?*`,
+  )
+  cy.patchSameSiteCookie(`http://localhost:4200/api/graphql`)
+
+  cy.patchSameSiteCookie('http://localhost:4200/api/*')
+
+  cy.visit(urlPath)
+
+  cy.origin(authUrl, sentArgs, ({ phoneNumber, urlPath }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
   cy.url().should('contain', `${Cypress.config().baseUrl}${urlPath}`)
 }
 
-Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
-  cy.intercept(interceptUrl, (req) => {
-    req.on('response', (res) => {
-      if (!res.headers['set-cookie']) {
-        return
-      }
-      const disableSameSite = (headerContent: string): string => {
-        const replacedHeaderContent = headerContent.replace(
-          /samesite=(lax|strict)/gi,
-          'samesite=none',
-        )
-        return replacedHeaderContent
-      }
-      if (Array.isArray(res.headers['set-cookie'])) {
-        console.log(res.headers)
-        res.headers['set-cookie'] = res.headers['set-cookie'].map(
-          disableSameSite,
-        )
-      } else {
-        res.headers['set-cookie'] = disableSameSite(res.headers['set-cookie'])
-      }
-    })
-  }).as('sameSitePatch')
-})
+Cypress.Commands.add(
+  'patchSameSiteCookie',
+  (interceptUrl, method: 'GET' | 'POST' = 'GET') => {
+    cy.intercept(method, interceptUrl, (req) => {
+      req.on('response', (res) => {
+        if (!res.headers['set-cookie']) {
+          return
+        }
+        const disableSameSite = (headerContent: string): string => {
+          const replacedSameSite = headerContent.replace(
+            /samesite=(lax|strict)/gi,
+            'samesite=none',
+          )
+          const results = `${replacedSameSite}; secure`
+          return results
+        }
+        if (Array.isArray(res.headers['set-cookie'])) {
+          res.headers['set-cookie'] = res.headers['set-cookie'].map(
+            disableSameSite,
+          )
+          console.log(res.headers['set-cookie'])
+        } else {
+          res.headers['set-cookie'] = disableSameSite(res.headers['set-cookie'])
+          console.log(res.headers['set-cookie'])
+        }
+      })
+    }).as('sameSitePatch')
+  },
+)
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber, url = '/' }) => {
+Cypress.Commands.add('idsLogin', ({ phoneNumber, urlPath = '/' }) => {
   if (testEnvironment !== 'local') {
     cy.session('idsLogin', () => {
       cy.session('cognitoLogin', () =>
         cognitoLogin({ cognitoUsername, cognitoPassword }),
       )
-      idsLogin(phoneNumber, url)
+      idsLogin({ phoneNumber, urlPath })
     })
   } else {
     cy.session('idsLogin', () => {
-      idsLogin(phoneNumber, url)
+      idsLogin({ phoneNumber, urlPath })
     })
   }
 })

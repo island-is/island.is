@@ -110,8 +110,15 @@ function Benefits({ misc }: PropTypes) {
 
       <Stack space={3}>
         {hasBenefits ? (
-          <>
-            <Typography variant="h3">{myRights}</Typography>
+          <Box component="section" aria-labelledby="discount-code">
+            <Typography
+              variant="h3"
+              as="h3"
+              id="discount-code"
+              marginBottom={3}
+            >
+              {myRights}
+            </Typography>
             {(loading && !called) || loading ? (
               <SkeletonLoader height={98} repeat={2} space={3} />
             ) : (
@@ -193,7 +200,7 @@ function Benefits({ misc }: PropTypes) {
                 </Stack>
               </Box>
             )}
-          </>
+          </Box>
         ) : (
           <NoBenefits misc={misc} />
         )}

@@ -8,7 +8,7 @@ interface CypressFn {
 
 interface IDSLogin {
   phoneNumber: string
-  urlPath?: string
+  urlPath: string
   fn?: CypressFn
 }
 
@@ -45,6 +45,9 @@ declare namespace Cypress {
      */
     idsLogin(params: IDSLogin): Chainable<void>
     cognitoLogin(): Chainable<void>
-    patchSameSiteCookie(interceptUrl: string): void
+    patchSameSiteCookie(
+      interceptUrl: string,
+      method: 'GET' | 'POST' = 'GET',
+    ): void
   }
 }
