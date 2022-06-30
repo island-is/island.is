@@ -291,7 +291,7 @@ const Screen: FC<ScreenProps> = ({
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
-
+  console.debug(`Rendering ${screen.type}`)
   return (
     <FormProvider {...hookFormData}>
       <Box

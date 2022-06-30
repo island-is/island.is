@@ -21,8 +21,8 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title, description } = field
 
   return (
-    <Box paddingTop={6}>
-      <Text variant="h4" as="h4">
+    <Box paddingTop={6} aria-labelledby={id} role="region">
+      <Text variant="h4" as="h4" id={id}>
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField

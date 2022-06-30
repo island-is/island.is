@@ -1,5 +1,22 @@
+import { MessageDescriptor, createIntl, createIntlCache } from '@formatjs/intl'
+import { parentalLeaveFormMessages } from '@island.is/application/templates/parental-leave/messages'
+
+//
+// // Create the `intl` object
+const cache = createIntlCache()
+const intl = createIntl(
+  {
+    locale: 'is',
+    onError: (err) => {
+      console.error(err)
+    },
+  },
+  cache,
+)
+
+const label = (l: MessageDescriptor) => intl.formatMessage(l)
 describe('Parental leave', () => {
-  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
+  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
   const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
   const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
 
@@ -8,12 +25,23 @@ describe('Parental leave', () => {
     cy.log('authUrl', authUrl)
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
+      phoneNumber: (
+        fakeUsers.find((user) => user.name.endsWith('Afríka')) || {
+          phoneNumber: '',
+        }
+      ).phoneNumber,
       url: '/umsoknir/faedingarorlof',
     })
   })
 
   it('should create an application', () => {
+    cy.intercept(
+      'POST',
+      'http://localhost:4444/api/graphql?op=GetTranslations',
+      {
+        data: { getTranslations: {} },
+      },
+    )
     cy.visit('/umsoknir/faedingarorlof')
 
     cy.get('body').then((body) => {
@@ -22,7 +50,13 @@ describe('Parental leave', () => {
         newAppButton.click()
       }
     })
-    cy.get("[data-testid='mockdata-no']").click()
+    cy.findByRole('heading', {
+      name: label(parentalLeaveFormMessages.shared.mockDataUse),
+    })
+    cy.findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+    }).click()
+
     cy.get('[data-testid="proceed"]').click()
 
     cy.get("[data-testid='agree-to-data-providers']").click()
@@ -64,5 +98,18 @@ describe('Parental leave', () => {
       '#react-select-payments\\.privatePensionFundPercentage-option-0',
     ).click()
     cy.get('[data-testid="proceed"]').click()
+
+    cy.get("[data-testid='use-personal-finance']").click()
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.get("[data-testid='use-as-much-as-possible']").click()
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('section', {
+      name: label(parentalLeaveFormMessages.personalAllowance.useFromSpouse),
+    })
+    cy.findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.noOptionLabel),
+    }).click()
   })
 })

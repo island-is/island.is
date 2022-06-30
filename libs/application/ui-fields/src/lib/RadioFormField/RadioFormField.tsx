@@ -44,10 +44,18 @@ export const RadioFormField: FC<Props> = ({
     [options, application],
   )
 
+  console.debug(
+    `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
+      title,
+      application,
+      formatMessage,
+    )}`,
+  )
+
   return (
-    <Box paddingTop={field.space}>
-      {showFieldName && (
-        <Text variant="h4" as="h4">
+    <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
+      {true && (
+        <Text variant="h4" as="h4" id={id + 'title'}>
           {formatText(title, application, formatMessage)}
         </Text>
       )}

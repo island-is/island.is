@@ -3,10 +3,14 @@ describe('Front page', () => {
     cy.cognitoLogin()
   })
 
-  it('has expected sections', () => {
+  it.only('has expected sections', () => {
     cy.visit('/')
     cy.contains('Öll opinber þjónusta á einum stað')
-    cy.get('[data-testid="home-banner"]').should('have.length', 1)
+    cy.findByRole('banner').should('exist')
+    cy.findByRole('button', { name: /change language to english/i }).should(
+      'exist',
+    )
+    cy.findByTestId('home-banner').should('have.length', 1)
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
@@ -41,13 +45,13 @@ describe('Front page', () => {
       })
   })
 
-  it.only('should change welcome message on language toggle', () => {
+  it('should change welcome message on language toggle', () => {
     cy.visit('/')
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
       cy.get('button[data-testid="language-toggler"]:visible')
         .click()
         .as('clicked')
-      cy.waitFor('@clicked')
+      cy.wait('@clicked')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
         previousHeading.text(),

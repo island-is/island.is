@@ -318,10 +318,12 @@ export const ParentalLeaveForm: Form = buildForm({
               options: [
                 {
                   label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  dataTestId: 'use-personal-finance',
                   value: YES,
                 },
                 {
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  dataTestId: 'dont-use-personal-finance',
                   value: NO,
                 },
               ],
