@@ -1,4 +1,4 @@
-import { FieldBaseProps, FormText } from '@island.is/application/core'
+import { FieldBaseProps, FormText } from '@island.is/application/types'
 import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
 import { StatusTypes } from './shared'
 

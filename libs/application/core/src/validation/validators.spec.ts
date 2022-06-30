@@ -1,8 +1,6 @@
 import * as z from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
-import { FormValue } from '@island.is/application/core'
-import { StaticText } from '../types/Form'
-import { coreErrorMessages } from '../lib/messages'
+import { FormValue, StaticText } from '@island.is/application/types'
 
 const dataSchema = z.object({
   nested: z.object({
@@ -326,6 +324,97 @@ describe('validateAnswers', () => {
       })
       expect(secondError).toEqual({
         person: [{ age: defaultError }],
+      })
+    })
+    it('should validate an optional array', () => {
+      const optionalArraySchema = z.object({
+        person: z
+          .object({
+            name: z.string(),
+            age: z.number(),
+            deceased: z.boolean().optional(),
+          })
+          .array()
+          .optional(),
+        someOtherValue: z.number().optional(),
+      })
+
+      const okFormValue = {
+        person: [
+          {
+            name: 'Hilmar',
+            age: 107,
+          },
+          {
+            name: 'Ásdís',
+            age: 32,
+            deceased: false,
+          },
+        ],
+      } as FormValue
+      expect(
+        validateAnswers({
+          dataSchema: optionalArraySchema,
+          answers: okFormValue,
+          formatMessage,
+        }),
+      ).toBeUndefined()
+
+      // person is undefined in this case
+      const anotherOkFormValue = {
+        someOtherValue: 123,
+      }
+      expect(
+        validateAnswers({
+          dataSchema: optionalArraySchema,
+          answers: anotherOkFormValue,
+          formatMessage,
+        }),
+      ).toBeUndefined()
+
+      const yetAnotherOkFormValue = {
+        person: [],
+      }
+      expect(
+        validateAnswers({
+          dataSchema: optionalArraySchema,
+          answers: yetAnotherOkFormValue,
+          formatMessage,
+        }),
+      ).toBeUndefined()
+
+      const badFormValue = {
+        person: [
+          {
+            name: 12,
+            age: 'þrjúhundruð',
+          },
+        ],
+      }
+      const firstError = validateAnswers({
+        dataSchema: optionalArraySchema,
+        answers: badFormValue,
+        formatMessage,
+      })
+      expect(firstError).toEqual({
+        person: [
+          {
+            name: defaultError,
+            age: defaultError,
+          },
+        ],
+      })
+
+      const anotherBadFormValue = {
+        person: [{}, {}, {}],
+      }
+      const secondError = validateAnswers({
+        dataSchema: optionalArraySchema,
+        answers: anotherBadFormValue,
+        formatMessage,
+      })
+      expect(secondError).toEqual({
+        person: defaultError,
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {

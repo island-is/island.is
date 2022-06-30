@@ -1,4 +1,4 @@
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 
 export interface DecodedAssignmentToken {
   applicationId: string

@@ -2,16 +2,18 @@ import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
 
 import {
-  Application,
   AnswerValidator,
   getValueViaPath,
-  Answer,
   buildValidationError,
   coreErrorMessages,
-  StaticText,
-  StaticTextObject,
   AnswerValidationError,
 } from '@island.is/application/core'
+import {
+  Application,
+  Answer,
+  StaticText,
+  StaticTextObject,
+} from '@island.is/application/types'
 
 import { Period, Payments, OtherParentObj } from '../types'
 import {

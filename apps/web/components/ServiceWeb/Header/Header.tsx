@@ -30,7 +30,6 @@ interface HeaderProps {
   hideSearch?: boolean
   textMode?: TextModes
   searchPlaceholder?: string
-  searchTags?: Tag[]
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -40,7 +39,6 @@ export const Header = ({
   hideSearch,
   textMode,
   searchPlaceholder,
-  searchTags,
 }: HeaderProps) => {
   const dark = textMode === 'dark'
 
@@ -118,7 +116,6 @@ export const Header = ({
                             <ServiceWebSearchInput
                               size="medium"
                               placeholder={searchPlaceholder}
-                              tags={searchTags}
                             />
                           </Box>
                         )}

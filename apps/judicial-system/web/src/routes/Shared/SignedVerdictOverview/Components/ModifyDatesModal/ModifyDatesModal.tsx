@@ -286,7 +286,7 @@ const ModifyDatesModal: React.FC<Props> = ({
   ] = useState<string>('')
 
   const handleCaseModifiedExplanationChange = (reason: string) => {
-    const { isValid } = validate(reason, 'empty')
+    const { isValid } = validate([[reason, ['empty']]])
 
     setCaseModifiedExplanation(reason)
 
@@ -296,7 +296,7 @@ const ModifyDatesModal: React.FC<Props> = ({
   }
 
   const handleCaseModifiedExplanationBlur = (reason: string) => {
-    const { isValid, errorMessage } = validate(reason, 'empty')
+    const { isValid, errorMessage } = validate([[reason, ['empty']]])
 
     if (isValid) {
       setCaseModifiedExplanation(reason)

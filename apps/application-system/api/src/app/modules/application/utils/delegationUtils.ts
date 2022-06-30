@@ -1,5 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 
 export function isNewActor(
   application: Pick<Application, 'applicantActors' | 'applicant'>,

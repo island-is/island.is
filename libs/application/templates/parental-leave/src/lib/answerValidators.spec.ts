@@ -1,9 +1,9 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-  coreErrorMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
@@ -24,6 +24,7 @@ const createBaseApplication = (): Application => ({
   assignees: [],
   applicant: '',
   attachments: {},
+  applicantActors: [],
   created: new Date(),
   externalData: {
     children: {

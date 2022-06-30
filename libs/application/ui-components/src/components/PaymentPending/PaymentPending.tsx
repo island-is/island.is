@@ -1,11 +1,10 @@
 import React, { FC, useEffect } from 'react'
+import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   FieldBaseProps,
-  coreErrorMessages,
-  coreMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'

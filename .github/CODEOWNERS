@@ -43,6 +43,8 @@
 /libs/contentful-extensions/mideind-translation/                                                    @island-is/juni
 /libs/contentful-extensions/parent-slug/                                                            @island-is/juni
 /libs/clients/driving-license/                                                                      @island-is/juni
+/libs/application/templates/announcement-of-death/                                                  @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death              @island-is/juni
 /libs/application/templates/driving-license/                                                        @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                            @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission         @island-is/juni
@@ -139,6 +141,7 @@
 /libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
+/libs/shared/form-fields/                                                                           @island-is/sendiradid @island-is/island-ui
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 

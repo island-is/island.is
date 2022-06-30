@@ -1,9 +1,9 @@
 import {
   buildForm,
   buildSection,
-  Form,
   buildCustomField,
 } from '@island.is/application/core'
+import { Form } from '@island.is/application/types'
 import { section, application, overview } from '../lib/messages'
 
 export const ComplaintFormInReview: Form = buildForm({

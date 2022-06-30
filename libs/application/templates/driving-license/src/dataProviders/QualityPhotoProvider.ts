@@ -1,10 +1,9 @@
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
-  coreErrorMessages,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { HasQualityPhotoProvider } from '@island.is/application/data-providers'
 
 const YES = 'yes'
