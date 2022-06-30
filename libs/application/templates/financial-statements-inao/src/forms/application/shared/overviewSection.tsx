@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { GREATER, LESS } from '../../../lib/constants'
+import { CEMETRY, GREATER, LESS, PARTY } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 
 export const overviewSection = buildSection({
@@ -17,18 +17,40 @@ export const overviewSection = buildSection({
       id: 'overview',
       title: (application) => {
         return getValueViaPath(application.answers, 'election.incomeLimit') ===
-          GREATER
-          ? m.overviewTitle
-          : m.statement
+          LESS
+          ? m.statement
+          : m.overviewTitle
       },
       description: (application) =>
-        getValueViaPath(application.answers, 'election.incomeLimit') === GREATER
+        getValueViaPath(application.answers, 'election.incomeLimit') === LESS
           ? m.overviewDescription
           : `${m.electionStatement.defaultMessage} ${getValueViaPath(
               application.answers,
               'election.selectElection',
             )}`,
       children: [
+        buildCustomField({
+          id: 'overviewCustomField',
+          title: '',
+          condition: (answers, externalData) => {
+            console.log({ externalData, answers })
+            const userType = externalData?.currentUserType?.data?.code
+            return userType === CEMETRY
+          },
+          doesNotRequireAnswer: true,
+          component: 'CemetryOverview',
+        }),
+        buildCustomField({
+          id: 'overviewCustomField',
+          title: '',
+          condition: (_answers, externalData) => {
+            console.log(externalData)
+            const userType = externalData?.currentUserType?.data?.code
+            return userType === PARTY
+          },
+          doesNotRequireAnswer: true,
+          component: 'PartyOverview',
+        }),
         buildCustomField({
           id: 'overviewCustomField',
           title: '',

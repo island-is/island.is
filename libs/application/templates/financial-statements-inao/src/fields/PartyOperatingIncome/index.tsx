@@ -8,16 +8,29 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Income } from './income'
-import { Expenses } from './expenses'
 import { Total } from '../KeyNumbers'
 import { getTotal } from '../../lib/utils/helpers'
+import { PartyIncome } from './partyIncome'
+import { PartyExpenses } from './partyExpenses'
+import { FieldBaseProps } from '@island.is/application/core'
 
-export const IndividualElectionOperatingIncome = (): JSX.Element => {
-  const { getValues } = useFormContext()
+export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
+  const { getValues, errors, setError } = useFormContext()
   const [totalIncome, setTotalIncome] = useState(0)
   const [totalExpense, setTotalExpense] = useState(0)
   const { formatMessage } = useLocale()
+  const applicationType = application?.externalData?.currentUserType?.data?.code
+  const checkIfEmpty = (fieldId: string) => {
+    const values = getValues()
+    const [income, id] = fieldId.split('.')
+    const current = values[income][id]
+    if (current === undefined || current.trim().length <= 0) {
+      setError(fieldId, {
+        type: 'error',
+        message: formatMessage(m.errorEmpty),
+      })
+    }
+  }
 
   const getTotalIncome = useCallback(() => {
     const values = getValues()
@@ -44,7 +57,12 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.income)}
           </Text>
-          <Income getSum={getTotalIncome} />
+          <PartyIncome
+            applicationType={applicationType}
+            getSum={getTotalIncome}
+            checkIfEmpty={checkIfEmpty}
+            errors={errors}
+          />
           <Total
             name="income.total"
             total={totalIncome}
@@ -55,7 +73,12 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
-          <Expenses getSum={getTotalExpense} />
+          <PartyExpenses
+            applicationType={applicationType}
+            getSum={getTotalExpense}
+            checkIfEmpty={checkIfEmpty}
+            errors={errors}
+          />
           <Total
             name="expense.total"
             total={totalExpense}

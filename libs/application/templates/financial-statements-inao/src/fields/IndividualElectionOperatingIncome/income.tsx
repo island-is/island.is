@@ -4,7 +4,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { OPERATIONIDS } from '../../lib/constants'
-
 interface PropTypes {
   getSum: () => void
 }

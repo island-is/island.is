@@ -5,6 +5,7 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
+import { CEMETRY, INDIVIDUAL, PARTY } from '../lib/constants'
 export class CurrentUserTypeProvider extends BasicDataProvider {
   type = 'CurrentUserTypeProvider'
 
@@ -49,6 +50,9 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
   onProvideSuccess(
     result: Record<string, unknown>,
   ): SuccessfulDataProviderResult {
-    return { date: new Date(), status: 'success', data: result }
+    const fakeResults = {
+      code: PARTY,
+    }
+    return { date: new Date(), status: 'success', data: fakeResults }
   }
 }

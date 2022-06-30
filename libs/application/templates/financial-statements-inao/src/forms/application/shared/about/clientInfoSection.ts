@@ -1,13 +1,14 @@
 import {
-  buildDescriptionField,
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
-import { UserProfile } from '../../../types/schema'
-import { m } from '../../../lib/messages'
+import { UserProfile } from '../../../../types/schema'
+import { m } from '../../../../lib/messages'
+import { ABOUTIDS, PARTY, CEMETRY } from '../../../../lib/constants'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -18,6 +19,16 @@ export const clientInfoSection = buildSection({
       title: m.about,
       description: m.reviewContact,
       children: [
+        buildCustomField({
+          id: 'OperatingYear',
+          childInputIds: Object.values(ABOUTIDS),
+          title: '',
+          condition: (_answers, externalData) => {
+            const userType = externalData?.currentUserType?.data?.code
+            return userType === CEMETRY || userType === PARTY
+          },
+          component: 'OperatingYear',
+        }),
         buildTextField({
           id: 'about.nationalId',
           title: m.nationalId,

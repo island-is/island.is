@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   GridColumn,
@@ -8,34 +8,22 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Income } from './income'
-import { Expenses } from './expenses'
 import { Total } from '../KeyNumbers'
-import { getTotal } from '../../lib/utils/helpers'
+import { CemetryIncome } from './cemetryIncome'
+import { CemetryExpenses } from './cemetryExpenses'
+import { CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { useTotals } from '../../hooks'
 
-export const IndividualElectionOperatingIncome = (): JSX.Element => {
-  const { getValues } = useFormContext()
-  const [totalIncome, setTotalIncome] = useState(0)
-  const [totalExpense, setTotalExpense] = useState(0)
+export const CemetryOperation = () => {
+  const { errors } = useFormContext()
   const { formatMessage } = useLocale()
-
-  const getTotalIncome = useCallback(() => {
-    const values = getValues()
-
-    const totalIncome: number = getTotal(values, 'income')
-    setTotalIncome(totalIncome)
-  }, [getValues])
-
-  const getTotalExpense = useCallback(() => {
-    const values = getValues()
-    const totalExpense: number = getTotal(values, 'expense')
-    setTotalExpense(totalExpense)
-  }, [getValues])
-
-  useEffect(() => {
-    getTotalExpense()
-    getTotalIncome()
-  }, [getTotalExpense, getTotalIncome])
+  
+  const [getTotalIncome, totalIncome] = useTotals(
+    CEMETRYOPERATIONIDS.prefixIncome,
+  )
+  const [getTotalExpense, totalExpense] = useTotals(
+    CEMETRYOPERATIONIDS.prefixExpense,
+  )
 
   return (
     <GridContainer>
@@ -44,7 +32,10 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.income)}
           </Text>
-          <Income getSum={getTotalIncome} />
+          <CemetryIncome
+            getSum={getTotalIncome}
+            errors={errors}
+          />
           <Total
             name="income.total"
             total={totalIncome}
@@ -55,7 +46,10 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
-          <Expenses getSum={getTotalExpense} />
+          <CemetryExpenses
+            getSum={getTotalExpense}
+            errors={errors}
+          />
           <Total
             name="expense.total"
             total={totalExpense}
