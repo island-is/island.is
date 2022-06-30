@@ -18,6 +18,10 @@ Uses [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drive
 
 Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License. Uses the national id of the currently logged in user to retreive the correct licenses.
 
+### Firearm License
+
+Uses RLS API via xroad to get a firearm license by national id
+
 #### Digital
 
 To be able to generate a digital drivers license, all of the following has to be true
