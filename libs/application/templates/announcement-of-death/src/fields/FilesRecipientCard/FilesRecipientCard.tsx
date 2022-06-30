@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
-  formatText,
   FormText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'
@@ -39,18 +39,23 @@ export const FilesRecipientCard: FC<
 
   options = options.filter((member) => isPerson(member.value))
 
-  // Add the option for selecting noone
-  options.push({
-    label: formatMessage(m.selectOptionNobody),
-    value: '',
-  })
-
-  if (field.id !== 'financesDataCollectionPermission') {
+  if (
+    field.id !== 'financesDataCollectionPermission' &&
+    !application.answers?.estateMembers?.members.find(
+      (member) => member.nationalId === application.applicant,
+    )
+  ) {
     options.push({
       label: application.answers.applicantName,
       value: application.applicant,
     })
   }
+
+  // Add the option for selecting noone
+  options.push({
+    label: formatMessage(m.selectOptionNobody),
+    value: '',
+  })
 
   return (
     <Box

@@ -3,7 +3,7 @@ import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { DataValue } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import { formatPeriods } from '../../../lib/parentalLeaveUtils'

@@ -9,13 +9,15 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
+  buildSelectField,
+} from '@island.is/application/core'
+import {
   Form,
   FormModes,
   Comparators,
   Application,
   FormValue,
-  buildSelectField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../shared'
 import { Address } from '@island.is/api/schema'

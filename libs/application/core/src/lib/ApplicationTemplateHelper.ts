@@ -8,11 +8,11 @@ import {
   ApplicationStatus,
   ExternalData,
   FormValue,
-} from '../types/Application'
-import { FormatMessage } from '../types/external'
-import {
+  StaticText,
+  FormatMessage,
   ApplicationContext,
   ApplicationRole,
+  ApplicationTemplate,
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
@@ -20,9 +20,7 @@ import {
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
-} from '../types/StateMachine'
-import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import { StaticText } from '../types/Form'
+} from '@island.is/application/types'
 
 enum FinalStates {
   REJECTED = 'rejected',

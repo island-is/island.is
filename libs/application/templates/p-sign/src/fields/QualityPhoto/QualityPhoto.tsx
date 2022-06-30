@@ -1,11 +1,8 @@
 import React, { FC } from 'react'
 
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
-import {
-  Application,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useQualityPhoto } from './hooks/useQualityPhoto'

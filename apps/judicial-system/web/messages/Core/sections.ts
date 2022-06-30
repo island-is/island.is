@@ -346,10 +346,18 @@ export const sections = {
       defaultMessage: 'Niðurstaða',
       description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
     },
+    // TODO: Remove rejected
     rejected: {
       id: 'judicial.system.core:sections.case_results.rejected',
       defaultMessage:
         'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
+    },
+    rejectedV2: {
+      id: 'judicial.system.core:sections.case_results.rejected_v2',
+      defaultMessage:
+        'Kröfu {isInvestigationCase, select, true {um rannsóknarheimild } other {}}hafnað',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
     },

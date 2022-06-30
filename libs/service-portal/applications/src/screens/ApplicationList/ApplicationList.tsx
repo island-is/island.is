@@ -15,18 +15,20 @@ import {
   Select,
   Option,
 } from '@island.is/island-ui/core'
-import { useApplications } from '@island.is/service-portal/graphql'
 import { ApplicationList as List } from '@island.is/application/ui-components'
+import {
+  GET_ORGANIZATIONS_QUERY,
+  useApplications,
+} from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 import { ValueType } from 'react-select'
-import {
-  Application,
-  ApplicationStatus,
-  getInstitutionMapper,
-} from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
+import { institutionMapper } from '@island.is/application/core'
+import { useQuery } from '@apollo/client'
+import { Organization } from '@island.is/shared/types'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -61,6 +63,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
 
+  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const organizations: Organization[] = orgData?.getOrganizations?.items || []
+
   const [incompleteApplications, setIncompleteApplications] = useState<
     Application[]
   >(applications)
@@ -89,14 +94,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   // Set all types for institutions
   const setApplicationTypes = () => {
-    const mapper = getInstitutionMapper(formatMessage)
+    const mapper = institutionMapper
     const apps: Application[] = applications
     let institutions: Option[] = []
     apps.map((elem, idx) => {
       const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
       institutions.push({
         value: inst,
-        label: inst,
+        label: organizations.find((x) => x.slug === inst)?.title ?? inst,
       })
     })
     // Remove duplicates
@@ -111,7 +116,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   // Search applications and add the results into filteredApplications
   const searchApplications = () => {
-    const mapper = getInstitutionMapper(formatMessage)
+    const mapper = institutionMapper
     const searchQuery = filterValue.searchQuery
     const activeInstitution = filterValue.activeInstitution.value
     const filteredApps = (applications as Application[]).filter(
@@ -188,7 +193,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
 
-      {loading && <ActionCardLoader repeat={3} />}
+      {loading && !orgData && <ActionCardLoader repeat={3} />}
 
       {error && <EmptyState description={m.error} />}
 
@@ -202,7 +207,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         />
       )}
 
-      {applications && !error && (
+      {applications && orgData && !loading && !error && (
         <>
           <Box paddingBottom={[3, 5]}>
             <GridRow alignItems="flexEnd">
@@ -243,6 +248,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                 {formatMessage(m.incopmleteApplications)}
               </Text>
               <List
+                organizations={organizations}
                 applications={incompleteApplications}
                 onClick={(applicationUrl) =>
                   window.open(`${baseUrlForm}/${applicationUrl}`)
@@ -258,6 +264,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                 {formatMessage(m.inProgressApplications)}
               </Text>
               <List
+                organizations={organizations}
                 applications={inProcessApplications}
                 onClick={(applicationUrl) =>
                   window.open(`${baseUrlForm}/${applicationUrl}`)
@@ -273,6 +280,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
                 {formatMessage(m.finishedApplications)}
               </Text>
               <List
+                organizations={organizations}
                 applications={finishedApplications}
                 onClick={(applicationUrl) =>
                   window.open(`${baseUrlForm}/${applicationUrl}`)

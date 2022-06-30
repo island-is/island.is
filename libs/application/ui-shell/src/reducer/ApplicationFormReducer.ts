@@ -1,10 +1,9 @@
+import { getValueViaPath, mergeAnswers } from '@island.is/application/core'
 import {
   FormItemTypes,
   FormModes,
   FormValue,
-  getValueViaPath,
-  mergeAnswers,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertFormToScreens,

@@ -1,7 +1,6 @@
 import * as z from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
-import { StaticText } from '../types/Form'
-import { FormValue } from '../types/Application'
+import { FormValue, StaticText } from '@island.is/application/types'
 
 const dataSchema = z.object({
   nested: z.object({

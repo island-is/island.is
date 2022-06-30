@@ -12,11 +12,15 @@ import {
   buildRadioField,
   buildTextField,
 } from './fieldBuilders'
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import { Form, StaticText } from '../types/Form'
-import { Comparators } from '../types/Condition'
-import { Application, ApplicationStatus } from '../types/Application'
-import { TextField } from '../types/Fields'
+import {
+  Application,
+  ApplicationTypes,
+  Comparators,
+  Form,
+  StaticText,
+  TextField,
+  ApplicationStatus,
+} from '@island.is/application/types'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
