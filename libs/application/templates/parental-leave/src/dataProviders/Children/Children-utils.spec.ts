@@ -1,6 +1,9 @@
 import set from 'lodash/set'
 
-import { Application, FormValue } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  FormValue,
+} from '@island.is/application/types'
 
 import { ParentalRelations } from '../../constants'
 import {
@@ -39,6 +42,7 @@ const createApplicationWithChildren = (
     },
     applicant,
     assignees: [],
+    applicantActors: [],
     attachments: {},
     created: new Date(),
     externalData,

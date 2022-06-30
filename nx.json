@@ -291,6 +291,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-types": {
+      "tags": []
+    },
     "application-ui-components": {
       "tags": []
     },
@@ -320,6 +323,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-adr-and-machine-license": {
       "tags": []
     },
     "clients-assets": {
@@ -547,6 +553,9 @@
       "tags": []
     },
     "judicial-system-formatters": {
+      "tags": []
+    },
+    "judicial-system-message": {
       "tags": []
     },
     "judicial-system-message-handler": {

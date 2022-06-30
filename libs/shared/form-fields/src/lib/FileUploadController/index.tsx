@@ -3,11 +3,8 @@ import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
 
-import {
-  getValueViaPath,
-  Application,
-  coreErrorMessages,
-} from '@island.is/application/core'
+import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   InputFileUpload,
   UploadFile,

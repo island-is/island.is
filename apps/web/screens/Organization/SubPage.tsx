@@ -178,6 +178,7 @@ const renderSlices = (
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}
+          renderedOnOrganizationSubpage={true}
         />
       ))
   }

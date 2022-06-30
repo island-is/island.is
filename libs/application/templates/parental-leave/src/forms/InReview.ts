@@ -2,8 +2,8 @@ import {
   buildCustomField,
   buildForm,
   buildSection,
-  Form,
 } from '@island.is/application/core'
+import { Form } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { States } from '../constants'

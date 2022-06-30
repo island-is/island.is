@@ -1,8 +1,5 @@
-import {
-  DefaultEvents,
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'

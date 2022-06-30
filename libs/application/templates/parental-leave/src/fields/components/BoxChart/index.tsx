@@ -4,7 +4,8 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './BoxChart.css'
-import { Application, formatText, FormText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application, FormText } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'

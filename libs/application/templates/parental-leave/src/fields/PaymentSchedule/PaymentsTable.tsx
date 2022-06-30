@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import format from 'date-fns/format'
-import { Application, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
