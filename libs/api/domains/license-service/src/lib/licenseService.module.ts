@@ -22,6 +22,11 @@ import {
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
 import { GenericMachineLicenseApi } from './client/machine-license-client'
+import { GenericFirearmLicenseApi } from './client/firearm-license-client'
+import {
+  FirearmApplicationApi,
+  FirearmLicenseClientModule,
+} from '@island.is/clients/firearm-license'
 
 export interface Config {
   xroad: {
@@ -68,6 +73,15 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpassVerify: false,
     timeout: 100,
   },
+  {
+    type: GenericLicenseType.FirearmLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalPoliceCommissioner,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+  },
 ]
 
 @Module({})
@@ -75,7 +89,11 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register(), AdrAndMachineLicenseClientModule],
+      imports: [
+        CacheModule.register(),
+        AdrAndMachineLicenseClientModule,
+        FirearmLicenseClientModule,
+      ],
       providers: [
         MainResolver,
         LicenseServiceService,
@@ -89,7 +107,11 @@ export class LicenseServiceModule {
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
-          useFactory: (adrApi: AdrApi, machineApi: VinnuvelaApi) => async (
+          useFactory: (
+            adrApi: AdrApi,
+            machineApi: VinnuvelaApi,
+            firearmApi: FirearmApplicationApi,
+          ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
           ): Promise<GenericLicenseClient<unknown> | null> => {
@@ -104,11 +126,13 @@ export class LicenseServiceModule {
                 return new GenericAdrLicenseApi(logger, adrApi)
               case GenericLicenseType.MachineLicense:
                 return new GenericMachineLicenseApi(logger, machineApi)
+              case GenericLicenseType.FirearmLicense:
+                return new GenericFirearmLicenseApi(logger, firearmApi)
               default:
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi],
+          inject: [AdrApi, VinnuvelaApi, FirearmApplicationApi],
         },
       ],
       exports: [LicenseServiceService],
