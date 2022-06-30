@@ -67,7 +67,6 @@ const MobileMenu = (): ReactElement | null => {
           active={false}
           icon={{ icon: 'logOut', type: 'outline' }}
         >
-          {' '}
           {formatMessage(sharedMessages.logout)}
         </NavItem>
       </Box>
