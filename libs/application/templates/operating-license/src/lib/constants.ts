@@ -1,5 +1,6 @@
 import { DefaultEvents, Option } from '@island.is/application/core'
-import { m } from './messages'
+
+import { attachmentNames, m } from './messages'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -112,3 +113,27 @@ export type FileSchema = {
   key: string
   url: string
 }
+
+export type Attachment = {
+  id: string
+  label: string
+}
+
+export const AttachmentProps: Attachment[] = [
+  {
+    id: 'attachments.healthLicense.file',
+    label: attachmentNames.one.defaultMessage,
+  },
+  {
+    id: 'attachments.formerLicenseHolderConfirmation.file',
+    label: attachmentNames.two.defaultMessage,
+  },
+  {
+    id: 'attachments.houseBlueprints.file',
+    label: attachmentNames.three.defaultMessage,
+  },
+  {
+    id: 'attachments.outsideBlueprints.file',
+    label: attachmentNames.four.defaultMessage,
+  },
+]

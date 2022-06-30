@@ -1,5 +1,28 @@
 import { defineMessages } from 'react-intl'
 
+export const attachmentNames = defineMessages({
+  one: {
+    id: 'ol.application:attachemnt.one',
+    defaultMessage: 'Starfsleyfi heilbrigðisnefndar',
+    description: 'Some description',
+  },
+  two: {
+    id: 'ol.application:attachemnt.one',
+    defaultMessage: 'Staðsetning fyrri leyfishafa',
+    description: 'Some description',
+  },
+  three: {
+    id: 'ol.application:attachemnt.one',
+    defaultMessage: 'Nákvæm teikning af húsnæði',
+    description: 'Some description',
+  },
+  four: {
+    id: 'ol.application:attachemnt.one',
+    defaultMessage: 'Teikning af útisvæði (valkvætt)',
+    description: 'Some description',
+  },
+})
+
 export const m = defineMessages({
   introTitle: {
     id: 'ol.application:intro.title',

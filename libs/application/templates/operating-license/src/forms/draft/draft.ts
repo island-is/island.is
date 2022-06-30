@@ -10,8 +10,10 @@ import {
   buildCustomField,
   buildFileUploadField,
   Application,
+  buildKeyValueField,
+  buildDescriptionField,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
+import { attachmentNames, m } from '../../lib/messages'
 import {
   APPLICATION_TYPES,
   Operation,
@@ -81,13 +83,60 @@ export const Draft: Form = buildForm({
           title: m.attachments,
           description: m.attachmentsDescription,
           children: [
-            buildCustomField({
-              id: 'bullets',
-              title: '',
-              component: 'Bullets',
+            buildDescriptionField({
+              id: 'overview.attachments.one',
+              title: attachmentNames.one,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
             }),
             buildFileUploadField({
-              id: 'attachments',
+              id: 'attachments.healthLicense.file',
+              title: '',
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadButtonLabel: m.uploadButtonLabel,
+            }),
+            buildDescriptionField({
+              id: 'overview.attachments.two',
+              title: attachmentNames.two,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
+            }),
+            buildFileUploadField({
+              id: 'attachments.formerLicenseHolderConfirmation.file',
+              title: '',
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadButtonLabel: m.uploadButtonLabel,
+            }),
+            buildDescriptionField({
+              id: 'overview.attachments.three',
+              title: attachmentNames.three,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
+            }),
+            buildFileUploadField({
+              id: 'attachments.houseBlueprints.file',
+              title: '',
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadButtonLabel: m.uploadButtonLabel,
+            }),
+            buildDescriptionField({
+              id: 'overview.attachments.four',
+              title: attachmentNames.four,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
+            }),
+            buildFileUploadField({
+              id: 'attachments.outsideBlueprints.file',
               title: '',
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: m.uploadHeader,

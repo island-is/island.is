@@ -1,28 +1,36 @@
 import React from 'react'
 
-import { Box, TopicCard } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
-import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import { FileSchema } from '../../lib/constants'
+import { Box, TopicCard, Text } from '@island.is/island-ui/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
+import { AttachmentProps, FileSchema } from '../../lib/constants'
 
 interface FileOverviewData {
   application: Application
 }
 
 export const FileOverview = ({ application }: FileOverviewData) => {
-  const { formatMessage } = useLocale()
-  const attachments: FileSchema[] = application.answers
-    .attachments as FileSchema[]
   return (
     <Box>
-      {attachments.map((a) => (
-        <Box key={a.key} marginBottom={2}>
-          <TopicCard tag={a.name.split('.').pop()?.toUpperCase()}>
-            {a.name}
-          </TopicCard>{' '}
-        </Box>
-      ))}
+      {AttachmentProps.map((a) => {
+        const attachment = (getValueViaPath(
+          application.answers,
+          a.id,
+        ) as FileSchema[])[0]
+        if (!attachment) {
+          return
+        }
+        const nameArray = attachment.name?.split('.')
+        const fileType = nameArray.pop()?.toUpperCase()
+        const fileName = nameArray.join()
+        return (
+          <Box key={attachment.key} marginBottom={2}>
+            <Text variant="h4" paddingBottom={1}>
+              {a.label}
+            </Text>
+            <TopicCard tag={fileType || undefined}>{fileName}</TopicCard>
+          </Box>
+        )
+      })}
     </Box>
   )
 }

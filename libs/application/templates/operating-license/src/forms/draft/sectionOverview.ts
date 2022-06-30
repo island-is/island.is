@@ -18,6 +18,7 @@ import {
   OPERATION_CATEGORY,
   OpeningHours,
   YES,
+  AttachmentProps,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { get24HFormatTime } from '../../lib/utils'

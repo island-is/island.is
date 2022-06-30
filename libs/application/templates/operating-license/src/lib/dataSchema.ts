@@ -117,7 +117,27 @@ export const dataSchema = z.object({
   temporaryLicense: z.array(z.enum([YES, NO])).nonempty(),
   debtClaim: z.array(z.enum([YES, NO])).nonempty(),
   otherInfoText: z.string().optional(),
-  attachments: z
-    .array(FileSchema)
-    .refine((v) => v.length >= 3, { params: error.attachments }),
+  attachments: z.object({
+    healthLicense: z.object({
+      file: z
+        .array(FileSchema)
+        .refine((v) => v.length > 0, { params: error.invalidValue }),
+    }),
+    formerLicenseHolderConfirmation: z.object({
+      file: z
+        .array(FileSchema)
+        .refine((v) => v.length > 0, { params: error.invalidValue }),
+    }),
+    houseBlueprints: z.object({
+      file: z
+        .array(FileSchema)
+        .refine((v) => v.length > 0, { params: error.invalidValue }),
+    }),
+    outsideBlueprints: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+  }),
 })
