@@ -1,3 +1,3 @@
-export * from './lib/passports.module'
+export { PassportsClientModule } from './lib/passports.module'
+export { PassportsClientConfig } from './lib/passports.config'
 export * from '../gen/fetch'
-export * from './lib/passports.config'

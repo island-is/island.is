@@ -1,8 +1,8 @@
 import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
-
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
+  LazyDuringDevScope,
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
@@ -12,10 +12,11 @@ import { PassportsClientConfig } from './passports.config'
 
 export const PassportsApiProvider: Provider<IdentityDocumentApi> = {
   provide: IdentityDocumentApi,
+  scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof PassportsClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    config: ConfigType<typeof PassportsClientConfig>,
   ) =>
     new IdentityDocumentApi(
       new Configuration({
@@ -39,5 +40,5 @@ export const PassportsApiProvider: Provider<IdentityDocumentApi> = {
         },
       }),
     ),
-  inject: [XRoadConfig.KEY, PassportsClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [XRoadConfig.KEY, IdsClientConfig.KEY, PassportsClientConfig.KEY],
 }

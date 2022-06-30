@@ -1,4 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
+import { NationalRegistryScope } from '@island.is/auth/scopes'
 import * as z from 'zod'
 
 const schema = z.object({
@@ -15,11 +16,12 @@ export const PassportsClientConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       xRoadServicePath: env.required(
+        'XROAD_PASSPORT_LICENSE_PATH',
         'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
       ),
       fetch: {
         timeout: 10000,
-        scope: ['@skra.is/individuals'],
+        scope: [NationalRegistryScope.individuals],
       },
     }
   },
