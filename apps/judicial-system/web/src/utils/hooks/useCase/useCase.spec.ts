@@ -92,20 +92,5 @@ describe('useCase', () => {
 
       expect(res.registrarId).toBe(null)
     })
-
-    test('should not update anything if all fields to update have value and force is not set', () => {
-      const workingCase = {
-        ruling: 'ruling1',
-        description: 'description1',
-      } as Case
-
-      const res = auto(
-        [{ ruling: 'ruling1', description: 'description1' }],
-        workingCase,
-      )
-
-      expect(res.ruling).toBe('ruling2')
-      expect(res.description).toBe('description2')
-    })
   })
 })

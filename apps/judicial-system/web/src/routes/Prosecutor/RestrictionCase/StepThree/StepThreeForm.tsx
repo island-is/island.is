@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
