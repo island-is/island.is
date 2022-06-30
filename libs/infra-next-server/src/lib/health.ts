@@ -29,15 +29,15 @@ export type ExternalEndpointDependencies =
  */
 export const setupHealthchecks = (
   app: Express,
-  readyPromise: Promise<unknown>,
+  readyPromise: Promise<void>,
   externalEndpointDependencies: ExternalEndpointDependencies = [],
 ) => {
-  const nextConfig = getNextConfig()
-  const getDependencies = readyPromise.then(() =>
-    typeof externalEndpointDependencies === 'function'
+  const getDependencies = readyPromise.then(() => {
+    const nextConfig = getNextConfig()
+    return typeof externalEndpointDependencies === 'function'
       ? externalEndpointDependencies(nextConfig)
-      : externalEndpointDependencies,
-  )
+      : externalEndpointDependencies
+  })
 
   app.use('/readiness', async (_, res) => {
     /*
