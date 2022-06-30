@@ -87,17 +87,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
             },
           )}
           onChange={(decision) => {
-            autofill(
-              [
-                {
-                  key: 'decision',
-                  value: decision,
-                  force: true,
-                },
-              ],
-              workingCase,
-              setWorkingCase,
-            )
+            autofill([{ decision, force: true }], workingCase, setWorkingCase)
           }}
         />
       </Box>

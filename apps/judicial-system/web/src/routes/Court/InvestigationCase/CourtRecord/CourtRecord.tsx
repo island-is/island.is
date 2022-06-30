@@ -55,6 +55,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -162,27 +163,20 @@ const CourtRecord = () => {
 
       autofill(
         [
-          { key: 'courtStartDate', value: workingCase.courtDate },
           {
-            key: 'courtLocation',
-            value: workingCase.court
+            courtStartDate: workingCase.courtDate,
+            courtLocation: workingCase.court
               ? `í ${
                   workingCase.court.name.indexOf('dómur') > -1
                     ? workingCase.court.name.replace('dómur', 'dómi')
                     : workingCase.court.name
                 }`
               : undefined,
-          },
-          {
-            key: 'courtAttendees',
-            value:
+            courtAttendees:
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-          },
-          {
-            key: 'sessionBookings',
-            value:
+            sessionBookings:
               workingCase.type === CaseType.RESTRAINING_ORDER
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
@@ -252,12 +246,11 @@ const CourtRecord = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
+                  if (date && valid) {
                     autofill(
                       [
                         {
-                          key: 'courtStartDate',
-                          value: date,
+                          courtStartDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
@@ -314,8 +307,7 @@ const CourtRecord = () => {
                 autofill(
                   [
                     {
-                      key: 'isClosedCourtHidden',
-                      value: isVisible,
+                      isClosedCourtHidden: isVisible,
                       force: true,
                     },
                   ],

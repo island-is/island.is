@@ -193,36 +193,20 @@ export const Ruling: React.FC = () => {
       autofill(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value:
+            conclusion:
               workingCase.decision &&
               workingCase.defendants &&
               workingCase.defendants.length > 0
@@ -564,14 +548,7 @@ export const Ruling: React.FC = () => {
                 }
 
                 autofill(
-                  [
-                    { key: 'conclusion', value: conclusion, force: true },
-                    {
-                      key: 'decision',
-                      value: decision,
-                      force: true,
-                    },
-                  ],
+                  [{ conclusion, decision, force: true }],
                   workingCase,
                   setWorkingCase,
                 )
@@ -654,18 +631,9 @@ export const Ruling: React.FC = () => {
                   autofill(
                     [
                       {
-                        key: 'validToDate',
-                        value: validToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'isolationToDate',
-                        value: isolationToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'conclusion',
-                        value: conclusion,
+                        validToDate,
+                        isolationToDate,
+                        conclusion,
                         force: true,
                       },
                     ],
@@ -730,13 +698,8 @@ export const Ruling: React.FC = () => {
                       autofill(
                         [
                           {
-                            key: 'isCustodyIsolation',
-                            value: !workingCase.isCustodyIsolation,
-                            force: true,
-                          },
-                          {
-                            key: 'conclusion',
-                            value: conclusion,
+                            isCustodyIsolation: !workingCase.isCustodyIsolation,
+                            conclusion,
                             force: true,
                           },
                         ],
@@ -799,13 +762,8 @@ export const Ruling: React.FC = () => {
                     autofill(
                       [
                         {
-                          key: 'isolationToDate',
-                          value: isolationToDate,
-                          force: true,
-                        },
-                        {
-                          key: 'conclusion',
-                          value: conclusion,
+                          isolationToDate,
+                          conclusion,
                           force: true,
                         },
                       ],

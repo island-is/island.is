@@ -4,6 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { CaseType, Case } from '@island.is/judicial-system/types'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface Props {
   workingCase: Case
@@ -17,12 +18,11 @@ const ArrestDate: React.FC<Props> = (props) => {
 
   const onChange = useCallback(
     (date: Date | undefined, valid: boolean) => {
-      if (valid) {
+      if (date && valid) {
         autofill(
           [
             {
-              key: 'arrestDate',
-              value: date,
+              arrestDate: formatDateForServer(date),
               force: true,
             },
           ],

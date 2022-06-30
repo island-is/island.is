@@ -68,8 +68,7 @@ const Overview = () => {
       autofill(
         [
           {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`

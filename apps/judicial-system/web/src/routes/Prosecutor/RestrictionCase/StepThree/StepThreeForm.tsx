@@ -53,6 +53,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export interface DemandsAutofillProps {
   defentant: Defendant
@@ -116,8 +117,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         [
           entry,
           {
-            key: 'demands',
-            value:
+            demands:
               workingCase.defendants && workingCase.defendants.length
                 ? getDemandsAutofill(formatMessage, {
                     defentant: workingCase.defendants[0],
@@ -190,10 +190,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   if (date && valid) {
                     onDemandsChange(
                       {
-                        key: 'requestedValidToDate',
-                        value: formatISO(date, {
-                          representation: 'complete',
-                        }),
+                        requestedValidToDate: formatDateForServer(date),
                         force: true,
                       },
                       workingCase.type,
@@ -222,8 +219,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     )
                     onDemandsChange(
                       {
-                        key: 'requestedCustodyRestrictions',
-                        value: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,
@@ -254,8 +250,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       : CaseType.CUSTODY
                     onDemandsChange(
                       {
-                        key: 'type',
-                        value: nextCaseType,
+                        type: nextCaseType,
                         force: true,
                       },
                       nextCaseType,

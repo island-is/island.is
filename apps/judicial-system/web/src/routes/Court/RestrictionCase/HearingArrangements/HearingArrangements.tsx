@@ -29,6 +29,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
@@ -69,20 +70,13 @@ export const HearingArrangements: React.FC = () => {
           // validToDate, isolationToDate and isCustodyIsolation are autofilled here
           // so they are ready for conclusion autofill later
           {
-            key: 'validToDate',
-            value: workingCase.requestedValidToDate,
-          },
-          {
-            key: 'isolationToDate',
-            value:
+            validToDate: workingCase.requestedValidToDate,
+            isolationToDate:
               workingCase.type === CaseType.CUSTODY ||
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedValidToDate
                 : undefined,
-          },
-          {
-            key: 'isCustodyIsolation',
-            value:
+            isCustodyIsolation:
               workingCase.type === CaseType.CUSTODY ||
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedCustodyRestrictions &&
@@ -113,7 +107,14 @@ export const HearingArrangements: React.FC = () => {
     )
 
     autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
       workingCase,
       setWorkingCase,
     )

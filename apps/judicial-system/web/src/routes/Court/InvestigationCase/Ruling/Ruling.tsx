@@ -95,36 +95,20 @@ const Ruling = () => {
       autofill(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value: isAcceptingCaseDecision(workingCase.decision)
+            conclusion: isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.demands
               : undefined,
           },
@@ -410,15 +394,13 @@ const Ruling = () => {
                 autofill(
                   [
                     {
-                      key: 'conclusion',
-                      value:
+                      conclusion:
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
                           : workingCase.conclusion,
                     },
                     {
-                      key: 'decision',
-                      value: decision,
+                      decision,
                       force: true,
                     },
                   ],

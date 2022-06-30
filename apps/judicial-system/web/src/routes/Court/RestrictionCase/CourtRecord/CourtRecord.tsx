@@ -58,6 +58,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -237,36 +238,23 @@ export const CourtRecord: React.FC = () => {
       autofill(
         [
           {
-            key: 'courtStartDate',
-            value: workingCase.courtDate,
-          },
-          {
-            key: 'courtLocation',
-            value:
+            courtStartDate: workingCase.courtDate,
+            courtLocation:
               workingCase.court &&
               `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')
                   : workingCase.court.name
               }`,
-          },
-          {
-            key: 'courtAttendees',
-            value:
+            courtAttendees:
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-          },
-          {
-            key: 'sessionBookings',
-            value:
+            sessionBookings:
               autofillSessionBookings.length > 0
                 ? autofillSessionBookings.join('')
                 : undefined,
-          },
-          {
-            key: 'endOfSessionBookings',
-            value:
+            endOfSessionBookings:
               endOfSessionBookings.length > 0
                 ? endOfSessionBookings.join('')
                 : undefined,
@@ -319,12 +307,11 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
+                  if (date && valid) {
                     autofill(
                       [
                         {
-                          key: 'courtStartDate',
-                          value: date,
+                          courtStartDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
@@ -381,8 +368,7 @@ export const CourtRecord: React.FC = () => {
                 autofill(
                   [
                     {
-                      key: 'isClosedCourtHidden',
-                      value: isVisible,
+                      isClosedCourtHidden: isVisible,
                       force: true,
                     },
                   ],

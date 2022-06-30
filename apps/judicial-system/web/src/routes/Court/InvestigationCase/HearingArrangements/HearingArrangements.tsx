@@ -39,6 +39,7 @@ import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 const HearingArrangements = () => {
   const {
@@ -72,8 +73,7 @@ const HearingArrangements = () => {
       autofill(
         [
           {
-            key: 'sessionArrangements',
-            value: workingCase.defenderName
+            sessionArrangements: workingCase.defenderName
               ? SessionArrangements.ALL_PRESENT
               : undefined,
           },
@@ -99,7 +99,14 @@ const HearingArrangements = () => {
     )
 
     autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
       workingCase,
       setWorkingCase,
     )
@@ -184,8 +191,8 @@ const HearingArrangements = () => {
                       autofill(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT,
                             force: true,
                           },
                         ],
@@ -213,8 +220,8 @@ const HearingArrangements = () => {
                       autofill(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
                             force: true,
                           },
                         ],
@@ -240,8 +247,8 @@ const HearingArrangements = () => {
                     autofill(
                       [
                         {
-                          key: 'sessionArrangements',
-                          value: SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements:
+                            SessionArrangements.PROSECUTOR_PRESENT,
                           force: true,
                         },
                       ],

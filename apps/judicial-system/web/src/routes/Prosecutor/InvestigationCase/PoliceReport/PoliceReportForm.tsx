@@ -50,8 +50,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       autofill(
         [
           {
-            key: 'prosecutorOnlySessionRequest',
-            value: formatMessage(
+            prosecutorOnlySessionRequest: formatMessage(
               icReportForm.prosecutorOnly.input.defaultValue,
             ),
           },

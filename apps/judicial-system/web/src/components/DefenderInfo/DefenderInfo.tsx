@@ -385,13 +385,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
               autofill(
-                [
-                  {
-                    key: 'sendRequestToDefender',
-                    value: event.target.checked,
-                    force: true,
-                  },
-                ],
+                [{ sendRequestToDefender: event.target.checked, force: true }],
                 workingCase,
                 setWorkingCase,
               )

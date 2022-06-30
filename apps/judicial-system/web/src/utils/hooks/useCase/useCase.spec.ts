@@ -9,7 +9,7 @@ describe('useCase', () => {
       const workingCase = { ruling: 'ruling1' } as Case
 
       const res = update(newCase, workingCase)
-      expect(res.ruling).toBe('ruling1')
+      expect(res.ruling).toBe(undefined)
     })
 
     test('should update field that is undefined on the workingCase', () => {
@@ -25,7 +25,7 @@ describe('useCase', () => {
       const workingCase = { ruling: '' } as Case
 
       const res = update(newCase, workingCase)
-      expect(res.ruling).toBe('')
+      expect(res.ruling).toBe(undefined)
     })
 
     test('should not update fields when update is empty', () => {
@@ -33,7 +33,7 @@ describe('useCase', () => {
       const workingCase = { ruling: 'some ruling' } as Case
 
       const res = update(newCase, workingCase)
-      expect(res.ruling).toBe('some ruling')
+      expect(res.ruling).toBe(undefined)
     })
   })
 
@@ -43,7 +43,7 @@ describe('useCase', () => {
 
       const res = auto([{ ruling: 'ruling2' }], workingCase)
 
-      expect(res.ruling).toBe('ruling1')
+      expect(res.ruling).toBe(undefined)
     })
 
     test('should overwrite value in workingCase if force is set', () => {
@@ -65,8 +65,32 @@ describe('useCase', () => {
         workingCase,
       )
 
-      expect(res.ruling).toBe('ruling1')
-      expect(res.description).toBe('description1')
+      expect(res.ruling).toBe('ruling2')
+      expect(res.description).toBe(undefined)
+    })
+
+    test('should not set field to undefined when force is not set', () => {
+      const workingCase = {
+        registrar: {
+          id: 'testId',
+        },
+      } as Case
+
+      const res = auto([{ registrarId: null }], workingCase)
+
+      expect(res.registrarId).toBe(undefined)
+    })
+
+    test('should set field to null when force is set', () => {
+      const workingCase = {
+        registrar: {
+          id: 'testId',
+        },
+      } as Case
+
+      const res = auto([{ registrarId: null, force: true }], workingCase)
+
+      expect(res.registrarId).toBe(null)
     })
   })
 })

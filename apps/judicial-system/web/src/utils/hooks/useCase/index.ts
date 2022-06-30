@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
-import pickBy from 'lodash/pickBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
 
@@ -14,11 +12,7 @@ import type {
   CaseTransition,
   RequestSignatureResponse,
   UpdateCase,
-  SessionArrangements,
   CreateCase,
-  CaseCustodyRestrictions,
-  Institution,
-  User,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -31,6 +25,7 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
+import formatISO from 'date-fns/formatISO'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -40,24 +35,6 @@ type ChildKeys = Pick<
   | 'registrarId'
   | 'judgeId'
 >
-
-function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
-  return [
-    'courtId',
-    'prosecutorId',
-    'sharedWithProsecutorsOfficeId',
-    'registrarId',
-    'judgeId',
-  ].includes(key)
-}
-
-const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
-  courtId: 'court',
-  prosecutorId: 'prosecutor',
-  sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
-  registrarId: 'registrar',
-  judgeId: 'judge',
-}
 
 export type autofillEntry = Partial<UpdateCase> & {
   force?: boolean
@@ -101,10 +78,28 @@ interface ExtendCaseMutationResponse {
   extendCase: Case
 }
 
-const overwrite = (update: UpdateCase, workingCase: Case): Case => {
+function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
+  return [
+    'courtId',
+    'prosecutorId',
+    'sharedWithProsecutorsOfficeId',
+    'registrarId',
+    'judgeId',
+  ].includes(key)
+}
+
+const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
+  courtId: 'court',
+  prosecutorId: 'prosecutor',
+  sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
+  registrarId: 'registrar',
+  judgeId: 'judge',
+}
+
+const overwrite = (update: UpdateCase, workingCase: Case): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, isUndefined)
 
-  return { ...workingCase, ...validUpdates }
+  return validUpdates
 }
 
 export const fieldHasValue = (workingCase: Case) => (
@@ -112,50 +107,41 @@ export const fieldHasValue = (workingCase: Case) => (
   key: string,
 ) => {
   const theKey = key as keyof UpdateCase // loadash types are not better than this
+
   if (
     isChildKey(theKey) // check if key is f.example `judgeId`
       ? isNil(workingCase[childof[theKey]])
       : isNil(workingCase[theKey])
   ) {
-    console.log('key', workingCase, key)
     return value === undefined
   }
 
-  console.log('we should return here', value, key)
   return true
 }
 
-export const update = (update: UpdateCase, workingCase: Case): Case => {
+export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
-  console.log('validupdates', validUpdates)
 
-  return { ...workingCase, ...validUpdates }
+  return validUpdates
 }
 
 export const auto = (updates: Array<autofillEntry>, workingCase: Case) => {
-  const u: Case[] = updates.map((entry) => {
+  const u: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry, workingCase)
     }
     return update(entry, workingCase)
   })
 
-  const newWorkingCase = u.reduce<Case>((currentUpdates, nextUpdates) => {
+  const newWorkingCase = u.reduce<UpdateCase>((currentUpdates, nextUpdates) => {
     return { ...currentUpdates, ...nextUpdates }
-  }, workingCase as Case)
+  }, {} as UpdateCase)
 
   return newWorkingCase
 }
 
-export const autosync = async (
-  updates: autofillEntry[],
-  workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-  updateCase: (id: string, update: UpdateCase) => Promise<Case | undefined>,
-) => {
-  const newWorkingCase: UpdateCase = auto(updates, workingCase)
-  updateCase(workingCase.id, newWorkingCase)
-  setWorkingCase({ ...workingCase, ...newWorkingCase })
+export const formatDateForServer = (date: Date) => {
+  return formatISO(date, { representation: 'complete' })
 }
 
 const useCase = () => {
@@ -392,54 +378,23 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill: autofillFunc = (entries, workingCase, setWorkingCase) => {
-    const validEntries = entries.filter(
-      (item) =>
-        item.value !== undefined &&
-        (item.force ||
-          (isChildKey(item.key)
-            ? workingCase[childof[item.key]] === undefined ||
-              workingCase[childof[item.key]] === null
-            : workingCase[item.key] === undefined ||
-              workingCase[item.key] === null)),
-    )
+  const autofill = async (
+    updates: autofillEntry[],
+    workingCase: Case,
+    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  ) => {
+    try {
+      const updatesToCase: UpdateCase = auto(updates, workingCase)
+      const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
-    if (validEntries.length === 0) {
-      return
+      if (!newWorkingCase) {
+        throw new Error()
+      }
+
+      setWorkingCase(newWorkingCase)
+    } catch (error) {
+      toast.error(formatMessage(errors.updateCase))
     }
-
-    const setEntries = Object.assign(
-      {},
-      ...validEntries.map((entry) => ({
-        [isChildKey(entry.key) ? childof[entry.key] : entry.key]:
-          // Ensure dates are saved on a correct format
-          entry.value instanceof Date
-            ? formatISO(entry.value, {
-                representation: 'complete',
-              })
-            : entry.value,
-      })),
-    )
-
-    if (setWorkingCase) {
-      setWorkingCase({ ...workingCase, ...setEntries })
-    }
-
-    const updateEntries = Object.assign(
-      {},
-      ...validEntries.map((entry) => ({
-        [entry.key]: isChildKey(entry.key)
-          ? (entry.value as Institution | User)?.id ?? null
-          : // Ensure dates are saved on a correct format
-          entry.value instanceof Date
-          ? formatISO(entry.value, {
-              representation: 'complete',
-            })
-          : entry.value,
-      })),
-    )
-
-    updateCase(workingCase.id, updateEntries)
   }
 
   return {

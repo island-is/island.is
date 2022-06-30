@@ -242,9 +242,8 @@ const Defendant = () => {
                     autofill(
                       [
                         {
-                          key: 'type',
-                          value: (selectedOption as ReactSelectOption)
-                            .value as string,
+                          type: (selectedOption as ReactSelectOption)
+                            .value as CaseType,
                           force: true,
                         },
                       ],
@@ -294,8 +293,7 @@ const Defendant = () => {
                   autofill(
                     [
                       {
-                        key: 'description',
-                        value: evt.target.value,
+                        description: evt.target.value,
                         force: true,
                       },
                     ],

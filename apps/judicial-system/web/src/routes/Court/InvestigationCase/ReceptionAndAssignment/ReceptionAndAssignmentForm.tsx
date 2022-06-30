@@ -73,15 +73,20 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
 
   const setJudge = (judge: User) => {
     if (workingCase) {
-      autofill([{ key: 'judgeId', value: judge, force: true }], workingCase)
+      autofill(
+        [{ judgeId: judge.id, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
     }
   }
 
   const setRegistrar = (registrar?: User) => {
     if (workingCase) {
       autofill(
-        [{ key: 'registrarId', value: registrar ?? null, force: true }],
+        [{ registrarId: registrar?.id, force: true }],
         workingCase,
+        setWorkingCase,
       )
     }
   }

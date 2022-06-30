@@ -41,6 +41,7 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { Box, Input, Checkbox, Text } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import type { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -132,8 +133,7 @@ const HearingArrangements = () => {
       return autofill(
         [
           {
-            key: 'prosecutorId',
-            value: prosecutor,
+            prosecutorId: prosecutor.id,
             force: true,
           },
         ],
@@ -148,8 +148,7 @@ const HearingArrangements = () => {
       autofill(
         [
           {
-            key: 'courtId',
-            value: court,
+            courtId: court.id,
             force: true,
           },
         ],
@@ -237,8 +236,7 @@ const HearingArrangements = () => {
                       autofill(
                         [
                           {
-                            key: 'isHeightenedSecurityLevel',
-                            value: event.target.checked,
+                            isHeightenedSecurityLevel: event.target.checked,
                             force: true,
                           },
                         ],
@@ -265,12 +263,11 @@ const HearingArrangements = () => {
               <RequestCourtDate
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
+                  if (date && valid) {
                     autofill(
                       [
                         {
-                          key: 'requestedCourtDate',
-                          value: date,
+                          requestedCourtDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
