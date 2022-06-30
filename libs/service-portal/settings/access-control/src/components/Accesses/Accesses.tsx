@@ -68,7 +68,7 @@ function Accesses(): JSX.Element {
               >
                 {formatMessage({
                   id: 'sp.settings-access-control:home-switch-access',
-                  defaultMessage: 'Skipta um umboð',
+                  defaultMessage: 'Skipta um notanda',
                 })}
               </Button>
             </Box>
