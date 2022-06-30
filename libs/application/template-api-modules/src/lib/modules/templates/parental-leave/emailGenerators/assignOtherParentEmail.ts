@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGenerator } from '../../../../types'

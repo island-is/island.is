@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {

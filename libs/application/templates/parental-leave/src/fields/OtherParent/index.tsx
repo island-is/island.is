@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioFormField } from '@island.is/application/ui-fields'

@@ -1,25 +1,27 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  Application,
   buildCustomField,
   buildRadioField,
   buildDescriptionField,
-  FormValue,
   buildSelectField,
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
-  DefaultEvents,
   buildFileUploadField,
   buildTextField,
   buildDateField,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  Application,
+  FormValue,
+  DefaultEvents,
+} from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import {

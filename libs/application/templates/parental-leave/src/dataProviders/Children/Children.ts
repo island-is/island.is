@@ -1,12 +1,12 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   BasicDataProvider,
+  CustomTemplateFindQuery,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
-  CustomTemplateFindQuery,
-  getValueViaPath,
   StaticText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as Sentry from '@sentry/react'
 

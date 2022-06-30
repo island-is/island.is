@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 

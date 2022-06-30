@@ -210,4 +210,9 @@ export const core = defineMessages({
     defaultMessage: 'lögmaður',
     description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
   },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
+  },
 })

@@ -220,7 +220,7 @@ describe('UserMenu', () => {
     })
     const dialog = await openMenu()
     const delegationButton = getByRole(dialog, 'button', {
-      name: 'Skipta um umboð',
+      name: 'Skipta um notanda',
     })
 
     // Act
