@@ -231,8 +231,8 @@ const template: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            // Applications that stay in this state for 3 hours will be pruned automatically
-            whenToPrune: 3 * 3600 * 1000,
+            // Applications that stay in this state for 1 hour will be pruned automatically
+            whenToPrune: 1 * 3600 * 1000,
           },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
