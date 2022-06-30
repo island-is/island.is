@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl'
 import { inRelationship } from '../../lib/messages'
 import DescriptionText from '../DescriptionText/DescriptionText'
 import { useFormContext } from 'react-hook-form'
+import withLogo from '../Logo/Logo'
 
 const spouseEmail = 'spouse.email'
 const spouseApproveTerms = 'spouse.approveTerms'
@@ -63,4 +64,4 @@ const InRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default InRelationshipForm
+export default withLogo(InRelationshipForm)

@@ -6,10 +6,8 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  DefaultEvents,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'

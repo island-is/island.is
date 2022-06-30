@@ -24,10 +24,10 @@ import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
-import { CaseQuery } from './caseGql'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
@@ -138,7 +138,7 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
+      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
@@ -165,157 +165,159 @@ export const Cases: React.FC = () => {
   }
 
   return (
-    <div className={styles.casesContainer}>
-      <PageHeader title={formatMessage(titles.shared.cases)} />
-      {loading ? (
-        <TableSkeleton />
-      ) : (
-        user && (
-          <div className={styles.logoContainer}>
-            <Logo />
-            {isProsecutor && (
-              <DropdownMenu
-                menuLabel="Tegund kröfu"
-                icon="add"
-                items={[
-                  {
-                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                    title: 'Gæsluvarðhald',
-                  },
-                  {
-                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                    title: 'Farbann',
-                  },
-                  {
-                    href: Constants.NEW_IC_ROUTE,
-                    title: 'Rannsóknarheimild',
-                  },
-                ]}
-                title="Stofna nýja kröfu"
-              />
-            )}
-          </div>
-        )
-      )}
-      {activeCases || pastCases ? (
-        <>
-          {!isHighCourtUser && (
-            <>
-              <Box marginBottom={3}>
-                {/**
-                 * This should be a <caption> tag inside the table but
-                 * Safari has a bug that doesn't allow that. See more
-                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                 */}
-                <Text variant="h3" id="activeCasesTableCaption">
-                  {formatMessage(
-                    isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers.title
-                      : isPrisonAdminUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .prisonAdminTitle
-                      : m.sections.activeRequests.title,
-                  )}
-                </Text>
-              </Box>
-              <Box marginBottom={15}>
-                {activeCases && activeCases.length > 0 ? (
-                  isPrisonUser || isPrisonAdminUser ? (
-                    <PastCases
-                      cases={activeCases}
-                      onRowClick={handleRowClick}
-                      isHighCourtUser={false}
-                    />
-                  ) : (
-                    <ActiveCases
-                      cases={activeCases}
-                      onRowClick={handleRowClick}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
-                      onDeleteCase={deleteCase}
-                      setActiveCases={setActiveCases}
-                    />
-                  )
-                ) : (
-                  <div className={styles.infoContainer}>
-                    <AlertMessage
-                      title={formatMessage(
-                        isPrisonUser || isPrisonAdminUser
-                          ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerTitle
-                          : m.sections.activeRequests.infoContainerTitle,
-                      )}
-                      message={formatMessage(
-                        isPrisonUser || isPrisonAdminUser
-                          ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerText
-                          : m.sections.activeRequests.infoContainerText,
-                      )}
-                      type="info"
-                    />
-                  </div>
-                )}
-              </Box>
-            </>
-          )}
-          <Box marginBottom={3}>
-            {/**
-             * This should be a <caption> tag inside the table but
-             * Safari has a bug that doesn't allow that. See more
-             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-             */}
-            <Text variant="h3" id="activeCasesTableCaption">
-              {formatMessage(
-                isHighCourtUser
-                  ? m.sections.pastRequests.highCourtUsers.title
-                  : isPrisonUser
-                  ? m.sections.pastRequests.prisonStaffUsers.title
-                  : isPrisonAdminUser
-                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.sections.pastRequests.title,
+    <Box paddingX={[0, 0, 4]}>
+      <Box className={styles.casesContainer}>
+        <PageHeader title={formatMessage(titles.shared.cases)} />
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          user && (
+            <div className={styles.logoContainer}>
+              <Logo />
+              {isProsecutor && (
+                <DropdownMenu
+                  menuLabel="Tegund kröfu"
+                  icon="add"
+                  items={[
+                    {
+                      href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                      title: 'Gæsluvarðhald',
+                    },
+                    {
+                      href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                      title: 'Farbann',
+                    },
+                    {
+                      href: constants.NEW_IC_ROUTE,
+                      title: 'Rannsóknarheimild',
+                    },
+                  ]}
+                  title="Stofna nýja kröfu"
+                />
               )}
-            </Text>
-          </Box>
-          {pastCases && pastCases.length > 0 ? (
-            <PastCases
-              cases={pastCases}
-              onRowClick={handleRowClick}
-              isHighCourtUser={isHighCourtUser}
-            />
-          ) : (
-            <div className={styles.infoContainer}>
-              <AlertMessage
-                title={formatMessage(
-                  isPrisonAdminUser || isPrisonUser
-                    ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerTitle
-                    : m.sections.pastRequests.infoContainerTitle,
-                )}
-                message={formatMessage(
-                  isPrisonAdminUser || isPrisonUser
-                    ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerText
-                    : m.sections.pastRequests.infoContainerText,
-                )}
-                type="info"
-              />
             </div>
-          )}
-        </>
-      ) : error ? (
-        <div
-          className={styles.infoContainer}
-          data-testid="custody-requests-error"
-        >
-          <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
-            type="error"
-          />
-        </div>
-      ) : null}
-    </div>
+          )
+        )}
+        {activeCases || pastCases ? (
+          <>
+            {!isHighCourtUser && (
+              <>
+                <Box marginBottom={3}>
+                  {/**
+                   * This should be a <caption> tag inside the table but
+                   * Safari has a bug that doesn't allow that. See more
+                   * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+                   */}
+                  <Text variant="h3" id="activeCasesTableCaption">
+                    {formatMessage(
+                      isPrisonUser
+                        ? m.sections.activeRequests.prisonStaffUsers.title
+                        : isPrisonAdminUser
+                        ? m.sections.activeRequests.prisonStaffUsers
+                            .prisonAdminTitle
+                        : m.sections.activeRequests.title,
+                    )}
+                  </Text>
+                </Box>
+                <Box marginBottom={15}>
+                  {activeCases && activeCases.length > 0 ? (
+                    isPrisonUser || isPrisonAdminUser ? (
+                      <PastCases
+                        cases={activeCases}
+                        onRowClick={handleRowClick}
+                        isHighCourtUser={false}
+                      />
+                    ) : (
+                      <ActiveCases
+                        cases={activeCases}
+                        onRowClick={handleRowClick}
+                        isDeletingCase={
+                          isTransitioningCase || isSendingNotification
+                        }
+                        onDeleteCase={deleteCase}
+                        setActiveCases={setActiveCases}
+                      />
+                    )
+                  ) : (
+                    <div className={styles.infoContainer}>
+                      <AlertMessage
+                        title={formatMessage(
+                          isPrisonUser || isPrisonAdminUser
+                            ? m.sections.activeRequests.prisonStaffUsers
+                                .infoContainerTitle
+                            : m.sections.activeRequests.infoContainerTitle,
+                        )}
+                        message={formatMessage(
+                          isPrisonUser || isPrisonAdminUser
+                            ? m.sections.activeRequests.prisonStaffUsers
+                                .infoContainerText
+                            : m.sections.activeRequests.infoContainerText,
+                        )}
+                        type="info"
+                      />
+                    </div>
+                  )}
+                </Box>
+              </>
+            )}
+            <Box marginBottom={3}>
+              {/**
+               * This should be a <caption> tag inside the table but
+               * Safari has a bug that doesn't allow that. See more
+               * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+               */}
+              <Text variant="h3" id="activeCasesTableCaption">
+                {formatMessage(
+                  isHighCourtUser
+                    ? m.sections.pastRequests.highCourtUsers.title
+                    : isPrisonUser
+                    ? m.sections.pastRequests.prisonStaffUsers.title
+                    : isPrisonAdminUser
+                    ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                    : m.sections.pastRequests.title,
+                )}
+              </Text>
+            </Box>
+            {pastCases && pastCases.length > 0 ? (
+              <PastCases
+                cases={pastCases}
+                onRowClick={handleRowClick}
+                isHighCourtUser={isHighCourtUser}
+              />
+            ) : (
+              <div className={styles.infoContainer}>
+                <AlertMessage
+                  title={formatMessage(
+                    isPrisonAdminUser || isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .infoContainerTitle
+                      : m.sections.pastRequests.infoContainerTitle,
+                  )}
+                  message={formatMessage(
+                    isPrisonAdminUser || isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .infoContainerText
+                      : m.sections.pastRequests.infoContainerText,
+                  )}
+                  type="info"
+                />
+              </div>
+            )}
+          </>
+        ) : error ? (
+          <div
+            className={styles.infoContainer}
+            data-testid="custody-requests-error"
+          >
+            <AlertMessage
+              title="Ekki tókst að sækja gögn úr gagnagrunni"
+              message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+              type="error"
+            />
+          </div>
+        ) : null}
+      </Box>
+    </Box>
   )
 }
 

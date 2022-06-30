@@ -5,9 +5,9 @@ import {
   ExternalData,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/core'
+  ApplicationLifecycle,
+} from '@island.is/application/types'
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [

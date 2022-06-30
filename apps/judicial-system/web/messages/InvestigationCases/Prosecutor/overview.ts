@@ -16,12 +16,35 @@ export const icOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
     },
   }),
+  seenByDefenderAlert: defineMessages({
+    title: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.title',
+      defaultMessage: 'Krafa sótt af verjanda',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+    text: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.text',
+      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+  }),
   heading: defineMessage({
     id: 'judicial.system.investigation_cases:overview.heading',
     defaultMessage: 'Yfirlit kröfu um rannsóknarheimild',
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    copyLinkForDefenderButton: defineMessage({
+      id:
+        'judicial.system.investigation_cases:overview.copy_link_for_defender_button',
+      defaultMessage: 'Afrita hlekk fyrir verjanda',
+      description:
+        'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
+    }),
     modal: defineMessages({
       heading: {
         id: 'judicial.system.investigation_cases:overview.modal.heading',
@@ -47,6 +70,7 @@ export const icOverview = {
           'Notaður sem texti í modal þegar ekki tókst að senda tilkynningu til dómara og dómritara á vakt',
       },
     }),
+    // TODO: remove this 'caseResentModal' section
     caseResentModal: {
       heading: defineMessage({
         id:

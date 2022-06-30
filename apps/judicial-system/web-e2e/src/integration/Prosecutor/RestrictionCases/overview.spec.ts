@@ -22,6 +22,18 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
   })
 
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+  })
+
   it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
@@ -83,6 +95,18 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     intercept(caseData)
 
     cy.contains('button', 'Krafa - PDF')
+  })
+
+  it('should have a button that copies link to case for defender', () => {
+    const caseId = 'test_case_id'
+    intercept({ ...caseData, id: caseId })
+
+    cy.getByTestid('copyLinkToCase').click()
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .then((data) => data)
+      .should('equal', `${window.location.origin}/verjandi/${caseId}`)
   })
 
   it.skip('should navigate to /krofur on successful confirmation', () => {

@@ -2,12 +2,11 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
-  CheckboxField,
-  FieldBaseProps,
   formatText,
   getValueViaPath,
   buildFieldOptions,
 } from '@island.is/application/core'
+import { CheckboxField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   CheckboxController,
@@ -75,7 +74,7 @@ export const CheckboxFormField: FC<Props> = ({
           }
           strong={strong}
           error={error}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {

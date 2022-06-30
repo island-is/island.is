@@ -29,17 +29,21 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  ApplicationWithAttachments as BaseApplication,
   callDataProviders,
+  ApplicationTemplateHelper,
+  mergeAnswers,
+} from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as BaseApplication,
+  CustomTemplateFindQuery,
+  DefaultEvents,
   ApplicationTypes,
   FormValue,
-  ApplicationTemplateHelper,
   ExternalData,
   ApplicationTemplateAPIAction,
   PdfTypes,
   ApplicationStatus,
-  CustomTemplateFindQuery,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -55,7 +59,6 @@ import {
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
-import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 

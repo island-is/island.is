@@ -1,14 +1,17 @@
 import { Colors } from '@island.is/island-ui/theme'
 
-import { Application } from '../types/Application'
-import { Condition } from '../types/Condition'
 import {
+  Application,
   BaseField,
+  CallToAction,
+  Condition,
   CheckboxField,
   CustomField,
   DateField,
   DividerField,
   KeyValueField,
+  FormText,
+  FormTextArray,
   FieldComponents,
   FieldTypes,
   FieldWidth,
@@ -25,9 +28,8 @@ import {
   Field,
   CompanySearchField,
   RedirectToServicePortalField,
-} from '../types/Fields'
-import { CallToAction } from '../types/StateMachine'
-import { FormText, FormTextArray } from '../types/Form'
+} from '@island.is/application/types'
+import { SpanType } from '@island.is/island-ui/core/types'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -104,7 +106,14 @@ export function buildDateField(
 export function buildDescriptionField(
   data: Omit<DescriptionField, 'type' | 'component' | 'children'>,
 ): DescriptionField {
-  const { titleVariant = 'h2', description, tooltip, space } = data
+  const {
+    titleVariant = 'h2',
+    description,
+    tooltip,
+    titleTooltip,
+    space,
+    marginBottom,
+  } = data
   return {
     ...extractCommonFields(data),
     doesNotRequireAnswer: true,
@@ -112,7 +121,9 @@ export function buildDescriptionField(
     description,
     titleVariant,
     tooltip,
+    titleTooltip,
     space,
+    marginBottom,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
   }
@@ -180,12 +191,13 @@ export function buildAsyncSelectField(
 export function buildCompanySearchField(
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
 ): CompanySearchField {
-  const { placeholder } = data
+  const { placeholder, shouldIncludeIsatNumber } = data
 
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
+    shouldIncludeIsatNumber,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
   }
@@ -248,6 +260,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    maxSizeErrorText,
     forImageUpload,
   } = data
   return {
@@ -260,6 +273,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    maxSizeErrorText,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
@@ -288,9 +302,10 @@ export function buildKeyValueField(data: {
   label: FormText
   value: FormText | FormTextArray
   width?: FieldWidth
+  colSpan?: SpanType
   condition?: Condition
 }): KeyValueField {
-  const { label, value, condition, width = 'full' } = data
+  const { label, value, condition, width = 'full', colSpan } = data
 
   return {
     id: '',
@@ -299,6 +314,7 @@ export function buildKeyValueField(data: {
     doesNotRequireAnswer: true,
     condition,
     width,
+    colSpan,
     label,
     value,
     type: FieldTypes.KEY_VALUE,

@@ -50,7 +50,7 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
 
@@ -67,16 +67,14 @@ export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   props: DemandsAutofillProps,
 ): string => {
-  return formatMessage(rcReportForm.sections.demands.autofillV2, {
+  return formatMessage(rcReportForm.sections.demands.autofillV3, {
     accusedName: props.defentant.name,
     accusedNationalId: props.defentant.noNationalId
       ? ' '
       : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
     isExtended:
       props.parentCaseDecision &&
-      isAcceptingCaseDecision(props.parentCaseDecision)
-        ? 'yes'
-        : 'no',
+      isAcceptingCaseDecision(props.parentCaseDecision),
     caseType: props.caseType,
     court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
     requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
@@ -84,9 +82,7 @@ export const getDemandsAutofill = (
       ?.replace(' kl.', ', kl.'),
     hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
       CaseCustodyRestrictions.ISOLATION,
-    )
-      ? 'yes'
-      : 'no',
+    ),
   })
 }
 
@@ -514,8 +510,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>

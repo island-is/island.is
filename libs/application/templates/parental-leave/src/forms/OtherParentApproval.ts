@@ -4,13 +4,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   coreMessages,
-  Application,
   buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Form, FormModes, Application } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
@@ -31,116 +29,6 @@ export const OtherParentApproval: Form = buildForm({
       children: [
         buildMultiField({
           id: 'multi',
-          condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() < currentDateStartTime(),
-          title: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
-
-            if (
-              isRequestingRights === YES &&
-              usePersonalAllowanceFromSpouse === YES
-            ) {
-              return otherParentApprovalFormMessages.requestBoth
-            }
-
-            if (isRequestingRights === YES) {
-              return otherParentApprovalFormMessages.requestRights
-            }
-
-            return otherParentApprovalFormMessages.requestAllowance
-          },
-          description: (application: Application) => {
-            const isRequestingRights = getValueViaPath(
-              application.answers,
-              'requestRights.isRequestingRights',
-            ) as YesOrNo
-            const usePersonalAllowanceFromSpouse = getValueViaPath(
-              application.answers,
-              'usePersonalAllowanceFromSpouse',
-            ) as YesOrNo
-
-            if (
-              isRequestingRights === YES &&
-              usePersonalAllowanceFromSpouse === YES
-            ) {
-              return otherParentApprovalFormMessages.introDescriptionBoth
-            }
-
-            if (isRequestingRights === YES) {
-              return otherParentApprovalFormMessages.introDescriptionRights
-            }
-
-            return otherParentApprovalFormMessages.introDescriptionAllowance
-          },
-          children: [
-            buildKeyValueField({
-              label: otherParentApprovalFormMessages.labelDays,
-              width: 'half',
-              condition: (answers) =>
-                getApplicationAnswers(answers).isRequestingRights === YES,
-              value: (application: Application) =>
-                getApplicationAnswers(
-                  application.answers,
-                ).requestDays.toString(),
-            }),
-            buildKeyValueField({
-              label: otherParentApprovalFormMessages.labelPersonalDiscount,
-              width: 'half',
-              condition: (answers) =>
-                getApplicationAnswers(answers)
-                  .usePersonalAllowanceFromSpouse === YES,
-              value: (application: Application) => {
-                const {
-                  spouseUseAsMuchAsPossible,
-                  spouseUsage,
-                } = getApplicationAnswers(application.answers)
-
-                if (spouseUseAsMuchAsPossible === YES) {
-                  return '100%'
-                }
-
-                return `${spouseUsage}%`
-              },
-            }),
-            buildDescriptionField({
-              id: 'final',
-              title: otherParentApprovalFormMessages.warning,
-              titleVariant: 'h4',
-              description: otherParentApprovalFormMessages.startDateInThePast,
-              condition: (answers) =>
-                new Date(
-                  getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() < currentDateStartTime(),
-            }),
-            buildSubmitField({
-              id: 'submit',
-              title: coreMessages.buttonSubmit,
-              placement: 'footer',
-              actions: [
-                {
-                  name: coreMessages.buttonReject,
-                  type: 'reject',
-                  event: 'REJECT',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'multi',
-          condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() >= currentDateStartTime(),
           title: (application: Application) => {
             const isRequestingRights = getValueViaPath(
               application.answers,
@@ -241,6 +129,10 @@ export const OtherParentApproval: Form = buildForm({
                   name: coreMessages.buttonApprove,
                   type: 'primary',
                   event: 'APPROVE',
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() >= currentDateStartTime(),
                 },
               ],
             }),

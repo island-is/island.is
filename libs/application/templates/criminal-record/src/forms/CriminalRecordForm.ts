@@ -3,13 +3,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const CriminalRecordForm: Form = buildForm({

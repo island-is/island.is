@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { Citizenship } from '@island.is/api/schema'
 import { ExternalDataNationalRegistry } from '../../types'

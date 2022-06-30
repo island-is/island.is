@@ -1,15 +1,20 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildTextField,
   buildSubmitField,
-  DefaultEvents,
   buildCheckboxField,
+  buildCompanySearchField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
 import {
   section,
   application,
@@ -18,6 +23,7 @@ import {
   technicalAnnouncements,
   overview,
   submitted,
+  selectCompany,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
 
@@ -57,6 +63,30 @@ export const LoginServiceForm: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'selectCompany',
+      title: section.selectCompany,
+      children: [
+        buildMultiField({
+          id: 'selectCompanyMultiField',
+          title: selectCompany.general.pageTitle,
+          description: selectCompany.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'selectCompany.nameFieldTitle',
+              title: selectCompany.labels.nameDescription,
+              doesNotRequireAnswer: true,
+              component: 'FieldTitle',
+            }),
+            buildCompanySearchField({
+              id: 'selectCompany.searchField',
+              title: selectCompany.labels.nameAndNationalId,
+              shouldIncludeIsatNumber: true,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'applicantSection',
       title: section.applicant,
       children: [
@@ -71,10 +101,67 @@ export const LoginServiceForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'FieldTitle',
             }),
+            buildTextField({
+              id: 'applicant.name',
+              title: applicant.labels.name,
+              backgroundColor: 'blue',
+              width: 'half',
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.label',
+                  '',
+                )
+              },
+            }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              title: applicant.labels.nationalId,
+              backgroundColor: 'blue',
+              width: 'half',
+              format: '######-####',
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.nationalId',
+                  '',
+                )
+              },
+            }),
+            buildTextField({
+              id: 'applicant.typeOfOperation',
+              title: applicant.labels.typeOfOperation,
+              backgroundColor: 'blue',
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+              },
+            }),
             buildCustomField({
-              id: 'applicant',
-              title: '',
-              component: 'InformationAboutApplication',
+              id: 'applicant.invalidIsat',
+              title: applicant.labels.invalidIsat,
+              doesNotRequireAnswer: true,
+              component: 'IsatInvalid',
+              condition: (formValue) => {
+                const isatNr = getValueViaPath(
+                  formValue,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+                if (isatNr !== undefined) {
+                  return isatNr.slice(0, 2) !== '84'
+                }
+                return false
+              },
             }),
             buildCustomField(
               {

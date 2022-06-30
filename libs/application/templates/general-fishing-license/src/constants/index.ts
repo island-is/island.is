@@ -1,4 +1,4 @@
-import { DefaultEvents } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 export enum States {
   PREREQUISITES = 'prerequisites',

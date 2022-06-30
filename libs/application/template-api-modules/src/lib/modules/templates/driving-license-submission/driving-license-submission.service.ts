@@ -6,7 +6,8 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,

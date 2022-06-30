@@ -250,6 +250,14 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
+      explanation: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.explanantion',
+        defaultMessage:
+          '{date} kl. {time} - {userName} {userTitle}, {institutionName}<br/>Ástæða: {explanation}',
+        description:
+          'Notaður sem beinagrind af texta í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála..',
+      },
     }),
     modifyRulingInfo: defineMessages({
       title: {
@@ -342,11 +350,20 @@ export const signedVerdictOverview = {
           'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
         description: 'Notaður sem label á framlengja mál takka',
       },
+      // TODO: remove
       extensionInfo: {
         id:
           'judicial.system.core:signed_verdict_overview.case_extension.button',
         defaultMessage:
           '{hasChildCase, select, yes {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
+        description:
+          'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
+      },
+      extensionInfoV2: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_extension.button_v2',
+        defaultMessage:
+          '{hasChildCase, select, true {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
         description:
           'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
       },

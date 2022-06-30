@@ -23,6 +23,17 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
   })
 
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    const caseDataAddition: Case = {
+      ...caseData,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+  })
+
   it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
@@ -77,6 +88,18 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     intercept(caseData)
 
     cy.getByTestid('requestPDFButton').should('exist')
+  })
+
+  it('should have a button that copies link to case for defender', () => {
+    const caseId = 'test_case_id'
+    intercept({ ...caseData, id: caseId })
+
+    cy.getByTestid('copyLinkToCase').click()
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .then((data) => data)
+      .should('equal', `${window.location.origin}/verjandi/${caseId}`)
   })
 
   it.skip('should navigate to /krofur on successful confirmation', () => {

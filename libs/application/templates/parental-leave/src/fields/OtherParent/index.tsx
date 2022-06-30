@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -33,8 +32,8 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
           options: (application) => getOtherParentOptions(application),
           onSelect: (s: string) => {
             if (s === SPOUSE || s === NO) {
-              setValue('otherParent.otherParentName', '')
-              setValue('otherParent.otherParentId', '')
+              setValue('otherParentObj.otherParentName', '')
+              setValue('otherParentObj.otherParentId', '')
             }
           },
         }}

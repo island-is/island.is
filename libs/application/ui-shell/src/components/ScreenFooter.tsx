@@ -2,14 +2,13 @@ import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatText, coreMessages } from '@island.is/application/core'
 import {
   Application,
-  formatText,
   FormModes,
   SubmitField,
-  coreMessages,
   CallToAction,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import * as styles from './ScreenFooter.css'
 
@@ -93,24 +92,30 @@ export const ScreenFooter: FC<FooterProps> = ({
       )
     }
 
-    return submitField?.actions.map(({ event, type, name }) => {
-      const buttonConfig = submitButtonConfig[type]
-
-      return (
-        <Box key={`cta-${event}`} marginX={1}>
-          <Button
-            type="submit"
-            loading={!canProceed || loading}
-            colorScheme={buttonConfig.colorScheme as any}
-            id={typeof event === 'object' ? event.type : event}
-            variant={buttonConfig.variant}
-            icon={buttonConfig.icon}
-          >
-            {formatText(name, application, formatMessage)}
-          </Button>
-        </Box>
+    return submitField?.actions
+      .filter(({ condition }) =>
+        typeof condition === 'function'
+          ? condition(application.answers, application.externalData)
+          : true,
       )
-    })
+      .map(({ event, type, name }, idx) => {
+        const buttonConfig = submitButtonConfig[type]
+
+        return (
+          <Box key={`cta-${event}`} marginLeft={idx === 0 ? 0 : 2}>
+            <Button
+              type="submit"
+              loading={!canProceed || loading}
+              colorScheme={buttonConfig.colorScheme as any}
+              id={typeof event === 'object' ? event.type : event}
+              variant={buttonConfig.variant}
+              icon={buttonConfig.icon}
+            >
+              {formatText(name, application, formatMessage)}
+            </Button>
+          </Box>
+        )
+      })
   }
 
   return (

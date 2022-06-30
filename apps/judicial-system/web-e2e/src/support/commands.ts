@@ -28,6 +28,8 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         graphqlRequest.headers.cookie.includes(UserRole.REGISTRAR)
       ) {
         return { fixture: 'judgeUser' }
+      } else if (graphqlRequest.headers.cookie.includes(UserRole.STAFF)) {
+        return { fixture: 'staffUser' }
       } else if (graphqlRequest.headers.referer.includes('/domur')) {
         return { fixture: 'judgeUser' }
       } else {

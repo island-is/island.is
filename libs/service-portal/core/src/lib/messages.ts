@@ -201,10 +201,21 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
-
+  vehiclesHistory: {
+    id: 'service.portal:vehicles-history',
+    defaultMessage: 'Ökutækjaferill',
+  },
+  vehiclesLookup: {
+    id: 'service.portal:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
   yourVehicles: {
     id: 'service.portal:your-vehicles',
     defaultMessage: 'Þín ökutæki',
+  },
+  myVehicles: {
+    id: 'service.portal:my-vehicles',
+    defaultMessage: 'Ökutækin mín',
   },
   incoming: {
     id: 'service.portal:incoming',
@@ -672,5 +683,45 @@ export const m = defineMessages({
   mortageCertificate: {
     id: 'service.portal:mortage-certificate',
     defaultMessage: 'Veðbókarvottorð',
+  },
+  companyTitle: {
+    id: 'service.portal:company-title',
+    defaultMessage: 'Um fyrirtæki',
+  },
+  datesLabel: {
+    id: 'service.portal:dates-label',
+    defaultMessage: 'Dagsetningar',
+  },
+  datepickerFromLabel: {
+    id: 'service.portal:datepicker-dateFrom-label',
+    defaultMessage: 'Dagsetning frá',
+  },
+  datepickerToLabel: {
+    id: 'service.portal:datepicker-dateTo-label',
+    defaultMessage: 'Dagsetning til',
+  },
+  datepickLabel: {
+    id: 'service.portal:datepicker-placeholder',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  clearFilter: {
+    id: 'service.portal:clear-filter',
+    defaultMessage: 'Hreinsa síu',
+  },
+  clearAllFilters: {
+    id: 'service.portal:clear-all-filters',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  openFilter: {
+    id: 'service.portal:open-filter',
+    defaultMessage: 'Opna síu',
+  },
+  closeFilter: {
+    id: 'service.portal:close-filter',
+    defaultMessage: 'Loka síu',
+  },
+  clearSelected: {
+    id: 'service.portal:clear-selected',
+    defaultMessage: 'Hreinsa val',
   },
 })

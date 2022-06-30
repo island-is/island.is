@@ -1,12 +1,14 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
-  DefaultStateLifeCycle,
   DefaultEvents,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'

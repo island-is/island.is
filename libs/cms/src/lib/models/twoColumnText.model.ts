@@ -28,6 +28,9 @@ export class TwoColumnText {
 
   @Field(() => Link, { nullable: true })
   leftLink?: Link | null
+
+  @Field(() => Boolean, { nullable: true })
+  dividerOnTop?: boolean
 }
 
 export const mapTwoColumnText = ({
@@ -46,4 +49,5 @@ export const mapTwoColumnText = ({
     ? mapDocument(fields.leftContent, sys.id + ':left-content')
     : [],
   leftLink: fields.leftLink ? mapLink(fields.leftLink) : null,
+  dividerOnTop: fields.dividerOnTop ?? true,
 })

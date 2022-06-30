@@ -6,6 +6,8 @@ import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
+    // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
+    // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
     return 55
   }
   return defaultBoost
@@ -18,6 +20,7 @@ export const searchQuery = (
     page = 1,
     types = [],
     tags = [],
+    excludedTags = [],
     contentfulTags = [],
     countTag = [],
     countTypes = false,
@@ -27,6 +30,7 @@ export const searchQuery = (
 ) => {
   const should = []
   const must: TagQuery[] = []
+  const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
   should.push({
@@ -58,6 +62,12 @@ export const searchQuery = (
   if (tags?.length) {
     tags.forEach((tag) => {
       must.push(tagQuery(tag))
+    })
+  }
+
+  if (excludedTags?.length) {
+    excludedTags.forEach((tag) => {
+      mustNot.push(tagQuery(tag))
     })
   }
 
@@ -95,6 +105,7 @@ export const searchQuery = (
       bool: {
         should,
         must,
+        must_not: mustNot,
         minimum_should_match: minimumShouldMatch,
       },
     },
