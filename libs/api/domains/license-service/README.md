@@ -6,7 +6,7 @@
 
 A license has the following parts: ...
 
-Licenses that are currently accepted are Driving, ADR and Machine license.
+Licenses that are currently accepted are Driving, Firearm, ADR and Machine license.
 
 ### Driving license
 
