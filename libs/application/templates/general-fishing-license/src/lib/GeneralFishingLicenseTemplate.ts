@@ -7,7 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'

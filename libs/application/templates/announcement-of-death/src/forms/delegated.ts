@@ -1,10 +1,9 @@
 import {
   buildForm,
   buildCustomField,
-  Form,
-  FormModes,
   buildMultiField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'
 

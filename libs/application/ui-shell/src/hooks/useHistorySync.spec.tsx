@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
 import { ApplicationUIState } from '../reducer/ReducerTypes'
+import { buildForm, buildTextField } from '@island.is/application/core'
 import {
   ApplicationStatus,
   ApplicationTypes,
-  buildForm,
-  buildTextField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import { initializeReducer } from '../reducer/ApplicationFormReducer'
 import { useHistorySync } from './useHistorySync'

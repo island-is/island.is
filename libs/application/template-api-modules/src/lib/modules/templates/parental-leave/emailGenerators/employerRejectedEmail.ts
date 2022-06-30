@@ -1,6 +1,6 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { ApplicationConfigurations } from '@island.is/application/types'
 
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'

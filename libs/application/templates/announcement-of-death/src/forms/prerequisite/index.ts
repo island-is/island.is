@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
@@ -10,10 +8,10 @@ import {
   buildDescriptionField,
   buildKeyValueField,
   buildSubmitField,
-  DefaultEvents,
   getValueViaPath,
   buildRadioField,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
