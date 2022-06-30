@@ -1,4 +1,4 @@
-import { BasicDataProvider } from '@island.is/application/core'
+import { BasicDataProvider } from '@island.is/application/types'
 
 export class ExampleSucceeds extends BasicDataProvider {
   readonly type = 'ExampleSucceeds'

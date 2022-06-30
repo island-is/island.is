@@ -5,12 +5,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   coreMessages,
   buildTextField,
   buildSubSection,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import {

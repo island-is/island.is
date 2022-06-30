@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { PaymentPending } from '@island.is/application/ui-components'
 
 export const PaymentPendingScreen: FC<FieldBaseProps> = ({

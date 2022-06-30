@@ -104,6 +104,7 @@ module.exports = {
     '<rootDir>/libs/application/graphql',
     '<rootDir>/libs/application/template-api-modules',
     '<rootDir>/libs/application/template-loader',
+    '<rootDir>/libs/application/types',
     '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',

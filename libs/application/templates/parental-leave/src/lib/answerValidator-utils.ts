@@ -4,12 +4,8 @@ import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import subtractDays from 'date-fns/subDays'
 import isValid from 'date-fns/isValid'
-import {
-  AnswerValidationError,
-  Application,
-  StaticTextObject,
-  NO_ANSWER,
-} from '@island.is/application/core'
+import { AnswerValidationError, NO_ANSWER } from '@island.is/application/core'
+import { Application, StaticTextObject } from '@island.is/application/types'
 import { StartDateOptions, YES, NO } from '../constants'
 import { getExpectedDateOfBirth } from './parentalLeaveUtils'
 import {

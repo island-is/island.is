@@ -11,10 +11,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Form,
-  FormModes,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'

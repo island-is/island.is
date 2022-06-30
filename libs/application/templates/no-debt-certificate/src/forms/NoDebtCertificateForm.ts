@@ -1,12 +1,11 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const NoDebtCertificateForm: Form = buildForm({
