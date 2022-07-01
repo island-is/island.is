@@ -161,5 +161,29 @@ describe('Parental leave', () => {
       })
       .click()
     cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.shared.periodsImageTitle),
+    })
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.firstPeriodStart.title),
+    })
+      .findByRole('radio', {
+        name: label(
+          parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
+        ),
+      })
+      .click()
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('heading', {
+      name: label(parentalLeaveFormMessages.duration.title),
+    })
+    cy.findByRole('radio', {
+      name: label(parentalLeaveFormMessages.duration.monthsOption),
+    }).click()
+    cy.get('[data-testid="proceed"]').click()
   })
 })
