@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -80,6 +80,11 @@ export const EditSignature = () => {
   const { formatMessage: t, formatDateFns } = useLocale()
   const { draft, actions } = useDraftingState()
   const { updateState } = actions
+  // Empty string is necessesary. If signedDocumentUrl is undefined the database value for the draft
+  // doesn't get updated.
+  const [uploadUrl, setUploadUrl] = useState(
+    draft.signedDocumentUrl.value ?? '',
+  )
 
   const {
     uploadLocation,
@@ -91,13 +96,19 @@ export const EditSignature = () => {
 
   const onRemove = () => {
     resetUploadLocation()
+    //Ugly
+    setUploadUrl('')
   }
 
   useEffect(() => {
-    if (uploadLocation) {
-      updateState('signedDocumentUrl', uploadLocation as URLString)
-    }
+    updateState('signedDocumentUrl', uploadUrl as URLString)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadUrl])
+
+  useEffect(() => {
+    if (uploadLocation) {
+      setUploadUrl(uploadLocation as URLString)
+    }
   }, [uploadLocation])
 
   return (
@@ -123,7 +134,7 @@ export const EditSignature = () => {
           <AlertMessage type="error" title={uploadStatus.error} />
         )}
       </Box>
-      {draft.signedDocumentUrl.value != null && (
+      {draft.signedDocumentUrl.value && (
         <>
           <Box marginBottom={3} display="flex" flexWrap="wrap">
             <Inline space={2} flexWrap="wrap">
