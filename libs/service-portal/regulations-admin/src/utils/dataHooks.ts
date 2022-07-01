@@ -47,9 +47,9 @@ export const CreatePresignedPostMutation = gql`
   }
 `
 export type UploadingState =
-  | { uploading: false; file?: never; error?: string }
-  | { uploading: false; file: File; error?: never }
-  | { uploading: true; file?: never; error?: never }
+  | { uploading: false; error?: string }
+  | { uploading: false; error?: never }
+  | { uploading: true; error?: never }
 
 export const useS3Upload = () => {
   const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
