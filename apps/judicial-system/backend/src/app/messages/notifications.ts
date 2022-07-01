@@ -234,30 +234,12 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
     },
-    // TODO: remove this unused contentful string
-    prosecutorBodyAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_attachment_v1',
-      defaultMessage:
-        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef ekki tókst að vista úrskurð í AWS S3',
-    },
     courtBody: {
       id: 'judicial.system.backend:notifications.signed_ruling.court_body',
       defaultMessage:
         'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskurðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
-    },
-    defenderBodyAttachment: {
-      // TODO: Remove this message
-      id:
-        'judicial.system.backend:notifications.signed_ruling.defender_body_attachment',
-      defaultMessage:
-        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
-      description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
     defenderBodyV2: {
       id:
@@ -277,15 +259,6 @@ export const notifications = {
     },
   }),
   prisonCourtDateEmail: defineMessages({
-    // TODO: remove isolationText
-    isolationText: {
-      id:
-        'judicial.system.backend:notifications.prison_court_date_email.isolation_text',
-      defaultMessage:
-        '{isolation, select, FALSE {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
-      description:
-        'Texti í pósti til fangeslis sem tilgreinir hvort farið er fram á einangrun',
-    },
     isolationTextV2: {
       id:
         'judicial.system.backend:notifications.prison_court_date_email.isolation_text_v2',

@@ -34,7 +34,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CourtArrangements, {
   useCourtArrangements,
@@ -51,12 +50,7 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const {
-    autofill,
-    updateCase,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { autofill, sendNotification, isSendingNotification } = useCase()
   const {
     courtDate,
     setCourtDate,
