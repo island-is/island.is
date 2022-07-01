@@ -33,18 +33,6 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', 'main.js')
-    .features({
-      INAO_Client: {
-        env: {},
-        secrets: {
-          FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
-            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
-          FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
-            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
-        },
-      },
-    })
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
@@ -131,12 +119,18 @@ export const serviceSetup = (services: {
         staging: 'http://web-financial-aid-backend',
         prod: 'http://web-financial-aid-backend',
       },
-      FINANCIAL_STATEMENTS_INAO_BASE_PATH:
-        'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+      FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
+        dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        staging: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        prod: 'https://star-re.crm4.dynamics.com/api/data/v9.1',
+      },
       FINANCIAL_STATEMENTS_INAO_ISSUER:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0',
-      FINANCIAL_STATEMENTS_INAO_SCOPE:
-        'https://dev-re.crm4.dynamics.com/.default',
+      FINANCIAL_STATEMENTS_INAO_SCOPE: {
+        dev: 'https://dev-re.crm4.dynamics.com/.default',
+        staging: 'https://dev-re.crm4.dynamics.com/.default',
+        prod: 'https://star-re.crm4.dynamics.com/.default',
+      },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
     })
@@ -183,6 +177,10 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .xroad(
       AdrAndMachine,
