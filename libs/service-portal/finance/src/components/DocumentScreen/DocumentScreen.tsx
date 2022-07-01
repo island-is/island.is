@@ -146,7 +146,7 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 4]}>
+          <Box marginTop={[1, 1, 2, 2, 5]}>
             <Filter
               resultCount={0}
               variant="popover"
