@@ -4,7 +4,7 @@ import { createIntl } from 'react-intl'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import { RulingSignatureConfirmationQueryQuery } from '../../graphql/schema'
-import { getSigningProcess, getSuccessText } from './SigningModal'
+import { getSigningProgress, getSuccessText } from './SigningModal'
 
 type SignatureConfirmation = RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation']
 describe('getSigningProcess', () => {
@@ -13,7 +13,7 @@ describe('getSigningProcess', () => {
       documentSigned: true,
     }
 
-    const result = getSigningProcess(signatureConfirmation, undefined)
+    const result = getSigningProgress(signatureConfirmation, undefined)
 
     expect(result).toBe('success')
   })
@@ -24,13 +24,13 @@ describe('getSigningProcess', () => {
       code: 7023,
     }
 
-    const result = getSigningProcess(signatureConfirmation, undefined)
+    const result = getSigningProgress(signatureConfirmation, undefined)
 
     expect(result).toBe('canceled')
   })
 
   test('should return error if there is an error', () => {
-    const result = getSigningProcess(undefined, new ApolloError({}))
+    const result = getSigningProgress(undefined, new ApolloError({}))
 
     expect(result).toBe('error')
   })
@@ -39,13 +39,13 @@ describe('getSigningProcess', () => {
     const signatureConfirmation: SignatureConfirmation = {
       documentSigned: false,
     }
-    const result = getSigningProcess(signatureConfirmation, undefined)
+    const result = getSigningProgress(signatureConfirmation, undefined)
 
     expect(result).toBe('error')
   })
 
   test('should return inProgress when there is no data nor error', () => {
-    const result = getSigningProcess(undefined, undefined)
+    const result = getSigningProgress(undefined, undefined)
 
     expect(result).toBe('inProgress')
   })
