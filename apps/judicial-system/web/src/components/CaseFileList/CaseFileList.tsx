@@ -42,7 +42,7 @@ const CaseFileList: React.FC<Props> = (props) => {
     isCaseCompleted,
   } = props
 
-  const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
   const { formatMessage } = useIntl()
@@ -94,14 +94,12 @@ const CaseFileList: React.FC<Props> = (props) => {
               !(isCaseCompleted && file.state === CaseFileState.STORED_IN_COURT)
                 ? (file: UploadFile) => {
                     if (file.id) {
-                      handleOpenFile(file.id)
+                      onOpen(file.id)
                     }
                   }
                 : undefined
             }
-            onRemoveClick={() =>
-              canOpenFiles ? handleOpenFile(file.id) : null
-            }
+            onRemoveClick={() => (canOpenFiles ? onOpen(file.id) : null)}
             onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
           />
           {file.status === 'unsupported' && (
