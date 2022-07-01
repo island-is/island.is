@@ -20312,10 +20312,10 @@ jwt-decode@^3.1.2:
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
-"kennitala@npm:@island.is/kennitala@2.0.0-beta.3":
-  version "2.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@island.is/kennitala/-/kennitala-2.0.0-beta.3.tgz#0d4d79055d432af68403d93ad83a1d6b15ea527d"
-  integrity sha512-6+2Nh5kcLMpdZM65vOWhsYGx05FQ2MJpi7mgW5u6ZD5lsMYE35GH+wlQcgNyLM5GLu2vIY131VN0G8Qp8WNktg==
+"kennitala@npm:@island.is/kennitala@2.0.0-beta.4":
+  version "2.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@island.is/kennitala/-/kennitala-2.0.0-beta.4.tgz#81320aecf95a6511e604febec4762bb1a4e8161c"
+  integrity sha512-d555X33wHADGmfKvmX1gslmEZ3665Sni5JW+Ugm5JLv50PvKuM7CHVHhILpfAsm9Qr//4y4bMo6YxICP+HkbbQ==
 
 keyv@^3.0.0:
   version "3.1.0"
