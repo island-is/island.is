@@ -2964,6 +2964,33 @@
         }
       }
     },
+    "application-templates-operating-license": {
+      "root": "libs/application/templates/operating-license",
+      "sourceRoot": "libs/application/templates/operating-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/operating-license/tsconfig.lib.json",
+              "libs/application/templates/operating-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/operating-license/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/operating-license/src/lib/messages.ts"
+          }
+        }
+      }
+    },
     "application-templates-p-sign": {
       "root": "libs/application/templates/p-sign",
       "sourceRoot": "libs/application/templates/p-sign/src",
