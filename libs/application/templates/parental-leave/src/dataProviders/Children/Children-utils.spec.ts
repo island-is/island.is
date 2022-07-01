@@ -58,14 +58,18 @@ const createApplicationWithChildren = (
 describe('applicationsToChildInformation', () => {
   it('should return empty array when no applicant', () => {
     const applicationsWhereApplicant: Application[] = []
-    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual([])
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(
+      [],
+    )
   })
   it('should return empty array when no children', () => {
     const children: ChildInformationWithoutRights[] = []
     const applicationsWhereApplicant: Application[] = [
       createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
     ]
-    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual([])
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(
+      [],
+    )
   })
   it('should return children of applicant', () => {
     const children: ChildInformationWithoutRights[] = [
@@ -77,7 +81,9 @@ describe('applicationsToChildInformation', () => {
     const applicationsWhereApplicant: Application[] = [
       createApplicationWithChildren(PRIMARY_PARENT_ID, children, 0),
     ]
-    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(children)
+    expect(applicationsToChildInformation(applicationsWhereApplicant)).toEqual(
+      children,
+    )
   })
 })
 

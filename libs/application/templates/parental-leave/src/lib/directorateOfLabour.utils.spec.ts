@@ -58,7 +58,7 @@ describe('monthsToDays', () => {
   it('should return 135 days for the minimum period', () => {
     const months = 6
     const givenDays = 45
-    const givenDaysInMonths = givenDays/DAYS_IN_MONTH
+    const givenDaysInMonths = givenDays / DAYS_IN_MONTH
     const sub = months - givenDaysInMonths
 
     expect(monthsToDays(sub)).toBe(135)
@@ -311,7 +311,9 @@ describe('calculateRemainingNumberOfDays', () => {
       },
       privatePensionFundRatio: 0,
     },
-    employers: [{ email: 'test@test.is', nationalRegistryId: 'nationalRegistryId' }],
+    employers: [
+      { email: 'test@test.is', nationalRegistryId: 'nationalRegistryId' },
+    ],
     status: 'In Process',
     rightsCode: '',
   }
@@ -592,13 +594,28 @@ describe('calculateMaxPercentageForPeriod', () => {
 
   describe('calculateMinPercentageForPeriod', () => {
     it('should calculate 2% for a full year', () => {
-      expect(calculateMinPercentageForPeriod(new Date(2020, 2, 14), new Date(2021, 2, 13))).toBe(0.02)
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 2, 14),
+          new Date(2021, 2, 13),
+        ),
+      ).toBe(0.02)
     })
     it('should calculate 2% for 180 days', () => {
-      expect(calculateMinPercentageForPeriod(new Date(2020, 1, 1), new Date(2020, 6, 30))).toBe(0.02)
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 1, 1),
+          new Date(2020, 6, 30),
+        ),
+      ).toBe(0.02)
     })
     it('should calculate 2% for 180 - 45 days', () => {
-      expect(calculateMinPercentageForPeriod(new Date(2020, 1, 1), new Date(2020, 5, 15))).toBe(0.02)
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 1, 1),
+          new Date(2020, 5, 15),
+        ),
+      ).toBe(0.02)
     })
   })
 })

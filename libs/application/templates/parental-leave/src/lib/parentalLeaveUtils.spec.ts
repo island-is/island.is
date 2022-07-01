@@ -64,7 +64,7 @@ function buildField(): Field {
     component: FieldComponents.TEXT,
     id: 'periods',
     title: 'fieldTitle',
-    children: undefined
+    children: undefined,
   }
 }
 
@@ -237,7 +237,7 @@ describe('getSpouse', () => {
           data: {
             spouse: {
               name: 'my spouse',
-              nationalId: 'spouse national ID'
+              nationalId: 'spouse national ID',
             },
           },
           date: new Date(),
@@ -245,21 +245,44 @@ describe('getSpouse', () => {
         },
       },
     })
-    expect(getSpouse(application)).toEqual({ "name": "my spouse", "nationalId": "spouse national ID" })
+    expect(getSpouse(application)).toEqual({
+      name: 'my spouse',
+      nationalId: 'spouse national ID',
+    })
   })
 })
 
 describe('getOtherParentOptions', () => {
   it('should return default options for the other parent', () => {
     const application = buildApplication()
-    expect(getOtherParentOptions(application)).toEqual([{ "label": { "defaultMessage": "Ég vil ekki staðfesta hitt foreldrið að svo stöddu", "description": "I do not want to confirm the other parent at this time.", "id": "pl.application:otherParent.none" }, "value": "no" }, { "label": { "defaultMessage": "Hitt foreldrið er:", "description": "The other parent is:", "id": "pl.application:otherParent.option" }, "value": "manual" }])
+    expect(getOtherParentOptions(application)).toEqual([
+      {
+        label: {
+          defaultMessage: 'Ég vil ekki staðfesta hitt foreldrið að svo stöddu',
+          description:
+            'I do not want to confirm the other parent at this time.',
+          id: 'pl.application:otherParent.none',
+        },
+        value: 'no',
+      },
+      {
+        label: {
+          defaultMessage: 'Hitt foreldrið er:',
+          description: 'The other parent is:',
+          id: 'pl.application:otherParent.option',
+        },
+        value: 'manual',
+      },
+    ])
   })
 })
 
 describe('isEligableForParentalLeave', () => {
   it('should return undefined without data', () => {
     const application = buildApplication()
-    expect(isEligibleForParentalLeave(application.externalData)).toEqual(undefined)
+    expect(isEligibleForParentalLeave(application.externalData)).toEqual(
+      undefined,
+    )
   })
 })
 
@@ -325,45 +348,66 @@ describe('getApplicationExternalData', () => {
         children: {
           data: {
             children: 'Mock child',
-            existingApplications: 'Mock application'
+            existingApplications: 'Mock application',
           },
           date: new Date(),
-          status: 'success'
+          status: 'success',
         },
         userProfile: {
           data: {
             email: 'mock@email.is',
-            mobilePhoneNumber: 'Mock number'
+            mobilePhoneNumber: 'Mock number',
           },
           date: new Date(),
-          status: 'success'
+          status: 'success',
         },
         person: {
           data: {
             genderCode: 'Mock gender code',
-            fullName: 'Mock name'
+            fullName: 'Mock name',
           },
           date: new Date(),
-          status: 'success'
-        }
-      }
+          status: 'success',
+        },
+      },
     })
-    expect(getApplicationExternalData(application.externalData)).toEqual({ "applicantGenderCode": "Mock gender code", "applicantName": "Mock name", "children": "Mock child", "dataProvider": { "children": "Mock child", "existingApplications": "Mock application" }, "existingApplications": "Mock application", "userEmail": "mock@email.is", "userPhoneNumber": "Mock number" })
+    expect(getApplicationExternalData(application.externalData)).toEqual({
+      applicantGenderCode: 'Mock gender code',
+      applicantName: 'Mock name',
+      children: 'Mock child',
+      dataProvider: {
+        children: 'Mock child',
+        existingApplications: 'Mock application',
+      },
+      existingApplications: 'Mock application',
+      userEmail: 'mock@email.is',
+      userPhoneNumber: 'Mock number',
+    })
   })
 })
 
 describe('requiresOtherParentApproval', () => {
   it('should return false when conditions not met', () => {
     const application = buildApplication()
-    expect(requiresOtherParentApproval(application.answers, application.externalData)).toBe(false)
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(false)
   })
   it('should return true when usePersonalAllowanceFromSpouse === YES ', () => {
     const application = buildApplication({
       answers: {
-        usePersonalAllowanceFromSpouse: YES
-      }
+        usePersonalAllowanceFromSpouse: YES,
+      },
     })
-    expect(requiresOtherParentApproval(application.answers, application.externalData)).toBe(true)
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
   })
 })
 
