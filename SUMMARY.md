@@ -168,7 +168,7 @@
   - [National Registry](libs/clients/national-registry/README.md)
     - [V1](libs/clients/national-registry/v1/README.md)
     - [V2](libs/clients/national-registry/v2/README.md)
-  - [Clients Passports](libs/clients/passports/README.md)
+  - [Passports](libs/clients/passports/README.md)
   - [Ark](libs/clients/payment/README.md)
   - [Payment Schedule](libs/clients/payment-schedule/README.md)
   - [Regulations](libs/clients/regulations/README.md)
