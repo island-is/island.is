@@ -74,7 +74,9 @@ class ApplicationServiceMock {
 }
 
 class ApplicationChargeServiceMock {
-  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {}
+  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+    // do nothing
+  }
 }
 
 describe('ApplicationLifecycleService Unit tests', () => {
