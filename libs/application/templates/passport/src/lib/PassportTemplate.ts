@@ -1,19 +1,24 @@
 import {
+  Application,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ApplicationContext,
-  ApplicationStateSchema,
-  Application,
   DefaultEvents,
-  ApplicationRole,
 } from '@island.is/application/types'
-import { dataSchema } from './dataSchema'
-import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { assign } from 'xstate'
 import { m } from '../lib/messages'
-
-const oneDay = 24 * 3600 * 1000
-const thirtyDays = 24 * 3600 * 1000 * 30
+import {
+  ApiActions,
+  Events,
+  Roles,
+  sixtyDays,
+  States,
+  twoDays,
+} from './constants'
+import { dataSchema } from './dataSchema'
 
 const pruneAfter = (time: number) => {
   return {
@@ -39,7 +44,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           progress: 0.33,
-          lifecycle: pruneAfter(oneDay),
+          lifecycle: pruneAfter(twoDays),
           onExit: {
             apiModuleAction: ApiActions.checkForDiscount,
           },
@@ -78,8 +83,8 @@ const PassportTemplate: ApplicationTemplate<
           actionCard: {
             description: m.payment,
           },
-          progress: 0.9,
-          lifecycle: pruneAfter(thirtyDays),
+          progress: 0.7,
+          lifecycle: pruneAfter(sixtyDays),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -89,6 +94,39 @@ const PassportTemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Payment').then((val) =>
                   Promise.resolve(val.payment),
+                ),
+              actions: [
+                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
+        },
+      },
+      [States.PARENT_B_CONFIRM]: {
+        entry: 'assignToParentB',
+        meta: {
+          name: 'ParentB',
+          progress: 0.9,
+          lifecycle: pruneAfter(sixtyDays),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingForParentBConfirmation').then((val) =>
+                  Promise.resolve(val.WaitingForParentBConfirmation),
+                ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/ParentB').then((val) =>
+                  Promise.resolve(val.ParentB),
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
@@ -105,7 +143,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: pruneAfter(thirtyDays),
+          lifecycle: pruneAfter(sixtyDays),
           onEntry: {
             apiModuleAction: ApiActions.submitPassportApplication,
           },
@@ -118,6 +156,18 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               read: {
                 externalData: ['submitPassportApplication'],
+                answers: ['passport'],
+              },
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.Done),
+                ),
+              read: {
+                externalData: ['submitPassportApplication'],
+                answers: ['passport'],
               },
             },
           ],
@@ -126,10 +176,27 @@ const PassportTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToParentB: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            // Assigning Gervimaður Útlönd for testing
+            assignees: ['0101307789'],
+          },
+        }
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (application.assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
+    }
     if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
