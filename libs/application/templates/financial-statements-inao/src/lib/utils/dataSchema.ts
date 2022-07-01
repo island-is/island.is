@@ -67,7 +67,7 @@ const cemetryEquity = z.object({
   newYearEquity: z.string(),
   operationResult: z.string(),
   reevaluatePrice: z.string(),
-  reevaluateOther: z.string()
+  reevaluateOther: z.string(),
 })
 
 const liability = z.object({
@@ -98,21 +98,33 @@ const cemetryExpense = z.object({
   writtenOffExpense: z.string(),
 })
 
-const partyIncome = z
-.object({
+const partyIncome = z.object({
   publicDonations: z.string(),
   partyDonations: z.string(),
   municipalityDonations: z.string(),
   individualDonations: z.string(),
+  otherIncome: z.string(),
+  capitalIncome: z.string(),
+})
+
+const partyExpense = z.object({
+  electionOffice: z.string(),
+  capitalCost: z.string(),
+  otherCost: z.string(),
+})
+
+const individualIncome = z.object({
   corporateDonations: z.string(),
+  individualDonations: z.string(),
   personalDonations: z.string(),
   otherIncome: z.string(),
   capitalIncome: z.string(),
 })
 
-const partyExpense = z
-.object({
+const individualExpense = z.object({
   electionOffice: z.string(),
+  advertisements: z.string(),
+  travelCost: z.string(),
   capitalCost: z.string(),
   otherCost: z.string(),
 })
@@ -122,6 +134,8 @@ export const dataSchema = z.object({
   conditionalAbout,
   about,
   election,
+  individualIncome,
+  individualExpense,
   partyIncome,
   partyExpense,
   cemetryIncome,

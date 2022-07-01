@@ -78,13 +78,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.income?.capitalIncome}
+              value={answers.partyIncome?.capitalIncome}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.individualDonations}
-              value={answers.income?.individualDonations}
+              value={answers.partyIncome?.individualDonations}
             />
           </GridColumn>
         </GridRow>
@@ -94,13 +94,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.income?.municipalityDonations}
+              value={answers.partyIncome?.municipalityDonations}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.individualDonations}
-              value={answers.income?.individualDonations}
+              value={answers.partyIncome?.individualDonations}
             />
           </GridColumn>
         </GridRow>
@@ -110,13 +110,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.publicDonations}
-              value={answers.income?.publicDonations}
+              value={answers.partyIncome?.publicDonations}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.partyDonations}
-              value={answers.income?.partyDonations}
+              value={answers.partyIncome?.partyDonations}
             />
           </GridColumn>
         </GridRow>
@@ -126,7 +126,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.otherIncome}
-              value={answers.income?.otherIncome}
+              value={answers.partyIncome?.otherIncome}
             />
           </GridColumn>
         </GridRow>
@@ -136,13 +136,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalCost}
-              value={answers.expense?.capitalCost}
+              value={answers.partyExpense?.capitalCost}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.electionOffice}
-              value={answers.expense?.electionOffice}
+              value={answers.partyExpense?.electionOffice}
             />
           </GridColumn>
         </GridRow>
@@ -150,7 +150,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.otherCost} value={answers.expense?.otherCost} />
+            <ValueLine label={m.otherCost} value={answers.partyExpense?.otherCost} />
           </GridColumn>
         </GridRow>
       </Box>

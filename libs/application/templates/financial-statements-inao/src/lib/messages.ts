@@ -16,7 +16,7 @@ export const m = defineMessages({
     defaultMessage: 'Þjónustuaðili',
     description: 'service provider',
   },
-  institutionName: {
+  institutionName: { 
     id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
     description: `Institution's name`,

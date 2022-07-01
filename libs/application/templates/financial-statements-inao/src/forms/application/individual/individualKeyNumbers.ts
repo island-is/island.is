@@ -5,18 +5,24 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import {
+  CEMETRY,
   EQUITIESANDLIABILITIESIDS,
-  LESS,
+  INDIVIDUAL,
+  GREATER,
   INDIVIDUALOPERATIONIDS,
-} from '../../../../lib/constants'
-import { m } from '../../../../lib/messages'
+  LESS,
+  PARTYOPERATIONIDS,
+  PARTY,
+} from '../../../lib/constants'
+import { m } from '../../../lib/messages'
 
-export const keyNumbersSection = buildSection({
+export const individualKeyNumbersSection = buildSection({
   id: 'keyNumbers',
   title: m.keyNumbers,
   condition: (answers, externalData) => {
-    const lessThanLimit = getValueViaPath(answers, 'election.incomeLimit') !== LESS
-    return false
+    const greaterThanLimit = getValueViaPath(answers, 'election.incomeLimit') === GREATER
+    const userType = externalData?.currentUserType?.data?.code
+    return greaterThanLimit && userType === INDIVIDUAL
   },
   children: [
     buildSubSection({
@@ -40,7 +46,7 @@ export const keyNumbersSection = buildSection({
           id: 'equitiesAndLiabilities',
           title: m.keyNumbersDebt,
           description: m.fillOutAppopriate,
-          component: 'IndividualElectionEquities',
+          component: 'ElectionEquities',
           childInputIds: Object.values(EQUITIESANDLIABILITIESIDS),
         }),
       ],

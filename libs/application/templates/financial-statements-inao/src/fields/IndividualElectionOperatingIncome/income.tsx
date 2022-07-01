@@ -3,7 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { OPERATIONIDS } from '../../lib/constants'
+import { INDIVIDUALOPERATIONIDS } from '../../lib/constants'
 interface PropTypes {
   getSum: () => void
 }
@@ -15,8 +15,8 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
     <Fragment>
       <Box paddingY={1}>
         <InputController
-          id={OPERATIONIDS.corporateDonations}
-          name={OPERATIONIDS.corporateDonations}
+          id={INDIVIDUALOPERATIONIDS.corporateDonations}
+          name={INDIVIDUALOPERATIONIDS.corporateDonations}
           label={formatMessage(m.corporateDonation)}
           onBlur={() => getSum()}
           backgroundColor="blue"
@@ -25,8 +25,8 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={OPERATIONIDS.individualDonations}
-          name={OPERATIONIDS.individualDonations}
+          id={INDIVIDUALOPERATIONIDS.individualDonations}
+          name={INDIVIDUALOPERATIONIDS.individualDonations}
           label={formatMessage(m.individualDonations)}
           onBlur={() => getSum()}
           backgroundColor="blue"
@@ -35,8 +35,8 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={OPERATIONIDS.personalDonations}
-          name={OPERATIONIDS.personalDonations}
+          id={INDIVIDUALOPERATIONIDS.personalDonations}
+          name={INDIVIDUALOPERATIONIDS.personalDonations}
           label={formatMessage(m.personalDonations)}
           onBlur={() => getSum()}
           backgroundColor="blue"
@@ -45,8 +45,8 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={OPERATIONIDS.otherIncome}
-          name={OPERATIONIDS.otherIncome}
+          id={INDIVIDUALOPERATIONIDS.otherIncome}
+          name={INDIVIDUALOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
           onBlur={() => getSum()}
           backgroundColor="blue"
@@ -55,8 +55,8 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
       </Box>
       <Box paddingY={1}>
         <InputController
-          id={OPERATIONIDS.capitalIncome}
-          name={OPERATIONIDS.capitalIncome}
+          id={INDIVIDUALOPERATIONIDS.capitalIncome}
+          name={INDIVIDUALOPERATIONIDS.capitalIncome}
           label={formatMessage(m.capitalIncome)}
           onBlur={() => getSum()}
           backgroundColor="blue"

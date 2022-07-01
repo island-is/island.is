@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   GridColumn,
@@ -27,6 +27,7 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
 
   const { formatMessage } = useLocale()
   const applicationType = application?.externalData?.currentUserType?.data?.code
+
   const checkIfEmpty = (fieldId: string) => {
     const values = getValues()
     const [income, id] = fieldId.split('.')
@@ -53,7 +54,7 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
             errors={errors}
           />
           <Total
-            name="income.total"
+            name="partyIncome.total"
             total={totalIncome}
             label={formatMessage(m.totalIncome)}
           />
@@ -69,7 +70,7 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
             errors={errors}
           />
           <Total
-            name="expense.total"
+            name="partyExpense.total"
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
           />
@@ -78,7 +79,7 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
-            name="operatingCost.total"
+            name="partyOperatingCost.total"
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

@@ -17,35 +17,37 @@ export enum ApiActions {
 export const GREATER = 'greater'
 export const LESS = 'less'
 
-export const OPERATIONIDS = {
-  incomePrefix: 'income',
-  expensePrefix: 'expense',
-  corporateDonations: 'income.corporateDonations',
-  individualDonations: 'income.individualDonations',
-  personalDonations: 'income.personalDonations',
-  otherIncome: 'income.otherIncome',
-  capitalIncome: 'income.capitalIncome',
-  electionOffice: 'expense.electionOffice',
-  advertisements: 'expense.advertisements',
-  travelCost: 'expense.travelCost',
-  otherCost: 'expense.otherCost',
-  capitalCost: 'expense.capitalCost',
+export const INDIVIDUALOPERATIONIDS = {
+  incomePrefix: 'individualIncome',
+  expensePrefix: 'individualExpense',
+  corporateDonations: 'individualIncome.corporateDonations',
+  individualDonations: 'individualIncome.individualDonations',
+  personalDonations: 'individualIncome.personalDonations',
+  otherIncome: 'individualIncome.otherIncome',
+  capitalIncome: 'individualIncome.capitalIncome',
+  electionOffice: 'individualExpense.electionOffice',
+  advertisements: 'individualExpense.advertisements',
+  travelCost: 'individualExpense.travelCost',
+  otherCost: 'individualExpense.otherCost',
+  capitalCost: 'individualExpense.capitalCost',
+  totalIncome: 'individualIncome.total',
+  totalExpense: 'IndividualExpense.total',
 }
 
 export const PARTYOPERATIONIDS = {
-  incomePrefix: 'income',
-  expensePrefix: 'expense',
-  applicationType: 'income.applicationType',
-  publicDonations: 'income.publicDonations',
-  partyDonations: 'income.partyDonations',
-  municipalityDonations: 'income.municipalityDonations', 
-  corporateDonations: 'income.corporateDonations',
-  individualDonations: 'income.individualDonations',
-  capitalIncome: 'income.capitalIncome',
-  otherIncome: 'income.otherIncome',
-  electionOffice: 'expense.electionOffice',
-  otherCost: 'expense.otherCost',
-  capitalCost: 'expense.capitalCost',
+  incomePrefix: 'partyIncome',
+  expensePrefix: 'partyExpense',
+  publicDonations: 'partyIncome.publicDonations',
+  partyDonations: 'partyIncome.partyDonations',
+  municipalityDonations: 'partyIncome.municipalityDonations', 
+  corporateDonations: 'partyIncome.corporateDonations',
+  individualDonations: 'partyIncome.individualDonations',
+  capitalIncome: 'partyIncome.capitalIncome',
+  otherIncome: 'partyIncome.otherIncome',
+  electionOffice: 'partyExpense.electionOffice',
+  otherCost: 'partyExpense.otherCost',
+  capitalCost: 'partyExpense.capitalCost',
+
 }
 
 export const CEMETRYOPERATIONIDS = {

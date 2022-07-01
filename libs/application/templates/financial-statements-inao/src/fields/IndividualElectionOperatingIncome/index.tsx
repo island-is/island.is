@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
+import React from 'react'
 import {
   GridColumn,
   GridContainer,
@@ -11,31 +10,17 @@ import { m } from '../../lib/messages'
 import { Income } from './income'
 import { Expenses } from './expenses'
 import { Total } from '../KeyNumbers'
-import { getTotal } from '../../lib/utils/helpers'
+import { INDIVIDUALOPERATIONIDS } from '../../lib/constants'
+import { useTotals } from '../../hooks'
 
 export const IndividualElectionOperatingIncome = (): JSX.Element => {
-  const { getValues } = useFormContext()
-  const [totalIncome, setTotalIncome] = useState(0)
-  const [totalExpense, setTotalExpense] = useState(0)
   const { formatMessage } = useLocale()
-
-  const getTotalIncome = useCallback(() => {
-    const values = getValues()
-
-    const totalIncome: number = getTotal(values, 'income')
-    setTotalIncome(totalIncome)
-  }, [getValues])
-
-  const getTotalExpense = useCallback(() => {
-    const values = getValues()
-    const totalExpense: number = getTotal(values, 'expense')
-    setTotalExpense(totalExpense)
-  }, [getValues])
-
-  useEffect(() => {
-    getTotalExpense()
-    getTotalIncome()
-  }, [getTotalExpense, getTotalIncome])
+  const [getTotalIncome, totalIncome] = useTotals(
+    INDIVIDUALOPERATIONIDS.incomePrefix,
+  )
+  const [getTotalExpense, totalExpense] = useTotals(
+    INDIVIDUALOPERATIONIDS.expensePrefix,
+  )
 
   return (
     <GridContainer>
@@ -46,7 +31,7 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           </Text>
           <Income getSum={getTotalIncome} />
           <Total
-            name="income.total"
+            name={INDIVIDUALOPERATIONIDS.totalIncome}
             total={totalIncome}
             label={formatMessage(m.totalIncome)}
           />
@@ -57,7 +42,7 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
           </Text>
           <Expenses getSum={getTotalExpense} />
           <Total
-            name="expense.total"
+            name={INDIVIDUALOPERATIONIDS.totalExpense}
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
           />
