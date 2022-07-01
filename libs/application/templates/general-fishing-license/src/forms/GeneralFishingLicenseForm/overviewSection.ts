@@ -2,9 +2,9 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 
 import { overview } from '../../lib/messages'
 

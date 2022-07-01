@@ -11,7 +11,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   NationalRegistry,
   UserProfile,
