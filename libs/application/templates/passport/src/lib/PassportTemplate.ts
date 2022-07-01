@@ -96,6 +96,7 @@ const PassportTemplate: ApplicationTemplate<
                   Promise.resolve(val.payment),
                 ),
               actions: [
+                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
@@ -103,7 +104,8 @@ const PassportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PARENT_B_CONFIRM },
+          [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.PARENT_B_CONFIRM]: {

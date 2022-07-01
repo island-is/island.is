@@ -357,7 +357,7 @@ export const m = defineMessages({
   },
   applicationCompleteDescription: {
     id: 'pa.application:complete.description',
-    defaultMessage: 'Umsókn þín um vegabréf hefur verið móttekin.',
+    defaultMessage: 'Einhver texti hérna sem segir eitthvað um eitthvað.',
     description: 'Some description',
   },
   applicationCompleteNumber: {

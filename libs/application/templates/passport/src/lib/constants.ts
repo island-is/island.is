@@ -1,6 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
 export type Events =
+  | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.PAYMENT }
 
