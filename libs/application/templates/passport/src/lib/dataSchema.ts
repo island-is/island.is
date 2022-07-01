@@ -22,7 +22,7 @@ export const dataSchema = z.object({
     .refine(
       ({ userPassport, childPassport }) => userPassport || childPassport,
       {
-        message: 'Verður að velja fyrir hvern þú ætlar að sækja um',
+        message: error.invalidValue.defaultMessage,
         path: ['userPassport'],
       },
     ),

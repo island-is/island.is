@@ -100,7 +100,7 @@ export const ParentB: Form = buildForm({
       children: [
         buildMultiField({
           id: 'overviewSection',
-          title: 'Yfirlit yfir umsókn',
+          title: m.overviewSectionTitle,
           children: [
             ...childsOverview.children,
             buildSubmitField({

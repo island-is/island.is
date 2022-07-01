@@ -250,6 +250,11 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     description: 'Some description',
   },
+  overviewSectionTitle: {
+    id: 'pa.application:overviewSection.title',
+    defaultMessage: 'Yfirlit yfir umsókn',
+    description: 'Some description',
+  },
   overviewDescription: {
     id: 'pa.application:overview.description',
     defaultMessage:
