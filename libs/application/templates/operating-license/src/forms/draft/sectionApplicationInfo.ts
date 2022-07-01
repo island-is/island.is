@@ -3,6 +3,7 @@ import {
   buildRadioField,
   buildSelectField,
   buildCheckboxField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
@@ -31,11 +32,9 @@ export const applicationInfo = buildMultiField({
       width: 'half',
       largeButtons: true,
     }),
-
     buildCheckboxField({
       id: 'applicationInfo.hotel.category',
-      title: '',
-      description: m.operationCategoryHotelTitle,
+      title: m.operationCategoryHotelTitle,
       doesNotRequireAnswer: true,
       large: true,
       options: [
@@ -54,8 +53,7 @@ export const applicationInfo = buildMultiField({
     }),
     buildRadioField({
       id: 'applicationInfo.resturant.category',
-      title: '',
-      description: m.operationCategoryResturantTitle,
+      title: m.operationCategoryResturantTitle,
       options: [
         {
           value: OPERATION_CATEGORY.ONE,
@@ -68,24 +66,43 @@ export const applicationInfo = buildMultiField({
       ],
       width: 'half',
       largeButtons: true,
+      space: 'none',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.RESTURANT,
     }),
+    buildDescriptionField({
+      id: 'applicationInfo.hotelTitle',
+      title: m.operationTypeHotelDescription,
+      titleVariant: 'h4',
+      description: '',
+      space: 'gutter',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL,
+    }),
     buildSelectField({
       id: 'applicationInfo.hotel.type',
       title: m.operationTypeHotelTitle,
-      description: m.operationTypeHotelDescription,
       options: HotelTypes,
       backgroundColor: 'blue',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL,
     }),
+    buildDescriptionField({
+      id: 'applicationInfo.resturantTitle',
+      title: m.operationTypeResturantDescription,
+      titleVariant: 'h4',
+      description: '',
+      space: 'gutter',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.RESTURANT,
+    }),
     buildSelectField({
       id: 'applicationInfo.resturant.type',
       title: m.operationTypeResturantTitle,
-      description: m.operationTypeResturantDescription,
       backgroundColor: 'blue',
       options: ResturantTypes,
       condition: (answers) =>

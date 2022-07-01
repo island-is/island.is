@@ -33,6 +33,7 @@ export const subSectionOtherInfo = buildSubSection({
           title: m.other,
           variant: 'textarea',
           doesNotRequireAnswer: true,
+          placeholder: m.otherTextPlaceholder,
         }),
       ],
     }),

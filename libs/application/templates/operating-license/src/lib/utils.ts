@@ -1,4 +1,9 @@
-import { APPLICATION_TYPES, Operation, OPERATION_CATEGORY, YES } from './constants'
+import {
+  APPLICATION_TYPES,
+  Operation,
+  OPERATION_CATEGORY,
+  YES,
+} from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const hasYes = (answer: any) => {
@@ -46,14 +51,13 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-
-
 export const displayOpeningHours = (answers: any) => {
-
-  return ((answers.applicationInfo as Operation)?.operation ===
-  APPLICATION_TYPES.RESTURANT ||
-(answers.applicationInfo as Operation)?.hotel?.category?.includes(
-  OPERATION_CATEGORY.TWO,
-) ||
-false)
+  return (
+    (answers.applicationInfo as Operation)?.operation ===
+      APPLICATION_TYPES.RESTURANT ||
+    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
+      OPERATION_CATEGORY.TWO,
+    ) ||
+    false
+  )
 }

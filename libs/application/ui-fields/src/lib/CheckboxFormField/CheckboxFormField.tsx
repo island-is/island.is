@@ -48,7 +48,7 @@ export const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Text variant="h5">
+        <Text variant="h4" as="h4">
           {formatText(title, application, formatMessage)}
         </Text>
       )}
@@ -59,7 +59,7 @@ export const CheckboxFormField: FC<Props> = ({
         />
       )}
 
-      <Box paddingTop={2}>
+      <Box paddingTop={3}>
         <CheckboxController
           id={id}
           disabled={disabled}

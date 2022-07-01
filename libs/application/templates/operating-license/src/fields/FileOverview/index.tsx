@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, TopicCard, Text } from '@island.is/island-ui/core'
-import {  getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentProps, FileSchema } from '../../lib/constants'
-import { Application } from '@island.is/application/types';
+import { Application } from '@island.is/application/types'
 
 interface FileOverviewData {
   application: Application

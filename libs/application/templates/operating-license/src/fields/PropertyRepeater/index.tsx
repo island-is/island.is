@@ -1,7 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import {
-  FieldBaseProps,
-} from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
@@ -25,9 +23,7 @@ import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Property } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 
-export const PropertyRepeater: FC<FieldBaseProps> = ({
-  field,
-}) => {
+export const PropertyRepeater: FC<FieldBaseProps> = ({ field }) => {
   const { formatMessage } = useLocale()
   const { id } = field
   const { fields, append, remove } = useFieldArray<Property>({

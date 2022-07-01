@@ -66,7 +66,8 @@ export const dataSchema = z.object({
           (!!resturant?.type || !resturant?.type) &&
           !!hotel?.type) ||
         (operation === APPLICATION_TYPES.RESTURANT &&
-          (!!hotel?.type || !hotel?.type)),
+          (!!hotel?.type || !hotel?.type) &&
+          !!resturant?.type),
       { message: error.invalidValue.defaultMessage, path: ['hotel', 'type'] },
     )
     // Check type for resturant

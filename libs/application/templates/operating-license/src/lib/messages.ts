@@ -51,13 +51,45 @@ export const m = defineMessages({
   },
   dataCollectionUserProfileTitle: {
     id: 'cr.application:dataCollection.userProfileTitle',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    defaultMessage: 'Skuldastaða hjá ríkissjóði',
     description: 'Some description',
   },
   dataCollectionUserProfileSubtitle: {
     id: 'ol.application:dataCollection.userProfileSubtitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum.',
+    description: 'Some description',
+  },
+  dataCollectionDebtStatusTitle: {
+    id: 'cr.application:dataCollection.debtStatusTitle',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Some description',
+  },
+  dataCollectionDebtStatusSubtitle: {
+    id: 'ol.application:dataCollection.debtStatusSubtitle',
+    defaultMessage:
+      'Upplýsingar frá Fjársýslu Ríkisins um skuldastöðu þína hjá ríkissjóði.',
+    description: 'Some description',
+  },
+  dataCollectionNonBankruptcyDisclosureTitle: {
+    id: 'cr.application:dataCollection.nonBankruptcyDisclosureTitle',
+    defaultMessage: 'Búsforræðisvottorð',
+    description: 'Some description',
+  },
+  dataCollectionNonBankruptcyDisclosureSubtitle: {
+    id: 'ol.application:dataCollection.nonBankruptcyDisclosureSubtitle',
+    defaultMessage:
+      'Vottorð frá Héraðsdómstólum um að bú einstaklings eða fyrirtækis sé ekki til gjaldþrotaskiptameðferðar.',
+    description: 'Some description',
+  },
+  dataCollectionCriminalRecordTitle: {
+    id: 'cr.application:dataCollection.criminalRecordTitle',
+    defaultMessage: 'Sakaskrá ríkisins',
+    description: 'Some description',
+  },
+  dataCollectionCriminalRecordSubtitle: {
+    id: 'ol.application:dataCollection.criminalRecordSubtitle',
+    defaultMessage: 'Uppfletting í sakaskrá ríkisins.',
     description: 'Some description',
   },
   formName: {
@@ -294,6 +326,12 @@ export const m = defineMessages({
     id: 'ol.application:otherInfo.debtClaimCheck',
     defaultMessage:
       'Ég lýsi því yfir sem umsækjandi að skuldastaða mín vegna skatta, opinberra gjalda eða iðgjalda í lífeyrissjóð nemur samanlegt ekki hærri fjárhæð en 1.000.000 kr.',
+    description: 'Some description',
+  },
+  otherTextPlaceholder: {
+    id: 'ol.application:otherInfo.otherTextPlaceholder',
+    defaultMessage:
+      'Vinsamlegast skráið aðrar upplýsingar hér ef einhverjar eru.',
     description: 'Some description',
   },
   // Attachments screen

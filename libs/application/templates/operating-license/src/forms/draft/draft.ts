@@ -10,9 +10,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { attachmentNames, m } from '../../lib/messages'
-import {
-  UPLOAD_ACCEPT,
-} from '../../lib/constants'
+import { UPLOAD_ACCEPT } from '../../lib/constants'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { applicationInfo } from './sectionApplicationInfo'
 import { subSectionOperationInfo } from './subSectionOperationInfo'
@@ -43,6 +41,24 @@ export const Draft: Form = buildForm({
               type: 'UserProfileProvider',
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'debtStatus',
+              type: '',
+              title: m.dataCollectionDebtStatusTitle,
+              subTitle: m.dataCollectionDebtStatusSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'courtBankruptcyCertificate',
+              type: '',
+              title: m.dataCollectionNonBankruptcyDisclosureTitle,
+              subTitle: m.dataCollectionNonBankruptcyDisclosureSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'criminalRecord',
+              type: '',
+              title: m.dataCollectionCriminalRecordTitle,
+              subTitle: m.dataCollectionCriminalRecordSubtitle,
             }),
             buildDataProviderItem({
               id: 'payment',

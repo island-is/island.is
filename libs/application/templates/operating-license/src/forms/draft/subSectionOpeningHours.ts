@@ -4,6 +4,7 @@ import {
   buildTextField,
   buildKeyValueField,
   buildCheckboxField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
@@ -26,10 +27,23 @@ export const subSectionOpeningHours = buildSubSection({
       title: m.openingHoursTitle,
       description: m.propertyInfoDescription,
       children: [
+        buildDescriptionField({
+          id: 'alcohol.servingHours',
+          title: m.openingHoursAlcohol,
+          space: 'gutter',
+          titleVariant: 'h3',
+        }),
+        buildDescriptionField({
+          id: 'overview.space',
+          title: '',
+          description: '',
+          space: 'gutter',
+        }),
         buildKeyValueField({
-          label: m.openingHoursAlcohol,
+          label: '',
           value: m.weekdays,
         }),
+
         buildTextField({
           id: 'openingHours.alcohol.weekdays.from',
           title: m.from,
@@ -43,6 +57,12 @@ export const subSectionOpeningHours = buildSubSection({
           width: 'half',
           format: '##:##',
           placeholder: '00:00',
+        }),
+        buildDescriptionField({
+          id: 'overview.space1',
+          title: '',
+          description: '',
+          space: 'gutter',
         }),
         buildKeyValueField({
           label: '',
@@ -62,11 +82,33 @@ export const subSectionOpeningHours = buildSubSection({
           format: '##:##',
           placeholder: '00:00',
         }),
+        buildDescriptionField({
+          id: 'overview.space2',
+          title: '',
+          description: '',
+          space: 'gutter',
+        }),
         buildCheckboxField({
           id: 'openingHours.willServe',
           title: m.openingHoursOutside,
           options: [{ value: YES, label: m.openingHoursOutsideCheck }],
           defaultValue: [NO],
+        }),
+        buildDescriptionField({
+          id: 'outside.servingHours',
+          title: m.openingHoursOutsideTitle,
+          space: 'gutter',
+          titleVariant: 'h3',
+          condition: (answers) =>
+            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
+        }),
+        buildDescriptionField({
+          id: 'overview.space3',
+          title: '',
+          description: '',
+          space: 'gutter',
+          condition: (answers) =>
+            hasYes((answers.openingHours as OpeningHours)?.willServe) || false,
         }),
         buildKeyValueField({
           label: '',
