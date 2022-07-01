@@ -20,6 +20,7 @@ export const accessControlModule: ServicePortalModule = {
       {
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
+        navHide: !userInfo.scopes.includes(AuthScope.writeDelegations),
         enabled: personDelegation
           ? false
           : userInfo.scopes.includes(AuthScope.writeDelegations),
