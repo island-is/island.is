@@ -1,28 +1,21 @@
 import {
   buildMultiField,
-  buildRadioField,
-  buildSelectField,
-  buildCheckboxField,
   buildDividerField,
   buildDescriptionField,
   buildKeyValueField,
-  Application,
-  Field,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   APPLICATION_TYPES,
-  ResturantTypes,
-  HotelTypes,
   Operation,
   OPERATION_CATEGORY,
   OpeningHours,
   YES,
-  AttachmentProps,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { get24HFormatTime } from '../../lib/utils'
-import { buildCustomField } from '../../../../../core/src/lib/fieldBuilders'
+import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'
+import { Application } from '@island.is/application/types'
 
 export const sectionOverview = buildMultiField({
   id: 'overview',
@@ -192,19 +185,21 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     // TODO: map properties
-    buildDividerField({}),
+    buildDividerField({ condition: (answers) => displayOpeningHours(answers) }),
     buildDescriptionField({
       id: 'overview.openingHours',
       title: m.openingHoursTitle,
       titleVariant: 'h3',
       description: '',
       space: 'gutter',
+      condition: (answers) => displayOpeningHours(answers),
     }),
     buildDescriptionField({
       id: 'overview.space8',
       title: '',
       description: '',
       space: 'gutter',
+      condition: (answers) => displayOpeningHours(answers),
     }),
     buildDescriptionField({
       id: 'overview.openingHoursAlcohol',
@@ -212,16 +207,19 @@ export const sectionOverview = buildMultiField({
       titleVariant: 'h4',
       description: '',
       space: 'gutter',
+      condition: (answers) => displayOpeningHours(answers),
     }),
     buildDescriptionField({
       id: 'overview.space6',
       title: '',
       description: '',
       space: 'gutter',
+      condition: (answers) => displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.weekdays,
       width: 'half',
+      condition: (answers) => displayOpeningHours(answers),
       value: (application: Application) => {
         const weekdays = (application.answers.openingHours as OpeningHours)
           .alcohol.weekdays
@@ -235,6 +233,7 @@ export const sectionOverview = buildMultiField({
     buildKeyValueField({
       label: m.holidays,
       width: 'half',
+      condition: (answers) => displayOpeningHours(answers),
       value: (application: Application) => {
         const weekdays = (application.answers.openingHours as OpeningHours)
           .alcohol.weekends
@@ -250,9 +249,11 @@ export const sectionOverview = buildMultiField({
       title: '',
       description: '',
       space: 'gutter',
+      condition: (answers) => displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.openingHoursOutside,
+      condition: (answers) => displayOpeningHours(answers),
       value: (application: Application) =>
         (application.answers.openingHours as OpeningHours).willServe?.includes(
           YES,
@@ -267,7 +268,8 @@ export const sectionOverview = buildMultiField({
       description: '',
       space: 'gutter',
       condition: (answers) =>
-        (answers.openingHours as OpeningHours).willServe?.includes(YES),
+        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        displayOpeningHours(answers),
     }),
     buildDescriptionField({
       id: 'overview.space5',
@@ -275,7 +277,8 @@ export const sectionOverview = buildMultiField({
       description: '',
       space: 'gutter',
       condition: (answers) =>
-        (answers.openingHours as OpeningHours).willServe?.includes(YES),
+        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.weekdays,
@@ -290,7 +293,8 @@ export const sectionOverview = buildMultiField({
         )
       },
       condition: (answers) =>
-        (answers.openingHours as OpeningHours).willServe?.includes(YES),
+        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        displayOpeningHours(answers),
     }),
     buildKeyValueField({
       label: m.holidays,
@@ -305,7 +309,8 @@ export const sectionOverview = buildMultiField({
         )
       },
       condition: (answers) =>
-        (answers.openingHours as OpeningHours).willServe?.includes(YES),
+        (answers.openingHours as OpeningHours)?.willServe?.includes(YES) &&
+        displayOpeningHours(answers),
     }),
     buildDividerField({}),
     buildDescriptionField({
@@ -323,8 +328,17 @@ export const sectionOverview = buildMultiField({
     }),
     buildKeyValueField({
       label: m.temporaryLicense,
+      width: 'half',
       value: (application: Application) =>
         (application.answers.temporaryLicense as string[]).includes(YES)
+          ? 'Já'
+          : 'Nei',
+    }),
+    buildKeyValueField({
+      label: m.debtClaimTitle,
+      width: 'half',
+      value: (application: Application) =>
+        (application.answers.debtClaim as string[]).includes(YES)
           ? 'Já'
           : 'Nei',
     }),

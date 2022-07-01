@@ -5,21 +5,15 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildCustomField,
   buildFileUploadField,
-  Application,
-  buildKeyValueField,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { attachmentNames, m } from '../../lib/messages'
 import {
-  APPLICATION_TYPES,
-  Operation,
   UPLOAD_ACCEPT,
 } from '../../lib/constants'
-import { DefaultEvents } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { applicationInfo } from './sectionApplicationInfo'
 import { subSectionOperationInfo } from './subSectionOperationInfo'
 import { subSectionPropertyRepeater } from './subSectionPropertyRepeater'

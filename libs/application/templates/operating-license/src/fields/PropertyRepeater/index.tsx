@@ -1,16 +1,13 @@
 import React, { FC, useEffect } from 'react'
 import {
-  CustomField,
-  DefaultEvents,
   FieldBaseProps,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
   GridColumn,
   GridRow,
   Button,
-  ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -25,13 +22,11 @@ import {
 import { useLazyQuery } from '@apollo/client'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
-import { Property } from '../../types/index'
+import { Property } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 
 export const PropertyRepeater: FC<FieldBaseProps> = ({
-  application,
   field,
-  refetch,
 }) => {
   const { formatMessage } = useLocale()
   const { id } = field
@@ -113,7 +108,6 @@ const PropertyItem = ({
     SEARCH_FOR_PROPERTY_QUERY,
     {
       onCompleted: (data) => {
-        console.log(data)
         setValue(
           addressField,
           data.searchForProperty?.defaultAddress?.display ?? '',

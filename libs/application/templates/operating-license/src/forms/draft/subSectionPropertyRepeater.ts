@@ -1,8 +1,6 @@
 import {
-  Application,
   buildMultiField,
   buildSubSection,
-  buildTextField,
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'

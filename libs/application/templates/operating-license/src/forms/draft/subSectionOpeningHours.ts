@@ -1,5 +1,4 @@
 import {
-  Application,
   buildMultiField,
   buildSubSection,
   buildTextField,
@@ -15,18 +14,12 @@ import {
   OPERATION_CATEGORY,
   YES,
 } from '../../lib/constants'
-import { hasYes } from '../../lib/utils'
+import { displayOpeningHours, hasYes } from '../../lib/utils'
 
 export const subSectionOpeningHours = buildSubSection({
   id: 'openingHours',
   title: m.openingHoursTitle,
-  condition: (answers) =>
-    (answers.applicationInfo as Operation)?.operation ===
-      APPLICATION_TYPES.RESTURANT ||
-    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
-      OPERATION_CATEGORY.TWO,
-    ) ||
-    false,
+  condition: (answers) => displayOpeningHours(answers),
   children: [
     buildMultiField({
       id: 'openingHours',

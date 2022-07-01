@@ -1,4 +1,4 @@
-import { DefaultEvents, Option } from '@island.is/application/core'
+import { DefaultEvents, Option } from '@island.is/application/types'
 
 import { attachmentNames, m } from './messages'
 
@@ -117,6 +117,12 @@ export type FileSchema = {
 export type Attachment = {
   id: string
   label: string
+}
+export type Property = {
+  propertyNumber: string
+  address: string
+  spaceNumber: string
+  customerCount: string
 }
 
 export const AttachmentProps: Attachment[] = [

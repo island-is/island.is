@@ -1,4 +1,4 @@
-import { YES } from './constants'
+import { APPLICATION_TYPES, Operation, OPERATION_CATEGORY, YES } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const hasYes = (answer: any) => {
@@ -44,4 +44,16 @@ export const isValidTime = (value: string) => timeRegex.test(value)
 export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
+}
+
+
+
+export const displayOpeningHours = (answers: any) => {
+
+  return ((answers.applicationInfo as Operation)?.operation ===
+  APPLICATION_TYPES.RESTURANT ||
+(answers.applicationInfo as Operation)?.hotel?.category?.includes(
+  OPERATION_CATEGORY.TWO,
+) ||
+false)
 }

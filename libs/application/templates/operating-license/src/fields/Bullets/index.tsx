@@ -1,7 +1,7 @@
 import React from 'react'
-
+import { formatText } from '@island.is/application/core'
 import { BulletList, Bullet } from '@island.is/island-ui/core'
-import { formatText, Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 

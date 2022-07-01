@@ -1,10 +1,10 @@
 import {
-  Application,
   buildMultiField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { Application } from '@island.is/application/types';
 
 export const subSectionOperationInfo = buildSubSection({
   id: 'info',
