@@ -27,6 +27,9 @@ export class PaymentSchedule {
   unpaidAmount!: number
 
   @Field()
+  unpaidWithInterest!: number
+
+  @Field()
   unpaidCount!: string
 
   @Field()
@@ -67,28 +70,19 @@ export class AccumulatedPayments {
 @ObjectType()
 export class DetailedSchedule {
   @Field()
-  paidAmount!: number
-
-  @Field()
-  paidAmountAccumulated!: number
+  paymentNumber!: string
 
   @Field()
   paidDate!: string
 
   @Field()
-  paymentNumber!: string
-
-  @Field(() => [AccumulatedPayments], { nullable: true })
-  payments!: AccumulatedPayments[]
+  paidAmount!: number
 
   @Field()
-  plannedAmount!: number
+  unpaidAmount!: number
 
   @Field()
-  plannedAmountAccumulated!: number
-
-  @Field()
-  plannedDate!: string
+  payExplanation!: string
 }
 
 @ObjectType()
