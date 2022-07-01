@@ -9,7 +9,7 @@ import { m } from '../lib/messages'
 export const WaitingForParentBConfirmation: Form = buildForm({
   id: 'PassportApplicationWaitingForParentB',
   title: '',
-  mode: FormModes.APPROVED,
+  mode: FormModes.APPLYING,
   children: [
     buildMultiField({
       id: 'waitingForConfirmation',

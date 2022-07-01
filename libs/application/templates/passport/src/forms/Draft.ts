@@ -1,32 +1,32 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSelectField,
   buildSubmitField,
-  buildCustomField,
 } from '@island.is/application/core'
 import {
-  Form,
-  FormModes,
   Application,
   DefaultEvents,
+  Form,
+  FormModes,
 } from '@island.is/application/types'
-import { m } from '../lib/messages'
 import {
-  Services,
   DistrictCommissionerAgencies,
-  YES,
   Passport,
+  Services,
+  YES,
 } from '../lib/constants'
-import { personalInfo } from './infoSection/personalInfo'
+import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
-import { personalOverview } from './overviewSection/personalOverview'
+import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
+import { personalOverview } from './overviewSection/personalOverview'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',

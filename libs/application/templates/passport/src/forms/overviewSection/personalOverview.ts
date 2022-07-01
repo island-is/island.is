@@ -5,15 +5,15 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import format from 'date-fns/format'
 import {
-  Services,
-  Service,
   DistrictCommissionerAgencies,
   Passport,
+  Service,
+  Services,
 } from '../../lib/constants'
-import format from 'date-fns/format'
+import { m } from '../../lib/messages'
 
 export const personalOverview = buildMultiField({
   id: 'overviewPersonalInfo',

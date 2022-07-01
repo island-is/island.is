@@ -6,9 +6,9 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { YES, Passport } from '../../lib/constants'
+import { Passport, YES } from '../../lib/constants'
+import { m } from '../../lib/messages'
 
 export const personalInfo = buildMultiField({
   id: 'personalInfo',

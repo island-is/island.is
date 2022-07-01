@@ -1,23 +1,23 @@
 import {
+  buildDataProviderItem,
+  buildDividerField,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
-  buildDividerField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildSubmitField,
 } from '@island.is/application/core'
 import {
-  Form,
-  FormModes,
   Application,
   DefaultEvents,
+  Form,
+  FormModes,
 } from '@island.is/application/types'
+import format from 'date-fns/format'
+import localeIS from 'date-fns/locale/is'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
-import format from 'date-fns/format'
 import { childsOverview } from './overviewSection/childsOverview'
-import localeIS from 'date-fns/locale/is'
 
 export const ParentB: Form = buildForm({
   id: 'PassportApplicationParentB',

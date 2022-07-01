@@ -1,17 +1,17 @@
 import React, { FC } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { RadioFormField } from '@island.is/application/ui-fields'
+import { getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { getErrorViaPath } from '@island.is/application/core'
-import { useFormContext } from 'react-hook-form'
+import { RadioFormField } from '@island.is/application/ui-fields'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
+import { useFormContext } from 'react-hook-form'
 import { IdentityDocument } from '../../lib/constants'
+import { m } from '../../lib/messages'
 
 export const PassportSelection: FC<FieldBaseProps> = ({
   field,

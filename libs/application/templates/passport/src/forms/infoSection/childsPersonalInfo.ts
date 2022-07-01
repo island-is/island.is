@@ -5,9 +5,9 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
-import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { Passport } from '../../lib/constants'
+import { m } from '../../lib/messages'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
@@ -35,7 +35,7 @@ export const childsPersonalInfo = buildMultiField({
       id: 'childsPersonalInfo.guardian1',
       title: 'Forráðamaður 1',
       titleVariant: 'h3',
-      space: 'gutter',
+      space: 'containerGutter',
       marginBottom: 'smallGutter',
     }),
     buildTextField({

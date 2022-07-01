@@ -10,7 +10,7 @@ import { m } from '../lib/messages'
 export const Done: Form = buildForm({
   id: 'PassportApplicationComplete',
   title: '',
-  mode: FormModes.APPROVED,
+  mode: FormModes.APPLYING,
   children: [
     buildMultiField({
       id: 'done',

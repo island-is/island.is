@@ -1,24 +1,24 @@
 import {
+  Application,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ApplicationContext,
-  ApplicationStateSchema,
-  Application,
   DefaultEvents,
-  ApplicationRole,
 } from '@island.is/application/types'
-import { dataSchema } from './dataSchema'
-import {
-  Roles,
-  States,
-  Events,
-  ApiActions,
-  twoDays,
-  sixtyDays,
-} from './constants'
 import { Features } from '@island.is/feature-flags'
-import { m } from '../lib/messages'
 import { assign } from 'xstate'
+import { m } from '../lib/messages'
+import {
+  ApiActions,
+  Events,
+  Roles,
+  sixtyDays,
+  States,
+  twoDays,
+} from './constants'
+import { dataSchema } from './dataSchema'
 
 const pruneAfter = (time: number) => {
   return {

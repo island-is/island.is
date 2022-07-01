@@ -1,10 +1,9 @@
-import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Passport, Service, Services, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
-import { Service, Services, Passport, YES } from '../../lib/constants'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
