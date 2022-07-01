@@ -42,7 +42,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Image',
           context: {
-            src: pathToAsset('reject.jpg'),
+            src: pathToAsset('reject.jpeg'),
             alt: 'Barn myndskreyting',
           },
         },
