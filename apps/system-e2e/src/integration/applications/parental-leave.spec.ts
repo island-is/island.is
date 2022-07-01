@@ -147,5 +147,19 @@ describe('Parental leave', () => {
       })
       .type(employerEmail)
     cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('heading', {
+      name: label(parentalLeaveFormMessages.shared.theseAreYourRights),
+    })
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.shared.transferRightsTitle),
+    })
+      .findByRole('radio', {
+        name: label(parentalLeaveFormMessages.shared.transferRightsNone),
+      })
+      .click()
+    cy.get('[data-testid="proceed"]').click()
   })
 })
