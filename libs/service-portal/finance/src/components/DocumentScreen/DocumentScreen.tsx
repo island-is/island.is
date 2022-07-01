@@ -33,6 +33,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import * as styles from '../../screens/Finance.css'
+import sortBy from 'lodash/sortBy'
 
 const ITEMS_ON_PAGE = 20
 
@@ -272,7 +273,10 @@ const DocumentScreen: FC<Props> = ({
                 </T.Row>
               </T.Head>
               <T.Body>
-                {billsDataArray
+                {sortBy(billsDataArray, (item) => {
+                  return item.date
+                })
+                  .reverse()
                   .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
                   .map((listItem) => (
                     <T.Row key={listItem.id}>
