@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApplicationService,
-  Application,
-} from '@island.is/application/api/core'
+import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
@@ -20,9 +17,7 @@ export class ApplicationChargeService {
     this.logger = logger.child({ context: 'ApplicationChargeService' })
   }
 
-  async deleteApplicationCharge(
-    application: Pick<Application, 'id' | 'externalData'>,
-  ) {
+  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
     try {
       const payment = await this.paymentService.findPaymentByApplicationId(
         application.id,
@@ -33,19 +28,8 @@ export class ApplicationChargeService {
         return
       }
 
-      // Make sure createCharge exists in externalData
-      const externalData = application.externalData as
-        | ExternalData
-        | undefined
-        | null
-      if (!externalData?.createCharge?.data) {
-        return
-      }
-
       // Delete the charge, using the ID we got from FJS
-      const { id: chargeId } = externalData.createCharge.data as {
-        id: string
-      }
+      const chargeId = this.getChargeId(application)
       if (chargeId) {
         await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
@@ -57,5 +41,21 @@ export class ApplicationChargeService {
 
       throw error
     }
+  }
+
+  getChargeId(application: Pick<Application, 'externalData'>) {
+    const externalData = application.externalData as
+      | ExternalData
+      | undefined
+      | null
+    if (!externalData?.createCharge?.data) {
+      return
+    }
+
+    const { id: chargeId } = externalData.createCharge.data as {
+      id: string
+    }
+
+    return chargeId
   }
 }

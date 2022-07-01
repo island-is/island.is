@@ -136,7 +136,7 @@ export class PaymentService {
     return application[0] as ApplicationModel
   }
 
-  async delete(applicationId: string, @CurrentUser() user: User) {
+  async delete(applicationId: string, user: User) {
     const { nationalId } = user
     const application = await ApplicationModel.findOne({
       where: {

@@ -111,11 +111,11 @@ export class ApplicationLifeCycleService {
   private async pruneApplicationCharge() {
     for (const prune of this.processingApplications) {
       try {
-        await this.applicationChargeService.deleteApplicationCharge(
+        await this.applicationChargeService.deleteCharge(prune.application)
+      } catch (error) {
+        const chargeId = this.applicationChargeService.getChargeId(
           prune.application,
         )
-      } catch (error) {
-        const chargeId = this.getApplicationChargeId(prune.application)
         if (chargeId) {
           prune.failedExternalData = {
             createCharge: {
@@ -181,23 +181,5 @@ export class ApplicationLifeCycleService {
     }
 
     return keys
-  }
-
-  private getApplicationChargeId(
-    application: Pick<Application, 'externalData'>,
-  ) {
-    const externalData = application.externalData as
-      | ExternalData
-      | undefined
-      | null
-    if (!externalData?.createCharge?.data) {
-      return
-    }
-
-    const { id: chargeId } = externalData.createCharge.data as {
-      id: string
-    }
-
-    return chargeId
   }
 }

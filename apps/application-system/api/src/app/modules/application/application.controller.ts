@@ -15,7 +15,6 @@ import {
   UnauthorizedException,
   Delete,
   ForbiddenException,
-  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -1138,9 +1137,7 @@ export class ApplicationController {
     }
 
     // delete charge in FJS
-    await this.applicationChargeService.deleteApplicationCharge(
-      existingApplication,
-    )
+    await this.applicationChargeService.deleteCharge(existingApplication)
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
