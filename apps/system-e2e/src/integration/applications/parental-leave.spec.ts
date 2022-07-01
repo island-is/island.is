@@ -19,12 +19,12 @@ describe('Parental leave', () => {
   const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
   const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
   const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
-  let employerEmail
+  let employerEmail: string = 'not ready'
 
   before(() => {
     cy.task('getUserEmail').then((email) => {
       expect(email).to.be.a('string')
-      employerEmail = email
+      employerEmail = email as string
     })
   })
 
@@ -129,6 +129,23 @@ describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
       .click()
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.employer.title),
+    })
+      .findByRole('textbox', {
+        name: label(parentalLeaveFormMessages.employer.phoneNumber),
+      })
+      .type('6666666')
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.employer.title),
+    })
+      .findByRole('textbox', {
+        name: label(parentalLeaveFormMessages.employer.email),
+      })
+      .type(employerEmail)
     cy.get('[data-testid="proceed"]').click()
   })
 })

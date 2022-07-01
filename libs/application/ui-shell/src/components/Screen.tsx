@@ -294,8 +294,7 @@ const Screen: FC<ScreenProps> = ({
   console.debug(`Rendering ${screen.type}`)
   const shouldCreateTopLevelRegion = !(
     screen.type === FormItemTypes.REPEATER ||
-    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ||
-    screen.type === FormItemTypes.MULTI_FIELD
+    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
   )
   return (
     <FormProvider {...hookFormData}>
