@@ -23,7 +23,7 @@ const cognitoLogin = ({ cognitoUsername, cognitoPassword }: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-export const idsLogin = ({ phoneNumber, urlPath }: IDSLogin) => {
+const idsLogin = ({ phoneNumber, urlPath }: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
