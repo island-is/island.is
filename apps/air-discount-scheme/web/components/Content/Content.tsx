@@ -75,9 +75,7 @@ const embeddedNodes = () => ({
             <Typography variant="h4">{title}</Typography>
           </Box>
           <Link href={link}>
-            <Button dataTestId="show-benefits-button" width="fluid">
-              {linkText}
-            </Button>
+            <Button width="fluid">{linkText}</Button>
           </Link>
         </Box>
       )
