@@ -65,12 +65,4 @@ export const getBaseUrl = (
   config: Cypress.ResolvedConfigOptions & Cypress.RuntimeConfigOptions,
 ): string => config.baseUrl || cypressError('Base url is missing, quitting.')
 
-export const valueInArray = (
-  arr: Array<Record<string, unknown>>,
-  key: string,
-  value: unknown,
-) => {
-  return arr.map((e) => e[key]).includes(value)
-}
-
 export const testEnvironment = process.env.TEST_ENVIRONMENT || 'local'
