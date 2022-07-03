@@ -110,11 +110,11 @@ function Benefits({ misc }: PropTypes) {
 
       <Stack space={3}>
         {hasBenefits ? (
-          <Box component="section" aria-labelledby="discount-code">
+          <Box component="section" aria-labelledby="benefits-discount-code">
             <Typography
               variant="h3"
               as="h3"
-              id="discount-code"
+              id="benefits-discount-code"
               marginBottom={3}
             >
               {myRights}

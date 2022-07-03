@@ -1,11 +1,11 @@
 import '@testing-library/cypress/add-commands'
-const testEnvironment = Cypress.env('testEnvironment')
-const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
-const { baseUrl } = Cypress.config()
-const { cognitoUsername, cognitoPassword } = Cypress.env()
+import { getBaseUrl } from './utils'
 
-const cognitoLogin = (creds: CognitoCreds) => {
-  const { cognitoUsername, cognitoPassword } = creds
+const testEnvironment = Cypress.env('testEnvironment') as TestEnvironment
+const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+const baseUrl = getBaseUrl(Cypress.config())
+
+const cognitoLogin = ({ cognitoUsername, cognitoPassword }: CognitoCreds) => {
   cy.visit('/innskraning')
   cy.get('form[name="cognitoSignInForm"]').as('cognito')
   cy.get('@cognito')
@@ -23,51 +23,22 @@ const cognitoLogin = (creds: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-export const idsLogin = ({ phoneNumber, urlPath, fn }: IDSLogin) => {
+export const idsLogin = ({ phoneNumber, urlPath }: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
-      authUrl: authUrl,
-      urlPath: `${Cypress.config().baseUrl}${urlPath}`,
     },
   }
 
-  // cy.patchSameSiteCookie(
-  //   'http://localhost:4200/api/auth/callback/identity-server?',
-  //   'POST',
-  // )
-  // cy.patchSameSiteCookie(
-  //   'http://localhost:4200/api/auth/signin/identity-server?',
-  //   'POST',
-  // )
-
-  cy.patchSameSiteCookie('http://localhost:4200/api/auth/csrf')
-  cy.patchSameSiteCookie('http://localhost:4200/api/auth/providers')
-  cy.patchSameSiteCookie('http://localhost:4200/api/auth/session')
-  cy.patchSameSiteCookie(`${authUrl}/login/phone/poll`)
-  cy.patchSameSiteCookie(`${authUrl}/login/phone/signIn`)
-  cy.patchSameSiteCookie(`${authUrl}/login/phone/signIn`, 'POST')
-  cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
+  cy.patchSameSiteCookie(`${baseUrl}/api/auth/signin/identity-server?`, 'POST')
   cy.patchSameSiteCookie(`${authUrl}/login/phone?*`)
-  cy.patchSameSiteCookie(`${authUrl}/login/clientName?*`)
-  cy.patchSameSiteCookie(`${authUrl}/login/idprestrictions?*`)
-
-  cy.patchSameSiteCookie(`${authUrl}/login/phone/authenticate`)
-
-  cy.patchSameSiteCookie(
-    `http://localhost:4200/api/auth/signin/identity-server?*`,
-  )
-  cy.patchSameSiteCookie(`http://localhost:4200/api/graphql`)
-
-  cy.patchSameSiteCookie('http://localhost:4200/api/*')
-
   cy.visit(urlPath)
 
-  cy.origin(authUrl, sentArgs, ({ phoneNumber, urlPath }) => {
+  cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
-  cy.url().should('contain', `${Cypress.config().baseUrl}${urlPath}`)
+  cy.url().should('contain', `${baseUrl}${urlPath}`)
 }
 
 Cypress.Commands.add(
@@ -90,10 +61,8 @@ Cypress.Commands.add(
           res.headers['set-cookie'] = res.headers['set-cookie'].map(
             disableSameSite,
           )
-          console.log(res.headers['set-cookie'])
         } else {
           res.headers['set-cookie'] = disableSameSite(res.headers['set-cookie'])
-          console.log(res.headers['set-cookie'])
         }
       })
     }).as('sameSitePatch')
@@ -102,6 +71,8 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('idsLogin', ({ phoneNumber, urlPath = '/' }) => {
   if (testEnvironment !== 'local') {
+    const { cognitoUsername, cognitoPassword } = Cypress.env('')
+
     cy.session('idsLogin', () => {
       cy.session('cognitoLogin', () =>
         cognitoLogin({ cognitoUsername, cognitoPassword }),
@@ -115,10 +86,7 @@ Cypress.Commands.add('idsLogin', ({ phoneNumber, urlPath = '/' }) => {
   }
 })
 
-Cypress.Commands.add('cognitoLogin', () => {
-  cy.log(`testEnvironment: ${Cypress.env('testEnvironment')}`)
-  cy.log(`baseUrl: ${Cypress.config().baseUrl}`)
-
+Cypress.Commands.add('cognitoLogin', ({ cognitoUsername, cognitoPassword }) => {
   if (testEnvironment !== 'local') {
     cy.session('cognitoLogin', () => {
       cognitoLogin({ cognitoUsername, cognitoPassword })
