@@ -22,6 +22,7 @@ export enum Services {
 }
 
 export enum ApiActions {
+  assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
   submitPassportApplication = 'submitPassportApplication',
