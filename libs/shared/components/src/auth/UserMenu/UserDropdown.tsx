@@ -11,13 +11,11 @@ import {
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
@@ -43,6 +41,7 @@ export const UserDropdown = ({
   showDropdownLanguage,
 }: UserDropdownProps) => {
   const { formatMessage } = useLocale()
+  useNamespaces('global')
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
