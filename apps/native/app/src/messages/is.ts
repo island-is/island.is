@@ -33,6 +33,7 @@ export const is = {
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
+  'onboarding.biometrics.noAuthenticationTypes': 'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',

@@ -59,7 +59,7 @@ export function useBiometricType(type: AuthenticationType[] = []) {
   }
 
   return {
-    text: '',
+    text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }),
     icon: undefined,
   }
 }

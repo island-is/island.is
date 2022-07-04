@@ -35,6 +35,7 @@ export const en: TranslatedMessages = {
     'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
+  'onboarding.biometrics.noAuthenticationTypes': 'Your device does not support biometrics',
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
   'onboarding.biometrics.type.faceId': 'Face ID',

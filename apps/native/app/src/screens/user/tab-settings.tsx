@@ -338,6 +338,7 @@ export function TabSettings() {
             },
           )}
           subtitle={
+            authenticationTypes.length === 0 ? intl.formatMessage({id: 'onboarding.biometrics.noAuthenticationTypes'}) :
             isEnrolledBiometrics
               ? intl.formatMessage(
                   {
