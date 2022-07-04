@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react'
+import React, { useState } from 'react'
 
 import {
   Box,
@@ -107,6 +107,7 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           <Stack space={2}>
             {field.options.map((option, idx) => (
               <RadioButton
+                key={idx}
                 name={`${slug}-${idx}`}
                 label={option}
                 checked={option === value}
@@ -315,6 +316,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               const slug = slugify(field.title)
               return (
                 <FormField
+                  key={field.id}
                   field={field}
                   slug={slug}
                   value={data[slug] ?? ''}
