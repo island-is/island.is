@@ -1,35 +1,32 @@
 import {
+  buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSelectField,
   buildSubmitField,
-  buildTextField,
-  buildCustomField,
-  buildDividerField,
-  buildKeyValueField,
-  buildCheckboxField,
 } from '@island.is/application/core'
 import {
-  Form,
-  FormModes,
   Application,
   DefaultEvents,
+  Form,
+  FormModes,
 } from '@island.is/application/types'
-import { m } from '../lib/messages'
-import { format as formatKennitala } from 'kennitala'
 import {
-  Services,
-  AUTH_TYPES,
-  Service,
   DistrictCommissionerAgencies,
+  Passport,
+  Services,
   YES,
 } from '../lib/constants'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { m } from '../lib/messages'
+import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
+import { personalInfo } from './infoSection/personalInfo'
+import { childsOverview } from './overviewSection/childsOverview'
+import { personalOverview } from './overviewSection/personalOverview'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -39,19 +36,26 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'intro',
-      title: m.infoTitle,
+      id: 'introSection',
+      title: m.introTitle,
       children: [
         buildMultiField({
           id: 'intro',
           title: m.introSectionTitle,
           description: m.introSectionDescription,
-          children: [buildDividerField({ title: ' ' })],
+          children: [
+            buildCustomField({
+              id: 'introInfo',
+              title: '',
+              component: 'IntroInfo',
+              doesNotRequireAnswer: true,
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'externalData',
+      id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
@@ -61,22 +65,16 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
-              title: m.dataCollectionDistrictCommissionersTitle,
-              subTitle: m.dataCollectionDistrictCommissionersSubitle,
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.dataCollectionNationalRegistryTitle,
-              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
               id: 'identityDocument',
@@ -89,99 +87,37 @@ export const Draft: Form = buildForm({
               type: 'FeeInfoProvider',
               title: '',
             }),
+            buildDataProviderItem({
+              id: 'districtCommissioners',
+              type: 'DistrictsProvider',
+              title: '',
+            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'personalInfo',
-      title: m.infoTitle,
+      id: 'passportSection',
+      title: m.selectPassportSectionTitle,
       children: [
         buildMultiField({
-          id: 'personalInfo',
-          title: m.infoTitle,
-          description: m.personalInfoSubtitle,
+          id: 'selectPassport',
+          title: m.selectPassportSectionTitle,
+          description: m.selectPassportSectionDescription,
           children: [
-            buildTextField({
-              id: 'personalInfo.name',
-              title: m.infoTitle,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
-            }),
-            buildTextField({
-              id: 'personalInfo.nationalId',
-              title: m.nationalId,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) => {
-                const nationalId =
-                  (application.externalData.nationalRegistry?.data as {
-                    nationalId?: string
-                  })?.nationalId ?? ''
-
-                return formatKennitala(nationalId)
-              },
-            }),
-            buildTextField({
-              id: 'personalInfo.email',
-              title: m.email,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'personalInfo.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-            buildDescriptionField({
-              id: 'personalInfo.space',
+            buildCustomField({
+              id: 'passport',
               title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildCheckboxField({
-              id: 'personalInfo.hasDisabilityDiscount',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.hasDisabilityDiscount,
-                },
-              ],
-            }),
-            buildSubmitField({
-              id: 'approveCheckForDisability',
-              placement: 'footer',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
+              component: 'PassportSelection',
             }),
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'personalInfoSection',
+      title: m.infoTitle,
+      children: [personalInfo, childsPersonalInfo],
     }),
     buildSection({
       id: 'serviceSection',
@@ -190,31 +126,51 @@ export const Draft: Form = buildForm({
         buildMultiField({
           id: 'service',
           title: m.serviceTitle,
-          description: m.serviceType,
           children: [
+            buildDescriptionField({
+              id: 'service.dropTypeDescription',
+              title: m.serviceTypeTitle,
+              titleVariant: 'h3',
+              description: m.serviceTypeDescription,
+            }),
             buildRadioField({
               id: 'service.type',
               title: '',
               width: 'half',
               space: 'none',
-              options: [
-                {
-                  value: Services.REGULAR,
-                  label:
-                    m.serviceTypeRegular.defaultMessage +
-                    ' - ' +
-                    m.serviceTypeRegularPrice.defaultMessage,
-                  subLabel: m.serviceTypeRegularSublabel.defaultMessage,
-                },
-                {
-                  value: Services.EXPRESS,
-                  label:
-                    m.serviceTypeExpress.defaultMessage +
-                    ' - ' +
-                    m.serviceTypeExpressPrice.defaultMessage,
-                  subLabel: m.serviceTypeExpressSublabel.defaultMessage,
-                },
-              ],
+              options: (application: Application) => {
+                const withDiscount =
+                  ((application.answers.passport as Passport)?.userPassport !==
+                    '' &&
+                    (application.answers
+                      .personalInfo as any)?.hasDisabilityDiscount.includes(
+                      YES,
+                    )) ||
+                  (application.answers.passport as Passport)?.childPassport !==
+                    ''
+                return [
+                  {
+                    value: Services.REGULAR,
+                    label:
+                      m.serviceTypeRegular.defaultMessage +
+                      ' - ' +
+                      (withDiscount === true
+                        ? m.serviceTypeRegularPriceWithDiscount.defaultMessage
+                        : m.serviceTypeRegularPrice.defaultMessage),
+                    subLabel: m.serviceTypeRegularSublabel.defaultMessage,
+                  },
+                  {
+                    value: Services.EXPRESS,
+                    label:
+                      m.serviceTypeExpress.defaultMessage +
+                      ' - ' +
+                      (withDiscount === true
+                        ? m.serviceTypeExpressPriceWithDiscount.defaultMessage
+                        : m.serviceTypeExpressPrice.defaultMessage),
+                    subLabel: m.serviceTypeExpressSublabel.defaultMessage,
+                  },
+                ]
+              },
             }),
             buildDescriptionField({
               id: 'service.dropLocationDescription',
@@ -222,6 +178,7 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 2,
               description: m.dropLocationDescription,
+              marginBottom: 'gutter',
             }),
             buildSelectField({
               id: 'service.dropLocation',
@@ -241,172 +198,14 @@ export const Draft: Form = buildForm({
                 )
               },
             }),
-            buildDescriptionField({
-              id: 'service.dropLocationAuthenticationDescription',
-              title: m.dropLocationAuthentication,
-              titleVariant: 'h3',
-              space: 4,
-              description: m.dropLocationAuthenticationDescription,
-            }),
-            buildRadioField({
-              id: 'service.authentication',
-              backgroundColor: 'white',
-              title: '',
-              largeButtons: false,
-              options: AUTH_TYPES,
-            }),
-            buildCustomField({
-              id: 'service.warning',
-              title: '',
-              component: 'AuthWarning',
-              condition: (answers) =>
-                (answers.service as Service)?.authentication === 'none',
-            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewSection',
       title: m.overview,
-      children: [
-        buildMultiField({
-          id: 'overview',
-          title: m.overview,
-          description: m.overviewDescription,
-          children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overview.infoTitle',
-              title: m.infoTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  name?: string
-                })?.name,
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  nationalId?: string
-                })?.nationalId,
-            }),
-            buildDescriptionField({
-              id: 'overview.space1',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  email?: string
-                })?.email,
-            }),
-            buildKeyValueField({
-              label: m.phoneNumber,
-              width: 'half',
-              value: (application: Application) => {
-                const phone = (application.answers.personalInfo as {
-                  phoneNumber?: string
-                })?.phoneNumber
-
-                return formatPhoneNumber(phone as string)
-              },
-            }),
-            buildDescriptionField({
-              id: 'overview.space2',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.currentPassportStatus,
-              width: 'half',
-              value: (application: Application) =>
-                (application.externalData.identityDocument?.data as {
-                  status?: string
-                }).status,
-            }),
-            buildDescriptionField({
-              id: 'overview.space3',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overview.dropLocationTitle',
-              title: m.serviceTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space4',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.serviceTypeTitle,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.service as Service).type ===
-                Services.REGULAR
-                  ? m.serviceTypeRegular
-                  : m.serviceTypeExpress,
-            }),
-            buildKeyValueField({
-              label: m.dropLocation,
-              width: 'half',
-              value: ({
-                externalData: {
-                  districtCommissioners: { data },
-                },
-                answers,
-              }) => {
-                const district = (data as DistrictCommissionerAgencies[]).find(
-                  (d) => d.id === (answers.service as Service).dropLocation,
-                )
-                return `${district?.name}, ${district?.place}`
-              },
-            }),
-            buildDescriptionField({
-              id: 'overview.space5',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.authenticationType,
-              width: 'half',
-              value: (application: Application) =>
-                AUTH_TYPES.find(
-                  (o) =>
-                    o.value ===
-                    (application.answers.service as Service).authentication,
-                )?.label,
-            }),
-          ],
-        }),
-      ],
+      children: [personalOverview, childsOverview],
     }),
     buildSection({
       id: 'payment',
@@ -420,6 +219,7 @@ export const Draft: Form = buildForm({
               id: 'paymentCharge',
               title: '',
               component: 'PaymentCharge',
+              doesNotRequireAnswer: true,
             }),
             buildSubmitField({
               id: 'payment',
