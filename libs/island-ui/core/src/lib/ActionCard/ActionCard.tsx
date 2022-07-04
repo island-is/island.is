@@ -361,7 +361,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
-      paddingY={3}
+      paddingY={[3, 3, 4]}
       background={bgr}
     >
       {renderEyebrow()}
