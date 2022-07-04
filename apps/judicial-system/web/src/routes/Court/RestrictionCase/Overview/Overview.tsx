@@ -66,17 +66,17 @@ export const JudgeOverview: React.FC = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      autofill(
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      setAndSendToServer(
         [
           {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
@@ -88,8 +88,17 @@ export const JudgeOverview: React.FC = () => {
         workingCase,
         setWorkingCase,
       )
+
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    setAndSendToServer,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout

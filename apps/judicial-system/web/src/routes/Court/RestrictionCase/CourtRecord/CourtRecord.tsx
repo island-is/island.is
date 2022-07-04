@@ -58,6 +58,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -87,7 +88,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -234,39 +235,26 @@ export const CourtRecord: React.FC = () => {
         }
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'courtStartDate',
-            value: workingCase.courtDate,
-          },
-          {
-            key: 'courtLocation',
-            value:
+            courtStartDate: workingCase.courtDate,
+            courtLocation:
               workingCase.court &&
               `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')
                   : workingCase.court.name
               }`,
-          },
-          {
-            key: 'courtAttendees',
-            value:
+            courtAttendees:
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-          },
-          {
-            key: 'sessionBookings',
-            value:
+            sessionBookings:
               autofillSessionBookings.length > 0
                 ? autofillSessionBookings.join('')
                 : undefined,
-          },
-          {
-            key: 'endOfSessionBookings',
-            value:
+            endOfSessionBookings:
               endOfSessionBookings.length > 0
                 ? endOfSessionBookings.join('')
                 : undefined,
@@ -279,7 +267,7 @@ export const CourtRecord: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -319,12 +307,11 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
-                    autofill(
+                  if (date && valid) {
+                    setAndSendToServer(
                       [
                         {
-                          key: 'courtStartDate',
-                          value: date,
+                          courtStartDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
@@ -378,11 +365,10 @@ export const CourtRecord: React.FC = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                autofill(
+                setAndSendToServer(
                   [
                     {
-                      key: 'isClosedCourtHidden',
-                      value: isVisible,
+                      isClosedCourtHidden: isVisible,
                       force: true,
                     },
                   ],

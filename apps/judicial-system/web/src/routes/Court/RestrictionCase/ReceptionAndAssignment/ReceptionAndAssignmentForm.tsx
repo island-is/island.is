@@ -41,7 +41,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
     users,
   } = props
   const { formatMessage } = useIntl()
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
 
   const judges = (users ?? [])
     .filter(
@@ -73,15 +73,20 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
 
   const setJudge = (judge: User) => {
     if (workingCase) {
-      autofill([{ key: 'judgeId', value: judge, force: true }], workingCase)
+      setAndSendToServer(
+        [{ judgeId: judge.id, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
     }
   }
 
   const setRegistrar = (registrar?: User) => {
     if (workingCase) {
-      autofill(
-        [{ key: 'registrarId', value: registrar ?? null, force: true }],
+      setAndSendToServer(
+        [{ registrarId: registrar?.id ?? null, force: true }],
         workingCase,
+        setWorkingCase,
       )
     }
   }

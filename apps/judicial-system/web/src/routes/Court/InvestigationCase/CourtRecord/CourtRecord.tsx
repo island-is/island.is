@@ -54,6 +54,7 @@ import {
   formatRequestCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 const getSessionBookingsAutofill = (
@@ -94,7 +95,7 @@ const getSessionBookingsAutofill = (
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { autofill, updateCase } = useCase()
+  const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -160,29 +161,22 @@ const CourtRecord = () => {
         }
       }
 
-      autofill(
+      setAndSendToServer(
         [
-          { key: 'courtStartDate', value: workingCase.courtDate },
           {
-            key: 'courtLocation',
-            value: workingCase.court
+            courtStartDate: workingCase.courtDate,
+            courtLocation: workingCase.court
               ? `í ${
                   workingCase.court.name.indexOf('dómur') > -1
                     ? workingCase.court.name.replace('dómur', 'dómi')
                     : workingCase.court.name
                 }`
               : undefined,
-          },
-          {
-            key: 'courtAttendees',
-            value:
+            courtAttendees:
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-          },
-          {
-            key: 'sessionBookings',
-            value:
+            sessionBookings:
               workingCase.type === CaseType.RESTRAINING_ORDER
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
@@ -212,7 +206,7 @@ const CourtRecord = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -252,12 +246,11 @@ const CourtRecord = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
-                    autofill(
+                  if (date && valid) {
+                    setAndSendToServer(
                       [
                         {
-                          key: 'courtStartDate',
-                          value: date,
+                          courtStartDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
@@ -311,11 +304,10 @@ const CourtRecord = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                autofill(
+                setAndSendToServer(
                   [
                     {
-                      key: 'isClosedCourtHidden',
-                      value: isVisible,
+                      isClosedCourtHidden: isVisible,
                       force: true,
                     },
                   ],

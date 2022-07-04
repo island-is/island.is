@@ -41,6 +41,7 @@ import {
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { Box, Input, Checkbox, Text } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import type { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -66,7 +67,7 @@ const HearingArrangements = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    autofill,
+    setAndSendToServer,
   } = useCase()
 
   const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
@@ -129,11 +130,10 @@ const HearingArrangements = () => {
 
   const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
-      return autofill(
+      return setAndSendToServer(
         [
           {
-            key: 'prosecutorId',
-            value: prosecutor,
+            prosecutorId: prosecutor.id,
             force: true,
           },
         ],
@@ -145,11 +145,10 @@ const HearingArrangements = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'courtId',
-            value: court,
+            courtId: court.id,
             force: true,
           },
         ],
@@ -234,11 +233,10 @@ const HearingArrangements = () => {
                     }
                     checked={workingCase.isHeightenedSecurityLevel}
                     onChange={(event) =>
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'isHeightenedSecurityLevel',
-                            value: event.target.checked,
+                            isHeightenedSecurityLevel: event.target.checked,
                             force: true,
                           },
                         ],
@@ -265,12 +263,11 @@ const HearingArrangements = () => {
               <RequestCourtDate
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
-                    autofill(
+                  if (date && valid) {
+                    setAndSendToServer(
                       [
                         {
-                          key: 'requestedCourtDate',
-                          value: date,
+                          requestedCourtDate: formatDateForServer(date),
                           force: true,
                         },
                       ],

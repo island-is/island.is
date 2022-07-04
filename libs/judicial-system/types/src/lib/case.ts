@@ -260,8 +260,8 @@ export interface UpdateCase
   policeCaseNumber?: string
   courtId?: string
   prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string
-  registrarId?: string
+  sharedWithProsecutorsOfficeId?: string | null
+  registrarId?: string | null
   judgeId?: string
 }
 

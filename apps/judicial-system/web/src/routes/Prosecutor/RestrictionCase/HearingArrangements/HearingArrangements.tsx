@@ -48,6 +48,7 @@ import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -73,7 +74,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
-    autofill,
+    setAndSendToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
@@ -121,11 +122,10 @@ export const HearingArrangements: React.FC = () => {
 
   const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
-      return autofill(
+      return setAndSendToServer(
         [
           {
-            key: 'prosecutorId',
-            value: prosecutor,
+            prosecutorId: prosecutor.id,
             force: true,
           },
         ],
@@ -137,11 +137,10 @@ export const HearingArrangements: React.FC = () => {
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'courtId',
-            value: court,
+            courtId: court.id,
             force: true,
           },
         ],
@@ -226,11 +225,10 @@ export const HearingArrangements: React.FC = () => {
                   }
                   checked={workingCase.isHeightenedSecurityLevel}
                   onChange={(event) =>
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
-                          key: 'isHeightenedSecurityLevel',
-                          value: event.target.checked,
+                          isHeightenedSecurityLevel: event.target.checked,
                           force: true,
                         },
                       ],
@@ -263,12 +261,11 @@ export const HearingArrangements: React.FC = () => {
               <RequestCourtDate
                 workingCase={workingCase}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  if (valid) {
-                    autofill(
+                  if (date && valid) {
+                    setAndSendToServer(
                       [
                         {
-                          key: 'requestedCourtDate',
-                          value: date,
+                          requestedCourtDate: formatDateForServer(date),
                           force: true,
                         },
                       ],
