@@ -286,7 +286,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box>
+          <Box marginLeft={[0, 3]}>
             <Button
               variant={cta.variant}
               size="small"
@@ -361,7 +361,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
-      paddingY={[3, 3, 4]}
+      paddingY={3}
       background={bgr}
     >
       {renderEyebrow()}
