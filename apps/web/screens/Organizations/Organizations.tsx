@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import NextLink from 'next/link'
 import { useWindowSize } from 'react-use'
 import {
@@ -39,6 +39,7 @@ import {
   FilterOptions,
   FilterLabels,
 } from './FilterMenu'
+import { Organization } from '@island.is/web/graphql/schema'
 
 const CARDS_PER_PAGE = 12
 
@@ -72,7 +73,21 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     input: '',
   })
 
-  const { items: organizationsItems } = organizations
+  const [selectedSortOption, setSelectedSortOption] = useState<{
+    field: keyof Organization
+    order: 'asc' | 'desc'
+  }>({ field: 'title', order: 'asc' })
+
+  const organizationsItems = useMemo(() => {
+    const items = [...organizations.items]
+    if (selectedSortOption.order === 'asc') {
+      items.sort((a, b) => a.title.localeCompare(b.title))
+    } else {
+      items.sort((a, b) => b.title.localeCompare(a.title))
+    }
+    return items
+  }, [organizations, selectedSortOption])
+
   const { items: tagsItems } = tags
 
   const categories: CategoriesProps[] = [
