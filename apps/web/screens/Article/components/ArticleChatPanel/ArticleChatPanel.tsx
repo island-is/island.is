@@ -6,7 +6,7 @@ import {
   LiveChatIncChatPanel,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { defaultWatsonConfig, liveChatIncConfig, watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig } from './config'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']
@@ -45,10 +45,6 @@ export const ArticleChatPanel = ({
       (o) => o.id in boostChatPanelEndpoints,
     )?.id as keyof typeof boostChatPanelEndpoints
     Component = <BoostChatPanel endpoint={organizationId} pushUp={pushUp} />
-  }
-  // If none of the above then use the default watson chat bot
-  else {
-    Component = <WatsonChatPanel {...defaultWatsonConfig} pushUp={pushUp} />
   }
 
   return Component
