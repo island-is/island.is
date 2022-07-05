@@ -41,6 +41,9 @@ export class ArticleReference {
 
   @Field(() => ProcessEntry, { nullable: true })
   processEntry?: ProcessEntry | null
+
+  @Field()
+  processEntryButtonText?: string
 }
 
 export const mapArticleReference = ({
@@ -62,4 +65,5 @@ export const mapArticleReference = ({
   processEntry: fields.processEntry
     ? mapProcessEntry(fields.processEntry)
     : null,
+  processEntryButtonText: fields.processEntryButtonText ?? '',
 })

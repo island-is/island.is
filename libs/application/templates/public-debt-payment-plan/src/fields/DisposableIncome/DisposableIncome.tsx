@@ -68,7 +68,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
     const results = await updateCurrentEmployer({
       variables: {
         input: {
-          employerNationalId: kennitala.clean(correctedNationalId),
+          employerNationalId: kennitala.sanitize(correctedNationalId),
         },
       },
     })

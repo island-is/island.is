@@ -5,6 +5,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '../../../../coverage/libs/api/domains/content-search',
-  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'api-domains-content-search',
+  testEnvironment: 'node',
 }
