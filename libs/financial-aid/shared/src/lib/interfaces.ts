@@ -356,9 +356,9 @@ export interface NationalRegistryData {
 export interface ServiceCenter {
   name: string
   number: number
-  phone: string
-  address: string
-  addressPostalCode: string
+  phone?: string
+  address?: string
+  addressPostalCode?: string
   postalCodes: number[]
   active?: boolean
   link?: string
