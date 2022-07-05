@@ -10,7 +10,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   ApplicationTypes,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 @Table({
   tableName: 'application',
@@ -21,7 +21,7 @@ import {
     },
   ],
 })
-export class Application extends Model<Application> {
+export class Application extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

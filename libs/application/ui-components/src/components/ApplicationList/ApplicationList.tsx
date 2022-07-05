@@ -3,15 +3,14 @@ import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
 import { ActionCard, Stack } from '@island.is/island-ui/core'
+import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
   ApplicationStatus,
-  coreMessages,
-  getSlugFromType,
   ActionCardTag,
   ApplicationTypes,
-  institutionMapper,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
+import { institutionMapper } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { useDeleteApplication } from './hooks/useDeleteApplication'

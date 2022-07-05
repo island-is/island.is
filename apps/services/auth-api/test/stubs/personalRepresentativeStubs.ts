@@ -8,6 +8,7 @@ import type {
 import faker from 'faker'
 import { uuid } from 'uuidv4'
 import { getFakeNationalId } from './genericStubs'
+import { CreationAttributes } from 'sequelize'
 
 export const personalRepresentativeType = {
   code: 'prTypeCode',
@@ -73,7 +74,7 @@ export const getPersonalRepresentativeRights = (
 export const getPRenabledApiScope = (
   enabled = true,
   name = faker.random.word(),
-): Partial<ApiScope> => ({
+): CreationAttributes<ApiScope> => ({
   enabled,
   name,
   displayName: name,

@@ -3,7 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { info } from 'kennitala'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from '@formatjs/intl'

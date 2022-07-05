@@ -1,4 +1,5 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'

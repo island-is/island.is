@@ -6,14 +6,14 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   Field,
   FormValue,
-  getValueViaPath,
   Option,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'

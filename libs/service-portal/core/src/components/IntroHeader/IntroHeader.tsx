@@ -8,7 +8,6 @@ import {
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
 interface Props {
   title: MessageDescriptor | string
   intro?: MessageDescriptor

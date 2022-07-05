@@ -3,7 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export class DeathNoticeProvider extends BasicDataProvider {

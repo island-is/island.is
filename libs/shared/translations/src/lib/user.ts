@@ -20,7 +20,7 @@ export const userMessages = defineMessages({
 
   switchUser: {
     id: 'global:switchUser',
-    defaultMessage: `Skipta um umboð`,
+    defaultMessage: `Skipta um notanda`,
   },
 
   delegationError: {

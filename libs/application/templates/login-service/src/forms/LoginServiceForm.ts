@@ -1,18 +1,20 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildTextField,
   buildSubmitField,
-  DefaultEvents,
   buildCheckboxField,
   buildCompanySearchField,
-  Application,
   getValueViaPath,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
 import {
   section,
   application,
@@ -24,7 +26,6 @@ import {
   selectCompany,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
-import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',

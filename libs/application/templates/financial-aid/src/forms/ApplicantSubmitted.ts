@@ -3,9 +3,8 @@ import {
   buildForm,
   buildMultiField,
   buildSubmitField,
-  DefaultEvents,
-  Form,
 } from '@island.is/application/core'
+import { DefaultEvents, Form } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 
 import * as m from '../lib/messages'
