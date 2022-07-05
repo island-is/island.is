@@ -890,7 +890,7 @@ describe('MeDelegationsController', () => {
           status: 400,
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
-          detail: ['0.validTo must be a Date instance'],
+          detail: ['scopes.0.validTo must be a Date instance'],
         })
       })
 
@@ -916,7 +916,7 @@ describe('MeDelegationsController', () => {
           status: 400,
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
-          detail: ['0.type must be a valid enum value'],
+          detail: ['scopes.0.type must be a valid enum value'],
         })
       })
     })
@@ -1176,7 +1176,7 @@ describe('MeDelegationsController', () => {
           status: 400,
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
-          detail: ['0.type must be a valid enum value'],
+          detail: ['scopes.0.type must be a valid enum value'],
         })
       })
 

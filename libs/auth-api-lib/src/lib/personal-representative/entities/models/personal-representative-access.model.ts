@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 @Table({
   tableName: 'personal_representative_access',
 })
-export class PersonalRepresentativeAccess extends Model<PersonalRepresentativeAccess> {
+export class PersonalRepresentativeAccess extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
