@@ -77,8 +77,8 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             prevResult.assetsOverview?.properties
           ) {
             fetchMoreResult.assetsOverview.properties = [
-              ...prevResult.assetsOverview?.properties,
-              ...fetchMoreResult.assetsOverview?.properties,
+              ...(prevResult.assetsOverview?.properties ?? []),
+              ...(fetchMoreResult.assetsOverview?.properties ?? []),
             ]
           }
           return fetchMoreResult

@@ -688,7 +688,7 @@ components:
           description: |-
             If person is health insured, this applies to the date when the insurance started.
             If person is not insured, this applies to the date when he was last insured
-            If person has always lived in Iceland then this will be empty.        
+            If person has always lived in Iceland then this will be empty.
           format: date-time
           nullable: true
         isOnWaitPeriod:

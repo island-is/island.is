@@ -9,9 +9,9 @@ import {
   Table as T,
   Button,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 import * as styles from './ExpandableTable.css'
-import { tableStyles } from '@island.is/service-portal/core'
+import { tableStyles } from '../../utils/utils'
 
 interface Props {
   data: Array<{

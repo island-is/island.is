@@ -5,15 +5,13 @@ import {
   getValueViaPath,
   mergeAnswers,
 } from './formUtils'
+import { buildForm, buildMultiField, buildSection } from './formBuilders'
 import {
   buildCheckboxField,
-  buildForm,
   buildDescriptionField,
-  buildMultiField,
   buildRadioField,
-  buildSection,
   buildTextField,
-} from '@island.is/application/core'
+} from './fieldBuilders'
 import {
   Application,
   ApplicationTypes,
