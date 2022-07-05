@@ -27,6 +27,7 @@
     "form-data",
     "configcat-node",
     "sequelize",
+    "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

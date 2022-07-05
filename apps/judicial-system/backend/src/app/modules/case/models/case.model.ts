@@ -34,7 +34,7 @@ import { Defendant } from '../../defendant'
   tableName: 'case',
   timestamps: true,
 })
-export class Case extends Model<Case> {
+export class Case extends Model {
   /**********
    * A surrogate key assigned by the database
    **********/

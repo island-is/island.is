@@ -54,8 +54,8 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
             prevResult?.assetsUnitsOfUse?.unitsOfUse
           ) {
             fetchMoreResult.assetsUnitsOfUse.unitsOfUse = [
-              ...prevResult.assetsUnitsOfUse?.unitsOfUse,
-              ...fetchMoreResult.assetsUnitsOfUse?.unitsOfUse,
+              ...(prevResult.assetsUnitsOfUse?.unitsOfUse ?? []),
+              ...(fetchMoreResult.assetsUnitsOfUse?.unitsOfUse ?? []),
             ]
           }
           return fetchMoreResult
