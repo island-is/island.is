@@ -1,6 +1,6 @@
 import { ComplaintPDF, ExternalDataMessages, Information } from '../../models'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
 import { messages } from '@island.is/application/templates/data-protection-complaint'

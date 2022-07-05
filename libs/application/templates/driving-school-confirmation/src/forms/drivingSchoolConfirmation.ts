@@ -1,15 +1,13 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
   buildCustomField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const getDrivingSchoolConfirmation = (): Form => {

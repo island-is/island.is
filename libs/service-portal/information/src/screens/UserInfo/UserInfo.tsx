@@ -67,7 +67,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
-          content={userInfo.profile.name}
+          loading={loading}
+          content={nationalRegistryUser?.fullName}
           editLink={{
             external: true,
             title: changeInNationalReg,
@@ -78,6 +79,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <UserInfoLine
           label={m.natreg}
+          loading={loading}
           content={formatNationalId(userInfo.profile.nationalId)}
         />
         <Divider />

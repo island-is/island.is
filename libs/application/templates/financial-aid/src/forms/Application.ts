@@ -5,10 +5,8 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
-  DefaultEvents,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'

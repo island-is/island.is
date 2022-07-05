@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/client'
-import some from 'lodash/some'
 
-import { NationalRegistryFamilyMember, Query } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -17,16 +16,11 @@ import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMember
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
-import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import { spmm } from '../../lib/messages'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-
-  const [childrenOnFamilyNr, setChildrenOnFamilyNr] = useState<
-    NationalRegistryFamilyMember[]
-  >([])
 
   // Current User
   const { data, loading, error, called } = useQuery<Query>(
@@ -39,27 +33,6 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
     NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = childrenData || {}
-
-  // User's Family members
-  const { data: famData, loading: familyLoading } = useQuery<Query>(
-    NATIONAL_REGISTRY_FAMILY,
-  )
-  const { nationalRegistryFamily } = famData || {}
-
-  useEffect(() => {
-    /**
-     * Get children on the same family number who are
-     * not in the NATIONAL_REGISTRY_CHILDREN query.
-     */
-    if (!familyLoading && !childrenLoading && nationalRegistryFamily) {
-      const familyNrChildren = nationalRegistryFamily?.filter(
-        (item) =>
-          item.familyRelation === 'child' &&
-          !some(nationalRegistryChildren, ['nationalId', item.nationalId]),
-      )
-      setChildrenOnFamilyNr(familyNrChildren)
-    }
-  }, [familyLoading, childrenLoading])
 
   const spouseData = nationalRegistryUser?.spouse
   return (
@@ -106,14 +79,6 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             title={familyMember.fullName || familyMember.displayName || ''}
             nationalId={familyMember.nationalId}
             familyRelation="child"
-          />
-        ))}
-        {childrenOnFamilyNr?.map((child) => (
-          <FamilyMemberCard
-            key={child.nationalId}
-            title={child.fullName || ''}
-            nationalId={child.nationalId}
-            familyRelation="child2"
           />
         ))}
       </Stack>

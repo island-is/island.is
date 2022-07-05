@@ -42,7 +42,6 @@ const filterNavigationTree = (
 
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
-
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   const solidPath = Array.isArray(routeItem?.path)
     ? routeItem?.path[0]

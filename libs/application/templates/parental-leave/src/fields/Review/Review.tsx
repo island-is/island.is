@@ -5,12 +5,8 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 
 import { format as formatKennitala } from 'kennitala'
-import {
-  Application,
-  RecordObject,
-  Field,
-  coreErrorMessages,
-} from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
+import { Application, RecordObject, Field } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -327,7 +323,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
-        editAction={() => goToScreen?.('otherParent')}
+        editAction={() => goToScreen?.('otherParentObj')}
       >
         {otherParent === NO && (
           <RadioValue

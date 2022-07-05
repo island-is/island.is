@@ -1,4 +1,4 @@
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { ServicePortalNavigationItem } from '../service-portal-core'
 import { m } from '../messages'
 import { ServicePortalPath } from './paths'
 
@@ -37,7 +37,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Company
       {
-        name: 'Um fyriræki',
+        name: m.companyTitle,
         path: ServicePortalPath.Company,
         icon: {
           icon: 'business',
@@ -227,17 +227,22 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'car',
         },
-        // children: [
-        //   {
-        //     name: 'Ökutækin mín',
-        //     path: ServicePortalPath.AssetsMyVehicles,
-        //   },
-        // {
-        //   name: 'Uppfletting í ökutækjaskrá',
-        //   path: ServicePortalPath.AssetsVehiclesLookup,
-        // },
-        // ],
+        children: [
+          {
+            name: m.myVehicles,
+            path: ServicePortalPath.AssetsMyVehicles,
+          },
+          // {
+          //   name: m.vehiclesLookup,
+          //   path: ServicePortalPath.AssetsVehiclesLookup,
+          // },
+          {
+            name: m.vehiclesHistory,
+            path: ServicePortalPath.AssetsVehiclesHistory,
+          },
+        ],
       },
+
       // Stillingar - hidden from nav
       {
         name: m.settings,

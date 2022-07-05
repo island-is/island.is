@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   messages,
   FundingGovernmentProjectsAnswers,

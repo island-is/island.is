@@ -33,11 +33,10 @@ import {
 } from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
-import { useCase, useLawyers } from '../../utils/hooks'
+import { useCase, useGetLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -49,7 +48,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { user } = useContext(UserContext)
 
   const [
@@ -64,7 +63,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
-  const lawyers = useLawyers()
+  const lawyers = useGetLawyers()
 
   const handleDefenderChange = useCallback(
     async (selectedOption: ValueType<ReactSelectOption>) => {
@@ -385,12 +384,16 @@ const DefenderInfo: React.FC<Props> = (props) => {
             }
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
-              setAndSendToServer(
-                'sendRequestToDefender',
-                event.target.checked,
+              autofill(
+                [
+                  {
+                    key: 'sendRequestToDefender',
+                    value: event.target.checked,
+                    force: true,
+                  },
+                ],
                 workingCase,
                 setWorkingCase,
-                updateCase,
               )
             }}
             large

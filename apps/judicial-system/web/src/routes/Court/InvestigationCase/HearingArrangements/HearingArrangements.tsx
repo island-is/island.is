@@ -34,7 +34,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CourtArrangements, {
   useCourtArrangements,
@@ -51,12 +50,7 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const {
-    autofill,
-    updateCase,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { autofill, sendNotification, isSendingNotification } = useCase()
   const {
     courtDate,
     setCourtDate,
@@ -187,13 +181,17 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        sessionArrangements: SessionArrangements.ALL_PRESENT,
-                      })
-                      updateCase(workingCase.id, {
-                        sessionArrangements: SessionArrangements.ALL_PRESENT,
-                      })
+                      autofill(
+                        [
+                          {
+                            key: 'sessionArrangements',
+                            value: SessionArrangements.ALL_PRESENT,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -212,15 +210,17 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      setWorkingCase({
-                        ...workingCase,
-                        sessionArrangements:
-                          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                      })
-                      updateCase(workingCase.id, {
-                        sessionArrangements:
-                          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                      })
+                      autofill(
+                        [
+                          {
+                            key: 'sessionArrangements',
+                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     large
                     backgroundColor="white"
@@ -237,12 +237,16 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    setAndSendToServer(
-                      'sessionArrangements',
-                      SessionArrangements.PROSECUTOR_PRESENT,
+                    autofill(
+                      [
+                        {
+                          key: 'sessionArrangements',
+                          value: SessionArrangements.PROSECUTOR_PRESENT,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }}
                   large

@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions, Sequelize } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/core'
+  ApplicationLifecycle,
+} from '@island.is/application/types'
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [

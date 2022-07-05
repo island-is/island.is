@@ -9,6 +9,7 @@ import { IndexingService } from './indexing.service'
 import { logger } from '@island.is/logging'
 import { environment } from '../environments/environment'
 import { SyncInput } from './dto/syncInput.input'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @Controller('')
 export class IndexingController {
@@ -35,8 +36,29 @@ export class IndexingController {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
     }
 
+    const syncStatus = await this.indexingService.getSyncStatus(locale)
+
+    // We allow a new sync if there is no lock or if the current one has been running for too long
+    const secondsFromLastStart =
+      (new Date().getTime() - Number(syncStatus?.lastStart) ?? 0) / 1000
+    if (syncStatus?.running && secondsFromLastStart < environment.lockTime) {
+      logger.info('Sync is already running, request ignored')
+      return {
+        acknowledge: true,
+      }
+    }
+
     logger.info('Doing sync')
+    await this.indexingService.updateSyncStatus(locale, {
+      running: true,
+      lastStart: new Date().getTime().toString(),
+    })
     await this.indexingService.doSync({ syncType: 'fromLast', locale })
+    await this.indexingService.updateSyncStatus(locale, {
+      running: false,
+      lastFinish: new Date().getTime().toString(),
+    })
+
     return {
       acknowledge: true,
     }
@@ -55,6 +77,36 @@ export class IndexingController {
     await this.indexingService.doSync({ syncType: 'full', locale })
     return {
       acknowledge: true,
+    }
+  }
+
+  @Get('status')
+  async status(@Query() { locale = 'is', token = '' }: SyncInput) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', {
+        recivedToken: token,
+      })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
+    return this.indexingService.getSyncStatus(locale)
+  }
+
+  @Get('document')
+  async document(
+    @Query() { locale = 'is' as ElasticsearchIndexLocale, token = '', id = '' },
+  ) {
+    if (environment.syncToken !== token) {
+      logger.warn('Failed to validate sync access token', {
+        recivedToken: token,
+      })
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+    }
+
+    try {
+      return this.indexingService.getDocumentById(locale, id)
+    } catch (error) {
+      return { error: true }
     }
   }
 }

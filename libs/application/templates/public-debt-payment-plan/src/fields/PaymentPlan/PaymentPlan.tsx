@@ -2,7 +2,8 @@ import {
   GetScheduleDistributionInput,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AccordionItem,
   AlertMessage,

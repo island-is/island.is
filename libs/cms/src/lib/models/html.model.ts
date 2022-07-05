@@ -60,7 +60,7 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   newHtml.content.forEach((node) => {
     if (node.nodeType === 'entry-hyperlink') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ('organizationPage' in (node.data.target as any)?.fields) {
+      if ('organizationPage' in ((node.data.target as any)?.fields ?? {})) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const slug = (node?.data?.target as any)?.fields?.organizationPage
           ?.fields?.slug

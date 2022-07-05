@@ -21,40 +21,11 @@ import { CreateCourtCaseMutation } from './createCourtCaseGql'
 import { UpdateCaseMutation } from './updateCaseGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
-type autofillProperties = Pick<
-  Case,
-  | 'conclusion'
-  | 'courtAttendees'
-  | 'courtCaseFacts'
-  | 'courtDate'
-  | 'courtDate'
-  | 'courtLegalArguments'
-  | 'courtLocation'
-  | 'courtStartDate'
-  | 'decision'
-  | 'demands'
-  | 'endOfSessionBookings'
-  | 'introduction'
-  | 'isCustodyIsolation'
-  | 'isolationToDate'
-  | 'prosecutorDemands'
-  | 'prosecutorOnlySessionRequest'
-  | 'requestedCustodyRestrictions'
-  | 'requestedOtherRestrictions'
-  | 'requestedValidToDate'
-  | 'ruling'
-  | 'sessionArrangements'
-  | 'sessionBookings'
-  | 'type'
-  | 'validToDate'
->
-
 export type autofillEntry = {
-  key: keyof autofillProperties
+  key: keyof Case
   value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
   force?: boolean
 }
@@ -83,10 +54,6 @@ interface TransitionCaseMutationResponse {
 
 interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
-}
-
-interface RequestRulingSignatureMutationResponse {
-  requestRulingSignature: RequestSignatureResponse
 }
 
 interface RequestCourtRecordSignatureMutationResponse {
@@ -119,12 +86,6 @@ const useCase = () => {
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
-  const [
-    requestRulingSignatureMutation,
-    { loading: isRequestingRulingSignature },
-  ] = useMutation<RequestRulingSignatureMutationResponse>(
-    RequestRulingSignatureMutation,
-  )
   const [
     requestCourtRecordSignatureMutation,
     { loading: isRequestingCourtRecordSignature },
@@ -286,21 +247,6 @@ const useCase = () => {
     [sendNotificationMutation],
   )
 
-  const requestRulingSignature = useMemo(
-    () => async (id: string) => {
-      try {
-        const { data } = await requestRulingSignatureMutation({
-          variables: { input: { caseId: id } },
-        })
-
-        return data?.requestRulingSignature
-      } catch (error) {
-        toast.error(formatMessage(errors.requestRulingSignature))
-      }
-    },
-    [formatMessage, requestRulingSignatureMutation],
-  )
-
   const requestCourtRecordSignature = useMemo(
     () => async (id: string) => {
       try {
@@ -366,8 +312,6 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     sendNotificationError,
-    requestRulingSignature,
-    isRequestingRulingSignature,
     requestCourtRecordSignature,
     isRequestingCourtRecordSignature,
     extendCase,

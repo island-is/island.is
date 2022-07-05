@@ -2,9 +2,8 @@ import {
   buildCustomField,
   buildForm,
   buildSection,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { application, conclusion, section } from '../lib/messages'
 
 export const PaymentPlanSubmittedForm: Form = buildForm({
