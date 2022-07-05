@@ -8,6 +8,7 @@ import {
   Text,
   Link,
   Hidden,
+  Logo,
 } from '@island.is/island-ui/core'
 import { EventSlice as EventSliceProps } from '@island.is/web/graphql/schema'
 import * as styles from './EventSlice.css'
@@ -42,6 +43,7 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
                   display="flex"
                   flexDirection={['row', 'row', 'row', 'row', 'column']}
                   className={styles.textWrapper}
+                  paddingTop={[0, 0, 0, 0, 4]}
                 >
                   <Text color="mint400" variant="h1">
                     {date[2]}
@@ -61,8 +63,11 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
               span={['12/12', '12/12', '12/12', '12/12', '6/12']}
               offset={['0', '0', '0', '0', '1/12']}
             >
+              <Hidden below="xl">
+                <Logo width={130} solid={true} />
+              </Hidden>
               <Box className={styles.textWrapper}>
-                <Text color="white" variant="h1">
+                <Text color="white" variant="h1" marginTop={[0, 0, 0, 0, 4]}>
                   {slice.title}
                 </Text>
               </Box>
@@ -77,7 +82,7 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '12/12', '12/12', '3/12']}
-              paddingTop={[0, 0, 0, 0, 10]}
+              paddingTop={[0, 0, 0, 0, 6]}
             >
               <Box
                 display="flex"
