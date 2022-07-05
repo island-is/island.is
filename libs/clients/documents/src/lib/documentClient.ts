@@ -1,4 +1,5 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import { AxiosRequestConfig } from 'axios'
 import {
   CategoriesResponse,
@@ -9,6 +10,7 @@ import {
 import { DocumentOauthConnection } from './document.connection'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { lastValueFrom } from 'rxjs'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -58,9 +60,12 @@ export class DocumentClient {
     try {
       const response: {
         data: T
-      } = await this.httpService
-        .get(`${this.clientConfig.basePath}${requestRoute}`, config)
-        .toPromise()
+      } = await lastValueFrom(
+        this.httpService.get(
+          `${this.clientConfig.basePath}${requestRoute}`,
+          config,
+        ),
+      )
 
       return response.data
     } catch (e) {

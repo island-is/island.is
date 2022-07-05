@@ -1,6 +1,4 @@
-import { FeatureNames as ServerSideFeatureNames } from '../../../../infra/src/dsl/features'
-
-export { ServerSideFeatureNames }
+import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
   id: string
@@ -22,6 +20,6 @@ export interface FeatureFlagClientProps {
 }
 
 /// This is an interface to query the status of feature flags specific to the server side
-export interface ServerSideFeature {
-  isOn(feature: ServerSideFeatureNames): boolean
+export interface ServerSideFeatureClientType {
+  isOn(feature: ServerSideFeature): boolean
 }

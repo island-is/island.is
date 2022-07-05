@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/types'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormItem } from './conditionUtils'
-import { buildSection, buildSubSection } from '@island.is/application/core'
+import { buildSection, buildSubSection } from './formBuilders'
 
 describe('conditions', () => {
   it('should show a field which has no condition whatsoever', () => {

@@ -44,6 +44,7 @@ const Estimation = ({
         if (familyStatus) {
           return !showSpouseData[familyStatus]
         }
+        break
       case myApplication?.spouseNationalId != undefined:
         return false
       case !nationalRegistryData?.spouse:

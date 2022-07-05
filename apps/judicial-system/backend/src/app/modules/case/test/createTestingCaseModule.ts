@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
 import { QueueModule } from '@island.is/message-queue'
 import { ConfigType } from '@island.is/nest/config'
@@ -96,6 +97,12 @@ export const createTestingCaseModule = async () => {
       LimitedAccessCaseService,
     ],
   })
+
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
     .overrideProvider(LOGGER_PROVIDER)
     .useValue({
       debug: jest.fn(),
