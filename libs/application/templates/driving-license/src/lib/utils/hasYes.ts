@@ -1,4 +1,4 @@
-import { Answer } from '@island.is/application/core'
+import { Answer } from '@island.is/application/types'
 import { YES } from '../constants'
 
 export const hasYes = (answer: Answer) => {

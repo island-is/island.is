@@ -1,7 +1,15 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+import { Type } from '@nestjs/common'
 import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
+import {
+  TestApp,
+  testServer,
+  TestServerOptions,
+  truncate,
+  useBullQueue,
+  useDatabase,
+} from '@island.is/testing/nest'
+import { SequelizeConfigService } from '../src/app/sequelizeConfig.service'
 
 // Give jest a bit more time when running application-system tests. Jest lazily transforms dynamically imported files.
 // In this case, we're using ts-jest (which is slow) and the application system uses dynamic imports for some large
@@ -12,29 +20,8 @@ import { Sequelize } from 'sequelize-typescript'
 // working correctly with our typescript, decorators and type hints.
 jest.setTimeout(10000)
 
-export let app: INestApplication
+export let app: TestApp
 let sequelize: Sequelize
-
-export const truncate = async () => {
-  if (!sequelize) {
-    return
-  }
-
-  await Promise.all(
-    Object.values(sequelize.models).map((model) => {
-      if (model.tableName.toLowerCase() === 'sequelize') {
-        return null
-      }
-
-      return model.destroy({
-        where: {},
-        cascade: true,
-        truncate: true,
-        force: true,
-      })
-    }),
-  )
-}
 
 export const setup = async (
   module: Type<any>,
@@ -42,20 +29,21 @@ export const setup = async (
 ) => {
   app = await testServer({
     appModule: module,
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+      useBullQueue({ name: 'upload' }),
+    ],
     ...options,
   })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
-  await sequelize.sync({ force: true })
-
   return app
 }
 
-beforeEach(truncate)
+beforeEach(() => truncate(sequelize))
 
 afterAll(async () => {
-  if (app && sequelize) {
-    await app.close()
-    await sequelize.close()
+  if (app) {
+    app.cleanUp()
   }
 })

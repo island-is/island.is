@@ -4,13 +4,13 @@ import {
   isProviderErrorReason,
   isTranslationObject,
 } from './dataProviderUtils'
-import { BasicDataProvider } from '../types/BasicDataProvider'
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import { Application, ApplicationStatus } from '../types/Application'
 import { coreErrorMessages } from './messages'
-import { StaticText } from '../types/Form'
-import { isString, isObject } from 'lodash'
-
+import {
+  BasicDataProvider,
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 

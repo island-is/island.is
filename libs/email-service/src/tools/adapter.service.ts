@@ -25,9 +25,10 @@ export class AdapterService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
     registerHelpers(handlebars)
 
-    const path = isRunningOnEnvironment('local')
-      ? 'libs/email-service/src/tools/design/*.hbs'
-      : 'email-service-assets/*.hbs'
+    const path =
+      process.env.NODE_ENV !== 'production'
+        ? 'libs/email-service/src/tools/design/*.hbs'
+        : 'email-service-assets/*.hbs'
     const files = glob.sync(path)
 
     files.forEach((file) => this.precompile(file))

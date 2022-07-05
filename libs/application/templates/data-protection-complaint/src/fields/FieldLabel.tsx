@@ -1,5 +1,6 @@
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 

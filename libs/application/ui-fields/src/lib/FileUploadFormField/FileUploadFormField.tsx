@@ -1,10 +1,7 @@
 import React, { FC } from 'react'
 
-import {
-  FieldBaseProps,
-  FileUploadField,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,

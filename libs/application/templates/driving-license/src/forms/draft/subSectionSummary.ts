@@ -5,11 +5,10 @@ import {
   buildSubmitField,
   buildCheckboxField,
   buildDividerField,
-  DefaultEvents,
-  StaticText,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+import { DefaultEvents, StaticText } from '@island.is/application/types'
 import { NationalRegistryUser, Teacher } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'

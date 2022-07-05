@@ -56,6 +56,6 @@ export const getOptions = (
     validate: recycleConnections ? validate : undefined,
   },
   logging: logger ? (message) => logger.debug(message) : false,
-  autoLoadModels: true,
+  autoLoadModels: !process.env.INIT_SCHEMA,
   synchronize: false,
 })
