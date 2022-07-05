@@ -7,6 +7,7 @@ import {
 } from '../../../nationalRegistry'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { User } from '@island.is/air-discount-scheme/types'
+import { AuthGuard } from '../../../common'
 
 let app: INestApplication
 let cacheManager: CacheManager
@@ -39,7 +40,11 @@ const mockAuthGuard = new MockAuthGuard({
 beforeAll(async () => {
   app = await setup({
     override: (builder) =>
-      builder.overrideGuard(IdsUserGuard).useValue(mockAuthGuard),
+      builder
+        .overrideGuard(IdsUserGuard)
+        .useValue(mockAuthGuard)
+        .overrideGuard(AuthGuard)
+        .useValue({ canActivate: () => true }),
   })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
   cacheManager.ttl = () => Promise.resolve('')
@@ -101,7 +106,6 @@ describe('Create DiscountCode', () => {
       )
     const response = await request(app.getHttpServer())
       .get(`/api/public/discounts/12345678/user`)
-      .set('Authorization', 'Bearer ernir')
       .expect(200)
     spy1.mockRestore()
     spy2.mockRestore()
