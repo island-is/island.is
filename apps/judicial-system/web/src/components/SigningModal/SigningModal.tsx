@@ -27,7 +27,7 @@ import {
   RequestRulingSignatureMutationMutation,
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
-import { RequestRulingSignatureMutation } from '../../utils/hooks/useCase/requestRulingSignatureGql'
+import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
   return (
@@ -87,12 +87,12 @@ export const useRequestRulingSignature = (
   }
 }
 
-export type signingProcess = 'inProgress' | 'success' | 'error' | 'canceled'
+type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
-export const getSigningProcess = (
+export const getSigningProgress = (
   rulingSignatureConfirmation: RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation'],
   error: ApolloError | undefined,
-): signingProcess => {
+): signingProgress => {
   if (rulingSignatureConfirmation?.documentSigned) return 'success'
 
   if (rulingSignatureConfirmation?.code === 7023) return 'canceled'
@@ -174,7 +174,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
     commitDecision,
   ])
 
-  const signingProcess = getSigningProcess(
+  const signingProgress = getSigningProgress(
     data?.rulingSignatureConfirmation,
     error,
   )
@@ -182,20 +182,20 @@ const SigningModal: React.FC<SigningModalProps> = ({
   return (
     <Modal
       title={
-        signingProcess === 'inProgress'
+        signingProgress === 'inProgress'
           ? 'Rafræn undirritun'
-          : signingProcess === 'success'
+          : signingProgress === 'success'
           ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : signingProcess === 'canceled'
+          : signingProgress === 'canceled'
           ? 'Notandi hætti við undirritun'
           : 'Undirritun tókst ekki'
       }
       text={
-        signingProcess === 'inProgress' ? (
+        signingProgress === 'inProgress' ? (
           <ControlCode
             controlCode={requestRulingSignatureResponse?.controlCode}
           />
-        ) : signingProcess === 'success' ? (
+        ) : signingProgress === 'success' ? (
           <MarkdownWrapper
             markdown={getSuccessText(formatMessage, workingCase.type)}
           />
@@ -204,9 +204,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
         )
       }
       secondaryButtonText={
-        signingProcess === 'inProgress'
+        signingProgress === 'inProgress'
           ? undefined
-          : signingProcess === 'success'
+          : signingProgress === 'success'
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
