@@ -7,4 +7,5 @@ module.exports = {
   coverageDirectory:
     '../../../../coverage/libs/api/domains/icelandic-names-registry',
   displayName: 'api-domains-icelandic-names-registry',
+  testEnvironment: 'node',
 }

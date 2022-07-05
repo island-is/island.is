@@ -9,6 +9,18 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
+interface ModelAttributes {
+  language: string
+  className: string
+  key: string
+  property: string
+  value?: string
+  created: Date
+  modified: Date
+}
+
+type CreationAttributes = Omit<ModelAttributes, 'created' | 'modified'>
+
 @Table({
   tableName: 'translation',
   indexes: [
@@ -17,7 +29,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class Translation extends Model<Translation> {
+export class Translation extends Model<ModelAttributes, CreationAttributes> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

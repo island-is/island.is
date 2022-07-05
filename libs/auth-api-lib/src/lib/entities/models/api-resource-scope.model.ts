@@ -14,7 +14,7 @@ import { ApiResource } from './api-resource.model'
 @Table({
   tableName: 'api_resource_scope',
 })
-export class ApiResourceScope extends Model<ApiResourceScope> {
+export class ApiResourceScope extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -1,19 +1,14 @@
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { EventService } from '../../event'
 import { CourtService } from '../court.service'
-
-jest.mock('@island.is/judicial-system/court-client')
-jest.mock('../../event/event.service')
 
 export const createTestingCourtModule = async () => {
   const courtModule = await Test.createTestingModule({
     providers: [
-      CourtClientService,
-      EventService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -24,7 +19,13 @@ export const createTestingCourtModule = async () => {
       },
       CourtService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
 
   const courtClientService = courtModule.get<CourtClientService>(
     CourtClientService,
