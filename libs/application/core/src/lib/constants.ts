@@ -1,4 +1,4 @@
-import { StateLifeCycle } from '../types/StateMachine'
+import { StateLifeCycle } from '@island.is/application/types'
 
 export const DefaultStateLifeCycle: StateLifeCycle = {
   shouldBePruned: false,

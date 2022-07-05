@@ -2,9 +2,9 @@ import {
   ServerSideFeatures,
   ServerSideFeaturesOnTheClientSide,
 } from './server-side'
-import { ServerSideFeature } from './types'
+import { ServerSideFeatureClientType } from './types'
 
-export const ServerSideFeatureClient: ServerSideFeature =
+export const ServerSideFeatureClient: ServerSideFeatureClientType =
   typeof window !== 'undefined'
     ? new ServerSideFeaturesOnTheClientSide()
     : new ServerSideFeatures(process.env.SERVERSIDE_FEATURES_ON)

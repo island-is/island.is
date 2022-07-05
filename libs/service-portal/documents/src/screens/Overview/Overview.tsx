@@ -23,6 +23,7 @@ import {
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
+  AccessDeniedLegal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { Document, Query } from '@island.is/api/schema'
@@ -46,6 +47,7 @@ import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 import FilterTag from '../../components/FilterTag/FilterTag'
+import differenceInYears from 'date-fns/differenceInYears'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -140,6 +142,7 @@ const getSortDirection = (currentDirection: SortDirectionType) => {
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
+  client,
 }) => {
   useNamespaces('sp.documents')
   Sentry.configureScope((scope) =>
@@ -171,6 +174,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
   const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
 
+  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
+  const dateOfBirth = userInfo?.profile.dateOfBirth
+  let isOver15 = false
+  if (dateOfBirth) {
+    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
+  }
   useEffect(() => {
     const groupArray = groupData?.getDocumentCategories ?? []
     const docs = data.documents ?? []
@@ -312,6 +321,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
+  if (isLegal && isOver15) {
+    return <AccessDeniedLegal userInfo={userInfo} client={client} />
+  }
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>

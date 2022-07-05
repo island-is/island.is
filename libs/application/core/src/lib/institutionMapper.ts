@@ -1,5 +1,7 @@
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import { InstitutionTypes } from '../types/InstitutionTypes'
+import {
+  ApplicationTypes,
+  InstitutionTypes,
+} from '@island.is/application/types'
 
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE]: InstitutionTypes.STAFRAENT_ISLAND,

@@ -52,7 +52,7 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '2. 3. Fullt nafn',
+      label: '3. 2. Fullt nafn',
       value: parsedResponse.fulltNafn ?? '',
     },
     {

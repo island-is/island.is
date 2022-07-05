@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { delimitation, info, overview, section } from '../../lib/messages'

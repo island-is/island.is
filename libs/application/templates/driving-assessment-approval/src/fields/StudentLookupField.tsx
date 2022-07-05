@@ -1,11 +1,8 @@
 import React, { FC } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { useWatch } from 'react-hook-form'
-import {
-  CustomField,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'

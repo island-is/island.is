@@ -468,6 +468,8 @@ export class CaseService {
     user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
+    await this.refreshFormatMessage()
+
     let rulingUploadedToS3 = false
     let rulingUploadedToCourt = false
     let courtRecordUploadedToCourt = false
@@ -522,17 +524,15 @@ export class CaseService {
       encoding: 'binary',
     }
 
-    const emailPromises = [
-      this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment),
-    ]
+    // No need to wait for email sending to complete
+
+    this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment)
 
     if (
       !rulingUploadedToCourt ||
       (!isModifyingRuling && !courtRecordUploadedToCourt)
     ) {
-      emailPromises.push(
-        this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
-      )
+      this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment)
     }
 
     if (
@@ -542,10 +542,8 @@ export class CaseService {
         theCase.sessionArrangements ===
           SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
-      emailPromises.push(this.sendEmailToDefender(theCase, rulingUploadedToS3))
+      this.sendEmailToDefender(theCase, rulingUploadedToS3)
     }
-
-    await Promise.all(emailPromises)
   }
 
   private async createCase(
@@ -553,8 +551,8 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create(caseToCreate, { transaction })
-      : this.caseModel.create(caseToCreate))
+      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
   }
@@ -907,9 +905,8 @@ export class CaseService {
           documentToken,
         )
 
-        await this.refreshFormatMessage()
-
-        await this.sendRulingAsSignedPdf(theCase, user, signedPdf)
+        // No need to wait for this to complete
+        this.sendRulingAsSignedPdf(theCase, user, signedPdf)
       } catch (error) {
         this.eventService.postErrorEvent(
           'Failed to get a ruling signature confirmation',

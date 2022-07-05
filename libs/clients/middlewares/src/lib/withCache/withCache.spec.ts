@@ -1,10 +1,7 @@
 import { caching } from 'cache-manager'
 
 import { Auth } from '@island.is/auth-nest-tools'
-import {
-  buildCacheControl,
-  CacheControlOptions,
-} from '@island.is/clients/middlewares'
+import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
 import { sleep } from '@island.is/shared/utils'
 
 import {

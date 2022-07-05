@@ -27,6 +27,7 @@
     "form-data",
     "mock-aws-s3",
     "nock",
+    "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
