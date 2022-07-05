@@ -25,6 +25,7 @@
     "logform",
     "pg-native",
     "form-data",
+    "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

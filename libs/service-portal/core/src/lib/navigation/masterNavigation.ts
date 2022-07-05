@@ -1,4 +1,4 @@
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { ServicePortalNavigationItem } from '../service-portal-core'
 import { m } from '../messages'
 import { ServicePortalPath } from './paths'
 

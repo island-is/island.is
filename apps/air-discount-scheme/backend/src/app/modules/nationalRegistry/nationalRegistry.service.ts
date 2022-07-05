@@ -1,13 +1,9 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
-import * as kennitala from 'kennitala'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  NationalRegistryGeneralLookupResponse,
-  NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
-  FamilyMember,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 import {
@@ -23,6 +19,7 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
+import { lastValueFrom } from 'rxjs'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
@@ -358,9 +355,9 @@ export class NationalRegistryService {
     }
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`),
+    )
 
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
