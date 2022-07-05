@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_claim',
 })
-export class ClientClaim extends Model<ClientClaim> {
+export class ClientClaim extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

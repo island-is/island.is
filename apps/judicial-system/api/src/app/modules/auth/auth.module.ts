@@ -12,6 +12,7 @@ const { audience: audienceUrl } = environment.auth
     AuthService,
     {
       provide: 'IslandisLogin',
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       useFactory: () => new (require('@island.is/login'))({ audienceUrl }),
     },
   ],

@@ -147,8 +147,12 @@ export const Disabled = () => {
           header="Drag documents here to upload"
           description="Documents accepted with extension: .pdf, .docx, .rtf"
           buttonLabel="Select documents to upload"
-          onChange={() => {}}
-          onRemove={() => {}}
+          onChange={() => {
+            // Intentionally left empty
+          }}
+          onRemove={() => {
+            // Intentionally left empty
+          }}
           disabled
         />
       </Box>

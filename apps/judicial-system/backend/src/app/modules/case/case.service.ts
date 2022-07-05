@@ -551,8 +551,8 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create(caseToCreate, { transaction })
-      : this.caseModel.create(caseToCreate))
+      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
   }
