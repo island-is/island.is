@@ -109,6 +109,7 @@ export class MeDelegationsController {
       params: {
         delegationId: {
           type: 'string',
+          format: 'uuid',
           description: 'Delegation ID.',
         },
       },
