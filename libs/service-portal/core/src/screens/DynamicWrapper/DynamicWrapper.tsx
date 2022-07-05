@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState, useEffect } from 'react'
 import { NotFound } from '../NotFound/NotFound'
 
 import { useRouteMatch } from 'react-router-dom'
-import { useDynamicRoutes } from '@island.is/service-portal/core'
+import { useDynamicRoutes } from '../../hooks/useDynamicRoutes/useDynamicRoutes'
 import { SkeletonLoader } from '@island.is/island-ui/core'
 
 interface Props {

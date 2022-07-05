@@ -5,9 +5,8 @@ module.exports = {
   globalTeardown: './test/globalTeardown.ts',
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
   },
   displayName: 'financial-aid-backend',
+  testEnvironment: 'node',
 }

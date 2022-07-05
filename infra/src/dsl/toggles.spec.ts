@@ -4,6 +4,7 @@ import { serializeService } from './map-to-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { MissingSetting } from './types/input-types'
+import { FeatureNames } from './features'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
@@ -38,7 +39,7 @@ describe('Server-side toggles', () => {
       B: 'A',
     })
     .features({
-      'do-not-remove-for-testing-only': {
+      [FeatureNames.testing]: {
         env: {
           A: {
             dev: 'B1',
@@ -52,7 +53,7 @@ describe('Server-side toggles', () => {
     .initContainer({
       containers: [{ command: 'go' }],
       features: {
-        'do-not-remove-for-testing-only': {
+        [FeatureNames.testing]: {
           env: {
             C: 'D',
           },
@@ -66,7 +67,7 @@ describe('Server-side toggles', () => {
     sut,
     new UberChart({
       ...Staging,
-      featuresOn: ['do-not-remove-for-testing-only'],
+      featuresOn: [FeatureNames.testing],
     }),
   ) as SerializeSuccess
   const stagingNoFeatures = serializeService(
@@ -131,7 +132,7 @@ describe('Server-side toggles', () => {
       sut,
       new UberChart({
         ...Prod,
-        featuresOn: ['do-not-remove-for-testing-only'],
+        featuresOn: [FeatureNames.testing],
       }),
     ) as SerializeErrors
     const prodNoFeature = serializeService(
@@ -184,7 +185,7 @@ describe('Server-side toggles', () => {
       sut,
       new UberChart({
         ...Prod,
-        featuresOn: ['do-not-remove-for-testing-only'],
+        featuresOn: [FeatureNames.testing],
       }),
     ) as SerializeErrors
     const prodNoFeature = serializeService(

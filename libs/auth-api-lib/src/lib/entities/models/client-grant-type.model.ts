@@ -15,7 +15,7 @@ import { GrantType } from './grant-type.model'
 @Table({
   tableName: 'client_grant_type',
 })
-export class ClientGrantType extends Model<ClientGrantType> {
+export class ClientGrantType extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

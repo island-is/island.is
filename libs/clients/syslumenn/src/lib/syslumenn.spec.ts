@@ -25,7 +25,7 @@ import {
 } from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
-import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+import { SyslumennClientModule } from '../lib/syslumennClient.module'
 
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 
