@@ -4,17 +4,19 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import {
   YES,

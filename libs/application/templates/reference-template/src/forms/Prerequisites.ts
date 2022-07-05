@@ -1,16 +1,14 @@
 import get from 'lodash/get'
 import {
-  Application,
   buildForm,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({

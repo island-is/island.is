@@ -6,14 +6,14 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   Field,
   FormValue,
-  getValueViaPath,
   Option,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -780,4 +780,22 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
+}
+
+export const removeCountryCode = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber?.startsWith('+354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(4)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.startsWith('00354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(5)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber
 }

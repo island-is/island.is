@@ -13,7 +13,7 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -62,9 +62,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.estateMembers?.encountered) &&
       externalData.estate.estateMembers
     ) {
-      for (const estateMember of externalData.estate.estateMembers) {
-        fields.push(estateMember)
-      }
+      append(externalData.estate.estateMembers)
       setValue('estateMembers.encountered', true)
     }
   }, [])
@@ -118,7 +116,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((member, index) => (
-        <Box key={member.id} hidden={member.initial}>
+        <Box key={member.id} hidden={member.initial || member?.dummy}>
           <Item
             field={member}
             fieldName={`${id}.members`}
@@ -167,6 +165,7 @@ const Item = ({
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
+  const dummyField = `${fieldIndex}.dummy`
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
   const foreignCitizenship = useWatch({
@@ -183,6 +182,7 @@ const Item = ({
     onCompleted: (data) => {
       setValue(nameField, data.identity?.name ?? '')
     },
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
@@ -194,7 +194,10 @@ const Item = ({
           },
         },
       })
-    } else if (name !== '' && !foreignCitizenship) {
+    } else if (
+      name !== '' &&
+      (!foreignCitizenship || foreignCitizenship.length == 0)
+    ) {
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
@@ -205,6 +208,11 @@ const Item = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+      />
+      <Controller
+        name={dummyField}
+        control={control}
+        defaultValue={field.dummy || false}
       />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button

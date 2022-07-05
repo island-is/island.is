@@ -1,4 +1,8 @@
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { NO, YES, StatusTypes } from '../shared'
 
 import { answerValidators } from './answerValidators'
@@ -11,8 +15,10 @@ describe('answerValidators', () => {
     },
     assignees: [],
     applicant: '',
-    attachments: {},
+    applicantActors: [],
+    status: ApplicationStatus.IN_PROGRESS,
     created: new Date(),
+    attachments: {},
     externalData: {
       nationalRegistry: {
         date: new Date(),

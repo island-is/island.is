@@ -70,7 +70,7 @@ See the following example for the `web` project:
 "e2e": {
   "builder": "@nrwl/cypress:cypress",
   "options": {
-    "cypressConfig": "apps/web-e2e/cypress.json",
+    "cypressConfig": "apps/web-e2e/cypress.config.ts",
     "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
     "baseUrl": "http://localhost:4200",
     "devServerTarget": "web:serve"
