@@ -3,17 +3,18 @@ import { ServiceCenter } from '../lib'
 // Compiled from https://www.samband.is/sveitarfelogin/ list and
 // https://is.wikipedia.org/wiki/Íslensk_sveitarfélög_eftir_sveitarfélagsnúmerum
 
-export const serviceCenters: ServiceCenter[] = [
+export const serviceCenters: Pick<
+  ServiceCenter[],
+  'name' & 'number' & 'link'
+> = [
   {
     name: 'Þjónustumiðstöð Vesturbæjar, Miðborgar og Hlíða',
     number: 0,
-    postalCodes: [101, 102, 105, 107],
     link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Þjónustumiðstöð Laugardals og Háaleitis',
     number: 0,
-    postalCodes: [103, 104, 105, 108],
     link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
