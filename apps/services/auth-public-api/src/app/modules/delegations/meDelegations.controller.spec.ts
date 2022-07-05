@@ -741,6 +741,39 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(404)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "status": 404,
+            "title": "Not Found",
+            "type": "https://httpstatuses.com/404",
+          }
+        `)
+      })
+
+      it('should return 400 Bad Request if delegationId is not valid uuid', async () => {
+        // Arrange
+        await delegationModel.bulkCreate(Object.values(mockDelegations), {
+          include: [
+            {
+              model: DelegationScope,
+              as: 'delegationScopes',
+            },
+          ],
+        })
+
+        // Act
+        const res = await server.get(`${path}/delegationId`)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchInlineSnapshot(`
+          Object {
+            "detail": "delegationId must be a valid uuid",
+            "status": 400,
+            "title": "Bad Request",
+            "type": "https://httpstatuses.com/400",
+          }
+        `)
       })
     })
 
