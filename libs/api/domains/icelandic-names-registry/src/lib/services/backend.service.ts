@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
-import { RESTDataSource } from 'apollo-datasource-rest'
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import type { IcelandicNamesRegistryOptions } from '@island.is/icelandic-names-registry-types'
 import {
   IcelandicName,
@@ -20,7 +20,7 @@ class BackendAPI extends RESTDataSource {
     this.baseURL = `${this.options.backendUrl}/api/icelandic-names-registry`
   }
 
-  willSendRequest() {
+  willSendRequest(_request: RequestOptions) {
     this.memoizedResults.clear()
   }
 
