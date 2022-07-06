@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { isUuid, uuid } from 'uuidv4'
 
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -201,6 +201,10 @@ export class DelegationsService {
    * @returns
    */
   async findById(user: User, id: string): Promise<DelegationDTO | null> {
+    if (!isUuid(id)) {
+      throw new BadRequestException('delegationId must be a valid uuid')
+    }
+
     this.logger.debug(`Finding a delegation with id ${id}`)
     const delegation = await this.delegationModel.findOne({
       where: {
