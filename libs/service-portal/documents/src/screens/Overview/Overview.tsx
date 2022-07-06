@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, Fragment } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import {
   Text,
@@ -7,7 +7,6 @@ import {
   Columns,
   Column,
   Button,
-  Pagination,
   DatePicker,
   GridRow,
   GridColumn,
@@ -19,6 +18,7 @@ import {
   FilterMultiChoice,
   AccordionItem,
   Accordion,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -37,17 +37,16 @@ import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
 import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
-import isWithinInterval from 'date-fns/isWithinInterval'
-import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 import FilterTag from '../../components/FilterTag/FilterTag'
 import differenceInYears from 'date-fns/differenceInYears'
+import cn from 'classnames'
+import orderBy from 'lodash/orderBy'
+import { Pagination } from '../../components/Pagination/Pagination'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -95,21 +94,12 @@ const getFilteredDocuments = (
   filterValues: FilterValues,
 ): Document[] => {
   const {
-    dateFrom,
-    dateTo,
     searchQuery,
     showUnread,
-    activeCategories,
     activeGroups,
+    activeCategories,
   } = filterValues
-  let filteredDocuments = documents.filter((doc) => {
-    const minDate = dateFrom || new Date('1900-01-01')
-    const maxDate = dateTo || addMonths(new Date(), 3)
-    return isWithinInterval(new Date(doc.date), {
-      start: isBefore(maxDate, minDate) ? maxDate : minDate,
-      end: isAfter(minDate, maxDate) ? minDate : maxDate,
-    })
-  })
+  let filteredDocuments = documents
 
   if (activeCategories && activeCategories.length > 0) {
     filteredDocuments = filteredDocuments.filter((doc) =>
@@ -172,13 +162,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     GroupsValue[] | typeof NO_GROUPS_AVAILABLE
   >([])
   const { data, loading, error } = useListDocuments(
-    filterValue.dateFrom,
-    filterValue.dateTo,
+    filterValue.dateFrom?.toISOString(),
+    filterValue.dateTo?.toISOString(),
+    filterValue.activeGroups.join(),
     null,
-    null,
-    null,
+    sortState.key === 'date' ? sortState.direction : null,
     page,
-    pageSize,
+    pageSize + 1,
   )
   const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
 
@@ -188,6 +178,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   if (dateOfBirth) {
     isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
   }
+
   useEffect(() => {
     const groupArray = groupData?.getDocumentCategories ?? []
     const docs = data.documents ?? []
@@ -227,15 +218,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             sortState.direction,
           )
         : filteredArray
-    return filteredArray //sortedFiltered
+    return sortedFiltered
   }
   const categories = data.categories
   const filteredDocuments = getFilteredSorted(data.documents, filterValue)
-  const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
-    totalPages: Math.ceil(filteredDocuments.length / pageSize),
-  }
+
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => {
@@ -262,7 +249,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }))
   }, [])
 
-  const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const handlePageChange = useCallback((page: number) => {
+    setPage(page)
+  }, [])
 
   const handleCategoriesChange = useCallback((selected: string[]) => {
     setPage(1)
@@ -332,6 +321,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   if (isLegal && isOver15) {
     return <AccessDeniedLegal userInfo={userInfo} client={client} />
   }
+
+  console.log(data.documents)
+  console.log(data.categories)
+  console.log(groupData)
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -649,39 +642,24 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Box>
             )}
             <Box marginTop={[2, 0]}>
-              {filteredDocuments
-                ?.slice(pagedDocuments.from, pagedDocuments.to)
-                .map((doc, index) => (
-                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
-                    <DocumentLine
-                      img={getOrganizationLogoUrl(
-                        doc.senderName,
-                        organizations,
-                      )}
-                      documentLine={doc}
-                      documentCategories={
-                        groupData?.getDocumentCategories ?? []
-                      }
-                    />
-                  </Box>
-                ))}
+              {filteredDocuments.map((doc, index) => (
+                <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
+                  <DocumentLine
+                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
+                    documentLine={doc}
+                    documentCategories={groupData?.getDocumentCategories ?? []}
+                  />
+                </Box>
+              ))}
             </Box>
           </Box>
-          {filteredDocuments && filteredDocuments.length > pageSize && (
-            <Box marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={pagedDocuments.totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
+          {filteredDocuments.length > 0 && (
+            <Pagination
+              data={filteredDocuments}
+              page={page}
+              pageSize={pageSize}
+              handlePageChange={handlePageChange}
+            />
           )}
         </Box>
       </Stack>

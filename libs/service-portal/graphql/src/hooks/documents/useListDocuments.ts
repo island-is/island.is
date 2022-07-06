@@ -13,8 +13,8 @@ interface UseListDocumentsProps {
 }
 
 export const useListDocuments = (
-  dateFrom?: Date | null,
-  dateTo?: Date | null,
+  dateFrom?: string | null,
+  dateTo?: string | null,
   categoryId?: string | null,
   typeId?: string | null,
   sortBy?: string | null,

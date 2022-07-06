@@ -84,8 +84,8 @@ export class DocumentClient {
   async getDocumentList(
     nationalId?: string,
     input?: {
-      dateFrom?: Date | null
-      dateTo?: Date | null
+      dateFrom?: string | null
+      dateTo?: string | null
       categoryId?: string | null
       typeId?: string | null
       archived?: boolean | null
@@ -94,16 +94,15 @@ export class DocumentClient {
       pageSize?: number | null
     },
   ): Promise<ListDocumentsResponse | null> {
-    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=desc&dateFrom=${
-      input?.dateFrom ?? ''
-    }&dateTo=${input?.dateTo ?? ''}&categoryId=${
-      input?.categoryId ?? ''
-    }&typeId=${input?.typeId ?? ''}&page=${input?.page ?? 1}&pageSize=${
-      input?.pageSize ?? 15
-    }`
-    //const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=desc&dateFrom=&dateTo=&categoryId=&typeId=&page=1&pageSize=15` //?dateFrom=${dateFrom}&dateTo=${dateTo}&categoryId=${categoryId}&typeId=${typeId}&page=${page}&pageSize=${pageSize}&sortBy=${sortBy}`
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=${
+      input?.sortBy ?? 'desc'
+    }&dateFrom=${input?.dateFrom ?? ''}&dateTo=${
+      input?.dateTo ?? ''
+    }&categoryId=${input?.categoryId ?? ''}&typeId=${
+      input?.typeId ?? ''
+    }&page=${input?.page ?? 1}&pageSize=${input?.pageSize ?? 15}`
 
-    console.log('req', requestRoute)
+    console.log(requestRoute)
     return await this.getRequest<ListDocumentsResponse>(requestRoute)
   }
 

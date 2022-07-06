@@ -3,10 +3,10 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class GetDocumentListInput {
   @Field({ nullable: true })
-  dateFrom?: Date
+  dateFrom?: string
 
   @Field({ nullable: true })
-  dateTo?: Date
+  dateTo?: string
 
   @Field({ nullable: true })
   categoryId?: string

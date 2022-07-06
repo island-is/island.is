@@ -49,7 +49,6 @@ export class DocumentResolver {
     @Args('input') input: GetDocumentListInput,
     @CurrentUser() user: User,
   ): Promise<Document[]> {
-    console.log('input', input)
     return this.documentService.listDocuments(user.nationalId, input)
   }
 

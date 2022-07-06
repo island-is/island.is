@@ -40,7 +40,6 @@ export class DocumentService {
   ): Promise<Document[]> {
     try {
       const body = await this.documentClient.getDocumentList(nationalId, input)
-
       return (body?.messages || []).reduce(
         (result: Document[], documentMessage: DocumentInfoDTO) => {
           if (documentMessage)
