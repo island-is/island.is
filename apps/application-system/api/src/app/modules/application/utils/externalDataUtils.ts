@@ -2,8 +2,8 @@ import {
   BasicDataProvider,
   DataProviderConfig,
   DataProviderResult,
-} from '@island.is/application/core'
-import { ExternalData } from '@island.is/application/core'
+  ExternalData,
+} from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { User } from '@island.is/auth-nest-tools'
 

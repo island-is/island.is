@@ -23,6 +23,9 @@ export interface SessionInfoResponse {
   // The time when the authenticated session expires.
   expiresUtc?: string
 
+  // Number of seconds until the session expires.
+  expiresIn?: number
+
   // Boolean flag to indicated if the Expires time is passed.
   isExpired?: boolean
 }
@@ -71,23 +74,12 @@ export const CheckIdpSession = () => {
         // SessionInfo was found, check if it is valid or expired
         if (sessionInfo.isExpired) {
           return signInRedirect()
-        } else if (sessionInfo.expiresUtc) {
-          // Calculate when the session should expire with padding when we should check again
-          const timeout =
-            new Date(sessionInfo.expiresUtc).getTime() -
-            new Date().getTime() +
-            1000
-
-          if (timeout <= 0) {
-            // The session is expired but for some reason the `isExpired` was not correctly set
-            return signInRedirect()
-          }
-
+        } else if (sessionInfo.expiresIn !== undefined) {
           if (!sessionTimeout.current) {
             const newSessionTimeout = setTimeout(() => {
               sessionTimeout.current = null
               setIframeChecksum((i) => i + 1)
-            }, timeout)
+            }, sessionInfo.expiresIn * 1000)
             sessionTimeout.current = newSessionTimeout
           }
         }

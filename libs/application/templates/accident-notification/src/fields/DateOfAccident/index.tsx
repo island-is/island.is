@@ -1,5 +1,5 @@
 import { IsHealthInsuredInput } from '@island.is/api/schema'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'

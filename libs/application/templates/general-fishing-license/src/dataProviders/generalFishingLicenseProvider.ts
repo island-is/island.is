@@ -3,7 +3,7 @@ import {
   FailedDataProviderResult,
   StaticText,
   SuccessfulDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FishingLicenseShip } from '@island.is/api/schema'
 import * as Sentry from '@sentry/react'
 import { queryShips } from '../graphql/queries'

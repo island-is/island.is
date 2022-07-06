@@ -41,6 +41,7 @@ export const AppContext = createContext<AppProvider>({
   updateApplication: () => undefined,
   setUser: () => undefined,
   setMunicipalityById: () => Promise.resolve(undefined),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setNationalRegistryData: () => {},
   loading: false,
   loadingUser: false,

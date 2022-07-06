@@ -5,12 +5,14 @@ import {
   buildSection,
   buildDescriptionField,
   buildTextField,
+  buildSubmitField,
+} from '@island.is/application/core'
+import {
   Form,
   ApplicationTypes,
   Comparators,
   FormModes,
-  buildSubmitField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({

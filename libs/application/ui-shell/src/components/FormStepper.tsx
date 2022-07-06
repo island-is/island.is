@@ -4,16 +4,17 @@ import {
   FormStepperThemes,
   Tag,
 } from '@island.is/island-ui/core'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
   FormModes,
   Section,
   SectionChildren,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { FormScreen } from '@island.is/application/ui-shell'
+
+import { FormScreen } from '../types'
 
 interface FormStepperProps {
   application: Application

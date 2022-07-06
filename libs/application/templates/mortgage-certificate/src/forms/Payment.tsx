@@ -3,13 +3,11 @@ import {
   buildForm,
   buildDescriptionField,
   buildSection,
-  DefaultEvents,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 type CreateChargeData = {
   data: {

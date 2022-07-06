@@ -303,13 +303,13 @@ describe('ActorDelegationsController', () => {
       describe('when scope is no longer allowed for delegation', () => {
         beforeAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: false } as ApiScope,
+            { allowExplicitDelegationGrant: false },
             { where: { name: Scopes[1].name } },
           )
         })
         afterAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: true } as ApiScope,
+            { allowExplicitDelegationGrant: true },
             { where: { name: Scopes[1].name } },
           )
         })

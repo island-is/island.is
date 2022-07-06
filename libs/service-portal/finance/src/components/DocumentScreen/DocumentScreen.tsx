@@ -33,6 +33,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import * as styles from '../../screens/Finance.css'
+import sortBy from 'lodash/sortBy'
 
 const ITEMS_ON_PAGE = 20
 
@@ -145,7 +146,7 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 4]}>
+          <Box marginTop={[1, 1, 2, 2, 5]}>
             <Filter
               resultCount={0}
               variant="popover"
@@ -272,7 +273,10 @@ const DocumentScreen: FC<Props> = ({
                 </T.Row>
               </T.Head>
               <T.Body>
-                {billsDataArray
+                {sortBy(billsDataArray, (item) => {
+                  return item.date
+                })
+                  .reverse()
                   .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
                   .map((listItem) => (
                     <T.Row key={listItem.id}>

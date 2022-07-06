@@ -1,12 +1,12 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTemplateHelper,
   ApplicationTypes,
   ExternalData,
   FormValue,
   DefaultEvents,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 import {
   NO,

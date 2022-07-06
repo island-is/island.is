@@ -90,6 +90,18 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
+  it('should have a button that copies link to case for defender', () => {
+    const caseId = 'test_case_id'
+    intercept({ ...caseData, id: caseId })
+
+    cy.getByTestid('copyLinkToCase').click()
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .then((data) => data)
+      .should('equal', `${window.location.origin}/verjandi/${caseId}`)
+  })
+
   it.skip('should navigate to /krofur on successful confirmation', () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
