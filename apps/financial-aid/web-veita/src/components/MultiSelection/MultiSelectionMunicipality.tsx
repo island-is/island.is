@@ -23,7 +23,7 @@ type Props<T> = {
   state: CreateUpdateStaff<T>
 }
 
-const MultiSelectionMunicipality = <T extends unknown>({
+const MultiSelectionMunicipality = <T,>({
   selectionUpdate,
   state,
 }: Props<T>) => {

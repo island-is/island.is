@@ -34,6 +34,7 @@ import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
 import { IcelandicName } from './icelandic-name.model'
 import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
+import { ParseIntPipe, ParseIcelandicAlphabetPipe } from './pipes'
 
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
@@ -43,7 +44,7 @@ export class IcelandicNameController {
     private readonly auditService: AuditService,
   ) {}
 
-  @Get()
+  @Get('names')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -53,7 +54,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getAll()
   }
 
-  @Get(':id')
+  @Get('names/:id')
   @ApiOkResponse({
     type: IcelandicName,
     description: 'Gets icelandic name by id.',
@@ -61,7 +62,7 @@ export class IcelandicNameController {
   @ApiNotFoundResponse({
     description: 'The name was not found.',
   })
-  async getById(@Param('id') id: number): Promise<IcelandicName> {
+  async getById(@Param('id', ParseIntPipe) id: number): Promise<IcelandicName> {
     const result = await this.icelandicNameService.getById(id)
 
     if (!result) {
@@ -71,31 +72,33 @@ export class IcelandicNameController {
     return result
   }
 
-  @Get('initial-letter/:initialLetter')
+  @Get('names/initial-letter/:initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
     description: 'Gets all icelandic names by initial letter.',
   })
   async getByInitialLetter(
-    @Param('initialLetter') initialLetter: string,
+    @Param('initialLetter', ParseIcelandicAlphabetPipe) initialLetter: string,
   ): Promise<IcelandicName[]> {
     return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Get('search/:q')
+  @Get('names/search/:q')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
     description: 'Gets all icelandic names by search.',
   })
-  async getBySearch(@Param('q') q: string): Promise<IcelandicName[]> {
+  async getBySearch(
+    @Param('q', ParseIcelandicAlphabetPipe) q: string,
+  ): Promise<IcelandicName[]> {
     return await this.icelandicNameService.getBySearch(q)
   }
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Patch(':id')
+  @Patch('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   async updateNameById(
@@ -124,7 +127,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Post()
+  @Post('names')
   @ApiBearerAuth()
   @HttpCode(201)
   @ApiOkResponse()
@@ -152,7 +155,7 @@ export class IcelandicNameController {
 
   @UseGuards(IdsUserGuard, NationalIdGuard, ScopesGuard)
   @Scopes(ApiScope.internal)
-  @Delete(':id')
+  @Delete('names/:id')
   @ApiBearerAuth()
   @ApiOkResponse()
   @HttpCode(204)

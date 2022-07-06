@@ -37,19 +37,10 @@ import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from '../Finance.css'
 
-const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
-
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
-  const allChargeTypes = {
-    label: formatMessage({
-      id: 'sp.finance-transactions:all-selection',
-      defaultMessage: 'Allir gjaldflokkar',
-    }),
-    value: ALL_CHARGE_TYPES,
-  }
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
@@ -58,9 +49,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   const [q, setQ] = useState<string>('')
   const [chargeTypesEmpty, setChargeTypesEmpty] = useState(false)
   const [dropdownSelect, setDropdownSelect] = useState<string[] | undefined>()
-  const [dropdownValue, setDropdownValue] = useState<string>(
-    allChargeTypes.value,
-  )
 
   const {
     data: customerChartypeData,
@@ -69,7 +57,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
     onCompleted: () => {
       if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-        onDropdownSelect(allChargeTypes.value)
+        setAllChargeTypes()
       } else {
         setChargeTypesEmpty(true)
       }
@@ -101,16 +89,18 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     setToDate(new Date())
   }, [])
 
-  function onDropdownSelect(selection: any) {
+  function getAllChargeTypes() {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
-    const selectedID =
-      selection === ALL_CHARGE_TYPES ? allChargeTypeValues : [selection]
-    setDropdownSelect(selectedID)
-    setDropdownValue(selection)
+    return allChargeTypeValues ?? []
+  }
+
+  function setAllChargeTypes() {
+    const allChargeTypes = getAllChargeTypes()
+    setDropdownSelect(allChargeTypes)
   }
 
   function clearAllFilters() {
-    onDropdownSelect(allChargeTypes.value)
+    setAllChargeTypes()
     setFromDate(backInTheDay)
     setToDate(new Date())
     setQ('')
@@ -143,43 +133,38 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-              {recordsDataArray.length > 0 ? (
-                <Box
-                  display="flex"
-                  marginLeft="auto"
-                  paddingRight={2}
-                  printHidden
-                >
-                  <Box paddingRight={2}>
-                    <Button
-                      colorScheme="default"
-                      icon="print"
-                      iconType="filled"
-                      onClick={() => window.print()}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(m.print)}
-                    </Button>
-                  </Box>
-                  <DropdownExport
-                    onGetCSV={() =>
-                      exportHreyfingarFile(recordsDataArray, 'csv')
-                    }
-                    onGetExcel={() =>
-                      exportHreyfingarFile(recordsDataArray, 'xlsx')
-                    }
-                  />
+              <Box
+                display="flex"
+                marginLeft="auto"
+                paddingRight={2}
+                printHidden
+              >
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
                 </Box>
-              ) : null}
+                <DropdownExport
+                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
+                  onGetExcel={() =>
+                    exportHreyfingarFile(recordsDataArray, 'xlsx')
+                  }
+                />
+              </Box>
             </GridColumn>
           </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
               <Filter
-                resultCount={0}
                 variant="popover"
                 align="left"
                 reverse
@@ -202,19 +187,19 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                   labelClear={formatMessage(m.clearSelected)}
                   singleExpand={true}
                   onChange={({ selected }) => {
-                    onDropdownSelect(selected[0])
+                    setDropdownSelect(selected)
                   }}
                   onClear={() => {
-                    onDropdownSelect(allChargeTypes.value)
+                    setAllChargeTypes()
                   }}
                   categories={[
                     {
                       id: 'flokkur',
                       label: formatMessage(m.transactionsLabel),
-                      selected: [dropdownValue] ?? [],
-                      filters: [allChargeTypes, ...chargeTypeSelect],
+                      selected: dropdownSelect ? [...dropdownSelect] : [],
+                      filters: chargeTypeSelect,
                       inline: false,
-                      singleOption: true,
+                      singleOption: false,
                     },
                   ]}
                 />
