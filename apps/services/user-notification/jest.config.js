@@ -2,9 +2,7 @@ module.exports = {
   displayName: 'services-user-notification',
   preset: '../../../jest.preset.js',
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
@@ -14,4 +12,5 @@ module.exports = {
   setupFiles: ['./test/environment.ts'],
   globalSetup: './test/globalSetup.ts',
   globalTeardown: './test/globalTeardown.ts',
+  testEnvironment: 'node',
 }

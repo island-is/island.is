@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { FC, useContext, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'

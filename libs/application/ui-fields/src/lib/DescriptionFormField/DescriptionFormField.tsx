@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@island.is/application/ui-components'
 
 import { formatText } from '@island.is/application/core'
 import { Application, DescriptionField } from '@island.is/application/types'
