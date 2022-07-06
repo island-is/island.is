@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
+import { checkDelegation } from '@island.is/shared/utils'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
@@ -45,8 +46,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(userInfo)
 
   const {
     data: paymentSchedulesData,
