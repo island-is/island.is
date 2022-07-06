@@ -298,7 +298,6 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
   '3pZwAagW0UY26giHaxHthe',
 
-
   // Heilbrigðisstofnun Norðurlands
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
   'EM4Y0gF4OoGhH9ZY0Dxl6',
@@ -313,5 +312,5 @@ export const excludedOrganizationWatsonConfig: string[] = [
 
   // Útlendingastofnun
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-  '77rXck3sISbMsUv7BO1PG2'
+  '77rXck3sISbMsUv7BO1PG2',
 ]
