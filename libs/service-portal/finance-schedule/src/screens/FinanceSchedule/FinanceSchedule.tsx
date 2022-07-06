@@ -116,21 +116,11 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
               })}
             </Text>
           </GridColumn>
-          {!isDelegation && (
+        </GridRow>
+        {!isDelegation && (
+          <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box
-                paddingRight={2}
-                paddingTop={[2, 2, 2, 0]}
-                display="flex"
-                justifyContent={[
-                  'flexStart',
-                  'flexStart',
-                  'flexStart',
-                  'flexEnd',
-                ]}
-                alignItems="flexEnd"
-                height="full"
-              >
+              <Box paddingTop={5} display="flex" height="full">
                 <a
                   href="/umsoknir/greidsluaaetlun/"
                   target="_blank"
@@ -150,8 +140,8 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
                 </a>
               </Box>
             </GridColumn>
-          )}
-        </GridRow>
+          </GridRow>
+        )}
 
         <Box marginTop={4}>
           {paymentSchedulesError && (
