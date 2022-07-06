@@ -171,7 +171,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [groupsAvailable, setGroupsAvailable] = useState<
     GroupsValue[] | typeof NO_GROUPS_AVAILABLE
   >([])
-  const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
+  const { data, loading, error } = useListDocuments(
+    filterValue.dateFrom,
+    filterValue.dateTo,
+    null,
+    null,
+    null,
+    page,
+    pageSize,
+  )
   const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
 
   const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
@@ -219,7 +227,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             sortState.direction,
           )
         : filteredArray
-    return sortedFiltered
+    return filteredArray //sortedFiltered
   }
   const categories = data.categories
   const filteredDocuments = getFilteredSorted(data.documents, filterValue)

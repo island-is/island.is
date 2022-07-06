@@ -6,6 +6,7 @@ import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
 import { DocumentClient } from '@island.is/clients/documents'
 import { DocumentBuilder } from './documentBuilder'
+import { GetDocumentListInput } from './dto/getDocumentListInput'
 
 @Injectable()
 export class DocumentService {
@@ -33,9 +34,12 @@ export class DocumentService {
     }
   }
 
-  async listDocuments(nationalId: string): Promise<Document[]> {
+  async listDocuments(
+    nationalId: string,
+    input: GetDocumentListInput,
+  ): Promise<Document[]> {
     try {
-      const body = await this.documentClient.getDocumentList(nationalId)
+      const body = await this.documentClient.getDocumentList(nationalId, input)
 
       return (body?.messages || []).reduce(
         (result: Document[], documentMessage: DocumentInfoDTO) => {

@@ -12,8 +12,28 @@ interface UseListDocumentsProps {
   error?: any
 }
 
-export const useListDocuments = (natReg: string): UseListDocumentsProps => {
-  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS)
+export const useListDocuments = (
+  dateFrom?: Date | null,
+  dateTo?: Date | null,
+  categoryId?: string | null,
+  typeId?: string | null,
+  sortBy?: string | null,
+  page?: number | null,
+  pageSize?: number | null,
+): UseListDocumentsProps => {
+  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
+    variables: {
+      input: {
+        dateFrom,
+        dateTo,
+        categoryId,
+        typeId,
+        sortBy,
+        page,
+        pageSize,
+      },
+    },
+  })
 
   const documents = data?.listDocuments || []
 

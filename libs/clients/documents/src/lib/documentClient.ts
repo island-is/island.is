@@ -82,9 +82,28 @@ export class DocumentClient {
   }
 
   async getDocumentList(
-    nationalId: string,
+    nationalId?: string,
+    input?: {
+      dateFrom?: Date | null
+      dateTo?: Date | null
+      categoryId?: string | null
+      typeId?: string | null
+      archived?: boolean | null
+      sortBy?: string | null
+      page?: number | null
+      pageSize?: number | null
+    },
   ): Promise<ListDocumentsResponse | null> {
-    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages`
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=desc&dateFrom=${
+      input?.dateFrom ?? ''
+    }&dateTo=${input?.dateTo ?? ''}&categoryId=${
+      input?.categoryId ?? ''
+    }&typeId=${input?.typeId ?? ''}&page=${input?.page ?? 1}&pageSize=${
+      input?.pageSize ?? 15
+    }`
+    //const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=desc&dateFrom=&dateTo=&categoryId=&typeId=&page=1&pageSize=15` //?dateFrom=${dateFrom}&dateTo=${dateTo}&categoryId=${categoryId}&typeId=${typeId}&page=${page}&pageSize=${pageSize}&sortBy=${sortBy}`
+
+    console.log('req', requestRoute)
     return await this.getRequest<ListDocumentsResponse>(requestRoute)
   }
 

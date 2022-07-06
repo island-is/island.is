@@ -16,6 +16,7 @@ import { Document } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import { GetDocumentListInput } from './dto/getDocumentListInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -44,8 +45,12 @@ export class DocumentResolver {
 
   @Scopes(DocumentsScope.main)
   @Query(() => [Document], { nullable: true })
-  listDocuments(@CurrentUser() user: User): Promise<Document[]> {
-    return this.documentService.listDocuments(user.nationalId)
+  listDocuments(
+    @Args('input') input: GetDocumentListInput,
+    @CurrentUser() user: User,
+  ): Promise<Document[]> {
+    console.log('input', input)
+    return this.documentService.listDocuments(user.nationalId, input)
   }
 
   @Scopes(DocumentsScope.main)
