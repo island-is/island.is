@@ -13,7 +13,7 @@ import { ApiProperty } from '@nestjs/swagger'
   tableName: 'grant_type',
   timestamps: false,
 })
-export class GrantType extends Model<GrantType> {
+export class GrantType extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

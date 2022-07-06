@@ -352,11 +352,14 @@ export class CmsResolver {
   @Query(() => Article, { nullable: true })
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
-  ): Promise<Partial<Article> & { lang: Locale }> {
+  ): Promise<(Partial<Article> & { lang: Locale }) | null> {
     const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
+
+    if (!article) return null
+
     return {
       ...article,
       lang,
@@ -527,8 +530,10 @@ export class ArticleResolver {
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
   async relatedArticles(
-    @Parent() article: Article & { lang?: Locale },
+    @Parent() article: (Article & { lang?: Locale }) | null,
   ): Promise<Article[]> {
+    if (!article) return []
+
     return this.cmsContentfulService.getRelatedArticles(
       article.slug,
       article?.lang ?? 'is',

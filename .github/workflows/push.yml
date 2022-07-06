@@ -220,7 +220,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
       - run: |
-            echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -425,7 +425,6 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-
       - uses: ./.github/actions/unit-test
         with:
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
@@ -602,7 +601,6 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
-
 
   retag-unaffected:
     runs-on: ec2-runners

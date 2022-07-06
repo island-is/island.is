@@ -5,8 +5,6 @@ import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
 
 import environment from '../../../environments/environment'
 
-const { identityProvider } = environment
-
 import {
   AuthUser,
   signIn as handleSignIn,
@@ -14,6 +12,8 @@ import {
   session,
   AuthSession,
 } from '@island.is/next-ids-auth'
+
+const { identityProvider } = environment
 
 const signIn = (
   user: AuthUser,

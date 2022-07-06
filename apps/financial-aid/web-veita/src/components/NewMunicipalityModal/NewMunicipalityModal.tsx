@@ -96,7 +96,7 @@ const NewMunicipalityModal = ({
       undefined,
       undefined,
       state.selectedAdmin?.municipalityIds && muniId
-        ? [...state.selectedAdmin?.municipalityIds, muniId]
+        ? [...(state.selectedAdmin?.municipalityIds ?? []), muniId]
         : undefined,
     ).then(() => {
       onMunicipalityCreated()

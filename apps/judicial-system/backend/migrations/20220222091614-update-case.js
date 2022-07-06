@@ -15,16 +15,14 @@ module.exports = {
                 `UPDATE "case" SET accused_bookings = ${
                   c.accused_bookings?.trim()
                     ? "'" +
-                      c.accused_bookings.trim().replace(/\'/g, "''") +
+                      c.accused_bookings.trim().replace(/'/g, "''") +
                       (c.litigation_presentations?.trim()
                         ? '\n\n' +
-                          c.litigation_presentations.trim().replace(/\'/g, "''")
+                          c.litigation_presentations.trim().replace(/'/g, "''")
                         : '') +
                       "'"
                     : c.litigation_presentations?.trim()
-                    ? "'" +
-                      c.litigation_presentations.replace(/\'/g, "''") +
-                      "'"
+                    ? "'" + c.litigation_presentations.replace(/'/g, "''") + "'"
                     : null
                 } WHERE id = '${c.id}'`,
                 { transaction },
