@@ -7,9 +7,9 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SjukratryggingarHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
@@ -45,20 +45,23 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               )
             }
           >
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-                className={styles.iconCircle}
-              >
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-              </Link>
-            </Hidden>
+            {!!organizationPage.organization.logo && (
+              <Hidden above="sm">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                  className={styles.iconCircle}
+                >
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Link>
+              </Hidden>
+            )}
             <Box
               marginTop={[2, 2, 0]}
               textAlign={['center', 'center', 'center']}
@@ -73,7 +76,7 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
                   <div className={styles.titleImage}></div>
                 </Hidden>
                 <Hidden above="sm">
-                  <Text variant="h1" color="white">
+                  <Text variant="h1" color="blueberry600">
                     {organizationPage.title}
                   </Text>
                 </Hidden>

@@ -4,17 +4,32 @@ import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
 
 export const licensesModule: ServicePortalModule = {
-  name: 'Skilríki',
+  name: m.licenseNavTitle,
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
-      name: 'Skilríki',
+      name: defineMessage({
+        id: 'sp.license:main-your-licenses',
+        defaultMessage: 'Þín skírteini',
+      }),
       path: ServicePortalPath.LicensesRoot,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      render: () => lazy(() => import('./screens/Licenses')),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      render: () =>
+        lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
+    },
+    {
+      name: m.drivingLicense,
+      path: ServicePortalPath.LicensesDrivingDetail,
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      render: () =>
+        lazy(() =>
+          import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),
+        ),
     },
   ],
 }

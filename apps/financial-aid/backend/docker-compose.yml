@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db_financial_aid:
-    image: public.ecr.aws/bitnami/postgresql:11.12.0
+    image: public.ecr.aws/docker/library/postgres:11.14-alpine
     container_name: db_financial_aid
     networks:
       - local
@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
-      - 5432:5432
+      - 5433:5432
 
 networks:
   local:

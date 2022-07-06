@@ -19,7 +19,7 @@ export const documentsModule: ServicePortalModule = {
     {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
-      enabled: userInfo.scopes.includes(DocumentsScope.main),
+      enabled: userInfo.scopes?.includes(DocumentsScope.main),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],

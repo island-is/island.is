@@ -22,7 +22,7 @@ export class UserProfileService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @InjectModel(UserDeviceTokens)
-    private readonly UserDeviceTokensModel: typeof UserDeviceTokens,
+    private readonly userDeviceTokensModel: typeof UserDeviceTokens,
   ) {}
 
   async findById(id: string): Promise<UserProfile | null> {
@@ -33,7 +33,7 @@ export class UserProfileService {
   }
 
   async create(userProfileDto: CreateUserProfileDto): Promise<UserProfile> {
-    return await this.userProfileModel.create(userProfileDto)
+    return this.userProfileModel.create({ ...userProfileDto })
   }
 
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
@@ -63,26 +63,26 @@ export class UserProfileService {
     return { numberOfAffectedRows, updatedUserProfile }
   }
 
-  // FIND ALL TOKENS by NationalId - used by notifications workers
   async getDeviceTokens(nationalId: string) {
-    return await this.UserDeviceTokensModel.findAll({
+    return await this.userDeviceTokensModel.findAll({
       where: { nationalId },
       order: [['created', 'DESC']],
     })
   }
 
-  // CREATE TOKEN
-  async addDeviceToken(body: DeviceTokenDto) {
+  async addDeviceToken(body: DeviceTokenDto, user: User) {
     try {
-      return await this.UserDeviceTokensModel.create(body)
+      return await this.userDeviceTokensModel.create({
+        ...body,
+        nationalId: user.nationalId,
+      })
     } catch (e) {
       throw new BadRequestException(e.errors)
     }
   }
 
-  // DELETE TOKEN
   async deleteDeviceToken(body: DeviceTokenDto, user: User) {
-    const token = await this.UserDeviceTokensModel.findOne({
+    const token = await this.userDeviceTokensModel.findOne({
       where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
     })
     if (token) {

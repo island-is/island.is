@@ -1,33 +1,41 @@
-import React, { useRef, useEffect, useState, FC, useMemo } from 'react'
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  FC,
+  useMemo,
+  useReducer,
+} from 'react'
+import { useLazyQuery } from '@apollo/client'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
+import { useWindowSize } from 'react-use'
+import { NextRouter, useRouter } from 'next/router'
 import NextLink from 'next/link'
-import { Screen } from '../../types'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
+import { theme } from '@island.is/island-ui/theme'
 import {
   Box,
   Text,
   Stack,
   Breadcrumbs,
-  Hidden,
   Pagination,
   Link,
   LinkContext,
-  Navigation,
-  NavigationItem,
+  ColorSchemeContext,
+  Inline,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Tag,
+  Button,
 } from '@island.is/island-ui/core'
+import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_SEARCH_RESULTS_QUERY_DETAILED,
-  GET_SEARCH_COUNT_QUERY,
-  GET_SEARCH_RESULTS_TOTAL,
-} from '../queries'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  Image,
+  Tag as TagType,
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
   GetSearchCountTagsQuery,
@@ -45,10 +53,19 @@ import {
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
   Link as LinkItem,
-} from '../../graphql/schema'
-import { Image } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useLazyQuery } from '@apollo/client'
+  ProjectPage,
+} from '@island.is/web/graphql/schema'
+import { ActionType, reducer, initialState } from './Search.state'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import { Screen } from '../../types'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_SEARCH_RESULTS_QUERY_DETAILED,
+  GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_TOTAL,
+} from '../queries'
+
+import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
 
 const PERPAGE = 10
 
@@ -65,18 +82,41 @@ interface CategoryProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-interface SidebarTagMap {
-  [key: string]: {
-    title: string
-    total: number
-  }
+type TagsList = {
+  title: string
+  count: number
+  key: string
 }
 
-interface SidebarData {
-  totalTagCount: number
-  tags: SidebarTagMap
-  types: SidebarTagMap
+type SearchType = Article &
+  LifeEventPage &
+  News &
+  AdgerdirPage &
+  SubArticle &
+  OrganizationSubpage &
+  LinkItem &
+  ProjectPage
+
+const connectedTypes: Partial<
+  Record<
+    SearchableContentTypes | string,
+    Array<SearchableContentTypes | string>
+  >
+> = {
+  webArticle: [
+    'WebArticle',
+    'WebSubArticle',
+    'WebOrganizationSubpage',
+    'WebProjectPage',
+  ],
+  webAdgerdirPage: ['WebAdgerdirPage'],
+  webNews: ['WebNews'],
+  webQNA: ['WebQna'],
+  webLifeEventPage: ['WebLifeEventPage'],
 }
+
+const stringToArray = (value: string | string[]) =>
+  Array.isArray(value) ? value : value?.length ? [value] : []
 
 const Search: Screen<CategoryProps> = ({
   q,
@@ -85,73 +125,78 @@ const Search: Screen<CategoryProps> = ({
   countResults,
   namespace,
 }) => {
+  const { query } = useRouter()
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    query: {
+      q,
+      type: stringToArray(query.type) as SearchableContentTypes[],
+      category: stringToArray(query.category),
+      organization: stringToArray(query.organization),
+    },
+  })
+  usePlausible('Search Query', {
+    query: (q ?? '').trim().toLowerCase(),
+    source: 'Web',
+  })
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
-  const Router = useRouter()
+  const routerReplace = useRouterReplace()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [sidebarData, setSidebarData] = useState<SidebarData>({
-    totalTagCount: 0,
-    tags: {},
-    types: {},
-  })
+
+  useMemo(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const filters: SearchQueryFilters = {
-    category: Router.query.category as string,
-    type: Router.query.type as string,
+    category: query.category as string,
+    type: query.type as string,
   }
 
-  useEffect(() => {
-    // we get the tag count manually since the total includes uncategorised data and the type count
-    let totalTagCount = 0
-    // create a map of sidebar tag data for easier lookup later
-    const tagCountResults = countResults.tagCounts.reduce(
-      (tagList: SidebarTagMap, { key, count: total, value: title }) => {
-        // in some rare cases a tag might be empty we skip counting and rendering it
-        if (key && title) {
-          totalTagCount = totalTagCount + total
+  const getArticleCount = useMemo(
+    () => () => {
+      let total = 0
 
-          tagList[key] = {
-            title,
-            total,
-          }
-        }
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webArticle')
+          ?.count ?? 0
 
-        return tagList
-      },
-      {},
-    )
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webSubArticle')
+          ?.count ?? 0
 
-    // create a map of sidebar type data for easier lookup later
-    const typeNames = {
-      webNews: n('newsTitle'),
-      webOrganizationSubpage: n('organizationsTitle', 'Opinberir aðilar'),
-    }
-    const typeCountResults = countResults.typesCount.reduce(
-      (typeList: SidebarTagMap, { key, count: total }) => {
-        if (Object.keys(typeNames).includes(key)) {
-          typeList[key] = {
-            title: typeNames[key],
-            total,
-          }
-        }
-        return typeList
-      },
-      {},
-    )
-    setSidebarData({
-      totalTagCount,
-      tags: tagCountResults,
-      types: typeCountResults,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countResults])
+      total +=
+        (countResults?.typesCount ?? []).find(
+          (x) => x.key === 'webOrganizationSubpage',
+        )?.count ?? 0
 
-  const getLabels = (item) => {
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
+          ?.count ?? 0
+
+      if (query.processentry) {
+        return total + (countResults?.processEntryCount ?? 0)
+      }
+
+      return total
+    },
+    [
+      countResults?.processEntryCount,
+      countResults?.typesCount,
+      query.processentry,
+    ],
+  )
+
+  const getLabels = (item: SearchType) => {
     const labels = []
-    switch (
-      item.__typename as LifeEventPage['__typename'] & News['__typename']
-    ) {
+
+    switch (item.__typename) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
         break
@@ -165,7 +210,7 @@ const Search: Screen<CategoryProps> = ({
         break
     }
 
-    if (item.processEntry) {
+    if (checkForProcessEntries(item)) {
       labels.push(n('applicationForm'))
     }
 
@@ -194,28 +239,78 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
-  const searchResultsItems = (searchResults.items as Array<
-    Article &
-      LifeEventPage &
-      News &
-      AdgerdirPage &
-      SubArticle &
-      OrganizationSubpage &
-      LinkItem
-  >).map((item) => ({
-    title: item.title,
-    parentTitle: item.parent?.title,
-    description: item.intro ?? item.description ?? item.parent?.intro,
-    link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
-    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-    category: item.category ?? item.parent?.category,
-    group: item.group,
-    ...(item.image && { image: item.image as Image }),
-    ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
-    labels: getLabels(item),
-  }))
+  const tagTitles:
+    | Partial<Record<SearchableContentTypes, string>>
+    | Record<string, string> = useMemo(
+    () => ({
+      webArticle: n('webArticle', 'Greinar'),
+      webSubArticle: n('webSubArticle', 'Undirgreinar'),
+      webLink: n('webLink', 'Tenglar'),
+      webNews: n('webNews', 'Fréttir og tilkynningar'),
+      webQNA: n('webQNA', 'Spurt og svarað'),
+      webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+    }),
+    [n],
+  )
 
-  const byCategory = (item) => {
+  const pathname = linkResolver('search').href
+
+  const tagsList = useMemo((): TagsList[] => {
+    return [
+      ...countResults.typesCount
+        .filter((x) => x.key in tagTitles)
+        .filter((x) =>
+          Object.keys(connectedTypes).some((y) => y.includes(x.key)),
+        )
+        .map((x) => {
+          let count = x.count
+
+          if (x.key === 'webArticle') {
+            count = getArticleCount()
+          }
+
+          return {
+            title: tagTitles[x.key] as string,
+            key: x.key,
+            count,
+          }
+        }),
+    ]
+  }, [countResults.typesCount, getArticleCount, tagTitles])
+
+  const checkForProcessEntries = (item: SearchType) => {
+    if (item.__typename === 'Article') {
+      const hasMainProcessEntry =
+        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
+      const hasProcessEntryInBody = !!item.body?.filter((content) => {
+        return content.__typename === 'ProcessEntry'
+      }).length
+
+      return hasMainProcessEntry || hasProcessEntryInBody
+    }
+
+    return false
+  }
+
+  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
+    (item) => ({
+      typename: item.__typename,
+      title: item.title,
+      parentTitle: item.parent?.title,
+      description:
+        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+      link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
+      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+      category: item.category ?? item.parent?.category,
+      hasProcessEntry: checkForProcessEntries(item),
+      group: item.group,
+      ...(item.image && { image: item.image as Image }),
+      ...(item.thumbnail && { thumbnail: item.thumbnail as Image }),
+      labels: getLabels(item),
+    }),
+  )
+
+  const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
     }
@@ -223,226 +318,321 @@ const Search: Screen<CategoryProps> = ({
     return !filters.category || filters.category === item.categorySlug
   }
 
-  const filteredItems = searchResultsItems.filter(byCategory)
+  const filteredItems = [...searchResultsItems].filter(noUncategorized)
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
-  const sidebarDataTypes = Object.entries(sidebarData.types)
-  const sidebarDataTags = Object.entries(sidebarData.tags)
 
-  const serviceCategoryItems = (sidebarDataTags ?? []).reduce(
-    (all, [key, { title, total }]) => {
-      const active = key === filters.category
-      const text = `${title} (${total})`
+  const searchResultsText =
+    totalSearchResults === 1
+      ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
+      : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
-      if (key === 'uncategorized') {
-        return all
-      }
+  useEffect(() => {
+    if (state.searchLocked) {
+      return null
+    }
 
-      all.push({
-        title: text,
-        href: `${linkResolver('search').href}?q=${q}&category=${key}`,
-        active,
-      })
+    const newQuery = {
+      ...state.query,
+      q,
+    }
 
-      return all
-    },
-    [],
-  )
+    if (newQuery.processentry === false) {
+      delete newQuery['processentry']
+    }
 
-  const hasFilters = sidebarDataTypes.length || serviceCategoryItems.length
+    routerReplace({
+      pathname,
+      query: newQuery,
+    }).then(() => {
+      window.scrollTo(0, 0)
+    })
+  }, [state, pathname, q, routerReplace])
 
-  const items: NavigationItem[] = [
-    {
-      title: n('showAll', 'Sýna allt'),
-      active: !filters.category && !filters.type,
-      href: `${linkResolver('search').href}?q=${q}`,
-    },
-    {
-      ...(serviceCategoryItems.length && {
-        title: `${n('serviceCategories', 'Þjónustuflokkar')} (${
-          sidebarData.totalTagCount
-        })`,
-        active: filters.type === 'webArticle,webSubArticle',
-        href: `${
-          linkResolver('search').href
-        }?q=${q}&type=webArticle,webSubArticle`,
-        accordion: true,
-        items: serviceCategoryItems,
+  const getSearchParams = (contentType: string) => {
+    return {
+      q,
+      ...(contentType && {
+        type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
+          ? connectedTypes[contentType].map((x) => firstLower(x))
+          : contentType,
       }),
+      ...(query.category?.length && { category: query.category }),
+      ...(query.organization?.length && {
+        organization: query.organization,
+      }),
+    }
+  }
+
+  const categories: CategoriesProps[] = [
+    {
+      id: 'category',
+      label: 'Þjónustuflokkar',
+      selected: state.query.category,
+      singleOption: true,
+      filters: countResults.tagCounts
+        .filter((x) => x.value.trim() && x.type === 'category')
+        .map(({ key, value }) => ({
+          label: value,
+          value: key,
+        })),
     },
-    ...(sidebarDataTypes ?? []).map(([key, { title, total }]) => {
-      const active = key === filters.type
-      const text = `${title} (${total})`
-
-      return {
-        title: text,
-        href: `${linkResolver('search').href}?q=${q}&type=${key}`,
-        active,
-      }
-    }),
+    {
+      id: 'organization',
+      label: 'Opinberir aðilar',
+      selected: state.query.organization,
+      singleOption: true,
+      filters: countResults.tagCounts
+        .filter((x) => x.value.trim() && x.type === 'organization')
+        .map(({ key, value }) => ({
+          label: value,
+          value: key,
+        })),
+    },
   ]
-
-  const selectedTitle =
-    sidebarData.tags[filters.category]?.title ??
-    sidebarData.types[filters.type]?.title ??
-    n('allCategories', 'Allir flokkar')
 
   return (
     <>
       <Head>
         <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
-      <SidebarLayout
-        sidebarContent={
-          !!hasFilters && (
-            <Navigation
-              title={n('filterResults', 'Sía niðurstöður')}
-              label={n('filterResults', 'Sía niðurstöður')}
-              baseId="search-navigation"
-              colorScheme="purple"
-              activeItemTitle={selectedTitle}
-              items={items}
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href}>{link}</NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          )
-        }
-      >
-        <Stack space={[3, 3, 4]}>
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                href: '/',
-              },
-            ]}
-            renderLink={(link) => {
-              return (
-                <NextLink {...linkResolver('homepage')} passHref>
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
-
-          <SearchInput
-            id="search_input_search_page"
-            ref={searchRef}
-            size="large"
-            placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
-            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
-            activeLocale={activeLocale}
-            initialInputValue={q}
-          />
-          <Hidden above="sm">
-            <Navigation
-              title={n('filterResults', 'Sía niðurstöður')}
-              label={n('filterResults', 'Sía niðurstöður')}
-              baseId="search-navigation-mobile"
-              colorScheme="purple"
-              activeItemTitle={selectedTitle}
-              items={items}
-              isMenuDialog
-              renderLink={(link, item) => {
-                return item?.href ? (
-                  <NextLink href={item?.href}>{link}</NextLink>
-                ) : (
-                  link
-                )
-              }}
-            />
-          </Hidden>
-
-          {nothingFound ? (
-            <>
-              {!!q && (
-                <Text variant="intro" as="p">
-                  {n(
-                    'nothingFoundWhenSearchingFor',
-                    'Ekkert fannst við leit á',
-                  )}{' '}
-                  <strong>{q}</strong>
-                </Text>
-              )}
-
-              <Text variant="intro" as="p">
-                {n('nothingFoundExtendedExplanation')}
-              </Text>
-
-              {q.length &&
-              searchResultsItems.length === 0 &&
-              activeLocale === 'is' ? (
-                <EnglishResultsLink q={q} />
-              ) : null}
-            </>
-          ) : (
-            <Box marginBottom={2}>
-              <Text variant="intro" as="p">
-                {filteredItems.length}{' '}
-                {filteredItems.length === 1
-                  ? (n(
-                      'searchResult',
-                      'leitarniðurstaða',
-                    ) as string).toLowerCase()
-                  : (n(
-                      'searchResults',
-                      'leitarniðurstöður',
-                    ) as string).toLowerCase()}
-              </Text>
-            </Box>
-          )}
-        </Stack>
-        <Stack space={2}>
-          {filteredItems.map(
-            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
-              const tags: Array<CardTagsProps> = []
-
-              labels.forEach((label) => {
-                tags.push({
-                  title: label,
-                  tagProps: {
-                    outlined: true,
+      <GridContainer>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            paddingBottom={6}
+            offset={[null, null, null, '2/12']}
+          >
+            <Stack space={[3, 3, 4]}>
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: '/',
                   },
-                })
-              })
-
-              return (
-                <Card
-                  key={index}
-                  tags={tags}
-                  image={thumbnail ? thumbnail : image}
-                  subTitle={parentTitle}
-                  {...rest}
-                />
-              )
-            },
-          )}{' '}
-          {totalSearchResults > 0 && (
-            <Box paddingTop={8}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Link
-                    href={{
-                      pathname: linkResolver('search').href,
-                      query: { ...Router.query, page },
-                    }}
-                  >
-                    <span className={className}>{children}</span>
-                  </Link>
-                )}
+                ]}
+                renderLink={(link) => {
+                  return (
+                    <NextLink {...linkResolver('homepage')} passHref>
+                      {link}
+                    </NextLink>
+                  )
+                }}
               />
-            </Box>
-          )}
-        </Stack>
-      </SidebarLayout>
+              <SearchInput
+                id="search_input_search_page"
+                ref={searchRef}
+                size="large"
+                placeholder={n('inputSearchQuery', 'Sláðu inn leitarorð')}
+                quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
+                activeLocale={activeLocale}
+                initialInputValue={q}
+              />
+              <Box width="full">
+                <Inline
+                  justifyContent="spaceBetween"
+                  alignY="center"
+                  space={3}
+                  flexWrap="nowrap"
+                  collapseBelow="md"
+                >
+                  <Inline space={1}>
+                    {countResults.total > 0 && (
+                      <Tag
+                        variant="blue"
+                        active={!query?.type?.length}
+                        onClick={() => {
+                          dispatch({
+                            type: ActionType.RESET_SEARCH,
+                          })
+                        }}
+                      >
+                        Sýna allt
+                      </Tag>
+                    )}
+                    {tagsList
+                      .filter((x) => x.count > 0)
+                      .map(({ title, key }, index) => (
+                        <Tag
+                          key={index}
+                          variant="blue"
+                          active={
+                            query?.processentry !== 'true' &&
+                            query?.type?.includes(key)
+                          }
+                          onClick={() => {
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: false,
+                                  ...getSearchParams(key),
+                                  category: [],
+                                  organization: [],
+                                },
+                                searchLocked: false,
+                              },
+                            })
+                          }}
+                        >
+                          {title}
+                        </Tag>
+                      ))}
+                    {countResults.processEntryCount > 0 && (
+                      <Tag
+                        variant="blue"
+                        active={query?.processentry === 'true'}
+                        onClick={() => {
+                          dispatch({
+                            type: ActionType.SET_PARAMS,
+                            payload: {
+                              query: {
+                                processentry: true,
+                                ...getSearchParams('webArticle'),
+                              },
+                              searchLocked: false,
+                            },
+                          })
+                        }}
+                      >
+                        {n('processEntry', 'Umsókn')}
+                      </Tag>
+                    )}
+                  </Inline>
+                  <FilterMenu
+                    {...filterLabels}
+                    categories={categories}
+                    resultCount={totalSearchResults}
+                    filter={{
+                      category: state.query.category ?? [],
+                      organization: state.query.organization ?? [],
+                    }}
+                    setFilter={(payload) =>
+                      dispatch({
+                        type: ActionType.SET_PARAMS,
+                        payload: {
+                          query: {
+                            ...getSearchParams('webArticle'),
+                            ...payload,
+                          },
+                        },
+                      })
+                    }
+                    align="right"
+                    variant={isMobile ? 'dialog' : 'popover'}
+                  />
+                </Inline>
+              </Box>
+              {nothingFound && !!q ? (
+                <>
+                  <Text variant="intro" as="p">
+                    {n(
+                      'nothingFoundWhenSearchingFor',
+                      'Ekkert fannst við leit á',
+                    )}{' '}
+                    <strong>{q}</strong>
+                    {!!(
+                      state.query.organization.length ||
+                      state.query.category.length
+                    ) && ` ${n('withChosenFilters', 'með völdum síum')}. `}
+                  </Text>
+                  {!!(
+                    state.query.organization.length ||
+                    state.query.category.length
+                  ) && (
+                    <Button
+                      variant="text"
+                      onClick={() =>
+                        dispatch({
+                          type: ActionType.RESET_SEARCH,
+                        })
+                      }
+                    >
+                      {`${n(
+                        'clickHereToRemoveFilters',
+                        'Smelltu hér til að fjarlægja allar síur.',
+                      )}`}
+                    </Button>
+                  )}
+                  <Text variant="intro" as="p">
+                    {n('nothingFoundExtendedExplanation')}
+                  </Text>
+                  {q.length &&
+                  searchResultsItems.length === 0 &&
+                  activeLocale === 'is' ? (
+                    <EnglishResultsLink q={q} />
+                  ) : null}
+                </>
+              ) : (
+                <Box marginBottom={2}>
+                  <Text variant="intro" as="p">
+                    {totalSearchResults} {searchResultsText}
+                  </Text>
+                </Box>
+              )}
+            </Stack>
+            <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+              <Stack space={2}>
+                {filteredItems.map(
+                  (
+                    {
+                      typename,
+                      image,
+                      thumbnail,
+                      labels,
+                      parentTitle,
+                      ...rest
+                    },
+                    index,
+                  ) => {
+                    const tags: Array<CardTagsProps> = []
+
+                    labels.forEach((label) => {
+                      tags.push({
+                        title: label,
+                        tagProps: {
+                          outlined: true,
+                        },
+                      })
+                    })
+
+                    return (
+                      <Card
+                        key={index}
+                        tags={tags}
+                        dataTestId="search-result"
+                        image={thumbnail ? thumbnail : image}
+                        subTitle={parentTitle}
+                        {...rest}
+                      />
+                    )
+                  },
+                )}{' '}
+                {totalSearchResults > 0 && (
+                  <Box paddingTop={6}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      variant="blue"
+                      renderLink={(page, className, children) => (
+                        <Link
+                          href={{
+                            pathname: linkResolver('search').href,
+                            query: { ...query, page },
+                          }}
+                        >
+                          <span className={className}>{children}</span>
+                        </Link>
+                      )}
+                    />
+                  </Box>
+                )}
+              </Stack>
+            </ColorSchemeContext.Provider>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </>
   )
 }
@@ -451,17 +641,37 @@ const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
-  const category = single(query.category) || ''
-  const type = single(query.type) || ''
   const page = Number(single(query.page)) || 1
+  const category = query.category ?? ''
+  const type = query.type ?? ''
+  const organization = query.organization ?? ''
+  const processentry = query.processentry ?? ''
+  const countTag = {}
 
-  let tags = {}
-  let countTag = {}
-  if (category) {
-    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
-  } else {
-    countTag = { countTag: 'category' as SearchableTags }
-  }
+  const tags: TagType[] = [
+    ...stringToArray(category).map(
+      (key: string): TagType => ({
+        type: 'category' as SearchableTags,
+        key,
+      }),
+    ),
+    ...stringToArray(organization).map(
+      (key: string): TagType => ({
+        type: 'organization' as SearchableTags,
+        key,
+      }),
+    ),
+    ...(processentry && [
+      {
+        type: 'processentry' as SearchableTags,
+        key: 'true',
+      },
+    ]),
+  ]
+
+  const types: SearchableContentTypes[] = stringToArray(type).map(
+    (x: SearchableContentTypes) => x,
+  )
 
   const allTypes = [
     'webArticle' as SearchableContentTypes,
@@ -471,18 +681,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     'webLink' as SearchableContentTypes,
     'webNews' as SearchableContentTypes,
     'webOrganizationSubpage' as SearchableContentTypes,
+    'webProjectPage' as SearchableContentTypes,
   ]
-
-  let types
-
-  const typeStrings = type.split(',') as SearchableContentTypes[]
-  if (typeStrings.length > 1) {
-    types = typeStrings
-  } else if (type) {
-    types = [type as SearchableContentTypes]
-  } else {
-    types = allTypes
-  }
 
   const [
     {
@@ -499,8 +699,8 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types,
-          ...tags,
+          types: types.length ? types : allTypes,
+          ...(tags.length && { tags }),
           ...countTag,
           countTypes: true,
           size: PERPAGE,
@@ -514,9 +714,14 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          countTag: 'category' as SearchableTags,
+          countTag: [
+            'category' as SearchableTags,
+            'organization' as SearchableTags,
+            'processentry' as SearchableTags,
+          ],
           types: allTypes,
           countTypes: true,
+          countProcessEntry: true,
         },
       },
     }),
@@ -548,6 +753,23 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     page,
   }
+}
+
+const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
+
+const useRouterReplace = (): NextRouter['replace'] => {
+  const Router = useRouter()
+  const routerRef = useRef(Router)
+
+  routerRef.current = Router
+
+  const [{ replace }] = useState<Pick<NextRouter, 'replace'>>({
+    replace: (path) => {
+      return routerRef.current.push(path)
+    },
+  })
+
+  return replace
 }
 
 interface EnglishResultsLinkProps {
@@ -597,6 +819,16 @@ const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
   }
 
   return null
+}
+
+const filterLabels: FilterLabels = {
+  labelClearAll: 'Hreinsa allar síur',
+  labelClear: 'Hreinsa síu',
+  labelOpen: 'Sía niðurstöður',
+  labelClose: 'Loka síu',
+  labelTitle: 'Sía mannanöfn',
+  labelResult: 'Sjá niðurstöður',
+  inputPlaceholder: 'Leita að nafni',
 }
 
 export default withMainLayout(Search, { showSearchInHeader: false })

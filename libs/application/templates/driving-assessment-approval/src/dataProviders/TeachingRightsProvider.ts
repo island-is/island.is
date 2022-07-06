@@ -3,13 +3,13 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { HasTeachingRights } from '@island.is/api/schema'
 
 export class TeachingRightsProvider extends BasicDataProvider {
   type = 'TeachingRightsProvider'
 
-  async provide(application: Application): Promise<HasTeachingRights> {
+  async provide(_application: Application): Promise<HasTeachingRights> {
     const query = `
       query DrivingLicenseTeachingRights {
         drivingLicenseTeachingRights {

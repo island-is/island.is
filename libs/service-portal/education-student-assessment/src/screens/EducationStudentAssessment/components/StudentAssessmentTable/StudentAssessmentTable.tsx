@@ -11,6 +11,7 @@ import { EmptyState, m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -75,6 +76,7 @@ type DataField = Pick<
 
 const StudentAssessmentTable = () => {
   const { familyIndex } = useParams<{ familyIndex: string }>()
+  const { formatMessage } = useLocale()
   const { data, loading: queryLoading, error } = useQuery<Query>(
     EducationExamResultQuery,
     {
@@ -91,13 +93,23 @@ const StudentAssessmentTable = () => {
   return (
     <>
       {data?.educationExamResult && (
-        <Text variant="h2" marginBottom={4}>
-          {data?.educationExamResult.fullName}
-        </Text>
+        <Box marginBottom={7}>
+          <Text variant="h3" as="h1">
+            {data?.educationExamResult.fullName}
+          </Text>
+          <Text variant="default">
+            {formatMessage({
+              id:
+                'sp.education-student-assessment:education-student-assessment-intro',
+              defaultMessage:
+                'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
+            })}
+          </Text>
+        </Box>
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
         <Box key={index} marginBottom={7}>
-          <Text variant="h3" marginBottom={3}>
+          <Text variant="h4" as="h2" marginBottom={3}>
             Samræmd könnunarpróf {studentAssessment.studentYear}. bekkur
           </Text>
           <T.Table>

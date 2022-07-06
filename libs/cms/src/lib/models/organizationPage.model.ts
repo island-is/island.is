@@ -3,6 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IOrganizationPage } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
 import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { Link, mapLink } from './link.model'
 import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
@@ -12,6 +13,7 @@ import {
   OrganizationTheme,
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -59,6 +61,15 @@ export class OrganizationPage {
 
   @Field(() => [SidebarCard])
   sidebarCards!: Array<SidebarCard>
+
+  @Field(() => [Link], { nullable: true })
+  externalLinks?: Array<Link>
+
+  @Field(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner
+
+  @Field(() => Image, { nullable: true })
+  defaultHeaderImage?: Image
 }
 
 export const mapOrganizationPage = ({
@@ -84,4 +95,11 @@ export const mapOrganizationPage = ({
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
   sidebarCards: (fields.sidebarCards ?? []).map(mapSidebarCard),
+  externalLinks: (fields.externalLinks ?? []).map(mapLink),
+  alertBanner: fields.alertBanner
+    ? mapAlertBanner(fields.alertBanner)
+    : undefined,
+  defaultHeaderImage: fields.defaultHeaderImage
+    ? mapImage(fields.defaultHeaderImage)
+    : undefined,
 })

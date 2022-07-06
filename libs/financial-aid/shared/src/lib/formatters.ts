@@ -1,5 +1,5 @@
-import { months, nextMonth } from './const'
-import { ApplicationFiltersEnum } from './enums'
+import { months } from './const'
+import { AidName, AmountModal, ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -7,16 +7,18 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
   FileType,
-  RolesRule,
   FamilyStatus,
   MartialStatusType,
 } from './enums'
 import {
   Aid,
+  Amount,
   ApplicantEmailData,
   ApplicationEvent,
+  Calculations,
   Municipality,
 } from './interfaces'
+import { acceptedAmountBreakDown, estimatedBreakDown } from './taxCalculator'
 import type { KeyMapping } from './types'
 
 export const getHomeCircumstances: KeyMapping<HomeCircumstances, string> = {
@@ -52,14 +54,6 @@ export const getStateFromUrl: KeyMapping<
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-}
-
-export const getEventTypesFromService: KeyMapping<
-  RolesRule,
-  ApplicationEventType[]
-> = {
-  osk: [ApplicationEventType.DATANEEDED],
-  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
@@ -169,14 +163,6 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
-export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
-  NotCohabitation: false,
-  Cohabitation: true,
-  UnregisteredCohabitation: false,
-  Married: true,
-  MarriedNotLivingTogether: true,
-}
-
 export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
   Cohabitation: true,
   UnregisteredCohabitation: true,
@@ -200,13 +186,34 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   SpouseFiles: 'Gögn frá maka',
 }
 
+export const getAidAmountModalInfo = (
+  type: AmountModal,
+  aidAmount = 0,
+  usePersonalTaxCredit = false,
+  finalAmount?: Amount,
+): { headline: string; calculations: Calculations[] } => {
+  switch (type) {
+    case AmountModal.ESTIMATED:
+      return {
+        headline: 'Áætluð aðstoð',
+        calculations: estimatedBreakDown(aidAmount, usePersonalTaxCredit),
+      }
+    case AmountModal.PROVIDED:
+      return {
+        headline: 'Veitt aðstoð',
+        calculations: acceptedAmountBreakDown(finalAmount),
+      }
+  }
+}
+
 export const getApplicantEmailDataFromEventType = (
   event:
     | ApplicationEventType.NEW
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
     | ApplicationEventType.APPROVED
-    | 'SPOUSE',
+    | 'SPOUSE'
+    | 'WAITINGSPOUSE',
   applicationLink: string,
   applicantEmail: string,
   municipality: Municipality,
@@ -224,9 +231,9 @@ export const getApplicantEmailDataFromEventType = (
         subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
-          content:
-            'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
+          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin`,
+          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
+          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -238,11 +245,13 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.DATANEEDED:
       return {
-        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+        subject:
+          'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
-          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
-          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
+          header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
+          content: `Til þess að hægt sé að meta umsóknina þarft þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
+          applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -258,7 +267,8 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `${rejectionComment}`,
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a> <br><br> <b>Málskot</b> <br> Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>. <br><br> Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.`,
+          applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -270,12 +280,13 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.APPROVED:
       return {
-        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        subject: 'Umsóknin þín er samþykkt og lokaupphæð tilbúin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
-          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
-          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${getPeriod.month} og getur því tekið breytingum.`,
-          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          header: 'Umsóknin þín er samþykkt og lokaupphæð er tilbúin',
+          content: `Umsókn þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt. Þú getur skoðað lokaupphæð fjárhagsaðstoðarinnar með því að ýta á hnappinn hér að neðan. Ef þú hefur einhverjar athugasemdir hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>.`,
+          applicationLinkText: 'Skoða lokaupphæð',
+          applicationChange: 'Umsóknin er samþykkt',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
@@ -286,15 +297,29 @@ export const getApplicantEmailDataFromEventType = (
 
     case 'SPOUSE':
       return {
-        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
-          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
-            getPeriod.month
-          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${nextMonth(
-            createdDate.getMonth(),
-          )}.`,
+          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
+          applicationLinkText: 'Bæta við gögnum',
+          applicationChange: 'Umsókn bíður eftir gögnum frá maka',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          applicationLink,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case 'WAITINGSPOUSE':
+      return {
+        subject: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+        data: {
+          title: 'Fjárhagsaðstoð Beðið eftir maka',
+          header: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+          content: `Maki þinn hefur fengið sendan tölvupóst með hlekk til að hlaða upp gögnum. Umsóknin verður tekin til úrvinnslu þegar maki hefur skilað inn gögnunum. Þú færð tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank">stöðusíðu umsóknarinnar</a>.`,
+          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -438,4 +463,20 @@ export const martialStatusTypeFromMartialCode = (
     default:
       return MartialStatusType.SINGLE
   }
+}
+
+export const aidDescriptionFromName: KeyMapping<AidName, string> = {
+  ownPlace: 'Eigið húsnæði',
+  registeredRenting: 'Leiga með þinglýstan leigusamning',
+  unregisteredRenting: 'Leiga með óþinglýstan leigusamning',
+  withOthers: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
+  livesWithParents: 'Býr hjá foreldrum',
+  unknown: 'Annað',
+}
+
+export const getNavEmploymentStatus: KeyMapping<Employment, number> = {
+  Working: 1,
+  Unemployed: 4,
+  CannotWork: 6,
+  Other: 10,
 }

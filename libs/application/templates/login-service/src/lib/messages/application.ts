@@ -26,6 +26,11 @@ export const section = defineMessages({
     defaultMessage: 'Skilmálar',
     description: 'Terms Section Title',
   },
+  selectCompany: {
+    id: `ls.application:section.selectCompany`,
+    defaultMessage: 'Upplýsingar um fyrirtæki',
+    description: 'Select Copmany Section Title',
+  },
   applicant: {
     id: `ls.application:section.applicant`,
     defaultMessage: 'Upplýsingar um umsækjanda',
@@ -33,13 +38,8 @@ export const section = defineMessages({
   },
   technicalContact: {
     id: `ls.application:section.technicalContact`,
-    defaultMessage: 'Tæknilegur tengiliður',
+    defaultMessage: 'Tæknilegar tilkynningar',
     description: 'Technical Contact Section Title',
-  },
-  technicalInfo: {
-    id: `ls.application:section.technicalInfo`,
-    defaultMessage: 'Tæknilegar upplýsingar',
-    description: 'Technical Info Section Title',
   },
   overview: {
     id: `ls.application:section.overview`,

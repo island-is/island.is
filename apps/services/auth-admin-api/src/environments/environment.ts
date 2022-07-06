@@ -18,7 +18,7 @@ const prodConfig = {
   },
   auth: {
     audience: '@island.is/auth/admin',
-    issuer: process.env.IDS_ISSUER,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
   },
 }
 

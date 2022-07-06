@@ -15,12 +15,14 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { Institution, User } from '@island.is/judicial-system/types'
-import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
-import { validate } from '../../../utils/validate'
+import {
+  isAdminUserFormValid,
+  validate,
+  Validation,
+} from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as constants from '@island.is/judicial-system/consts'
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
@@ -61,53 +63,12 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.value === user.institution?.id,
   )
 
-  const validations: FormSettings = {
-    name: {
-      validations: ['empty'],
-      errorMessage: nameErrorMessage,
-      setErrorMessage: setNameErrorMessage,
-    },
-    nationalId: {
-      validations: ['empty', 'national-id'],
-      errorMessage: nationalIdErrorMessage,
-      setErrorMessage: setNationalIdErrorMessage,
-    },
-    institution: {
-      validations: ['empty'],
-    },
-    title: {
-      validations: ['empty'],
-      errorMessage: titleErrorMessage,
-      setErrorMessage: setTitleErrorMessage,
-    },
-    mobileNumber: {
-      validations: ['empty'],
-      errorMessage: mobileNumberErrorMessage,
-      setErrorMessage: setMobileNumberErrorMessage,
-    },
-    email: {
-      validations: ['empty', 'email-format'],
-      errorMessage: emailErrorMessage,
-      setErrorMessage: setEmailErrorMessage,
-    },
-  }
-
   const isValid = () => {
-    for (const fieldName in validations) {
-      const validation = validations[fieldName]
-
-      const value = user[fieldName as keyof User] as string
-
-      if (
-        validation.validations?.some(
-          (v) => validate(value, v).isValid === false,
-        )
-      ) {
-        return false
-      }
+    // TODO: Find a better way to validate the match between user role and institution type
+    if (!isAdminUserFormValid(user)) {
+      return false
     }
 
-    // TODO: Find a better way to validate the match between user role and institution type
     return user.role === UserRole.PROSECUTOR
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
@@ -119,33 +80,31 @@ export const UserForm: React.FC<Props> = (props) => {
       : false
   }
 
-  const storeAndRemoveErrorIfValid = (field: string, value: string) => {
+  const storeAndRemoveErrorIfValid = (
+    field: string,
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
     setUser({
       ...user,
       [field]: value,
     })
 
-    const fieldValidation = validations[field]
-
-    if (
-      !fieldValidation.validations?.some(
-        (v) => validate(value, v).isValid === false,
-      ) &&
-      fieldValidation.setErrorMessage
-    ) {
-      fieldValidation.setErrorMessage(undefined)
+    if (validate([[value, validations]]).isValid) {
+      setErrorMessage(undefined)
     }
   }
 
-  const validateAndSetError = (field: string, value: string) => {
-    const fieldValidation = validations[field]
+  const validateAndSetError = (
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
+    const validation = validate([[value, validations]])
 
-    const error = fieldValidation.validations
-      ?.map((v) => validate(value, v))
-      .find((v) => v.isValid === false)
-
-    if (error && fieldValidation.setErrorMessage) {
-      fieldValidation.setErrorMessage(error.errorMessage)
+    if (!validation.isValid) {
+      setErrorMessage(validation.errorMessage)
     }
   }
 
@@ -165,9 +124,20 @@ export const UserForm: React.FC<Props> = (props) => {
             autoComplete="off"
             value={user.name || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('name', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'name',
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('name', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
             hasError={nameErrorMessage !== undefined}
             errorMessage={nameErrorMessage}
             required
@@ -182,10 +152,16 @@ export const UserForm: React.FC<Props> = (props) => {
               storeAndRemoveErrorIfValid(
                 'nationalId',
                 event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
               )
             }
             onBlur={(event) =>
-              validateAndSetError('nationalId', event.target.value)
+              validateAndSetError(
+                event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
+              )
             }
             readOnly={user.id.length > 0 ? true : false}
           >
@@ -269,9 +245,20 @@ export const UserForm: React.FC<Props> = (props) => {
             autoComplete="off"
             value={user.title || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('title', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'title',
+                event.target.value,
+                ['empty'],
+                setTitleErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('title', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value,
+                ['empty'],
+                setTitleErrorMessage,
+              )
+            }
             required
             hasError={titleErrorMessage !== undefined}
             errorMessage={titleErrorMessage}
@@ -286,10 +273,16 @@ export const UserForm: React.FC<Props> = (props) => {
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
                 event.target.value.replace('-', ''),
+                ['empty'],
+                setMobileNumberErrorMessage,
               )
             }
             onBlur={(event) =>
-              validateAndSetError('mobileNumber', event.target.value)
+              validateAndSetError(
+                event.target.value.replace('-', ''),
+                ['empty'],
+                setMobileNumberErrorMessage,
+              )
             }
           >
             <Input
@@ -312,9 +305,20 @@ export const UserForm: React.FC<Props> = (props) => {
             autoComplete="off"
             value={user.email || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('email', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'email',
+                event.target.value,
+                ['empty', 'email-format'],
+                setEmailErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('email', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value,
+                ['empty', 'email-format'],
+                setEmailErrorMessage,
+              )
+            }
             required
             hasError={emailErrorMessage !== undefined}
             errorMessage={emailErrorMessage}

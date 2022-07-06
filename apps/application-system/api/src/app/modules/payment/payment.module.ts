@@ -10,7 +10,7 @@ import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
 import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
-import { Application } from '../application/application.model'
+import { Application } from '@island.is/application/api/core'
 
 export interface Config {
   clientConfig: PaymentServiceOptions

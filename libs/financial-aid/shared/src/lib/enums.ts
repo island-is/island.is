@@ -12,6 +12,7 @@ export enum AidTypeHomeCircumstances {
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
   UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHOTHERS = 'WithOthers',
   WITHPARENTS = 'WithParents',
   UNKNOWN = 'Unknown',
 }
@@ -60,11 +61,6 @@ export enum ApplicationEventType {
   ASSIGNCASE = 'AssignCase',
 }
 
-export enum RolesRule {
-  OSK = 'osk',
-  VEITA = 'veita',
-}
-
 export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',
@@ -94,4 +90,23 @@ export enum AidType {
 export enum MartialStatusType {
   MARRIED = 'Married',
   SINGLE = 'Single',
+}
+
+export enum AmountModal {
+  ESTIMATED = 'Estimated',
+  PROVIDED = 'Provided',
+}
+
+export enum UserType {
+  APPLICANT = 'Applicant',
+  SPOUSE = 'Spouse',
+}
+
+export enum AidName {
+  OWNPLACE = 'ownPlace',
+  REGISTEREDRENTING = 'registeredRenting',
+  UNREGISTEREDRENTING = 'unregisteredRenting',
+  WITHOTHERS = 'withOthers',
+  LIVESWITHPARENTS = 'livesWithParents',
+  UNKNOWN = 'unknown',
 }

@@ -81,9 +81,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
+          [styles.extraSmall]: size === 'xs',
         })}
       >
         <ReactDatePicker
+          popperClassName={cn(styles.popper, {
+            [styles.popperXsmall]: size === 'xs',
+            [styles.popperSmall]: size === 'sm',
+            [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
+            [styles.popperWithoutLabel]: size === 'md' && !label,
+          })}
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
@@ -96,7 +103,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           popperPlacement="bottom-start"
           popperModifiers={{
             flip: {
-              enabled: false,
+              enabled: true,
+              behavior: 'flip',
+            },
+            offset: {
+              enabled: true,
             },
             preventOverflow: {
               enabled: true,
@@ -203,11 +214,14 @@ const CustomHeader = ({
   const years =
     minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)
   return (
-    <div className={styles.customHeaderContainer}>
+    <div
+      className={cn(styles.customHeaderContainer, 'date-picker-custom-header')}
+    >
       <button
         type="button"
         onClick={decreaseMonth}
         className={styles.decreaseButton}
+        aria-label="Previous month"
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
@@ -218,6 +232,7 @@ const CustomHeader = ({
           </Text>
         </VisuallyHidden>
         <select
+          aria-label="Select month"
           className={styles.headerSelect}
           value={month}
           onChange={({ target: { value } }) =>
@@ -257,6 +272,7 @@ const CustomHeader = ({
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}
+        aria-label="Next month"
       >
         <Icon icon="chevronForward" type="outline" color="blue400" />
       </button>

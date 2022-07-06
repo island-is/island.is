@@ -29,6 +29,7 @@ export const Application = () => {
     <ApplicationForm
       applicationId={id}
       nationalRegistryId={nationalRegistryId}
+      slug={slug}
     />
   )
 }

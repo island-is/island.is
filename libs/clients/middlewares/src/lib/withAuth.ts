@@ -1,16 +1,27 @@
-import { FetchAPI, Request, Headers } from './nodeFetch'
+import { MiddlewareAPI } from './nodeFetch'
 
 export interface AuthMiddlewareOptions {
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
+  forwardAuthUserAgent: boolean
 }
 
-export const withAuth = ({ fetch }: AuthMiddlewareOptions): FetchAPI => {
-  return (input, init) => {
-    const auth = init?.auth ?? (input as Request).auth
-    const headers = new Headers(init?.headers)
-    if (auth && !headers.has('authorization')) {
-      headers.set('authorization', auth.authorization)
+export const withAuth = ({
+  fetch,
+  forwardAuthUserAgent,
+}: AuthMiddlewareOptions): MiddlewareAPI => {
+  return (request) => {
+    const auth = request.auth
+    if (!auth) {
+      return fetch(request)
     }
-    return fetch(input, { ...init, headers })
+
+    request.headers.set('authorization', auth.authorization)
+    if (forwardAuthUserAgent && auth.userAgent) {
+      request.headers.set('user-agent', auth.userAgent)
+    }
+    if (forwardAuthUserAgent && auth.ip) {
+      request.headers.set('x-forwarded-for', auth.ip)
+    }
+    return fetch(request)
   }
 }

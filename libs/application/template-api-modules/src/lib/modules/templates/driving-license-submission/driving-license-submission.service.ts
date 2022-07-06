@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   DrivingLicenseService,
   NewDrivingLicenseResult,
@@ -6,11 +6,14 @@ import {
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { FormValue } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import {
   generateDrivingLicenseSubmittedEmail,
   generateDrivingAssessmentApprovalEmail,
 } from './emailGenerators'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -19,6 +22,7 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
 @Injectable()
 export class DrivingLicenseSubmissionService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
@@ -27,7 +31,12 @@ export class DrivingLicenseSubmissionService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = answers.applicationFor || 'B-full'
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+      answers,
+      'applicationFor',
+      'B-full',
+    )
+
     const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -37,7 +46,7 @@ export class DrivingLicenseSubmissionService {
     )
 
     // last chance to validate before the user receives a dummy
-    if (!response.paymentUrl) {
+    if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
 
@@ -56,52 +65,71 @@ export class DrivingLicenseSubmissionService {
       application.id,
     )
 
-    if (isPayment?.fulfilled) {
-      const result = await this.createLicense(nationalId, answers).catch(
-        (e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
-        },
-      )
-
-      if (!result.success) {
-        throw new Error(
-          `Application submission failed (${result.errorMessage})`,
-        )
+    if (!isPayment?.fulfilled) {
+      return {
+        success: false,
       }
+    }
 
+    let result
+    try {
+      result = await this.createLicense(nationalId, answers)
+    } catch (e) {
+      this.log('error', 'Creating license failed', {
+        e,
+        applicationFor: answers.applicationFor,
+        jurisdiction: answers.juristictionId,
+      })
+
+      throw e
+    }
+
+    if (!result.success) {
+      throw new Error(`Application submission failed (${result.errorMessage})`)
+    }
+
+    try {
       await this.sharedTemplateAPIService.sendEmail(
         generateDrivingLicenseSubmittedEmail,
         application,
       )
-
-      return {
-        success: result.success,
-      }
-    } else {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+    } catch (e) {
+      this.log(
+        'error',
+        'Could not send email to applicant after successful submission',
+        { e },
       )
     }
+
+    return {
+      success: true,
+    }
+  }
+
+  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
+    this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
   private async createLicense(
     nationalId: string,
     answers: FormValue,
   ): Promise<NewDrivingLicenseResult> {
-    const applicationFor = answers.applicationFor || 'B-full'
+    const applicationFor =
+      getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
+      'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const healthRemarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
     const teacher = answers.drivingInstructor as string
+    const email = answers.email as string
+    const phone = answers.phone as string
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
+        needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
@@ -110,6 +138,8 @@ export class DrivingLicenseSubmissionService {
         needsToPresentHealthCertificate: needsHealthCert,
         needsToPresentQualityPhoto: needsQualityPhoto,
         teacherNationalId: teacher,
+        email: email,
+        phone: phone,
       })
     }
 

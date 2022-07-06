@@ -7,12 +7,6 @@ import {
   toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
-
-import * as styles from './Profile.css'
-import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
-import * as tableStyles from '../../sharedStyles/Table.css'
-import cn from 'classnames'
-
 import {
   AidTypeHomeCircumstances,
   Municipality,
@@ -26,6 +20,7 @@ import {
   TextTableItem,
   ActivationButtonTableItem,
   NewUserModal,
+  MultiSelectionAdmin,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { useLazyQuery } from '@apollo/client'
@@ -33,7 +28,11 @@ import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import { useMutation } from '@apollo/client'
 import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import cn from 'classnames'
 
+import * as styles from './Profile.css'
+import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 interface MunicipalityProfileProps {
   municipality: Municipality
   getMunicipality: () => void
@@ -98,13 +97,13 @@ const MunicipalityProfile = ({
     switch (value) {
       case AidTypeHomeCircumstances.OWNPLACE:
         return [
-          TextTableItem(headline, 'Eigin húsnæði'),
+          TextTableItem(headline, 'Eigið húsnæði'),
           TextTableItem(smallText, municipality.individualAid.ownPlace),
           TextTableItem(smallText, municipality.cohabitationAid.ownPlace),
         ]
       case AidTypeHomeCircumstances.REGISTEREDLEASE:
         return [
-          TextTableItem(headline, 'Leiga með þinglýstum leigusamning'),
+          TextTableItem(headline, 'Leiga með þinglýstan leigusamning'),
           TextTableItem(
             smallText,
             municipality.individualAid.registeredRenting,
@@ -116,7 +115,7 @@ const MunicipalityProfile = ({
         ]
       case AidTypeHomeCircumstances.UNREGISTEREDLEASE:
         return [
-          TextTableItem(headline, 'Býr eða leigir án þinglýsts leigusamnings'),
+          TextTableItem(headline, 'Leiga með óþinglýstan leigusamning'),
           TextTableItem(
             smallText,
             municipality.individualAid.unregisteredRenting,
@@ -125,6 +124,15 @@ const MunicipalityProfile = ({
             smallText,
             municipality.cohabitationAid.unregisteredRenting,
           ),
+        ]
+      case AidTypeHomeCircumstances.WITHOTHERS:
+        return [
+          TextTableItem(
+            headline,
+            'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
+          ),
+          TextTableItem(smallText, municipality.individualAid.withOthers),
+          TextTableItem(smallText, municipality.cohabitationAid.withOthers),
         ]
       case AidTypeHomeCircumstances.WITHPARENTS:
         return [
@@ -191,13 +199,12 @@ const MunicipalityProfile = ({
             </button>
           </Box>
         </Box>
-        <Box marginBottom={7}>
-          <Box marginBottom={3} className={`contentUp delay-50`}>
+        <Box marginBottom={7} className={`contentUp delay-50`}>
+          <Box marginBottom={3}>
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
           </Box>
-
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
@@ -264,12 +271,23 @@ const MunicipalityProfile = ({
           </div>
         </Box>
 
-        <Box>
-          <Box marginBottom={3} className={`contentUp delay-100`}>
-            <Text as="h3" variant="h3" color="dark300">
-              Grunnupphæðir
-            </Text>
-          </Box>
+        <Box marginBottom={3} className={`contentUp delay-100`}>
+          {municipality?.allAdminUsers && (
+            <>
+              <Text as="h3" variant="h3" color="dark300" marginBottom={3}>
+                Bæta við stjórnanda úr lista
+              </Text>
+
+              <MultiSelectionAdmin
+                admins={municipality.allAdminUsers}
+                onUpdate={refreshList}
+              />
+            </>
+          )}
+
+          <Text as="h3" variant="h3" color="dark300">
+            Grunnupphæðir
+          </Text>
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
@@ -370,7 +388,6 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
-        municipalityName={municipality.name}
       />
       <ToastContainer />
     </Box>

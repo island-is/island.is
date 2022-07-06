@@ -1,16 +1,15 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  icRulingStepOne,
-  rcRulingStepOne,
-} from '@island.is/judicial-system-web/messages'
+import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
+
+import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
@@ -20,6 +19,7 @@ interface Props {
 const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
+  const { autofill } = useCase()
 
   return (
     <>
@@ -36,50 +36,69 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Decision
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRulingStepOne.sections.decision.acceptLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+              ? formatMessage(rcRuling.sections.decision.acceptLabel, {
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
-              : formatMessage(icRulingStepOne.sections.decision.acceptLabel)
+              : formatMessage(icRuling.sections.decision.acceptLabel)
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRulingStepOne.sections.decision.rejectLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+              ? formatMessage(rcRuling.sections.decision.rejectLabel, {
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
-              : formatMessage(icRulingStepOne.sections.decision.rejectLabel)
+              : formatMessage(icRuling.sections.decision.rejectLabel)
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
               ? formatMessage(
-                  rcRulingStepOne.sections.decision.partiallyAcceptLabel,
+                  rcRuling.sections.decision.partiallyAcceptLabelV2,
+                  {
+                    caseType: formatMessage(
+                      rcRuling.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
                 )
-              : formatMessage(
-                  icRulingStepOne.sections.decision.partiallyAcceptLabel,
-                )
+              : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRulingStepOne.sections.decision.dismissLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+              ? formatMessage(rcRuling.sections.decision.dismissLabel, {
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
-              : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
+              : formatMessage(icRuling.sections.decision.dismissLabel)
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            rcRulingStepOne.sections.decision
-              .acceptingAlternativeTravelBanLabel,
+            rcRuling.sections.decision.acceptingAlternativeTravelBanLabelV2,
+            {
+              caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                caseType: workingCase.type,
+              }),
+            },
           )}
+          onChange={(decision) => {
+            autofill(
+              [
+                {
+                  key: 'decision',
+                  value: decision,
+                  force: true,
+                },
+              ],
+              workingCase,
+              setWorkingCase,
+            )
+          }}
         />
       </Box>
       <Box marginBottom={3}>
@@ -88,7 +107,6 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <RulingInput
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        isRequired={false}
         rows={12}
       />
     </>

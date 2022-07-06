@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../../../environments'
 
-import { StaffModel } from './models'
+import { StaffModel } from './models/staff.model'
 import { StaffController } from './staff.controller'
 import { StaffService } from './staff.service'
 

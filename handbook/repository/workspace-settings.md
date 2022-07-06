@@ -70,7 +70,7 @@ See the following example for the `web` project:
 "e2e": {
   "builder": "@nrwl/cypress:cypress",
   "options": {
-    "cypressConfig": "apps/web-e2e/cypress.json",
+    "cypressConfig": "apps/web-e2e/cypress.config.ts",
     "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
     "baseUrl": "http://localhost:4200",
     "devServerTarget": "web:serve"
@@ -146,4 +146,3 @@ yarn nx run web-e2e:e2e-ci
 ### E2E in CI
 
 This task is executed as part of our GitHub CI pipeline via the `40_e2e.sh`.
-This script adds the `-c` option to enable Cypress recording.

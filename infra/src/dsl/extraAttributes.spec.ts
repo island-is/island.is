@@ -11,6 +11,7 @@ const Staging: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',

@@ -31,11 +31,11 @@ export class MainResolver {
   ) {}
 
   @Query(() => [EducationLicense])
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.educationLicense)
   educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
     return this.auditService.auditPromise<EducationLicense[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationLicense',
         resources: (licenses) => licenses.map((license) => license.id),
@@ -45,7 +45,7 @@ export class MainResolver {
   }
 
   @Mutation(() => EducationSignedLicense, { nullable: true })
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.educationLicense)
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
@@ -60,7 +60,7 @@ export class MainResolver {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'fetchEducationSignedicenseUrl',
       resources: input.licenseId,
@@ -76,7 +76,7 @@ export class MainResolver {
   ): Promise<ExamFamilyOverview[]> {
     return this.auditService.auditPromise<ExamFamilyOverview[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationExamFamilyOverviews',
         resources: (results) => results.map((result) => result.nationalId),
@@ -100,7 +100,7 @@ export class MainResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationExamResult',
         resources: familyMember.Kennitala,

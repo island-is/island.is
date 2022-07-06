@@ -31,6 +31,7 @@
 .translation-create-form-dropdown,
 .api-scope-resource-form,
 .api-scope-group-create-form,
+.personal-representative-permissions-form,
 .domain-create-form {
   position: relative;
 
@@ -234,6 +235,14 @@
         }
       }
     }
+  }
+
+  &__selected__description {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    width: 100%;
+    padding: 8px 8px 24px 8px;
   }
 
   &__container__checkbox__field,

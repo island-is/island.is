@@ -36,10 +36,34 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       id
       title
       slug
+      importance
       subCategory {
         title
         description
         slug
+        importance
+      }
+      category {
+        title
+        description
+        slug
+      }
+    }
+  }
+`
+
+export const GET_SINGLE_SUPPORT_QNA = gql`
+  query GetSingleSupportQNA($input: GetSingleSupportQNAInput!) {
+    getSingleSupportQNA(input: $input) {
+      id
+      title
+      slug
+      importance
+      subCategory {
+        title
+        description
+        slug
+        importance
       }
       category {
         title
@@ -49,9 +73,27 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       answer {
         ...AllSlices
       }
+      relatedLinks {
+        url
+        text
+      }
+      contactLink
     }
   }
   ${slices}
+`
+
+export const GET_FEATURED_SUPPORT_QNAS = gql`
+  query GetFeaturedSupportQNAs($input: GetFeaturedSupportQNAsInput!) {
+    getFeaturedSupportQNAs(input: $input) {
+      id
+      title
+      slug
+      category {
+        slug
+      }
+    }
+  }
 `
 
 export const GET_SUPPORT_CATEGORY = gql`
@@ -71,7 +113,11 @@ export const GET_SUPPORT_CATEGORIES = gql`
       slug
       organization {
         slug
+        namespace {
+          fields
+        }
       }
+      importance
     }
   }
 `
@@ -88,21 +134,7 @@ export const GET_SUPPORT_CATEGORIES_IN_ORGANIZATION = gql`
       organization {
         slug
       }
-    }
-  }
-`
-
-export const GET_SUPPORT_FORM_IN_ORGANIZATION = gql`
-  query GET_SUPPORT_FORM_IN_ORGANIZATION(
-    $input: GetSupportFormInOrganizationInput!
-  ) {
-    getSupportFormInOrganization(input: $input) {
-      id
-      category
-      form
-      organization {
-        slug
-      }
+      importance
     }
   }
 `
@@ -160,6 +192,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         content {
           ...HtmlFields
         }
+        serviceWebContent {
+          ...HtmlFields
+        }
         link {
           text
           url
@@ -169,6 +204,18 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       email
       serviceWebTitle
       serviceWebEnabled
+      serviceWebPopularQuestionCount
+      namespace {
+        fields
+      }
+      serviceWebFeaturedImage {
+        url
+        title
+        width
+        height
+        contentType
+        id
+      }
     }
   }
 `

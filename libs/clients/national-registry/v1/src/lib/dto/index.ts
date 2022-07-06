@@ -6,3 +6,4 @@ export {
   GetViewISLFjolskyldanDto,
   ISLFjolskyldan,
 } from './getViewISLFjolskyldan.dto'
+export { GetViewISLBorninMinDto, ISLBorninMin } from './getViewISLBorninMin.dto'

@@ -18,8 +18,6 @@ const AboutForm = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
 
-  const { nationalRegistryData } = useContext(AppContext)
-
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps

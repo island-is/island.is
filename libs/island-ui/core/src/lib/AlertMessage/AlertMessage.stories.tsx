@@ -17,11 +17,17 @@ export const Info = () => (
   <GridContainer>
     <ContentBlock>
       <GridRow>
-        <GridColumn span="5/12">
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <AlertMessage
             type="info"
             title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"
             message="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '6/12']} paddingTop={[1, 1, 0]}>
+          <AlertMessage
+            type="info"
+            message="Here is an alert message that contains no title. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus pellentesque amet, id tortor urna faucibus augue sit. Fames dignissim condimentum nibh ut in."
           />
         </GridColumn>
       </GridRow>

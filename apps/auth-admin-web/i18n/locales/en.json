@@ -209,6 +209,9 @@
         },
         "apiResource": {
           "text": "Connect Api Resource"
+        },
+        "personalRepresentativePermissions": {
+          "text": "Personal Representative Permissions"
         }
       }
     },
@@ -1030,7 +1033,7 @@
         },
         "key": {
           "label": "Key",
-          "placeholder": "island-is-1",
+          "placeholder": "@island.is/web",
           "helpText": "The key of the item that is being translated",
           "errorMessage": "The key is required and needs to be in the right format"
         },
@@ -1504,6 +1507,12 @@
           "helpText": "Should procuring holders automatically get this scope for their organisations",
           "errorMessage": ""
         },
+        "grantToPersonalRepresentatives": {
+          "label": "Grant To PersonalRepresentatives",
+          "placeholder": "",
+          "helpText": "Should personal representatives automatically get this scope for their clients",
+          "errorMessage": ""
+        },
         "allowExplicitDelegationGrant": {
           "label": "Allow Explicit Delegation Grant",
           "placeholder": "",
@@ -1724,6 +1733,10 @@
         "supportsProcuringHolders": {
           "label": "Supports Procuring Holders Delegation",
           "helpText": "Specifies if the client supports Procuring Holders delegation"
+        },
+        "supportsPersonalRepresentatives": {
+          "label": "Supports Personal Representatives Delegation",
+          "helpText": "Specifies if the client supports Personal Representatives delegation"
         },
         "promptDelegations": {
           "label": "Prompt delegations",
@@ -2201,6 +2214,39 @@
           "helpText": "Description of the secret",
           "errorMessage": "Description is required and needs to be in the right format"
         }
+      }
+    },
+    {
+      "id": "ApiScopePersonalRepresentativePermissions",
+      "title": "Personal Representative Permissions",
+      "help": "An Api Scope can be associated with an Personal Representative Permission.",
+      "buttons": {
+        "add": {
+          "text": "Add",
+          "helpText": "Add permission to scope"
+        },
+        "save": {
+          "text": "Next",
+          "helpText": "Save changes and go to next step"
+        },
+        "cancel": {
+          "text": "Back",
+          "helpText": "Go Back"
+        },
+        "remove": {
+          "text": "Remove",
+          "helpText": "Remove permission"
+        }
+      },
+      "fields": {
+        "permissionType": {
+          "label": "Permission type",
+          "helpText": "Select permission type"
+        }
+      },
+      "noActiveConnections": {
+        "title": "No permissions have been added",
+        "helpText": "Select permission from the dropdown and click the Add button to add permissions."
       }
     }
   ]

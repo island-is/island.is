@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -7,21 +7,18 @@ import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { Institution } from '../institution'
-import { CreateUserDto, UpdateUserDto } from './dto'
+import { CreateUserDto } from './dto/createUser.dto'
+import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User)
-    private readonly userModel: typeof User,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    @InjectModel(User) private readonly userModel: typeof User,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getAll(user: User): Promise<User[]> {
-    this.logger.debug('Getting all users')
-
     if (user.role === UserRole.ADMIN) {
       return this.userModel.findAll({
         order: ['name'],
@@ -31,25 +28,25 @@ export class UserService {
 
     return this.userModel.findAll({
       order: ['name'],
-      where: {
-        active: true,
-      },
+      where: { active: true },
       include: [{ model: Institution, as: 'institution' }],
     })
   }
 
-  async findById(id: string): Promise<User | null> {
-    this.logger.debug(`Finding user ${id}`)
-
-    return this.userModel.findOne({
-      where: { id },
+  async findById(userId: string): Promise<User> {
+    const user = await this.userModel.findOne({
+      where: { id: userId },
       include: [{ model: Institution, as: 'institution' }],
     })
+
+    if (!user) {
+      throw new NotFoundException(`User ${userId} does not exist`)
+    }
+
+    return user
   }
 
-  async findByNationalId(nationalId: string): Promise<User | null> {
-    this.logger.debug('Getting a user by national id')
-
+  async findByNationalId(nationalId: string): Promise<User> {
     // First check if the user is an admin
     try {
       const admin = (JSON.parse(environment.admin.users) as User[]).find(
@@ -67,35 +64,40 @@ export class UserService {
         } as User
       }
     } catch (error) {
-      this.logger.error('Failed to parse admin users', error)
+      // Tolerate failure, but log error
+      this.logger.error('Failed to parse admin users', { error })
     }
 
-    return this.userModel.findOne({
+    const user = await this.userModel.findOne({
       where: { nationalId },
       include: [{ model: Institution, as: 'institution' }],
     })
+
+    if (!user) {
+      throw new NotFoundException('User does not exist')
+    }
+
+    return user
   }
 
   async create(userToCreate: CreateUserDto): Promise<User> {
-    this.logger.debug('Creating a new user')
-
-    return this.userModel.create(userToCreate)
+    return this.userModel.create({ ...userToCreate })
   }
 
-  async update(
-    id: string,
-    update: UpdateUserDto,
-  ): Promise<{ numberOfAffectedRows: number; updatedUser: User }> {
-    this.logger.debug(`Updating user ${id}`)
+  async update(userId: string, update: UpdateUserDto): Promise<User> {
+    const [numberOfAffectedRows] = await this.userModel.update(update, {
+      where: { id: userId },
+    })
 
-    const [numberOfAffectedRows, [updatedUser]] = await this.userModel.update(
-      update,
-      {
-        where: { id },
-        returning: true,
-      },
-    )
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating user ${userId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new NotFoundException(`Could not update user ${userId}`)
+    }
 
-    return { numberOfAffectedRows, updatedUser }
+    return this.findById(userId)
   }
 }

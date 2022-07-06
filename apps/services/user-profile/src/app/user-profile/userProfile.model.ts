@@ -18,7 +18,7 @@ import { Locale } from './types/localeTypes'
     },
   ],
 })
-export class UserProfile extends Model<UserProfile> {
+export class UserProfile extends Model {
   // Force rebuild of schemas
   @Column({
     type: DataType.UUID,
@@ -90,4 +90,18 @@ export class UserProfile extends Model<UserProfile> {
   })
   @ApiProperty()
   documentNotifications!: boolean
+
+  @Column({
+    type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
+    defaultValue: 'NOT_DEFINED',
+  })
+  @ApiProperty()
+  emailStatus?: string
+
+  @Column({
+    type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
+    defaultValue: 'NOT_DEFINED',
+  })
+  @ApiProperty()
+  mobileStatus?: string
 }

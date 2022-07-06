@@ -16,13 +16,8 @@ import { FindEndorsementListInput } from './dto/findEndorsementList.input'
 import { CreateEndorsementInput } from './dto/createEndorsement.input'
 import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
-import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
-import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
 import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
-import {
-  UpdateEndorsementListInput,
-  UpdateEndorsementListDto,
-} from './dto/updateEndorsementList.input'
+import { UpdateEndorsementListInput } from './dto/updateEndorsementList.input'
 import { PaginatedEndorsementInput } from './dto/paginatedEndorsement.input'
 import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.response'
 
@@ -40,7 +35,7 @@ export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
   @ResolveField('ownerName', () => String, { nullable: true })
-  resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
+  resolveOwnerName(@Parent() list: EndorsementList): Promise<string | null> {
     return this.endorsementSystemService.endorsementListControllerGetOwnerName({
       listId: list.id,
     })
@@ -78,21 +73,6 @@ export class EndorsementSystemResolver {
   ): Promise<Endorsement> {
     return await this.endorsementSystemService.endorsementControllerCreate(
       input,
-      user,
-    )
-  }
-
-  // POST /endorsement-list/{listId}/endorsement/bulk
-  @Mutation(() => EndorsementBulkCreate)
-  async endorsementSystemBulkEndorseList(
-    @Args('input') { listId, nationalIds }: BulkEndorseListInput,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementBulkCreate> {
-    return await this.endorsementSystemService.endorsementControllerBulkCreate(
-      {
-        listId,
-        bulkEndorsementDto: { nationalIds },
-      },
       user,
     )
   }

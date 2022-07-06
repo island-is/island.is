@@ -6,7 +6,7 @@ import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
 import { Option } from '@island.is/island-ui/core'
-import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
+import { selectProsecutor as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -19,10 +19,14 @@ const SelectProsecutor: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [selectedProsecutor, setSelectedProsecutor] = useState<
     ValueType<Option>
-  >({
-    label: workingCase.prosecutor?.name || '',
-    value: workingCase.prosecutor?.id || '',
-  })
+  >(
+    workingCase.prosecutor
+      ? {
+          label: workingCase.prosecutor.name,
+          value: workingCase.prosecutor.id,
+        }
+      : null,
+  )
 
   return (
     <>
@@ -37,6 +41,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       <Select
         name="prosecutor"
         label={formatMessage(m.label)}
+        placeholder={formatMessage(m.placeholder)}
         value={selectedProsecutor}
         options={prosecutors}
         onChange={(selectedOption) => {

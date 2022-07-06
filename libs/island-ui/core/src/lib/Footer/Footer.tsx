@@ -1,4 +1,5 @@
 import React from 'react'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
@@ -13,7 +14,7 @@ import { Link } from '../Link/Link'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import { Stack } from '../Stack/Stack'
 
 import * as styles from './Footer.css'
 
@@ -25,14 +26,23 @@ export interface FooterLinkProps {
 
 interface FooterProps {
   topLinks?: FooterLinkProps[]
+  /**
+   * Contact information links.
+   */
   topLinksContact?: FooterLinkProps[]
   bottomLinks?: FooterLinkProps[]
   middleLinks?: FooterLinkProps[]
   middleLinksTitle?: string
   bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
-  hideLanguageSwith?: boolean
+  privacyPolicyLink?: FooterLinkProps
+  hideLanguageSwitch?: boolean
   showMiddleLinks?: boolean
+  /**
+   * The link to the help web. If used it will be shown instead of the contact information links.
+   */
+  linkToHelpWeb?: string
+  linkToHelpWebText?: string
   languageSwitchOnClick?: () => void
 }
 
@@ -45,7 +55,10 @@ export const Footer = ({
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwith = false,
+  privacyPolicyLink = defaultPrivacyPolicyLink,
+  hideLanguageSwitch = false,
+  linkToHelpWeb,
+  linkToHelpWebText = 'Getum við aðstoðað?',
   languageSwitchOnClick,
 }: FooterProps) => {
   return (
@@ -90,30 +103,58 @@ export const Footer = ({
                   })}
                 </LinkContext.Provider>
                 <Box display="flex" flexDirection={'column'} paddingBottom={4}>
-                  {topLinksContact.map(({ title, href }, index) => {
-                    const isLast = index + 1 === topLinksContact.length
-                    const isInternalLink = !shouldLinkOpenInNewWindow(href)
-                    return (
-                      <Box marginBottom={isLast ? 0 : 3} key={index}>
-                        <Link href={href} skipTab>
-                          <Button
-                            colorScheme="default"
-                            icon={isInternalLink ? 'arrowForward' : undefined}
-                            iconType={isInternalLink ? 'filled' : undefined}
-                            size="default"
-                            variant="text"
-                            as="span"
-                          >
-                            {title}
-                          </Button>
-                        </Link>
-                      </Box>
-                    )
-                  })}
+                  {linkToHelpWeb ? (
+                    <Link href={linkToHelpWeb} skipTab>
+                      <Button
+                        colorScheme="default"
+                        icon="arrowForward"
+                        iconType="filled"
+                        size="default"
+                        variant="text"
+                        as="span"
+                      >
+                        {linkToHelpWebText}
+                      </Button>
+                    </Link>
+                  ) : (
+                    topLinksContact.map(({ title, href }, index) => {
+                      const isLast = index + 1 === topLinksContact.length
+                      const isInternalLink = !shouldLinkOpenInNewWindow(href)
+                      return (
+                        <Box marginBottom={isLast ? 0 : 3} key={index}>
+                          <Link href={href} skipTab>
+                            <Button
+                              colorScheme="default"
+                              icon={isInternalLink ? 'arrowForward' : undefined}
+                              iconType={isInternalLink ? 'filled' : undefined}
+                              size="default"
+                              variant="text"
+                              as="span"
+                            >
+                              {title}
+                            </Button>
+                          </Link>
+                        </Box>
+                      )
+                    })
+                  )}
                 </Box>
                 <div>
-                  <Inline space={3}>
-                    {!hideLanguageSwith && (
+                  <Stack space={1}>
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        type="info"
+                        height="15"
+                        width="15"
+                        color="blue400"
+                      />
+                      <Text variant="h5" color="blue600" fontWeight="light">
+                        <Link href={privacyPolicyLink.href}>
+                          {privacyPolicyLink.title}
+                        </Link>
+                      </Text>
+                    </Inline>
+                    {!hideLanguageSwitch && (
                       <Inline space={1} alignY="center">
                         <Icon
                           height="15"
@@ -131,6 +172,7 @@ export const Footer = ({
                         </Text>
                       </Inline>
                     )}
+
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
@@ -144,7 +186,7 @@ export const Footer = ({
                         </Link>
                       </Text>
                     </Inline>
-                  </Inline>
+                  </Stack>
                 </div>
               </Box>
             </GridColumn>
@@ -156,14 +198,19 @@ export const Footer = ({
               >
                 <Box paddingX={[0, 0, 1]}>
                   {!!middleLinksTitle && (
-                    <Text variant="eyebrow" color="blue400" paddingBottom={3}>
+                    <Text
+                      as="h2"
+                      variant="eyebrow"
+                      color="blue400"
+                      paddingBottom={3}
+                    >
                       {middleLinksTitle}
                     </Text>
                   )}
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link href={href} color="blue400" underline="normal">
+                        <Link href={href} color="blue600" underline="normal">
                           {children}
                         </Link>
                       ),
@@ -193,7 +240,7 @@ export const Footer = ({
       <Box paddingY={4}>
         <GridContainer>
           <Box paddingBottom={2}>
-            <Text variant="eyebrow" color="blue400">
+            <Text as="h2" variant="eyebrow" color="blue400">
               {bottomLinksTitle}
             </Text>
           </Box>
@@ -251,6 +298,11 @@ const defaultTopLinksContact = [
 const defaultLanguageSwitchLink = {
   title: 'English',
   href: 'https://island.is/en',
+}
+
+const defaultPrivacyPolicyLink = {
+  title: 'Persónuverndarstefna',
+  href: '/personuverndarstefna-stafraent-islands',
 }
 
 const defaultBottomLinks = [

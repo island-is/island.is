@@ -1,38 +1,52 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import {
+  DrivingLicenseApiConfig,
+  DrivingLicenseApiModule,
+} from '@island.is/clients/driving-license'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
+import { ConfigModule } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
-
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        DrivingLicenseApiModule.register({
-          secret: '',
-          xroadBaseUrl: 'http://localhost',
-          xroadClientId: '',
-          xroadPathV1: 'v1',
-          xroadPathV2: 'v2',
-          fetchOptions: {
-            logger: createLogger({
-              silent: true,
-            }),
-          },
+        DrivingLicenseApiModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [DrivingLicenseApiConfig],
         }),
       ],
-      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
+      providers: [
+        DrivingLicenseService,
+        { provide: 'CONFIG', useValue: {} },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: {
+            warn: () => undefined,
+          },
+        },
+        {
+          provide: NationalRegistryXRoadService,
+          useClass: jest.fn(() => ({
+            getNationalRegistryResidenceHistory: () => ResidenceHistory,
+          })),
+        },
+      ],
     }).compile()
 
     service = module.get(DrivingLicenseService)
@@ -47,7 +61,6 @@ describe('DrivingLicenseService', () => {
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID)
-
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2021-05-25T06:43:15.327Z'),
@@ -55,15 +68,10 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('should return an expired license', async () => {
+    it('should not return an expired license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
 
-      expect(response).toMatchObject({
-        name: 'Expired Halldórsson',
-        expires: new Date('1997-05-25T06:43:15.327Z'),
-      })
-
-      expect(response?.expires?.getTime()).toBeLessThan(Date.now())
+      expect(response).toBeNull()
     })
   })
 
@@ -76,12 +84,15 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it("should return a student's license despite expiry", async () => {
+    it("_should_ return a student's license when expired", async () => {
+      // Reason:
+      // It is allowed to look up stundents and mark them as having finished
+      // the driving assessment even though their license is expired.
       const response = await service.getStudentInformation(
         MOCK_NATIONAL_ID_EXPIRED,
       )
 
-      expect(response).toMatchObject({
+      expect(response).toStrictEqual({
         name: 'Expired Halldórsson',
       })
     })
@@ -167,6 +178,7 @@ describe('DrivingLicenseService', () => {
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-full',
       )
@@ -183,6 +195,10 @@ describe('DrivingLicenseService', () => {
             requirementMet: true,
           },
           {
+            key: 'CurrentLocalResidency',
+            requirementMet: true,
+          },
+          {
             key: 'DeniedByService',
             requirementMet: true,
           },
@@ -192,6 +208,7 @@ describe('DrivingLicenseService', () => {
 
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-temp',
       )
@@ -213,6 +230,7 @@ describe('DrivingLicenseService', () => {
 
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )
@@ -227,6 +245,10 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DrivingSchoolMissing',
             requirementMet: false,
+          },
+          {
+            key: 'CurrentLocalResidency',
+            requirementMet: true,
           },
           {
             key: 'DeniedByService',
@@ -295,6 +317,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         },
       )
 
@@ -305,14 +329,14 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should handle error responses when creating a license', async () => {
-      expect.assertions(1)
-
-      return service
+      return await service
         .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         })
         .catch((e) => expect(e).toBeTruthy())
     })

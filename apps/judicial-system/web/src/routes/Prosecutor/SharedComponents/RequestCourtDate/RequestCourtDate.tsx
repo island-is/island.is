@@ -27,11 +27,7 @@ const RequestCourtDate: React.FC<Props> = (props) => {
       </Box>
       <DateTime
         name="reqCourtDate"
-        selectedDate={
-          workingCase.requestedCourtDate
-            ? new Date(workingCase.requestedCourtDate)
-            : undefined
-        }
+        selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
         locked={

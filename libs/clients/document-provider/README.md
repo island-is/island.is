@@ -1,4 +1,6 @@
-# Clients Document Provider
+<!-- gitbook-navigation: "Document Provider" -->
+
+# Document Provider Client
 
 ## About
 

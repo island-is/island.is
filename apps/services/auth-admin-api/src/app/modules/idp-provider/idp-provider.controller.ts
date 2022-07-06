@@ -121,7 +121,7 @@ export class IdpProviderController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: name,
@@ -148,7 +148,7 @@ export class IdpProviderController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'update',
         namespace,
         resources: name,

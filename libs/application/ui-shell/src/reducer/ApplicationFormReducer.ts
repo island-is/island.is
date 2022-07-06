@@ -1,10 +1,9 @@
+import { getValueViaPath, mergeAnswers } from '@island.is/application/core'
 import {
   FormItemTypes,
   FormModes,
   FormValue,
-  getValueViaPath,
-  mergeAnswers,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertFormToScreens,
@@ -12,7 +11,7 @@ import {
   getNavigableSectionsInForm,
   moveToScreen,
 } from './reducerUtils'
-import { FormScreen } from '@island.is/application/ui-shell'
+import { FormScreen } from '../types'
 
 export function initializeReducer(
   state: ApplicationUIState,

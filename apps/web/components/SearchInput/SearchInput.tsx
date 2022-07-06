@@ -39,6 +39,7 @@ import {
 
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -117,6 +118,7 @@ const useSearch = (
               types: [
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
+                SearchableContentTypes['WebProjectPage'],
               ],
             },
           },
@@ -172,25 +174,34 @@ const useSearch = (
   return state
 }
 
+type SubmitType = {
+  type: 'query' | 'link'
+  string: string
+}
+
 const useSubmit = (locale: Locale, onRouting?: () => void) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
 
   return useCallback(
-    (q: string) => {
-      if (q) {
-        Router.push({
+    (item: SubmitType) => {
+      Router.push({
+        ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q },
-        }).then(() => {
-          window.scrollTo(0, 0)
-        })
-        if (onRouting) {
-          onRouting()
-        }
+          query: { q: item.string },
+        }),
+        ...(item.type === 'link' && {
+          pathname: item.string,
+        }),
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+
+      if (onRouting) {
+        onRouting()
       }
     },
-    [Router, linkResolver],
+    [Router, linkResolver, onRouting],
   )
 }
 
@@ -210,7 +221,10 @@ interface SearchInputProps {
   quickContentLabel?: string
 }
 
-export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
+export const SearchInput = forwardRef<
+  HTMLInputElement,
+  SearchInputProps & TestSupport
+>(
   (
     {
       placeholder = '',
@@ -226,6 +240,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       onRouting,
       skipContext,
       quickContentLabel,
+      dataTestId,
     },
     ref,
   ) => {
@@ -240,21 +255,34 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     }, [setHasFocus])
 
     return (
-      <Downshift<string>
+      <Downshift<SubmitType>
         id={id}
         initialInputValue={initialInputValue}
-        onChange={(q) => {
-          return onSubmit(`${search.prefix} ${q}`.trim() || '')
-        }}
-        onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => {
-          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
-
-          if (str === 'null') {
-            return ''
+        onChange={(item) => {
+          if (!item?.string) {
+            return false
           }
 
-          return str
+          if (item?.type === 'query') {
+            return onSubmit({
+              ...item,
+              string: `${search.prefix} ${item.string}`.trim() || '',
+            })
+          }
+
+          if (item?.type === 'link') {
+            return onSubmit(item)
+          }
+        }}
+        onInputValueChange={(q) => setSearchTerm(q)}
+        itemToString={(item) => {
+          if (item?.type === 'query') {
+            return `${search.prefix ? search.prefix + ' ' : ''}${
+              item.string
+            }`.trim()
+          }
+
+          return ''
         }}
         stateReducer={(state, changes) => {
           // pressing tab when input is not empty should move focus to the
@@ -283,6 +311,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             white={white}
             hasFocus={hasFocus}
             loading={search.isLoading}
+            dataTestId={dataTestId}
             skipContext={skipContext}
             rootProps={{
               'aria-controls': id + '-menu',
@@ -294,8 +323,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             }}
             buttonProps={{
               onClick: () => {
+                if (!inputValue) {
+                  return false
+                }
+
                 closeMenu()
-                onSubmit(inputValue)
+                onSubmit({
+                  type: 'query',
+                  string: inputValue,
+                })
               },
               onFocus,
               onBlur,
@@ -313,10 +349,19 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               placeholder,
               colored,
               onKeyDown: (e) => {
+                const v = e.currentTarget.value
+
+                if (!v) {
+                  return false
+                }
+
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   e.currentTarget.blur()
                   closeMenu()
-                  onSubmit(e.currentTarget.value)
+                  onSubmit({
+                    type: 'query',
+                    string: v,
+                  })
                 }
               },
             })}
@@ -392,7 +437,10 @@ const Results = ({
                 ? suggestion.replace(search.term, '')
                 : ''
               const { onClick, ...itemProps } = getItemProps({
-                item: suggestion,
+                item: {
+                  type: 'query',
+                  string: suggestion,
+                },
               })
               return (
                 <div
@@ -426,30 +474,37 @@ const Results = ({
                 News[] &
                 SubArticle[])
                 .slice(0, 5)
-                .map((item) => {
+                .map((item, i) => {
                   const { onClick, ...itemProps } = getItemProps({
-                    item: '',
+                    item: {
+                      type: 'link',
+                      string: linkResolver(
+                        item.__typename as LinkType,
+                        item.slug.split('/'),
+                      ).href,
+                    },
                   })
                   return (
-                    <div
+                    <Link
                       key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
+                      color="blue400"
+                      underline="normal"
+                      dataTestId="search-result"
+                      pureChildren
+                      underlineVisibility={
+                        search.suggestions.length + i === highlightedIndex
+                          ? 'always'
+                          : 'hover'
+                      }
+                      skipTab
                     >
-                      <Link
-                        {...linkResolver(
-                          item.__typename as LinkType,
-                          item.slug.split('/'),
-                        )}
-                      >
-                        <Text variant="h5" color="blue400">
-                          {item.title}
-                        </Text>
-                      </Link>
-                    </div>
+                      {item.title}
+                    </Link>
                   )
                 })}
             </Stack>

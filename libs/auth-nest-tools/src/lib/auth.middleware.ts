@@ -64,7 +64,7 @@ export class AuthMiddleware implements Middleware {
     if (this.options.forwardUserInfo) {
       context.init.headers = Object.assign({}, context.init.headers, {
         'User-Agent': this.auth.userAgent,
-        'X-Real-IP': this.auth.ip,
+        'X-Forwarded-For': this.auth.ip,
       })
     }
   }

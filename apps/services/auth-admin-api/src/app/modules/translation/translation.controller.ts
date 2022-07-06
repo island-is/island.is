@@ -154,7 +154,7 @@ export class TranslationController {
   ): Promise<Language> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateLanguage',
         namespace,
         resources: language.isoKey,
@@ -174,7 +174,7 @@ export class TranslationController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteLanguage',
         namespace,
         resources: isoKey,
@@ -244,7 +244,7 @@ export class TranslationController {
   ): Promise<Translation> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'udpateTranslation',
         namespace,
         resources: `${translation.language}/${translation.className}/${translation.property}/${translation.key}`,
@@ -263,7 +263,7 @@ export class TranslationController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteTranslation',
         namespace,
         resources: `${translation.language}/${translation.className}/${translation.property}/${translation.key}`,

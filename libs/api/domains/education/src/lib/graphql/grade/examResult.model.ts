@@ -11,5 +11,5 @@ export class ExamResult {
   fullName!: string
 
   @Field(() => [GradeResult])
-  grades: GradeResult[]
+  grades!: GradeResult[]
 }

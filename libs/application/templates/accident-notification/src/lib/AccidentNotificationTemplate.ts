@@ -1,27 +1,27 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
-// import * as z from 'zod'
 import { States } from '../constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
+import { Features } from '@island.is/feature-flags'
 
-// Uncomment for empty data schema
-// const AccidentNotificationSchema = z.object({})
-
+// The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
+// The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
+// The assignee should see all data related to the application being submitted to sjukra but not data only relevant to applicant
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
@@ -42,6 +42,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   name: application.general.name,
   institution: application.general.institutionName,
   readyForProduction: true,
+  featureFlag: Features.accidentNotification,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
@@ -52,7 +53,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.2,
+          progress: 0.4,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -81,7 +82,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         entry: 'assignUser',
         meta: {
           name: States.REVIEW,
-          progress: 0.6,
+          progress: 0.8,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -135,13 +136,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [States.REVIEW_ADD_ATTACHMENT]: {
         meta: {
           name: States.REVIEW_ADD_ATTACHMENT,
-          progress: 0.6,
+          progress: 0.8,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
           },
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
+            shouldPersistToExternalData: true,
           },
 
           roles: [

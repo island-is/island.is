@@ -28,18 +28,17 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
-  lightThemes,
+  getThemeConfig,
   OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-
-const { publicRuntimeConfig } = getConfig()
+import { ParsedUrlQuery } from 'querystring'
+import { useRouter } from 'next/router'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -52,30 +51,26 @@ const SubPage: Screen<SubPageProps> = ({
   subpage,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
+  const router = useRouter()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage.id)
 
-  const pageUrl = `/s/${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `/s/${organizationPage.slug}/${subpage.parentSubpage}`
+  useContentfulId(organizationPage.id, subpage.id)
+
+  const pathWithoutHash = router.asPath.split('#')[0]
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl) ||
-        childrenLinks.some((link) => link.url === parentSubpageUrl),
+        primaryLink.url === pathWithoutHash ||
+        childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl || url === parentSubpageUrl,
+        active: url === pathWithoutHash,
       })),
     }),
   )
@@ -117,7 +112,7 @@ const SubPage: Screen<SubPageProps> = ({
                     ]}
                   >
                     <Box marginBottom={2}>
-                      <Text variant="h1" as="h2">
+                      <Text variant="h1" as="h1">
                         {subpage.title}
                       </Text>
                     </Box>
@@ -183,12 +178,14 @@ const renderSlices = (
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}
+          renderedOnOrganizationSubpage={true}
         />
       ))
   }
 }
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
+  const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {
       data: { getOrganizationPage },
@@ -202,7 +199,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -211,8 +208,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: query.slug as string,
-          slug: query.subSlug as string,
+          organizationSlug: slug as string,
+          slug: subSlug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -222,7 +219,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },
@@ -238,15 +235,29 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
+}
+
+const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
+  const path = pathname?.split('/') ?? []
+  let { slug, subSlug } = query
+
+  if (!slug && path.length >= 2) {
+    // The slug is the next-last index in the path, i.e. "syslumenn" in the case of "/s/syslumenn/utgefid-efni"
+    slug = path[path.length - 2]
+  }
+  if (!subSlug && path.length > 0) {
+    // The subslug is the last index in the path, i.e. "utgefid-efni" in the case of "/s/syslumenn/utgefid-efni"
+    subSlug = path.pop()
+  }
+
+  return { slug, subSlug }
 }
 
 export default withMainLayout(SubPage)

@@ -137,11 +137,7 @@ To do so, you can run for example:
 ./scripts/run-db-proxy.sh
 ```
 
-It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. We're currently not able to get AWS credentials from an AWS profile configured using AWS SSO. You will need to visit your AWS account and export the credentials manually or add them to your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
-
-{% hint style="info" %}
-You will be able to find the credentials needed to open the development services on your AWS account.
-{% endhint %}
+It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
 
 {% hint style="info" %}
 If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.

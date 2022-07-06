@@ -14,17 +14,17 @@ import { SearchableTags } from '../enums/searchableTags'
 @InputType()
 export class Tag {
   @Field(() => SearchableTags)
-  type: SearchableTags
+  type!: SearchableTags
 
   @Field(() => String)
-  key: string
+  key!: string
 }
 
 @InputType()
 export class SearcherInput {
   @Field(() => String)
   @IsString()
-  queryString: string
+  queryString!: string
 
   @Field(() => [SearchableContentTypes], { nullable: true })
   @IsArray()
@@ -51,13 +51,28 @@ export class SearcherInput {
   @IsOptional()
   tags?: Tag[]
 
-  @Field(() => SearchableTags, { nullable: true })
-  @IsEnum(SearchableTags)
+  @Field(() => [Tag], { nullable: true })
+  @IsArray()
   @IsOptional()
-  countTag?: SearchableTags
+  excludedTags?: Tag[]
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  contentfulTags?: string[]
+
+  @Field(() => [SearchableTags], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  countTag?: SearchableTags[] = Object.values(SearchableTags)
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   countTypes?: boolean = false
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  countProcessEntry?: boolean = false
 }

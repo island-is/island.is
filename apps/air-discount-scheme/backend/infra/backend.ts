@@ -1,4 +1,5 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
@@ -10,7 +11,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .image('air-discount-scheme-backend')
     .namespace('air-discount-scheme')
     .secrets({
-      SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN',
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
       ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY',
       NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',
@@ -20,7 +20,10 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME',
       NATIONAL_REGISTRY_URL:
         '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL',
+      VEGAGERDIN_IDS_CLIENTS_SECRET:
+        '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET',
     })
+    .xroad(Base, Client, NationalRegistry)
     .env({
       ENVIRONMENT: {
         dev: 'dev',
@@ -34,6 +37,11 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
     })
     .postgres(postgresInfo)
@@ -64,3 +72,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
+    })

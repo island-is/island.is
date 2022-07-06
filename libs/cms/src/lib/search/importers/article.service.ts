@@ -14,6 +14,18 @@ import {
   removeEntryHyperlinkFields,
 } from './utils'
 
+interface MetaData {
+  metadata: {
+    tags: {
+      sys: {
+        id: string
+        type: 'Link'
+        linkType: 'Tag'
+      }
+    }[]
+  }
+}
+
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   // only process articles that we consider not to be empty
@@ -53,7 +65,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents } = fields
+            const { title, url, content, showTableOfContents, stepper } = fields
             return {
               sys,
               fields: {
@@ -61,6 +73,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 slug: url,
                 content,
                 showTableOfContents,
+                stepper,
               },
             }
           })
@@ -79,12 +92,26 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
               : undefined) as IArticleFields['subArticles'],
           },
         }
+
         // An entry hyperlink does not need the extra content present in
         // the entry hyperlink associated fields
         // We remove them from the reference itself on nodeType `entry-hyperlink`
         if (processedEntry.fields?.content) {
           removeEntryHyperlinkFields(processedEntry.fields.content)
         }
+        // Remove all unnecessary entry hyperlink fields for the subArticles
+        if (processedEntry.fields?.subArticles?.length) {
+          for (const subArticle of processedEntry.fields.subArticles) {
+            removeEntryHyperlinkFields(subArticle.fields.content)
+          }
+        }
+        // Also remove all unnecessary entry hyperlink fields for the relatedArticles
+        if (processedEntry.fields?.relatedArticles?.length) {
+          for (const relatedArticle of processedEntry.fields.relatedArticles) {
+            removeEntryHyperlinkFields(relatedArticle.fields.content)
+          }
+        }
+
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
         } else {
@@ -97,12 +124,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
     }, [])
   }
 
-  doMapping(entries: IArticle[]) {
+  doMapping(entries: (IArticle & MetaData)[]) {
     logger.info('Mapping articles', { count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
         let mapped: Article
+
+        const contentfulTags = (entry?.metadata?.tags ?? [])
+          .map((t) => t?.sys?.id)
+          .filter(Boolean)
 
         try {
           mapped = mapArticle(entry)
@@ -113,12 +144,20 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             extractStringsFromObject(subArticle.body),
           )
           searchableContent.push(parentContent)
+
+          const hasMainProcessEntry =
+            mapped.processEntry?.processTitle &&
+            mapped.processEntry?.processLink
+
+          const processEntryCount =
+            (hasMainProcessEntry ? 1 : 0) + numberOfProcessEntries(mapped.body)
+
           return {
             _id: mapped.id,
             title: mapped.title,
             content: searchableContent.join(' '), // includes all searchable content in parent and children
             contentWordCount: parentContent.split(/\s+/).length,
-            processEntryCount: numberOfProcessEntries(mapped.body),
+            processEntryCount,
             ...numberOfLinks(mapped.body),
             type: 'webArticle',
             termPool: createTerms([
@@ -139,8 +178,8 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'category',
               },
               {
-                key: entry.fields?.processEntry ? 'true' : 'false',
-                value: entry.fields?.processEntry ? 'Yes' : 'No',
+                key: processEntryCount > 0 ? 'true' : 'false',
+                value: processEntryCount > 0 ? 'Yes' : 'No',
                 type: 'processentry',
               },
               ...(mapped.otherCategories ?? []).map((x) => ({
@@ -157,12 +196,19 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 key: entry.fields?.slug,
                 type: 'slug',
               },
+              ...contentfulTags.map((tag) => ({
+                key: tag,
+                type: 'contentfultag',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import article', { error: error.message })
+          logger.warn('Failed to import article', {
+            error: error.message,
+            id: entry.sys.id,
+          })
           return false
         }
       })

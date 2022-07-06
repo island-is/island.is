@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
-import { Document } from '@contentful/rich-text-types'
 import {
   Stack,
   Text,
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
+import { Slice as SliceType, richText } from '../types'
+
 export interface FaqListProps {
   title: string
   questions: {
@@ -15,18 +15,30 @@ export interface FaqListProps {
     question: string
     answer?: SliceType[]
   }[]
+  showTitle?: boolean
 }
 
-export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
+export const FaqList: FC<FaqListProps> = ({
+  title,
+  questions,
+  showTitle = true,
+}) => {
   return (
     <Stack space={6}>
-      <Text variant="h2" as="h2">
-        <span data-sidebar-link={slugify(title)}>{title}</span>
-      </Text>
+      {showTitle !== false && (
+        <Text variant="h2" as="h2">
+          <span data-sidebar-link={slugify(title)}>{title}</span>
+        </Text>
+      )}
       <Accordion>
         {questions.map(({ id, question, answer }) => {
           return (
-            <AccordionItem key={id} id={`faq_${id}`} label={question}>
+            <AccordionItem
+              key={id}
+              id={`faq_${id}`}
+              label={question}
+              labelUse="h2"
+            >
               {richText(answer as SliceType[], undefined)}
             </AccordionItem>
           )

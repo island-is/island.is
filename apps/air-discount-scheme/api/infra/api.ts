@@ -7,15 +7,15 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .serviceAccount()
     .env({
-      SAML_ENTRY_POINT: {
-        dev: 'https://innskraning.island.is/?id=ads.dev',
-        staging: 'https://innskraning.island.is/?id=ads.staging',
-        prod: 'https://innskraning.island.is/?id=ads.prod',
-      },
       AUTH_AUDIENCE: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',
         prod: 'loftbru.island.is',
+      },
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
       ELASTIC_NODE: {
         dev:
@@ -33,7 +33,6 @@ export const serviceSetup = (services: {
       },
     })
     .secrets({
-      SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',
       CONTENTFUL_ACCESS_TOKEN:
         '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN',
@@ -55,9 +54,13 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths: ['/api'],
+        paths: ['/api/graphql'],
         public: true,
       },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
     })
     .readiness('/liveness')
     .liveness('/liveness')

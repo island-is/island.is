@@ -24,6 +24,7 @@ export interface Period {
   ratio: string
   firstPeriodStart?: string
   useLength?: YesOrNo
+  daysToUse?: string
   rawIndex?: number
 }
 
@@ -42,4 +43,18 @@ export interface Payment {
     approved: boolean
     paid: boolean
   }
+}
+
+export interface Payments {
+  bank: string
+  pensionFund: string
+  privatePensionFund: string
+  privatePensionFundPercentage: string
+  union: string
+}
+
+export interface OtherParentObj {
+  chooseOtherParent: string
+  otherParentName?: string
+  otherParentId: string
 }

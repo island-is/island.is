@@ -12,14 +12,10 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
-  title: string
-  logo?: string
   footerItems: Array<FooterItem>
 }
 
 export const SjukratryggingarFooter: React.FC<FooterProps> = ({
-  title,
-  logo,
   footerItems,
 }) => {
   return (
@@ -45,8 +41,11 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
               </Box>
             </Box>
             <GridRow>
-              {footerItems.slice(0, 4).map((item) => (
-                <GridColumn span={['12/12', '12/12', '6/12', '3/12']}>
+              {footerItems.slice(0, 4).map((item, index) => (
+                <GridColumn
+                  span={['12/12', '12/12', '6/12', '3/12']}
+                  key={`footer-main-row-column-${index}`}
+                >
                   <Box>
                     <Box marginBottom={2}>
                       {richText(item.content as SliceType[])}
@@ -71,18 +70,32 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   span={['12/12', '12/12', '6/12', '3/12']}
                   className={styles.footerSecondRow}
                 >
-                  <img src="/assets/sjukratryggingar_norraent_samstarf.png" />
+                  <img
+                    src="/assets/sjukratryggingar_heilbrigdisraduneytid.png"
+                    alt="heilbrygdisraduneytid"
+                  />
                 </GridColumn>
                 <GridColumn
                   span={['12/12', '12/12', '6/12', '3/12']}
                   className={styles.footerSecondRow}
                 >
-                  <img src="/assets/sjukratryggingar_heilbrigdisraduneytid.png" />
+                  <Box>
+                    {richText((footerItems?.[4].content ?? []) as SliceType[], {
+                      renderNode: {
+                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          <Text variant="small" color="dark400" marginY={1}>
+                            {children}
+                          </Text>
+                        ),
+                      },
+                    })}
+                  </Box>
                 </GridColumn>
-                {footerItems.slice(4, 6).map((item) => (
+                {footerItems.slice(5, 7).map((item, index) => (
                   <GridColumn
                     span={['12/12', '12/12', '6/12', '3/12']}
                     className={styles.footerSecondRow}
+                    key={`footer-secondary-row-column-${index}`}
                   >
                     <Box>
                       {richText(item.content as SliceType[], {

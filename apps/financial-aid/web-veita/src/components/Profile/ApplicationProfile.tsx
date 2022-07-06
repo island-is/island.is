@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useContext } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import React, { useState, useMemo } from 'react'
+import cn from 'classnames'
+import format from 'date-fns/format'
 
-import * as styles from './Profile.css'
-
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationState,
@@ -10,11 +10,16 @@ import {
   getMonth,
   calculateAidFinalAmount,
   showSpouseData,
+  AmountModal,
+  getAidAmountModalInfo,
+  UserType,
+  ApplicationProfileInfo,
+  Municipality,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
-import format from 'date-fns/format'
-
 import {
+  CollapsibleProfileUnit,
   ProfileUnit,
   StateModal,
   AidAmountModal,
@@ -23,45 +28,59 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+
 import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
+import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
+
+import * as styles from './Profile.css'
 
 interface ApplicationProps {
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  isPrint?: boolean
+  applicationMunicipality: Municipality
+}
+
+interface CalculationsModal {
+  visible: boolean
+  type: AmountModal
 }
 
 const ApplicationProfile = ({
   application,
   setApplication,
   setIsLoading,
+  isPrint = false,
+  applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
-  const [isAidModalVisible, setAidModalVisible] = useState(false)
-
-  const { municipality } = useContext(AdminContext)
+  const [calculationsModal, setCalculationsModal] = useState<CalculationsModal>(
+    {
+      visible: false,
+      type: AmountModal.ESTIMATED,
+    },
+  )
 
   const aidAmount = useMemo(() => {
-    if (application && municipality && application.homeCircumstances) {
+    if (applicationMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        application.spouseNationalId
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+        showSpouseData[application.familyStatus]
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [application, municipality])
+  }, [applicationMunicipality, application])
 
-  const currentYear = format(new Date(), 'yyyy')
-
-  const applicationInfo = [
+  const applicationInfo: ApplicationProfileInfo[] = [
     {
       title: 'Tímabil',
       content:
@@ -78,10 +97,9 @@ const ApplicationProfile = ({
           content: `${calculateAidFinalAmount(
             aidAmount,
             application.usePersonalTaxCredit,
-            currentYear,
           ).toLocaleString('de-DE')} kr.`,
           onclick: () => {
-            setAidModalVisible(!isAidModalVisible)
+            setCalculationsModal({ visible: true, type: AmountModal.ESTIMATED })
           },
         }
       : {
@@ -92,8 +110,11 @@ const ApplicationProfile = ({
 
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
-      title: 'Veitt',
+      title: 'Veitt aðstoð',
       content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
+      onclick: () => {
+        setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })
+      },
     })
   }
   if (application.state === ApplicationState.REJECTED) {
@@ -102,6 +123,7 @@ const ApplicationProfile = ({
       content: application?.rejection
         ? application?.rejection
         : 'enginn ástæða gefin',
+      fullWidth: true,
     })
   }
 
@@ -113,11 +135,28 @@ const ApplicationProfile = ({
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
 
+  const modalInfo = getAidAmountModalInfo(
+    calculationsModal.type,
+    aidAmount,
+    application.usePersonalTaxCredit,
+    application?.amount,
+  )
+
+  const applicantDirectPayments =
+    application.directTaxPayments.filter(
+      (d) => d.userType === UserType.APPLICANT,
+    ) ?? []
+
+  const spouseDirectPayments =
+    application.directTaxPayments.filter(
+      (d) => d.userType === UserType.SPOUSE,
+    ) ?? []
+
   return (
     <>
       <Box
-        marginTop={10}
-        marginBottom={15}
+        marginTop={isPrint ? 1 : 10}
+        marginBottom={isPrint ? 4 : 15}
         className={`${styles.applicantWrapper}`}
       >
         <ApplicationHeader
@@ -127,7 +166,26 @@ const ApplicationProfile = ({
           }}
           setApplication={setApplication}
           setIsLoading={setIsLoading}
+          isPrint={isPrint}
         />
+
+        {application.navSuccess === false && (
+          <Box
+            className={cn({
+              [`${styles.widthFull} `]: true,
+            })}
+            marginBottom={[5, 5, 7]}
+          >
+            <AlertMessage
+              type="warning"
+              message={
+                <Text variant="medium">
+                  Sjálfvirk yfirfærsla í Navision tóskt ekki.
+                </Text>
+              }
+            />
+          </Box>
+        )}
 
         <ProfileUnit
           heading="Umsókn"
@@ -141,40 +199,75 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
+        <CollapsibleProfileUnit
+          heading="Upplýsingar um staðgreiðslu"
+          info={getDirectTaxPayments(applicantDirectPayments)}
+          className={`contentUp delay-75`}
+          isPrint={isPrint}
+        >
+          {getDirectTaxPaymentsContent(
+            applicantDirectPayments,
+            application.hasFetchedDirectTaxPayment,
+            application.created,
+          )}
+        </CollapsibleProfileUnit>
+
         {showSpouseData[application.familyStatus] && (
-          <ProfileUnit
-            heading="Maki"
-            info={applicantSpouse}
-            className={`contentUp delay-75`}
+          <>
+            <CollapsibleProfileUnit
+              heading="Maki"
+              info={applicantSpouse}
+              className={`contentUp delay-100`}
+              isPrint={isPrint}
+            />
+
+            <CollapsibleProfileUnit
+              heading="Upplýsingar um staðgreiðslu maka"
+              info={getDirectTaxPayments(spouseDirectPayments)}
+              className={`contentUp delay-125`}
+              isPrint={isPrint}
+            >
+              {getDirectTaxPaymentsContent(
+                spouseDirectPayments,
+                application.spouseHasFetchedDirectTaxPayment,
+                application.created,
+              )}
+            </CollapsibleProfileUnit>
+          </>
+        )}
+
+        <CollapsibleProfileUnit
+          heading="Umsóknarferli"
+          info={applicantMoreInfo}
+          className={`contentUp delay-125`}
+          isPrint={isPrint}
+        />
+
+        <CollapsibleProfileUnit
+          heading="Þjóðskrá"
+          info={nationalRegistryInfo}
+          className={`contentUp delay-125`}
+          isPrint={isPrint}
+        />
+
+        {application.files && (
+          <FilesListWithHeaderContainer applicationFiles={application.files} />
+        )}
+
+        {!isPrint && (
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
           />
         )}
 
-        <ProfileUnit
-          heading="Umsóknarferli"
-          info={applicantMoreInfo}
-          className={`contentUp delay-100`}
-        />
-
-        <ProfileUnit
-          heading="Þjóðskrá"
-          info={nationalRegistryInfo}
-          className={`contentUp delay-100`}
-        />
-
-        <FilesListWithHeaderContainer applicationFiles={application.files} />
-
-        <CommentSection
-          className={`contentUp delay-125 ${styles.widthAlmostFull}`}
-          setApplication={setApplication}
-        />
-
         <History
           applicantName={application.name}
+          applicantEmail={application.email}
           applicationEvents={application.applicationEvents}
           spouseName={application.spouseName ?? ''}
         />
       </Box>
-
       {application.state && (
         <StateModal
           isVisible={isStateModalVisible}
@@ -185,23 +278,47 @@ const ApplicationProfile = ({
           applicationId={application.id}
           currentState={application.state}
           homeCircumstances={application.homeCircumstances}
-          spouseNationalId={application.spouseNationalId}
+          familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
+          applicationCreated={application.created}
+          applicationMunicipality={applicationMunicipality}
         />
       )}
 
-      {aidAmount && (
-        <AidAmountModal
-          aidAmount={aidAmount}
-          usePersonalTaxCredit={application.usePersonalTaxCredit}
-          isVisible={isAidModalVisible}
-          onVisibilityChange={(isVisibleBoolean) => {
-            setAidModalVisible(isVisibleBoolean)
-          }}
-        />
-      )}
+      <AidAmountModal
+        headline={modalInfo.headline}
+        calculations={modalInfo.calculations}
+        isVisible={calculationsModal.visible}
+        onVisibilityChange={() => {
+          setCalculationsModal({ ...calculationsModal, visible: false })
+        }}
+      />
     </>
   )
 }
 
 export default ApplicationProfile
+
+export const getDirectTaxPaymentsContent = (
+  directPaymentsArr: DirectTaxPayment[],
+  hasFetchedPayments: boolean,
+  applicationCreated: string,
+) => {
+  switch (true) {
+    case directPaymentsArr.length > 0:
+      return (
+        <TaxBreakdown
+          items={directPaymentsArr}
+          dateDataWasFetched={applicationCreated}
+        />
+      )
+    case directPaymentsArr.length === 0 && hasFetchedPayments:
+      return <Text marginBottom={4}>Engin staðgreiðsla</Text>
+    case directPaymentsArr.length === 0 && !hasFetchedPayments:
+      return (
+        <Text marginBottom={4} color="red400">
+          Ekki tókst að sækja staðgreiðslu
+        </Text>
+      )
+  }
+}

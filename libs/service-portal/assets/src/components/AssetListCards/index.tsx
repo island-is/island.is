@@ -23,13 +23,14 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
   return (
     <Box>
       {assets?.properties?.map((asset, i) => (
-        <Box key={asset.propertyNumber} marginTop={i > 0 ? 4 : undefined}>
+        <Box key={asset.propertyNumber} marginTop={i > 0 ? 2 : undefined}>
           <ActionCard
             heading={asset?.defaultAddress?.display || ''}
+            headingVariant="h4"
             text={asset.propertyNumber as string}
             cta={{
               label: formatMessage(m.viewDetail),
-              variant: 'ghost',
+              variant: 'text',
               size: 'small',
               icon: 'arrowForward',
               onClick: () =>

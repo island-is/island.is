@@ -9,7 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationModel } from '../../application'
+import { ApplicationModel } from '../../application/models/application.model'
 
 import {
   ApplicationEventType,
@@ -20,7 +20,10 @@ import {
   tableName: 'application_events',
   timestamps: false,
 })
-export class ApplicationEventModel extends Model<ApplicationEvent> {
+export class ApplicationEventModel extends Model<
+  ApplicationEventModel,
+  ApplicationEvent
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -54,7 +57,7 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   eventType: ApplicationEventType
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -73,4 +76,11 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   })
   @ApiProperty()
   staffNationalId?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  emailSent: boolean
 }

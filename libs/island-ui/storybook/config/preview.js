@@ -2,10 +2,14 @@ import React from 'react'
 import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ApolloProvider } from '@apollo/client'
+import { MockedProvider } from '@apollo/client/testing'
 
 export const parameters = {
   viewMode: 'docs',
   previewTabs: { 'storybook/docs/panel': { index: -1 } },
+  apolloClient: {
+    MockedProvider,
+  },
 }
 
 export const decorators = [

@@ -5,22 +5,22 @@ import {
   getValueViaPath,
   mergeAnswers,
 } from './formUtils'
+import { buildForm, buildMultiField, buildSection } from './formBuilders'
+import {
+  buildCheckboxField,
+  buildDescriptionField,
+  buildRadioField,
+  buildTextField,
+} from './fieldBuilders'
 import {
   Application,
   ApplicationTypes,
-  buildCheckboxField,
-  buildForm,
-  buildDescriptionField,
-  buildMultiField,
-  buildRadioField,
-  buildSection,
-  buildTextField,
   Comparators,
   Form,
   StaticText,
   TextField,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
@@ -122,8 +122,8 @@ describe('formatText', () => {
   const application: Application = {
     answers: { someAnswer: 'awesome' },
     assignees: [],
+    applicantActors: [],
     applicant: '',
-    attachments: {},
     created: new Date(),
     externalData: {},
     id: '',

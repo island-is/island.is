@@ -6,6 +6,8 @@ import {
   Get,
   ParseUUIDPipe,
   Body,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
@@ -15,7 +17,7 @@ import {
   ApiHeader,
   ApiOkResponse,
 } from '@nestjs/swagger'
-import { PaymentType as BasePayment } from '@island.is/application/core'
+import { PaymentType as BasePayment } from '@island.is/application/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -30,7 +32,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
 
@@ -87,11 +88,23 @@ export class PaymentController {
     const chargeResult = await this.paymentService.createCharge(payment, user)
 
     this.auditService.audit({
-      user,
-      action: 'create',
+      auth: user,
+      action: 'createCharge',
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id, id: payment.id },
     })
+
+    await this.paymentModel.update(
+      {
+        user4: chargeResult.user4,
+      },
+      {
+        where: {
+          id: payment.id,
+          application_id: applicationId,
+        },
+      },
+    )
 
     return {
       id: payment.id,
@@ -115,10 +128,23 @@ export class PaymentController {
       applicationId,
     )
 
+    if (!payment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!payment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
-      fulfilled: payment?.fulfilled || false,
+      fulfilled: payment.fulfilled || false,
+      paymentUrl: this.paymentService.makePaymentUrl(payment.user4),
     }
   }
 }

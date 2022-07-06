@@ -2,16 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const rcConfirmation = {
   sections: {
-    custodyRestrictions: defineMessages({
-      disclaimer: {
-        id:
-          'judicial.system.restriction_cases:confirmation.custody_restrictions.disclaimer',
-        defaultMessage:
-          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     conclusion: defineMessages({
       title: {
         id: 'judicial.system.restriction_cases:confirmation.conclusion.title',
@@ -30,6 +20,25 @@ export const rcConfirmation = {
           'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð. Auk þess hefur útdráttur verið sendur á fangelsi.<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
         description:
           'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæsluvarðhaldsmálum.',
+      },
+    }),
+    rulingNotification: defineMessages({
+      // TODO: remove text
+      text: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.ruling_notification.text#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.{summarySentToPrison, select, yes { Auk þess hefur útdráttur verið sendur á fangelsi.} other {}}<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæslu-, farbanns- og vistunarmálum.',
+      },
+      textV2: {
+        id:
+          'judicial.system.restriction_cases:confirmation.modal.ruling_notification.text_v2#markdown',
+        defaultMessage:
+          'Úrskurður hefur verið sendur á ákæranda, verjanda og dómara sem kvað upp úrskurð.{summarySentToPrison, select, true { Auk þess hefur útdráttur verið sendur á fangelsi.} other {}}<br/><br/>Þú getur komið ábendingum á framfæri við þróunarteymi Réttarvörslugáttar um það sem mætti betur fara í vinnslu mála með því að smella á takkann hér fyrir neðan.',
+        description:
+          'Notaður sem texti í úrskurðar tilkynningaglugganum á staðfesingar skrefi í gæslu-, farbanns- og vistunarmálum.',
       },
     }),
     travelBanCases: defineMessages({

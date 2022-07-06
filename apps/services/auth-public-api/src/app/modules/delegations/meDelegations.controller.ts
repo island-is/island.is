@@ -1,11 +1,9 @@
 import {
   BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Delete,
   Get,
-  HttpCode,
   NotFoundException,
   Param,
   Post,
@@ -13,35 +11,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiBadRequestResponse,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
-import startOfDay from 'date-fns/startOfDay'
+import { ApiTags } from '@nestjs/swagger'
 
+import { Documentation } from '@island.is/nest/swagger'
 import {
   CreateDelegationDTO,
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
   DelegationValidity,
-  ResourcesService,
   UpdateDelegationDTO,
-  UpdateDelegationScopeDTO,
 } from '@island.is/auth-api-lib'
 import {
-  AuthMiddlewareOptions,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -55,9 +36,6 @@ import {
   Features,
   FeatureFlag,
 } from '@island.is/nest/feature-flags'
-import { HttpProblemResponse } from '@island.is/nest/problem'
-
-import { environment } from '../../../environments'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -69,34 +47,38 @@ export class MeDelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,
     private readonly auditService: AuditService,
-    private readonly resourcesService: ResourcesService,
   ) {}
 
   @Scopes(AuthScope.readDelegations)
   @FeatureFlag(Features.customDelegations)
   @Get()
-  @ApiQuery({
-    name: 'direction',
-    required: true,
-    schema: {
-      enum: [DelegationDirection.OUTGOING],
-      default: DelegationDirection.OUTGOING,
+  @Documentation({
+    response: { status: 200, type: [DelegationDTO] },
+    request: {
+      query: {
+        direction: {
+          required: true,
+          schema: {
+            enum: [DelegationDirection.OUTGOING],
+            default: DelegationDirection.OUTGOING,
+          },
+        },
+        validity: {
+          required: false,
+          schema: {
+            enum: Object.values(DelegationValidity),
+            default: DelegationValidity.ALL,
+          },
+        },
+        otherUser: {
+          description:
+            'NationalId of an other user to find if the current user has given that user a delegation.',
+          required: false,
+          type: 'string',
+        },
+      },
     },
   })
-  @ApiQuery({
-    name: 'valid',
-    required: false,
-    schema: {
-      enum: Object.values(DelegationValidity),
-      default: DelegationValidity.ALL,
-    },
-  })
-  @ApiQuery({ name: 'otherUser', required: false, type: 'string' })
-  @ApiOkResponse({ type: [DelegationDTO] })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
   @Audit<DelegationDTO[]>({
     resources: (delegations) =>
       delegations.map((delegation) => delegation?.id ?? ''),
@@ -104,7 +86,7 @@ export class MeDelegationsController {
   async findAll(
     @CurrentUser() user: User,
     @Query('direction') direction: DelegationDirection,
-    @Query('valid') valid: DelegationValidity = DelegationValidity.ALL,
+    @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
     @Query('otherUser') otherUser?: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
@@ -113,30 +95,26 @@ export class MeDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllOutgoing(
-      user.nationalId,
-      valid,
-      otherUser,
-    )
+    return this.delegationsService.findAllOutgoing(user, validity, otherUser)
   }
 
   @Scopes(AuthScope.readDelegations)
   @FeatureFlag(Features.customDelegations)
   @Get(':delegationId')
-  @ApiOperation({
+  @Documentation({
     description: `Finds a single delegation by ID where the authenticated user is either giving or receiving.
        Does not include delegations from NationalRegistry or CompanyRegistry.`,
+    response: { status: 200, type: DelegationDTO },
+    request: {
+      params: {
+        delegationId: {
+          type: 'string',
+          format: 'uuid',
+          description: 'Delegation ID.',
+        },
+      },
+    },
   })
-  @ApiParam({
-    name: 'delegationId',
-    type: 'string',
-    description: 'Delegation ID.',
-  })
-  @ApiOkResponse({ type: DelegationDTO })
-  @ApiNotFoundResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
   })
@@ -145,7 +123,7 @@ export class MeDelegationsController {
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationsService.findById(
-      user.nationalId,
+      user,
       delegationId,
     )
 
@@ -159,12 +137,9 @@ export class MeDelegationsController {
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Post()
-  @ApiCreatedResponse({ type: DelegationDTO })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiConflictResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 201, type: DelegationDTO },
+  })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
   })
@@ -172,140 +147,50 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
-    }
-
-    if (!this.validateScopesPeriod(delegation.scopes)) {
-      throw new BadRequestException(
-        'If scope validTo property is provided it must be in the future',
-      )
-    }
-
-    if (
-      await this.delegationsService.findByRelationship(
-        user.nationalId,
-        delegation.toNationalId,
-      )
-    ) {
-      throw new ConflictException(
-        'Delegation exists. Please use PUT method to update.',
-      )
-    }
-
-    return this.delegationsService.create(
-      user,
-      delegation,
-      environment.nationalRegistry
-        .authMiddlewareOptions as AuthMiddlewareOptions,
-    )
+    return this.delegationsService.create(user, delegation)
   }
 
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Put(':delegationId')
-  @ApiOkResponse({ type: DelegationDTO })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiNotFoundResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 200, type: DelegationDTO },
+  })
   async update(
     @CurrentUser() user: User,
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
-    }
-
-    if (!this.validateScopesPeriod(delegation.scopes)) {
-      throw new BadRequestException(
-        'If scope validTo property is provided it must be in the future',
-      )
-    }
-
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'update',
         resources: (delegation) => delegation?.id ?? '',
         meta: { fields: Object.keys(delegation) },
       },
-      this.delegationsService.update(user.nationalId, delegation, delegationId),
+      this.delegationsService.update(user, delegation, delegationId),
     )
   }
 
   @Scopes(AuthScope.writeDelegations)
   @FeatureFlag(Features.customDelegations)
   @Delete(':delegationId')
-  @HttpCode(204)
-  @ApiNoContentResponse()
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    response: { status: 204 },
+  })
   async delete(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
   ): Promise<void> {
     await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteFrom',
         resources: delegationId,
       },
-      this.delegationsService.delete(user.nationalId, delegationId),
-    )
-  }
-
-  /**
-   * Validates that the delegation scopes belong to user and are valid for delegation
-   * @param userScopes user scopes from the currently authenticated user
-   * @param requestedScopes requested scopes from a delegation
-   * @returns
-   */
-  private async validateScopesAccess(
-    userScopes: string[],
-    requestedScopes?: UpdateDelegationScopeDTO[],
-  ): Promise<boolean> {
-    if (!requestedScopes || requestedScopes.length === 0) {
-      return true
-    }
-
-    for (const scope of requestedScopes) {
-      // Delegation scopes need to be associated with the user scopes
-      if (!userScopes.includes(scope.name)) {
-        return false
-      }
-    }
-
-    // Check if the requested scopes are valid
-    const scopes = requestedScopes.map((scope) => scope.name)
-    const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
-      scopes,
-    )
-    return requestedScopes.length === allowedApiScopesCount
-  }
-
-  /**
-   * Validates the valid period of the scopes requested in a delegation.
-   * @param scopes requested scopes on a delegation
-   */
-  private validateScopesPeriod(scopes?: UpdateDelegationScopeDTO[]): boolean {
-    if (!scopes || scopes.length === 0) {
-      return true
-    }
-
-    const startOfToday = startOfDay(new Date())
-    // validTo can be null or undefined or it needs to be the current day or in the future
-    return scopes.every(
-      (scope) => !scope.validTo || new Date(scope.validTo) >= startOfToday,
+      this.delegationsService.delete(user, delegationId),
     )
   }
 }

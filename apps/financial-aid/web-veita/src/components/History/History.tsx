@@ -4,20 +4,18 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './History.css'
 import cn from 'classnames'
 
-import {
-  ApplicationEvent,
-  ApplicationEventType,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationEvent } from '@island.is/financial-aid/shared/lib'
 
 import {
   ChatElement,
-  StaffComment,
+  EmailElement,
   TimeLineContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string
   applicantName: string
+  applicantEmail: string
   applicationEvents?: ApplicationEvent[]
   spouseName: string
 }
@@ -25,6 +23,7 @@ interface Props {
 const History = ({
   className,
   applicantName,
+  applicantEmail,
   spouseName,
   applicationEvents,
 }: Props) => {
@@ -46,7 +45,7 @@ const History = ({
       </Box>
       <Box
         className={cn({
-          [`${styles.historyContainer}`]: true,
+          [`${styles.historyContainer} printableSection`]: true,
           [`${className}`]: true,
         })}
       >
@@ -58,19 +57,14 @@ const History = ({
               applicantName={applicantName}
               spouseName={spouseName}
             >
-              <StaffComment
-                isVisable={item.eventType === ApplicationEventType.STAFFCOMMENT}
-                comment={item.comment}
-              />
-
-              <ChatElement
-                isVisable={
-                  item.eventType === ApplicationEventType.FILEUPLOAD ||
-                  item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
-                  item.eventType === ApplicationEventType.DATANEEDED
-                }
-                comment={item.comment}
-              />
+              <Box paddingLeft={3}>
+                <ChatElement comment={item.comment} />
+                <EmailElement
+                  email={applicantEmail}
+                  event={item.eventType}
+                  emailSent={item.emailSent}
+                />
+              </Box>
             </TimeLineContainer>
           )
         })}

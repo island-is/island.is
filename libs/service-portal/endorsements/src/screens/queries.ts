@@ -60,7 +60,6 @@ const GetListsUserSigned = gql`
         }
         meta {
           fullName
-          address
         }
         created
         modified

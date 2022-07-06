@@ -1,34 +1,31 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useState, useMemo } from 'react'
+import { useWindowSize } from 'react-use'
+import { useRouter } from 'next/router'
+import NextLink from 'next/link'
+import { theme } from '@island.is/island-ui/theme'
+import { LayoutProps } from '@island.is/web/layouts/main'
 import {
   Image,
-  LinkGroup,
-  Namespace,
   Organization,
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
-  AlertBanner,
   Box,
   BreadCrumbItem,
   Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Link,
   Navigation,
   NavigationItem,
   ProfileCard,
   Stack,
   Text,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
-import NextLink from 'next/link'
-import {
-  ChatPanel,
-  HeadWithSocialSharing,
-  Main,
-  Sticky,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -37,15 +34,21 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import getConfig from 'next/config'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-import { useRouter } from 'next/router'
-import * as styles from './OrganizationWrapper.css'
+import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
+import { watsonConfig } from './config'
+import { WatsonChatPanel } from '@island.is/web/components'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -66,15 +69,68 @@ interface WrapperProps {
   stickySidebar?: boolean
   minimal?: boolean
   showSecondaryMenu?: boolean
-  namespace: Namespace
+  showExternalLinks?: boolean
 }
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun']
-export const footerEnabled = ['syslumenn']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
+export const footerEnabled = [
+  'syslumenn',
+  'district-commissioner',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
+
+  'sjukratryggingar',
+  'icelandic-health-insurance',
+
+  'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
+]
+
+export const getThemeConfig = (
+  theme: string,
+  slug: string,
+): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(slug)) {
+    footerVersion = 'organization'
+  }
+
+  if (theme === 'sjukratryggingar')
+    return {
+      themeConfig: {
+        headerButtonColorScheme: 'blueberry',
+        headerColorScheme: 'blueberry',
+        footerVersion,
+      },
+    }
+
+  const isLightTheme = lightThemes.includes(theme)
+  return !isLightTheme
+    ? {
+        themeConfig: {
+          headerColorScheme: 'white',
+          headerButtonColorScheme: 'negative',
+          footerVersion,
+        },
+      }
+    : { themeConfig: { footerVersion } }
+}
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
@@ -86,46 +142,49 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
+    case 'fiskistofa':
+      return <FiskistofaHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
 }
 
-interface AlertProps {
+interface ExternalLinksProps {
   organizationPage: OrganizationPage
-  namespace: Namespace
 }
 
-export const OrganizationAlert: React.FC<AlertProps> = ({
+export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
-  namespace,
 }) => {
-  /**
-   * The following code was added as a quick fix in order to get the message out to
-   * users ASAP. After December 14th 2021, the PR that added this code can be reverted.
-   */
-  const n = useNamespace(namespace)
-  const alertEndDate = new Date(2021, 11, 14) // Dec. 14th 2021
-  const withinAlertTimeframe = new Date() < alertEndDate
-  if (organizationPage.slug === 'syslumenn' && withinAlertTimeframe) {
+  if (organizationPage.externalLinks) {
     return (
-      <Box paddingTop={[3, 4, 8]} paddingX={[3, 3, 6]}>
-        <AlertBanner
-          variant={n('alertVariant', 'info')}
-          title={n('alertTitle', 'Lokað er hjá sýslumönnum 13. desember')}
-          description={n(
-            'alertDescription',
-            'Skrifstofur embætta sýslumanna um land allt verða lokaðar mánudaginn 13. desember vegna uppfærslu tölvukerfa.',
-          )}
-          dismissable={false}
-          link={{
-            href: n(
-              'alertLinkHref',
-              'https://island.is/s/syslumenn/frett/lokad-hja-syslumonnum-13-desember',
-            ),
-            title: n('alertLinkTitle', 'Nánar'),
-          }}
-        />
+      <Box
+        display={['none', 'none', 'flex', 'flex']}
+        justifyContent="flexEnd"
+        marginBottom={4}
+      >
+        <Inline space={2}>
+          {organizationPage.externalLinks.map((link, index) => (
+            <Link href={link.url} key={'organization-external-link-' + index}>
+              <Button
+                colorScheme="light"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
+                {link.text}
+              </Button>
+            </Link>
+          ))}
+        </Inline>
       </Box>
     )
   }
@@ -144,61 +203,86 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
-  if (!organization) return null
 
-  switch (organization.slug) {
+  const n = useNamespace(organization?.namespace ?? {})
+
+  let OrganizationFooterComponent = null
+
+  switch (organization?.slug) {
     case 'syslumenn':
-      return (
+    case 'district-commissioner':
+      OrganizationFooterComponent = (
         <SyslumennFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          questionsAndAnswersText={n(
+            'questionsAndAnswers',
+            'Spurningar og svör',
+          )}
+          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
         />
       )
+      break
     case 'sjukratryggingar':
-      return (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+    case 'icelandic-health-insurance':
+      OrganizationFooterComponent = (
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
+      break
     case 'utlendingastofnun':
-      return (
+    case 'directorate-of-immigration':
+      OrganizationFooterComponent = (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
+    case 'mannaudstorg':
+      OrganizationFooterComponent = (
+        <MannaudstorgFooter
+          title={organization.title}
+          logoSrc={organization.logo?.url}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      OrganizationFooterComponent = (
+        <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
+      )
+      break
   }
-  return null
+
+  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({
-  slugs,
-  pushUp = false,
+  organizationIds,
 }: {
-  slugs: string[]
+  organizationIds: string[]
   pushUp?: boolean
 }) => {
-  // remove when organization chat-bot is ready for release
-  const { publicRuntimeConfig } = getConfig()
-  const { disableOrganizationChatbot } = publicRuntimeConfig
-  if (disableOrganizationChatbot === 'true') {
-    return null
-  }
-
-  const chatEnabled = ['syslumenn']
-
-  const slug = slugs.find((x) => chatEnabled.includes(x))
-
-  return slug ? (
-    <ChatPanel
-      endpoint={slug as keyof typeof chatPanelEndpoints}
-      pushUp={pushUp}
-    />
-  ) : null
+  const id = organizationIds.find((id) => {
+    return id in watsonConfig
+  })
+  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
 }
 
 const SecondaryMenu = ({
@@ -233,6 +317,22 @@ const SecondaryMenu = ({
   </Box>
 )
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -247,16 +347,25 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
   showSecondaryMenu = true,
-  namespace,
+  showExternalLinks = false,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: Router.asPath === url,
+      active: router.asPath === url,
     })) ?? []
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [navigationData.items, router.asPath],
+  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -274,30 +383,63 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
       <OrganizationHeader organizationPage={organizationPage} />
-      <Main>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
-              <OrganizationAlert
-                organizationPage={organizationPage}
-                namespace={namespace}
+      {!minimal && (
+        <SidebarLayout
+          paddingTop={[2, 2, 9]}
+          paddingBottom={[4, 4, 4]}
+          isSticky={false}
+          fullWidthContent={fullWidthContent}
+          sidebarContent={
+            <SidebarContainer>
+              <Navigation
+                baseId="pageNav"
+                items={navigationData.items}
+                title={navigationData.title}
+                activeItemTitle={activeNavigationItemTitle}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href}>{link}</NextLink>
+                  ) : (
+                    link
+                  )
+                }}
               />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-        {!minimal && (
-          <SidebarLayout
-            paddingTop={[2, 2, 9]}
-            paddingBottom={[4, 4, 4]}
-            isSticky={false}
-            fullWidthContent={fullWidthContent}
-            sidebarContent={
-              <SidebarContainer>
+              {showSecondaryMenu && (
+                <>
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
+                  {organizationPage.sidebarCards.map((card) => (
+                    <ProfileCard
+                      title={card.title}
+                      description={card.content}
+                      link={card.link}
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
+                      size="small"
+                    />
+                  ))}
+                </>
+              )}
+              {sidebarContent}
+            </SidebarContainer>
+          }
+        >
+          {isMobile && (
+            <Box className={styles.menuStyle}>
+              <Box marginY={2}>
                 <Navigation
-                  baseId="pageNav"
+                  baseId="pageNavMobile"
+                  isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
+                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
@@ -306,38 +448,15 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
-                {showSecondaryMenu && (
-                  <>
-                    {organizationPage.secondaryMenu && (
-                      <SecondaryMenu
-                        title={organizationPage.secondaryMenu.name}
-                        items={secondaryNavList}
-                      />
-                    )}
-                    {organizationPage.sidebarCards.map((card) => (
-                      <ProfileCard
-                        title={card.title}
-                        description={card.content}
-                        link={card.link}
-                        image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
-                        size="small"
-                      />
-                    ))}
-                  </>
-                )}
-                {sidebarContent}
-              </SidebarContainer>
-            }
-          >
-            <Hidden above="sm">
-              <Box className={styles.menuStyle}>
+              </Box>
+              {organizationPage.secondaryMenu && (
                 <Box marginY={2}>
                   <Navigation
-                    baseId="pageNav"
+                    baseId="secondaryNav"
+                    colorScheme="purple"
                     isMenuDialog={true}
-                    items={navigationData.items}
-                    title={navigationData.title}
-                    activeItemTitle={navigationData.activeItemTitle}
+                    title={organizationPage.secondaryMenu.name}
+                    items={secondaryNavList}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -347,26 +466,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     }}
                   />
                 </Box>
-                {organizationPage.secondaryMenu && (
-                  <Box marginY={2}>
-                    <Navigation
-                      colorScheme="purple"
-                      baseId="secondarynav"
-                      isMenuDialog={true}
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </Hidden>
+              )}
+            </Box>
+          )}
+          {(!!breadcrumbItems || !!pageDescription) && (
             <GridContainer>
               <GridRow>
                 <GridColumn
@@ -385,6 +488,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>
@@ -393,34 +501,36 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 </GridColumn>
               </GridRow>
             </GridContainer>
-            <Hidden above="sm">{sidebarContent}</Hidden>
-            <Box paddingTop={fullWidthContent ? 0 : 4}>
-              {mainContent ?? children}
-            </Box>
-          </SidebarLayout>
-        )}
-        {!!mainContent && children}
-        {minimal && (
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                paddingTop={6}
-                span={['12/12', '12/12', '10/12']}
-                offset={['0', '0', '1/12']}
-              >
-                {children}
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        )}
-      </Main>
+          )}
+          {isMobile && sidebarContent}
+          <Box paddingTop={fullWidthContent ? 0 : 4}>
+            {mainContent ?? children}
+          </Box>
+        </SidebarLayout>
+      )}
+      {!!mainContent && children}
+      {minimal && (
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              paddingTop={6}
+              span={['12/12', '12/12', '10/12']}
+              offset={['0', '0', '1/12']}
+            >
+              {children}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )}
       {!minimal && (
         <OrganizationFooter
           organizations={[organizationPage.organization]}
           force={true}
         />
       )}
-      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
+      <OrganizationChatPanel
+        organizationIds={[organizationPage?.organization?.id]}
+      />
     </>
   )
 }

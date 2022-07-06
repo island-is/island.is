@@ -50,10 +50,5 @@ export const externalData = {
         'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
       description: 'User Profile Subtitle',
     },
-    printButtonLabel: {
-      id: 'dpac.application:section.overview.labels.userProfileSubTitle',
-      defaultMessage: 'Hlaða kvörtuninni niður í PDF-skjali',
-      description: 'The label of the print button on the overview screen',
-    },
   }),
 }

@@ -38,7 +38,7 @@ const textBase = {
     boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,
   },
   ':disabled': {
-    cursor: 'normal',
+    cursor: 'default',
   },
   selectors: {
     // text button uses span instead of button and data active is used to emulate button active, span is used to make text button inline, because button element will default to inline-block if you use display: inline

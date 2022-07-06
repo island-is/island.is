@@ -17,20 +17,20 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-  Application,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ApplicationEventModel } from '../../applicationEvent/models'
-import { ApplicationFileModel } from '../../file/models'
-import { StaffModel } from '../../staff'
-import { AmountModel } from '../../amount'
+import { ApplicationEventModel } from '../../applicationEvent/models/applicationEvent.model'
+import { ApplicationFileModel } from '../../file/models/file.model'
+import { StaffModel } from '../../staff/models/staff.model'
+import { AmountModel } from '../../amount/models/amount.model'
+import { DirectTaxPaymentModel } from '../../directTaxPayment/models'
 
 @Table({
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<Application> {
+export class ApplicationModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -85,7 +85,7 @@ export class ApplicationModel extends Model<Application> {
   homeCircumstances: HomeCircumstances
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -100,7 +100,7 @@ export class ApplicationModel extends Model<Application> {
   employment: Employment
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -189,7 +189,7 @@ export class ApplicationModel extends Model<Application> {
   files: ApplicationFileModel[]
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -247,8 +247,8 @@ export class ApplicationModel extends Model<Application> {
   @ApiProperty({ type: ApplicationEventModel, isArray: true })
   applicationEvents?: ApplicationEventModel[]
 
-  @HasOne(() => AmountModel, 'applicationId')
-  @ApiProperty({ type: AmountModel })
+  @HasMany(() => AmountModel, 'applicationId')
+  @ApiProperty({ type: AmountModel, nullable: true })
   amount?: AmountModel
 
   @Column({
@@ -274,8 +274,41 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   municipalityCode: string
+
+  @HasMany(() => DirectTaxPaymentModel, 'applicationId')
+  @ApiProperty({ type: DirectTaxPaymentModel, isArray: true })
+  directTaxPayments: DirectTaxPaymentModel[]
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    unique: false,
+  })
+  @ApiProperty()
+  applicationSystemId: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  hasFetchedDirectTaxPayment: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseHasFetchedDirectTaxPayment: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  navSuccess: boolean
 }

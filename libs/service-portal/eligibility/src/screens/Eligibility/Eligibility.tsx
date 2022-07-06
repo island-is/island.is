@@ -13,11 +13,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
 type Data = {
   heading: MessageDescriptor | string
@@ -44,7 +40,7 @@ const data: Data[] = [
       defaultMessage:
         'Hér er hægt að skoða stöðu núverandi ökuskírteinis, ásamt því að sækja um og eða endurnýja ökupróf í öllum flokkum.',
     }),
-    link: ServicePortalPath.DrivingLicense,
+    link: ServicePortalPath.LicensesDriving,
     image: '/assets/images/movingTruck.svg',
   },
 ]
@@ -61,7 +57,7 @@ function Eligibility(): JSX.Element {
             <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <Stack space={2}>
                 <Inline space={1}>
-                  <Text variant="h1" as="h1">
+                  <Text variant="h3" as="h1">
                     {formatMessage({
                       id: 'sp.eligibility:title',
                       defaultMessage: 'Mín réttindi',
@@ -93,7 +89,7 @@ function Eligibility(): JSX.Element {
                 marginTop={[3, 3, 0]}
               >
                 <Box marginBottom={2}>
-                  <Text variant="h2" as="h2">
+                  <Text variant="h4" as="h2">
                     {formatMessage(item.heading)}
                   </Text>
                 </Box>
@@ -113,7 +109,7 @@ function Eligibility(): JSX.Element {
                 alignItems="center"
                 marginBottom={[3, 3, 0]}
               >
-                <img src={item.image} alt="Skrautmynd" />
+                <img src={item.image} alt="" />
               </Box>
             </GridColumn>
           </GridRow>

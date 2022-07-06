@@ -1,6 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  existingApplicationTitle: {
+    id: 'dl.application:error.existingApplication',
+    defaultMessage: 'Fyrri umsóknir um ökuskírteini',
+    description: 'Title of the data needed to fetch existing applications',
+  },
+  existingApplicationExists: {
+    id: 'dl.application:error.existingApplicationExists',
+    defaultMessage: 'Þú átt nú þegar umsókn í vinnslu',
+    description:
+      'Message letting the applicant know they already have an application in progress',
+  },
   externalDataAgreement: {
     id: 'dl.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
@@ -15,12 +26,6 @@ export const m = defineMessages({
     id: 'dl.application:externalData.subTitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'The following data will be retrieved electronically',
-  },
-  eligibilitySummaryTitle: {
-    id: 'dl.application:eligibility.title',
-    defaultMessage:
-      'Skilyrði sem umsækjandi um fullnaðarskírteini þarf að uppfylla',
-    description: 'Headline showing up above the list of requirements',
   },
   yes: {
     id: 'dl.application:shared.yes',
@@ -39,7 +44,7 @@ export const m = defineMessages({
   },
   externalDataSection: {
     id: 'dl.application:externalData.section',
-    defaultMessage: 'Upplýsingasöfnun',
+    defaultMessage: 'Forsendur',
     description: 'Information',
   },
   externalDataComplete: {
@@ -71,18 +76,6 @@ export const m = defineMessages({
     description:
       'In order to apply for this application we need your email and phone number',
   },
-  penaltyPointsTitle: {
-    id: 'dl.application:penaltyPoints.title',
-    defaultMessage: 'Punktastaða úr Ökuskírteinaskrá',
-    description: 'Penalty points from Ökuskírteinaskrá',
-  },
-  penaltyPointsSubTitle: {
-    id: 'dl.application:penaltyPoints.subTitle',
-    defaultMessage:
-      'Til þess að tryggja að notandi hafi heimild til þess að sækja um ökuskírteini út frá punktastöðu',
-    description:
-      "In order to ensure the user's penalty points do not prohibit him from applying for a driving license",
-  },
   residenceTitle: {
     id: 'dl.application:residence.title',
     defaultMessage: 'Búseta',
@@ -94,51 +87,6 @@ export const m = defineMessages({
       'Ég hef fasta búsetu hér á landi eins og hún er skilgreind í VIII. viðauka reglugerðar um ökuskírteini eða tel mig fullnægja skilyrðum um búsetu hér á landi til að fá gefið út ökuskírteini.',
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
-  },
-  typeFieldMultiFieldTitle: {
-    id: 'dl.application:typeField.multiFieldTitle',
-    defaultMessage: 'Ég er að sækja um:',
-    description: "I'm applying for:",
-  },
-  typeFieldCheckbox: {
-    id: 'dl.application:typeField.checkbox',
-    defaultMessage: 'Tegund ökutækja',
-    description: 'Type of vehicle',
-  },
-  typeFieldCar: {
-    id: 'dl.application:typeField.car',
-    defaultMessage: 'Almenn ökuréttindi',
-    description: 'General driving license',
-  },
-  typeFieldMotorcycle: {
-    id: 'dl.application:typeField.motorcycle',
-    defaultMessage: 'Bifhjólaréttindi',
-    description: 'Motorcycle license',
-  },
-  typeFieldTrailer: {
-    id: 'dl.application:typeField.trailer',
-    defaultMessage: 'Kerrur og eftirvagnar',
-    description: 'Trailers',
-  },
-  subTypeFieldTitle: {
-    id: 'dl.application:subTypeField.subtitle',
-    defaultMessage: 'Tegund',
-    description: 'Type',
-  },
-  subTypeFieldMultiFieldTitle: {
-    id: 'dl.application:subTypeField.multiFieldTitle',
-    defaultMessage: 'Ég er að sækja um:',
-    description: "I'm applying for:",
-  },
-  subTypeFieldCar: {
-    id: 'dl.application:subTypeField.car',
-    defaultMessage: 'Fólksbílaflokkar:',
-    description: 'Passenger car categories',
-  },
-  subTypeFieldMotorcycle: {
-    id: 'dl.application:subTypeField.motorcycle',
-    defaultMessage: 'Bifhjólaflokkar:',
-    description: 'Motorcycle categories',
   },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
@@ -154,11 +102,6 @@ export const m = defineMessages({
     id: 'dl.application:information.applicant',
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
-  },
-  informationTeacher: {
-    id: 'dl.application:information.teacher',
-    defaultMessage: 'Ökukennari',
-    description: 'Teacher',
   },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
@@ -301,11 +244,6 @@ export const m = defineMessages({
     defaultMessage: 'Ökukennari',
     description: 'Teacher',
   },
-  overviewBringData: {
-    id: 'dl.application:overview.bringData',
-    defaultMessage: 'Gögn höfð meðferðis til Sýslumanns',
-    description: 'Will bring along data to the sheriff',
-  },
   applicationQualityPhotoTitle: {
     id: 'dl.application:applicationQualityPhotoTitle',
     defaultMessage: 'Ljósmynd',
@@ -409,11 +347,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
-  overviewSubmit: {
-    id: 'dl.application:overview.submit',
-    defaultMessage: 'Smelltu hér til að senda inn umsókn',
-    description: 'Click here to submit an application',
-  },
   overviewDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
@@ -429,50 +362,6 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'Cost',
   },
-  requirementUnmetDrivingAssessmentTitle: {
-    id: 'dl.application:requirementunmet.drivingassessmenttitle',
-    defaultMessage: 'Akstursmat',
-    description: 'requirement unmet assessment',
-  },
-  requirementUnmetDrivingAssessmentDescription: {
-    id: 'dl.application:requirementunmet.drivingassessmentdescription',
-    defaultMessage:
-      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
-    description: 'requirement unmet assessment',
-  },
-  requirementUnmetDrivingSchoolTitle: {
-    id: 'dl.application:requirementunmet.drivingschooltitle',
-    defaultMessage: 'Ökuskóli 3',
-    description: 'requirement unmet driving school',
-  },
-  requirementUnmetDrivingSchoolDescription: {
-    id: 'dl.application:requirementunmet.drivingschooldescription',
-    defaultMessage:
-      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
-    description: 'requirement unmet driving school',
-  },
-  requirementUnmetDeniedByServiceTitle: {
-    id: 'dl.application:requirementunmet.deniedbyservicetitle',
-    defaultMessage: 'Ökuskírteinaskrá',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetDeniedByServiceDescription: {
-    id: 'dl.application:requirementunmet.deniedbyservicedescription',
-    defaultMessage:
-      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetLocalResidencyTitle: {
-    id: 'dl.application:requirementunmet.localResidencyTitle',
-    defaultMessage: 'Búseta á Íslandi',
-    description: 'requirement unmet api returned false',
-  },
-  requirementUnmetLocalResidencyDescription: {
-    id: 'dl.application:requirementunmet.localResidencyDescription',
-    defaultMessage:
-      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
-    description: 'requirement unmet api returned false',
-  },
   errorDataProvider: {
     id: 'dl.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
@@ -487,11 +376,6 @@ export const m = defineMessages({
     id: 'dl.application:example.waitingForPaymentError',
     defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
     description: 'An error came up while getting payment information',
-  },
-  examplePaymentPendingDescription: {
-    id: 'dl.application:example.waitingDescription',
-    defaultMessage: 'Texti um hvað er að gerast',
-    description: 'Text about current payment proceedures.',
   },
   orderDrivingLicense: {
     id: 'dl.application:order.drivingLicense',
@@ -710,6 +594,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfangið þitt',
     description: 'Your email',
   },
+  informationYourPhone: {
+    id: 'dl.application:informationYourPhone',
+    defaultMessage: 'Símanúmerið þitt',
+    description: 'Your phone number',
+  },
   drivingInstructor: {
     id: 'dl.application:drivingInstructor',
     defaultMessage: 'Ökukennari',
@@ -762,24 +651,128 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
-  declinedHelpText: {
-    id: 'dl.application:declinedHelpText',
-    defaultMessage: '[declinedHelpText]',
-    description: '[declinedHelpText]',
+  declinedOtherCountryHelpText: {
+    id: 'dl.application:declinedOtherCountryHelpText',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'Requirement not met for driving license application',
   },
-  declinedOtherCountryTitle: {
-    id: 'dl.application:declinedOtherCountryTitle',
-    defaultMessage: '[declinedOtherCountryTitle]',
-    description: '[declinedOtherCountryTitle]',
+  declinedOtherEESCountryTitle: {
+    id: 'dl.application:declinedOtherEESCountryTitle',
+    defaultMessage: 'Ökuskírteini frá EES',
+    description: 'Driving license from other EES country title',
   },
-  declinedOtherCountryDescription: {
-    id: 'dl.application:declinedOtherCountryDescription',
-    defaultMessage: '[declinedOtherCountryDescription]',
-    description: '[declinedOtherCountryDescription]',
+  declinedOtherEESCountryDescription: {
+    id: 'dl.application:declinedOtherEESCountryDescription',
+    defaultMessage:
+      'Umsækjandi með ökuskírteini frá landi innan EES, Bretlandi og Japan má skipta yfir í íslenskt ökuskírteini án þess að taka próf.',
+    description: 'Driving license from other EES country description',
+  },
+  declinedOtherNonEESCountryTitle: {
+    id: 'dl.application:declinedOtherNonEESCountryTitle',
+    defaultMessage: 'Ökuskírteini utan EES',
+    description: 'Driving license from other country title',
+  },
+  declinedOtherNonEESCountryDescription: {
+    id: 'dl.application:declinedOtherNonEESCountryDescription',
+    defaultMessage:
+      'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
+    description: 'Driving license from other country description',
   },
   nationalCommissionerOfPolice: {
     id: 'dl.application:nationalCommissionerOfPolice',
     defaultMessage: 'Ríkislögreglustjóri',
     description: 'National Commissioner of Police',
+  },
+  countryDirectionsTitle: {
+    id: 'dl.application:countryDirectionsTitle',
+    defaultMessage: 'Leiðbeiningar',
+    description:
+      'Title of the section that explains the next steps when they have a driving license in a different country',
+  },
+  healthRemarksTitle: {
+    id: 'dl.application:healthRemarksTitle',
+    defaultMessage: 'Athugið',
+    description:
+      'Alert message title for health remarks on temporary driving license',
+  },
+  healthRemarksDescription: {
+    id: 'dl.application:healthRemarksDescription',
+    defaultMessage:
+      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
+    description:
+      'Alert message for health remarks on temporary driving license',
+  },
+})
+
+export const requirementsMessages = defineMessages({
+  rlsAcceptedDescription: {
+    id: 'dl.application:requirementunmet.accepted',
+    defaultMessage: 'Þú uppfyllir þær kröfur sem gerðar eru',
+    description: 'RLS / driving license api approves of the applicant',
+  },
+  rlsDefaultDeniedDescription: {
+    id: 'dl.application:requirementunmet.deniedbyservicedescription',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  invalidLicense: {
+    id: 'dl.application:requirementunmet.invalidlicense',
+    defaultMessage:
+      'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned NO_TEMP_LICENSE / NO_LICENSE_FOUND',
+  },
+  hasPointsOrDeprivation: {
+    id: 'dl.application:requirementunmet.haspointsordeprivation',
+    defaultMessage:
+      'Þú ert með punkta eða sviptingu. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'requirement unmet api returned HAS_DEPRIVATION / HAS_POINTS',
+  },
+  drivingAssessmentTitle: {
+    id: 'dl.application:requirementunmet.drivingassessmenttitle',
+    defaultMessage: 'Akstursmat',
+    description: 'requirement unmet assessment',
+  },
+  drivingAssessmentDescription: {
+    id: 'dl.application:requirementunmet.drivingassessmentdescription',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
+    description: 'requirement unmet assessment',
+  },
+  drivingSchoolTitle: {
+    id: 'dl.application:requirementunmet.drivingschooltitle',
+    defaultMessage: 'Ökuskóli 3',
+    description: 'requirement unmet driving school',
+  },
+  drivingSchoolDescription: {
+    id: 'dl.application:requirementunmet.drivingschooldescription',
+    defaultMessage:
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
+    description: 'requirement unmet driving school',
+  },
+  rlsTitle: {
+    id: 'dl.application:requirementunmet.deniedbyservicetitle',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyTitle: {
+    id: 'dl.application:requirementunmet.localResidencyTitle',
+    defaultMessage: 'Búseta á Íslandi',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyDescription: {
+    id: 'dl.application:requirementunmet.localResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
+  currentLocalResidencyDescription: {
+    id: 'dl.application:requirementunmet.currentLocalResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
+    description: 'requirement unmet api returned false',
   },
 })

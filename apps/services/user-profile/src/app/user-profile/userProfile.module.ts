@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UserProfileController } from './userProfile.controller'
+import { UserTokenController } from './userToken.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'
@@ -28,7 +29,11 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
   ],
-  controllers: [UserProfileController, UserProfileInfraController],
+  controllers: [
+    UserProfileController,
+    UserProfileInfraController,
+    UserTokenController,
+  ],
   providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
 })

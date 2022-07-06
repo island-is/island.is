@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains Payment
 
 This domain implements Payments endpoints needed for applications and possibly other systems.

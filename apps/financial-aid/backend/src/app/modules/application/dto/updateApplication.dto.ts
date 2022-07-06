@@ -1,10 +1,17 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsArray,
+  IsBoolean,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
   ApplicationEventType,
   ApplicationState,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 import { CreateAmountDto } from '../../amount'
 
@@ -57,4 +64,19 @@ export class UpdateApplicationDto {
   @IsOptional()
   @ApiProperty()
   readonly amount?: CreateAmountDto
+
+  @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  readonly directTaxPayments?: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly spouseHasFetchedDirectTaxPayment?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  navSuccess?: boolean
 }

@@ -2,12 +2,18 @@ import { generateYamlForEnv, dumpYaml } from '../dsl/serialize-to-yaml'
 import { OpsEnv } from '../dsl/types/input-types'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
-import { ChartName, ChartNames, charts } from '../uber-charts/all-charts'
+import {
+  ChartName,
+  ChartNames,
+  Charts,
+  Deployments,
+} from '../uber-charts/all-charts'
+import { OpsEnvName } from '../dsl/types/charts'
 
 export const renderEnv = (env: OpsEnv, chartName: ChartName) => {
-  process.stdout.write(
-    dumpYaml(
-      generateYamlForEnv(new UberChart(Envs[env]), ...charts[chartName][env]),
-    ),
+  let uberChart = new UberChart(Envs[Deployments[chartName][env]])
+  return dumpYaml(
+    uberChart,
+    generateYamlForEnv(uberChart, ...Charts[chartName][env]),
   )
 }

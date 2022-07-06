@@ -29,6 +29,7 @@ const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
+  '2022': 6,
 }
 
 const availableFinancialStates = [
@@ -51,6 +52,9 @@ export class FlightService {
   ) {}
 
   isADSPostalCode(postalcode: number): boolean {
+    if (postalcode === null) {
+      return false
+    }
     if (
       postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
       postalcode <= ADS_POSTAL_CODES['Þingeyri']
@@ -228,6 +232,7 @@ export class FlightService {
           : {}),
         ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
         ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
+        ...(body.nationalId ? { '$flight.national_id$': body.nationalId } : {}),
         // We want to show rows that are awaiting credit based on their
         // financial_state_updated instead of booking_date because if they
         // were booked long ago and have recently been cancelled they need

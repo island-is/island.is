@@ -2,12 +2,12 @@ import { useQuery } from '@apollo/client'
 import { Document, Query } from '@island.is/api/schema'
 import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
 import uniqBy from 'lodash/uniqBy'
-
 interface UseListDocumentsProps {
   data: {
     documents: Document[]
     categories: { label: string; value: string }[]
   }
+  unreadCounter: number
   loading?: boolean
   error?: any
 }
@@ -25,6 +25,7 @@ export const useListDocuments = (natReg: string): UseListDocumentsProps => {
   const categories = uniqBy(allCategories, (category) => category.value)
   return {
     data: { documents, categories },
+    unreadCounter: documents.filter((x) => x.opened === false).length,
     loading,
     error,
   }

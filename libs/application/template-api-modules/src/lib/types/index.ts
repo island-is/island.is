@@ -1,15 +1,15 @@
-import { Application } from '@island.is/application/core'
-import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
-import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
-import {
-  PaymentScheduleCharge,
-  PaymentScheduleType,
-} from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { Injectable, Type } from '@nestjs/common'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -23,11 +23,6 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
-  syslumenn: {
-    url: string
-    username: string
-    password: string
-  }
   email: {
     sender: string
     address: string
@@ -37,29 +32,21 @@ export interface BaseTemplateAPIModuleConfig {
     username: string
     password: string
   }
-  drivingLicense: DrivingLicenseApiConfig
+  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
-  partyLetter: {
-    partyLetterRegistryApiBasePath: string
-    endorsementsApiBasePath: string
-    defaultClosedDate: Date
-  }
-  partyApplication: {
-    endorsementsApiBasePath: string
-    options: PartyApplicationServiceOptions
-    defaultClosedDate: Date
-  }
   generalPetition: {
     endorsementsApiBasePath: string
   }
   paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
+  dataProtectionComplaint: DataProtectionComplaintClientConfig
+  applicationService: Type<BaseTemplateApiApplicationService>
 }
 
 export interface TemplateApiModuleActionProps {
-  application: Application
+  application: ApplicationWithAttachments
   auth: User
 }
 
@@ -87,36 +74,24 @@ export type AttachmentEmailTemplateGenerator = (
   email: string,
 ) => Message
 
-export type PublicDebtPaymentPlanPayment = {
-  id: PublicDebtPaymentScheduleType
-  totalAmount: number
-  distribution: string
-  amountPerMonth: number
-  numberOfMonths: number
-  organization: string
-  chargetypes: PaymentScheduleCharge[]
-}
+@Injectable()
+export abstract class BaseTemplateApiApplicationService {
+  abstract saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string>
 
-export type PublicDebtPaymentPlanPaymentCollection = {
-  [key: string]: PublicDebtPaymentPlanPayment
-}
+  abstract storeNonceForApplication(application: Application): Promise<string>
 
-export type PublicDebtPaymentPlanPrerequisites = {
-  type: PublicDebtPaymentScheduleType
-  organizationId: string
-  chargetypes: {
-    id: string
-    name: string
-    total: number
-    intrest: number
-    expenses: number
-    principal: number
-  }[]
-}
-
-export enum PublicDebtPaymentScheduleType {
-  FinesAndLegalCost = 'FinesAndLegalCost',
-  OverpaidBenefits = 'OverpaidBenefits',
-  Wagedection = 'Wagedection',
-  OtherFees = 'OtherFees',
+  abstract createAssignToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
+  ): Promise<string>
 }

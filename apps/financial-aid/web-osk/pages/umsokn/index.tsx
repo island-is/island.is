@@ -1,3 +1,3 @@
-import ApplicationInfo from '@island.is/financial-aid-web/osk/src/routes/application/Info/info'
+import DataGathering from '@island.is/financial-aid-web/osk/src/routes/application/DataGathering/dataGathering'
 
-export default ApplicationInfo
+export default DataGathering

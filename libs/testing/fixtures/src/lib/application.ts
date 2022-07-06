@@ -1,16 +1,17 @@
-import {
-  Application,
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
 import * as faker from 'faker'
+import {
+  ApplicationTypes,
+  ApplicationStatus,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 
 export const createApplication = (
-  overrides?: Partial<Application>,
-): Application => ({
+  overrides?: Partial<ApplicationWithAttachments>,
+): ApplicationWithAttachments => ({
   applicant: faker.helpers.replaceSymbolWithNumber('##########'),
   answers: {},
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),

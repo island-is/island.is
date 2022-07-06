@@ -106,6 +106,10 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    useEffect(() => {
+      setHeight(expanded ? 'auto' : 0)
+    }, [expanded])
+
     useEffect(
       () => {
         if (startExpanded && expandedProp == null) {
@@ -119,71 +123,78 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     return (
       <Box>
         <Box position="relative" display="flex">
-          <Box
-            ref={forwardedRef}
-            component="button"
-            type="button"
-            cursor="pointer"
-            className={[styles.button, useVirtualTouchable()]}
-            outline="none"
-            width="full"
-            textAlign="left"
-            aria-controls={id}
-            aria-expanded={expanded}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onClick={onClick ? onClick : handleToggle}
-          >
-            <Columns space={2} alignY="center">
-              <Column>
-                <Box
-                  height="full"
-                  width="full"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Text variant={labelVariant} as={labelUse} color={labelColor}>
-                    {label}
-                  </Text>
-                </Box>
-                {visibleContent && (
-                  <Box paddingTop={2}>
-                    <Text>{visibleContent}</Text>
+          <Box component={labelUse} width="full" display="flex">
+            <Box
+              ref={forwardedRef}
+              component="button"
+              type="button"
+              cursor="pointer"
+              className={[styles.button, useVirtualTouchable()]}
+              outline="none"
+              width="full"
+              textAlign="left"
+              aria-controls={id}
+              aria-expanded={expanded}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onClick={onClick ? onClick : handleToggle}
+            >
+              <Columns space={2} alignY="center" as="span">
+                <Column>
+                  <Box
+                    component="span"
+                    height="full"
+                    width="full"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    {typeof label === 'string' ? (
+                      <Text variant={labelVariant} as="span" color={labelColor}>
+                        {label}
+                      </Text>
+                    ) : (
+                      label
+                    )}
                   </Box>
-                )}
-              </Column>
-              <Column width="content">
-                <div
-                  className={cn(
-                    styles.plusIconWrap,
-                    styles.iconWrapVariants[iconVariant],
+                  {visibleContent && (
+                    <Box paddingTop={2}>
+                      <Text>{visibleContent}</Text>
+                    </Box>
                   )}
-                >
-                  <div
-                    className={cn(styles.icon, styles.removeIcon, {
-                      [styles.showRemoveIcon]: expanded,
-                    })}
+                </Column>
+                <Column width="content">
+                  <span
+                    className={cn(
+                      styles.plusIconWrap,
+                      styles.iconWrapVariants[iconVariant],
+                    )}
                   >
-                    <Icon
-                      icon="remove"
-                      size={iconVariant === 'default' ? 'large' : 'small'}
-                      color="currentColor"
-                    />
-                  </div>
-                  <div
-                    className={cn(styles.icon, styles.addIcon, {
-                      [styles.hideAddIcon]: expanded,
-                    })}
-                  >
-                    <Icon
-                      icon="add"
-                      size={iconVariant === 'default' ? 'large' : 'small'}
-                      color="currentColor"
-                    />
-                  </div>
-                </div>
-              </Column>
-            </Columns>
+                    <span
+                      className={cn(styles.icon, styles.removeIcon, {
+                        [styles.showRemoveIcon]: expanded,
+                      })}
+                    >
+                      <Icon
+                        icon="remove"
+                        size={iconVariant === 'default' ? 'large' : 'small'}
+                        color="currentColor"
+                      />
+                    </span>
+                    <span
+                      className={cn(styles.icon, styles.addIcon, {
+                        [styles.hideAddIcon]: expanded,
+                      })}
+                    >
+                      <Icon
+                        icon="add"
+                        size={iconVariant === 'default' ? 'large' : 'small'}
+                        color="currentColor"
+                      />
+                    </span>
+                  </span>
+                </Column>
+              </Columns>
+            </Box>
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>

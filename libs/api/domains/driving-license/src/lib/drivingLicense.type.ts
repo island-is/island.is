@@ -20,6 +20,8 @@ export interface NewTemporaryDrivingLicenseInput {
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string
+  email: string
+  phone: string
 }
 
 export interface NewDrivingLicenseResult {
@@ -52,6 +54,15 @@ export enum RequirementKey {
   drivingSchoolMissing = 'DrivingSchoolMissing',
   deniedByService = 'DeniedByService',
   localResidency = 'LocalResidency',
+  currentLocalResidency = 'CurrentLocalResidency',
+  noTempLicense = 'NoTempLicense',
+  noLicenseFound = 'NoLicenseFound',
+  personNot17YearsOld = 'PersonNot17YearsOld',
+  hasNoPhoto = 'HasNoPhoto',
+  hasNoSignature = 'HasNoSignature',
+  personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
+  hasDeprivation = 'HasDeprivation',
+  hasPoints = 'HasPoints',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -77,11 +88,8 @@ export enum NeedsQualityPhoto {
   TRUE = 1,
   FALSE = 0,
 }
-
 export interface QualityPhotoResult {
-  success: boolean
-  qualityPhoto: string | null
-  errorMessage: string | null
+  hasQualityPhoto: boolean
 }
 
 export interface StudentAssessment {

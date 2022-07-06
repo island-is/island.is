@@ -10,37 +10,37 @@ export class GetApiServiceInput {
 
 @InputType()
 export class GetApiCatalogueInput {
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsNumber()
   limit?: number
 
-  @Field((type) => String, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   cursor?: string
 
-  @Field((type) => String, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   query?: string
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
   pricing?: Array<string>
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
   data?: Array<string>
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
   type?: Array<string>
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()
   access?: Array<string>

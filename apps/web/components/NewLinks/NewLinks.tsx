@@ -58,7 +58,13 @@ export const NewLinks = ({
           [styles.buttonVisible]: showMoreButton,
         })}
       >
-        <Button variant="text" icon="arrowForward" size="small" nowrap>
+        <Button
+          variant="text"
+          as="span"
+          icon="arrowForward"
+          size="small"
+          nowrap
+        >
           {seeMoreText}
         </Button>
       </Box>

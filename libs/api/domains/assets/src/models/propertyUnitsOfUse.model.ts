@@ -4,28 +4,28 @@ import { PagingData } from './propertyOwners.model'
 @ObjectType()
 export class Appraisal {
   @Field({ nullable: true })
-  activeAppraisal?: number | undefined
+  activeAppraisal?: number
 
   @Field({ nullable: true })
   plannedAppraisal?: number
 
   @Field({ nullable: true })
-  activeStructureAppraisal?: number | undefined
+  activeStructureAppraisal?: number
 
   @Field({ nullable: true })
   plannedStructureAppraisal?: number
 
   @Field({ nullable: true })
-  activePlotAssessment?: number | undefined
+  activePlotAssessment?: number
 
   @Field({ nullable: true })
   plannedPlotAssessment?: number
 
   @Field({ nullable: true })
-  activeYear?: number | undefined
+  activeYear?: number
 
   @Field({ nullable: true })
-  plannedYear?: number | undefined
+  plannedYear?: number
 }
 
 @ObjectType()

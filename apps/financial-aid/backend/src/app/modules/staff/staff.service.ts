@@ -3,15 +3,14 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { environment } from '../../../environments'
 
-import { StaffModel } from './models'
+import { StaffModel } from './models/staff.model'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
 import {
@@ -44,14 +43,15 @@ export class StaffService {
     })
   }
 
-  async findByMunicipalityId(municipalityId: string): Promise<StaffModel[]> {
+  async findByMunicipalityId(municipalityIds: string[]): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.overlap]: municipalityIds },
       },
-      order: Sequelize.literal(
-        'CASE WHEN active = true THEN 0 ELSE 1 END, name ASC',
-      ),
+      order: [
+        ['active', 'DESC'],
+        ['name', 'ASC'],
+      ],
     })
   }
 
@@ -75,18 +75,19 @@ export class StaffService {
 
   private async sendEmail(
     input: CreateStaffDto,
-    municipalityName: string,
-    user: Staff,
+    municipalityNames: string[],
     isFirstStaffForMunicipality: boolean,
   ) {
+    const municipalityName = municipalityNames.map((muni) => muni).join(', ')
+
     const contact = {
       from: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.fromEmail,
       },
       replyTo: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.replyToEmail,
       },
       to: input.email,
     }
@@ -134,36 +135,44 @@ export class StaffService {
 
   async createStaff(
     input: CreateStaffDto,
-    municipality: CreateStaffMunicipality,
-    user: Staff,
+    municipality?: CreateStaffMunicipality,
     t?: Transaction,
-    isFirstStaffForMunicipality: boolean = false,
+    isFirstStaffForMunicipality = false,
   ): Promise<StaffModel> {
+    const staff = await this.staffModel
+      .create(
+        {
+          nationalId: input.nationalId,
+          name: input.name,
+          municipalityIds: isFirstStaffForMunicipality
+            ? [municipality?.municipalityId]
+            : input.municipalityIds,
+          email: input.email,
+          roles: input.roles,
+          active: true,
+        },
+        { transaction: t },
+      )
+      .catch(() => {
+        throw new BadRequestException('Cannot create staff')
+      })
+
     await this.sendEmail(
       input,
-      municipality.municipalityName,
-      user,
+      isFirstStaffForMunicipality
+        ? [municipality.municipalityName]
+        : input.municipalityNames,
       isFirstStaffForMunicipality,
     )
-    return await this.staffModel.create(
-      {
-        nationalId: input.nationalId,
-        name: input.name,
-        municipalityId: municipality.municipalityId,
-        email: input.email,
-        roles: input.roles,
-        active: true,
-        municipalityName: municipality.municipalityName,
-        municipalityHomepage: municipality.municipalityHomepage,
-      },
-      { transaction: t },
-    )
+
+    return staff
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
     return await this.staffModel.count({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })
   }
@@ -171,7 +180,28 @@ export class StaffService {
   async getUsers(municipalityId: string): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async allAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        [Op.not]: {
+          municipalityIds: {
+            [Op.contains]: [municipalityId],
+          },
+        },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async getAdmins(): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
         roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })

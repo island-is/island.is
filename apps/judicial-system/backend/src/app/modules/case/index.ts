@@ -1,12 +1,9 @@
-export { Case } from './models'
-export {
-  CaseExistsGuard,
-  CaseReadGuard,
-  CaseWriteGuard,
-  CaseNotCompletedGuard,
-  CaseCompletedGuard,
-  CurrentCase,
-} from './guards'
-export { CaseOriginalAncestorInterceptor } from './interceptors'
+export { Case } from './models/case.model'
+export { CaseExistsGuard } from './guards/caseExists.guard'
+export { CaseReadGuard } from './guards/caseRead.guard'
+export { CaseWriteGuard } from './guards/caseWrite.guard'
+export { CaseNotCompletedGuard } from './guards/caseNotCompleted.guard'
+export { CaseReceivedGuard } from './guards/caseReceived.guard'
+export { CurrentCase } from './guards/case.decorator'
+export { CaseOriginalAncestorInterceptor } from './interceptors/caseOriginalAncestor.interceptor'
 export { CaseService } from './case.service'
-export { CaseModule } from './case.module'

@@ -45,6 +45,7 @@ export const EndpointsForm: FC<Props> = ({ onSubmit }) => {
           defaultValue=""
           render={({ onChange, value, name }) => (
             <Input
+              size="xs"
               name={name}
               label={formatMessage(m.SettingsEditEndPointsUrl)}
               placeholder={formatMessage(m.SettingsEditEndPointsUrl)}

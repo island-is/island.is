@@ -67,12 +67,14 @@ export class AccessService {
         offset: offset,
         distinct: true,
         where: { nationalId: searchString },
+        order: ['nationalId'],
       })
     } else {
       return this.apiScopeUser.findAndCountAll({
         limit: count,
         offset: offset,
         distinct: true,
+        order: ['nationalId'],
       })
     }
   }
@@ -171,7 +173,7 @@ export class AccessService {
 
     let response = null
     scopes.forEach(async (x) => {
-      response = await this.apiScopeUserAccess.create(x)
+      response = await this.apiScopeUserAccess.create({ ...x })
     })
 
     return response

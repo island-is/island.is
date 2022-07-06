@@ -1,19 +1,23 @@
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import { motion } from 'framer-motion'
+
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Modal.css'
 
 interface ModalProps {
   title: string
   text: string | ReactNode
-  primaryButtonText: string
+  primaryButtonText?: string
   secondaryButtonText?: string
   handleClose?: () => void
   handleSecondaryButtonClick?: () => void
   handlePrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
+  isPrimaryButtonDisabled?: boolean
+  errorMessage?: string
+  children?: ReactNode
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -25,6 +29,9 @@ const Modal: React.FC<ModalProps> = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  isPrimaryButtonDisabled,
+  errorMessage,
+  children,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -37,6 +44,7 @@ const Modal: React.FC<ModalProps> = ({
       transition: { duration: 0.2 },
     },
   }
+
   return (
     <motion.div
       key="modal"
@@ -61,7 +69,9 @@ const Modal: React.FC<ModalProps> = ({
           </Box>
         )}
         <Box marginBottom={3}>
-          <Text variant="h1">{title}</Text>
+          <Text variant="h1" as="h2">
+            {title}
+          </Text>
         </Box>
         <Box marginBottom={6} className={styles.breakSpaces}>
           {
@@ -69,6 +79,7 @@ const Modal: React.FC<ModalProps> = ({
             React.isValidElement(text) ? text : <Text>{text}</Text>
           }
         </Box>
+        {children}
         <Box display="flex">
           {secondaryButtonText && (
             <Box marginRight={3}>
@@ -81,16 +92,24 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          {primaryButtonText !== '' && (
+          {primaryButtonText && (
             <Button
               data-testid="modalPrimaryButton"
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}
+              disabled={isPrimaryButtonDisabled}
             >
               {primaryButtonText}
             </Button>
           )}
         </Box>
+        {errorMessage && (
+          <Box marginTop={1} data-testid="modalErrorMessage">
+            <Text variant="eyebrow" color="red600">
+              {errorMessage}
+            </Text>
+          </Box>
+        )}
       </motion.div>
     </motion.div>
   )
@@ -105,6 +124,9 @@ const ModalPortal = ({
   handleSecondaryButtonClick,
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
+  isPrimaryButtonDisabled,
+  errorMessage,
+  children,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -119,6 +141,9 @@ const ModalPortal = ({
       handleSecondaryButtonClick={handleSecondaryButtonClick}
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
+      isPrimaryButtonDisabled={isPrimaryButtonDisabled}
+      errorMessage={errorMessage}
+      children={children}
     />,
     modalRoot,
   )

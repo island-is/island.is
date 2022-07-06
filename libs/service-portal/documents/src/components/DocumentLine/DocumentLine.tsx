@@ -1,31 +1,41 @@
-import React, { FC } from 'react'
-import { Document } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
-import {
-  Text,
-  Box,
-  GridRow,
-  GridColumn,
-  Link,
-  Hidden,
-} from '@island.is/island-ui/core'
+import cn from 'classnames'
 import format from 'date-fns/format'
+import React, { FC } from 'react'
+import { useWindowSize } from 'react-use'
+
+import { Document, DocumentCategory } from '@island.is/api/schema'
+import { getAccessToken } from '@island.is/auth/react'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Link,
+  Text,
+  Icon,
+} from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
+
 import * as styles from './DocumentLine.css'
-import { User } from 'oidc-client'
 
 interface Props {
   documentLine: Document
-  userInfo: User
   img?: string
+  documentCategories?: DocumentCategory[]
 }
 
-const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
-  const onClickHandler = () => {
+const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.sm
+
+  const onClickHandler = async () => {
     // Create form elements
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
     const tokenInput = document.createElement('input')
+
+    const token = await getAccessToken()
+    if (!token) return
 
     form.appendChild(documentIdInput)
     form.appendChild(tokenInput)
@@ -44,93 +54,154 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     // National Id values
     tokenInput.type = 'hidden'
     tokenInput.name = '__accessToken'
-    tokenInput.value = userInfo.access_token
+    tokenInput.value = token
 
     document.body.appendChild(form)
     form.submit()
     document.body.removeChild(form)
   }
 
+  const date = (variant: 'small' | 'medium') => (
+    <Text variant={variant}>
+      {format(new Date(documentLine.date), dateFormat.is)}
+    </Text>
+  )
+
+  const image = img && <img className={styles.image} src={img} alt="" />
+  const isLink = documentLine.fileType === 'url' && documentLine.url
+
+  const subject = isLink ? (
+    <Link href={documentLine.url} newTab>
+      <button className={styles.button}>
+        {documentLine.subject}
+        <Icon type="outline" icon="open" size="small" className={styles.icon} />
+      </button>
+    </Link>
+  ) : (
+    <button
+      className={cn(styles.button, {
+        [styles.unopened]: !documentLine.opened,
+      })}
+      onClick={onClickHandler}
+    >
+      {documentLine.subject}
+    </button>
+  )
+
+  const group = (variant: 'eyebrow' | 'medium') => {
+    const categoryGroup = documentCategories?.find(
+      (item) => item.id === documentLine.categoryId,
+    )
+    return (
+      <Text variant={variant} id="groupName">
+        {categoryGroup?.name || ''}
+      </Text>
+    )
+  }
+
+  const sender = (variant: 'eyebrow' | 'medium') => (
+    <Text variant={variant} id="senderName">
+      {documentLine.senderName}
+    </Text>
+  )
   return (
-    <>
-      <Box position="relative" className={styles.line} paddingY={2}>
-        <GridRow>
-          <GridColumn span={['1/2', '2/12']} order={[2, 1]}>
+    <Box
+      position="relative"
+      className={cn(styles.line, {
+        [styles.unopenedWrapper]: !documentLine.opened && !isLink,
+        [styles.linkWrapper]: isLink,
+      })}
+      paddingY={2}
+    >
+      {isMobile ? (
+        <GridRow alignItems="flexStart" align="flexStart">
+          {img && (
+            <GridColumn span="2/12">
+              <Box
+                display="flex"
+                alignItems="center"
+                height="full"
+                paddingX={[0, 2]}
+                paddingBottom={[1, 0]}
+              >
+                {image}
+              </Box>
+            </GridColumn>
+          )}
+          <GridColumn span="7/12">
             <Box
-              className={styles.date}
               display="flex"
               alignItems="center"
-              justifyContent={['flexEnd', 'flexStart']}
-              height="full"
               paddingX={[0, 2]}
-              marginBottom={1}
+              className={styles.sender}
             >
-              <Hidden above="xs">
-                <Text variant="small" color="dark300">
-                  {format(new Date(documentLine.date), dateFormat.is)}
-                </Text>
-              </Hidden>
-              <Hidden below="sm">
-                <Text>
-                  {format(new Date(documentLine.date), dateFormat.is)}
-                </Text>
-              </Hidden>
+              {sender('eyebrow')}
+            </Box>
+            <Box display="flex" alignItems="center" paddingX={[0, 2]}>
+              {subject}
             </Box>
           </GridColumn>
-          <GridColumn
-            span={['1/1', '6/12', '7/12', '6/12', '7/12']}
-            order={[2, 3]}
-          >
+          <GridColumn span="3/12">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="flexEnd"
+              height="full"
+              paddingX={[0, 2]}
+            >
+              {date('small')}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      ) : (
+        <GridRow>
+          <GridColumn span={['1/1', '2/12']}>
+            <Box
+              display="flex"
+              alignItems="center"
+              height="full"
+              paddingX={[0, 2]}
+            >
+              {date('medium')}
+            </Box>
+          </GridColumn>
+          <GridColumn span={['1/1', '4/12']}>
             <Box
               display="flex"
               alignItems="center"
               height="full"
               paddingX={[0, 2]}
               paddingBottom={[1, 0]}
-              overflow="hidden"
             >
-              {img && (
-                <img
-                  className={styles.image}
-                  src={img}
-                  alt={documentLine.subject}
-                />
-              )}
-              {documentLine.fileType === 'url' && documentLine.url ? (
-                <Link href={documentLine.url}>
-                  <button className={styles.button}>
-                    {documentLine.subject}
-                  </button>
-                </Link>
-              ) : (
-                <button className={styles.button} onClick={onClickHandler}>
-                  {documentLine.subject}
-                </button>
-              )}
+              {img && image}
+              {subject}
             </Box>
           </GridColumn>
-          <GridColumn
-            span={['1/2', '4/12', '3/12', '4/12', '3/12']}
-            order={[1, 3]}
-          >
+          <GridColumn span={['1/1', '3/12']}>
             <Box
               display="flex"
               alignItems="center"
               height="full"
               paddingX={[0, 2]}
-              overflow="hidden"
+              className={styles.sender}
             >
-              <Hidden above="xs">
-                <Text variant="small">{documentLine.senderName}</Text>
-              </Hidden>
-              <Hidden below="sm">
-                <Text>{documentLine.senderName}</Text>
-              </Hidden>
+              {group('medium')}
+            </Box>
+          </GridColumn>
+          <GridColumn span={['1/1', '3/12']}>
+            <Box
+              display="flex"
+              alignItems="center"
+              height="full"
+              paddingX={[0, 2]}
+              className={styles.sender}
+            >
+              {sender('medium')}
             </Box>
           </GridColumn>
         </GridRow>
-      </Box>
-    </>
+      )}
+    </Box>
   )
 }
 

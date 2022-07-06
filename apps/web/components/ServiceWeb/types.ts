@@ -1,6 +1,7 @@
 export type BackgroundVariations =
   | 'syslumenn'
   | 'stafraent-island'
+  | 'mannaudstorg'
   | 'default'
   | string
 

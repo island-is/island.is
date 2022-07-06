@@ -10,6 +10,7 @@ const Staging: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -94,6 +95,7 @@ describe('Basic serialization', () => {
       DB_USER: 'api',
       DB_NAME: 'api',
       DB_HOST: 'a',
+      DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=464',
       SERVERSIDE_FEATURES_ON: '',
     })

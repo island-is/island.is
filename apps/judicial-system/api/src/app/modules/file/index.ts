@@ -1,2 +1,1 @@
-export { FileModule } from './file.module'
-export { CaseFile } from './models'
+export { CaseFile } from './models/file.model'

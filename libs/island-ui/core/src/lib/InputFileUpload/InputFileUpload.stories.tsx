@@ -137,3 +137,25 @@ export const Default = () => {
     </ContentBlock>
   )
 }
+
+export const Disabled = () => {
+  return (
+    <ContentBlock>
+      <Box padding={[2, 2, 3]} background="blue100">
+        <InputFileUpload
+          fileList={[]}
+          header="Drag documents here to upload"
+          description="Documents accepted with extension: .pdf, .docx, .rtf"
+          buttonLabel="Select documents to upload"
+          onChange={() => {
+            // Intentionally left empty
+          }}
+          onRemove={() => {
+            // Intentionally left empty
+          }}
+          disabled
+        />
+      </Box>
+    </ContentBlock>
+  )
+}

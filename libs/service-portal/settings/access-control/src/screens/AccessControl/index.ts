@@ -1,2 +1,2 @@
 export { default } from './AccessControl'
-export { AuthDelegationsQuery } from './components'
+export { AuthDelegationsQuery } from '../../components/Accesses'

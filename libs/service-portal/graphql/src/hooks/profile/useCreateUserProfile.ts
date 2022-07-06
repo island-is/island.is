@@ -12,6 +12,11 @@ export type CreateUserProfileData = {
   email?: string
   locale?: Locale
   mobilePhoneNumber?: string
+  canNudge?: boolean
+  emailStatus?: string
+  mobileStatus?: string
+  emailCode?: string
+  smsCode?: string
 }
 
 export const useCreateUserProfile = () => {
@@ -33,6 +38,11 @@ export const useCreateUserProfile = () => {
     if (data.email) input.email = data.email
     if (data.locale) input.locale = data.locale
     if (data.mobilePhoneNumber) input.mobilePhoneNumber = data.mobilePhoneNumber
+    if (data.canNudge !== undefined) input.canNudge = data.canNudge
+    if (data.emailStatus) input.emailStatus = data.emailStatus
+    if (data.mobileStatus) input.mobileStatus = data.mobileStatus
+    if (data.emailCode) input.emailCode = data.emailCode
+    if (data.smsCode) input.smsCode = data.smsCode
 
     return createUserProfileMutation({
       variables: {

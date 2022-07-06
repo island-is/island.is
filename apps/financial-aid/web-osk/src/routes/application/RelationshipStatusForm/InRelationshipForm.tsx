@@ -4,9 +4,10 @@ import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
+  SpouseEmailInput,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { FamilyStatus } from '@island.is/financial-aid/shared/lib'
+import { FamilyStatus, isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -16,22 +17,27 @@ interface Props {
 
 const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   const router = useRouter()
-  const { form } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [acceptData, setAcceptData] = useState(false)
 
   const [hasError, setHasError] = useState(false)
 
+  const isInputEmailValid = () =>
+    Boolean(form.spouse?.email && isEmailValid(form.spouse.email))
+
   const errorCheck = () => {
-    if (form?.familyStatus === undefined || !nextUrl) {
+    if (!nextUrl) {
       setHasError(true)
       return
     }
 
-    if (form?.familyStatus === FamilyStatus.MARRIED && !acceptData) {
+    if (!acceptData || isInputEmailValid() === false) {
       setHasError(true)
       return
     }
+
+    updateForm({ ...form, familyStatus: FamilyStatus.MARRIED })
 
     router.push(nextUrl)
   }
@@ -56,6 +62,10 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
         </Text>
 
         <Box marginBottom={[5, 5, 10]}>
+          <SpouseEmailInput
+            hasError={hasError && isInputEmailValid() === false}
+            removeError={() => setHasError(false)}
+          />
           <Checkbox
             name={'accept'}
             backgroundColor="blue"

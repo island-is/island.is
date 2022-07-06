@@ -2,24 +2,26 @@ import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
-import * as styles from './StateModal.css'
-
 import {
   OptionsModal,
-  RejectModal,
   AcceptModal,
-  DataNeededModal,
+  EmailFormatInputModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
   Application,
   ApplicationState,
-  CreateAmount,
+  Amount,
   eventTypeFromApplicationState,
   HomeCircumstances,
+  FamilyStatus,
+  getMonth,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
+
+import * as styles from './StateModal.css'
 
 interface Props {
   isVisible: boolean
@@ -29,7 +31,9 @@ interface Props {
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   homeCircumstances: HomeCircumstances
-  spouseNationalId?: string
+  familyStatus: FamilyStatus
+  applicationCreated: string
+  applicationMunicipality: Municipality
 }
 
 const StateModal = ({
@@ -40,7 +44,9 @@ const StateModal = ({
   setApplication,
   setIsLoading,
   homeCircumstances,
-  spouseNationalId,
+  familyStatus,
+  applicationCreated,
+  applicationMunicipality,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -51,7 +57,7 @@ const StateModal = ({
     state: ApplicationState,
     rejection?: string,
     comment?: string,
-    amount?: CreateAmount,
+    amount?: Amount,
   ) => {
     setIsLoading(true)
 
@@ -118,7 +124,6 @@ const StateModal = ({
 
     saveStateApplication(applicationId, stateOption)
   }
-
   return (
     <StateModalContainer
       isVisible={isVisible}
@@ -148,21 +153,27 @@ const StateModal = ({
             }}
           />
 
-          <DataNeededModal
-            isModalVisable={selected === ApplicationState.DATANEEDED}
+          <EmailFormatInputModal
             onCancel={onClickCancel}
+            isModalVisable={selected === ApplicationState.DATANEEDED}
+            state={ApplicationState.DATANEEDED}
             onSaveApplication={(comment?: string) => {
               if (!selected) {
                 return
               }
               saveStateApplication(applicationId, selected, undefined, comment)
             }}
+            headline="Skrifaðu hvaða gögn vantar"
+            submitButtonText="Senda á umsækjanda"
+            errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
+            prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
+            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
-
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: CreateAmount) => {
+            onSaveApplication={(amount: Amount, comment: string) => {
               if (!selected) {
                 return
               }
@@ -170,23 +181,35 @@ const StateModal = ({
                 applicationId,
                 selected,
                 undefined,
-                undefined,
+                `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
+                  'de-DE',
+                )}.-${comment ? '\n' + comment : comment}`,
                 amount,
               )
             }}
             homeCircumstances={homeCircumstances}
-            spouseNationalId={spouseNationalId}
+            familyStatus={familyStatus}
+            applicationMunicipality={applicationMunicipality}
           />
 
-          <RejectModal
-            isModalVisable={selected === ApplicationState.REJECTED}
+          <EmailFormatInputModal
             onCancel={onClickCancel}
+            isModalVisable={selected === ApplicationState.REJECTED}
+            state={ApplicationState.REJECTED}
             onSaveApplication={(reasonForRejection?: string) => {
               if (!selected) {
                 return
               }
               saveStateApplication(applicationId, selected, reasonForRejection)
             }}
+            headline="Skrifaðu ástæðu synjunar"
+            submitButtonText="Synja og senda á umsækjanda"
+            errorMessage="Þú þarft að greina frá ástæðu synjunar"
+            prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
+              new Date(applicationCreated).getMonth(),
+            )} hefur verið synjað`}
+            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
         </AnimateSharedLayout>
       </Box>

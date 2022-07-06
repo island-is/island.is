@@ -5,13 +5,13 @@ import { IsString } from 'class-validator'
 export class AddAttachmentInput {
   @Field(() => String)
   @IsString()
-  id: string
+  id!: string
 
   @Field(() => String)
   @IsString()
-  key: string
+  key!: string
 
   @Field(() => String)
   @IsString()
-  url: string
+  url!: string
 }

@@ -26,6 +26,17 @@ export const core = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'Notað fyrir orðið Kennitala í öllum flæðum.',
   },
+  dateOfBirth: {
+    id: 'judicial.system.core:date_of_birth',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Notað fyrir orðið Fæðingardagur í öllum flæðum.',
+  },
+  dateOfBirthPlaceholder: {
+    id: 'judicial.system.core:date_of_birth.placeholder',
+    defaultMessage: 'dd.mm.áááá',
+    description:
+      'Notað sem skýritexti í Fæðingardagur textaboxi í öllum flæðum.',
+  },
   fullName: {
     id: 'judicial.system.core:full_name',
     defaultMessage: 'Fullt nafn',
@@ -69,14 +80,139 @@ export const core = defineMessages({
     defaultMessage: 'Sóknaraðili',
     description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
   },
+  prosecutorPerson: {
+    id: 'judicial.system.core:prosecutor_person',
+    defaultMessage: 'Sækjandi',
+    description: 'Notað fyrir orðið sækjandi í öllum flæðum.',
+  },
   accused: {
-    id: 'judicial.system.core:accused',
-    defaultMessage: 'Varnaraðili',
+    id: 'judicial.system.core:accused-v3',
+    defaultMessage: 'kærð{suffix}',
+    description: 'Notað fyrir orðið kærði í öllum flæðum.',
+  },
+  defendant: {
+    id: 'judicial.system.core:defendant',
+    defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',
     defaultMessage: 'Krafa um {caseType}',
     description: 'Notað sem titill fyrir Krafa um í öllum flæðum',
+  },
+  court: {
+    id: 'judicial.system.core:court',
+    defaultMessage: 'Dómstóll',
+    description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
+  },
+  selectGender: {
+    id: 'judicial.system.core:select_gender',
+    defaultMessage: 'Veldu kyn',
+    description: 'Notað fyrir Veldu kyn í öllum flæðum',
+  },
+  citizenship: {
+    id: 'judicial.system.core:citizenship',
+    defaultMessage: 'Ríkisfang',
+    description: 'Notað fyrir Ríkisfang í öllum flæðum',
+  },
+  selectCitizenship: {
+    id: 'judicial.system.core:select_citizenship',
+    defaultMessage: 'Veldu ríkisfang',
+    description: 'Notað fyrir Veldu ríkisfang í öllum flæðum',
+  },
+  nationalIdNotFoundInNationalRegistry: {
+    id: 'judicial.system.core:national_id_not_found_in_national_registry',
+    defaultMessage: 'Ekki tókst að fletta upp kennitölu',
+    description:
+      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá.',
+  },
+  judge: {
+    id: 'judicial.system.core:judge',
+    defaultMessage: 'Dómari',
+    description: 'Notað fyrir orðið Dómari í öllum flæðum.',
+  },
+  registrar: {
+    id: 'judicial.system.core:registrar',
+    defaultMessage: 'Dómritari',
+    description: 'Notað fyrir orðið Dómritari í öllum flæðum.',
+  },
+  policeCaseNumber: {
+    id: 'judicial.system.core:police_case_number',
+    defaultMessage: 'LÖKE málsnúmer',
+    description: 'Notað fyrir orðið LÖKE málsnúmer í öllum flæðum.',
+  },
+  courtCaseNumber: {
+    id: 'judicial.system.core:court_case_number',
+    defaultMessage: 'Málsnúmer héraðsdóms',
+    description: 'Notað fyrir orðið Málsnúmer héraðsdóms í öllum flæðum.',
+  },
+  caseType: {
+    id: 'judicial.system.core:case_type',
+    defaultMessage: 'Tegund kröfu',
+    description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
+  },
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
+  },
+  arrestDate: {
+    id: 'judicial.system.core:arrest_date',
+    defaultMessage: 'Tími handtöku',
+    description: 'Notað fyrir orðið Tími handtöku í öllum flæðum.',
+  },
+  confirmedCourtDate: {
+    id: 'judicial.system.core:confirmed_court_date',
+    defaultMessage: 'Staðfestur fyrirtökutími',
+    description: 'Notað fyrir orðið Staðfestur fyrirtökutími í öllum flæðum.',
+  },
+  update: {
+    id: 'judicial.system.core:update',
+    defaultMessage: 'Uppfæra',
+    description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
+  and: {
+    id: 'judicial.system.core:and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og',
+  },
+  modify: {
+    id: 'judicial.system.core:modify',
+    defaultMessage: 'leiðrétta',
+    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
+  },
+  back: {
+    id: 'judicial.system.core:back',
+    defaultMessage: 'Til baka',
+    description: 'Notað fyrir "Til baka" takka í öllum flæðum.',
+  },
+  continue: {
+    id: 'judicial.system.core:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
+  headerTipDisclaimer: {
+    id: 'judicial.system.core:header_tip_disclaimer',
+    defaultMessage:
+      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
+    description:
+      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
+  },
+  headerTipDisclaimerDefenders: {
+    id: 'judicial.system.core:header_tip_disclaimer_defenders',
+    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
+    description:
+      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
+  },
+  defender: {
+    id: 'judicial.system.core:defender',
+    defaultMessage: 'lögmaður',
+    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
+  },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
   },
 })

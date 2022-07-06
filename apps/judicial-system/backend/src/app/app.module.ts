@@ -1,19 +1,25 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { ProblemModule } from '@island.is/nest/problem'
+import { ConfigModule } from '@island.is/nest/config'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
+  caseModuleConfig,
   CaseModule,
-  CourtModule,
-  FileModule,
-  InstitutionModule,
-  NotificationModule,
+  DefendantModule,
   UserModule,
-  EventModule,
+  InstitutionModule,
+  FileModule,
+  NotificationModule,
   PoliceModule,
+  CourtModule,
   AwsS3Module,
+  EventModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -26,15 +32,21 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
-    UserModule,
     CaseModule,
-    NotificationModule,
+    DefendantModule,
+    UserModule,
     InstitutionModule,
     FileModule,
-    CourtModule,
-    EventModule,
+    NotificationModule,
     PoliceModule,
+    CourtModule,
     AwsS3Module,
+    EventModule,
+    ProblemModule.forRoot({ logAllErrors: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [signingModuleConfig, courtClientModuleConfig, caseModuleConfig],
+    }),
   ],
 })
 export class AppModule {}

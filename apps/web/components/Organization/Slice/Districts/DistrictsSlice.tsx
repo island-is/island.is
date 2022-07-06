@@ -47,7 +47,9 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
                 {slice.links.map((link, index) => (
                   <Box component="li" key={index} marginBottom={4}>
                     <Link href={link.url}>
-                      <Button variant="text">{link.text}</Button>
+                      <Button variant="text" as="span">
+                        {link.text}
+                      </Button>
                     </Link>
                   </Box>
                 ))}

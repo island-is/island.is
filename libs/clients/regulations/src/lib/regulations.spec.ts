@@ -2,7 +2,8 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
-import { Regulation, RegulationViewTypes } from '@island.is/regulations/web'
+import { RegulationViewTypes } from '@island.is/regulations/web'
+import { Regulation } from '@island.is/regulations'
 import { demoRegulation } from './regulations.mocks'
 
 // MOCK START

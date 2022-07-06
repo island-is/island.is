@@ -51,10 +51,10 @@ const Petitions = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.petition.introTitle)}
         </Text>
-        <Text as="p" variant="intro">
+        <Text as="p" variant="default">
           {formatMessage(m.petition.intro)}
         </Text>
       </Stack>

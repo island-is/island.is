@@ -8,7 +8,6 @@ import {
   Box,
   Hidden,
 } from '@island.is/island-ui/core'
-
 interface Props {
   title: MessageDescriptor | string
   intro?: MessageDescriptor
@@ -24,12 +23,12 @@ export const IntroHeader = ({
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow marginBottom={7}>
+    <GridRow marginBottom={6}>
       <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-        <Text variant="h1" as="h1" marginBottom={3}>
+        <Text variant="h3" as="h1" marginBottom={3}>
           {formatMessage(title)}
         </Text>
-        {intro && <Text variant="intro">{formatMessage(intro)}</Text>}
+        {intro && <Text variant="default">{formatMessage(intro)}</Text>}
       </GridColumn>
       {img && (
         <GridColumn

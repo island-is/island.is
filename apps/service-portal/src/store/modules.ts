@@ -2,25 +2,20 @@ import { ServicePortalModule } from '@island.is/service-portal/core'
 import { documentProviderModule } from '@island.is/service-portal/document-provider'
 import { documentsModule } from '@island.is/service-portal/documents'
 import { assetsModule } from '@island.is/service-portal/assets'
-import { familyModule } from '@island.is/service-portal/family'
+import { informationModule } from '@island.is/service-portal/information'
 import { financeModule } from '@island.is/service-portal/finance'
+import { financeScheduleModule } from '@island.is/service-portal/finance-schedule'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
 import { educationModule } from '@island.is/service-portal/education'
 import { educationLicenseModule } from '@island.is/service-portal/education-license'
-import {
-  endorsementsModule,
-  petitionsModule,
-} from '@island.is/service-portal/endorsements'
-import { educationDegreeModule } from '@island.is/service-portal/education-degree'
+import { petitionsModule } from '@island.is/service-portal/endorsements'
 import { educationCareerModule } from '@island.is/service-portal/education-career'
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
-import { wipModule } from '@island.is/service-portal/wip'
-import { islykillModule } from '@island.is/service-portal/settings/islykill'
-
+import { vehiclesModule } from '@island.is/service-portal/vehicles'
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -36,52 +31,62 @@ export type ModuleKeys =
   | 'accessControl'
   | 'documentProvider'
   | 'documents'
-  | 'family'
+  | 'information'
   | 'finance'
+  | 'financeSchedule'
   | 'icelandicNamesRegistry'
   | 'personalInformation'
   | 'education'
   | 'educationLicense'
-  | 'endorsements'
   | 'educationCareer'
   | 'educationStudentAssessment'
   | 'assets'
   | 'applications'
   | 'licenses'
-  | 'wip'
-  | 'islykill'
   | 'petitions'
+  | 'vehicles'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
   'documentProvider',
-  'endorsements',
   'icelandicNamesRegistry',
-  'finance',
-  'assets',
-  'personalInformation',
-  'licenses',
-  'islykill',
   'petitions',
+  'financeSchedule',
+  'vehicles',
 ]
+
+export const companyModules: ModuleKeys[] = [
+  'documents',
+  'applications',
+  'assets',
+  'finance',
+  'information',
+  'vehicles',
+  'personalInformation',
+  'accessControl',
+
+  // TODO: Next in:
+  // 'licenses',
+]
+
+export const featureFlaggedCompanyModules: ModuleKeys[] = ['accessControl']
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
   documents: documentsModule,
-  family: familyModule,
+  information: informationModule,
   finance: financeModule,
+  financeSchedule: financeScheduleModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
   personalInformation: personalInformationModule,
   education: educationModule,
   educationLicense: educationLicenseModule,
   petitions: petitionsModule,
-  endorsements: endorsementsModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
   assets: assetsModule,
   applications: applicationsModule,
   accessControl: accessControlModule,
   licenses: licensesModule,
-  wip: wipModule,
-  islykill: islykillModule,
+  vehicles: vehiclesModule,
 }

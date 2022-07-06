@@ -48,11 +48,11 @@ const PetitionsAdmin = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.petition.introTitle)}
         </Text>
 
-        <Text as="p" variant="intro">
+        <Text as="p" variant="default">
           {formatMessage(m.petition.intro)}
         </Text>
       </Stack>
@@ -67,7 +67,7 @@ const PetitionsAdmin = () => {
       <Box marginTop={5} marginBottom={7}>
         {openLists && openLists.length > 0 && (
           <>
-            <Text as="p" variant="h3" marginBottom={2}>
+            <Text as="p" variant="h4" marginBottom={2}>
               {formatMessage(m.petition.petitionListsOngoing)}
             </Text>
 
@@ -110,7 +110,7 @@ const PetitionsAdmin = () => {
 
         {closedLists && closedLists.length > 0 && (
           <>
-            <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
+            <Text as="p" variant="h4" marginBottom={3} marginTop={7}>
               {formatMessage(m.petition.petitionListsClosed)}
             </Text>
 
@@ -153,7 +153,7 @@ const PetitionsAdmin = () => {
 
         {lockedLists && lockedLists.length > 0 && (
           <>
-            <Text as="p" variant="h3" marginBottom={3} marginTop={7}>
+            <Text as="p" variant="h4" marginBottom={3} marginTop={7}>
               {formatMessage(m.petition.petitionListsLocked)}
             </Text>
 

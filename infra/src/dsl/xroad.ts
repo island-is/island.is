@@ -72,7 +72,7 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
-    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
+    XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
   },
   secrets: {
@@ -95,7 +95,7 @@ export const DrivingLicense = new XroadConf({
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       staging:
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
   },
   secrets: {
@@ -123,6 +123,28 @@ export const HealthInsurance = new XroadConf({
       '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME',
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD:
       '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD',
+  },
+})
+
+export const RskProcuring = new XroadConf({
+  env: {
+    XROAD_RSK_PROCURING_REDIS_NODES: {
+      dev:
+        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
+      staging:
+        '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
+      prod:
+        '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
+    },
+    XROAD_RSK_PROCURING_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
+    },
+  },
+  secrets: {
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
   },
 })
 
@@ -158,7 +180,28 @@ export const Finance = new XroadConf({
 
 export const Properties = new XroadConf({
   env: {
+    XROAD_PROPERTIES_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Fasteignir-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Fasteignir-v1',
+    },
+    // Deprecated:
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1',
+  },
+  secrets: {
+    XROAD_PROPERTIES_CLIENT_SECRET:
+      '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+  },
+})
+
+export const AdrAndMachine = new XroadConf({
+  env: {
+    XROAD_ADR_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
   },
 })
 
@@ -184,7 +227,6 @@ export const NationalRegistry = new XroadConf({
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
-    // Only cache on dev for now.
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
         'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -235,5 +277,92 @@ export const PaymentSchedule = new XroadConf({
   secrets: {
     PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER',
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD',
+  },
+})
+
+export const CriminalRecord = new XroadConf({
+  env: {
+    XROAD_CRIMINAL_RECORD_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
+    },
+  },
+})
+
+export const RskCompanyInfo = new XroadConf({
+  env: {
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+    },
+    COMPANY_REGISTRY_REDIS_NODES: {
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
+    },
+  },
+})
+
+export const DataProtectionComplaint = new XroadConf({
+  env: {
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10026/gopro/kvortun-v1',
+      staging: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1',
+      prod: 'IS/GOV/5608002820/gopro/kvortun-v1',
+    },
+  },
+  secrets: {
+    DATA_PROTECTION_COMPLAINT_API_USERNAME:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME',
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD',
+  },
+})
+
+export const DrivingLicenseBook = new XroadConf({
+  env: {},
+  secrets: {
+    DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+    DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME',
+    DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD',
+  },
+})
+
+export const FishingLicense = new XroadConf({
+  env: {
+    FISHING_LICENSE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      staging: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+      prod: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+    },
+  },
+})
+
+export const MunicipalitiesFinancialAid = new XroadConf({
+  env: {
+    XROAD_FINANCIAL_AID_BACKEND_PATH: {
+      dev: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
+      staging:
+        'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+      prod: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+    },
+  },
+})
+
+export const Vehicles = new XroadConf({
+  env: {
+    XROAD_VEHICLES_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
   },
 })

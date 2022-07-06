@@ -95,6 +95,9 @@ export const slices = gql`
       }
     }
     readMoreText
+    readMoreLink {
+      url
+    }
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -158,6 +161,7 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
     questions {
       id
       question
@@ -266,21 +270,6 @@ export const slices = gql`
     errorMessage
   }
 
-  fragment LocationFields on Location {
-    __typename
-    id
-    title
-    subTitle
-    address
-    link {
-      text
-      url
-    }
-    background {
-      ...ImageFields
-    }
-  }
-
   fragment TellUsAStoryFields on TellUsAStory {
     __typename
     id
@@ -358,6 +347,7 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
     }
     link {
       text
@@ -384,6 +374,7 @@ export const slices = gql`
       text
       url
     }
+    dividerOnTop
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -413,7 +404,9 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+      ...AssetFields
     }
+    dividerOnTop
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -426,6 +419,7 @@ export const slices = gql`
       title
       content {
         ...HtmlFields
+        ...AssetFields
       }
       link {
         url
@@ -498,7 +492,6 @@ export const slices = gql`
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
-    ...LocationFields
     ...TellUsAStoryFields
     ...ConnectedComponentFields
     ...DistrictsFields
@@ -514,5 +507,14 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+  }
+`
+
+export const nestedOneColumnTextFields = gql`
+  fragment NestedOneColumnTextFields on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+    }
   }
 `

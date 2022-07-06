@@ -5,20 +5,20 @@ import { IsString, IsArray } from 'class-validator'
 class DataProvider {
   @Field(() => String)
   @IsString()
-  id: string
+  id!: string
 
   @Field(() => String)
   @IsString()
-  type: string
+  type!: string
 }
 
 @InputType()
 export class UpdateApplicationExternalDataInput {
   @Field(() => String)
   @IsString()
-  id: string
+  id!: string
 
   @Field(() => [DataProvider])
   @IsArray()
-  dataProviders: DataProvider[]
+  dataProviders!: DataProvider[]
 }

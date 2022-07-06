@@ -9,6 +9,7 @@ The home for all the infrastructure information you need to know regarding `isla
 - [Environment setup](environment-setup.md)
 - [Logging](logging.md)
 - [Metrics](metrics.md)
+- [Database](database.md)
 - [Observability](observability.md)
 - [Services setup](service-setup.md)
 - [Operations base principles](operations-base-principles.md)

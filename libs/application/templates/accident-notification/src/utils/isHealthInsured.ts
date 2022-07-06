@@ -1,9 +1,11 @@
-import { FormValue } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 
 export const isHealthInsured = (formValue: FormValue) => {
-  const isHealthInsured = (formValue as {
-    accidentDetails: { isHealthInsured: string }
-  })?.accidentDetails?.isHealthInsured
+  const isHealthInsured = getValueViaPath(
+    formValue,
+    'accidentDetails.isHealthInsure',
+  ) as string
   if (isHealthInsured === undefined) return true
   return isHealthInsured === 'yes'
 }

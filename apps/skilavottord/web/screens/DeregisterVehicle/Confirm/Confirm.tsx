@@ -29,7 +29,10 @@ import {
 import {
   Mutation,
   Query,
+  RequestErrors,
+  RequestStatus,
   Role,
+  RecyclingRequestTypes,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
@@ -47,12 +50,10 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
 
 const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $partnerId: String
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
-      partnerId: $partnerId
       permno: $permno
       requestType: $requestType
     ) {
@@ -99,19 +100,16 @@ const Confirm: FC = () => {
   const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
 
   useEffect(() => {
-    if (mutationResponse?.status) {
+    if ((mutationResponse as RequestStatus)?.status) {
       router.replace(routes.baseRoute).then(() => toast.success(t.success))
     }
   }, [mutationResponse, router, routes, t.success])
-
-  const partnerId = user?.partnerId
 
   const handleConfirm = () => {
     setRecyclingRequest({
       variables: {
         permno: id,
-        partnerId: partnerId,
-        requestType: 'deregistered',
+        requestType: RecyclingRequestTypes.deregistered,
       },
     })
   }
@@ -126,7 +124,11 @@ const Confirm: FC = () => {
     return <NotFound />
   }
 
-  if (mutationError || mutationLoading || mutationResponse?.message) {
+  if (
+    mutationError ||
+    mutationLoading ||
+    (mutationResponse as RequestErrors)?.message
+  ) {
     return (
       <ProcessPageLayout processType={'company'} activeSection={1}>
         {mutationLoading ? (

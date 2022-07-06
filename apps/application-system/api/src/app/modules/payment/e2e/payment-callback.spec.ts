@@ -2,13 +2,14 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import { setup } from '../../../../../test/setup'
+import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
-  app = await setup()
+  app = await setup(AppModule)
   server = request(app.getHttpServer())
 })
 

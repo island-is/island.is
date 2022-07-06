@@ -1,13 +1,12 @@
 import React, { FC } from 'react'
-import { GraphQLError } from 'graphql'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   RepeaterProps,
-  getValueViaPath,
   Application,
   RecordObject,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
 import { RepeaterScreen } from '../types'

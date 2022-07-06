@@ -1,11 +1,8 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import {
-  FieldBaseProps,
-  formatText,
-  TextField,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps, TextField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   InputController,
@@ -38,7 +35,9 @@ export const TextFormField: FC<Props> = ({
     suffix,
     rows,
     required,
+    readOnly,
     maxLength,
+    onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -54,6 +53,7 @@ export const TextFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <InputController
           disabled={disabled}
+          readOnly={readOnly}
           id={id}
           placeholder={formatText(
             placeholder || '',
@@ -67,10 +67,11 @@ export const TextFormField: FC<Props> = ({
           }
           autoFocus={autoFocus}
           error={error}
-          onChange={() => {
+          onChange={(e) => {
             if (error) {
               clearErrors(id)
             }
+            onChange(e)
           }}
           maxLength={maxLength}
           textarea={variant === 'textarea'}

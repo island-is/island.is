@@ -1,0 +1,1 @@
+export { ElectPerson } from './ElectPerson'

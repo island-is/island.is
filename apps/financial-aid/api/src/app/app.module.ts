@@ -12,8 +12,9 @@ import {
   MunicipalityModule,
   FileModule,
   StaffModule,
+  PersonalTaxReturnModule,
+  MunicipalityNationalRegistryModule,
 } from './modules/'
-import { NationalRegistryXRoadModule } from './modules/nationalRegistryXRoadModule'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -38,13 +39,13 @@ const autoSchemaFile = environment.production
     ApplicationModule,
     MunicipalityModule,
     FileModule,
-    NationalRegistryXRoadModule,
+    MunicipalityNationalRegistryModule,
     StaffModule,
+    PersonalTaxReturnModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [XRoadConfig, NationalRegistryClientConfig],
     }),
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}

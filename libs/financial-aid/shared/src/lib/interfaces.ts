@@ -4,15 +4,22 @@ import {
   FileType,
   Employment,
   ApplicationEventType,
-  RolesRule,
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
+  folder: string
   fileName: string
+}
+
+export type ReactSelectOption = { label: string; value: string | number }
+
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
 }
 
 export interface SignedUrl {
@@ -22,18 +29,17 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
   id: string
   nationalId: string
   name: string
-  municipalityId: string
+  municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
-  municipalityName: string
   phoneNumber?: string
-  municipalityHomepage?: string
   nickname?: string
   email?: string
   usePseudoName?: boolean
@@ -93,8 +99,6 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber?: string
-  folder: string
-  service: RolesRule
   currentApplicationId?: string
   spouse?: Spouse
   staff?: Staff
@@ -143,6 +147,13 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
+}
+
+export interface UpdateAdmin {
+  id: string
+  name: string
+  municipalityIds: string[]
 }
 
 export interface Municipality {
@@ -157,6 +168,11 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: UpdateAdmin[]
+  usingNav: boolean
+  navUrl?: string
+  navUsername?: string
+  navPassword?: string
 }
 
 export interface UpdateMunicipalityActivity {
@@ -186,7 +202,6 @@ export interface CreateApplicationFile {
 }
 
 export interface CreateApplication {
-  nationalId: string
   name: string
   phoneNumber?: string
   email: string
@@ -213,7 +228,9 @@ export interface CreateApplication {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  applicationSystemId?: string
+  hasFetchedDirectTaxPayment: boolean
 }
 
 export interface ApplicantEmailData {
@@ -226,6 +243,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {
@@ -235,6 +253,22 @@ export interface ApplicationFilters {
   Rejected: number
   Approved: number
   MyCases: number
+}
+
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
+}
+
+export interface DirectTaxPayment {
+  totalSalary: number
+  payerNationalId: string
+  personalAllowance: number
+  withheldAtSource: number
+  month: number
+  year: number
+  userType: UserType
 }
 
 export interface Application {
@@ -274,7 +308,12 @@ export interface Application {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  directTaxPayments: DirectTaxPayment[]
+  hasFetchedDirectTaxPayment: boolean
+  spouseHasFetchedDirectTaxPayment: boolean
+  applicationSystemId?: string
+  navSuccess?: boolean
 }
 
 export interface GetSignedUrlForId {
@@ -284,7 +323,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  spouseName?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {
@@ -334,12 +374,31 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityName?: string
-  municipalityId?: string
+  municipalityNames?: string[]
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {
   municipalityId: string
   municipalityName: string
   municipalityHomepage?: string
+}
+
+export interface Calculations {
+  title: string
+  calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
+}
+
+export interface ApplicationPagination {
+  applications: Application[]
+  totalCount: number
 }

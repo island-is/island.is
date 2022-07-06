@@ -2,25 +2,25 @@ import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 import {
   Application,
   ApplicationStatus,
   ExternalData,
   FormValue,
-} from '../types/Application'
-import {
+  StaticText,
+  FormatMessage,
   ApplicationContext,
   ApplicationRole,
+  ApplicationTemplate,
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
-} from '../types/StateMachine'
-import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import { FormatMessage, StaticText } from '../types/Form'
+  RoleInState,
+} from '@island.is/application/types'
 
 enum FinalStates {
   REJECTED = 'rejected',
@@ -82,6 +82,7 @@ export class ApplicationTemplateHelper<
   } {
     const actionCard = this.template.stateMachineConfig.states[stateKey]?.meta
       ?.actionCard
+
     return {
       title: actionCard?.title,
       description: actionCard?.description,
@@ -180,12 +181,7 @@ export class ApplicationTemplateHelper<
     }
     const { answers, externalData } = this.application
 
-    const stateInformation = this.getApplicationStateInformation(
-      this.application.state,
-    )
-    if (!stateInformation) return returnValue
-
-    const roleInState = stateInformation.roles?.find(({ id }) => id === role)
+    const roleInState = this.getRoleInState(role)
     if (!roleInState) {
       return returnValue
     }
@@ -211,22 +207,27 @@ export class ApplicationTemplateHelper<
     })
     return returnValue
   }
+
   getWritableAnswersAndExternalData(
     role?: ApplicationRole,
   ): ReadWriteValues | undefined {
     if (!role) {
       return undefined
     }
+    const roleInState = this.getRoleInState(role)
+    if (!roleInState) {
+      return undefined
+    }
+    return roleInState.write
+  }
+
+  getRoleInState(role: ApplicationRole): RoleInState<TEvents> | undefined {
     const stateInformation = this.getApplicationStateInformation(
       this.application.state,
     )
     if (!stateInformation) return undefined
 
-    const roleInState = stateInformation.roles?.find(({ id }) => id === role)
-    if (!roleInState) {
-      return undefined
-    }
-    return roleInState.write
+    return stateInformation.roles?.find(({ id }) => id === role)
   }
 
   async applyAnswerValidators(

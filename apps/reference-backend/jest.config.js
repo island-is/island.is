@@ -6,9 +6,8 @@ module.exports = {
   setupFilesAfterEnv: ['./test/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
-    },
+    'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' },
   },
   displayName: 'reference-backend',
+  testEnvironment: 'node',
 }

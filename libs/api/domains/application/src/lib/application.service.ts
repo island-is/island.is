@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
@@ -19,20 +17,22 @@ import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
+import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @Injectable()
 export class ApplicationService {
   constructor(
-    private _applicationApi: ApplicationsApi,
-    private _applicationPaymentApi: PaymentsApi,
+    private applicationApi: ApplicationsApi,
+    private applicationPaymentApi: PaymentsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
-    return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   paymentApiWithAuth(auth: Auth) {
-    return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
@@ -156,6 +156,13 @@ export class ApplicationService {
     })
   }
 
+  async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
+    return this.applicationApiWithAuth(auth).applicationControllerDelete({
+      id: input.id,
+      authorization: auth.authorization,
+    })
+  }
+
   async generatePdfPresignedUrl(input: GeneratePdfInput, auth: Auth) {
     const { id, ...generatePdfDto } = input
     return await this.applicationApiWithAuth(
@@ -194,6 +201,17 @@ export class ApplicationService {
     ).applicationControllerGetPresignedUrl({
       id,
       pdfType: type,
+    })
+  }
+
+  async attachmentPresignedURL(input: AttachmentPresignedUrlInput, auth: Auth) {
+    const { id, attachmentKey } = input
+
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetAttachmentPresignedURL({
+      id,
+      attachmentKey,
     })
   }
 }

@@ -6,8 +6,8 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   OrganizationWrapper,
-  lightThemes,
   NewsCard,
+  getThemeConfig,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -44,6 +44,8 @@ import {
 } from '../../graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 const PERPAGE = 10
 
@@ -74,6 +76,8 @@ const NewsList: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
+  useContentfulId(organizationPage.id)
+  useLocalLinkTypeResolver()
 
   const currentNavItem =
     organizationPage.menuLinks.find(
@@ -85,7 +89,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   const newsTitle =
     currentNavItem?.text ??
-    newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
+    newsList[0]?.genericTags.find((x) => x.slug === selectedTag)?.title ??
     n('newsTitle', 'Fréttir og tilkynningar')
 
   const years = Object.keys(datesMap)
@@ -399,8 +403,6 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  const lightTheme = lightThemes.includes(organizationPage.theme)
-
   return {
     organizationPage: organizationPage,
     newsList: organizationPage.newsTag ? newsList : [],
@@ -411,7 +413,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 

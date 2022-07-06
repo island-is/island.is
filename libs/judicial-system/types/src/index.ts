@@ -1,5 +1,13 @@
 export { Feature } from './lib/feature'
 
+export { Gender } from './lib/defendant'
+export type {
+  Defendant,
+  CreateDefendant,
+  UpdateDefendant,
+  DeleteDefendantResponse,
+} from './lib/defendant'
+
 export { InstitutionType } from './lib/institution'
 export type { Institution } from './lib/institution'
 
@@ -25,17 +33,17 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles } from './lib/user'
+export { UserRole, courtRoles, isCourtRole } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
+  CaseOrigin,
   CaseType,
   CaseState,
   CaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
   SessionArrangements,
   restrictionCases,
@@ -53,7 +61,6 @@ export type {
   TransitionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  CreateCourtCase,
 } from './lib/case'
 
 export type {
@@ -61,3 +68,5 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export type { CourtDocument } from './lib/courtDocument'

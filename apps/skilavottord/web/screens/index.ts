@@ -1,6 +1,7 @@
 /* Citizen screens */
 export * from './Overview'
 export * from './Confirm'
+export * from './RecycleCar'
 export * from './Handover'
 export * from './Completed'
 
@@ -11,6 +12,7 @@ export {
   Select as DeregisterSelect,
   Confirm as DeregisterConfirm,
 } from './DeregisterVehicle'
+export * from './AccessControlCompany'
 
 /* Fund screens */
 export { Overview as RecyclingFundOverview } from './RecyclingFund'

@@ -4,15 +4,15 @@ import graphqlTypeJson from 'graphql-type-json'
 
 @InputType()
 export class SubmitApplicationInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
-  id: string
+  id!: string
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
-  event: string
+  event!: string
 
-  @Field((type) => graphqlTypeJson, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
   answers?: object

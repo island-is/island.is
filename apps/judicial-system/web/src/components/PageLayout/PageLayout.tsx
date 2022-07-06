@@ -9,16 +9,16 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
+import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import * as constants from '@island.is/judicial-system/consts'
+import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
-import { getSections } from './utils'
-import * as styles from './PageLayout.css'
 import Skeleton from '../Skeleton/Skeleton'
+import useSections from '../../utils/hooks/useSections'
+import * as styles from './PageLayout.css'
 
 interface PageProps {
   children: ReactNode
@@ -41,13 +41,8 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
+  const { getSections } = useSections()
   const { formatMessage } = useIntl()
-  const sections = getSections(
-    { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
-    workingCase,
-    activeSubSection,
-    user,
-  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -55,46 +50,76 @@ const PageLayout: React.FC<PageProps> = ({
 
   return isLoading ? (
     <Skeleton />
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? formatMessage(pageLayout.adminRole.alertTitle)
+          : user?.role === UserRole.DEFENDER
+          ? formatMessage(pageLayout.defenderRole.alertTitle)
+          : formatMessage(pageLayout.otherRoles.alertTitle)
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? formatMessage(pageLayout.adminRole.alertMessage)
+          : user?.role === UserRole.DEFENDER
+          ? formatMessage(pageLayout.defenderRole.alertMessage)
+          : formatMessage(pageLayout.otherRoles.alertMessage)
+      }
+      variant="error"
+      link={
+        user?.role === UserRole.DEFENDER
+          ? undefined
+          : {
+              href:
+                user?.role === UserRole.ADMIN
+                  ? constants.USER_LIST_ROUTE
+                  : constants.CASE_LIST_ROUTE,
+              title: 'Fara á yfirlitssíðu',
+            }
+      }
+    />
   ) : children ? (
     <Box
-      paddingY={[3, 3, 3, 6]}
+      paddingY={[0, 0, 3, 6]}
+      paddingX={[0, 0, 4]}
       background="purple100"
       className={styles.processContainer}
     >
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+      <GridContainer className={styles.container}>
+        <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
             <Box
               background="white"
               borderColor="white"
-              borderRadius="large"
+              paddingTop={[3, 3, 10, 10]}
               className={styles.processContent}
             >
               {children}
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['0', '0', '3/12', '3/12']}>
+            <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
               <div className={styles.formStepperContainer}>
-                <Box marginLeft={2}>
-                  <Box marginBottom={5}>
-                    <Logo />
+                <Box marginLeft={[0, 0, 2]}>
+                  <Box marginBottom={7} display={['none', 'none', 'block']}>
+                    <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
                   <FormStepper
                     // Remove the extension parts of the formstepper if the user is not applying for an extension
                     sections={
                       activeSection === Sections.EXTENSION ||
                       activeSection === Sections.JUDGE_EXTENSION
-                        ? sections
-                        : sections.filter((_, index) => index <= 2)
+                        ? getSections(workingCase, activeSubSection, user)
+                        : getSections(
+                            workingCase,
+                            activeSubSection,
+                            user,
+                          ).filter((_, index) => index <= 2)
                     }
-                    formName={
-                      workingCase?.type === CaseType.CUSTODY
-                        ? 'Gæsluvarðhald'
-                        : workingCase?.type === CaseType.TRAVEL_BAN
-                        ? 'Farbann'
-                        : 'Rannsóknarheimild'
-                    }
+                    formName={formatMessage(sections.title, {
+                      caseType: workingCase?.type,
+                    })}
                     activeSection={activeSection}
                     activeSubSection={activeSubSection}
                   />
@@ -105,27 +130,6 @@ const PageLayout: React.FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        user?.role === UserRole.ADMIN
-          ? 'Notandi fannst ekki'
-          : 'Mál fannst ekki'
-      }
-      description={
-        user?.role === UserRole.ADMIN
-          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
-      }
-      variant="error"
-      link={{
-        href:
-          user?.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE,
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
   ) : null
 }
 

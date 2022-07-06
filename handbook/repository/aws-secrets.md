@@ -22,32 +22,74 @@ SSO start URL [None]: https://island-is.awsapps.com/start
 SSO Region [None]: eu-west-1
 ```
 
-Then choose the environnement of your choice. Likely to be `island-is-development01`. You will be prompted for the following:
+Then choose the environment of your choice. Likely to be `island-is-development01`. You will be prompted for the following:
 
 ```md
 CLI default client Region [eu-west-1]: <Press Enter>
 CLI default output format [json]: <Press Enter>
-CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. dev)> or <Press Enter>
+CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. islandis-dev)> or <Press Enter>
 ```
 
-This step will add the new profile to your `~/.aws/config` file. If you choose `dev` as profile's name, you will see `[profile dev]` in there.
+This step will add the new profile to your `~/.aws/config` file. If you choose `islandis-dev` as profile's name, you will see `[profile islandis-dev]` in there.
 
 - Ready to use
 
 You can now pass your profile to the `get-secrets` script.
 
 ```bash
-AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -> dev as seen above
+AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -> islandis-dev as seen above
 ```
 
 {% hint style="info" %}
 **Refresh your profile:** The SSO credentials only lasts 8 hours, after which AWS commands start failing. You can run the following command to renew your SSO credentials.
 
 ```bash
-aws configure sso --profile <profile-name> # e.g. profile-name -> dev as seen above
+aws sso login --profile <profile-name> # e.g. profile-name -> islandis-dev as seen above
 ```
 
 It will open the browser, go to your AWS account to log in and will refresh your credentials and you are ready to use the AWS commands again.
+{% endhint %}
+
+{% hint style="info" %}
+**Pre-configured AWS profiles:** Feel free to copy and paste these to your `~/.aws/config` file:
+
+```
+[profile islandis-dev]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 013313053092
+sso_role_name = AWSPowerUserAccess
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-staging]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 261174024191
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-prod]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 251502586493
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+```
+
+{% endhint %}
+
+{% hint style="info" %}
+**AWS Vault:** You can use [AWS Vault](https://github.com/99designs/aws-vault) to store and access AWS credentials in your operating system's secure keystore. When requesting credentials from an expired SSO session, it will automatically open a browser window for you to log in again.
+
+Just follow its [installation instructions](https://github.com/99designs/aws-vault#installing) and configure your `~/.aws/credentials` file like this:
+
+```
+[islandis-dev]
+credential_process = aws-vault exec islandis-dev --json
+
+# ... do the same thing for your other profiles.
+```
+
 {% endhint %}
 
 ### Using AWS session
@@ -131,9 +173,21 @@ An error occurred (ExpiredTokenException) when calling the GetParametersByPath o
 
 You can run the following command and will be prompted for input.
 
+**With SSO**
+
+```bash
+AWS_PROFILE=<profile-name> create-secret
+```
+
+**Without SSO**
+
 ```bash
 yarn create-secret
 ```
+
+{% hint style="warning" %}
+Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
+{% endhint %}
 
 You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
 
@@ -164,17 +218,40 @@ Are you sure [Y/n]? # [enter] to confirm
 It's recommended to use `SecureString` in most cases. However, if you need to add an email address, or an email sender's name to the secrets, you can just use a `String`.
 {% endhint %}
 
-{% hint style="warning" %}
-Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
+{% hint style="info" %}
+Note that this command only creates the secret in one AWS account at a time (eg `island-is-development01`). To create a secret in all environments, you need to run it with each corresponding AWS account configured, by going through the steps in [Using AWS session](#using-aws-session) multiple times.
+
+To make this easier we recommend configuring SSO for each AWS account using a different AWS profile (islandis-dev, islandis-staging, islandis-prod). Then you can create a secret in all environments like this:
+
+```bash
+# If your SSO session is expired and you're not using AWS Vault, you can log into any one profile since they all share the same SSO session.
+AWS_PROFILE=islandis-dev aws sso login
+
+AWS_PROFILE=islandis-dev yarn create-secret
+AWS_PROFILE=islandis-staging yarn create-secret
+AWS_PROFILE=islandis-prod yarn create-secret
+```
+
 {% endhint %}
+
+### Finalizing creating secrets
+
+In order to use the secrets in your app you need to add it to its `infra` configuration.
+
+1. Add the new secret to `your-app/infra/your-app.ts`
+2. Generate helm charts for your app with
+
+```
+yarn charts islandis
+```
+
+3. Follow the documentation on [Config Module](/libs/nest/config)
 
 ## Making dev secrets available locally
 
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file. _(**NOTE:** Each variable must be prefixed with `export ` for direnv to pick them up.)_
 
-Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
-
-All secrets labeled with the `dev` label can be fetched using `yarn get-secrets <project>`.
+Additionally, you can fetch secrets configured in a project's infra DSL from the `island-is-development01` AWS Parameter Store. Just run `yarn get-secrets <project>` and they'll be loaded into your `.env.secret` file.
 
 ## Environment variables with static websites
 

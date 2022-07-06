@@ -313,7 +313,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateIdentityResource',
         namespace,
         resources: name,
@@ -336,7 +336,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteIdentityResource',
         namespace,
         resources: name,
@@ -459,7 +459,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateApiScope',
         namespace,
         resources: name,
@@ -484,7 +484,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateApiResource',
         namespace,
         resources: name,
@@ -508,7 +508,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteApiScope',
         namespace,
         resources: name,
@@ -531,7 +531,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteApiResource',
         namespace,
         resources: name,
@@ -564,7 +564,7 @@ export class ResourcesController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeResourceUserClaim',
         namespace,
         resources: `${identityResourceName}/${claimName}`,
@@ -598,7 +598,7 @@ export class ResourcesController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiScopeUserClaim',
         namespace,
         resources: `${apiScopeName}/${claimName}`,
@@ -667,7 +667,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceUserClaim',
         namespace,
         resources: `${apiResourceName}/${claimName}`,
@@ -711,7 +711,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceSecret',
         namespace,
         resources: apiSecret.apiResourceName,
@@ -758,7 +758,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceAllowedScope',
         namespace,
         resources: `${apiResourceName}/${scopeName}`,
@@ -799,7 +799,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiScopeFromApiResourceScope',
         namespace,
         resources: scopeName,
@@ -863,7 +863,7 @@ export class ResourcesController {
   ): Promise<[number, ApiScopeGroup[]]> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateApiScopeGroup',
         resources: id,
@@ -885,7 +885,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteApiScopeGroup',
         resources: id,
@@ -945,7 +945,7 @@ export class ResourcesController {
   ): Promise<[number, Domain[]]> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateDomain',
         resources: name,
@@ -968,7 +968,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteDomain',
         resources: name,

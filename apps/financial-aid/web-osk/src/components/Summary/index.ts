@@ -1,0 +1,6 @@
+export { default as UserInfo } from './UserInfo'
+export { default as AllFiles } from './AllFiles'
+export { default as FormInfo } from './FormInfo'
+export { default as ContactInfo } from './ContactInfo'
+export { default as FormComment } from './FormComment'
+export { default as DirectTaxPaymentCell } from './DirectTaxPaymentCell'

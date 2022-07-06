@@ -9,6 +9,7 @@ import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
+import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
@@ -21,7 +22,6 @@ class MockPaymentApi {
       receptionID: faker.datatype.number(),
     }
   }
-
   async getCatalog() {
     return {
       item: [...Array.from({ length: 10 })].map((_, i) => ({
@@ -36,6 +36,7 @@ class MockPaymentApi {
   }
 }
 
+// TODO: mock the client instead - we are essentially not testing the service
 class MockPaymentService {
   async findApplicationById() {
     return {
@@ -61,9 +62,14 @@ class MockPaymentService {
     }
   }
 
+  makePaymentUrl() {
+    return 'asdf'
+  }
+
   async findPaymentByApplicationId() {
     return {
       fulfilled: true,
+      user4: 'amazing-user4-code-for-url',
     }
   }
 }
@@ -72,7 +78,7 @@ let server: request.SuperTest<request.Test>
 const nationalId = createCurrentUser().nationalId
 
 beforeAll(async () => {
-  app = await setup({
+  app = await setup(AppModule, {
     override: (builder) =>
       builder
         .overrideProvider(PaymentAPI)

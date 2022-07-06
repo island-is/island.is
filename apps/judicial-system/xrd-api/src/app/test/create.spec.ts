@@ -5,9 +5,9 @@ import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
 import { Case as TCase } from '@island.is/judicial-system/types'
 
-import { environment } from '../../environments'
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
+import appModuleConfig from '../app.config'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')
@@ -19,6 +19,7 @@ interface Then {
 
 type GivenWhenThen = (caseToCreate: CreateCaseDto) => Promise<Then>
 
+const config = appModuleConfig()
 describe('AppController - Greate', () => {
   let givenWhenThen: GivenWhenThen
 
@@ -46,12 +47,12 @@ describe('AppController - Greate', () => {
 
     it('should initiate case creation', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${environment.backend.url}/api/internal/case/`,
+        `${config.backend.url}/api/internal/case/`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${environment.auth.secretToken}`,
+            authorization: `Bearer ${config.backend.accessToken}`,
           },
           body: JSON.stringify(caseToCreate),
         },
@@ -76,7 +77,6 @@ describe('AppController - Greate', () => {
     })
 
     it('should return a new case', () => {
-      console.log(then)
       expect(then.result).toEqual({ id: caseId })
     })
   })
@@ -90,7 +90,7 @@ describe('AppController - Greate', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        message: 'Some message',
+        json: jest.fn().mockResolvedValueOnce({ detail: 'Some detail' }),
       })
 
       then = await givenWhenThen(caseToCreate)
@@ -98,7 +98,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Some detail')
     })
   })
 
@@ -110,6 +110,7 @@ describe('AppController - Greate', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: false,
+        json: jest.fn().mockResolvedValueOnce({ detail: 'Some detail' }),
       })
 
       then = await givenWhenThen(caseToCreate)
@@ -117,7 +118,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 
@@ -137,7 +138,7 @@ describe('AppController - Greate', () => {
 
     it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 
@@ -154,7 +155,7 @@ describe('AppController - Greate', () => {
 
     it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
-      expect(then.error.message).toBe('Could not create a new case')
+      expect(then.error.message).toBe('Failed to create a new case')
     })
   })
 })

@@ -11,7 +11,25 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
-import { Case } from '../case/models/case.model'
+import { Case } from '../case'
+
+const errorEmojis = [
+  ':sos:',
+  ':scream:',
+  ':exploding_head:',
+  ':cry:',
+  ':fearful:',
+  ':face_with_raised_eyebrow:',
+  ':unamused:',
+  ':face_with_monocle:',
+  ':skull_and_crossbones:',
+  ':see_no_evil:',
+  ':hear_no_evil:',
+  ':speak_no_evil:',
+  ':bomb:',
+  ':bangbang:',
+  ':x:',
+]
 
 const caseEvent = {
   CREATE: ':new: Krafa stofnuð',
@@ -26,6 +44,7 @@ const caseEvent = {
   DELETE: ':fire: Krafa dregin til baka',
   SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
   DISMISS: ':woman-shrugging: Kröfu vísað frá',
+  ARCHIVE: ':file_cabinet: Sett í geymslu',
 }
 
 export enum CaseEvent {
@@ -41,6 +60,7 @@ export enum CaseEvent {
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
+  ARCHIVE = 'ARCHIVE',
 }
 
 @Injectable()
@@ -56,12 +76,10 @@ export class EventService {
         return
       }
 
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
-        theCase.description ? ` - _${theCase.description}_` : ''
-      }`
+      const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
-        theCase.prosecutor?.institution
-          ? `${theCase.prosecutor?.institution?.name} `
+        theCase.creatingProsecutor?.institution
+          ? `${theCase.creatingProsecutor?.institution?.name} `
           : ''
       }*${theCase.policeCaseNumber}*`
       const courtText = theCase.court
@@ -87,7 +105,6 @@ export class EventService {
           blocks: [
             {
               type: 'section',
-              // color: '#2eb886',
               text: {
                 type: 'mrkdwn',
                 text: `*${caseEvent[event]}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
@@ -97,10 +114,53 @@ export class EventService {
         }),
       })
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
         `Failed to post event ${event} for case ${theCase.id}`,
-        error,
+        { error },
       )
+    }
+  }
+
+  postErrorEvent(
+    message: string,
+    info: { [key: string]: string | boolean | undefined },
+    reason: Error,
+  ) {
+    try {
+      if (!environment.events.errorUrl) {
+        return
+      }
+
+      let infoText = ''
+
+      if (info) {
+        let property: keyof typeof info
+        for (property in info) {
+          infoText = `${infoText}${property}: ${info[property]}\n`
+        }
+      }
+
+      fetch(`${environment.events.errorUrl}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `${
+                  errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
+                } *${message}:*\n${infoText}>${JSON.stringify(reason)}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(`Failed to post an error event`, { error })
     }
   }
 }

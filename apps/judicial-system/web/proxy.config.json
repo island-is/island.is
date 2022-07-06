@@ -1,5 +1,17 @@
 {
-  "/api": {
+  "/api/graphql": {
+    "target": "http://localhost:3333",
+    "secure": false
+  },
+  "/api/auth": {
+    "target": "http://localhost:3333",
+    "secure": false
+  },
+  "/api/case": {
+    "target": "http://localhost:3333",
+    "secure": false
+  },
+  "/api/feature": {
     "target": "http://localhost:3333",
     "secure": false
   }

@@ -18,8 +18,8 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
+  getThemeConfig,
   HeadWithSocialSharing,
-  lightThemes,
   NewsArticle,
   OrganizationWrapper,
 } from '@island.is/web/components'
@@ -28,6 +28,7 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 import { CustomNextError } from '../../units/errors'
 import { useRouter } from 'next/router'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -40,10 +41,11 @@ const NewsItem: Screen<NewsItemProps> = ({
   namespace,
   organizationPage,
 }) => {
-  useContentfulId(newsItem?.id)
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
+  useContentfulId(organizationPage.id, newsItem?.id)
+  useLocalLinkTypeResolver()
 
   // We only display breadcrumbs and highlighted nav item if the news has the
   // primary news tag of the organization
@@ -63,6 +65,14 @@ const NewsItem: Screen<NewsItemProps> = ({
     ? currentNavItem.primaryLink.text
     : n('newsTitle', 'Fréttir og tilkynningar')
 
+  const isNewsletter = newsItem?.genericTags?.some(
+    (x) => x.slug === 'frettabref',
+  )
+
+  const newsletterTitle = newsItem?.genericTags?.find(
+    (x) => x.slug === 'frettabref',
+  )?.title
+
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
@@ -77,10 +87,23 @@ const NewsItem: Screen<NewsItemProps> = ({
     ...(isOrganizationNews
       ? [
           {
+            isTag: true,
             title: newsOverviewTitle,
             href: linkResolver('organizationnewsoverview', [
               organizationPage.slug,
             ]).href,
+            typename: 'organizationnewsoverview',
+          },
+        ]
+      : []),
+    ...(isNewsletter
+      ? [
+          {
+            isTag: true,
+            title: newsletterTitle,
+            href:
+              linkResolver('organizationnewsoverview', [organizationPage.slug])
+                .href + '?tag=frettabref',
             typename: 'organizationnewsoverview',
           },
         ]
@@ -110,7 +133,7 @@ const NewsItem: Screen<NewsItemProps> = ({
           items: navList,
         }}
       >
-        <NewsArticle newsItem={newsItem} namespace={namespace} />
+        <NewsArticle newsItem={newsItem} />
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${newsItem.title} | ${organizationPage.title}`}
@@ -172,13 +195,11 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     newsItem,
     namespace,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

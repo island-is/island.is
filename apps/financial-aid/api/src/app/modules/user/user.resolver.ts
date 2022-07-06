@@ -1,4 +1,4 @@
-import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -8,10 +8,10 @@ import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 import { UserModel } from './user.model'
 
 import { StaffModel } from '../staff/models'
-import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { SpouseModel } from './spouseModel.model'
+import { CurrentUser } from '../decorators/currentUser.decorator'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -35,34 +35,32 @@ export class UserResolver {
   @Query(() => UserModel, { nullable: true })
   async currentUser(@CurrentUser() user: User): Promise<UserModel | undefined> {
     this.logger.debug('Getting current user')
+
     return user as UserModel
   }
 
   @ResolveField('spouse', () => SpouseModel)
   async spouse(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SpouseModel> {
-    return await backendApi.getSpouse(user.nationalId)
+    return await backendApi.getSpouse()
   }
 
   @ResolveField('currentApplicationId', () => String)
   async currentApplicationId(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplicationId(user.nationalId),
+      backendApi.getCurrentApplicationId(),
     )
   }
 
   @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
   async staff(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Staff | undefined> {
     this.logger.debug('Getting staff for nationalId')
-    return await backendApi.getStaff(user.nationalId)
+    return await backendApi.getStaff()
   }
 }

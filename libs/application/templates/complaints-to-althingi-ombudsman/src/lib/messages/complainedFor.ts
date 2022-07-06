@@ -107,7 +107,7 @@ export const complainedFor = {
       description: 'Complained for phone number',
     },
     powerOfAttorney: {
-      id: 'ctao.applaction:complainedFor.powerOfAttorney',
+      id: 'ctao.application:complainedFor.powerOfAttorney',
       defaultMessage: 'Umboð frá aðila',
       description: 'Label for power of attorney document upload',
     },

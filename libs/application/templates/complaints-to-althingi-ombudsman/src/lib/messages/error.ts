@@ -7,4 +7,9 @@ export const error = defineMessages({
     defaultMessage: 'Skylda er að fylla út reitinn',
     description: 'Error message when a required field has not been filled out',
   },
+  document: {
+    id: 'ctao.application:error.document',
+    defaultMessage: 'Skylda er að bæta við viðhengi',
+    description: 'Error message when a required field has not been filled out',
+  },
 })

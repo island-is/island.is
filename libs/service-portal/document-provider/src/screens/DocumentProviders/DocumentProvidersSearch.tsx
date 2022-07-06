@@ -49,6 +49,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
   return (
     <Box>
       <Input
+        size="xs"
         placeholder={formatMessage(m.documentProvidersSearchPlaceholder)}
         name="searchProviders"
         backgroundColor="blue"

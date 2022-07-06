@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
+
 import {
   AlertMessage,
   Box,
@@ -9,17 +14,17 @@ import {
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/components'
 import { Institution, UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useQuery } from '@apollo/client'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { titles } from '@island.is/judicial-system-web/messages'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import type { User } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
+
 import * as styles from './Users.css'
 
 interface UserData {
@@ -32,7 +37,7 @@ interface InstitutionData {
 export const Users: React.FC = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
-
+  const { formatMessage } = useIntl()
   const { data, error, loading } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -46,10 +51,6 @@ export const Users: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  useEffect(() => {
-    document.title = 'Notendur - Réttarvörslugátt'
-  }, [])
-
   const users = data?.users.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
@@ -57,7 +58,7 @@ export const Users: React.FC = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${Constants.USER_CHANGE_ROUTE}/${user.id}`)
+    router.push(`${constants.USER_CHANGE_ROUTE}/${user.id}`)
   }
 
   const userRoleToString = (userRole: UserRole) => {
@@ -75,11 +76,12 @@ export const Users: React.FC = () => {
 
   return (
     <div className={styles.userControlContainer}>
+      <PageHeader title={formatMessage(titles.admin.users)} />
       <div className={styles.logoContainer}>
         <Button
           icon="add"
           onClick={() => {
-            router.push(Constants.USER_NEW_ROUTE)
+            router.push(constants.USER_NEW_ROUTE)
           }}
         >
           Nýr notandi

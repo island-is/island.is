@@ -1,10 +1,4 @@
-import cookies from 'next-cookies'
-
 import { Role } from '@island.is/skilavottord-web/graphql/schema'
-
-const CSRF_COOKIE_NAME = 'skilavottord.csrf'
-
-type CookieContext = { req?: { headers: { cookie?: string } } }
 
 type Page =
   | 'myCars'
@@ -13,14 +7,8 @@ type Page =
   | 'recycledVehicles'
   | 'recyclingCompanies'
   | 'accessControl'
-
-export const getCsrfToken = (ctx: CookieContext) => {
-  return cookies(ctx || {})[CSRF_COOKIE_NAME]
-}
-
-export const isAuthenticated = (ctx: CookieContext) => {
-  return Boolean(getCsrfToken(ctx))
-}
+  | 'accessControlCompany'
+  | 'companyInfo'
 
 export const isDeveloper = (role: Role) => role === Role.developer
 
@@ -31,14 +19,14 @@ export const hasPermission = (page: Page, role: Role) => {
 
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
+    recyclingCompanyAdmin: [
+      'deregisterVehicle',
+      'companyInfo',
+      'accessControlCompany',
+    ],
     citizen: ['myCars', 'recycleVehicle'],
-    recyclingFund: ['recycledVehicles', 'recyclingCompanies'], // 'accessControl'
+    recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
   }
 
   return permittedRoutes[role].includes(page)
-}
-
-export const AUTH_URL = {
-  citizen: '/api/auth/citizen',
-  recyclingPartner: '/api/auth/company',
 }

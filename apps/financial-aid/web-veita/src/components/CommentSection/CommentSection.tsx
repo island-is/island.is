@@ -3,9 +3,7 @@ import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
-import cn from 'classnames'
 
-import * as styles from './CommentSection.css'
 import { useMutation } from '@apollo/client'
 import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
@@ -13,6 +11,7 @@ import {
   ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
 import { AdminContext } from '../AdminProvider/AdminProvider'
+import AnimateHeight from 'react-animate-height'
 
 interface Props {
   className?: string
@@ -55,23 +54,20 @@ const CommentSection = ({ className, setApplication }: Props) => {
 
   return (
     <Box marginBottom={3} className={`${className} `}>
-      <Button
-        icon={showInput ? 'close' : 'open'}
-        size="small"
-        iconType="outline"
-        onClick={() => {
-          setShowInput(!showInput)
-        }}
-      >
-        {showInput ? 'Loka' : 'Skrifa athugasemd'}
-      </Button>
+      <Box marginBottom={3}>
+        <Button
+          icon={showInput ? 'close' : 'pencil'}
+          size="small"
+          iconType="outline"
+          onClick={() => {
+            setShowInput((showInput) => !showInput)
+          }}
+        >
+          {showInput ? 'Loka' : 'Skrifa athugasemd'}
+        </Button>
+      </Box>
 
-      <div
-        className={cn({
-          [`${styles.inputFieldContainer}`]: true,
-          [`${styles.showInput}`]: showInput,
-        })}
-      >
+      <AnimateHeight duration={250} height={showInput ? 'auto' : 0}>
         <Input
           backgroundColor="blue"
           label="Athugasemd"
@@ -96,7 +92,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
             Vista athugasemd
           </Button>
         </Box>
-      </div>
+      </AnimateHeight>
     </Box>
   )
 }

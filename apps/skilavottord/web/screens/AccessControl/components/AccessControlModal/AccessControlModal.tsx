@@ -1,5 +1,5 @@
 import React, { BaseSyntheticEvent, FC } from 'react'
-import { Control, Controller, ValidationRules } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 import { FieldError, FieldValues } from 'react-hook-form/dist/types/form'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
 import * as kennitala from 'kennitala'
@@ -21,7 +21,8 @@ interface AccessControlModalProps
   roles: Option[]
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
-  isNationalIdDisabled?: boolean
+  nationalIdDisabled?: boolean
+  partnerIdRequired?: boolean
 }
 
 export const AccessControlModal: FC<AccessControlModalProps> = ({
@@ -32,7 +33,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   onSubmit,
   recyclingPartners,
   roles,
-  isNationalIdDisabled = false,
+  nationalIdDisabled = false,
+  partnerIdRequired = false,
   errors,
   control,
 }) => {
@@ -46,7 +48,9 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
       text={text}
       show={show}
       onCancel={onCancel}
-      onContinue={() => {}}
+      onContinue={() => {
+        // Intentionally left empty
+      }}
       continueButtonText={t.modal.buttons.continue}
       cancelButtonText={t.modal.buttons.cancel}
     >
@@ -58,29 +62,27 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             required
             label={t.modal.inputs.nationalId.label}
             placeholder={t.modal.inputs.nationalId.placeholder}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.nationalId.rules?.required,
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.nationalId.rules?.required,
+              },
+              validate: {
+                value: (value: number) => {
+                  if (
+                    value.toString().length === 10 &&
+                    !kennitala.isPerson(value)
+                  ) {
+                    return t.modal.inputs.nationalId.rules?.validate
+                  }
                 },
-                validate: {
-                  value: (value: number) => {
-                    if (
-                      value.toString().length === 10 &&
-                      !kennitala.isPerson(value)
-                    ) {
-                      return t.modal.inputs.nationalId.rules?.validate
-                    }
-                  },
-                },
-              } as ValidationRules
-            }
+              },
+            }}
             type="tel"
             format="######-####"
             error={errors?.nationalId?.message}
             backgroundColor="blue"
-            disabled={isNationalIdDisabled}
+            disabled={nationalIdDisabled}
           />
           <InputController
             id="name"
@@ -88,28 +90,59 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             required
             label={t.modal.inputs.name.label}
             placeholder={t.modal.inputs.name.placeholder}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.name.rules?.required,
-                },
-              } as ValidationRules
-            }
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.name.rules?.required,
+              },
+            }}
             error={errors?.name?.message}
+            backgroundColor="blue"
+          />
+          <InputController
+            id="email"
+            control={control}
+            required
+            label={t.modal.inputs.email.label}
+            placeholder={t.modal.inputs.email.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.email.rules?.required,
+              },
+              pattern: {
+                value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                message: t.modal.inputs.email.rules?.validate,
+              },
+            }}
+            error={errors?.email?.message}
+            backgroundColor="blue"
+          />
+          <InputController
+            id="phone"
+            control={control}
+            required
+            label={t.modal.inputs.phone.label}
+            placeholder={t.modal.inputs.phone.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.phone.rules?.required,
+              },
+            }}
+            type="tel"
+            error={errors?.phone?.message}
             backgroundColor="blue"
           />
           <Controller
             name="role"
             control={control}
-            rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.role.rules?.required,
-                },
-              } as ValidationRules
-            }
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.role.rules?.required,
+              },
+            }}
             render={({ onChange, value, name }) => {
               return (
                 <Select
@@ -132,17 +165,18 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             name="partnerId"
             control={control}
             rules={
-              {
-                required: {
-                  value: true,
-                  message: t.modal.inputs.partner.rules?.required,
-                },
-              } as ValidationRules
+              partnerIdRequired
+                ? {
+                    required: {
+                      value: true,
+                      message: t.modal.inputs.partner.rules?.required,
+                    },
+                  }
+                : {}
             }
             render={({ onChange, value, name }) => {
               return (
                 <Select
-                  required
                   name={name}
                   label={t.modal.inputs.partner.label}
                   placeholder={t.modal.inputs.partner.placeholder}
@@ -153,6 +187,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   backgroundColor="blue"
                   options={recyclingPartners}
                   onChange={onChange}
+                  required={partnerIdRequired}
+                  isCreatable
                 />
               )
             }}

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Button, NavigationItem, Text } from '@island.is/island-ui/core'
+import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -12,30 +12,31 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  lightThemes,
+  getThemeConfig,
   OrganizationSlice,
   OrganizationWrapper,
   SearchBox,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
 }
 
-const WITH_SEARCH = ['syslumenn', 'sjukratryggingar', 'utlendingastofnun']
+const WITH_SEARCH = [
+  'syslumenn',
+  'district-commissioner',
+
+  'sjukratryggingar',
+  'health-insurance-in-iceland',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+]
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id)
 
@@ -53,12 +54,12 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
+      showExternalLinks={true}
       pageTitle={organizationPage.title}
       pageDescription={organizationPage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={true}
-      namespace={namespace}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
@@ -72,22 +73,21 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         />
       ))}
       sidebarContent={
-        <>
-          {WITH_SEARCH.includes(organizationPage.slug) && (
-            <SearchBox
-              organizationPage={organizationPage}
-              placeholder={n('searchServices', 'Leitaðu að þjónustu')}
-              noResultsText={n(
-                'noServicesFound',
-                'Engar niðurstöður í þjónustu sýslumanna',
-              )}
-              searchAllText={n(
-                'searchAllServices',
-                'Leita í öllu efni Ísland.is',
-              )}
-            />
-          )}
-        </>
+        WITH_SEARCH.includes(organizationPage.slug) && (
+          <SearchBox
+            id="sidebar"
+            organizationPage={organizationPage}
+            placeholder={n('searchServices', 'Leitaðu að þjónustu')}
+            noResultsText={n(
+              'noServicesFound',
+              'Engar niðurstöður í þjónustu sýslumanna',
+            )}
+            searchAllText={n(
+              'searchAllServices',
+              'Leita í öllu efni Ísland.is',
+            )}
+          />
+        )
       }
     >
       {organizationPage.bottomSlices.map((slice) => (
@@ -124,7 +124,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },
@@ -140,13 +140,11 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

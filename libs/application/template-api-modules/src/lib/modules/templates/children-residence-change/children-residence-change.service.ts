@@ -5,7 +5,7 @@ import {
   Person,
   Attachment,
   PersonType,
-} from '@island.is/api/domains/syslumenn'
+} from '@island.is/clients/syslumenn'
 import {
   getSelectedChildrenFromExternalData,
   formatDate,
@@ -20,7 +20,7 @@ import {
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
@@ -129,8 +129,10 @@ export class ChildrenResidenceChangeService {
       childResidenceInfo.future.address.postalCode,
     )
 
+    const uploadDataName = 'Lögheimilisbreyting barns'
+
     const response = await this.syslumennService
-      .uploadData(participants, attachment, extraData)
+      .uploadData(participants, attachment, extraData, uploadDataName)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
@@ -148,7 +150,7 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           answers.parentA.email,
           syslumennData.name,
-          response?.malsnumer,
+          response?.caseNumber,
         ),
       (application as unknown) as Application,
     )
@@ -160,7 +162,7 @@ export class ChildrenResidenceChangeService {
           fileContent.toString('binary'),
           answers.parentB.email,
           syslumennData.name,
-          response?.malsnumer,
+          response?.caseNumber,
         ),
       (application as unknown) as Application,
     )

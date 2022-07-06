@@ -1,17 +1,32 @@
 'use strict'
 const faker = require('faker')
 
-const getRandomFlightLeg = (flightId, flightDate) => {
+// Good to have one test user accumulate more than the statistically
+// likely singular flight leg.
+const specific_test_user = faker.phone.phoneNumber('##########')
+
+const pairings = [
+  [
+    ['REK', 'AEY'],
+    ['REK', 'AEY'],
+    ['AEY', 'REK'],
+    ['AEY', 'REK'],
+  ],
+  [
+    ['AEY', 'REK'],
+    ['AEY', 'THO'],
+    ['REK', 'AEY'],
+    ['THO', 'AEY'],
+  ],
+]
+
+const getRandomFlightLeg = (flightId, flightDate, pairing) => {
   const randomPrice = 10000 + (0.5 - Math.random()) * 10000
   return {
     id: faker.datatype.uuid(),
     flight_id: flightId,
-    origin: [65, 65, 65]
-      .map((i) => String.fromCharCode(i + Math.floor(Math.random() * 26)))
-      .join(''),
-    destination: [65, 65, 65]
-      .map((i) => String.fromCharCode(i + Math.floor(Math.random() * 26)))
-      .join(''),
+    origin: pairing[0],
+    destination: pairing[1],
     original_price: randomPrice,
     discount_price: 0.6 * randomPrice,
     date: flightDate,
@@ -23,7 +38,7 @@ const getRandomFlightLeg = (flightId, flightDate) => {
     ],
     cooperation: null,
     financial_state_updated: flightDate,
-    is_connecting_flight: false,
+    is_connecting_flight: pairing[0] === 'THO' || pairing[1] === 'THO',
   }
 }
 
@@ -52,12 +67,22 @@ module.exports = {
     const flights = []
     const flight_legs = []
     for (let i = 0; i < 100; i++) {
-      const flight = getRandomFlight(faker.phone.phoneNumber('##########'))
+      const nationalId =
+        i < 2 ? specific_test_user : faker.phone.phoneNumber('##########')
+      const pairingLeg = Math.round(Math.random() * (pairings[0].length - 1))
+      const flight = getRandomFlight(nationalId)
       flights.push(flight)
-      for (let j = 0; j < faker.datatype.number(2); j++) {
-        flight_legs.push(getRandomFlightLeg(flight.id, flight.created))
+      for (let j = 0; j < faker.datatype.number({ min: 1, max: 2 }); j++) {
+        flight_legs.push(
+          getRandomFlightLeg(
+            flight.id,
+            flight.created,
+            pairings[j][pairingLeg],
+          ),
+        )
       }
     }
+
     await queryInterface.bulkInsert('flight', flights)
     await queryInterface.bulkInsert('flight_leg', flight_legs)
   },

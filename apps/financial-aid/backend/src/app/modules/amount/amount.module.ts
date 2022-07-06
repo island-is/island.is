@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AmountModel } from './models'
 import { AmountService } from './amount.service'
-import { DeductionFactorsModule } from '../deductionFactors'
+import { DeductionFactorsModule } from '../index'
 
 @Module({
   imports: [SequelizeModule.forFeature([AmountModel]), DeductionFactorsModule],

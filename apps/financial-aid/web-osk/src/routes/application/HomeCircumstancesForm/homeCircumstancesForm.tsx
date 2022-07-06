@@ -48,7 +48,7 @@ const HomeCircumstancesForm = () => {
 
     if (
       form?.homeCircumstances === HomeCircumstances.OTHER &&
-      !Boolean(form?.homeCircumstancesCustom)
+      !form?.homeCircumstancesCustom
     ) {
       setHasError(true)
       return
@@ -86,16 +86,19 @@ const HomeCircumstancesForm = () => {
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: hasError && !form?.homeCircumstances,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {hasError && !form?.homeCircumstances && (
+          <div
+            data-testid="errorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: hasError && !form?.homeCircumstances,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
         <Box
           marginTop={1}
@@ -106,22 +109,24 @@ const HomeCircumstancesForm = () => {
               form?.homeCircumstances === HomeCircumstances.OTHER,
           })}
         >
-          <Input
-            backgroundColor={'blue'}
-            label="Lýstu þínum aðstæðum"
-            name="homeCircumstancesCustom"
-            rows={8}
-            textarea
-            value={form?.homeCircumstancesCustom}
-            hasError={hasError && !Boolean(form?.homeCircumstancesCustom)}
-            errorMessage="Þú þarft að skrifa í textareitinn"
-            onChange={(event) => {
-              updateForm({
-                ...form,
-                homeCircumstancesCustom: event.target.value,
-              })
-            }}
-          />
+          {form?.homeCircumstances === HomeCircumstances.OTHER && (
+            <Input
+              backgroundColor={'blue'}
+              label="Lýstu þínum aðstæðum"
+              name="homeCircumstancesCustom"
+              rows={8}
+              textarea
+              value={form?.homeCircumstancesCustom}
+              hasError={hasError && !form?.homeCircumstancesCustom}
+              errorMessage="Þú þarft að skrifa í textareitinn"
+              onChange={(event) => {
+                updateForm({
+                  ...form,
+                  homeCircumstancesCustom: event.target.value,
+                })
+              }}
+            />
+          )}
         </Box>
       </ContentContainer>
 

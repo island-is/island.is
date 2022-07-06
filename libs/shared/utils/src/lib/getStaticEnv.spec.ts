@@ -48,4 +48,12 @@ describe('getStaticEnv', () => {
 
     expect(value).toBe('VALUE')
   })
+
+  it('should get APP_VERSION value', () => {
+    mockGetElementById(JSON.stringify({ APP_VERSION: 'VALUE' }))
+
+    const value = getStaticEnv('APP_VERSION')
+
+    expect(value).toBe('VALUE')
+  })
 })

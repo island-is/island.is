@@ -204,7 +204,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'createTestProvider',
         resources: input.nationalId,
@@ -228,16 +228,18 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateTestEndpoint',
         resources: input.nationalId,
         meta: { fields: Object.keys(input) },
       },
       this.documentProviderService.updateEndpointOnTest(
+        input.nationalId,
         input.endpoint,
         input.providerId,
         input.xroad || false,
+        user,
       ),
     )
   }
@@ -253,15 +255,17 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'runEndpointTests',
         resources: input.nationalId,
       },
       this.documentProviderService.runEndpointTests(
+        input.nationalId,
         input.recipient,
         input.documentId,
         input.providerId,
+        user,
       ),
     )
   }
@@ -277,7 +281,7 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'createProvider',
         resources: input.nationalId,
@@ -301,13 +305,14 @@ export class DocumentProviderResolver {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateEndpoint',
         resources: input.nationalId,
         meta: { fields: Object.keys(input) },
       },
       this.documentProviderService.updateEndpoint(
+        input.nationalId,
         input.endpoint,
         input.providerId,
         input.xroad || false,

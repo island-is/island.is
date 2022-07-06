@@ -6,15 +6,14 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   Field,
-  FormatMessage,
   FormValue,
-  getValueViaPath,
   Option,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -39,6 +38,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
+import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -387,10 +387,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParentObj.chooseOtherParent',
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -398,6 +398,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as SchemaFormValues['otherParentRightOfAccess']
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
+
+  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
@@ -422,13 +424,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentName',
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentId',
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -466,6 +479,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -526,6 +544,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
+    useUnion,
     union,
     usePrivatePensionFund,
     privatePensionFund,
@@ -534,6 +553,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
@@ -542,6 +562,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -649,6 +670,21 @@ export const getOtherParentName = (
     return spouse.name
   }
 
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
+    }
+
+    return spouse.name
+  }
+
   return otherParentName
 }
 
@@ -710,7 +746,9 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
 
-      const calculatedLength = calculatePeriodLength(start, end, percentage)
+      const calculatedLength = period.daysToUse
+        ? Number(period.daysToUse)
+        : calculatePeriodLength(start, end, percentage)
 
       return total + calculatedLength
     }, 0),
@@ -742,4 +780,18 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
+}
+
+const getMobilePhoneNumber = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber
+}
+
+export const removeCountryCode = (application: Application) => {
+  return getMobilePhoneNumber(application)?.startsWith('+354')
+    ? getMobilePhoneNumber(application)?.slice(4)
+    : getMobilePhoneNumber(application)?.startsWith('00354')
+    ? getMobilePhoneNumber(application)?.slice(5)
+    : getMobilePhoneNumber(application)
 }

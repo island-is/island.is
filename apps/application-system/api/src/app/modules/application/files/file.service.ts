@@ -6,24 +6,21 @@ import {
   RequestTimeoutException,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { PdfTypes } from '@island.is/application/core'
-import { Application } from './../application.model'
+import { PdfTypes } from '@island.is/application/types'
+import { Application } from '@island.is/application/api/core'
 import { SigningService } from '@island.is/dokobit-signing'
 import {
   BucketTypePrefix,
   DokobitFileName,
   DokobitErrorCodes,
 } from './utils/constants'
-import { AwsService } from './aws.service'
+import { AwsService } from '@island.is/nest/aws'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { JCAApplication } from '@island.is/application/templates/joint-custody-agreement'
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
-import {
-  generateJointCustodyPdf,
-  generateResidenceChangePdf,
-} from './pdfGenerators'
+import { generateResidenceChangePdf } from './pdfGenerators'
+import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class FileService {
@@ -42,7 +39,11 @@ export class FileService {
 
     if ((await this.awsService.fileExists(bucket, fileName)) === false) {
       const content = await this.createFile(application, pdfType)
-      await this.awsService.uploadFile(content, bucket, fileName)
+      await this.awsService.uploadFile(content, bucket, fileName, {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      })
     }
 
     return await this.awsService.getPresignedUrl(bucket, fileName)
@@ -58,7 +59,7 @@ export class FileService {
     const bucket = this.getBucketName()
 
     await this.signingService
-      .getSignedDocument(DokobitFileName[pdfType], documentToken)
+      .waitForSignature(DokobitFileName[pdfType], documentToken)
       .then(async (file) => {
         const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
         await this.awsService.uploadFile(
@@ -120,9 +121,6 @@ export class FileService {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
-      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        return await generateJointCustodyPdf(application as JCAApplication)
-      }
     }
   }
 
@@ -182,31 +180,6 @@ export class FileService {
           name,
         }
       }
-      case PdfTypes.JOINT_CUSTODY_AGREEMENT: {
-        const { answers, externalData, state } = application as JCAApplication
-        const { nationalRegistry } = externalData
-        const isParentA = state === 'draft'
-        const applicant = nationalRegistry?.data
-        const parentB = getOtherParentInformation(
-          applicant.children,
-          answers.selectedChildren,
-        )
-        const { name, phoneNumber } = isParentA
-          ? {
-              name: applicant.fullName,
-              phoneNumber: answers.parentA.phoneNumber,
-            }
-          : {
-              name: parentB.fullName,
-              phoneNumber: answers.parentB.phoneNumber,
-            }
-
-        return {
-          phoneNumber,
-          title: 'Sameiginleg forsjá barns',
-          name,
-        }
-      }
     }
   }
 
@@ -228,5 +201,11 @@ export class FileService {
     }
 
     return bucket
+  }
+
+  async getAttachmentPresignedURL(fileName: string) {
+    const { bucket, key } = AmazonS3URI(fileName)
+    const url = await this.awsService.getPresignedUrl(bucket, key)
+    return { url }
   }
 }

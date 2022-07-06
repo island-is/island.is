@@ -21,7 +21,7 @@ import { ClientClaim } from './client-claim.model'
 @Table({
   tableName: 'client',
 })
-export class Client extends Model<Client> {
+export class Client extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -458,6 +458,16 @@ export class Client extends Model<Client> {
     example: true,
   })
   supportsProcuringHolders!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  supportsPersonalRepresentatives!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

@@ -2,15 +2,19 @@ import * as s from './RegulationDisplay.css'
 
 import React, { memo, useMemo } from 'react'
 import { Icon, Link } from '@island.is/island-ui/core'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { toISODate } from '@island.is/regulations'
+import { toISODate, RegulationMaybeDiff } from '@island.is/regulations'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
-    const { timelineDate, history, lastAmendDate } = regulation
+    const {
+      timelineDate,
+      history: regulationHistory,
+      lastAmendDate,
+    } = regulation
+    const history = regulationHistory.filter((h) => h.status === 'published')
 
     const changes = history.filter(({ effect }) => effect !== 'repeal')
 

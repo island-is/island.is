@@ -1,10 +1,11 @@
 import { MessageDescriptor } from '@formatjs/intl'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { LoginService } from '../../lib/dataSchema'
-import { applicant, technicalContact, technicalInfo } from '../../lib/messages'
+import { applicant, technicalAnnouncements, terms } from '../../lib/messages'
 
 interface ValueLineProps {
   title?: MessageDescriptor
@@ -37,6 +38,13 @@ export const Overview = ({ application }: FieldBaseProps) => {
 
   return (
     <>
+      <Text variant="h2" marginBottom={3}>
+        {formatMessage(terms.general.pageTitle)}
+      </Text>
+      <ValueLine
+        title={terms.labels.termsAgreementApprovalForOverview}
+        value={formatMessage(terms.labels.yesLabel)}
+      />
       <Text variant="h2" marginBottom={3}>
         {formatText(applicant.general.pageTitle, application, formatMessage)}
       </Text>
@@ -73,60 +81,29 @@ export const Overview = ({ application }: FieldBaseProps) => {
       />
       <Text variant="h2" marginTop={3} marginBottom={3}>
         {formatText(
-          technicalContact.general.pageTitle,
+          technicalAnnouncements.general.pageTitle,
           application,
           formatMessage,
         )}
       </Text>
-      {answers.technicalContact.name && (
+      {answers.technicalAnnouncements.email && (
         <ValueLine
-          title={technicalContact.labels.name}
-          value={answers.technicalContact.name}
+          title={technicalAnnouncements.labels.email}
+          value={answers.technicalAnnouncements.email}
         />
       )}
-      {answers.technicalContact.email && (
+      {answers.technicalAnnouncements.phoneNumber && (
         <ValueLine
-          title={technicalContact.labels.email}
-          value={answers.technicalContact.email}
+          title={technicalAnnouncements.labels.tel}
+          value={answers.technicalAnnouncements.phoneNumber}
         />
       )}
-      {answers.technicalContact.phoneNumber && (
+      {answers.technicalAnnouncements.type && (
         <ValueLine
-          title={technicalContact.labels.tel}
-          value={answers.technicalContact.phoneNumber}
+          title={technicalAnnouncements.labels.type}
+          value={answers.technicalAnnouncements.type}
         />
       )}
-      <ValueLine
-        title={technicalContact.labels.techAnnouncementsEmail}
-        value={answers.technicalContact.techAnnouncementsEmail}
-      />
-      <Text variant="h2" marginTop={3} marginBottom={3}>
-        {formatText(
-          technicalInfo.general.pageTitle,
-          application,
-          formatMessage,
-        )}
-      </Text>
-      <ValueLine
-        title={technicalInfo.labels.type}
-        value={answers.technicalInfo.type}
-      />
-      {answers.technicalInfo.devReturnUrl && (
-        <ValueLine
-          title={technicalInfo.labels.devReturnUrl}
-          value={answers.technicalInfo.devReturnUrl}
-        />
-      )}
-      {answers.technicalInfo.stagingReturnUrl && (
-        <ValueLine
-          title={technicalInfo.labels.stagingReturnUrl}
-          value={answers.technicalInfo.stagingReturnUrl}
-        />
-      )}
-      <ValueLine
-        title={technicalInfo.labels.prodReturnUrl}
-        value={answers.technicalInfo.prodReturnUrl}
-      />
     </>
   )
 }

@@ -1,16 +1,16 @@
 import winston from 'winston'
 import WinstonCloudWatch from 'winston-cloudwatch'
-import { format, TransformableInfo } from 'logform'
+import { TransformableInfo } from 'logform'
 import { createHash } from 'crypto'
 import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { User } from '@island.is/auth-nest-tools'
+import type { Auth } from '@island.is/auth-nest-tools'
 import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 
 export interface AuditMessage {
-  user: User
+  auth: Auth
   action: string
   namespace?: string
   resources?: string | string[]
@@ -18,7 +18,7 @@ export interface AuditMessage {
 }
 
 export type AuditTemplate<ResultType> = {
-  user: User
+  auth: Auth
   action: string
   namespace?: string
   resources?: string | string[] | ((result: ResultType) => string | string[])
@@ -80,8 +80,19 @@ export class AuditService {
     }
   }
 
+  private getClients(auth: Auth) {
+    const clients: string[] = []
+    let act = auth.act
+    while (act) {
+      clients.unshift(act.client_id)
+      act = act.act
+    }
+    clients.unshift(auth.client)
+    return clients
+  }
+
   private formatMessage({
-    user,
+    auth,
     namespace = this.defaultNamespace,
     action,
     resources,
@@ -93,15 +104,16 @@ export class AuditService {
       )
     }
     const message = {
-      subject: user.nationalId,
-      actor: user.actor ? user.actor.nationalId : user.nationalId,
-      client: [user.client],
+      subject: auth.nationalId,
+      actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
+      client: this.getClients(auth),
       action: `${namespace}#${action}`,
       resources:
         resources && (typeof resources === 'string' ? [resources] : resources),
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion: process.env.APP_VERSION,
     }
 
     return this.useDevLogger ? { message: 'Audit record', ...message } : message
@@ -121,7 +133,7 @@ export class AuditService {
   ): Promise<ResultType> {
     return promise.then((result) => {
       const message: AuditMessage = {
-        user: template.user,
+        auth: template.auth,
         action: template.action,
         namespace: template.namespace,
         resources: this.unwrap(template.resources, result),

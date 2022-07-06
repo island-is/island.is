@@ -17,31 +17,41 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     options: { email = { sender: 'Ísland.is', address: 'no-reply@island.is' } },
   } = props
 
-  const applicationFor: DrivingLicenseApplicationType =
-    (application.answers?.applicationFor as DrivingLicenseApplicationType) ??
-    'B-full'
+  const applicationFor =
+    getValueViaPath<DrivingLicenseApplicationType>(
+      application.answers,
+      'applicationFor',
+    ) ?? 'B-full'
 
   const applicantEmail =
-    getValueViaPath(application.answers, 'email') ||
-    getValueViaPath(application.externalData, 'userProfile.data.email')
+    getValueViaPath<string>(application.answers, 'email') ||
+    getValueViaPath<string>(application.externalData, 'userProfile.data.email')
+
+  if (!applicantEmail) {
+    throw new Error('Cannot compose email message - Applicant has no email')
+  }
 
   const willBringQualityPhoto =
     includes(
-      application.answers?.willBringQualityPhoto as YesOrNoAnswer,
+      getValueViaPath<YesOrNoAnswer>(
+        application.answers,
+        'willBringQualityPhoto',
+      ),
       'yes',
     ) || applicationFor === 'B-temp'
 
   const willBringHealthCert = includes(
-    application.answers?.healthDeclaration as YesOrNoAnswer,
+    getValueViaPath<YesOrNoAnswer>(application.answers, 'healthDeclaration'),
     'yes',
   )
 
-  const firstName = (application.externalData
-    ?.nationalRegistry as ExternalDataNationalRegistry).data?.fullName?.split(
-    ' ',
-  )[0]
+  const nationalRegistryDetails = getValueViaPath<ExternalDataNationalRegistry>(
+    application.externalData,
+    'nationalRegistry',
+  )
+  const [firstName] = nationalRegistryDetails?.data?.fullName?.split(' ') ?? []
 
-  const selectedJuristictionId = getValueViaPath<number>(
+  const selectedJurisdictionId = getValueViaPath<number>(
     application.answers,
     'juristiction',
   )
@@ -51,14 +61,14 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     'juristictions.data',
   )
 
-  if (!juristictions || !selectedJuristictionId) {
+  if (!juristictions || !selectedJurisdictionId) {
     throw new Error(
       'no juristiction or selected juristication ID - not handled',
     )
   }
 
   const juristictionInfo = juristictions.find(
-    (x) => x.id == selectedJuristictionId,
+    (x) => x.id == selectedJurisdictionId,
   )
 
   return {
@@ -69,7 +79,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: applicantEmail,
       },
     ],
     subject: m.drivingLicenseSubject[applicationFor],

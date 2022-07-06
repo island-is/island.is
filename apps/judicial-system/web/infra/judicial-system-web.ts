@@ -1,5 +1,4 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'judicial-system-api'>
@@ -14,6 +13,11 @@ export const serviceSetup = (services: {
       },
       INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),
     })
+    .secrets({
+      NATIONAL_REGISTRY_API_KEY:
+        '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
+    })
     .liveness('/liveness')
     .readiness('/readiness')
     .ingress({
@@ -24,5 +28,19 @@ export const serviceSetup = (services: {
           prod: 'rettarvorslugatt.island.is',
         },
         paths: ['/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })

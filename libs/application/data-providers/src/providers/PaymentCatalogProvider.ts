@@ -1,9 +1,9 @@
 import { PaymentCatalogItem } from '@island.is/api/schema'
-import { BasicDataProvider } from '@island.is/application/core'
+import { BasicDataProvider } from '@island.is/application/types'
 
 export abstract class PaymentCatalogProvider extends BasicDataProvider {
   async getCatalogForOrganization(
-    organizationId: string,
+    organizationId?: string,
   ): Promise<PaymentCatalogItem[] | null> {
     const query = `
       query PaymentCatalogProvider($input: PaymentCatalogInput!) {

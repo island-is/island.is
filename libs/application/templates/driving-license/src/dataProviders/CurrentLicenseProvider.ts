@@ -1,26 +1,35 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
-import { Eligibility } from '../types/schema'
+import { Eligibility, DrivingLicense } from '../types/schema'
 
+export interface CurrentLicenseProviderResult {
+  currentLicense: Eligibility['name'] | null
+  healthRemarks?: string[]
+}
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
 
   async provide(
     application: Application,
-  ): Promise<{ currentLicense: Eligibility['name'] | null }> {
-    const fakeData = application.answers.fakeData as
-      | DrivingLicenseFakeData
-      | undefined
-
+  ): Promise<CurrentLicenseProviderResult> {
+    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+        healthRemarks:
+          fakeData.healthRemarks === YES
+            ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
+            : undefined,
       }
     }
 
@@ -30,11 +39,14 @@ export class CurrentLicenseProvider extends BasicDataProvider {
           categories {
             name
           }
+          healthRemarks
         }
       }
     `
 
-    const res = await this.useGraphqlGateway(query)
+    const res = await this.useGraphqlGateway<{
+      drivingLicense: DrivingLicense | null
+    }>(query)
 
     if (!res.ok) {
       console.error('[CurrentLicenseProvider]', await res.json())
@@ -49,11 +61,13 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
-
-    const [currentLicense] = response.data.drivingLicense.categories
+    const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
+      (cat) => cat.name === 'B',
+    )
 
     return {
-      currentLicense: currentLicense || null,
+      currentLicense: categoryB ? categoryB.name : null,
+      healthRemarks: response.data?.drivingLicense?.healthRemarks,
     }
   }
 
@@ -62,11 +76,12 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       date: new Date(),
       reason: m.errorDataProvider,
       status: 'failure',
-      data: {},
     }
   }
 
-  onProvideSuccess(result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: CurrentLicenseProviderResult,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

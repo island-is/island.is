@@ -218,12 +218,12 @@ export const Navigation: FC<NavigationProps> = ({
             {...menu}
             className={styles.menuBtn}
             onClick={() => menu.show}
+            aria-label={title}
           >
             <MobileButton
               title={activeItemTitle ?? title}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
-              aria-controls={'OpenNavigationDialog'}
             />
           </MenuButton>
           <Menu
@@ -264,6 +264,7 @@ export const Navigation: FC<NavigationProps> = ({
             <Box background={dividerColor} className={styles.divider} />
           </Box>
           <NavigationTree
+            id="desktop"
             items={items}
             colorScheme={colorScheme}
             renderLink={renderLink}
@@ -302,7 +303,6 @@ const MobileNavigationDialog = ({
           <FocusableBox
             component="button"
             onClick={onClick}
-            aria-controls={`CloseNavigationDialog`}
             background={colorSchemeColors[colorScheme]['dividerColor']}
             className={styles.dropdownIcon}
           >
@@ -321,6 +321,7 @@ const MobileNavigationDialog = ({
         />
       </Box>
       <NavigationTree
+        id="mobile"
         items={items}
         colorScheme={colorScheme}
         renderLink={renderLink}
@@ -354,13 +355,14 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
       </Text>
 
       <Box
+        component="span"
         position="absolute"
         right={0}
         marginRight={2}
         style={{ top: '50%', transform: 'translateY(-50%)' }}
       >
         <FocusableBox
-          aria-controls={`OpenNavigationDialog`}
+          component="span"
           background={colorSchemeColors[colorScheme]['dividerColor']}
           className={styles.dropdownIcon}
         >
@@ -391,7 +393,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
       {({ baseId, activeAccordions, toggleAccordion }) => (
         <Box
           component="ul"
-          {...(id && { id })}
+          {...(id && { id: `navigation-tree-${id}` })}
           {...(labelId && { 'aria-labelledby': labelId })}
           className={cn(styles.ul, styles.level[level])}
           style={{
@@ -410,15 +412,19 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
               items.length &&
               nextLevel <= MAX_LEVELS &&
               !accordion
-            const useAccordion =
-              items.length && nextLevel <= MAX_LEVELS && accordion
+            const isAccordion = !!(
+              items.length &&
+              nextLevel <= MAX_LEVELS &&
+              accordion
+            )
             const accordionId = `${level}-${index}`
             const activeAccordion = activeAccordions.includes(accordionId)
             const labelId = `${baseId}-title-${accordionId}`
-            const id = `${baseId}-tree-${accordionId}`
+            const ariaId = `${baseId}-tree-${accordionId}`
 
             const nextLevelTree = (
               <NavigationTree
+                id="accordion"
                 items={items}
                 level={nextLevel}
                 colorScheme={colorScheme}
@@ -457,11 +463,13 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                       return (
                         <span
                           className={cn(styles.text, {
-                            [styles.textNarrower]: useAccordion,
+                            [styles.textNarrower]: isAccordion,
                           })}
                         >
                           <Text
-                            id={`navigation-title-${accordionId}`}
+                            id={`navigation-title-${accordionId}${
+                              id ? `-${id}` : ''
+                            }`}
                             as="span"
                             color={textColor}
                             variant={isChildren ? 'small' : 'default'}
@@ -475,7 +483,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                   </FocusableBox>,
                   item,
                 )}
-                {!!useAccordion && (
+                {isAccordion && (
                   <FocusableBox
                     component="button"
                     onClick={() => {
@@ -484,7 +492,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                     background={colorSchemeColors[colorScheme]['dividerColor']}
                     marginRight={2}
                     aria-expanded={activeAccordion}
-                    aria-controls={id}
+                    aria-controls={ariaId}
                     className={cn(
                       styles.accordionIcon,
                       styles.largerClickableArea,
@@ -514,9 +522,9 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                     />
                   </FocusableBox>
                 )}
-                {!!useAccordion && (
+                {isAccordion && (
                   <AnimateHeight
-                    id={id}
+                    id={ariaId}
                     duration={300}
                     height={activeAccordion ? 'auto' : 0}
                     aria-labelledby={labelId}

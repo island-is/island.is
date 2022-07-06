@@ -7,3 +7,11 @@ export const parseNumber = (tel: string) => {
   }
   return ''
 }
+
+export const parseFullNumber = (tel: string) => {
+  const mobileNumber = tel.replace(/\s/g, '')
+  if (mobileNumber.length === 7) {
+    return parseNumber(mobileNumber)
+  }
+  return mobileNumber
+}

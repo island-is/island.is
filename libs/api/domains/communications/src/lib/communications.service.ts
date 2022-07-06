@@ -5,7 +5,6 @@ import { ZendeskService } from '@island.is/clients/zendesk'
 import { ContentfulRepository, localeMap } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {
@@ -20,9 +19,6 @@ type SendEmailInput =
   | ContactUsInput
   | TellUsAStoryInput
   | ServiceWebFormsInputWithInstitutionEmail
-interface EmailTypeTemplateMap {
-  [template: string]: (SendEmailInput) => SendMailOptions
-}
 
 @Injectable()
 export class CommunicationsService {
@@ -32,7 +28,7 @@ export class CommunicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
-  emailTypeTemplateMap: EmailTypeTemplateMap = {
+  emailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
     tellUsAStory: getTellUsAStoryTemplate,
     serviceWebForms: getServiceWebFormsTemplate,
@@ -40,7 +36,7 @@ export class CommunicationsService {
 
   getEmailTemplate(input: SendEmailInput) {
     if (this.emailTypeTemplateMap[input.type]) {
-      return this.emailTypeTemplateMap[input.type](input)
+      return this.emailTypeTemplateMap[input.type](input as never)
     } else {
       throw new Error('Message type is not supported')
     }
@@ -61,7 +57,7 @@ export class CommunicationsService {
       },
     )
 
-    const errors = {}
+    const errors: Record<string, string> = {}
 
     const item = result?.items?.[0]
 
@@ -83,7 +79,7 @@ export class CommunicationsService {
 
     return {
       ...input,
-      institutionEmail,
+      institutionEmail: institutionEmail!,
     }
   }
 

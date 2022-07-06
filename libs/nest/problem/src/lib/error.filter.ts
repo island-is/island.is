@@ -5,8 +5,6 @@ import { BaseProblemFilter } from './base-problem.filter'
 @Catch(Error)
 export class ErrorFilter extends BaseProblemFilter {
   getProblem(error: Error): Problem {
-    this.logger.error(error)
-
     const extraDetails =
       process.env.NODE_ENV !== 'production'
         ? { detail: error.message, stack: error.stack }

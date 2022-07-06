@@ -14,6 +14,7 @@ import {
   ApiScopeGroup,
   Domain,
   ResourcesService,
+  TranslationModule,
 } from '@island.is/auth-api-lib'
 import { ScopesController } from './scopes.controller'
 
@@ -33,6 +34,7 @@ import { ScopesController } from './scopes.controller'
       ApiScopeGroup,
       Domain,
     ]),
+    TranslationModule,
   ],
   controllers: [ScopesController],
   providers: [ResourcesService],

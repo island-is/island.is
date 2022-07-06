@@ -2,18 +2,35 @@ import { SearchInput } from '../types'
 import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
+import { processAggregationQuery } from './processAggregation'
 
-export const searchQuery = ({
-  queryString,
-  size = 10,
-  page = 1,
-  types = [],
-  tags = [],
-  countTag = '',
-  countTypes = false,
-}: SearchInput) => {
+const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+  if (type === 'webArticle') {
+    // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
+    // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
+    return 55
+  }
+  return defaultBoost
+}
+
+export const searchQuery = (
+  {
+    queryString,
+    size = 10,
+    page = 1,
+    types = [],
+    tags = [],
+    excludedTags = [],
+    contentfulTags = [],
+    countTag = [],
+    countTypes = false,
+    countProcessEntry = false,
+  }: SearchInput,
+  aggregate = true,
+) => {
   const should = []
   const must: TagQuery[] = []
+  const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
   should.push({
@@ -35,7 +52,7 @@ export const searchQuery = ({
         term: {
           type: {
             value,
-            boost,
+            boost: getBoostForType(value, boost),
           },
         },
       })
@@ -48,16 +65,39 @@ export const searchQuery = ({
     })
   }
 
-  const aggregation = { aggs: {} }
-
-  if (countTag) {
-    // set the tag aggregation as the only aggregation
-    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+  if (excludedTags?.length) {
+    excludedTags.forEach((tag) => {
+      mustNot.push(tagQuery(tag))
+    })
   }
 
-  if (countTypes) {
-    // add tag aggregation, handle if there is already an existing aggregation
-    aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
+  if (contentfulTags?.length) {
+    contentfulTags
+      .map((ct) => ({ key: ct, type: 'contentfultag' }))
+      .forEach((tag) => {
+        must.push(tagQuery(tag))
+      })
+  }
+
+  const aggregation = { aggs: {} }
+
+  if (aggregate) {
+    if (countTag) {
+      // set the tag aggregation as the only aggregation
+      aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+    }
+
+    if (countTypes) {
+      // add tag aggregation, handle if there is already an existing aggregation
+      aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
+    }
+
+    if (countProcessEntry) {
+      aggregation.aggs = {
+        ...aggregation.aggs,
+        ...processAggregationQuery().aggs,
+      }
+    }
   }
 
   return {
@@ -65,6 +105,7 @@ export const searchQuery = ({
       bool: {
         should,
         must,
+        must_not: mustNot,
         minimum_should_match: minimumShouldMatch,
       },
     },

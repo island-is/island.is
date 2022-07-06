@@ -13,7 +13,8 @@ export const serviceSetup = (services: {
       AUDIT_TRAIL_REGION: 'eu-west-1',
     })
     .secrets({
-      SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
+      ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
+      BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')

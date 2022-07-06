@@ -27,6 +27,14 @@ export const label = {
 }
 
 export const labelSizes = {
+  xs: {
+    marginBottom: 7,
+    ...themeUtils.responsiveStyle({
+      md: {
+        marginBottom: 7,
+      },
+    }),
+  },
   sm: {
     marginBottom: 4,
     ...themeUtils.responsiveStyle({
@@ -55,16 +63,24 @@ export const container = {
 }
 
 export const containerSizes = {
+  xs: {
+    padding: 8,
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[0]}px`,
+      },
+    }),
+  },
   sm: {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: '8px 16px 8px 8px',
+        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
       },
     }),
   },
   md: {
-    padding: '8px 16px 16px 8px',
+    padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[2]}px ${theme.spacing[1]}px`,
     ...themeUtils.responsiveStyle({
       md: {
         padding: '8px 24px 14px 8px',
@@ -90,7 +106,24 @@ export const input = {
   }),
 }
 
+export const inputExtraSmallPlaceholder = {
+  color: theme.color.dark300,
+  fontWeight: theme.typography.light,
+  fontSize: theme.typography.baseFontSize,
+}
+
 export const inputSizes = {
+  xs: {
+    fontSize: mobileInputFontSizeSmall,
+    lineHeight: 1.25,
+    '::placeholder': inputExtraSmallPlaceholder,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: inputFontSizeSmall,
+        lineHeight: 1.777777777777778,
+      },
+    }),
+  },
   sm: {
     fontSize: mobileInputFontSizeSmall,
     lineHeight: 1.25,
@@ -114,6 +147,16 @@ export const inputSizes = {
 }
 
 export const optionDescriptionSizes = {
+  xs: {
+    fontSize: mobileLabelFontSize,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: labelFontSize,
+        lineHeight: 1.555556,
+      },
+    }),
+  },
   sm: {
     fontSize: mobileLabelFontSize,
     lineHeight: 1.25,
@@ -181,6 +224,10 @@ export const containerHover = {
 // Disabled state
 export const labelDisabledEmptyInput = {
   color: theme.color.blue300,
+}
+
+export const labelReadOnly = {
+  color: theme.color.dark400,
 }
 
 // Textarea state

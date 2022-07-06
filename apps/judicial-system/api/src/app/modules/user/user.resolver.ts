@@ -13,11 +13,12 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { BackendAPI } from '../../../services'
-import { CreateUserInput, UpdateUserInput, UserQueryInput } from './dto'
+import { BackendApi } from '../../data-sources'
+import { CreateUserInput } from './dto/createUser.input'
+import { UpdateUserInput } from './dto/updateUser.input'
+import { UserQueryInput } from './dto/user.input'
 import { User } from './user.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(
@@ -26,10 +27,11 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
 
@@ -41,12 +43,13 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => User, { nullable: true })
   async user(
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
@@ -58,6 +61,7 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(new JwtGraphQlAuthGuard(true))
   @Query(() => User, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: TUser,
@@ -67,12 +71,13 @@ export class UserResolver {
     return user as User
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Mutation(() => User, { nullable: true })
   createUser(
     @Args('input', { type: () => CreateUserInput })
     input: CreateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User> {
     this.logger.debug('Creating user')
 
@@ -84,12 +89,13 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Mutation(() => User, { nullable: true })
   updateUser(
     @Args('input', { type: () => UpdateUserInput })
     input: UpdateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User> {
     const { id, ...updateUser } = input
 

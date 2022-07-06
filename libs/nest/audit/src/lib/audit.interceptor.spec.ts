@@ -4,14 +4,15 @@ import { AuditService } from './audit.service'
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuditInterceptor } from './audit.interceptor'
 import { Audit } from './audit.decorator'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
-import { of } from 'rxjs'
+import { getCurrentAuth } from '@island.is/auth-nest-tools'
+import { lastValueFrom, of } from 'rxjs'
 import MockInstance = jest.MockInstance
 
 jest.mock('@island.is/auth-nest-tools', () => ({
-  getCurrentUser: jest.fn(),
+  getCurrentAuth: jest.fn(),
 }))
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const context: any = {
   getHandler: jest.fn(),
   getClass: jest.fn(),
@@ -55,7 +56,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -78,7 +79,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -103,7 +104,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
@@ -123,21 +124,21 @@ describe('AuditInterceptor', () => {
     }
     context.getClass.mockReturnValue(MyClass)
     context.getHandler.mockReturnValue(MyClass.prototype.handler)
-    const user = 'Test user'
-    const getCurrentUserMock = (getCurrentUser as unknown) as MockInstance<
+    const auth = 'Test user'
+    const getCurrentAuthMock = (getCurrentAuth as unknown) as MockInstance<
       string,
       unknown[]
     >
-    getCurrentUserMock.mockReturnValue(user)
+    getCurrentAuthMock.mockReturnValue(auth)
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toHaveBeenCalledWith(
       expect.objectContaining({
-        user,
+        auth,
       }),
       expect.anything(),
     )
@@ -154,7 +155,7 @@ describe('AuditInterceptor', () => {
 
     // Act
     const observable = interceptor.intercept(context, next)
-    await observable.toPromise()
+    await lastValueFrom(observable)
 
     // Assert
     expect(auditService.auditPromise).toBeCalledTimes(0)

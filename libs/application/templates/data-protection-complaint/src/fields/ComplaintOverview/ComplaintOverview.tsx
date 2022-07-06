@@ -1,14 +1,8 @@
-import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import React, { FC, useEffect } from 'react'
+import { FieldBaseProps } from '@island.is/application/types'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  delimitation,
-  info,
-  overview,
-  section,
-  externalData,
-} from '../../lib/messages'
+import { delimitation, info, overview, section } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {
   SectionHeading,
@@ -23,12 +17,30 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
+import { useFormContext } from 'react-hook-form'
+import { getBullets, getExternalData } from './messagesUtils'
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
+export type Bullet = {
+  bullet: string
+  link: string
+  linkText: string
+}
+
+export const ComplaintOverview: FC<FieldBaseProps> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
+  const { id } = field
   const answers = (application as any).answers as DataProtectionComplaint
-
-  const onPrintClick = () => window.print()
+  useEffect(() => {
+    // Send message from Contentful to make sure that information on
+    // PDF is the same as in the form.
+    setValue(`${id}.externalDataMessage`, getExternalData(formatMessage))
+    setValue(`${id}.informationMessage.title`, formatMessage(section.agreement))
+    setValue(`${id}.informationMessage.bullets`, getBullets(formatMessage))
+  }, [setValue])
 
   return (
     <Box>
@@ -63,14 +75,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       {answers.commissions && <Commissions answers={answers} />}
       <Complainees answers={answers} />
       <Complaint answers={answers} />
-      <Button
-        variant="ghost"
-        icon="open"
-        iconType="outline"
-        onClick={onPrintClick}
-      >
-        {formatMessage(externalData.labels.printButtonLabel)}
-      </Button>
     </Box>
   )
 }

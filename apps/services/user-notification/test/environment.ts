@@ -1,0 +1,5 @@
+process.env.MAIN_QUEUE_NAME = 'test-main'
+process.env.DEAD_LETTER_QUEUE_NAME = 'test-failure'
+process.env.SQS_REGION = 'eu-west-1'
+process.env.SQS_ACCESS_KEY = 'testing'
+process.env.SQS_SECRET_ACCESS_KEY = 'testing'

@@ -54,6 +54,7 @@ export type MountedFile = { filename: string; env: string }
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
+  healthPort?: number
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
@@ -71,7 +72,7 @@ export type ServiceDefinition = {
   args?: string[]
   extraAttributes?: ExtraValues
   image?: string
-  resources?: Resources
+  resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {
     privileged: boolean
@@ -90,7 +91,7 @@ export interface Ingress {
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
 export type Resources = {
-  limits?: {
+  limits: {
     cpu: string
     memory: string
   }
@@ -104,6 +105,11 @@ export type ReplicaCount = {
   default: number
   max: number
   min: number
+  /**
+   * This is mostly for internal use by the DevOps team. If you would like to know more about it, please be in touch with them.
+   * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
+   */
+  scalingMagicNumber?: number
 }
 
 export type InitContainers = {
@@ -125,4 +131,4 @@ export interface Context {
   env: EnvironmentConfig
 }
 
-export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }
+export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType | any }

@@ -2,10 +2,13 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileService } from './userProfile.service'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -17,6 +20,7 @@ import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
+import { UserProfileStatus } from './models/userProfileStatus.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -27,6 +31,13 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<UserProfile | null | undefined> {
     return this.userUserProfileService.getUserProfile(user)
+  }
+
+  @Query(() => UserProfileStatus, { nullable: true })
+  getUserProfileStatus(
+    @CurrentUser() user: User,
+  ): Promise<UserProfileStatus | undefined> {
+    return this.userUserProfileService.getUserProfileStatus(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })
@@ -45,12 +56,29 @@ export class UserProfileResolver {
     return this.userUserProfileService.updateUserProfile(input, user)
   }
 
+  @Mutation(() => UserProfile, { nullable: true })
+  async deleteIslykillValue(
+    @Args('input') input: DeleteIslykillValueInput,
+    @CurrentUser() user: User,
+  ): Promise<DeleteIslykillSettings> {
+    return this.userUserProfileService.deleteIslykillValue(input, user)
+  }
+
   @Mutation(() => Response, { nullable: true })
   async createSmsVerification(
     @Args('input') input: CreateSmsVerificationInput,
     @CurrentUser() user: User,
   ): Promise<Response> {
     await this.userUserProfileService.createSmsVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
+  @Mutation(() => Response, { nullable: true })
+  async createEmailVerification(
+    @Args('input') input: CreateEmailVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userUserProfileService.createEmailVerification(input, user)
     return Promise.resolve({ created: true })
   }
 

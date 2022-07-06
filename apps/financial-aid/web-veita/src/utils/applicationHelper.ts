@@ -4,12 +4,16 @@ import {
   HomeCircumstances,
   getEmploymentStatus,
   Employment,
-  insertAt,
   formatPhoneNumber,
   formatNationalId,
-  sanitizeNationalId,
+  DirectTaxPayment,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
+
+const commentFullWidth = (comment?: string) => {
+  return comment && comment.length > 80 ? true : false
+}
 
 export const getApplicant = (application: Application) => {
   return [
@@ -20,7 +24,7 @@ export const getApplicant = (application: Application) => {
     {
       title: 'Kennitala',
       content: formatNationalId(application.nationalId),
-      link: '/leit?search=' + sanitizeNationalId(application.nationalId),
+      link: '/leit?search=' + sanitizeOnlyNumbers(application.nationalId),
     },
     {
       title: 'Sími',
@@ -48,7 +52,9 @@ export const getApplicant = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.formComment ? '' : 'Engin athugasemd',
       other: application.formComment,
+      fullWidth: commentFullWidth(application.formComment),
     },
   ]
 }
@@ -91,18 +97,18 @@ export const getNationalRegistryInfo = (application: Application) => {
       content: application.postalCode,
     },
     {
-      title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
-    },
-    {
-      title: 'Fjöldi barna',
-      content: '0',
+      title: 'Sveitarfélag',
+      content: application.city,
     },
     {
       title: 'Ríkisfang',
       content: 'Ísland',
+    },
+    {
+      title: 'Maki',
+      content: application.spouseNationalId
+        ? formatNationalId(application.spouseNationalId)
+        : 'Enginn maki',
     },
     {
       title: 'Aldur',
@@ -135,7 +141,47 @@ export const getApplicantSpouse = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.spouseFormComment ? '' : 'Engin athugasemd',
       other: application.spouseFormComment,
+      fullWidth: commentFullWidth(application.spouseFormComment),
+    },
+  ]
+}
+
+export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
+  const totalSalary = directTaxPayments.reduce(
+    (n, { totalSalary }) => n + totalSalary,
+    0,
+  )
+
+  return [
+    {
+      title: 'Samtals heildarlaun',
+      content: totalSalary.toLocaleString('de-DE'),
+    },
+    {
+      title: 'Meðaltal',
+      content: Math.floor(
+        totalSalary / directTaxPayments.length,
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Persónuafsláttur meðaltal',
+      content: (
+        directTaxPayments.reduce(
+          (n, { personalAllowance }) => n + personalAllowance,
+          0,
+        ) / directTaxPayments.length
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Samtals staðgreiðsla',
+      content: directTaxPayments
+        .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
+        .toLocaleString('de-DE'),
     },
   ]
 }

@@ -20,6 +20,7 @@ import { Icon } from '../IconRC/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
@@ -38,6 +39,7 @@ export type AsyncSearchOption = {
 }
 
 export interface AsyncSearchProps {
+  id?: string
   label?: string
   placeholder?: string
   options: AsyncSearchOption[]
@@ -60,6 +62,7 @@ export interface AsyncSearchProps {
 export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
   (
     {
+      id = 'asyncsearch-id',
       label,
       placeholder,
       size = 'medium',
@@ -90,7 +93,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
     return (
       <Downshift
-        id="downshift"
+        id={id}
         onChange={onChange}
         initialInputValue={initialInputValue}
         onInputValueChange={onInputValueChange}
@@ -165,6 +168,13 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             }
           }
 
+          let inputColor: InputProps['color'] | undefined = undefined
+          if (whiteColorScheme) {
+            inputColor = 'white'
+          } else if (colorScheme === 'blueberry') {
+            inputColor = 'blueberry'
+          }
+
           return (
             <AsyncSearchInput
               hasFocus={focused}
@@ -179,6 +189,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   onFocus,
                   onBlur,
                   ref,
+                  spellCheck: true,
                   ...(onSubmit && { onKeyDown }),
                 }),
                 inputSize: size,
@@ -186,7 +197,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored,
                 hasLabel,
                 placeholder,
-                white: whiteColorScheme,
+                color: inputColor,
               }}
               buttonProps={{
                 onFocus,
@@ -233,6 +244,19 @@ const createFilterFunction = (
   return () => true
 }
 
+const getIconColor = (
+  whiteColorScheme: boolean,
+  blueberryColorScheme: boolean,
+) => {
+  if (whiteColorScheme) {
+    return 'white'
+  }
+  if (blueberryColorScheme) {
+    return 'blueberry600'
+  }
+  return 'blue400'
+}
+
 export interface AsyncSearchInputProps {
   hasFocus: boolean
   rootProps: HTMLProps<HTMLDivElement>
@@ -249,7 +273,7 @@ export interface AsyncSearchInputProps {
 
 export const AsyncSearchInput = forwardRef<
   HTMLInputElement,
-  AsyncSearchInputProps
+  AsyncSearchInputProps & TestSupport
 >(
   (
     {
@@ -264,6 +288,7 @@ export const AsyncSearchInput = forwardRef<
       menuProps = {},
       children,
       skipContext,
+      dataTestId,
     },
     ref,
   ) => {
@@ -271,9 +296,24 @@ export const AsyncSearchInput = forwardRef<
     const { value, inputSize: size } = inputProps
     const showLabel = Boolean(size === 'large' && label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
+
     const whiteColorScheme = skipContext
       ? false
       : colorSchemeContext === 'white' || white
+
+    const blueberryColorScheme = skipContext
+      ? false
+      : colorSchemeContext === 'blueberry'
+
+    const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
+
+    let inputColor: InputProps['color'] | undefined = undefined
+
+    if (whiteColorScheme) {
+      inputColor = 'white'
+    } else if (blueberryColorScheme) {
+      inputColor = 'blueberry'
+    }
 
     return (
       <div
@@ -286,23 +326,22 @@ export const AsyncSearchInput = forwardRef<
       >
         <Input
           {...inputProps}
-          white={whiteColorScheme}
+          data-testid={dataTestId}
+          color={inputColor}
           isOpen={isOpen}
           ref={ref}
         />
         {!loading ? (
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
-              [styles.iconWhite]: whiteColorScheme,
+              [styles.transparentBackground]:
+                whiteColorScheme || blueberryColorScheme,
               [styles.focusable]: value,
             })}
             tabIndex={value ? 0 : -1}
             {...buttonProps}
           >
-            <Icon
-              icon="search"
-              color={whiteColorScheme ? 'white' : 'blue400'}
-            />
+            <Icon size={size} icon="search" color={iconColor} />
           </button>
         ) : (
           <span
@@ -310,10 +349,7 @@ export const AsyncSearchInput = forwardRef<
             aria-hidden="false"
             aria-label="Loading"
           >
-            <Icon
-              icon="reload"
-              color={whiteColorScheme ? 'white' : 'blue400'}
-            />
+            <Icon icon="reload" color={iconColor} />
           </span>
         )}
         {showLabel && <Label {...labelProps}>{label}</Label>}

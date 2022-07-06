@@ -22,7 +22,6 @@ class ActionCardTag {
   @Field(() => String, { nullable: true })
   variant?: string
 }
-
 @ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
@@ -33,6 +32,9 @@ class ActionCardMetaData {
 
   @Field(() => ActionCardTag, { nullable: true })
   tag?: ActionCardTag
+
+  @Field(() => Boolean, { nullable: true })
+  deleteButton?: boolean
 }
 
 @ObjectType()
@@ -52,14 +54,14 @@ export class Application {
   @Field(() => [String])
   assignees!: string[]
 
+  @Field(() => [String])
+  applicantActors!: string[]
+
   @Field(() => String)
   state!: string
 
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  attachments?: object
 
   @Field(() => ApplicationResponseDtoTypeIdEnum)
   typeId!: ApplicationResponseDtoTypeIdEnum
@@ -87,4 +89,7 @@ export class Application {
 export class ApplicationPayment {
   @Field()
   fulfilled!: boolean
+
+  @Field()
+  paymentUrl!: string
 }

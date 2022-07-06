@@ -11,6 +11,7 @@ const Dev: EnvironmentConfig = {
   type: 'dev',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -21,6 +22,7 @@ const Dev: EnvironmentConfig = {
 describe('Feature-deployment support', () => {
   const dependencyA = service('service-a').namespace('A')
   const dependencyB = service('service-b')
+  const dependencyC = service('service-c')
   const apiService: ServiceBuilder<'graphql'> = service('graphql')
     .env({
       A: ref((h) => `${h.svc(dependencyA)}`),
@@ -46,7 +48,8 @@ describe('Feature-deployment support', () => {
   const values = generateYamlForFeature(
     chart,
     [apiService, dependencyA, dependencyB],
-    dependencyA,
+    [dependencyA, dependencyC],
+    [dependencyC],
   )
 
   it('dynamic service name generation', () => {
@@ -56,6 +59,8 @@ describe('Feature-deployment support', () => {
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
+      DB_REPLICAS_HOST: 'a',
+      NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
     })
   })

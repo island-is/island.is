@@ -1,4 +1,5 @@
 import { Allow } from 'class-validator'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
 
@@ -7,10 +8,10 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   UpdateCase,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -33,23 +34,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedNationalId?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
-
-  @Allow()
-  @Field({ nullable: true })
   readonly defenderName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderNationalId?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -62,10 +51,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -192,20 +177,20 @@ export class UpdateCaseInput implements UpdateCase {
   readonly prosecutorDemands?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly courtDocuments?: string[]
+  @Field(() => [GraphQLJSONObject], { nullable: true })
+  readonly courtDocuments?: CourtDocument[]
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedBookings?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @Allow()
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -224,12 +209,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly validToDate?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @Allow()
   @Field({ nullable: true })
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -238,6 +219,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly conclusion?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly endOfSessionBookings?: string
 
   @Allow()
   @Field(() => String, { nullable: true })
@@ -270,4 +255,20 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly registrarId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseModifiedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly rulingModifiedHistory?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly seenByDefender?: string
 }

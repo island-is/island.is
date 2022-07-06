@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
+  Inject,
   Param,
   Post,
   Put,
@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -20,44 +22,40 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { adminRule } from '../../guards'
-import { CreateUserDto, UpdateUserDto } from './dto'
+import { CreateUserDto } from './dto/createUser.dto'
+import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
 @Controller('api')
 @ApiTags('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
-  create(
-    @Body()
-    userToCreate: CreateUserDto,
-  ): Promise<User> {
+  create(@Body() userToCreate: CreateUserDto): Promise<User> {
+    this.logger.debug('Creating a new user')
+
     return this.userService.create(userToCreate)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
-  @Put('user/:id')
+  @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
-  async update(
-    @Param('id') id: string,
+  update(
+    @Param('userId') userId: string,
     @Body() userToUpdate: UpdateUserDto,
   ): Promise<User> {
-    const { numberOfAffectedRows, updatedUser } = await this.userService.update(
-      id,
-      userToUpdate,
-    )
+    this.logger.debug(`Updating user ${userId}`)
 
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`User ${id} does not exist`)
-    }
-
-    return updatedUser
+    return this.userService.update(userId, userToUpdate)
   }
 
   @UseGuards(JwtAuthGuard)
@@ -68,23 +66,21 @@ export class UserController {
     description: 'Gets all existing users',
   })
   getAll(@CurrentHttpUser() user: User): Promise<User[]> {
+    this.logger.debug('Getting all users')
+
     return this.userService.getAll(user)
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('user/:id')
+  @Get('user/:userId')
   @ApiOkResponse({
     type: User,
     description: 'Gets an existing user',
   })
-  async getById(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.findById(id)
+  async getById(@Param('userId') userId: string): Promise<User> {
+    this.logger.debug(`Finding user ${userId}`)
 
-    if (!user) {
-      throw new NotFoundException(`User ${id} not found`)
-    }
-
-    return user
+    return this.userService.findById(userId)
   }
 
   @UseGuards(TokenGuard)
@@ -93,15 +89,9 @@ export class UserController {
     type: User,
     description: 'Gets an existing user by national id',
   })
-  async getByNationalId(
-    @Query('nationalId') nationalId: string,
-  ): Promise<User> {
-    const user = await this.userService.findByNationalId(nationalId)
+  getByNationalId(@Query('nationalId') nationalId: string): Promise<User> {
+    this.logger.debug('Getting a user by national id')
 
-    if (!user) {
-      throw new NotFoundException(`User ${nationalId} not found`)
-    }
-
-    return user
+    return this.userService.findByNationalId(nationalId)
   }
 }

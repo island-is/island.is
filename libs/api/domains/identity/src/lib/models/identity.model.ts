@@ -43,7 +43,7 @@ export class Identity {
 }
 
 const isExternalUser = ({ context, source }: MiddlewareContext): boolean => {
-  return (context as GraphQLContext).req.user.nationalId !== source.nationalId
+  return (context as GraphQLContext).req.user?.nationalId !== source.nationalId
 }
 
 @Extensions({

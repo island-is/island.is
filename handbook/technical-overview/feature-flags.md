@@ -18,3 +18,7 @@ Example: Your service name is "my-awesome-service" and you're introducing a feat
 ## Feature flag lifecycle
 
 After a feature flag has been flipped on for all environments be mindful to clean it up. That involves removing all mentions of that flag in the source code and deleting it from ConfigCat. You will need to contact an administrator to delete the flag.
+
+## Feature flag for applications
+
+You can introduce feature flags to applications. The flag determines whether the applications is accessible for users. See readme [here](https://docs.devland.is/libs/application/core#feature-flags 'Application system core readme') on further details on how to implement.

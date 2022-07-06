@@ -30,8 +30,10 @@ interface RequestInit extends NodeFetchRequestInit {
 
 type FetchAPI = (input: RequestInfo, init?: RequestInit) => Promise<Response>
 
+type MiddlewareAPI = (request: Request) => Promise<Response>
+
 interface FetchMiddlewareOptions {
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
 }
 
 export {
@@ -43,4 +45,5 @@ export {
   Response,
   FetchAPI,
   FetchMiddlewareOptions,
+  MiddlewareAPI,
 }

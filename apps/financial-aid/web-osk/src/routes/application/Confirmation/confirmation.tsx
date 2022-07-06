@@ -30,7 +30,9 @@ const Confirmation = () => {
 
   const nextSteps = [
     'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
-    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${getNextPeriod.month}.`,
+    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${
+      getNextPeriod().month
+    }.`,
     'Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
@@ -101,7 +103,7 @@ const Confirmation = () => {
                 type="button"
                 variant="text"
               >
-                Upplýsingar um fjárhagsaðstoð
+                Reglur um fjárhagsaðstoð
               </Button>
             </Box>
           )}

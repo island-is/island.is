@@ -1,6 +1,8 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Inject, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { JwtAuthGuard } from '@island.is/judicial-system/auth'
 
 import { InstitutionService } from './institution.service'
@@ -10,7 +12,10 @@ import { Institution } from './institution.model'
 @ApiTags('institutions')
 @UseGuards(JwtAuthGuard)
 export class InstitutionController {
-  constructor(private readonly institutionService: InstitutionService) {}
+  constructor(
+    private readonly institutionService: InstitutionService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Get('institutions')
   @ApiOkResponse({
@@ -19,6 +24,8 @@ export class InstitutionController {
     description: 'Gets all existing institutions',
   })
   getAll(): Promise<Institution[]> {
+    this.logger.debug('Getting all institutions')
+
     return this.institutionService.getAll()
   }
 }

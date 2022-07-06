@@ -58,8 +58,8 @@ export const FrontpageSvg = () => {
           y2="240.14"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#4C90FF" />
-          <stop offset="1" stop-color="#FF4C84" />
+          <stop offset="0" stopColor="#4C90FF" />
+          <stop offset="1" stopColor="#FF4C84" />
         </linearGradient>
       </defs>
     </svg>

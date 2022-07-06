@@ -2,27 +2,33 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import {
-  formatCustodyRestrictions,
+  capitalize,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
+import { FormatMessage } from '@island.is/cms-translations'
+import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case/models'
-import { formatCustodyIsolation } from './formatters'
+import { Case } from '../modules/case'
+import { core, custodyNotice } from '../messages'
+import { formatCustodyRestrictions } from './formatters'
 import {
-  baseFontSize,
-  hugeFontSize,
-  largeFontSize,
-  mediumFontSize,
-  setPageNumbers,
+  addEmptyLines,
+  addHugeHeading,
+  addLargeHeading,
+  addMediumText,
+  addNormalText,
+  setLineGap,
+  addFooter,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
-export async function getCustodyNoticePdfAsString(
-  existingCase: Case,
-): Promise<string> {
+function constructCustodyNoticePdf(
+  theCase: Case,
+  formatMessage: FormatMessage,
+): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -34,148 +40,165 @@ export async function getCustodyNoticePdfAsString(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = 'Vistunarseðill'
-  }
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text('Vistunarseðill', { align: 'center' })
-    .fontSize(largeFontSize)
-    .text('Úrskurður um gæsluvarðhald', { align: 'center' })
-    .font('Helvetica')
-    .text(
-      `Málsnúmer ${existingCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
-        existingCase.courtCaseNumber
-      }`,
-      { align: 'center' },
-    )
-    .text(`LÖKE málsnúmer ${existingCase.policeCaseNumber}`, {
-      align: 'center',
-    })
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
-    .text('Sakborningur')
-    .fontSize(baseFontSize)
-    .text(existingCase.accusedName ?? 'Nafn ekki skráð')
-    .font('Helvetica')
-    .text(`kt. ${formatNationalId(existingCase.accusedNationalId)}`)
-    .text(existingCase.accusedAddress ?? 'Heimili ekki skráð')
-    .text(' ')
-    .text(' ')
-    .font('Helvetica-Bold')
-    .fontSize(mediumFontSize)
-    .lineGap(8)
-    .text('Úrskurður um gæsluvarðhald')
-    .font('Helvetica')
-    .fontSize(baseFontSize)
-    .text(
-      `${existingCase.court?.name}, ${formatDate(
-        existingCase.courtStartDate,
-        'PPP',
-      )}`,
-    )
-    .text(' ')
-    .text(
-      `Úrskurður kveðinn upp ${
-        formatDate(existingCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ??
-        '?'
-      }`,
-    )
-    .text(
-      `Úrskurður rennur út ${
-        formatDate(existingCase.validToDate, 'PPPp')?.replace(
-          ' kl.',
-          ', kl.',
-        ) ?? '?'
-      }`,
-    )
-    .text(' ')
-    .font('Helvetica-Bold')
-    .text('Stjórnandi rannsóknar: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(existingCase.leadInvestigator ?? 'Ekki skráður')
-    .font('Helvetica-Bold')
-    .text('Ákærandi: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(
-      existingCase.prosecutor
-        ? `${existingCase.prosecutor.name} ${existingCase.prosecutor.title}`
-        : 'Ekki skráður',
-    )
-    .font('Helvetica-Bold')
-    .text('Verjandi: ', {
-      continued: true,
-    })
-    .font('Helvetica')
-    .text(
-      existingCase.defenderName && !existingCase.defenderIsSpokesperson
-        ? `${existingCase.defenderName}${
-            existingCase.defenderPhoneNumber
-              ? `, s. ${existingCase.defenderPhoneNumber}`
-              : ''
-          }${
-            existingCase.defenderEmail ? `, ${existingCase.defenderEmail}` : ''
-          }`
-        : 'Ekki skráður',
-    )
-
-  const custodyRestrictions = formatCustodyRestrictions(
-    existingCase.accusedGender,
-    existingCase.custodyRestrictions,
+  setTitle(doc, 'Vistunarseðill')
+  setLineGap(doc, 8)
+  addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
+  addLargeHeading(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+  )
+  addLargeHeading(
+    doc,
+    `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
+      theCase.courtCaseNumber
+    }`,
+    'Helvetica',
+  )
+  addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
+  addEmptyLines(doc)
+  setLineGap(doc, 8)
+  addMediumText(doc, 'Sakborningur', 'Helvetica-Bold')
+  addNormalText(
+    doc,
+    theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].name
+      ? theCase.defendants[0].name
+      : 'Nafn ekki skráð',
   )
 
-  if (
-    existingCase.custodyRestrictions?.includes(
-      CaseCustodyRestrictions.ISOLATION,
-    ) ||
-    custodyRestrictions
-  ) {
-    doc
-      .text(' ')
-      .text(' ')
-      .font('Helvetica-Bold')
-      .fontSize(mediumFontSize)
-      .lineGap(8)
-      .text('Tilhögun gæsluvarðhalds')
-      .font('Helvetica')
-      .fontSize(baseFontSize)
-    if (
-      existingCase.custodyRestrictions?.includes(
-        CaseCustodyRestrictions.ISOLATION,
-      )
-    ) {
-      doc.text(
-        formatCustodyIsolation(
-          existingCase.accusedGender,
-          existingCase.isolationToDate,
+  if (theCase.defendants && theCase.defendants.length > 0) {
+    addNormalText(
+      doc,
+      formatDOB(
+        theCase.defendants[0].nationalId,
+        theCase.defendants[0].noNationalId,
+      ),
+      'Helvetica',
+    )
+  }
+
+  addNormalText(
+    doc,
+    theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].address
+      ? theCase.defendants[0].address
+      : 'Heimili ekki skráð',
+  )
+  addEmptyLines(doc, 2)
+  setLineGap(doc, 8)
+  addMediumText(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    'Helvetica-Bold',
+  )
+  addNormalText(
+    doc,
+    `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
+    'Helvetica',
+  )
+  addEmptyLines(doc)
+  addNormalText(
+    doc,
+    `Úrskurður kveðinn upp ${
+      formatDate(theCase.courtEndTime, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+    }`,
+  )
+  addNormalText(
+    doc,
+    `Úrskurður rennur út ${
+      formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+    }`,
+  )
+  addEmptyLines(doc)
+  addNormalText(doc, 'Stjórnandi rannsóknar: ', 'Helvetica-Bold', true)
+  addNormalText(doc, theCase.leadInvestigator ?? 'Ekki skráður', 'Helvetica')
+  addNormalText(doc, 'Ákærandi: ', 'Helvetica-Bold', true)
+  addNormalText(
+    doc,
+    theCase.prosecutor
+      ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+      : 'Ekki skráður',
+    'Helvetica',
+  )
+  addNormalText(doc, 'Verjandi: ', 'Helvetica-Bold', true)
+  addNormalText(
+    doc,
+    theCase.defenderName &&
+      theCase.sessionArrangements !==
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
+      ? `${theCase.defenderName}${
+          theCase.defenderPhoneNumber
+            ? `, s. ${theCase.defenderPhoneNumber}`
+            : ''
+        }${theCase.defenderEmail ? `, ${theCase.defenderEmail}` : ''}`
+      : 'Ekki skráður',
+    'Helvetica',
+  )
+
+  const custodyRestrictions = formatCustodyRestrictions(
+    formatMessage,
+    theCase.type,
+    theCase.requestedCustodyRestrictions,
+    theCase.isCustodyIsolation,
+  )
+
+  if (theCase.isCustodyIsolation || custodyRestrictions) {
+    addEmptyLines(doc, 2)
+    setLineGap(doc, 8)
+    addMediumText(
+      doc,
+      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      'Helvetica-Bold',
+    )
+
+    if (theCase.isCustodyIsolation) {
+      const genderedAccused = formatMessage(core.accused, {
+        suffix:
+          !theCase.defendants ||
+          theCase.defendants.length < 1 ||
+          theCase.defendants[0].gender === Gender.MALE
+            ? 'i'
+            : 'a',
+      })
+      const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
+        ?.replace('dagur,', 'dagsins')
+        ?.replace(' kl.', ', kl.')
+
+      addNormalText(
+        doc,
+        capitalize(
+          formatMessage(custodyNotice.isolationDisclaimer, {
+            genderedAccused,
+            isolationPeriod,
+          }),
         ),
+        'Helvetica',
       )
     }
+
     if (custodyRestrictions) {
-      doc.text(custodyRestrictions, {
-        lineGap: 6,
-        paragraphGap: 0,
-      })
+      addNormalText(doc, custodyRestrictions, 'Helvetica')
     }
   }
 
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 
-  // wait for the writing to finish
+  return stream
+}
 
+export async function getCustodyNoticePdfAsString(
+  theCase: Case,
+  formatMessage: FormatMessage,
+): Promise<string> {
+  const stream = constructCustodyNoticePdf(theCase, formatMessage)
+
+  // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
     stream.on('finish', () => {
       resolve(stream.getContentsAsString('binary') as string)
@@ -183,7 +206,27 @@ export async function getCustodyNoticePdfAsString(
   })
 
   if (!environment.production) {
-    writeFile(`${existingCase.id}-custody-notice.pdf`, pdf)
+    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
+  }
+
+  return pdf
+}
+
+export async function getCustodyNoticePdfAsBuffer(
+  theCase: Case,
+  formatMessage: FormatMessage,
+): Promise<Buffer> {
+  const stream = constructCustodyNoticePdf(theCase, formatMessage)
+
+  // wait for the writing to finish
+  const pdf = await new Promise<Buffer>(function (resolve) {
+    stream.on('finish', () => {
+      resolve(stream.getContents() as Buffer)
+    })
+  })
+
+  if (!environment.production) {
+    writeFile(`${theCase.id}-custody-notice.pdf`, pdf)
   }
 
   return pdf

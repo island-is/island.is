@@ -4,26 +4,30 @@ import {
   Parent,
   Query,
   ResolveField,
-  ID,
   Resolver,
 } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import { Identity, IdentityService } from '@island.is/api/domains/identity'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  Identity,
+  IdentityService,
+  IdentityType,
+} from '@island.is/api/domains/identity'
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 
 import {
-  UpdateDelegationInput,
-  DeleteDelegationInput,
   CreateDelegationInput,
   DelegationInput,
+  DeleteDelegationInput,
+  UpdateDelegationInput,
 } from '../dto'
 import { Delegation } from '../models'
 import { MeDelegationsService } from '../meDelegations.service'
 import { ActorDelegationsService } from '../actorDelegations.service'
+import { ActorDelegationInput } from '../dto/actorDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
@@ -35,8 +39,15 @@ export class DelegationResolver {
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
-  getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.actorDelegationsService.getActorDelegations(user)
+  getActorDelegations(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ActorDelegationInput, nullable: true })
+    input?: ActorDelegationInput,
+  ): Promise<DelegationDTO[]> {
+    return this.actorDelegationsService.getActorDelegations(
+      user,
+      input?.delegationTypes,
+    )
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
@@ -93,35 +104,29 @@ export class DelegationResolver {
   }
 
   @ResolveField('to', () => Identity, { nullable: true })
-  resolveTo(
+  async resolveTo(
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
-  ): Promise<Identity | null> {
-    if (kennitala.isCompany(delegation.toNationalId)) {
-      // XXX: temp until rsk gets implemented
-      return Promise.resolve({
-        nationalId: delegation.toNationalId,
-        name: delegation.toName,
-        type: 'company',
-      } as Identity)
-    }
-    return this.identityService.getIdentity(delegation.toNationalId, user)
+  ): Promise<Identity> {
+    return this.identityService.getIdentityWithFallback(
+      delegation.toNationalId,
+      {
+        name: delegation.toName ?? undefined,
+      },
+    )
   }
 
-  @ResolveField('from', () => Identity, { nullable: true })
-  resolveFrom(
+  @ResolveField('from', () => Identity)
+  async resolveFrom(
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
-  ): Promise<Identity | null> {
-    if (kennitala.isCompany(delegation.fromNationalId)) {
-      // XXX: temp until rsk gets implemented
-      return Promise.resolve({
-        nationalId: delegation.fromNationalId,
-        name: delegation.fromName,
-        type: 'company',
-      } as Identity)
-    }
-    return this.identityService.getIdentity(delegation.fromNationalId, user)
+  ): Promise<Identity> {
+    return this.identityService.getIdentityWithFallback(
+      delegation.fromNationalId,
+      {
+        name: delegation.fromName ?? undefined,
+      },
+    )
   }
 
   @ResolveField('validTo', () => Date, { nullable: true })

@@ -4,10 +4,9 @@ const devConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=sv_citizen.local',
-    samlEntryPoint2: 'https://innskraning.island.is/?id=sv_company.local',
-    audience: 'localhost:4200',
-    jwtSecret: 'securesecret',
+    issuer: 'https://identity-server.staging01.devland.is',
+    audience: '@urvinnslusjodur.is/skilavottord',
+    nextAuthCookieName: 'next-auth.session-token',
   },
   samgongustofa: {
     soapUrl:
@@ -33,13 +32,6 @@ const devConfig = {
     restUsername: process.env.FJARSYSLA_REST_USER ?? 'xxxxxxxxxxxxx',
     restPassword: process.env.FJARSYSLA_REST_PASS ?? 'xxxxxxxxx',
   },
-  skilavottord: {
-    userList:
-      process.env.SKILAVOTTORD_USER_LIST ??
-      `[{"nationalId":"1111111111","name":"xxxxxxxxxxxxxxxxxxxxx","role":"developer","partnerId":""},
-        {"nationalId":"2222222222","name":"xxxxxxxx","role":"recyclingFund","partnerId":""},
-        {"nationalId":"3333333333","name":"xxxxxxxxxxxxxxxxxx","role":"recyclingCompany","partnerId":""}]`,
-  },
   backendUrl: 'http://localhost:3333',
 }
 
@@ -49,10 +41,9 @@ const prodConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   auth: {
-    samlEntryPoint: process.env.SAML_ENTRY_POINT,
-    samlEntryPoint2: process.env.SAML_ENTRY_POINT2,
-    audience: process.env.AUTH_AUDIENCE,
-    jwtSecret: process.env.AUTH_JWT_SECRET,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: '@urvinnslusjodur.is/skilavottord',
+    nextAuthCookieName: '__Secure-next-auth.session-token',
   },
   samgongustofa: {
     soapUrl: process.env.SAMGONGUSTOFA_SOAP_URL,
@@ -68,9 +59,6 @@ const prodConfig = {
     restUrl: process.env.FJARSYSLA_REST_URL,
     restUsername: process.env.FJARSYSLA_REST_USER,
     restPassword: process.env.FJARSYSLA_REST_PASS,
-  },
-  skilavottord: {
-    userList: process.env.SKILAVOTTORD_USER_LIST ?? '[]',
   },
   backendUrl: process.env.BACKEND_URL,
 }

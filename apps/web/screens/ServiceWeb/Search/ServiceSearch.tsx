@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../../types'
@@ -39,8 +39,9 @@ import {
   Organization,
   QueryGetOrganizationArgs,
   Query,
+  SearchableTags,
 } from '../../../graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import {
   ServiceWebSearchInput,
@@ -67,7 +68,16 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  usePlausible('Search Query', {
+    query: (q ?? '').trim().toLowerCase(),
+    source: 'Service Web',
+  })
   const { linkResolver } = useLinkResolver()
+  const organizationNamespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [organization?.namespace?.fields],
+  )
+  const o = useNamespace(organizationNamespace)
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
@@ -78,10 +88,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href:
-          linkResolver('helpdeskcategory', [
+          linkResolver('servicewebcategory', [
             item.organization.slug,
             item.category.slug,
-          ]).href + `?&q=${item.slug}`,
+          ]).href + `/${item.slug}`,
       },
       categorySlug: item.category.slug,
       category: item.category.title,
@@ -89,24 +99,47 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
     }),
   )
 
+  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} | ${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
+
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
+  const breadcrumbItems = [
+    institutionSlugBelongsToMannaudstorg
+      ? {
+          title: organization.title,
+          typename: 'serviceweb',
+          href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+        }
+      : {
+          title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+          href: linkResolver('serviceweb').href,
+        },
+    {
+      title: n('search', 'Leit'),
+      isTag: true,
+    },
+  ]
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )}
       institutionSlug={institutionSlug}
       organization={organization}
       smallBackground
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -118,16 +151,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
               <Stack space={[3, 3, 4]}>
                 <Box display={['none', 'none', 'block']} printHidden>
                   <Breadcrumbs
-                    items={[
-                      {
-                        title: n('serviceWeb', 'Þjónustuvefur'),
-                        href: linkResolver('helpdesk').href,
-                      },
-                      {
-                        title: n('search', 'Leit'),
-                        isTag: true,
-                      },
-                    ]}
+                    items={breadcrumbItems}
                     renderLink={(link, { href }) => {
                       return (
                         <NextLink href={href} passHref>
@@ -155,7 +179,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                       }}
                     >
                       <Text truncate>
-                        <a href={linkResolver('helpdesk').href}>
+                        <a href={linkResolver('serviceweb').href}>
                           <Button
                             preTextIcon="arrowBack"
                             preTextIconType="filled"
@@ -163,7 +187,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                             type="button"
                             variant="text"
                           >
-                            {n('serviceWeb', 'Þjónustuvefur')}
+                            {n(
+                              'assistanceForIslandIs',
+                              'Aðstoð fyrir Ísland.is',
+                            )}
                           </Button>
                         </a>
                       </Text>
@@ -175,6 +202,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   colored={true}
                   size="large"
                   initialInputValue={q}
+                  placeholder={o(
+                    'serviceWebSearchPlaceholder',
+                    'Leitaðu á þjónustuvefnum',
+                  )}
                 />
 
                 {!!q &&
@@ -251,7 +282,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
-                        pathname: linkResolver('helpdesksearch').href,
+                        pathname: linkResolver('servicewebsearch').href,
                         query: { ...Router.query, page },
                       }}
                     >
@@ -290,6 +321,11 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const queryString = ServiceWebModifySearchTerms(q)
 
+  const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
+  const mannaudstorgTag = [
+    { key: 'mannaudstorg', type: SearchableTags.Organization },
+  ]
+
   const [
     organization,
     {
@@ -314,6 +350,9 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
+          [institutionSlugBelongsToMannaudstorg
+            ? 'tags'
+            : 'excludedTags']: mannaudstorgTag,
           size: PERPAGE,
           page,
         },
@@ -350,5 +389,5 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 export default withMainLayout(ServiceSearch, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

@@ -16,12 +16,12 @@ import {
   StudentInformationResult,
   ApplicationEligibility,
   Juristiction,
-  QualityPhoto,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
+import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -34,11 +34,11 @@ export class MainResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => DrivingLicense)
+  @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicense',
         resources: user.nationalId,
@@ -56,7 +56,7 @@ export class MainResolver {
   drivingLicenseTeachingRights(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'drivingLicenseTeachingRights',
         resources: user.nationalId,
@@ -65,6 +65,7 @@ export class MainResolver {
     )
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => StudentInformationResult)
   async drivingLicenseStudentInformation(
     @Args('nationalId') nationalId: string,
@@ -75,7 +76,7 @@ export class MainResolver {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'drivingLicenseStudentInformation',
       resources: nationalId,
@@ -92,6 +93,7 @@ export class MainResolver {
     @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
+      user,
       user.nationalId,
       input.applicationFor,
     )
@@ -102,12 +104,7 @@ export class MainResolver {
     return this.drivingLicenseService.getListOfJuristictions()
   }
 
-  @Query(() => QualityPhoto)
-  qualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
-  }
-
-  @Query(() => StudentAssessment)
+  @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }

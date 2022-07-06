@@ -48,6 +48,10 @@ export interface InputComponentProps {
    */
   fixedFocusState?: boolean
   autoComplete?: 'on' | 'off'
+  autoExpand?: {
+    on: boolean
+    maxHeight?: number
+  }
 }
 
 export interface InputProps extends InputComponentProps {
@@ -58,4 +62,5 @@ export interface InputProps extends InputComponentProps {
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
   textarea?: boolean
   maxLength?: number
+  loading?: boolean
 }

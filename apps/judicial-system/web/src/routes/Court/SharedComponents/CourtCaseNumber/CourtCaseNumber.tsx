@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
@@ -12,6 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtCaseNumber.css'
 
@@ -43,6 +43,14 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
+    const isValid = validate([
+      [update.courtCaseNumber, ['empty', 'court-case-number']],
+    ]).isValid
+
+    if (!isValid) {
+      return
+    }
+
     await updateCase(id, update)
     if (update.courtCaseNumber) {
       receiveCase(workingCase, update.courtCaseNumber)
@@ -67,24 +75,21 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
           <Box display="flex">
-            {workingCase.court &&
-              IntegratedCourts.includes(workingCase.court.id) && (
-                <div className={styles.createCourtCaseButton}>
-                  <Button
-                    size="small"
-                    onClick={() => handleCreateCourtCase(workingCase)}
-                    loading={isCreatingCourtCase}
-                    disabled={Boolean(
-                      (workingCase.state !== CaseState.SUBMITTED &&
-                        workingCase.state !== CaseState.RECEIVED) ||
-                        workingCase.courtCaseNumber,
-                    )}
-                    fluid
-                  >
-                    Stofna nýtt mál
-                  </Button>
-                </div>
-              )}
+            <div className={styles.createCourtCaseButton}>
+              <Button
+                size="small"
+                onClick={() => handleCreateCourtCase(workingCase)}
+                loading={isCreatingCourtCase}
+                disabled={Boolean(
+                  (workingCase.state !== CaseState.SUBMITTED &&
+                    workingCase.state !== CaseState.RECEIVED) ||
+                    workingCase.courtCaseNumber,
+                )}
+                fluid
+              >
+                Stofna nýtt mál
+              </Button>
+            </div>
             <div className={styles.createCourtCaseInput}>
               <Input
                 data-testid="courtCaseNumber"
@@ -106,8 +111,8 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   setCreateCourtCaseSuccess(false)
                   removeTabsValidateAndSet(
                     'courtCaseNumber',
-                    event,
-                    ['empty'],
+                    event.target.value,
+                    ['empty', 'court-case-number'],
                     workingCase,
                     setWorkingCase,
                     courtCaseNumberEM,
@@ -118,7 +123,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   validateAndSendToServer(
                     'courtCaseNumber',
                     event.target.value,
-                    ['empty'],
+                    ['empty', 'court-case-number'],
                     workingCase,
                     updateAndReceiveCase,
                     setCourtCaseNumberEM,

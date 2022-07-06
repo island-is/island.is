@@ -53,6 +53,25 @@ const IdentityResourceStepNav: React.FC<Props> = ({
               }
             </button>
           </li>
+          <li>
+            <button
+              type="button"
+              onClick={() =>
+                handleStepChange(ApiScopeStep.PersonalRepresentativePermissions)
+              }
+              className={
+                activeStep === ApiScopeStep.PersonalRepresentativePermissions
+                  ? 'active'
+                  : ''
+              }
+            >
+              {
+                localization.navigations['apiScopeSteps'].items[
+                  'personalRepresentativePermissions'
+                ].text
+              }
+            </button>
+          </li>
         </ul>
       </nav>
       <div className="api-scope__container__content">{children}</div>

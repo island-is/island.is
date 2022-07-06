@@ -48,8 +48,10 @@ const Select: FC = () => {
   }
 
   const validateRegNumber = (value: string) => {
-    const regular = new RegExp(/^[A-Z]{1,2}(\s|-){0,1}([A-Z]|\d){1}\d{2}$/gi)
     const antique = new RegExp(/^[A-Z]{1}\s{0,1}\d{5}$/gi)
+    const regular = new RegExp(
+      /^[A-ZÞÖ]{1,2}(\s|-){0,1}([A-ZÞÖ]|\d){1}\d{2}$/gi,
+    )
     return regular.test(value) || antique.test(value)
   }
 
@@ -70,20 +72,20 @@ const Select: FC = () => {
           rules={{
             required: {
               value: true,
-              message: t.input.errors.empty,
+              message: t.input!.errors.empty,
             },
-            minLength: { value: 5, message: t.input.errors.length },
-            maxLength: { value: 7, message: t.input.errors.length },
+            minLength: { value: 5, message: t.input!.errors.length },
+            maxLength: { value: 7, message: t.input!.errors.length },
             validate: {
               isValidRegNumber: (value) =>
-                validateRegNumber(value) || t.input.errors.invalidRegNumber,
+                validateRegNumber(value) || t.input!.errors.invalidRegNumber,
             },
           }}
           defaultValue=""
           render={({ onChange, value, name }) => (
             <Input
-              label={t.input.label}
-              placeholder={t.input.placeholder}
+              label={t.input!.label}
+              placeholder={t.input!.placeholder}
               name={name}
               value={value?.toUpperCase()}
               onChange={({ target }) => onChange(target.value)}

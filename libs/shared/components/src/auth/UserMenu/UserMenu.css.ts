@@ -1,26 +1,70 @@
-import { style } from '@vanilla-extract/css'
+import { keyframes, style } from '@vanilla-extract/css'
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
+import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
+import {
+  SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  zIndex,
+} from '@island.is/service-portal/constants'
 
-export const dropdown = style({
-  position: 'fixed',
-  top: spacing[3],
-  right: spacing[3],
-  left: spacing[3],
-
-  maxHeight: `calc(100vh - ${spacing[6]}px)`,
-  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+export const container = style({
+  top: SERVICE_PORTAL_HEADER_HEIGHT_SM,
+  zIndex: zIndex.mobileMenu,
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+  overflowY: 'auto',
 
   ...themeUtils.responsiveStyle({
     md: {
-      left: 'auto',
-      right: 'auto',
-      width: 358,
+      maxHeight: 'unset',
+      overflowY: 'unset',
+      top: 'unset',
     },
   }),
 })
 
+const dropdownBase: StyleWithSelectors = {
+  position: 'fixed',
+  right: spacing[0],
+  left: spacing[0],
+  borderRadius: 'unset',
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_SM}px)`,
+}
+
+const dropdownBaseMD: StyleWithSelectors = {
+  top: spacing[3],
+  width: 358,
+  borderRadius: theme.border.radius.large,
+  filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
+}
+
+export const dropdown = style({
+  ...dropdownBase,
+  ...themeUtils.responsiveStyle({
+    md: {
+      ...dropdownBaseMD,
+      left: 'auto',
+      right: 'auto',
+    },
+  }),
+})
+
+export const fullScreen = style({
+  ...dropdownBase,
+  ...themeUtils.responsiveStyle({
+    md: {
+      ...dropdownBaseMD,
+      left: 'auto',
+      right: spacing[3],
+    },
+  }),
+})
+
+export const wrapper = style({
+  maxHeight: `calc(100vh - ${spacing[12]}px)`,
+  overflowY: 'auto',
+  overflowX: 'hidden',
+})
+
 export const closeButton = style({
-  display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
 
@@ -48,7 +92,6 @@ export const closeButton = style({
     borderColor: theme.color.mint200,
   },
 })
-
 export const hr = style({
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],
@@ -66,6 +109,17 @@ export const delegationsList = style({
   margin: '-3px',
 })
 
+export const smallAvatar = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginRight: -theme.spacing.gutter,
+    },
+    sm: {
+      marginRight: 'unset',
+    },
+  }),
+})
+
 export const resetButtonPadding = style({
   marginTop: '-16px',
   marginBottom: '-16px',
@@ -76,8 +130,13 @@ export const resetButtonPadding = style({
 })
 
 export const delegationName = style({
-  fontSize: '16px',
+  fontSize: '14px',
   lineHeight: '20px',
+  ...themeUtils.responsiveStyle({
+    md: {
+      fontSize: '16px',
+    },
+  }),
 })
 
 export const actorName = style({
@@ -88,4 +147,31 @@ export const actorName = style({
 
 export const breakWord = style({
   wordBreak: 'break-word',
+})
+
+export const dropdownItem = style({
+  ':hover': {
+    textDecoration: 'underline',
+  },
+})
+
+export const accessAvatarSize = style({
+  width: 32,
+  height: 32,
+})
+
+export const companyIconSize = style({
+  width: 40,
+  height: 40,
+})
+export const userDelegationsText = style({
+  fontSize: 16,
+  lineHeight: '21px',
+  fontWeight: theme.typography.semiBold,
+  color: theme.color.dark400,
+})
+
+export const userTopicCardBox = style({
+  height: 64,
+  textAlign: 'left',
 })

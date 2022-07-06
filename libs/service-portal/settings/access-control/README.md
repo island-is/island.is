@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Service Portal Settings Access Control
 
 This library was generated with [Nx](https://nx.dev).

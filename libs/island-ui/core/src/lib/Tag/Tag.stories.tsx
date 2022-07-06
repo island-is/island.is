@@ -16,7 +16,7 @@ export const Basic = () => (
   <ContentBlock>
     <Box paddingY={[1, 2]}>
       <Inline space={1}>
-        <Tag>Ferðagjöf</Tag>
+        <Tag>Fæðing</Tag>
         <Tag variant="darkerBlue">Gifting</Tag>
         <Tag variant="blueberry">Fæðingarorlof</Tag>
         <Tag variant="purple">Færnimat</Tag>
@@ -24,6 +24,7 @@ export const Basic = () => (
         <Tag variant="white">Færnimat</Tag>
         <Tag variant="rose">Færnimat</Tag>
         <Tag variant="dark">Færnimat</Tag>
+        <Tag variant="mint">Færnimat</Tag>
         <Tag variant="red" attention>
           Mikilvægt
         </Tag>
@@ -36,7 +37,7 @@ export const outlined = () => (
   <ContentBlock>
     <Box paddingY={[1, 2]}>
       <Inline space={1}>
-        <Tag outlined>Ferðagjöf</Tag>
+        <Tag outlined>Fæðing</Tag>
         <Tag variant="darkerBlue" outlined>
           Gifting
         </Tag>
@@ -53,6 +54,9 @@ export const outlined = () => (
           Færnimat
         </Tag>
         <Tag variant="dark" outlined>
+          Færnimat
+        </Tag>
+        <Tag variant="mint" outlined>
           Færnimat
         </Tag>
         <Tag variant="blueberry" outlined attention>

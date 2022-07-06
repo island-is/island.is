@@ -113,19 +113,30 @@
       "primaryButton": "Re-load page"
     }
   },
-  "confirm": {
-    "title": "Confirm car",
+  "recycle": {
+    "title": "Recycle car",
     "subTitles": {
       "confirm": "Do you want select this car for recycling?"
     },
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "continue": "Confirm with icekey"
+      "continue": "Continue"
     },
     "checkbox": {
       "label": "I agree to the",
       "linkLabel": " Terms and conditions"
+    }
+  },
+  "confirm": {
+    "title": "Confirm car recycling",
+    "subTitles": {
+      "confirm": "Are you sure you want to recycle this car?"
+    },
+    "info": "By confirming your car will be marked as recyclable. This is not binding, and the car will only be recycled if you hand over the car to a recycling company.",
+    "buttons": {
+      "cancel": "Go back",
+      "continue": "Confirm"
     }
   },
   "handover": {
@@ -199,7 +210,7 @@
     "outOf": "out of",
     "citizen": {
       "title": "Recycle car",
-      "sections": ["Confirm car for recycling", "Handover car to recycle"],
+      "sections": ["Recycle car", "Confirmation", "Summary"],
       "completed": "Completed"
     },
     "company": {
@@ -248,8 +259,8 @@
         "placeholder": "Ex. Maplestreet 2"
       },
       "postNumber": {
-        "label": "Postnumber",
-        "placeholder": "Postnumber of visiting adress"
+        "label": "Postal code",
+        "placeholder": "Postal code of visiting adress"
       },
       "city": {
         "label": "City",
@@ -274,7 +285,8 @@
   "deregisterSidenav": {
     "title": "Actions",
     "deregister": "Deregister car",
-    "companyInfo": "Company information"
+    "companyInfo": "Company information",
+    "accessControl": "Access Control"
   },
   "deregisterVehicle": {
     "select": {
@@ -347,13 +359,118 @@
     "subtitles": {
       "companies": "Recycling companies"
     },
+    "tableHeaders": {
+      "id": "ID",
+      "name": "Name",
+      "address": "Address",
+      "postnumber": "Post",
+      "email": "Email",
+      "status": "Status"
+    },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
     },
     "buttons": {
       "add": "Add recycling company",
-      "edit": "Edit"
+      "view": "View"
+    },
+    "recyclingCompany": {
+      "view": {
+        "title": "Recycling company",
+        "breadcrumb": "View",
+        "info": "You can either update or edit a recycling company. Please verify that the companies information is correct",
+        "updated": "Successfully updated",
+        "deleted": "Successfully deleted"
+      },
+      "add": {
+        "title": "Add recycling company",
+        "breadcrumb": "Add",
+        "info": "Adding a new recycling company will make it available to access control. Please verify that the companies information is correct.",
+        "added": "Successfully added"
+      },
+      "form": {
+        "inputs": {
+          "companyId": {
+            "label": "Company ID",
+            "placeholder": "Company ID",
+            "rules": {
+              "required": "Company ID is required"
+            }
+          },
+          "companyName": {
+            "label": "Company name",
+            "placeholder": "Company name",
+            "rules": {
+              "required": "Company name is required"
+            }
+          },
+          "nationalId": {
+            "label": "Company national ID",
+            "placeholder": "Company national ID",
+            "rules": {
+              "required": "Company national ID is required",
+              "validate": "National ID is incorrect"
+            }
+          },
+          "email": {
+            "label": "Company email",
+            "placeholder": "Company email",
+            "rules": {
+              "required": "Company email is required",
+              "validate": "Invalid email"
+            }
+          },
+          "address": {
+            "label": "Address",
+            "placeholder": "Address",
+            "rules": {
+              "required": "Address is required"
+            }
+          },
+          "postnumber": {
+            "label": "Postal code",
+            "placeholder": "Postal code",
+            "rules": {
+              "required": "Postal code is required"
+            }
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "City",
+            "rules": {
+              "required": "City is required"
+            }
+          },
+          "website": {
+            "label": "Website",
+            "placeholder": "Website",
+            "rules": {
+              "required": "Website is required"
+            }
+          },
+          "phone": {
+            "label": "Phone",
+            "placeholder": "Phone",
+            "rules": {
+              "required": "Phone is required"
+            }
+          },
+          "active": {
+            "label": "Active",
+            "placeholder": "Active",
+            "rules": {
+              "required": "Active is required"
+            }
+          }
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "continue": "Submit",
+          "confirm": "Confirm",
+          "goBack": "Go back"
+        }
+      }
     }
   },
   "accessControl": {
@@ -364,7 +481,10 @@
       "nationalId": "National Id",
       "name": "Name",
       "role": "Role",
-      "partner": "Partner"
+      "partner": "Partner",
+      "email": "Email",
+      "phone": "Phone",
+      "recyclingLocation": "Location"
     },
     "status": {
       "active": "Active",
@@ -374,7 +494,7 @@
       "add": "Give access",
       "edit": "Edit",
       "delete": "Delete",
-      "actions": "actions"
+      "actions": "Actions"
     },
     "modal": {
       "titles": {
@@ -389,11 +509,11 @@
       },
       "inputs": {
         "nationalId": {
-          "label": "National Id",
-          "placeholder": "National Id",
+          "label": "National ID",
+          "placeholder": "National ID",
           "rules": {
-            "required": "National Id is required",
-            "validate": "National Id is incorrect"
+            "required": "National ID is required",
+            "validate": "National ID is incorrect"
           }
         },
         "name": {
@@ -401,6 +521,28 @@
           "placeholder": "Name",
           "rules": {
             "required": "Name is required"
+          }
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Email",
+          "rules": {
+            "required": "Email is required",
+            "validate": "Invalid email"
+          }
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "Phone",
+          "rules": {
+            "required": "Phone is required"
+          }
+        },
+        "recyclingLocation": {
+          "label": "Recycling location",
+          "placeholder": "Recycling location",
+          "rules": {
+            "validate": "Recycling location could not extend 32 characters"
           }
         },
         "role": {
@@ -446,6 +588,7 @@
     "myCars": "/en/my-cars",
     "recycleVehicle": {
       "baseRoute": "/en/recycle-vehicle",
+      "recycle": "/en/recycle-vehicle/[id]/recycle",
       "confirm": "/en/recycle-vehicle/[id]/confirm",
       "handover": "/en/recycle-vehicle/[id]/handover",
       "completed": "/en/recycle-vehicle/[id]/completed"
@@ -457,10 +600,11 @@
     },
     "recycledVehicles": "/en/recycled-vehicles",
     "accessControl": "/en/access-control",
+    "accessControlCompany": "/en/access-control-company",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",
-      "edit": "/en/recycling-companies/[company]"
+      "edit": "/en/recycling-companies/[id]"
     },
     "companyInfo": {
       "baseRoute": "/en/company-info",

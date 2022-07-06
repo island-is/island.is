@@ -5,6 +5,7 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
+  sentryDsn: '',
   redis: {
     urls: (
       process.env.REDIS_NODES ??
@@ -17,6 +18,7 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
+    allowClientNationalId: true,
   },
   templateApi: {
     clientLocationOrigin: 'http://localhost:4242/umsoknir',
@@ -31,25 +33,19 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    syslumenn: {
-      url: 'https://api.syslumenn.is/dev',
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
     },
-    drivingLicense: {
+    criminalRecord: {
       clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
-        xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
+        xroadClientId:
+          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
         xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-        xroadPathV1:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-        xroadPathV2:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+        xroadPath:
+          process.env.XROAD_CRIMINAL_RECORD_PATH ??
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
       },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -69,33 +65,8 @@ const devConfig = {
       username: process.env.XROAD_PAYMENT_USER,
       password: process.env.XROAD_PAYMENT_PASSWORD,
     },
-    partyLetter: {
-      partyLetterRegistryApiBasePath: 'http://localhost:4251',
-      endorsementsApiBasePath: 'http://localhost:4246',
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-    },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
-    },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: 'http://localhost:4246',
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth: 's@kogk.is',
-          partyApplicationRvkNorth: 's@kogk.is',
-          partyApplicationSouthWest: 's@kogk.is',
-          partyApplicationNorthWest: 's@kogk.is',
-          partyApplicationNorth: 's@kogk.is',
-          partyApplicationSouth: 's@kogk.is',
-        },
-      },
     },
     paymentScheduleConfig: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
@@ -116,6 +87,13 @@ const devConfig = {
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
     },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -123,10 +101,6 @@ const devConfig = {
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
@@ -136,6 +110,8 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
+  sentryDsn:
+    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   redis: {
@@ -168,11 +144,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    syslumenn: {
-      url: process.env.SYSLUMENN_HOST,
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: process.env.NOVA_URL,
       username: process.env.NOVA_USERNAME,
@@ -180,13 +151,11 @@ const prodConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    drivingLicense: {
+    criminalRecord: {
       clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
-        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
+        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
     paymentOptions: {
@@ -199,40 +168,8 @@ const prodConfig = {
       username: process.env.XROAD_PAYMENT_USER,
       password: process.env.XROAD_PAYMENT_PASSWORD,
     },
-    partyLetter: {
-      partyLetterRegistryApiBasePath:
-        process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-    },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth:
-            process.env.PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL,
-          partyApplicationRvkNorth:
-            process.env.PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL,
-          partyApplicationSouthWest:
-            process.env.PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorthWest:
-            process.env.PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorth:
-            process.env.PARTY_APPLICATION_NORTH_ADMIN_EMAIL,
-          partyApplicationSouth:
-            process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
-        },
-      },
     },
     paymentScheduleConfig: {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
@@ -248,6 +185,13 @@ const prodConfig = {
       username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
       password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
     },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -255,10 +199,6 @@ const prodConfig = {
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,

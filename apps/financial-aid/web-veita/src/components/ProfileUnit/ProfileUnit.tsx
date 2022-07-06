@@ -1,29 +1,25 @@
-import React from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import React, { ReactNode } from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
+import Unit from './Unit'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   heading: string
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
+  children?: ReactNode
 }
 
-const ProfileUnit = ({ heading, info, className }: Props) => {
+const ProfileUnit = ({ heading, info, className, children }: Props) => {
   return (
     <>
-      {' '}
       <Box
         className={cn({
-          [`${styles.headings} `]: true,
-          [`${className}`]: true,
+          [`${styles.fullWidth} `]: true,
+          [`${className}`]: className,
         })}
         marginBottom={[2, 2, 3]}
         borderBottomWidth="standard"
@@ -33,49 +29,18 @@ const ProfileUnit = ({ heading, info, className }: Props) => {
           {heading}
         </Text>
       </Box>
-      <div
-        className={cn({
-          [`${styles.container} hideScrollBar`]: true,
-          [`${className}`]: true,
-        })}
-      >
-        {info.map((item, index) => {
-          return (
-            <Box key={'profile-' + index}>
-              <Text variant="eyebrow" marginBottom={1}>
-                {item.title}
-              </Text>
+      <Unit info={info} className={className} />
 
-              {item.link && (
-                <Link href={item.link} color="blue400" onClick={item.onclick}>
-                  {item.content}
-                </Link>
-              )}
-
-              {item.onclick && (
-                <button onClick={item.onclick} className={styles.button}>
-                  {item.content}
-                </button>
-              )}
-
-              {!item.link && !item.onclick && <Text>{item.content}</Text>}
-
-              {item.other && (
-                <Box
-                  background="blue100"
-                  borderRadius="large"
-                  padding={2}
-                  marginTop={1}
-                >
-                  <Text variant="small">
-                    „<em>{item.other}</em>“
-                  </Text>
-                </Box>
-              )}
-            </Box>
-          )
-        })}
-      </div>
+      {children && (
+        <Box
+          className={cn({
+            [`${styles.fullWidth}`]: true,
+            [`${className}`]: className,
+          })}
+        >
+          {children}
+        </Box>
+      )}
     </>
   )
 }

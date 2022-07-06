@@ -2,7 +2,8 @@ import {
   GetScheduleDistributionInput,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
-import { FieldBaseProps } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AccordionItem,
   AlertMessage,
@@ -25,8 +26,8 @@ import {
 } from '../../shared/utils'
 import {
   PaymentModeState,
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
+  PaymentPlans,
+  PrerequisitesResult,
 } from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
@@ -48,30 +49,35 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   ] = useState<PaymentScheduleDistribution | null>(null)
   const [displayInfo, setDisplayInfo] = useState(false)
 
-  const externalData = application.externalData as PaymentPlanExternalData
-  const answers = application.answers as PublicDebtPaymentPlan
   const index = field.defaultValue as number
+
+  const paymentPlans = getValueViaPath(
+    application.answers,
+    'paymentPlans',
+  ) as PaymentPlans
+
+  const paymentPlanPrerequisites = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites',
+  ) as PrerequisitesResult
+
   // Assign a payment to this screen by using the index of the step
-  const payment = externalData.paymentPlanPrerequisites?.data?.debts[index]
+  const payment = paymentPlanPrerequisites?.data?.debts[index]
+
   // Geta min/max month and min/max payment data
-  const initialMinMaxData = externalData.paymentPlanPrerequisites?.data?.allInitialSchedules.find(
+  const initialMinMaxData = paymentPlanPrerequisites?.data?.allInitialSchedules.find(
     (x) => x.scheduleType === payment?.type,
   )
+
   // Locate the entry of the payment plan in answers.
-  const entryKey = getPaymentPlanKeyById(
-    answers.paymentPlans,
-    payment?.type || '',
-  )
+  const entryKey = getPaymentPlanKeyById(paymentPlans, payment?.type || '')
+
   // If no entry is found, find an empty entry to assign to this payment
   const answerKey = (entryKey ||
-    getEmptyPaymentPlanEntryKey(
-      answers.paymentPlans,
-    )) as keyof typeof answers.paymentPlans
+    getEmptyPaymentPlanEntryKey(paymentPlans)) as keyof typeof paymentPlans
 
   const entry = `paymentPlans.${answerKey}`
-  const currentAnswers = answers.paymentPlans
-    ? answers.paymentPlans[answerKey]
-    : undefined
+  const currentAnswers = paymentPlans ? paymentPlans[answerKey] : undefined
 
   const [paymentMode, setPaymentMode] = useState<PaymentModeState | undefined>(
     currentAnswers?.paymentMode,
@@ -295,7 +301,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
-            label="Greiðsluáætlun skuldar"
+            label={formatMessage(paymentPlan.labels.distributionDataMainTitle)}
             visibleContent={formatMessage(
               paymentPlan.labels.distributionDataTitle,
             )}

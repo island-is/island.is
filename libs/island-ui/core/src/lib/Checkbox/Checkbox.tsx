@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
-import { Icon } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
 import { InputBackgroundColor } from '../Input/types'
@@ -22,7 +22,7 @@ export interface CheckboxProps {
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
-  labelVariant?: 'default' | 'small'
+  labelVariant?: 'default' | 'small' | 'medium'
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
@@ -94,11 +94,7 @@ export const Checkbox = ({
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon
-            type="check"
-            width={styles.checkMarkWidth}
-            color={checked ? 'white' : 'transparent'}
-          />
+          <Icon icon="checkmark" color={checked ? 'white' : 'transparent'} />
         </div>
         <span className={styles.labelText}>
           <Text

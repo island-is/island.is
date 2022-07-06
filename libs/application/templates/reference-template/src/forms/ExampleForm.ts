@@ -8,12 +8,15 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  buildFileUploadField,
+  buildRedirectToServicePortalField,
+} from '@island.is/application/core'
+import {
   Comparators,
   Form,
   FormModes,
   FormValue,
-  buildFileUploadField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
@@ -128,6 +131,16 @@ export const ExampleForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'assignee',
+          title: m.assigneeTitle,
+          children: [
+            buildTextField({
+              id: 'assigneeEmail',
+              title: m.assignee,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
@@ -152,6 +165,10 @@ export const ExampleForm: Form = buildForm({
                 'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
             }),
           ],
+        }),
+        buildRedirectToServicePortalField({
+          id: 'redirect',
+          title: '',
         }),
         buildDescriptionField({
           id: 'final',

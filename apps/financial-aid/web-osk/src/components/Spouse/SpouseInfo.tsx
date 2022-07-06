@@ -4,9 +4,10 @@ import { Input, Checkbox, Box } from '@island.is/island-ui/core'
 import {
   focusOnNextInput,
   isEmailValid,
-  sanitizeNationalId,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '../FormProvider/FormProvider'
+import SpouseEmailInput from '../SpouseEmailInput/SpouseEmailInput'
 
 interface Props {
   hasError: boolean
@@ -29,6 +30,7 @@ const SpouseInfo = ({
         <Input
           label="Kennitala maka"
           name="nationalIdSpouse"
+          data-testid="nationalIdSpouse"
           placeholder="Sláðu inn kennitölu maka"
           backgroundColor="blue"
           hasError={
@@ -43,7 +45,7 @@ const SpouseInfo = ({
               ...form,
               spouse: {
                 ...form.spouse,
-                nationalId: sanitizeNationalId(event.target.value),
+                nationalId: sanitizeOnlyNumbers(event.target.value),
               },
             })
             removeError()
@@ -53,34 +55,16 @@ const SpouseInfo = ({
         />
       </Box>
 
-      <Box marginBottom={[2, 2, 3]}>
-        <Input
-          label="Netfang maka"
-          name="emailSpouse"
-          id="email"
-          placeholder="Sláðu inn netfang maka"
-          backgroundColor="blue"
-          hasError={
-            (hasError && !form?.spouse?.email) ||
-            (hasError && !isEmailValid(form?.spouse?.email))
-          }
-          errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
-          type="email"
-          value={form?.spouse?.email}
-          onChange={(event) => {
-            removeError()
-            updateForm({
-              ...form,
-              spouse: {
-                ...form.spouse,
-                email: event.target.value,
-              },
-            })
-          }}
-        />
-      </Box>
+      <SpouseEmailInput
+        hasError={
+          hasError &&
+          Boolean(form.spouse?.email && isEmailValid(form.spouse.email)) ===
+            false
+        }
+        removeError={removeError}
+      />
 
-      <Box>
+      <Box data-testid="acceptSpouseTerms">
         <Checkbox
           name={'accept'}
           id="accept"

@@ -2,12 +2,13 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 import {
   createApplication,
   createCurrentUser,
 } from '@island.is/testing/fixtures'
+import { faker } from '@island.is/shared/mocking'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
@@ -26,9 +27,11 @@ const application = createApplication({
       a: 'no',
       b: 'yes',
     },
+    email: faker.internet.email(),
   },
   applicant: user.nationalId,
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),

@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Translation" -->
+
 # Contentful Translation Extension
 
 This is the Contentful extension responsible of translations for namespaces for your application. It works in pair with the [localization](../../localization/README.md) library.

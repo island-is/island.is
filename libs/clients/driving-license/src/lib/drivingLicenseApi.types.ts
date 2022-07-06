@@ -1,5 +1,3 @@
-import { Okuskirteini } from '../v1'
-
 export interface DriversLicenseCategory {
   id: number
   name: string
@@ -14,6 +12,7 @@ export interface DriversLicense {
   issued?: Date | null
   expires?: Date | null
   categories: DriversLicenseCategory[]
+  healthRemarks?: string[]
 }
 
 export interface Teacher {
@@ -35,4 +34,25 @@ export interface DrivingAssessment {
 
 export interface QualityPhoto {
   data: string
+}
+
+export type CanApplyErrorCodeBTemporary =
+  | 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY'
+  | 'NO_LICENSE_FOUND'
+  | 'PERSON_NOT_17_YEARS_OLD'
+  | 'HAS_DEPRIVATION'
+  | 'HAS_NO_PHOTO'
+  | 'HAS_NO_SIGNATURE'
+  | 'HAS_B_CATEGORY'
+
+export type CanApplyErrorCodeBFull =
+  | 'HAS_POINTS'
+  | 'NO_TEMP_LICENSE'
+  | 'HAS_DEPRIVATION'
+
+export interface CanApplyForCategoryResult<
+  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
+> {
+  result: boolean
+  errorCode?: T | undefined
 }

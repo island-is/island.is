@@ -37,4 +37,8 @@ export class UpdateStaffInput implements UpdateStaff {
   @Allow()
   @Field({ nullable: true })
   readonly usePseudoName?: boolean
+
+  @Allow()
+  @Field(() => [String], { nullable: true })
+  readonly municipalityIds?: string[]
 }

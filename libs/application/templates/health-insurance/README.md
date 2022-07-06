@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Health Insurance
 
 Application for health insurance when moving back to Iceland after living abroad.

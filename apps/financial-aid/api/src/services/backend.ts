@@ -20,18 +20,19 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
-  Amount,
+  ApplicationPagination,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 import {
-  CreateMunicipalityInput,
-  UpdateMunicipalityInput,
-} from '../app/modules/municipality/dto'
-import { CreateAmountInput } from '../app/modules/amount/dto'
+  DirectTaxPaymentsResponse,
+  PersonalTaxReturnResponse,
+} from '../app/modules/personalTaxReturn/models'
+import { FilterApplicationsInput } from '../app/modules/application/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -59,7 +60,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getMunicipality(id: string): Promise<Municipality> {
-    return this.get(`municipality/${id}`)
+    return this.get(`municipality/id/${id}`)
+  }
+
+  getMunicipalitiesById(): Promise<Municipality[]> {
+    return this.get('municipality/ids')
   }
 
   getMunicipalities(): Promise<Municipality[]> {
@@ -68,7 +73,7 @@ class BackendAPI extends RESTDataSource {
 
   createMunicipality(
     createMunicipality: CreateMunicipality,
-    createAdmin: CreateStaff,
+    createAdmin?: CreateStaff,
   ): Promise<Municipality> {
     return this.post('municipality', {
       municipalityInput: createMunicipality,
@@ -78,7 +83,7 @@ class BackendAPI extends RESTDataSource {
 
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
-  ): Promise<Municipality> {
+  ): Promise<Municipality[]> {
     return this.put('municipality', updateMunicipality)
   }
 
@@ -118,6 +123,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`file/url/${id}`)
   }
 
+  getSignedUrlForAllFiles(applicationId: string): Promise<SignedUrl[]> {
+    return this.get(`file/${applicationId}`)
+  }
+
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
@@ -130,16 +139,16 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplicationId(nationalId: string): Promise<string | undefined> {
-    return this.get(`application/nationalId/${nationalId}`)
+  getCurrentApplicationId(): Promise<string | undefined> {
+    return this.get('application/nationalId')
   }
 
-  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
-    return this.get(`application/spouse/${spouseNationalId}`)
+  getSpouse(): Promise<SpouseModel> {
+    return this.get('application/spouse')
   }
 
-  getStaff(nationalId: string): Promise<Staff> {
-    return this.get(`staff/nationalId/${nationalId}`)
+  getStaff(): Promise<Staff> {
+    return this.get('staff/nationalId')
   }
 
   getStaffById(id: string): Promise<Staff> {
@@ -149,9 +158,16 @@ class BackendAPI extends RESTDataSource {
   getAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/users/${municipalityId}`)
   }
+  getAllAdminUsers(municipalityId: string): Promise<Staff[]> {
+    return this.get(`staff/allAdminUsers/${municipalityId}`)
+  }
 
   getSupervisors(): Promise<Staff[]> {
     return this.get('staff/supervisors')
+  }
+
+  getAdmins(): Promise<Staff[]> {
+    return this.get('staff/admins')
   }
 
   updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
@@ -168,6 +184,20 @@ class BackendAPI extends RESTDataSource {
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
     return this.get(`staff/municipality/${municipalityId}`)
+  }
+
+  getPersonalTaxReturn(id: string): Promise<PersonalTaxReturnResponse> {
+    return this.get(`personalTaxReturn/id/${id}`)
+  }
+
+  getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {
+    return this.get('personalTaxReturn/directTaxPayments')
+  }
+
+  getFilteredApplications(
+    filters: FilterApplicationsInput,
+  ): Promise<ApplicationPagination> {
+    return this.post('application/filter', filters)
   }
 }
 

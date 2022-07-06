@@ -1,4 +1,5 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import * as kennitala from 'kennitala'
 
 import type { Logger } from '@island.is/logging'
@@ -10,10 +11,11 @@ import {
   FamilyMember,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
+import { lastValueFrom } from 'rxjs'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
-const MAX_AGE_LIMIT = 18
+export const MAX_AGE_LIMIT = 18
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -159,6 +161,28 @@ const TEST_USERS: NationalRegistryUser[] = [
     postalcode: 540,
     city: 'Blönduós',
   },
+  {
+    // Gervimaður Útlönd
+    nationalId: '0101307789',
+    firstName: 'Gervimaður',
+    middleName: '',
+    lastName: 'Útlönd',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Útlönd
+    nationalId: '1111111119',
+    firstName: 'Sól',
+    middleName: 'Rún',
+    lastName: 'Gervimannsdóttir',
+    gender: 'kvk',
+    address: 'Urðarbraut 1',
+    postalcode: 210,
+    city: 'Garðabær',
+  },
 ]
 
 @Injectable()
@@ -204,24 +228,25 @@ export class NationalRegistryService {
         return testUser
       }
     }
-
     const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
       return cacheValue.user
     }
-
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`),
+    )
 
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
       await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
+    } else if (user === null) {
+      this.logger.error(
+        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
+      )
     }
-
     return user
   }
 
@@ -254,9 +279,9 @@ export class NationalRegistryService {
 
     const response: {
       data: [NationalRegistryFamilyLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`),
+    )
 
     const data = response.data[0]
     if (data.error) {

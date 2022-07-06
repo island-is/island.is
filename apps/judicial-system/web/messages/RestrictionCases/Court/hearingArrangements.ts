@@ -18,40 +18,6 @@ export const rcHearingArrangements = {
       'Notaður sem titill á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
-    setJudge: defineMessages({
-      title: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_judge.title',
-        defaultMessage: 'Dómari',
-        description:
-          'Notaður sem titill fyrir "dómari" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_judge.tooltip',
-        defaultMessage:
-          'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
-    setRegistrar: defineMessages({
-      title: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_registrar.title',
-        defaultMessage: 'Dómritari',
-        description:
-          'Notaður sem titill fyrir "Dómritari" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_registrar.tooltip',
-        defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     requestedCourtDate: defineMessages({
       title: {
         id:
@@ -68,6 +34,14 @@ export const rcHearingArrangements = {
         defaultMessage: 'Verjandi',
         description:
           'Notaður sem titill fyrir "Verjanda" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.restriction_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður verjandi í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       nameLabel: {
         id:
@@ -99,20 +73,29 @@ export const rcHearingArrangements = {
       },
       phoneNumberLabel: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_label',
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_label',
         defaultMessage: 'Símanúmer verjanda',
         description:
           'Notaður sem titill í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       phoneNumberPlaceholder: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_placeholder',
+          'judicial.system.restriction_cases:hearing_arrangements.defender.phone_number_placeholder',
         defaultMessage: 'Símanúmer',
         description:
           'Notaður sem skýritexti í "Símanúmer verjanda" textaboxi á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
   },
+  continueButton: defineMessages({
+    label: {
+      id:
+        'judicial.system.restriction_cases:hearing_arrangements.continue_button.label',
+      defaultMessage: 'Staðfesta fyrirtökutíma',
+      description:
+        'Notaður sem titill á halda áfram takka í fyrirtöku skrefi gæsluvarðhalds- og farbannsmálum.',
+    },
+  }),
   modal: {
     custodyCases: defineMessages({
       heading: {
@@ -124,9 +107,9 @@ export const rcHearingArrangements = {
       },
       text: {
         id:
-          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.text',
+          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.text_v2',
         defaultMessage:
-          'Tilkynning hafi verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður.',
+          '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.',
         description:
           'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í gæsluvarðhaldsmálum.',
       },
@@ -141,9 +124,9 @@ export const rcHearingArrangements = {
       },
       text: {
         id:
-          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.text',
+          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.text_v2',
         defaultMessage:
-          'Tilkynning hefur verið send á ákæranda og verjanda hafi verjandi verið skráður.',
+          '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.',
         description:
           'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
       },

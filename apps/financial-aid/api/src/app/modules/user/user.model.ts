@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared/lib'
+import { User } from '@island.is/financial-aid/shared/lib'
 
 import { StaffModel } from '../staff'
 import { SpouseModel } from './spouseModel.model'
@@ -15,12 +15,6 @@ export class UserModel implements User {
 
   @Field({ nullable: true })
   readonly phoneNumber?: string
-
-  @Field()
-  readonly folder!: string
-
-  @Field(() => String)
-  readonly service!: RolesRule
 
   @Field(() => String, { nullable: true })
   readonly currentApplicationId?: string

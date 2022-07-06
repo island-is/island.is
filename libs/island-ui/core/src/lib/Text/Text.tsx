@@ -15,7 +15,9 @@ import {
   TextVariants,
   truncate as truncateStyle,
   strikethrough as strikethroughStyle,
+  whiteSpace as whiteSpaceStyle,
 } from './Text.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type TextElements =
   | 'h1'
@@ -46,6 +48,13 @@ export interface TextProps {
   lineHeight?: keyof typeof lineHeightStyles
   title?: string
   strikethrough?: boolean
+  whiteSpace?:
+    | 'normal'
+    | 'nowrap'
+    | 'pre'
+    | 'preWrap'
+    | 'preLine'
+    | 'breakSpaces'
 }
 
 type GetTextStylesProps = Pick<
@@ -56,6 +65,7 @@ type GetTextStylesProps = Pick<
   | 'fontWeight'
   | 'lineHeight'
   | 'strikethrough'
+  | 'whiteSpace'
 >
 
 export const getTextStyles = ({
@@ -65,6 +75,7 @@ export const getTextStyles = ({
   lineHeight,
   variant = 'default',
   strikethrough,
+  whiteSpace,
 }: GetTextStylesProps) =>
   cn(base, {
     [variantStyles[variant!]]: variant,
@@ -75,9 +86,10 @@ export const getTextStyles = ({
     [defaultLineHeights[variant!]]: variant && !lineHeight,
     [truncateStyle]: truncate,
     [strikethroughStyle]: strikethrough,
+    [whiteSpaceStyle[whiteSpace!]]: whiteSpace,
   })
 
-export const Text = forwardRef<HTMLElement, TextProps>(
+export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
   (
     {
       id,
@@ -96,6 +108,8 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       title,
       as = 'p',
       strikethrough,
+      whiteSpace,
+      dataTestId,
     },
     ref,
   ) => {
@@ -110,6 +124,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
+        data-testid={dataTestId}
         className={getTextStyles({
           color,
           truncate,
@@ -117,6 +132,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
           lineHeight,
           variant,
           strikethrough,
+          whiteSpace,
         })}
         ref={ref}
         title={title}

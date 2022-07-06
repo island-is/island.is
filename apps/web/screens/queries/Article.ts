@@ -11,8 +11,37 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
+      processEntryButtonText
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       body {
         ...AllSlices
+      }
+      stepper {
+        id
+        title
+        steps {
+          id
+          title
+          slug
+          stepType
+          subtitle {
+            ...HtmlFields
+          }
+          config
+        }
+        config
       }
       processEntry {
         id
@@ -23,6 +52,7 @@ export const GET_ARTICLE_QUERY = gql`
         buttonText
       }
       organization {
+        id
         title
         shortTitle
         slug
@@ -35,6 +65,9 @@ export const GET_ARTICLE_QUERY = gql`
         footerItems {
           title
           content {
+            ...HtmlFields
+          }
+          serviceWebContent {
             ...HtmlFields
           }
           link {
@@ -83,6 +116,7 @@ export const GET_ARTICLE_QUERY = gql`
         url
       }
       subArticles {
+        id
         title
         slug
         body {
@@ -105,7 +139,15 @@ export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
       id
+      title {
+        en
+        is
+      }
       slug {
+        en
+        is
+      }
+      url {
         en
         is
       }

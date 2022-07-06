@@ -4,6 +4,7 @@ import {
   ArrowLink,
   Box,
   Button,
+  ColorSchemeContext,
   GridContainer,
   LoadingDots,
   NavigationItem,
@@ -30,11 +31,9 @@ import {
   ApiCatalogueFilter,
   OrganizationWrapper,
   ServiceList,
-  SubpageDetailsContent,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
@@ -49,6 +48,8 @@ import {
 } from '@island.is/api-catalogue/consts'
 import { useRouter } from 'next/router'
 import { INLINES } from '@contentful/rich-text-types'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const LIMIT = 20
 
@@ -67,18 +68,27 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   filterContent,
   navigationLinks,
 }) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
   const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
 
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
       return
     }
 
-    const { nextCursor } = data?.getApiCatalogue?.pageInfo
+    const nextCursor = data?.getApiCatalogue?.pageInfo.nextCursor
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },
@@ -244,130 +254,85 @@ const ApiCatalogue: Screen<HomestayProps> = ({
           },
         })}
       </OrganizationWrapper>
-      <Box background="blue100" marginTop={[2, 2, 6]} paddingTop={[2, 2, 6]}>
-        <SubpageDetailsContent
-          header=""
-          content={
-            <SidebarLayout
-              paddingTop={[3, 3, 5]}
-              paddingBottom={[0, 0, 6]}
-              sidebarContent={
-                <Box paddingRight={[0, 0, 3]}>
-                  <ApiCatalogueFilter
-                    labelClear={fn('clear')}
-                    labelOpen={fn('openFilterButton')}
-                    labelClose={fn('closeFilter')}
-                    labelResult={fn('mobileResult')}
-                    labelTitle={fn('mobileTitle')}
-                    resultCount={data?.getApiCatalogue?.services?.length ?? 0}
-                    onFilterClear={() =>
-                      setParameters({
-                        query: '',
-                        pricing: [],
-                        data: [],
-                        type: [],
-                        access: [],
-                      })
-                    }
-                    inputPlaceholder={fn('search')}
-                    inputValue={parameters.query}
-                    onInputChange={(value) =>
-                      setParameters({ ...parameters, query: value })
-                    }
-                    labelCategoryClear={fn('clearCategory')}
-                    onCategoryChange={({ categoryId, selected }) => {
-                      setParameters({
-                        ...parameters,
-                        [categoryId]: selected,
-                      })
-                    }}
-                    onCategoryClear={(categoryId) =>
-                      setParameters({
-                        ...parameters,
-                        [categoryId]: [],
-                      })
-                    }
-                    categories={filterCategories}
-                  />
-                </Box>
-              }
-            >
-              <Box display={['block', 'block', 'none']} paddingBottom={4}>
-                <ApiCatalogueFilter
-                  isDialog={true}
-                  labelClear={fn('clear')}
-                  labelOpen={fn('openFilterButton')}
-                  labelClose={fn('closeFilter')}
-                  labelResult={fn('mobileResult')}
-                  labelTitle={fn('mobileTitle')}
-                  resultCount={data?.getApiCatalogue?.services?.length ?? 0}
-                  onFilterClear={() =>
-                    setParameters({
-                      query: '',
-                      pricing: [],
-                      data: [],
-                      type: [],
-                      access: [],
-                    })
-                  }
-                  inputPlaceholder={fn('search')}
-                  inputValue={parameters.query}
-                  onInputChange={(value) =>
-                    setParameters({ ...parameters, query: value })
-                  }
-                  labelCategoryClear={fn('clearCategory')}
-                  onCategoryChange={({ categoryId, selected }) => {
-                    setParameters({
-                      ...parameters,
-                      [categoryId]: selected,
-                    })
-                  }}
-                  onCategoryClear={(categoryId) =>
-                    setParameters({
-                      ...parameters,
-                      [categoryId]: [],
-                    })
-                  }
-                  categories={filterCategories}
+      <Box background="blue100" display="inlineBlock" width="full">
+        <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+          <GridContainer id="service-list">
+            <Box marginY={[3, 3, 6]}>
+              <ApiCatalogueFilter
+                variant={isMobile ? 'dialog' : 'popover'}
+                align="right"
+                labelClearAll={fn('clearAll')}
+                labelClear={fn('clear')}
+                labelOpen={fn('openFilterButton')}
+                labelClose={fn('closeFilter')}
+                labelResult={fn('mobileResult')}
+                labelTitle={fn('mobileTitle')}
+                resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                onFilterClear={() =>
+                  setParameters({
+                    query: '',
+                    pricing: [],
+                    data: [],
+                    type: [],
+                    access: [],
+                  })
+                }
+                inputPlaceholder={fn('search')}
+                inputValue={parameters.query}
+                onInputChange={(value) =>
+                  setParameters({ ...parameters, query: value })
+                }
+                labelCategoryClear={fn('clearCategory')}
+                onCategoryChange={({ categoryId, selected }) => {
+                  setParameters({
+                    ...parameters,
+                    [categoryId]: selected,
+                  })
+                }}
+                onCategoryClear={(categoryId) =>
+                  setParameters({
+                    ...parameters,
+                    [categoryId]: [],
+                  })
+                }
+                categories={filterCategories}
+              />
+            </Box>
+            {(error || data?.getApiCatalogue?.services.length < 1) && (
+              <GridContainer>
+                {error ? (
+                  <Text>{sn('errorHeading')}</Text>
+                ) : loading ? (
+                  <LoadingDots />
+                ) : (
+                  <Text>{sn('notFound')}</Text>
+                )}
+              </GridContainer>
+            )}
+            {data?.getApiCatalogue?.services.length > 0 && (
+              <GridContainer>
+                <ServiceList
+                  baseUrl={linkResolver('webservicespage').href + '/'}
+                  services={data?.getApiCatalogue?.services}
+                  tagDisplayNames={filterContent}
                 />
-              </Box>
-
-              {(error || data?.getApiCatalogue?.services.length < 1) && (
-                <GridContainer>
-                  {error ? (
-                    <Text>{sn('errorHeading')}</Text>
-                  ) : loading ? (
-                    <LoadingDots />
-                  ) : (
-                    <Text>{sn('notFound')}</Text>
-                  )}
-                </GridContainer>
-              )}
-              {data?.getApiCatalogue?.services.length > 0 && (
-                <GridContainer>
-                  <ServiceList
-                    baseUrl={linkResolver('apicataloguepage').href + '/'}
-                    services={data?.getApiCatalogue?.services}
-                    tagDisplayNames={filterContent}
-                  />
-                  {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
-                    <Box display="flex" justifyContent="center">
-                      <Button onClick={() => onLoadMore()} variant="ghost">
-                        {!loading ? sn('fmButton') : <LoadingDots />}
-                      </Button>
-                    </Box>
-                  )}
-                </GridContainer>
-              )}
-            </SidebarLayout>
-          }
-        />
+                {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+                  <Box display="flex" justifyContent="center">
+                    <Button onClick={() => onLoadMore()} variant="ghost">
+                      {!loading ? sn('fmButton') : <LoadingDots single />}
+                    </Button>
+                  </Box>
+                )}
+              </GridContainer>
+            )}
+          </GridContainer>
+        </ColorSchemeContext.Provider>
       </Box>
     </>
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
+ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizationPage },

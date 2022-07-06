@@ -20,7 +20,6 @@ import {
   ITabSection,
   ITeamList,
   IContactUs,
-  ILocation,
   ITellUsAStory,
   IDistricts,
   IFeaturedArticles,
@@ -66,7 +65,6 @@ import {
 import { mapTabSection, TabSection } from '../models/tabSection.model'
 import { mapTeamList, TeamList } from '../models/teamList.model'
 import { ContactUs, mapContactUs } from '../models/contactUs.model'
-import { Location, mapLocation } from '../models/location.model'
 import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
 import { Districts, mapDistricts } from '../models/districts.model'
 import {
@@ -104,7 +102,6 @@ type SliceTypes =
   | ITabSection
   | ITeamList
   | IContactUs
-  | ILocation
   | ITellUsAStory
   | IDistricts
   | IFeaturedArticles
@@ -135,7 +132,6 @@ export const SliceUnion = createUnionType({
     TabSection,
     TeamList,
     ContactUs,
-    Location,
     TellUsAStory,
     Html,
     Image,
@@ -189,8 +185,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapTeamList(slice as ITeamList)
     case 'contactUs':
       return mapContactUs(slice as IContactUs)
-    case 'location':
-      return mapLocation(slice as ILocation)
     case 'tellUsAStory':
       return mapTellUsAStory(slice as ITellUsAStory)
     case 'districts':

@@ -1,9 +1,13 @@
 import * as s from './RegulationStatus.css'
 
 import React from 'react'
-import { ISODate, interpolate, toISODate } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { Hidden, Link, Text } from '@island.is/island-ui/core'
+import {
+  ISODate,
+  interpolate,
+  toISODate,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
+import { Link, Text } from '@island.is/island-ui/core'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -36,9 +40,11 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const today = toISODate(new Date())
 
+  const hasPending = history[0]?.status === 'pending'
+
   const color: BallColor = repealed
     ? 'red'
-    : type === 'amending'
+    : hasPending || type === 'amending'
     ? 'yellow'
     : !timelineDate || timelineDate === (lastAmendDate || publishedDate)
     ? 'green'
@@ -55,7 +61,12 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const getNextHistoryDate = () => {
     const idx = (history || []).findIndex((item) => item.date === timelineDate)
-    const nextItem = idx > -1 && history[idx + 1]
+    const nextItem =
+      idx > -1
+        ? history[idx + 1]
+        : idx === -1 && history.length
+        ? history[0]
+        : false
     return nextItem ? nextItem.date : undefined
   }
 
@@ -115,6 +126,16 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                     })}
                   </small>
                 ))}
+            </>
+          ) : hasPending ? (
+            <>
+              {txt('statusCurrentBase') + ' '}
+              <small className={s.metaDate}>
+                {txt(
+                  'statusHasPending',
+                  'Reglugerð án breytinga, sjá breytingasögu.',
+                )}
+              </small>
             </>
           ) : !lastAmendDate ? (
             <>

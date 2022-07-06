@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { Base64 } from 'js-base64'
 import {
   Conditions,
   DebtSchedules,
@@ -31,6 +30,7 @@ export class PaymentScheduleAPI extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xRoadClientId)
   }
@@ -82,7 +82,8 @@ export class PaymentScheduleAPI extends RESTDataSource {
     const queryParams = new URLSearchParams()
     queryParams.append('totalAmount', totalAmount.toString())
 
-    if (monthAmount) queryParams.append('monthAmount', monthAmount.toString())
+    if (monthAmount)
+      queryParams.append('monthAmount', Math.floor(monthAmount).toString())
     if (monthCount) queryParams.append('monthCount', monthCount.toString())
 
     const response = await this.get<PaymentDistributionResponse>(

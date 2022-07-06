@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   UseGuards,
@@ -9,11 +10,15 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { prosecutorRule } from '../../guards'
 import {
@@ -24,8 +29,9 @@ import {
   CaseOriginalAncestorInterceptor,
   CurrentCase,
 } from '../case'
-import { UploadPoliceCaseFileDto } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
 @UseGuards(
@@ -38,7 +44,10 @@ import { PoliceService } from './police.service'
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 export class PoliceController {
-  constructor(private readonly policeService: PoliceService) {}
+  constructor(
+    private readonly policeService: PoliceService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @RolesRules(prosecutorRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
@@ -49,10 +58,13 @@ export class PoliceController {
     description: 'Gets all police files for a case',
   })
   getAll(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<PoliceCaseFile[]> {
-    return this.policeService.getAllPoliceCaseFiles(theCase.id)
+    this.logger.debug(`Getting all police files for case ${caseId}`)
+
+    return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
   }
 
   @RolesRules(prosecutorRule)
@@ -63,8 +75,17 @@ export class PoliceController {
   })
   uploadPoliceCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
-    return this.policeService.uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
+    this.logger.debug(
+      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
+    )
+
+    return this.policeService.uploadPoliceCaseFile(
+      caseId,
+      uploadPoliceCaseFile,
+      user,
+    )
   }
 }

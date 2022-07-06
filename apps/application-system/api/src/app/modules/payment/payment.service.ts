@@ -12,7 +12,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { Application as ApplicationModel } from '../application/application.model'
+import { Application as ApplicationModel } from '@island.is/application/api/core'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -44,13 +44,13 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
-          [Op.and]: [{ application_id: applicationId }, { fulfilled: true }],
+          application_id: applicationId,
         },
       })
       .catch(handleError)
   }
 
-  private makePaymentUrl(docNum: string): string {
+  public makePaymentUrl(docNum: string): string {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
@@ -94,6 +94,7 @@ export class PaymentService {
     }
 
     const result = await this.paymentApi.createCharge(charge)
+
     return {
       ...result,
       paymentUrl: this.makePaymentUrl(result.user4),

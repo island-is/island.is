@@ -8,9 +8,9 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
+import { showModal } from '../src/utils/showModal'
 
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 import * as Sentry from '@sentry/react'
 
 export const personalInformationModule: ServicePortalModule = {
@@ -25,57 +25,16 @@ export const personalInformationModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
       {
-        name: defineMessage({
-          id: 'sp.settings:edit-phone-number',
-          defaultMessage: 'Breyta símanúmeri',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () =>
-          lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:edit-email',
-          defaultMessage: 'Breyta netfangi',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditEmail,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:edit-language',
-          defaultMessage: 'Breyta tungumáli',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
-      },
-      {
         name: m.messages,
         path: ServicePortalPath.MessagesRoot,
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
       {
-        name: defineMessage({
-          id: 'sp.settings:edit-nudge',
-          defaultMessage: 'Breyta Hnippi',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+        name: 'Stillingar',
+        path: ServicePortalPath.SettingsRoot,
         enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:email-confirmation',
-          defaultMessage: 'Staðfesta netfang',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () =>
-          lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
+        render: () => lazy(() => import('./screens/SettingsRoot/SettingsRoot')),
       },
     ]
 
@@ -92,11 +51,13 @@ export const personalInformationModule: ServicePortalModule = {
         query: USER_PROFILE,
       })
 
-      // If the user profile is empty, we render the onboarding modal
+      const showTheModal = showModal(res.data?.getUserProfile)
+
       if (
+        // true
         process.env.NODE_ENV !== 'development' &&
-        res.data?.getUserProfile === null &&
-        userInfo.scopes.includes(UserProfileScope.write)
+        userInfo.scopes.includes(UserProfileScope.write) &&
+        showTheModal
       )
         routes.push({
           render: () =>

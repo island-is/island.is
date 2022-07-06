@@ -1,40 +1,35 @@
 import { useMutation } from '@apollo/client'
 import {
   Mutation,
-  MutationConfirmEmailVerificationArgs,
+  MutationCreateEmailVerificationArgs,
 } from '@island.is/api/schema'
-import { CONFIRM_EMAIL_VERIFICATION } from '../../lib/mutations/confirmEmailVerification'
-import { USER_PROFILE } from '../../lib/queries/getUserProfile'
+import { CREATE_EMAIL_VERIFICATION } from '../../lib/mutations/createEmailVerification'
 
-export type ConfirmEmailVerificationData = {
-  hash: string
+export type CreateEmailVerificationData = {
+  email: string
 }
 
 export const useVerifyEmail = () => {
-  const [confirmEmailVerificationMutation, { loading, error }] = useMutation<
-    Mutation,
-    MutationConfirmEmailVerificationArgs
-  >(CONFIRM_EMAIL_VERIFICATION, {
-    refetchQueries: [
-      {
-        query: USER_PROFILE,
-      },
-    ],
-  })
+  const [
+    createEmailVerificationMutation,
+    { loading: createLoading, error: createError },
+  ] = useMutation<Mutation, MutationCreateEmailVerificationArgs>(
+    CREATE_EMAIL_VERIFICATION,
+  )
 
-  const confirmEmailVerification = (data: ConfirmEmailVerificationData) => {
-    return confirmEmailVerificationMutation({
+  const createEmailVerification = (data: CreateEmailVerificationData) => {
+    return createEmailVerificationMutation({
       variables: {
         input: {
-          hash: data.hash,
+          email: data.email,
         },
       },
     })
   }
 
   return {
-    confirmEmailVerification,
-    loading,
-    error,
+    createEmailVerification,
+    createLoading,
+    createError,
   }
 }

@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   guardian: {
     id: 'service.portal:guardian',
-    defaultMessage: 'Umsjónarmaður',
+    defaultMessage: 'Þjónustuaðili',
   },
   status: {
     id: 'service.portal:status',
@@ -135,7 +135,7 @@ export const m = defineMessages({
   },
   selectForResults: {
     id: 'service.portal:select-for-results',
-    defaultMessage: 'Veldu leitarskilyrði, t.d. gjaldflokk og tímabil.',
+    defaultMessage: 'Veldu öll leitarskilyrði til að fá niðurstöður.',
   },
   datesForResults: {
     id: 'service.portal:dates-for-results',
@@ -159,7 +159,7 @@ export const m = defineMessages({
   },
   contactInfo: {
     id: 'service.portal:contact-info',
-    defaultMessage: 'Tengiliða upplýsingar',
+    defaultMessage: 'Tengiliðaupplýsingar',
   },
   website: {
     id: 'service.portal:website',
@@ -187,7 +187,7 @@ export const m = defineMessages({
   },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
-    defaultMessage: 'eitthvað fór úrskeiðis',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
   },
   fetching: {
     id: 'service.portal:fetching',
@@ -201,6 +201,22 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
+  vehiclesHistory: {
+    id: 'service.portal:vehicles-history',
+    defaultMessage: 'Ökutækjaferill',
+  },
+  vehiclesLookup: {
+    id: 'service.portal:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
+  yourVehicles: {
+    id: 'service.portal:your-vehicles',
+    defaultMessage: 'Þín ökutæki',
+  },
+  myVehicles: {
+    id: 'service.portal:my-vehicles',
+    defaultMessage: 'Ökutækin mín',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -211,15 +227,15 @@ export const m = defineMessages({
   },
   maleGreeting: {
     id: 'service.portal:welcome-male',
-    defaultMessage: 'Velkominn á mínar síður á island.is',
+    defaultMessage: 'Velkominn á Mínar síður á Ísland.is',
   },
   femaleGreeting: {
     id: 'service.portal:welcome-female',
-    defaultMessage: 'Velkomin á mínar síður á island.is',
+    defaultMessage: 'Velkomin á Mínar síður á Ísland.is',
   },
   nonBinaryGreeting: {
     id: 'service.portal:welcome-nonbinary',
-    defaultMessage: 'Velkomið á mínar síður á island.is',
+    defaultMessage: 'Velkomið á Mínar síður á Ísland.is',
   },
   eveningGreeting: {
     defaultMessage: 'Góða kvöldið,',
@@ -233,12 +249,8 @@ export const m = defineMessages({
   },
   greetingIntro: {
     defaultMessage:
-      'Síðan er í þróun með þarfir notanda að leiðarljósi. Ef þú finnur ekki þá þjónustu sem var á eldri Mínum síðum getur þú fundið þær upplýsingar á Eldri útgáfa.',
+      'Á Mínum síðum Ísland.is er markmiðið að auka þægindi og gegnsæi upplýsinga fyrir einstaklinga og fyrirtæki. Hér má finna sundurliðun skulda hjá ríkissjóði, upplýsingar úr fasteignaskrá, upplýsingar úr ökutækjaskrá og fleira sem nálgast má í valmyndinni hér til hliðar.',
     id: 'service.portal:greeting-intro',
-  },
-  olderVersion: {
-    defaultMessage: 'Eldri útgáfa',
-    id: 'service.portal:older-version',
   },
   menu: {
     defaultMessage: 'Valmynd',
@@ -268,14 +280,12 @@ export const m = defineMessages({
   },
   goToIslandIs: {
     id: 'service.portal:go-to-island-is',
-    defaultMessage: 'Fara á ytrivef island.is',
+    defaultMessage: 'Fara á ytri vef Ísland.is',
   },
   incomingServicesFooterMobile: {
     id: 'service.portal:incoming-services-footer-mobile',
-    defaultMessage: `
-      Þessi virkni er enn í boði á eldri Mínum síðum.
-      Unnið er að því að færa þessar þjónustur.
-    `,
+    defaultMessage:
+      'Þessi virkni er enn í boði á eldri Mínum síðum. Unnið er að því að færa þjónustuna.',
   },
   continue: {
     id: 'service.portal:continue',
@@ -325,9 +335,22 @@ export const m = defineMessages({
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',
   },
+  myRegistration: {
+    id: 'service.portal:my-registration',
+    defaultMessage: 'Mín skráning',
+  },
+  baseInfo: {
+    id: 'service.portal:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
+  },
+  familyNumber: {
+    id: 'service.portal:family-number',
+    defaultMessage: 'Fjölskyldunúmer',
   },
   endorsements: {
     id: 'service.portal:endorsements',
@@ -355,7 +378,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Skilríki',
+    defaultMessage: 'Skírteini',
   },
   finance: {
     id: 'service.portal:finance',
@@ -371,7 +394,11 @@ export const m = defineMessages({
   },
   financeBills: {
     id: 'service.portal:finance-bills',
-    defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+    defaultMessage: 'Greiðsluseðlar og -kvittanir',
+  },
+  financeSchedules: {
+    id: 'service.portal:finance-schedules',
+    defaultMessage: 'Greiðsluáætlanir',
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
@@ -380,6 +407,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  searchLabel: {
+    id: 'service.portal:search-label',
+    defaultMessage: 'Leit',
   },
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
@@ -397,6 +428,10 @@ export const m = defineMessages({
   settings: {
     id: 'service.portal:settings',
     defaultMessage: 'Stillingar',
+  },
+  mySettings: {
+    id: 'service.portal:my-settings',
+    defaultMessage: 'Mínar stillingar',
   },
   delegation: {
     id: 'service.portal:delegation',
@@ -439,6 +474,25 @@ export const m = defineMessages({
     id: 'service.portal:accessControlAccess',
     defaultMessage: 'Aðgangur',
   },
+  accessDenied: {
+    id: 'service.portal:accessDenied',
+    defaultMessage: 'Ekki með aðgang',
+  },
+
+  accessNeeded: {
+    id: 'service.portal:access-needed',
+    defaultMessage: 'Umboð vantar',
+  },
+
+  accessNeededText: {
+    id: 'service.portal:access-needed-text',
+    defaultMessage: 'Umboð vantar',
+  },
+  accessDeniedText: {
+    id: 'service.portal:accessDeniedText',
+    defaultMessage:
+      'Því miður vantar þig umboð til þess að hafa aðgang að þessu svæði. Vinsamlegast hafðu samband við viðeigandi aðila sem sér um þessi mál.',
+  },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
     defaultMessage: 'Samræmd könnunarpróf',
@@ -454,6 +508,10 @@ export const m = defineMessages({
   displayName: {
     id: 'service.portal:display-name',
     defaultMessage: 'Birtingarnafn',
+  },
+  fullName: {
+    id: 'service.portal:full-name',
+    defaultMessage: 'Fullt nafn',
   },
   gender: {
     id: 'service.portal:gender',
@@ -475,9 +533,13 @@ export const m = defineMessages({
     id: 'service.portal:marital-status',
     defaultMessage: 'Hjúskaparstaða',
   },
+  banMarking: {
+    id: 'service.portal:banmarking',
+    defaultMessage: 'Bannmerking',
+  },
   religion: {
     id: 'service.portal:religion',
-    defaultMessage: 'Trúfélag / lífsskoðunarfélag',
+    defaultMessage: 'Lífsskoðunarfélag',
   },
   goBack: {
     id: 'service.portal:go-back',
@@ -489,7 +551,12 @@ export const m = defineMessages({
   },
   noDataFound: {
     id: 'service.portal:no-data-found',
-    defaultMessage: 'Engin gögn fundust',
+    defaultMessage: 'Engin gögn fundust fyrir þig',
+  },
+  noDataFoundDetail: {
+    id: 'service.portal:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   },
   noDataPresent: {
     id: 'service.portal:no-data-present',
@@ -497,15 +564,15 @@ export const m = defineMessages({
   },
   personalInformation: {
     id: 'service.portal:personalInformation',
-    defaultMessage: 'Persónuupplýsingar',
+    defaultMessage: 'Mínar stillingar',
   },
   language: {
     id: 'service.portal:language',
     defaultMessage: 'Tungumál',
   },
-  confirmCode: {
-    id: 'service.portal:confirm-code',
-    defaultMessage: 'Senda staðfestingarkóða',
+  codeConfirmation: {
+    id: 'service.portal:code-confirmation',
+    defaultMessage: 'Staðfesta',
   },
   telNumber: {
     id: 'service.portal:tel',
@@ -518,6 +585,10 @@ export const m = defineMessages({
   nudge: {
     id: 'service.portal:nudge-info',
     defaultMessage: 'Hnipp',
+  },
+  refuseEmailTitle: {
+    id: 'service.portal:refuse-email-title',
+    defaultMessage: 'Tölvupóstur',
   },
   nextStep: {
     id: 'service.portal:next-step',
@@ -538,6 +609,10 @@ export const m = defineMessages({
   finishLater: {
     id: 'service.portal:finish-later',
     defaultMessage: 'Klára seinna',
+  },
+  bankInfoRequired: {
+    id: 'service.portal:bank-info-required',
+    defaultMessage: 'Skylda er að fylla inn alla reiti fyrir bankaupplýsingar',
   },
   digitalIceland: {
     id: 'service.portal:digital-iceland',
@@ -577,8 +652,76 @@ export const m = defineMessages({
     id: 'service.portal:endpoint',
     defaultMessage: 'Endapunktur',
   },
+  openFinanceDetail: {
+    id: 'service.portal:open-finance-detail',
+    defaultMessage: 'Skoða sundurliðun',
+  },
+  closeFinanceDetail: {
+    id: 'service.portal:close-finance-detail',
+    defaultMessage: 'Loka sundurliðun',
+  },
   islykill: {
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
+  },
+  saveInfo: {
+    id: 'service.portal:saveInfo',
+    defaultMessage: 'Vista upplýsingar',
+  },
+  startPage: {
+    id: 'service.portal:start-page',
+    defaultMessage: 'upphafssíðu',
+  },
+  licenseNavTitle: {
+    id: 'service.portal:license-title',
+    defaultMessage: 'Skírteini',
+  },
+  yourLicenses: {
+    id: 'service.portal:your-licenses',
+    defaultMessage: 'Þín skírteini',
+  },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
+  },
+  companyTitle: {
+    id: 'service.portal:company-title',
+    defaultMessage: 'Um fyrirtæki',
+  },
+  datesLabel: {
+    id: 'service.portal:dates-label',
+    defaultMessage: 'Dagsetningar',
+  },
+  datepickerFromLabel: {
+    id: 'service.portal:datepicker-dateFrom-label',
+    defaultMessage: 'Dagsetning frá',
+  },
+  datepickerToLabel: {
+    id: 'service.portal:datepicker-dateTo-label',
+    defaultMessage: 'Dagsetning til',
+  },
+  datepickLabel: {
+    id: 'service.portal:datepicker-placeholder',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  clearFilter: {
+    id: 'service.portal:clear-filter',
+    defaultMessage: 'Hreinsa síu',
+  },
+  clearAllFilters: {
+    id: 'service.portal:clear-all-filters',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  openFilter: {
+    id: 'service.portal:open-filter',
+    defaultMessage: 'Opna síu',
+  },
+  closeFilter: {
+    id: 'service.portal:close-filter',
+    defaultMessage: 'Loka síu',
+  },
+  clearSelected: {
+    id: 'service.portal:clear-selected',
+    defaultMessage: 'Hreinsa val',
   },
 })

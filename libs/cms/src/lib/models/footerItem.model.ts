@@ -17,6 +17,9 @@ export class FooterItem {
 
   @Field(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
+
+  @Field(() => [SliceUnion], { nullable: true })
+  serviceWebContent?: Array<typeof SliceUnion>
 }
 
 export const mapFooterItem = ({ fields, sys }: IFooterItem): FooterItem => ({
@@ -25,5 +28,8 @@ export const mapFooterItem = ({ fields, sys }: IFooterItem): FooterItem => ({
   link: fields.link ? mapLink(fields.link) : null,
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
+    : [],
+  serviceWebContent: fields.serviceWebContent
+    ? mapDocument(fields.serviceWebContent, sys.id + ':serviceWebContent')
     : [],
 })

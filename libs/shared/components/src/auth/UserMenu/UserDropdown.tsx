@@ -1,25 +1,27 @@
-import React, { Dispatch, SetStateAction } from 'react'
-
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
   Box,
-  Button,
-  Select,
-  Stack,
   Text,
   ModalBase,
   UserAvatar,
   Icon,
   GridContainer,
-  Option,
+  Divider,
+  Hidden,
 } from '@island.is/island-ui/core'
-import { Locale, User } from '@island.is/shared/types'
+import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { useLocale } from '@island.is/localization'
-import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
+import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { ValueType } from 'react-select'
+import { useActorDelegationsQuery } from '../../../gen/graphql'
+import { QueryResult } from '@apollo/client'
+import { UserLanguageSwitcher } from './UserLanguageSwitcher'
+import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 interface UserDropdownProps {
   user: User
@@ -27,6 +29,8 @@ interface UserDropdownProps {
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
+  fullscreen: boolean
+  showDropdownLanguage: boolean
 }
 
 export const UserDropdown = ({
@@ -35,40 +39,120 @@ export const UserDropdown = ({
   setDropdownState,
   onSwitchUser,
   onLogout,
+  fullscreen,
+  showDropdownLanguage,
 }: UserDropdownProps) => {
-  const { lang, formatMessage, changeLanguage } = useLocale()
+  const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
   }
 
-  const isDelegation = Boolean(user.profile.actor)
+  const actor = user.profile.actor
+  const isDelegation = Boolean(actor)
+  const userName = user.profile.name
+  const actorName = actor?.name
+  const isDelegationCompany = user.profile.subjectType === 'legalEntity'
 
-  const [updateUserProfileMutation] = useUpdateUserProfileMutation()
-  const handleLanguageChange = async (option: ValueType<Option>) => {
-    const locale = (option as Option).value.toString()
-    changeLanguage(locale as Locale)
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
 
-    if (user && !isDelegation) {
-      try {
-        await updateUserProfileMutation({
-          variables: {
-            input: {
-              locale: locale,
-            },
-          },
-        })
-      } catch (e) {
-        return null
-      }
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
     }
-  }
+    setIsMobile(false)
+  }, [width])
 
-  const username = user.profile.actor
-    ? user.profile.actor.name
-    : user.profile.name
+  const closeButton = (
+    <button
+      className={styles.closeButton}
+      onClick={() => setDropdownState('closed')}
+      aria-label={formatMessage(sharedMessages.close)}
+    >
+      <Icon icon="close" color="blue400" />
+    </button>
+  )
 
-  return (
+  const content = (
+    <Box display="flex" justifyContent="flexEnd">
+      <Box
+        position="relative"
+        background="white"
+        padding={3}
+        borderRadius="large"
+        display="flex"
+        flexDirection="column"
+        height={isMobile ? 'full' : undefined}
+        className={cn(
+          fullscreen ? styles.fullScreen : styles.dropdown,
+          styles.container,
+        )}
+      >
+        <Box display="flex" flexDirection="column" className={styles.wrapper}>
+          <Box
+            display="flex"
+            flexWrap="nowrap"
+            alignItems="center"
+            paddingBottom={3}
+            paddingTop={2}
+          >
+            {isDelegationCompany ? (
+              <Box
+                borderRadius="circle"
+                background="blue100"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                className={styles.companyIconSize}
+              >
+                <Icon icon="business" type="filled" color="blue400" />
+              </Box>
+            ) : (
+              <UserAvatar username={userName} />
+            )}
+            <Box marginLeft={1} marginRight={4}>
+              <Text variant="h4" as="h4">
+                {userName}
+              </Text>
+              {isDelegation && <Text variant="small">{actorName}</Text>}
+            </Box>
+          </Box>
+          {showDropdownLanguage && (
+            <Hidden above="sm">
+              {<UserLanguageSwitcher user={user} dropdown />}
+            </Hidden>
+          )}
+
+          <Divider />
+
+          <Box paddingTop={2}>
+            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+          </Box>
+
+          {(!isDelegation || isDelegationCompany) && (
+            <Box paddingTop={1}>
+              <UserProfileInfo onClick={() => onClose()} />
+            </Box>
+          )}
+          <Box paddingTop={1}>
+            <UserDropdownItem
+              text={formatMessage(sharedMessages.logout)}
+              icon={{ type: 'outline', icon: 'logOut' }}
+              onClick={onLogout}
+            />
+          </Box>
+        </Box>
+        <Hidden below="md">{closeButton}</Hidden>
+      </Box>
+    </Box>
+  )
+
+  return isMobile ? (
+    <Box display={isVisible ? 'flex' : 'none'} height="full">
+      {content}
+    </Box>
+  ) : (
     <ModalBase
       baseId="island-ui-header-user-dropdown"
       isVisible={isVisible}
@@ -76,87 +160,14 @@ export const UserDropdown = ({
       hideOnEsc={true}
       modalLabel={formatMessage(userMessages.userButtonAria)}
       removeOnClose={true}
-      preventBodyScroll={false}
+      preventBodyScroll={true}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           onClose()
         }
       }}
     >
-      <GridContainer>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            position="relative"
-            background="white"
-            padding={3}
-            borderRadius="large"
-            display="flex"
-            flexDirection="column"
-            className={styles.dropdown}
-          >
-            <Stack space={2}>
-              <Box display="flex" flexWrap="nowrap" alignItems="center">
-                <UserAvatar username={username} />
-
-                <Box marginLeft={1} marginRight={4}>
-                  <Text variant="h4" as="h4">
-                    {username}
-                  </Text>
-                </Box>
-              </Box>
-
-              <Select
-                name="language-switcher"
-                size="sm"
-                value={
-                  lang === 'en'
-                    ? { label: 'English', value: 'en' }
-                    : { label: 'Íslenska', value: 'is' }
-                }
-                onChange={handleLanguageChange}
-                label={formatMessage(sharedMessages.language)}
-                options={[
-                  { label: 'Íslenska', value: 'is' },
-                  { label: 'English', value: 'en' },
-                ]}
-              />
-
-              {isDelegation && (
-                <Box>
-                  <Button
-                    variant="ghost"
-                    onClick={() => onSwitchUser(user.profile.actor!.nationalId)}
-                    fluid
-                  >
-                    {formatMessage(userMessages.backToMyself)}
-                  </Button>
-                </Box>
-              )}
-              {!isDelegation && <UserProfileInfo />}
-              <Box>
-                <Button
-                  onClick={onLogout}
-                  fluid
-                  icon="logOut"
-                  iconType="outline"
-                >
-                  {formatMessage(sharedMessages.logout)}
-                </Button>
-              </Box>
-            </Stack>
-
-            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
-
-            <button
-              className={styles.closeButton}
-              onClick={() => setDropdownState('closed')}
-              aria-label={formatMessage(sharedMessages.close)}
-            >
-              <Icon icon="close" color="blue400" />
-            </button>
-          </Box>
-        </Box>
-      </GridContainer>
+      <GridContainer>{content}</GridContainer>
     </ModalBase>
   )
 }

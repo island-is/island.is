@@ -12,6 +12,11 @@ export const application = defineMessages({
     defaultMessage: 'Persónuvernd',
     description: 'Name of the Data Protection Authority',
   },
+  submittedTag: {
+    id: 'dpac.application:application.submittedTag',
+    defaultMessage: 'Lokið',
+    description: 'Submitted tag on action card',
+  },
 })
 
 // All sections in the application

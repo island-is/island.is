@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -11,11 +10,13 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+} from '@island.is/application/core'
+import {
   DefaultEvents,
   Form,
   FormModes,
   FormValue,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,
@@ -28,7 +29,7 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, SubjectOfComplaint, YES } from '../shared'
+import { FILE_SIZE_LIMIT, NO, YES } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -67,11 +68,11 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'delimitation',
-      title: section.delimitation.defaultMessage,
+      title: section.delimitation,
       children: [
         buildSubSection({
           id: 'authoritiesSection',
-          title: section.authorities.defaultMessage,
+          title: section.authorities,
           children: [
             buildMultiField({
               id: 'inCourtProceedingsFields',
@@ -99,6 +100,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.inCourtProceedingsTitle,
                         url: delimitation.links.inCourtProceedingsUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -109,7 +111,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'mediaSection',
-          title: section.media.defaultMessage,
+          title: section.media,
           children: [
             buildMultiField({
               id: 'concernsMediaCoverageFields',
@@ -138,11 +140,13 @@ export const ComplaintForm: Form = buildForm({
                         title:
                           delimitation.links.concernsMediaCoverageFirstTitle,
                         url: delimitation.links.concernsMediaCoverageFirstUrl,
+                        isExternal: true,
                       },
                       {
                         title:
                           delimitation.links.concernsMediaCoverageSecondTitle,
                         url: delimitation.links.concernsMediaCoverageSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -153,7 +157,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'banMarkingSection',
-          title: section.banMarking.defaultMessage,
+          title: section.banMarking,
           children: [
             buildMultiField({
               id: 'concernsBanMarkingFields',
@@ -181,10 +185,12 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsBanMarkingFirstTitle,
                         url: delimitation.links.concernsBanMarkingFirstUrl,
+                        isExternal: true,
                       },
                       {
                         title: delimitation.links.concernsBanMarkingSecondTitle,
                         url: delimitation.links.concernsBanMarkingSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -195,7 +201,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'libelSection',
-          title: section.libel.defaultMessage,
+          title: section.libel,
           children: [
             buildMultiField({
               id: 'concernsLibelFields',
@@ -222,6 +228,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsLibelTitle,
                         url: delimitation.links.concernsLibelUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -287,7 +294,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'applicant',
-          title: section.applicant.defaultMessage,
+          title: section.applicant,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -369,9 +376,20 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
-                  defaultValue: (application: DataProtectionComplaint) =>
-                    application.externalData?.userProfile?.data
-                      ?.mobilePhoneNumber,
+                  defaultValue: (application: DataProtectionComplaint) => {
+                    const phoneNumber =
+                      application.externalData?.userProfile?.data
+                        ?.mobilePhoneNumber
+                    if (phoneNumber?.startsWith('+')) {
+                      const splitNumber = phoneNumber.split('-')
+                      if (splitNumber.length === 3) {
+                        return `${splitNumber[1]}${splitNumber[2]}`
+                      } else if (splitNumber.length === 2) {
+                        return `${splitNumber[1]}`
+                      }
+                    }
+                    return phoneNumber
+                  },
                 }),
               ],
             }),
@@ -379,7 +397,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
-          title: section.organizationOrInstitution.defaultMessage,
+          title: section.organizationOrInstitution,
           condition: (formValue) =>
             (formValue.info as FormValue)?.onBehalf ===
             OnBehalf.ORGANIZATION_OR_INSTITUTION,
@@ -440,13 +458,30 @@ export const ComplaintForm: Form = buildForm({
                   variant: 'tel',
                   backgroundColor: 'blue',
                 }),
+                buildCustomField({
+                  id: 'contactTitle',
+                  title: info.labels.contactTitle,
+                  component: 'FieldLabel',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.contactName',
+                  title: info.labels.contactName,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.contactEmail',
+                  title: info.labels.email,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                }),
               ],
             }),
           ],
         }),
         buildSubSection({
           id: 'commissions',
-          title: section.commissions.defaultMessage,
+          title: section.commissions,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -489,7 +524,7 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'complaint',
-      title: section.complaint.defaultMessage,
+      title: section.complaint,
       children: [
         buildCustomField({
           id: 'complainees',
@@ -497,7 +532,7 @@ export const ComplaintForm: Form = buildForm({
           component: 'ComplaineeRepeater',
         }),
         buildSubSection({
-          id: 'subjectOfComplaint',
+          id: 'subjectOfComplaintSection',
           title: section.subjectOfComplaint,
           children: [
             buildMultiField({
@@ -505,72 +540,11 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.subjectOfComplaintPageDescription,
               space: 3,
               children: [
-                buildCheckboxField({
-                  id: 'subjectOfComplaint.values',
+                buildCustomField({
+                  component: 'ReasonsForComplaint',
+                  id: 'subjectOfComplaint',
+                  doesNotRequireAnswer: true,
                   title: '',
-                  options: [
-                    {
-                      label: complaint.labels.subjectAuthorities,
-                      value: SubjectOfComplaint.WITH_AUTHORITIES,
-                    },
-                    {
-                      label: complaint.labels.subjectLackOfEducation,
-                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
-                    },
-                    {
-                      label: complaint.labels.subjectSocialMedia,
-                      value: SubjectOfComplaint.SOCIAL_MEDIA,
-                    },
-                    {
-                      label: complaint.labels.subjectRequestForAccess,
-                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
-                    },
-                    {
-                      label: complaint.labels.subjectRightOfObjection,
-                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
-                    },
-                    {
-                      label: complaint.labels.subjectEmail,
-                      value: SubjectOfComplaint.EMAIL,
-                    },
-                    {
-                      label: complaint.labels.subjectNationalId,
-                      value: SubjectOfComplaint.NATIONAL_ID,
-                    },
-                    {
-                      label: complaint.labels.subjectEmailInWorkplace,
-                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
-                    },
-                    {
-                      label: complaint.labels.subjectUnauthorizedPublication,
-                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
-                    },
-                    {
-                      label: complaint.labels.subjectVanskilaskra,
-                      value: SubjectOfComplaint.VANSKILASKRA,
-                    },
-                    {
-                      label: complaint.labels.subjectVideoRecording,
-                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
-                    },
-                    {
-                      label: complaint.labels.subjectOtherOther,
-                      value: SubjectOfComplaint.OTHER,
-                    },
-                  ],
-                  large: true,
-                }),
-                buildTextField({
-                  id: 'subjectOfComplaint.somethingElse',
-                  title: complaint.labels.subjectSomethingElse,
-                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
-                  backgroundColor: 'blue',
-                  condition: (formValue) => {
-                    const values =
-                      ((formValue.subjectOfComplaint as FormValue)
-                        ?.values as string[]) || []
-                    return values.includes('other')
-                  },
                 }),
               ],
             }),
@@ -625,7 +599,7 @@ export const ComplaintForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewSection',
       title: section.overview,
       children: [
         buildMultiField({
@@ -633,7 +607,7 @@ export const ComplaintForm: Form = buildForm({
           title: overview.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'overviewComplaintOverview',
+              id: 'overview',
               title: overview.general.pageTitle,
               doesNotRequireAnswer: true,
               component: 'ComplaintOverview',

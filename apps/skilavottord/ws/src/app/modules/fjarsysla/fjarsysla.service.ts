@@ -1,25 +1,16 @@
 import { Base64 } from 'js-base64'
-import { Injectable, HttpService, Inject } from '@nestjs/common'
-
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
 
 import { environment } from '../../../environments'
 
 @Injectable()
 export class FjarsyslaService {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-    private httpService: HttpService,
-  ) {}
+  constructor(private httpService: HttpService) {}
 
   async getFjarsysluRest(nationalId: string, permno: string, id: string) {
     try {
-      this.logger.info(
-        `---- Starting FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
-      )
-
       const { restUrl, restUsername, restPassword } = environment.fjarsysla
 
       const data = JSON.stringify({
@@ -34,27 +25,23 @@ export class FjarsyslaService {
           `${restUsername}:${restPassword}`,
         )}`,
       }
-      const response = await this.httpService
-        .post(restUrl, data, { headers: headersRequest })
-        .toPromise()
+      const response = await lastValueFrom(
+        this.httpService.post(restUrl, data, { headers: headersRequest }),
+      )
       if (!response) {
-        this.logger.error(response.statusText)
-        throw new Error(response.statusText)
+        throw new Error(
+          `Failed on FjarsyslaRest request with error: ${response.statusText}`,
+        )
       }
       if (response.status < 300 && response.status > 199) {
-        this.logger.info(
-          `---- Finished FjarsyslaRest request on ${nationalId} with number ${permno} ----`,
-        )
         return true
       } else {
-        this.logger.error(response.statusText)
-        throw new Error(response.statusText)
+        throw new Error(
+          `Failed on FjarsyslaRest with status code: ${response.statusText}`,
+        )
       }
     } catch (err) {
-      this.logger.error(
-        `Failed on FjarsyslaRest request on ${nationalId} with number ${permno} with: ${err}`,
-      )
-      throw new Error('Failed on FjarsyslaRest request...')
+      throw new Error(`Failed on FjarsyslaRest request with error: ${err}`)
     }
   }
 }

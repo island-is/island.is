@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Core" -->
+
 # Service Portal Core
 
 This library contains all the core functionality needed to build a library into the service portal shell

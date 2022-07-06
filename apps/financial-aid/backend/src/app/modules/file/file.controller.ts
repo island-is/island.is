@@ -1,39 +1,39 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
-import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
-import type { User } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath } from '@island.is/financial-aid/shared/lib'
 
 import { GetSignedUrlDto, CreateFilesDto } from './dto'
 import { CreateFilesModel, SignedUrlModel } from './models'
 import { FileService } from './file.service'
-import { RolesGuard } from '../../guards/roles.guard'
-import { CurrentUser, RolesRules } from '../../decorators'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { StaffGuard } from '../../guards/staff.guard'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/file`)
 @ApiTags('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @Scopes(
+    MunicipalitiesFinancialAidScope.write,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
   @Post('url')
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
   })
-  createSignedUrl(
-    @CurrentUser() user: User,
-    @Body() getSignedUrl: GetSignedUrlDto,
-  ): SignedUrlModel {
-    return this.fileService.createSignedUrl(user.folder, getSignedUrl.fileName)
+  createSignedUrl(@Body() getSignedUrl: GetSignedUrlDto): SignedUrlModel {
+    return this.fileService.createSignedUrl(
+      getSignedUrl.folder,
+      getSignedUrl.fileName,
+    )
   }
 
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get('url/:id')
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.VEITA)
   @ApiCreatedResponse({
     type: SignedUrlModel,
     description: 'Creates a new signed url',
@@ -42,9 +42,28 @@ export class FileController {
     return this.fileService.createSignedUrlForFileId(id)
   }
 
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
+  @Get(':applicationId')
+  @Scopes(MunicipalitiesFinancialAidScope.read)
+  @ApiCreatedResponse({
+    type: SignedUrlModel,
+    description: 'Creates a new signed url for all files for application id',
+  })
+  async createSignedUrlForAllFiles(
+    @Param('applicationId') applicationId: string,
+  ): Promise<SignedUrlModel[]> {
+    return this.fileService.createSignedUrlForAllFilesId(applicationId)
+  }
+
+  @Scopes(
+    MunicipalitiesFinancialAidScope.applicant,
+    MunicipalitiesFinancialAidScope.write,
+  )
   @Post('')
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
   @ApiCreatedResponse({
     type: CreateFilesModel,
     description: 'Uploads files',

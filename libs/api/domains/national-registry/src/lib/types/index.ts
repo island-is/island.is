@@ -1,5 +1,6 @@
 export { FamilyMember } from './familyMember.type'
 export { FamilyRelation } from './familyRelation.enum'
 export { User } from './user.type'
+export { FamilyChild } from './child.type'
 export { Gender } from './gender.enum'
 export { MaritalStatus } from './maritalStatus.enum'

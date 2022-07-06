@@ -101,7 +101,7 @@ export const Modal: FC<ModalProps> = ({
                           <Text variant="h1">{title}</Text>
                           {loading ? (
                             <Box textAlign="center">
-                              <LoadingDots size={50} />
+                              <LoadingDots large />
                             </Box>
                           ) : (
                             <Text variant="intro">{text}</Text>

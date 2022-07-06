@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsNumber,
+  IsUUID,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -15,18 +16,19 @@ import {
   ApplicationState,
   FamilyStatus,
   CreateApplicationFile,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly nationalId: string
+  readonly name: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly name: string
+  readonly nationalId: string
 
   @IsOptional()
   @IsString()
@@ -132,6 +134,16 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly spouseEmail: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseFormComment: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -147,7 +159,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly postalCode: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly municipalityCode: string
@@ -156,4 +168,23 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly streetName: string
+
+  @IsArray()
+  @ApiProperty()
+  readonly directTaxPayments: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsUUID()
+  @ApiProperty()
+  readonly applicationSystemId: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly hasFetchedDirectTaxPayment: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly spouseHasFetchedDirectTaxPayment: boolean
 }

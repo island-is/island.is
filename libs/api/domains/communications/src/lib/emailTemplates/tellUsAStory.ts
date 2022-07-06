@@ -6,7 +6,7 @@ import { environment } from '../environments/environment'
 export const getTemplate = (input: TellUsAStoryInput): SendMailOptions => ({
   from: {
     name: 'Island.is communications',
-    address: environment.emailOptions.sendFrom,
+    address: environment.emailOptions.sendFrom!,
   },
   replyTo: {
     name: input.name,
@@ -15,7 +15,7 @@ export const getTemplate = (input: TellUsAStoryInput): SendMailOptions => ({
   to: [
     {
       name: 'Island.is þjónustuborð',
-      address: environment.emailOptions.tellUsAStoryDestination,
+      address: environment.emailOptions.tellUsAStoryDestination!,
     },
   ],
   subject: `Tell us a story: ${input.name}`,

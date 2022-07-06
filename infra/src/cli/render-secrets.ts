@@ -1,13 +1,12 @@
 import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
-import { charts } from '../uber-charts/all-charts'
-import { SSM } from 'aws-sdk'
+import { Charts } from '../uber-charts/all-charts'
+import { SSM } from '@aws-sdk/client-ssm'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
-  maxRetries: 10,
-  retryDelayOptions: { base: 200 },
+  maxAttempts: 10,
 }
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
@@ -16,12 +15,29 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
   'NOVA_PASSWORD',
 ]
 
+const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
+}
+
 const client = new SSM(API_INITIALIZATION_OPTIONS)
+
+export const renderSecretsCommand = async (service: string) => {
+  renderSecrets(service).catch((error) => {
+    if (error.name === 'CredentialsProviderError') {
+      console.error(
+        'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
+      )
+    } else {
+      console.error(error)
+    }
+    process.exit(1)
+  })
+}
 
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
-  const uberChart = new UberChart(Envs.dev)
-  const services = Object.values(charts).map(
+  const uberChart = new UberChart(Envs.dev01)
+  const services = Object.values(Charts).map(
     (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
   )
 
@@ -38,6 +54,14 @@ export const renderSecrets = async (service: string) => {
     })
     .reduce((p, c) => p.concat(c), [])
     .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+    .map((request) => {
+      const envName = request[0]
+      const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]
+      if (ssmName) {
+        return [envName, ssmName]
+      }
+      return request
+    })
 
   const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
 
@@ -57,7 +81,7 @@ const getParams = async (
 
   const allParams = await Promise.all(
     chunks.map((Names) =>
-      client.getParameters({ Names, WithDecryption: true }).promise(),
+      client.getParameters({ Names, WithDecryption: true }),
     ),
   )
   return allParams

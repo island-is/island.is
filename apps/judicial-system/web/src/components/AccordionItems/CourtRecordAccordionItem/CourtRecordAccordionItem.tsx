@@ -1,30 +1,26 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatAccusedByGender,
-  formatAlternativeTravelBanRestrictions,
   formatAppeal,
-  formatCustodyRestrictions,
   formatDate,
-  NounCases,
-  TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseDecision,
-  CaseType,
-  isAcceptingCaseDecision,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import {
+  closedCourt,
+  core,
+  courtRecordAccordion as m,
+} from '@island.is/judicial-system-web/messages'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system/types'
+
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
-import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
-import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import { rcConfirmation } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -33,17 +29,6 @@ interface Props {
 const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   const { formatMessage } = useIntl()
 
-  const custodyRestrictions = formatCustodyRestrictions(
-    workingCase.accusedGender,
-    workingCase.custodyRestrictions,
-  )
-
-  const alternativeTravelBanRestrictions = formatAlternativeTravelBanRestrictions(
-    workingCase.accusedGender,
-    workingCase.custodyRestrictions,
-    workingCase.otherRestrictions,
-  )
-
   const prosecutorAppeal = formatAppeal(
     workingCase.prosecutorAppealDecision,
     'Sækjandi',
@@ -51,16 +36,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   const accusedAppeal = formatAppeal(
     workingCase.accusedAppealDecision,
-    isRestrictionCase(workingCase.type)
-      ? capitalize(formatAccusedByGender(workingCase.accusedGender))
-      : 'Varnaraðili',
-    isRestrictionCase(workingCase.type) ? workingCase.accusedGender : undefined,
+    capitalize(
+      formatMessage(core.defendant, {
+        suffix:
+          workingCase.defendants && workingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
+      }),
+    ),
   )
+
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
-      label="Þingbók"
+      label={formatMessage(m.title)}
       labelVariant="h3"
+      labelUse="h3"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
@@ -98,49 +89,30 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </AccordionListItem>
       )}
       <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
-        <Text>{`${formatMessage(core.requestCaseType, {
-          caseType: formatRequestCaseType(workingCase.type),
-        })} þingmerkt nr. 1.`}</Text>
         <Text>
-          Rannsóknargögn málsins liggja frammi.
-          <br />
-          <br />
-          {workingCase.courtDocuments?.map((courtDocument, index) => {
-            return (
-              <>
-                {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
-                {index <= (workingCase.courtDocuments ?? []).length && (
-                  <>
-                    <br />
-                    <br />
-                  </>
-                )}
-              </>
-            )
+          {formatMessage(m.sections.firstCourtDocument, {
+            caseType: formatRequestCaseType(workingCase.type),
           })}
         </Text>
+        {workingCase.courtDocuments?.map((courtDocument, index) => {
+          return (
+            <Text key={`${index}${courtDocument.name}`}>
+              {formatMessage(m.sections.courtDocuments.text, {
+                documentName: capitalize(courtDocument.name),
+                documentNumber: index + 2,
+                submittedBy: courtDocument.submittedBy,
+              })}
+            </Text>
+          )
+        })}
       </AccordionListItem>
-      {workingCase.accusedBookings?.trim() && (
-        <AccordionListItem
-          title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.ACCUSATIVE,
-                )
-              : 'varnaraðila',
-          })}
-          breakSpaces
-        >
-          <Text>{workingCase.accusedBookings.trim()}</Text>
-        </AccordionListItem>
-      )}
-      <AccordionListItem title="Málflutningur" breakSpaces>
-        <Text>{workingCase.litigationPresentations}</Text>
+      <AccordionListItem
+        title={formatMessage(m.sections.sessionBookings.title)}
+        breakSpaces
+      >
+        <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
-      {(isRestrictionCase(workingCase.type) ||
-        workingCase.sessionArrangements !==
-          SessionArrangements.REMOTE_SESSION) && (
+      {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>
           <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
         </Box>
@@ -176,54 +148,12 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           </AccordionListItem>
         </Box>
       }
-      {workingCase.type === CaseType.CUSTODY &&
-        isAcceptingCaseDecision(workingCase.decision) && (
-          <AccordionListItem title="Tilhögun gæsluvarðhalds">
-            {custodyRestrictions && (
-              <Box marginBottom={2}>
-                <Text>{custodyRestrictions}</Text>
-              </Box>
-            )}
-            <Text>
-              {formatMessage(
-                rcConfirmation.sections.custodyRestrictions.disclaimer,
-                {
-                  caseType: 'gæsluvarðhaldsins',
-                },
-              )}
-            </Text>
-          </AccordionListItem>
-        )}
-      {((workingCase.type === CaseType.CUSTODY &&
-        workingCase.decision ===
-          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
-        (workingCase.type === CaseType.TRAVEL_BAN &&
-          (workingCase.decision === CaseDecision.ACCEPTING ||
-            workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY))) && (
-        <AccordionListItem title="Tilhögun farbanns">
-          {alternativeTravelBanRestrictions && (
-            <Box marginBottom={2}>
-              <Text>
-                {alternativeTravelBanRestrictions
-                  .split('\n')
-                  .map((str, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{str}</Text>
-                      </div>
-                    )
-                  })}
-              </Text>
-            </Box>
-          )}
-          <Text>
-            {formatMessage(
-              rcConfirmation.sections.custodyRestrictions.disclaimer,
-              {
-                caseType: 'farbannsins',
-              },
-            )}
-          </Text>
+      {workingCase.endOfSessionBookings && (
+        <AccordionListItem
+          title={formatMessage(m.sections.endOfSessionBookings.title)}
+          breakSpaces
+        >
+          <Text>{workingCase.endOfSessionBookings}</Text>
         </AccordionListItem>
       )}
     </AccordionItem>

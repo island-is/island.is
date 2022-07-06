@@ -1,11 +1,15 @@
 import '@island.is/infra-tracing'
-import next from 'next'
-import { logger, monkeyPatchServerLogging } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
+
 import createExpressApp, { Express } from 'express'
-import { getNextConfig } from './config'
-import { setupProxy } from './proxy'
 import type { Config } from 'http-proxy-middleware'
+import next from 'next'
+
+import { startMetricServer } from '@island.is/infra-metrics'
+import { logger, monkeyPatchServerLogging } from '@island.is/logging'
+
+import { getNextConfig } from './config'
+import { ExternalEndpointDependencies, setupHealthchecks } from './health'
+import { setupProxy } from './proxy'
 
 type BootstrapOptions = {
   /**
@@ -27,6 +31,13 @@ type BootstrapOptions = {
    * Proxy configuration. Ignored in production (according to NODE_ENV).
    */
   proxyConfig?: { [context: string]: Config }
+
+  /**
+   * External dependencies to do DNS lookup for the /readiness healthcheck
+   * If values needs to be read from the next config of the app you can provide
+   * a callback function, which is called when the next config has loaded.
+   */
+  externalEndpointDependencies?: ExternalEndpointDependencies
 }
 
 const startServer = (app: Express, port = 4200) => {
@@ -63,12 +74,19 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   await setupProxy(expressApp, options.proxyConfig, dev)
 
-  const nextConfig = getNextConfig(options.appDir, dev)
+  const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
+  const readyPromise = nextApp.prepare()
+
+  setupHealthchecks(
+    expressApp,
+    readyPromise,
+    options.externalEndpointDependencies,
+  )
   expressApp.all('*', (req, res) => handle(req, res))
 
   startServer(expressApp, options.port)
 
-  await nextApp.prepare()
+  await readyPromise
 }

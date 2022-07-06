@@ -7,7 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
@@ -73,7 +73,21 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
+              read: 'all',
+              write: {
+                answers: [
+                  'reason',
+                  'parentA',
+                  'approveTerms',
+                  'counterParty',
+                  'selectDuration',
+                  'selectedChildren',
+                  'approveExternalData',
+                  'residenceChangeReason',
+                  'approveChildSupportTerms',
+                ],
+                externalData: ['userProfile', 'nationalRegistry'],
+              },
             },
           ],
         },
@@ -113,7 +127,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   type: 'reject',
                 },
               ],
-              write: 'all',
+              read: 'all',
+              write: {
+                answers: [
+                  'parentB',
+                  'acceptContract',
+                  'approveTermsParentB',
+                  'confirmContractParentB',
+                  'approveChildSupportTermsParentB',
+                ],
+                externalData: [],
+              },
             },
             {
               id: Roles.ParentA,

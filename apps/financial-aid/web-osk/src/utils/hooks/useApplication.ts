@@ -18,7 +18,7 @@ const useApplication = () => {
     { loading: isCreatingApplication },
   ] = useMutation(CreateApplicationMutation)
 
-  const { nationalRegistryData } = useContext(AppContext)
+  const { nationalRegistryData, municipality } = useContext(AppContext)
 
   const formatFiles = (files: UploadFile[], type: FileType) => {
     return files.map((f) => {
@@ -41,11 +41,11 @@ const useApplication = () => {
         const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
           .concat(formatFiles(form.otherFiles, FileType.OTHER))
+          .concat(formatFiles(form.taxReturnFromRskFile, FileType.TAXRETURN))
 
         const { data } = await createApplicationMutation({
           variables: {
             input: {
-              nationalId: user?.nationalId,
               name: user?.name,
               phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,
@@ -73,7 +73,11 @@ const useApplication = () => {
               streetName: nationalRegistryData?.address.streetName,
               postalCode: nationalRegistryData?.address.postalCode,
               city: nationalRegistryData?.address.city,
-              municipalityCode: nationalRegistryData?.address.municipalityCode,
+              municipalityCode:
+                nationalRegistryData?.address.municipalityCode ||
+                municipality?.municipalityId,
+              directTaxPayments: form?.directTaxPayments,
+              hasFetchedDirectTaxPayment: form?.hasFetchedPayments,
             },
           },
         })
@@ -89,7 +93,6 @@ const useApplication = () => {
 
   return {
     createApplication,
-    isCreatingApplication,
   }
 }
 

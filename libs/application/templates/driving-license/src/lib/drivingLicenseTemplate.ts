@@ -1,11 +1,14 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
-  DefaultStateLifeCycle,
   DefaultEvents,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -15,6 +18,7 @@ import {
   DrivingLicenseFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
+import { hasCompletedPrerequisitesStep } from './utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -27,16 +31,13 @@ const template: ApplicationTemplate<
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
-          actionCard: {
-            description: m.actionCardDraft,
-          },
-          progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          progress: 0.2,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -45,17 +46,41 @@ const template: ApplicationTemplate<
                   featureFlagClient as FeatureFlagClient,
                 )
 
-                const getApplication = await import(
-                  '../forms/application'
-                ).then((val) => val.getApplication)
+                const getForm = await import(
+                  '../forms/prerequisites/getForm'
+                ).then((val) => val.getForm)
 
-                return getApplication(
-                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
-                  featureFlags[
-                    DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
-                  ],
-                )
+                return getForm({
+                  allowFakeData:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
+                  allowPickLicense:
+                    featureFlags[
+                      DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
+                    ],
+                })
               },
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: m.applicationForDrivingLicense.defaultMessage,
+          actionCard: {
+            description: m.actionCardDraft,
+          },
+          progress: 0.4,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () => (await import('../forms/draft')).draft,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -64,11 +89,22 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
+              delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: [
+            {
+              target: States.PREREQUISITES,
+              cond: hasCompletedPrerequisitesStep(false),
+            },
+            {
+              target: States.PAYMENT,
+              cond: hasCompletedPrerequisitesStep(true),
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
@@ -83,9 +119,6 @@ const template: ApplicationTemplate<
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -93,6 +126,11 @@ const template: ApplicationTemplate<
                 import('../forms/payment').then((val) => val.payment),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
+                },
               ],
               write: 'all',
             },
@@ -100,6 +138,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.DONE]: {
@@ -107,6 +146,9 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

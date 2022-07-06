@@ -57,12 +57,13 @@ export interface SelectProps {
   defaultValue?: Option
   icon?: string
   isSearchable?: boolean
+  size?: 'xs' | 'sm' | 'md'
   isCreatable?: boolean
-  size?: 'sm' | 'md'
   backgroundColor?: InputBackgroundColor
   required?: boolean
   ariaError?: AriaError
   formatGroupLabel?: formatGroupLabel<Option>
+  isClearable?: boolean
   filterConfig?: Config | null
 }
 
@@ -86,6 +87,7 @@ export const Select = ({
   backgroundColor = 'white',
   required,
   formatGroupLabel,
+  isClearable,
   filterConfig = null,
 }: SelectProps) => {
   const errorId = `${id}-error`
@@ -99,11 +101,15 @@ export const Select = ({
 
   return isCreatable ? (
     <div
-      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      className={cn(styles.wrapper, {
+        [styles.wrapperColor[backgroundColor]]: !disabled,
+        [styles.containerDisabled]: disabled,
+      })}
       data-testid={`creatable-select-${name}`}
     >
       <CreatableReactSelect
         instanceId={id}
+        aria-labelledby={id}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
@@ -150,11 +156,15 @@ export const Select = ({
     </div>
   ) : (
     <div
-      className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
+      className={cn(styles.wrapper, {
+        [styles.wrapperColor[backgroundColor]]: !disabled,
+        [styles.containerDisabled]: disabled,
+      })}
       data-testid={`select-${name}`}
     >
       <ReactSelect
         instanceId={id}
+        aria-labelledby={id}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
@@ -187,6 +197,8 @@ export const Select = ({
           Menu,
           Option,
         }}
+        isClearable={isClearable}
+        backspaceRemovesValue={isClearable}
       />
       {hasError && errorMessage && (
         <div id={errorId} className={styles.errorMessage} aria-live="assertive">

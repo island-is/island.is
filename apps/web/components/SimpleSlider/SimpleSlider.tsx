@@ -27,7 +27,6 @@ type Breakpoints = Record<number, BreakpointOption>
 
 interface SimpleSliderProps {
   title?: string
-  titleColor?: 'white' | 'dark400'
   gutterWidth?: SlideState['gutterWidth']
   slideCount?: SlideState['slideCount']
   breakpoints?: SlideState['breakpoints']
@@ -53,7 +52,6 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
   slideWidthOffset = 0,
   breakpoints = {},
   title,
-  titleColor,
   carouselController,
   logo,
 }) => {
@@ -149,7 +147,7 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
     start.current = e.targetTouches[0].pageX
   }
 
-  const handleTouchEnd: TouchEventHandler<HTMLDivElement> = (e) => {
+  const handleTouchEnd: TouchEventHandler<HTMLDivElement> = () => {
     switch (touchDirection.current) {
       case 'right':
         traverse('next')
@@ -185,7 +183,9 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         <Box paddingBottom={4}>
           <Inline space={2}>
             {logo && <Logo width={24} iconOnly />}
-            <Text variant="h3">{title}</Text>
+            <Text as="h2" variant="h3">
+              {title}
+            </Text>
           </Inline>
         </Box>
       )}

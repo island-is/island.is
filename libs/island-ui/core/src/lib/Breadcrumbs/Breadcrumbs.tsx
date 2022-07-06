@@ -45,7 +45,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
       {visibleItems.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (
-          <Tag disabled={!isLink} variant={tagVariant}>
+          <Tag textLeft={true} disabled={!isLink} variant={tagVariant}>
             {item.title}
           </Tag>
         ) : (

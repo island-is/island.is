@@ -3,7 +3,7 @@ import * as z from 'zod'
 import { AMOUNT, MONTHS, NO, YES } from '../shared/constants'
 import { error } from './messages'
 
-const paymentPlanSchema = z
+export const PaymentPlanSchema = z
   .object({
     id: z.string().min(1),
     amountPerMonth: z.number().optional(),
@@ -16,41 +16,48 @@ const paymentPlanSchema = z
   })
   .optional()
 
+export const ApplicantSchema = z.object({
+  address: z.string(),
+  city: z.string(),
+  email: z.string(),
+  name: z.string(),
+  nationalId: z.string(),
+  phoneNumber: z.string(),
+  postalCode: z.string(),
+})
+
+export const CorrectedEmployerSchema = z.object({
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x), {
+      params: error.nationalId,
+    }),
+  label: z.string().min(1),
+})
+
+export const PaymentPlansSchema = z.object({
+  one: PaymentPlanSchema,
+  two: PaymentPlanSchema,
+  three: PaymentPlanSchema,
+  four: PaymentPlanSchema,
+  five: PaymentPlanSchema,
+  six: PaymentPlanSchema,
+  seven: PaymentPlanSchema,
+  eight: PaymentPlanSchema,
+  nine: PaymentPlanSchema,
+  ten: PaymentPlanSchema,
+})
+
 export const PublicDebtPaymentPlanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    address: z.string(),
-    city: z.string(),
-    email: z.string(),
-    name: z.string(),
-    nationalId: z.string(),
-    phoneNumber: z.string(),
-    postalCode: z.string(),
-  }),
+  applicant: ApplicantSchema,
   employer: z.object({
     isCorrectInfo: z.enum([YES, NO]),
-    correctedNationalId: z
-      .object({
-        id: z
-          .string()
-          .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
-      })
-      .optional(),
   }),
+  correctedEmployer: CorrectedEmployerSchema,
   paymentPlanContext: z.object({
     isFulfilled: z.boolean().refine((x) => x),
     activePayment: z.string().optional(),
   }),
-  paymentPlans: z.object({
-    one: paymentPlanSchema,
-    two: paymentPlanSchema,
-    three: paymentPlanSchema,
-    four: paymentPlanSchema,
-    five: paymentPlanSchema,
-    six: paymentPlanSchema,
-    seven: paymentPlanSchema,
-    eight: paymentPlanSchema,
-    nine: paymentPlanSchema,
-    ten: paymentPlanSchema,
-  }),
+  paymentPlans: PaymentPlansSchema,
 })

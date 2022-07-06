@@ -22,10 +22,12 @@ export const Column = ({ children, width }: ColumnProps) => {
     lgSpace,
     xlSpace,
     collapsibleAlignmentChildProps,
+    as,
   } = useContext(ColumnsContext)
 
   return (
     <Box
+      component={as}
       minWidth={0}
       width={width !== 'content' ? 'full' : undefined}
       flexShrink={width === 'content' ? 0 : undefined}
@@ -35,6 +37,7 @@ export const Column = ({ children, width }: ColumnProps) => {
       ]}
     >
       <Box
+        component={as}
         paddingLeft={[
           collapseXs ? 'none' : xsSpace,
           collapseSm ? 'none' : smSpace,

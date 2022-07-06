@@ -2,6 +2,13 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  requestProsecutorOnlySession: defineMessage({
+    id:
+      'judicial.system.investigation_cases:hearing_arrangements.request_prosecutor_only_session',
+    defaultMessage: 'Beiðni um dómþing að varnaraðila fjarstöddum',
+    description:
+      'Notaður sem texti fyrir beiðni um dómþing að varnaraðila fjarstöddum á fyrirtöku skrefi í rannsóknarheimildum.',
+  }),
   comments: {
     title: defineMessage({
       id:
@@ -17,40 +24,6 @@ export const icHearingArrangements = {
     description: 'Notaður sem titill á fyrirtöku skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    setJudge: defineMessages({
-      title: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.set_judge.title',
-        defaultMessage: 'Dómari',
-        description:
-          'Notaður sem titll fyrir "dómari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.set_judge.tooltip',
-        defaultMessage:
-          'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-    }),
-    setRegistrar: defineMessages({
-      title: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.title',
-        defaultMessage: 'Dómritari',
-        description:
-          'Notaður sem titll fyrir "Dómritari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.tooltip',
-        defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-    }),
     sessionArrangements: {
       heading: defineMessage({
         id:
@@ -104,10 +77,18 @@ export const icHearingArrangements = {
     defender: defineMessages({
       title: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.title',
-        defaultMessage: 'Verjandi/talsmaður',
+          'judicial.system.investigation_cases:hearing_arrangements.defender.title_v1',
+        defaultMessage: '{defenderType}',
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.tooltip',
+        defaultMessage:
+          'Lögmaður sem er valinn hér verður skipaður {defenderType} í þinghaldi og fær sendan úrskurð rafrænt.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
       },
       nameLabel: {
         id:
@@ -153,6 +134,15 @@ export const icHearingArrangements = {
       },
     }),
   },
+  continueButton: defineMessages({
+    label: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.continue_button.label',
+      defaultMessage: 'Staðfesta fyrirtökutíma',
+      description:
+        'Notaður sem titil á takka til að halda áfram á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
+  }),
   modal: defineMessages({
     heading: {
       id:
@@ -161,43 +151,29 @@ export const icHearingArrangements = {
       description:
         'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum.',
     },
-    remoteSessionHeading: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_heading',
-      defaultMessage: 'Enginn hefur verið boðaður í þinghald að svo stöddu',
-      description:
-        'Notaður sem titill fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
     allPresentText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text_v2',
       defaultMessage:
-        'Tilkynning um fyrirtöku verður send á saksóknara og verjanda, hafi verjandi verið skráður.',
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara og verjanda, hafi verjandi verið skráður.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds og verjandi mæta.',
     },
     allPresentSpokespersonText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_spokesperson_text',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_spokesperson_text_v2',
       defaultMessage:
-        'Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir og dómari kallar til talsmann.',
     },
     prosecutorPresentText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.prosecutor_present_text',
-      defaultMessage: 'Tilkynning um fyrirtöku verður send á saksóknara.',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.prosecutor_present_text_v2',
+      defaultMessage:
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir.',
-    },
-    remoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.remote_session_text',
-      defaultMessage:
-        'Ekki er sjálfkrafa gert ráð fyrir boðun eða mætingu af hálfu málsaðila eða málflytjenda í þinghaldið.',
-      description:
-        'Notaður sem texti fyrir tilkynningagluggan á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
     },
     secondaryButtonText: {
       id:
@@ -212,23 +188,6 @@ export const icHearingArrangements = {
       defaultMessage: 'Já, senda núna',
       description:
         'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    primaryButtonRemoteSessionText: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.primary_button_remote_session_text',
-      defaultMessage: 'Áfram',
-      description:
-        'Notaður sem texti í takkanum í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fyrirtaka er án munnlegs málflutnings.',
-    },
-  }),
-  footer: defineMessages({
-    infoPanelForRestrictedAccess: {
-      id:
-        'judicial.system.investigation_cases:hearing_arrangements.footer.info_panel_for_restricted_access',
-      defaultMessage:
-        'Aðeins skráður dómari og dómritari geta haldið áfram í þingbók og úrskurð fyrir rannsóknarheimildir.',
-      description:
-        'Notaður sem texti sem birtist í staðinn fyrir halda áfram takka á fyrirtöku skrefi í rannsóknarheimildum ef notandi hefur ekki aðgang að málinu.',
     },
   }),
 }

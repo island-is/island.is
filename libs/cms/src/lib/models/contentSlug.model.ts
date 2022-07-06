@@ -3,7 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
 
 @ObjectType()
-export class ContentSlugLocales {
+export class TextFieldLocales {
   @Field()
   is?: string = ''
 
@@ -17,8 +17,16 @@ export class ContentSlug {
   id: string = ''
 
   @IsObject()
-  @Field(() => ContentSlugLocales, { nullable: true })
-  slug: ContentSlugLocales = {}
+  @Field(() => TextFieldLocales, { nullable: true })
+  slug: TextFieldLocales = {}
+
+  @IsObject()
+  @Field(() => TextFieldLocales, { nullable: true })
+  title: TextFieldLocales = {}
+
+  @IsObject()
+  @Field(() => TextFieldLocales, { nullable: true })
+  url: TextFieldLocales = {}
 
   @Field()
   type: string = ''

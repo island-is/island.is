@@ -15,6 +15,7 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      deleteButton
     }
     typeId
     name

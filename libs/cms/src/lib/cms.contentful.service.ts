@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
-import { ContentSlug, ContentSlugLocales } from './models/contentSlug.model'
+import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -68,9 +68,8 @@ import {
   SupportCategory,
 } from './models/supportCategory.model'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
-import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
-import { mapSupportForm, SupportForm } from './models/supportForm.model'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -399,24 +398,44 @@ export class CmsContentfulService {
   }: GetContentSlugInput): Promise<ContentSlug | null> {
     const result = await this.contentfulRepository
       .getClient()
-      .getEntry<{ slug: Record<string, string> }>(id, {
+      .getEntry<{
+        slug: Record<string, string>
+        title: Record<string, string>
+        url: Record<string, string>
+      }>(id, {
         locale: '*',
         include: 1,
       })
       .catch(errorHandler('getContentSlug'))
 
-    let slugs: ContentSlugLocales = { is: '', en: '' }
+    let slugs: TextFieldLocales = { is: '', en: '' }
+    let titles: TextFieldLocales = { is: '', en: '' }
+    let urls: TextFieldLocales = { is: '', en: '' }
 
-    if (result?.fields?.slug) {
-      slugs = Object.keys(localeMap).reduce((obj, k) => {
-        obj[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
-        return obj
-      }, {} as typeof localeMap)
+    if (
+      result?.fields?.title &&
+      (result?.fields?.slug || result?.fields?.url)
+    ) {
+      ;({ slugs, titles, urls } = Object.keys(localeMap).reduce(
+        (obj, k) => {
+          obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
+          obj.titles[k] = result?.fields?.title?.[localeMap[k]] ?? ''
+          obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
+          return obj
+        },
+        {
+          slugs: {} as typeof localeMap,
+          titles: {} as typeof localeMap,
+          urls: {} as typeof localeMap,
+        },
+      ))
     }
 
     return {
       id: result?.sys?.id,
       slug: slugs,
+      title: titles,
+      url: urls,
       type: result?.sys?.contentType?.sys?.id ?? '',
     }
   }
@@ -677,7 +696,7 @@ export class CmsContentfulService {
   async getSupportCategoriesInOrganization({
     lang,
     slug,
-  }: GetSupportFormInOrganizationInput): Promise<SupportCategory[]> {
+  }: GetSupportCategoriesInOrganizationInput): Promise<SupportCategory[]> {
     const params = {
       ['content_type']: 'supportCategory',
       'fields.organization.sys.contentType.sys.id': 'organization',
@@ -686,26 +705,9 @@ export class CmsContentfulService {
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ISupportCategoryFields>(lang, params)
-      .catch(errorHandler('getSupportFormInOrganization'))
+      .catch(errorHandler('getSupportCategoriesInOrganization'))
 
     return (result.items as types.ISupportCategory[]).map(mapSupportCategory)
-  }
-
-  async getSupportFormInOrganization({
-    lang,
-    slug,
-  }: GetSupportFormInOrganizationInput): Promise<SupportForm[]> {
-    const params = {
-      ['content_type']: 'supportForm',
-      'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ISupportFormFields>(lang, params)
-      .catch(errorHandler('getSupportFormInOrganization'))
-
-    return (result.items as types.ISupportForm[]).map(mapSupportForm)
   }
 
   async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {

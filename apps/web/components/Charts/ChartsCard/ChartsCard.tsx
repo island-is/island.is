@@ -12,18 +12,10 @@ import { ExportCSVButton } from '@island.is/web/components'
 
 import * as styles from './ChartsCard.css'
 
-interface GraphDataProps {
-  title?: string
-  data: string
-  datakeys: string
-  type: string
-}
-
 interface ChartCardDataProps {
   graphTitle?: string
   graphDescription?: string
   organization?: string
-  organizationLogo?: any
   data?: string
   datakeys?: string
   type?: string
@@ -42,9 +34,8 @@ export const ChartsCard: React.FC<ChartsCardsProps> = ({ chart, subPage }) => {
     type,
     data,
     datakeys,
-    organizationLogo,
   } = chart
-  const [ref, { width, height }] = useMeasure()
+  const [ref, { width }] = useMeasure()
   const graphData = { title: graphTitle, data: data, datakeys: datakeys }
 
   let children = null

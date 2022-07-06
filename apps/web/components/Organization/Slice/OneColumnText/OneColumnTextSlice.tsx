@@ -1,5 +1,11 @@
 import React from 'react'
-import { Box, Button, GridContainer, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  BoxProps,
+  Button,
+  GridContainer,
+  Text,
+} from '@island.is/island-ui/core'
 import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -9,15 +15,18 @@ interface SliceProps {
 }
 
 export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+  const boxProps: BoxProps = slice.dividerOnTop
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 4,
+      }
+    : {}
+
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[4, 4, 6]}
-          paddingBottom={[4, 5, 10]}
-        >
+        <Box {...boxProps}>
           <Text
             variant="h2"
             as="h2"
@@ -27,8 +36,8 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
             {slice.title}
           </Text>
           {richText(slice.content as SliceType[])}
-          {slice.link && (
-            <Link href="#">
+          {slice.link && slice.link.url && (
+            <Link href={slice.link.url}>
               <Button
                 icon="arrowForward"
                 iconType="filled"

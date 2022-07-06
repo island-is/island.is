@@ -4,7 +4,7 @@ import { CategoryDTO } from '@island.is/clients/documents'
 @ObjectType()
 export class DocumentCategory {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => String)
   name?: string

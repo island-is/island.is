@@ -37,26 +37,17 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
-    // Judges have permission to view files of completed cases, and
-    // of uncompleted received cases they have been assigned to
-    if (user.role === UserRole.JUDGE) {
-      if (
-        completedCaseStates.includes(theCase.state) ||
-        (theCase.state === CaseState.RECEIVED && user.id === theCase.judgeId)
-      ) {
-        return true
-      }
-
-      throw new ForbiddenException('Forbidden for judges')
-    }
-
-    // Registrars have permission to view files of completed cases
-    if (user.role === UserRole.REGISTRAR) {
-      if (completedCaseStates.includes(theCase.state)) {
-        return true
-      }
-
-      throw new ForbiddenException('Forbidden for registrars')
+    // Judges and registrars have permission to view files of submitted and
+    // completed cases
+    if (
+      [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        ...completedCaseStates,
+      ].includes(theCase.state)
+    ) {
+      return true
     }
 
     // Other users do not have permission to view any case files

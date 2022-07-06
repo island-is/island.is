@@ -24,7 +24,19 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "swagger-ui-dist",
+    "sequelize",
+    "@protobufjs/aspromise",
+    "@protobufjs/base64",
+    "@protobufjs/codegen",
+    "@protobufjs/eventemitter",
+    "@protobufjs/fetch",
+    "@protobufjs/float",
+    "@protobufjs/inquire",
+    "@protobufjs/path",
+    "@protobufjs/pool",
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

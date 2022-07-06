@@ -1,11 +1,12 @@
 import { PaymentScheduleDebts } from '@island.is/api/schema'
-import { FieldBaseProps } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
-import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
+import { PaymentPlans } from '../../types'
 import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
 export const PaymentPlanList = ({
@@ -13,12 +14,19 @@ export const PaymentPlanList = ({
   goToScreen,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const paymentScheduleDebts = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanPrerequisites?.data?.debts as PaymentScheduleDebts[]
-  const answers = application.answers as PublicDebtPaymentPlan
+
+  const paymentScheduleDebts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
+
+  const paymentPlans = getValueViaPath(
+    application.answers,
+    'paymentPlans',
+  ) as PaymentPlans
 
   const handleEditPaymentPlan = (id: string) => {
-    const clickedPlanKey = getPaymentPlanKeyById(answers.paymentPlans, id)
+    const clickedPlanKey = getPaymentPlanKeyById(paymentPlans, id)
     if (clickedPlanKey && goToScreen)
       goToScreen(`paymentPlans.${clickedPlanKey}`)
   }
@@ -29,7 +37,7 @@ export const PaymentPlanList = ({
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
       {paymentScheduleDebts?.map((payment, index) => {
-        const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
+        const isAnswered = getPaymentPlanIds(paymentPlans).some(
           (id) => id === payment.type,
         )
 

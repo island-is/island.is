@@ -74,6 +74,13 @@ export class ApiScopesDTO {
   @ApiProperty({
     example: false,
   })
+  readonly grantToPersonalRepresentatives!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
   readonly allowExplicitDelegationGrant!: boolean
 
   @IsBoolean()

@@ -23,7 +23,7 @@ if [ -z "${1-}" ]; then
   echo "  yarn get-secrets <project> [--reset]"
   echo ""
   echo "Example:"
-  echo "  yarn get-secrets gjafakort --reset"
+  echo "  yarn get-secrets api --reset"
   echo ""
   echo "Documentation:"
   echo "  docs.devland.is/handbook/repository/aws-secrets"

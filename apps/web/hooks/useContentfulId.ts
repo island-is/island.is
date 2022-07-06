@@ -1,16 +1,16 @@
 import { useEffect, useContext } from 'react'
 import { GlobalContext } from '../context'
 
-export const useContentfulId = (id: string) => {
+export const useContentfulId = (pageId: string, subpageId?: string) => {
   const { setContentfulId } = useContext(GlobalContext)
 
   useEffect(() => {
-    if (id) {
-      setContentfulId(id)
+    if (pageId) {
+      setContentfulId(pageId, subpageId)
     }
 
     return () => setContentfulId('')
-  }, [id])
+  }, [pageId, subpageId])
 }
 
 export default useContentfulId

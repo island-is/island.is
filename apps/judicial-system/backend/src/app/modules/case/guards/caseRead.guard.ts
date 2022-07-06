@@ -2,12 +2,11 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  BadRequestException,
   InternalServerErrorException,
   ForbiddenException,
 } from '@nestjs/common'
 
-import { isCaseBlockedFromUser } from '../filters'
+import { isCaseBlockedFromUser } from '../filters/case.filters'
 
 @Injectable()
 export class CaseReadGuard implements CanActivate {
@@ -23,7 +22,7 @@ export class CaseReadGuard implements CanActivate {
     const theCase = request.case
 
     if (!theCase) {
-      throw new BadRequestException('Missing case')
+      throw new InternalServerErrorException('Missing case')
     }
 
     if (isCaseBlockedFromUser(theCase, user, false)) {

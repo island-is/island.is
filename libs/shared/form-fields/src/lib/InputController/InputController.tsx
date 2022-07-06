@@ -26,7 +26,11 @@ interface Props {
   rows?: number
   format?: string | FormatInputValueFunction
   required?: boolean
+  readOnly?: boolean
   maxLength?: number
+  loading?: boolean
+  size?: 'xs' | 'sm' | 'md'
+  autoComplete?: 'off' | 'on'
 }
 
 interface ChildParams {
@@ -57,7 +61,11 @@ export const InputController: FC<Props> = ({
   suffix,
   rows,
   required,
+  readOnly,
   maxLength,
+  loading,
+  size = 'md',
+  autoComplete,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -68,6 +76,7 @@ export const InputController: FC<Props> = ({
           id={id}
           icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           placeholder={placeholder}
           label={label}
           type="text"
@@ -78,7 +87,11 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          autoComplete={autoComplete}
+          loading={loading}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -95,10 +108,12 @@ export const InputController: FC<Props> = ({
     } else if (type === 'number' && suffix) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           id={id}
           icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -106,7 +121,11 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          autoComplete={autoComplete}
+          loading={loading}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -123,10 +142,12 @@ export const InputController: FC<Props> = ({
     } else if (format && ['text', 'tel'].includes(type)) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           icon={icon}
           id={id}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -134,7 +155,11 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
-          onChange={(e) => {
+          autoComplete={autoComplete}
+          loading={loading}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -154,6 +179,7 @@ export const InputController: FC<Props> = ({
           id={id}
           value={value}
           disabled={disabled}
+          readOnly={readOnly}
           icon={icon}
           placeholder={placeholder}
           label={label}
@@ -165,6 +191,8 @@ export const InputController: FC<Props> = ({
           textarea={textarea}
           type={type}
           maxLength={maxLength}
+          autoComplete={autoComplete}
+          loading={loading}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {
@@ -172,6 +200,7 @@ export const InputController: FC<Props> = ({
             }
           }}
           rows={rows}
+          size={size}
           {...props}
         />
       )

@@ -1,9 +1,9 @@
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
 import { format as formatKennitala } from 'kennitala'
-import amountFormat from './amountFormat'
+import { amountFormat } from '@island.is/service-portal/core'
 import { messages } from '../lib/messages'
-import { FormatMessage } from '@island.is/application/core'
+import { FormatMessage } from '@island.is/localization'
 
 import {
   PropertyOwner,
@@ -51,14 +51,6 @@ const unitsArray = (
             value: unit.unitOfUseNumber || '',
           },
           {
-            title: `${formatMessage(messages.appraisal)} ${
-              unit?.appraisal?.activeYear
-            }`,
-            value: unit.appraisal?.activeAppraisal
-              ? amountFormat(unit.appraisal?.activeAppraisal)
-              : '',
-          },
-          {
             title: formatMessage(messages.location),
             value: locationData?.displayShort || '',
             detail: locationData?.locationNumber
@@ -66,14 +58,6 @@ const unitsArray = (
                   locationData?.locationNumber
                 }`
               : undefined,
-          },
-          {
-            title: `${formatMessage(messages.appraisal)} ${
-              unit?.appraisal?.plannedYear
-            }`,
-            value: unit?.appraisal?.plannedAppraisal
-              ? amountFormat(unit.appraisal.plannedAppraisal)
-              : '',
           },
           {
             title: formatMessage(messages.marking),

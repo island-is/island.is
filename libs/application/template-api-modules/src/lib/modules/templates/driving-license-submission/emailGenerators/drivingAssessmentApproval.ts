@@ -20,7 +20,7 @@ export const generateDrivingAssessmentApprovalEmail: EmailTemplateGenerator = (
       : 'Driving assessment confirmation'
   const html =
     locale === 'is'
-      ? dedent(`<h1>Akstursmat staðist</h1>
+      ? dedent(`<h1>Akstursmat lokið</h1>
 
         <p>Ökukennarinn þinn hefur staðfest að akstursmat hafi farið fram.
         Smelltu hér til að hefja umsókn um fullnaðarskírteini</p>

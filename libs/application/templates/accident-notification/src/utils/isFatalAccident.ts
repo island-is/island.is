@@ -1,9 +1,12 @@
-import { FormValue } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { YES } from '../constants'
-import { AccidentNotification } from '../lib/dataSchema'
+import { YesOrNo } from '../types'
 
 export const isFatalAccident = (formValue: FormValue) => {
-  const wasTheAccidentFatal = (formValue as AccidentNotification)
-    .wasTheAccidentFatal
+  const wasTheAccidentFatal = getValueViaPath(
+    formValue,
+    'wasTheAccidentFatal',
+  ) as YesOrNo
   return wasTheAccidentFatal === YES
 }

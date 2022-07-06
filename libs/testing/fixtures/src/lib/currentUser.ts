@@ -2,36 +2,22 @@ import * as faker from 'faker'
 
 import { User } from '@island.is/auth-nest-tools'
 
-interface CreateCurrentUser {
+import { createNationalId } from './nationalId'
+import type { NationalIdType } from './nationalId'
+
+interface UserOptions {
   nationalId?: string
   scope?: string[]
   authorization?: string
   client?: string
+  nationalIdType?: NationalIdType
 }
 
-const createRandomCurrentUser = (): User => ({
-  nationalId: faker.helpers.replaceSymbolWithNumber('##########'),
-  scope: [],
-  authorization: faker.random.word(),
-  client: faker.random.word(),
-})
-
-export const createCurrentUser = (
-  user: CreateCurrentUser = createRandomCurrentUser(),
-): User => {
-  const fallback = createRandomCurrentUser()
-
-  const {
-    nationalId = user['nationalId'] ?? fallback['nationalId'],
-    scope = user['scope'] ?? fallback['scope'],
-    authorization = user['authorization'] ?? fallback['authorization'],
-    client = user['client'] ?? fallback['client'],
-  } = user
-
+export const createCurrentUser = (user: UserOptions = {}): User => {
   return {
-    nationalId,
-    scope,
-    authorization,
-    client,
+    nationalId: user.nationalId ?? createNationalId(user.nationalIdType),
+    scope: user.scope ?? [],
+    authorization: user.authorization ?? faker.random.word(),
+    client: user.client ?? faker.random.word(),
   }
 }

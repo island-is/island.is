@@ -44,6 +44,12 @@ export class EmailVerification extends Model<EmailVerification> {
   nationalId!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+  })
+  @ApiProperty()
+  confirmed!: boolean
+
+  @Column({
     type: DataType.STRING,
   })
   @ApiProperty()

@@ -11,9 +11,9 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
-  HttpStatus,
   Inject,
   forwardRef,
+  CACHE_MANAGER,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -49,6 +49,8 @@ import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
+import * as kennitala from 'kennitala'
+import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -57,6 +59,7 @@ import type { HttpRequest } from '../../app.types'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
@@ -168,7 +171,6 @@ export class PublicFlightController {
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
-    @Req() request: HttpRequest,
   ): Promise<void> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
@@ -214,9 +216,45 @@ export class PublicFlightController {
       )
     }
 
-    const meetsADSRequirements = this.flightService.isADSPostalCode(
+    let meetsADSRequirements = this.flightService.isADSPostalCode(
       user.postalcode,
     )
+
+    // TODO: this is a quickly made temporary hotfix and should be rewritten
+    // along when the nationalregistry module is rewritten for the client V2 completely
+    if (
+      !meetsADSRequirements &&
+      kennitala.info(discount.nationalId).age < MAX_AGE_LIMIT
+    ) {
+      const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
+      const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
+
+      if (cacheValue) {
+        const custodians = cacheValue.custodians
+
+        for (const custodian of custodians) {
+          const custodianInfo = await this.nationalRegistryService.getUser(
+            custodian,
+          )
+
+          if (
+            custodianInfo &&
+            this.flightService.isADSPostalCode(custodianInfo.postalcode)
+          ) {
+            // Overview breaks when postalcode is null
+            // On rare occasions the national registry has no
+            // info on children. This is a patch for the overview screen
+            // to function properly on those occasions
+            if (!user.postalcode) {
+              user.postalcode = custodianInfo.postalcode
+            }
+            meetsADSRequirements = true
+            break
+          }
+        }
+      }
+    }
+
     if (!meetsADSRequirements) {
       throw new ForbiddenException('User postalcode does not meet conditions')
     }

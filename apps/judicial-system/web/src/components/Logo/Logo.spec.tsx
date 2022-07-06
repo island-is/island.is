@@ -4,16 +4,18 @@ import { createMemoryHistory } from 'history'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as constants from '@island.is/judicial-system/consts'
+
 import UserProvider from '../UserProvider/UserProvider'
 import { mockJudgeQuery } from '../../utils/mocks'
+
 import Logo from './Logo'
 
 describe('Logo', () => {
   test('should display the current users institution', async () => {
     // Arrange
     const history = createMemoryHistory()
-    history.push(Constants.STEP_ONE_ROUTE)
+    history.push(constants.STEP_ONE_ROUTE)
 
     render(
       <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>
@@ -25,8 +27,7 @@ describe('Logo', () => {
       </MockedProvider>,
     )
 
-    expect(
-      await screen.findByText('Héraðsdómur Reykjavíkur'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
+    expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
   })
 })

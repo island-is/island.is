@@ -3,10 +3,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
-import { randomInt, randomBytes } from 'crypto'
+import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
-import { UserProfile } from '../user-profile/userProfile.model'
+import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
 import { SmsVerification } from './smsVerification.model'
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
@@ -17,23 +18,24 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'verification-service'
+
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
 
 /**
-  *- Email verification procedure
-    *- New User
-      *- Create User
-      *- Create Email verification
-      *- Send Email verification
-    *- Update User
-      *- Is email being Updated
-      *- Create Email Verification
-      *- Send Email verification
-    *- Confirmation
-      *- Does hash match
-      *- Remove Email verifation from db
-      *- Mark email as confirmed in UserProfile
+  *- email verification procedure
+    *- New user
+      *- User confirms before User profile Creation
+      *- Create email confirmation
+      *- Confirm Directly with emailCode
+      *- On profile creation check for confirmation and mark email as verified
+    *- Update user
+      *- Create email confirmation
+      *- Confirm Directly with code
+      *- update email check db for confirmation save email as verified
+
 
   *- SMS verification procedure
     *- New user
@@ -65,14 +67,15 @@ export class VerificationService {
     nationalId: string,
     email: string,
   ): Promise<EmailVerification | null> {
-    const hashString = randomBytes(16).toString('hex')
+    const emailCode = randomInt(0, 999999).toString().padStart(6, '0')
 
     const [record] = await this.emailVerificationModel.upsert(
-      { nationalId, email, hash: hashString },
+      { nationalId, email, hash: emailCode, created: new Date() },
       {
         returning: true,
       },
     )
+
     if (record) {
       this.sendConfirmationEmail(record)
     }
@@ -103,12 +106,11 @@ export class VerificationService {
 
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
-    userProfile: UserProfile,
+    nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
-    const { nationalId } = userProfile
-
     const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, email: confirmEmailDto.email },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -118,19 +120,52 @@ export class VerificationService {
       }
     }
 
+    const expiration = addMilliseconds(
+      verification.created,
+      SMS_VERIFICATION_MAX_AGE,
+    )
+    if (expiration < new Date()) {
+      return {
+        message: 'Email verification is expired',
+        confirmed: false,
+      }
+    }
+
     if (confirmEmailDto.hash !== verification.hash) {
+      // TODO: Add tries?
       return {
         message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
         confirmed: false,
       }
     }
 
-    await this.userProfileService.update(nationalId, {
-      emailVerified: true,
-    })
+    try {
+      await this.emailVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update email verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update email verification',
+        confirmed: false,
+      }
+    }
 
-    await this.removeEmailVerification(nationalId)
-
+    try {
+      await this.removeEmailVerification(nationalId)
+    } catch (e) {
+      this.logger.error('Email verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
     return {
       message: 'Email confirmed',
       confirmed: true,
@@ -141,8 +176,14 @@ export class VerificationService {
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobileNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, mobilePhoneNumber: mobileNumber },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -180,13 +221,34 @@ export class VerificationService {
       }
     }
 
-    await this.smsVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.smsVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update sms verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update sms verification',
+        confirmed: false,
+      }
+    }
+
+    try {
+      await this.removeSmsVerification(nationalId)
+    } catch (e) {
+      this.logger.error('SMS verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
+
     return {
       message: 'SMS confirmed',
       confirmed: true,
@@ -194,7 +256,6 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
-    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/personuupplysingar/stadfesta-netfang/${verification.hash}`
     try {
       await this.emailService.sendEmail({
         from: {
@@ -207,11 +268,45 @@ export class VerificationService {
             address: verification.email,
           },
         ],
-        subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu skráninguna með því að smella á hlekkinn hér fyrir neðan:
-        <br><br><a href="${resetLink}" target="_blank">${resetLink}</a><br>
-        <br>Ef hlekkurinn er ekki lengur í gildi biðjum við þig að endurtaka skráninguna á Ísland.is.
-        <br><br>Ef þú kannast ekki við að hafa sett inn þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        subject: `Staðfesting á netfangi á Ísland.is`,
+        template: {
+          title: 'Staðfesting á netfangi',
+          body: [
+            {
+              component: 'Image',
+              context: {
+                src: join(__dirname, `./assets/images/logois.jpg`),
+                alt: 'Ísland.is logo',
+              },
+            },
+            {
+              component: 'Heading',
+              context: { copy: 'Staðfesting á netfangi', small: true },
+            },
+            {
+              component: 'Copy',
+              context: { copy: 'Öryggiskóðinn þinn', small: true },
+            },
+            {
+              component: 'Heading',
+              context: { copy: verification.hash },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+              },
+            },
+          ],
+        },
       })
     } catch (exception) {
       this.logger.error(exception)
@@ -254,5 +349,16 @@ export class VerificationService {
       verification.confirmed &&
       verification.mobilePhoneNumber === mobilePhoneNumber
     )
+  }
+
+  async isEmailVerified(
+    createUserProfileDto: CreateUserProfileDto,
+  ): Promise<boolean> {
+    const { nationalId, email } = createUserProfileDto
+    const verification = await this.emailVerificationModel.findOne({
+      where: { nationalId },
+    })
+    if (!verification) return false
+    return verification.confirmed && verification.email === email
   }
 }

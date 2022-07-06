@@ -68,7 +68,7 @@ export const ServiceList: React.FC<ServiceListProps> = ({
           return (
             <GridColumn
               key={item.id.toString()}
-              span={['12/12', '12/12', '12/12', '6/12']}
+              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
               paddingBottom={3}
             >
               <CategoryCard

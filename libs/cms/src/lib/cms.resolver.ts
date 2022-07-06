@@ -81,10 +81,13 @@ import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { SupportCategory } from './models/supportCategory.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
-import { SupportForm } from './models/supportForm.model'
-import { GetSupportFormInOrganizationInput } from './dto/getSupportFormInOrganization.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
+import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
+import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
+import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
+import { Locale } from '@island.is/shared/types'
 
 const { cacheTime } = environment
 
@@ -347,13 +350,20 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
-  getSingleArticle(
+  async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
-  ): Promise<Article | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+  ): Promise<(Partial<Article> & { lang: Locale }) | null> {
+    const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
+
+    if (!article) return null
+
+    return {
+      ...article,
+      lang,
+    }
   }
 
   @Directive(cacheControlDirective())
@@ -423,6 +433,28 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => SupportQNA, { nullable: true })
+  getSingleSupportQNA(
+    @Args('input') { lang, slug }: GetSingleSupportQNAInput,
+  ): Promise<SupportQNA | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<SupportQNA>(
+      getElasticsearchIndex(lang),
+      { type: 'webQNA', slug },
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [SupportQNA])
+  getFeaturedSupportQNAs(
+    @Args('input') input: GetFeaturedSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => [SupportQNA])
   getSupportQNAs(
     @Args('input') input: GetSupportQNAsInput,
@@ -463,11 +495,14 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [SupportForm])
-  getSupportFormInOrganization(
-    @Args('input') input: GetSupportFormInOrganizationInput,
-  ): Promise<SupportForm[]> {
-    return this.cmsContentfulService.getSupportFormInOrganization(input)
+  @Query(() => EnhancedAssetSearchResult)
+  getPublishedMaterial(
+    @Args('input') input: GetPublishedMaterialInput,
+  ): Promise<EnhancedAssetSearchResult> {
+    return this.cmsElasticsearchService.getPublishedMaterial(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 }
 
@@ -494,7 +529,14 @@ export class ArticleResolver {
 
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
-  async relatedArticles(@Parent() article: Article) {
-    return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
+  async relatedArticles(
+    @Parent() article: (Article & { lang?: Locale }) | null,
+  ): Promise<Article[]> {
+    if (!article) return []
+
+    return this.cmsContentfulService.getRelatedArticles(
+      article.slug,
+      article?.lang ?? 'is',
+    )
   }
 }

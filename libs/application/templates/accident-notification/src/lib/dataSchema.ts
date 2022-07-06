@@ -154,6 +154,11 @@ export const AccidentNotificationSchema = z.object({
         // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
+    additionalFilesFromReviewer: z
+      .object({
+        file: z.array(FileSchema),
+      })
+      .optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),

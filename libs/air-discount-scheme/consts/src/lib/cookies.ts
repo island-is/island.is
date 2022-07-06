@@ -1,3 +1,3 @@
-export const CSRF_COOKIE_NAME = 'air-discount-scheme.csrf'
+export const CSRF_COOKIE_NAME = 'next-auth.csrf-token'
 
-export const ACCESS_TOKEN_COOKIE_NAME = 'air-discount-scheme.token'
+export const ACCESS_TOKEN_COOKIE_NAME = 'next-auth.session-token'

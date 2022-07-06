@@ -2,8 +2,11 @@ import * as s from './RegulationDisplay.css'
 
 import React, { Fragment, memo } from 'react'
 import { Link } from '@island.is/island-ui/core'
-import { interpolate, prettyName } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import {
+  interpolate,
+  prettyName,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import uniqBy from 'lodash/uniqBy'
 import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'

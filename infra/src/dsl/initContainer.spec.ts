@@ -10,6 +10,7 @@ const Staging: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -24,7 +25,10 @@ describe('Init-container definitions', () => {
           command: 'migration',
           name: 'migration',
           args: ['all'],
-          resources: { requests: { cpu: '100m', memory: '1024Mi' } },
+          resources: {
+            limits: { cpu: '100m', memory: '1024Mi' },
+            requests: { cpu: '100m', memory: '1024Mi' },
+          },
         },
         {
           command: 'seed',
@@ -60,12 +64,20 @@ describe('Init-container definitions', () => {
               cpu: '100m',
               memory: '1024Mi',
             },
+            limits: {
+              cpu: '100m',
+              memory: '1024Mi',
+            },
           },
         },
         {
           command: ['seed'],
           args: ['all'],
           name: 'seedation',
+          resources: {
+            limits: { cpu: '200m', memory: '256Mi' },
+            requests: { cpu: '100m', memory: '128Mi' },
+          },
         },
       ],
       env: {
@@ -74,6 +86,7 @@ describe('Init-container definitions', () => {
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',
+        DB_REPLICAS_HOST: 'a',
         SERVERSIDE_FEATURES_ON: '',
       },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },

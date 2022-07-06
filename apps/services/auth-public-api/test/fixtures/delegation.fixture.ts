@@ -2,7 +2,15 @@ import * as faker from 'faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
-import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
+import {
+  ApiScopeGroup,
+  Delegation,
+  DelegationScope,
+  Domain,
+  Translation,
+} from '@island.is/auth-api-lib'
+import { createNationalId } from '@island.is/testing/fixtures'
+import { Model } from 'sequelize'
 
 export interface CreateDelegationOptions {
   fromNationalId: string
@@ -28,14 +36,17 @@ export type CreateDelegation = Pick<
   'id' | 'fromNationalId' | 'fromDisplayName' | 'toNationalId' | 'toName'
 > & { delegationScopes: CreateDelegationScope[] }
 
-const createRandomNationalId = (): string => {
-  return faker.datatype
-    .number({
-      min: 10000000000,
-      max: 9999999999,
-    })
-    .toString()
-}
+export type CreateDomain = Pick<Domain, 'name' | 'description' | 'nationalId'>
+
+export type CreateApiScopeGroup = Pick<
+  ApiScopeGroup,
+  'id' | 'name' | 'displayName' | 'description'
+> & { domain: CreateDomain }
+
+export type CreateTranslation = Pick<
+  Translation,
+  'language' | 'className' | 'value' | 'property' | 'key'
+>
 
 /**
  * Private helper to create a DelegationScope with random values.
@@ -63,9 +74,9 @@ const createRandomDelegation = (): CreateDelegation => {
 
   return {
     id,
-    fromNationalId: createRandomNationalId(),
+    fromNationalId: createNationalId(),
     fromDisplayName: faker.random.word(),
-    toNationalId: createRandomNationalId(),
+    toNationalId: createNationalId(),
     toName: faker.random.word(),
     delegationScopes: [createRandomDelegationScope(id)],
   }
@@ -122,4 +133,39 @@ export const createDelegation = ({
       createDelegationScope(delegation.id, scope, today, expired, future),
     ),
   }
+}
+
+export const createApiScopeGroup = ({
+  displayName,
+  description,
+}: Partial<CreateApiScopeGroup>): CreateApiScopeGroup => {
+  return {
+    id: faker.datatype.uuid(),
+    name: faker.random.word(),
+    domain: {
+      name: faker.random.word(),
+      description: faker.lorem.sentence(),
+      nationalId: createNationalId('company'),
+    },
+    displayName: displayName ?? faker.random.word(),
+    description: description ?? faker.lorem.sentence(),
+  }
+}
+
+export const createTranslations = (
+  instance: Model,
+  language: string,
+  translations: Record<string, string>,
+): CreateTranslation[] => {
+  const className = instance.constructor.name.toLowerCase()
+  const key = instance.get(
+    (instance.constructor as typeof Model).primaryKeyAttributes[0],
+  ) as string
+  return Object.entries(translations).map(([property, value]) => ({
+    language,
+    className,
+    key,
+    property,
+    value,
+  }))
 }

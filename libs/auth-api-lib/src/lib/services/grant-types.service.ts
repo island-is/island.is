@@ -34,6 +34,7 @@ export class GrantTypeService {
       limit: count,
       offset: offset,
       where: includeArchived ? {} : { archived: null },
+      order: ['name'],
     })
   }
 
@@ -55,6 +56,7 @@ export class GrantTypeService {
       where: includeArchived
         ? { name: searchString }
         : { name: searchString, archived: null },
+      order: ['name'],
     })
   }
 

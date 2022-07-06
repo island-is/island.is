@@ -1,58 +1,92 @@
+import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { UserProfileApi } from '@island.is/clients/user-profile'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
-  testServerActivateAuthGuards,
-  TestServerOptions,
-} from '@island.is/infra-nest-server'
-import { INestApplication } from '@nestjs/common'
-import { Sequelize } from 'sequelize-typescript'
+  TestApp,
+  testServer,
+  useAuth,
+  useDatabase,
+} from '@island.is/testing/nest'
+import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
-import { execSync } from 'child_process'
 
-export let app: INestApplication
-let sequelize: Sequelize
-
-export const truncate = async () => {
-  if (!sequelize) {
-    return
-  }
-
-  await Promise.all(
-    Object.values(sequelize.models).map((model) => {
-      if (model.tableName.toLowerCase() === 'sequelize') {
-        return null
-      }
-
-      return model.destroy({
-        where: {},
-        cascade: true,
-        truncate: true,
-        force: true,
-      })
-    }),
-  )
+class MockEinstaklingarApi {
+  withMiddleware = () => this
+  einstaklingarGetEinstaklingur = jest.fn().mockResolvedValue({})
+  einstaklingarGetEinstaklingurRaw = jest.fn().mockResolvedValue({})
+  einstaklingarGetForsja = jest.fn().mockResolvedValue([])
 }
 
-export const setup = async (options?: Partial<TestServerOptions>) => {
-  app = await testServerActivateAuthGuards({
-    appModule: AppModule,
-    ...options,
-  })
-  //TODO: find out why this setup does not work for this project
-  // sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-  // await sequelize.sync()
+class MockUserProfile {
+  withMiddleware = () => this
+  userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
+}
 
-  // Populate the database models
-  execSync('yarn nx run services-auth-api:migrate')
-  // Seed the database
-  execSync('yarn nx run services-auth-api:seed')
+interface SetupOptions {
+  user: User
+}
+
+export const setupWithAuth = async ({
+  user,
+}: SetupOptions): Promise<TestApp> => {
+  // Setup app with authentication and database
+  const app = await testServer({
+    appModule: AppModule,
+    override: (builder: TestingModuleBuilder) =>
+      builder
+        .overrideProvider(IdsUserGuard)
+        .useValue(
+          new MockAuthGuard({
+            nationalId: user.nationalId,
+            scope: user.scope,
+          }),
+        )
+        .overrideProvider(EinstaklingarApi)
+        .useClass(MockEinstaklingarApi)
+        .overrideProvider(UserProfileApi)
+        .useClass(MockUserProfile)
+        .overrideProvider(CompanyRegistryClientService)
+        .useValue({
+          getCompany: jest.fn().mockResolvedValue({}),
+        })
+        .overrideProvider(RskProcuringClient)
+        .useValue({
+          getSimple: jest.fn().mockResolvedValue(null),
+        })
+        .overrideProvider(FeatureFlagService)
+        .useValue({ getValue: () => true }),
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
+  })
 
   return app
 }
 
-beforeEach(truncate)
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const app = await testServer({
+    appModule: AppModule,
+    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+  })
 
-afterAll(async () => {
-  if (app && sequelize) {
-    await app.close()
-    await sequelize.close()
-  }
-})
+  return app
+}
+
+export const setupWithoutPermission = async (): Promise<TestApp> => {
+  const user = createCurrentUser()
+  const app = await testServer({
+    appModule: AppModule,
+    hooks: [
+      useAuth({ auth: user }),
+      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+    ],
+  })
+
+  return app
+}

@@ -15,14 +15,18 @@ interface FilterMenuProps {
   categories: ReadonlyArray<CategoriesProps>
   filter: FilterOptions
   setFilter: Dispatch<SetStateAction<FilterOptions>>
-  asDialog?: boolean
   resultCount: number
   onBeforeUpdate: () => void
 }
 
 export type FilterLabels = Pick<
   FilterProps,
-  'labelClear' | 'labelOpen' | 'labelClose' | 'labelTitle' | 'labelResult'
+  | 'labelClear'
+  | 'labelOpen'
+  | 'labelClose'
+  | 'labelTitle'
+  | 'labelResult'
+  | 'labelClearAll'
 > & { inputPlaceholder?: string }
 
 export type CategoriesProps = {
@@ -36,24 +40,36 @@ export const FilterMenu = ({
   categories,
   filter,
   setFilter,
-  asDialog,
   resultCount,
   onBeforeUpdate,
   labelClear = 'Hreinsa síu',
-  labelOpen = 'Opna síu',
+  labelClearAll = 'Hreinsa allar síur',
+  labelOpen = 'Sía niðurstöður',
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
   inputPlaceholder = 'Sía eftir leitarorði',
-}: FilterMenuProps & FilterLabels) => (
+  variant,
+  align,
+}: FilterMenuProps & FilterLabels & Pick<FilterProps, 'variant' | 'align'>) => (
   <Filter
+    labelClearAll={labelClearAll}
     labelClear={labelClear}
     labelOpen={labelOpen}
     labelClose={labelClose}
     labelTitle={labelTitle}
     labelResult={labelResult}
     resultCount={resultCount}
-    isDialog={asDialog}
+    variant={variant}
+    align={align}
+    filterInput={
+      <FilterInput
+        name="filter-input"
+        placeholder={inputPlaceholder}
+        value={filter.input}
+        onChange={(value) => setFilter({ ...filter, input: value })}
+      />
+    }
     onFilterClear={() =>
       setFilter({
         raduneyti: [],
@@ -61,12 +77,6 @@ export const FilterMenu = ({
       })
     }
   >
-    <FilterInput
-      name="filter-input"
-      placeholder={inputPlaceholder}
-      value={filter.input}
-      onChange={(value) => setFilter({ ...filter, input: value })}
-    />
     <FilterMultiChoice
       labelClear={labelClear}
       categories={categories}
@@ -84,6 +94,7 @@ export const FilterMenu = ({
           [categoryId]: [],
         })
       }}
+      singleExpand
     />
   </Filter>
 )

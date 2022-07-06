@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Nest" -->
+
 # Testing Nest
 
 This library is supposed to help developers setup a nest.js application for
@@ -14,7 +16,7 @@ order to build the Nest.js Application graph. From thereon you can build your
 test nest server any way you want to hooks and overriders.
 
 ```typescript
-const app: TestApp = await testServer<AppModule>({ appModule: AppModule })
+const app: TestApp = await testServer({ appModule: AppModule })
 ```
 
 The testServer can be setup anywhere, i.e. inside beforeAll, beforeEach, inside
@@ -54,7 +56,7 @@ describe('Example unit test', () => {
   let app: TestApp
 
   beforeAll(async () => {
-    app = await testServer<AppModule>({
+    app = await testServer({
       appModule: AppModule,
       override: (builder: TestingModuleBuilder) =>
         builder
@@ -83,7 +85,7 @@ describe('Example functional test', () => {
   let app: TestApp
 
   beforeAll(async () => {
-    app = await testServer<AppModule>({
+    app = await testServer({
       appModule: AppModule,
       override: (builder: TestingModuleBuilder) =>
         builder

@@ -1,26 +1,31 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildTextField,
-  buildSelectField,
   buildSubmitField,
-  DefaultEvents,
+  buildCheckboxField,
+  buildCompanySearchField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
 import {
   section,
   application,
   terms,
   applicant,
-  technicalContact,
-  technicalInfo,
+  technicalAnnouncements,
   overview,
   submitted,
+  selectCompany,
 } from '../lib/messages'
-import { TYPE_OF_OPERATION } from '../shared/constants'
+import { YES } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -31,15 +36,58 @@ export const LoginServiceForm: Form = buildForm({
       id: 'terms',
       title: section.terms,
       children: [
-        buildCustomField({
-          id: 'termsAgreement',
+        buildMultiField({
+          id: 'termsOfAgreementMultiField',
           title: terms.general.pageTitle,
-          component: 'TermsOfAgreement',
+          description: terms.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'termsAgreement',
+              title: terms.general.pageTitle,
+              doesNotRequireAnswer: true,
+              component: 'TermsOfAgreement',
+            }),
+            buildCheckboxField({
+              id: 'termsOfAgreement',
+              title: '',
+              backgroundColor: 'white',
+              options: [
+                {
+                  value: YES,
+                  label: terms.labels.termsAgreementApproval,
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
-      id: 'applicant',
+      id: 'selectCompany',
+      title: section.selectCompany,
+      children: [
+        buildMultiField({
+          id: 'selectCompanyMultiField',
+          title: selectCompany.general.pageTitle,
+          description: selectCompany.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'selectCompany.nameFieldTitle',
+              title: selectCompany.labels.nameDescription,
+              doesNotRequireAnswer: true,
+              component: 'FieldTitle',
+            }),
+            buildCompanySearchField({
+              id: 'selectCompany.searchField',
+              title: selectCompany.labels.nameAndNationalId,
+              shouldIncludeIsatNumber: true,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'applicantSection',
       title: section.applicant,
       children: [
         buildMultiField({
@@ -50,6 +98,7 @@ export const LoginServiceForm: Form = buildForm({
             buildCustomField({
               id: 'applicant.nameFieldTitle',
               title: applicant.labels.nameDescription,
+              doesNotRequireAnswer: true,
               component: 'FieldTitle',
             }),
             buildTextField({
@@ -58,29 +107,68 @@ export const LoginServiceForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.label',
+                  '',
+                )
+              },
             }),
             buildTextField({
               id: 'applicant.nationalId',
               title: applicant.labels.nationalId,
-              format: '######-####',
               backgroundColor: 'blue',
               width: 'half',
+              format: '######-####',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.nationalId',
+                  '',
+                )
+              },
             }),
-            buildSelectField({
+            buildTextField({
               id: 'applicant.typeOfOperation',
               title: applicant.labels.typeOfOperation,
               backgroundColor: 'blue',
-              options: TYPE_OF_OPERATION.map((value) => ({
-                label: value,
-                value: value,
-              })),
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+              },
+            }),
+            buildCustomField({
+              id: 'applicant.invalidIsat',
+              title: applicant.labels.invalidIsat,
+              doesNotRequireAnswer: true,
+              component: 'IsatInvalid',
+              condition: (formValue) => {
+                const isatNr = getValueViaPath(
+                  formValue,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+                if (isatNr !== undefined) {
+                  return isatNr.slice(0, 2) !== '84'
+                }
+                return false
+              },
             }),
             buildCustomField(
               {
                 id: 'applicant.responsibleParty',
                 title: applicant.labels.responsiblePartyTitle,
                 description: applicant.labels.responsiblePartyDescription,
+                doesNotRequireAnswer: true,
                 component: 'FieldTitle',
               },
               {
@@ -119,84 +207,28 @@ export const LoginServiceForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'technicalContactMultiField',
-          title: technicalContact.general.pageTitle,
-          description: technicalContact.general.pageDescription,
+          title: technicalAnnouncements.general.pageTitle,
+          description: technicalAnnouncements.general.pageDescription,
           children: [
             buildTextField({
-              id: 'technicalContact.name',
-              title: technicalContact.labels.name,
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'technicalContact.email',
-              title: technicalContact.labels.email,
+              id: 'technicalAnnouncements.email',
+              title: technicalAnnouncements.labels.email,
               variant: 'email',
               backgroundColor: 'blue',
               required: true,
             }),
             buildTextField({
-              id: 'technicalContact.phoneNumber',
-              title: technicalContact.labels.tel,
+              id: 'technicalAnnouncements.phoneNumber',
+              title: technicalAnnouncements.labels.tel,
               variant: 'tel',
               backgroundColor: 'blue',
               format: '###-####',
               required: true,
             }),
-            buildCustomField(
-              {
-                id: 'technicalContact.techAnnouncementsEmailTitle',
-                title: technicalContact.labels.techAnnouncementsEmailTitle,
-                component: 'FieldTitle',
-              },
-              {
-                marginTop: [3, 5],
-              },
-            ),
             buildTextField({
-              id: 'technicalContact.techAnnouncementsEmail',
-              title: technicalContact.labels.techAnnouncementsEmail,
-              description:
-                technicalContact.labels.techAnnouncementsEmailDescription,
-              variant: 'email',
-              backgroundColor: 'blue',
-              required: true,
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'technicalInfo',
-      title: section.technicalInfo,
-      children: [
-        buildMultiField({
-          id: 'technicalInfoMultiField',
-          title: section.technicalInfo,
-          children: [
-            buildTextField({
-              id: 'technicalInfo.type',
-              title: technicalInfo.labels.type,
-              description: technicalInfo.labels.typeDescription,
-              placeholder: technicalInfo.labels.typePlaceholder,
-              variant: 'textarea',
-              rows: 4,
-              backgroundColor: 'blue',
-              required: true,
-            }),
-            buildTextField({
-              id: 'technicalInfo.devReturnUrl',
-              title: technicalInfo.labels.devReturnUrl,
-              backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'technicalInfo.stagingReturnUrl',
-              title: technicalInfo.labels.stagingReturnUrl,
-              backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'technicalInfo.prodReturnUrl',
-              title: technicalInfo.labels.prodReturnUrl,
+              id: 'technicalAnnouncements.type',
+              title: technicalAnnouncements.labels.type,
+              placeholder: technicalAnnouncements.labels.typePlaceholder,
               backgroundColor: 'blue',
               required: true,
             }),

@@ -238,7 +238,9 @@ export class PkPassClient {
     return null
   }
 
-  async getPkPassUrl(payload: PkPassPayload): Promise<string | null> {
+  async getPkPass(
+    payload: PkPassPayload,
+  ): Promise<PkPassServiceDriversLicenseResponse | null> {
     let res: Response | null = null
 
     try {
@@ -300,13 +302,41 @@ export class PkPassClient {
 
     const response = json as PkPassServiceDriversLicenseResponse
 
-    if (response.status === 1 && response.data?.pass_url) {
-      return response.data.pass_url
+    if (response.status === 1 && response.data) {
+      return response as PkPassServiceDriversLicenseResponse
+    }
+
+    return null
+  }
+
+  async getPkPassUrl(payload: PkPassPayload): Promise<string | null> {
+    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_url) {
+      return response.data?.pass_url
     }
 
     this.logger.warn('pkpass service response does not include pass_url', {
-      serviceStatus: response.status,
-      serviceMessage: response.message,
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
+
+  async getPkPassQRCode(payload: PkPassPayload): Promise<string | null> {
+    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_qrcode) {
+      return response.data?.pass_qrcode
+    }
+
+    this.logger.warn('pkpass service response does not include pass_qrcode', {
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
       category: LOG_CATEGORY,
     })
 

@@ -12,13 +12,14 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
+// TODO Find a way to import from an index file
 import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'case_file',
   timestamps: true,
 })
-export class CaseFile extends Model<CaseFile> {
+export class CaseFile extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -62,17 +63,16 @@ export class CaseFile extends Model<CaseFile> {
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(CaseFileState),
-    defaultValue: CaseFileState.STORED_IN_RVG,
   })
   @ApiProperty({ enum: CaseFileState })
   state!: CaseFileState
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  key!: string
+  key?: string
 
   @Column({
     type: DataType.INTEGER,

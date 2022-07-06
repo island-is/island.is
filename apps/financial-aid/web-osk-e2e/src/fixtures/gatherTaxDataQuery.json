@@ -1,0 +1,11 @@
+{
+  "data": {
+    "municipalitiesPersonalTaxReturn": {
+      "personalTaxReturn": null
+    },
+    "municipalitiesDirectTaxPayments": {
+      "directTaxPayments": [],
+      "success": true
+    }
+  }
+}

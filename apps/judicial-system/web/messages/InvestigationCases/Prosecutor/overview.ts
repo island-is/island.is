@@ -1,12 +1,50 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const icOverview = {
+  receivedAlert: defineMessages({
+    title: {
+      id: 'judicial.system.investigation_cases:overview.received_alert.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Notaður sem titill í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
+    },
+    message: {
+      id: 'judicial.system.investigation_cases:overview.received_alert.message',
+      defaultMessage:
+        'Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu hér fyrir neðan.',
+      description:
+        'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
+    },
+  }),
+  seenByDefenderAlert: defineMessages({
+    title: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.title',
+      defaultMessage: 'Krafa sótt af verjanda',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+    text: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.text',
+      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+  }),
   heading: defineMessage({
     id: 'judicial.system.investigation_cases:overview.heading',
     defaultMessage: 'Yfirlit kröfu um rannsóknarheimild',
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    copyLinkForDefenderButton: defineMessage({
+      id:
+        'judicial.system.investigation_cases:overview.copy_link_for_defender_button',
+      defaultMessage: 'Afrita hlekk fyrir verjanda',
+      description:
+        'Notaður sem texti á takka til þessa að afrita hlekk á mál fyrir verjanda.',
+    }),
     modal: defineMessages({
       heading: {
         id: 'judicial.system.investigation_cases:overview.modal.heading',

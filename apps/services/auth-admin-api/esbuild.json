@@ -24,7 +24,20 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "mock-aws-s3",
+    "nock",
+    "swagger-ui-dist",
+    "@protobufjs/aspromise",
+    "@protobufjs/base64",
+    "@protobufjs/codegen",
+    "@protobufjs/eventemitter",
+    "@protobufjs/fetch",
+    "@protobufjs/float",
+    "@protobufjs/inquire",
+    "@protobufjs/path",
+    "@protobufjs/pool",
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

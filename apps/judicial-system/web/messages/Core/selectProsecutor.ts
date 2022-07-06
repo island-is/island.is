@@ -7,6 +7,12 @@ export const selectProsecutor = defineMessages({
     description:
       'Notaður sem titill fyrir "ákærandi" hlutann á óskir um fyrirtöku skrefi í öllum málstegundum.',
   },
+  placeholder: {
+    id: 'judicial.system.core:select_prosecutor.placeholder',
+    defaultMessage: 'Veldu sækjanda',
+    description:
+      'Notaður sem skýritexti í "Veldu sækjanda" textaboxi á óskir um fyrirtöku skrefi í öllum málstegundum.',
+  },
   label: {
     id: 'judicial.system.core:select_prosecutor.label',
     defaultMessage: 'Veldu sækjanda',

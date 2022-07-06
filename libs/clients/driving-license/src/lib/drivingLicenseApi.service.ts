@@ -1,15 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import { DrivingAssessment, Juristiction, QualityPhoto } from '..'
-import { ApiV1, EmbaettiDto } from '../v1'
-import { ApiV2, DRIVING_LICENSE_API_VERSION_V2, Rettindi } from '../v2'
-import { DriversLicense, Teacher } from './drivingLicenseApi.types'
-
-// empty string === successful license posted!?!
-const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
+import {
+  CanApplyErrorCodeBFull,
+  CanApplyForCategoryResult,
+  DrivingAssessment,
+  Juristiction,
+  QualityPhoto,
+} from '..'
+import * as v1 from '../v1'
+import * as v2 from '../v2'
+import {
+  CanApplyErrorCodeBTemporary,
+  DriversLicense,
+  Teacher,
+} from './drivingLicenseApi.types'
+import { handleCreateResponse } from './utils/handleCreateResponse'
 
 @Injectable()
 export class DrivingLicenseApi {
-  constructor(private readonly v1: ApiV1, private readonly v2: ApiV2) {}
+  constructor(private readonly v1: v1.ApiV1, private readonly v2: v2.ApiV2) {}
 
   public async getCurrentLicense(input: {
     nationalId: string
@@ -18,29 +26,67 @@ export class DrivingLicenseApi {
       kennitala: input.nationalId,
       // apiVersion header indicates that this method will return a single license, rather
       // than an array
-      apiVersion: DRIVING_LICENSE_API_VERSION_V2,
+      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
     })
 
     if (!skirteini || !skirteini.id) {
       return null
     }
+    const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
 
+    if (skirteini.athugasemdir) {
+      const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
+        apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
+      })
+      const licenseRemarks: string[] = skirteini.athugasemdir
+        .filter(
+          (remark: v1.AtsSkirteini) =>
+            remark.id === skirteini.id && !!remark.nr,
+        )
+        .map((remark: v1.AtsSkirteini) => remark.nr || '')
+      const filteredRemarks: string[] = remarks
+        .filter(
+          (remark: v1.TegundAthugasemdaDto) =>
+            !!remark.heiti &&
+            licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
+        )
+        .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
+      return { ...license, healthRemarks: filteredRemarks }
+    }
+
+    return license
+  }
+
+  private static normalizeDrivingLicenseType(
+    skirteini: v2.Okuskirteini | v1.Okuskirteini,
+  ): DriversLicense {
     // Pretty sure none of these fallbacks can get triggered, since if the service
     // finds a driver's license, it's going to have the values. - this is mostly to
     // appease the type system, since the downstream type is actually wrong.
     return {
-      id: skirteini.id,
-      name: skirteini.nafn || '',
+      id: skirteini.id ?? -1,
+      name: skirteini.nafn ?? '',
       issued: skirteini.utgafuDagsetning,
       expires: skirteini.gildirTil,
-      categories: (skirteini.rettindi as Rettindi[]).map((rettindi) => ({
-        id: rettindi.id || 0,
-        name: rettindi?.nr || '',
-        issued: rettindi.utgafuDags || null,
-        expires: rettindi.gildirTil || null,
-        comments: rettindi.aths || '',
-      })),
+      categories:
+        skirteini.rettindi?.map((rettindi: v2.Rettindi | v1.Rettindi) => ({
+          id: rettindi.id ?? 0,
+          name: rettindi?.nr ?? '',
+          issued: rettindi.utgafuDags ?? null,
+          expires: rettindi.gildirTil ?? null,
+          comments: rettindi.aths ?? '',
+        })) ?? [],
     }
+  }
+
+  public async getAllLicenses(input: {
+    nationalId: string
+  }): Promise<DriversLicense[]> {
+    const response = await this.v1.apiOkuskirteiniKennitalaAllGet({
+      kennitala: input.nationalId,
+    })
+
+    return response.map(DrivingLicenseApi.normalizeDrivingLicenseType)
   }
 
   public async getTeachers(): Promise<Teacher[]> {
@@ -69,7 +115,7 @@ export class DrivingLicenseApi {
   public async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.v1.apiOkuskirteiniEmbaettiGet({})
 
-    return embaetti.map(({ nr, postnumer, nafn }: EmbaettiDto) => ({
+    return embaetti.map(({ nr, postnumer, nafn }: v1.EmbaettiDto) => ({
       id: nr || 0,
       zip: postnumer || 0,
       name: nafn || '',
@@ -116,27 +162,37 @@ export class DrivingLicenseApi {
   public async getCanApplyForCategoryFull(params: {
     category: string
     nationalId: string
-  }) {
-    const canApplyResult = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
+    const response = await this.v2.apiOkuskirteiniKennitalaCanapplyforCategoryFullGet(
       {
-        apiVersion: DRIVING_LICENSE_API_VERSION_V2,
+        apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
         kennitala: params.nationalId,
         category: params.category,
       },
     )
 
-    // TODO: Use error codes from v2 api
-    return !!canApplyResult.result
+    return {
+      result: !!response.result,
+      errorCode: response.errorCode
+        ? (response.errorCode as CanApplyErrorCodeBFull)
+        : undefined,
+    }
   }
 
-  public async getCanApplyForCategoryTemporary(params: { nationalId: string }) {
-    const canApplyResult = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
+  public async getCanApplyForCategoryTemporary(params: {
+    nationalId: string
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
+    const response = await this.v1.apiOkuskirteiniKennitalaCanapplyforTemporaryGet(
       {
         kennitala: params.nationalId,
       },
     )
-
-    return !!canApplyResult.result
+    return {
+      result: !!response.result,
+      errorCode: response.errorCode
+        ? (response.errorCode as CanApplyErrorCodeBTemporary)
+        : undefined,
+    }
   }
 
   public async postCreateDrivingAssessment(params: {
@@ -160,29 +216,47 @@ export class DrivingLicenseApi {
     willBringQualityPhoto: boolean
     juristictionId: number
     sendLicenseInMail: boolean
+    email: string
+    phone: string
   }) {
-    const response = await this.v1.apiOkuskirteiniApplicationsNewTemporaryPost({
-      postTemporaryLicense: {
-        kemurMedLaeknisvottord: params.willBringHealthCertificate,
-        kennitala: params.nationalIdApplicant,
-        kemurMedNyjaMynd: params.willBringQualityPhoto,
-        embaetti: params.juristictionId,
-        kennitalaOkukennara: params.nationalIdTeacher,
-        sendaSkirteiniIPosti: params.sendLicenseInMail,
-      },
-    })
+    try {
+      const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost(
+        {
+          apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+          postTemporaryLicenseV2: {
+            kemurMedLaeknisvottord: params.willBringHealthCertificate,
+            kennitala: params.nationalIdApplicant,
+            kemurMedNyjaMynd: params.willBringQualityPhoto,
+            embaetti: params.juristictionId,
+            kennitalaOkukennara: params.nationalIdTeacher,
+            sendaSkirteiniIPosti: params.sendLicenseInMail,
+            netfang: params.email,
+            farsimaNumer: params.phone,
+          },
+        },
+      )
+      if (!response.result) {
+        throw new Error(
+          `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
+        )
+      }
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
-
-    if (!success) {
+      return response.result
+    } catch (e) {
+      // In cases where first submit fails then resubmission gets 400 response
+      // The generated api does not map the error correctly so we check if the canApply status has changed to "HAS_B_Category"
+      if ((e as { status: number })?.status === 400) {
+        const hasTemp = await this.getCanApplyForCategoryTemporary({
+          nationalId: params.nationalIdApplicant,
+        })
+        return hasTemp.errorCode === 'HAS_B_CATEGORY'
+      }
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${
+          (e as { status: number })?.status
+        }`,
       )
     }
-
-    return success
   }
 
   async postCreateDrivingLicenseFull(params: {
@@ -206,20 +280,18 @@ export class DrivingLicenseApi {
         sendLicenseInMail: params.sendLicenseInMail ? 1 : 0,
         sendToAddress: params.sendLicenseToAddress,
       },
-      apiVersion: DRIVING_LICENSE_API_VERSION_V2,
+      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
     })
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
+    const handledResponse = handleCreateResponse(response)
 
-    if (!success) {
+    if (!handledResponse.success) {
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewCategoryPost was not successful, response was: ${handledResponse.error}`,
       )
     }
 
-    return success
+    return handledResponse.success
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {

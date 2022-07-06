@@ -124,7 +124,7 @@ export class AccessController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'udpate',
         namespace,
         resources: nationalId,
@@ -148,7 +148,7 @@ export class AccessController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: nationalId,

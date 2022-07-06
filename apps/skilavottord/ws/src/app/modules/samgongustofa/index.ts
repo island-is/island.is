@@ -1,2 +1,2 @@
-export { SamgongustofaModule } from './samgongustofa.module'
 export { VehicleInformation } from './samgongustofa.model'
+export { SamgongustofaService } from './samgongustofa.service'

@@ -13,7 +13,7 @@ const ROOT_LEVEL = 3
  * Format names following https://en.wikipedia.org/wiki/AP_Stylebook and https://en.wikipedia.org/wiki/APA_style styles
  */
 const CONNECTIVES = 'a an and at but by for in nor of on or so the to up yet'
-const UPPERCASE_WHITELIST = 'api css cms adr http nova sms ui'
+const UPPERCASE_WHITELIST = 'api css cms adr http nova sms ui rsk mms'
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1)
 
@@ -60,8 +60,7 @@ const format = (str) => {
       }
 
       if (
-        // The first two indexes are the `#` and a whitespace, so the first meaningful word is indexed at index 2
-        index !== 2 &&
+        index !== 0 &&
         index !== all.length - 1 &&
         CONNECTIVES.split(' ').includes(word.toLowerCase())
       ) {
@@ -71,6 +70,29 @@ const format = (str) => {
       return capitalize(word)
     })
     .join('')
+}
+
+const updateAndReturnTitle = (lines) => {
+  const index = lines.findIndex((line) => line.startsWith('# '))
+  if (index === -1) {
+    return null
+  }
+  const title = lines[index].slice(2)
+  const formattedTitle = format(title)
+  lines[index] = `# ${formattedTitle}`
+  return formattedTitle
+}
+
+const updateAndReturnNavigationOverride = (lines) => {
+  const navigationRegex = /^<!-- gitbook-navigation: "([^"]+)" -->$/
+  const index = lines.findIndex((line) => line.match(navigationRegex))
+  if (index === -1) {
+    return null
+  }
+  const title = lines[index].match(navigationRegex)[1]
+  const formattedTitle = format(title)
+  lines[index] = `<!-- gitbook-navigation: "${formattedTitle}" -->`
+  return formattedTitle
 }
 
 const printContent = (apps, libs, overview, repo, reference, misc) => {
@@ -149,16 +171,20 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
     } else if (/\.md$/.test(filename)) {
       const file = fs.readFileSync(filename, 'utf-8')
       const lines = file.split('\n')
-      const firstLine = lines[0] && lines[0]
 
-      if (firstLine === '<!-- gitbook-ignore -->') {
+      if (lines[0] === '<!-- gitbook-ignore -->') {
         return
       }
 
       // We overwrite the heading of the readme to match with our convention
-      const name = format(firstLine)
-      const updatedFile = file.replace(/# .*/, name)
+      const title = updateAndReturnTitle(lines)
+      const navigationTitle = updateAndReturnNavigationOverride(lines) ?? title
 
+      if (!navigationTitle) {
+        throw new Error(`Could not find a title in ${filename}`)
+      }
+
+      const updatedFile = lines.join('\n')
       fs.writeFileSync(filename, updatedFile)
 
       const replaceWindowsBackslashes = filename.replace(/\\/g, '/')
@@ -176,7 +202,7 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
           : undefined
 
       res.push({
-        name: name.replace('# ', ''),
+        name: navigationTitle,
         path: replaceWindowsBackslashes,
         fromRoot,
       })

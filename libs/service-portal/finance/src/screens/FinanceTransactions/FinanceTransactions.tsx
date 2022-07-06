@@ -14,40 +14,36 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '@island.is/service-portal/core'
+import { m, DynamicWrapper } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
-  Columns,
-  Column,
   Stack,
   GridRow,
   GridColumn,
   DatePicker,
   SkeletonLoader,
-  Select,
   AlertBanner,
   Hidden,
-  Input,
   Button,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
+  AccordionItem,
+  Accordion,
 } from '@island.is/island-ui/core'
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
-const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
+import * as styles from '../Finance.css'
 
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
   const { formatMessage } = useLocale()
 
-  const allChargeTypes = {
-    label: formatMessage({
-      id: 'sp.finance-transactions:all-selection',
-      defaultMessage: 'Allir gjaldflokkar',
-    }),
-    value: ALL_CHARGE_TYPES,
-  }
+  const backInTheDay = sub(new Date(), {
+    months: 3,
+  })
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
@@ -61,7 +57,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
     onCompleted: () => {
       if (customerChartypeData?.getCustomerChargeType?.chargeType) {
-        onDropdownSelect(allChargeTypes)
+        setAllChargeTypes()
       } else {
         setChargeTypesEmpty(true)
       }
@@ -89,20 +85,25 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
-    const backInTheDay = sub(new Date(), {
-      months: 3,
-    })
     setFromDate(backInTheDay)
     setToDate(new Date())
   }, [])
 
-  function onDropdownSelect(selection: any) {
+  function getAllChargeTypes() {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
-    const selectedID =
-      selection.value === ALL_CHARGE_TYPES
-        ? allChargeTypeValues
-        : [selection.value]
-    setDropdownSelect(selectedID)
+    return allChargeTypeValues ?? []
+  }
+
+  function setAllChargeTypes() {
+    const allChargeTypes = getAllChargeTypes()
+    setDropdownSelect(allChargeTypes)
+  }
+
+  function clearAllFilters() {
+    setAllChargeTypes()
+    setFromDate(backInTheDay)
+    setToDate(new Date())
+    setQ('')
   }
 
   const recordsData: CustomerRecords = data?.getCustomerRecords || {}
@@ -114,148 +115,178 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   }))
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <Stack space={2}>
-        <Text variant="h1" as="h1">
-          {formatMessage({
-            id: 'sp.finance-transactions:title',
-            defaultMessage: 'Hreyfingar',
-          })}
-        </Text>
-        <Columns collapseBelow="sm">
-          <Column width="8/12">
-            <Text variant="intro">
-              {formatMessage({
-                id: 'sp.finance-transactions:intro',
-                defaultMessage:
-                  'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-              })}
-            </Text>
-          </Column>
-        </Columns>
-        <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
-            {recordsDataArray.length > 0 ? (
-              <GridRow>
-                <GridColumn paddingBottom={2} span={['1/1', '12/12']}>
-                  <Columns space="p2" align="right">
-                    <Column width="content">
-                      <Button
-                        colorScheme="default"
-                        icon="print"
-                        iconType="filled"
-                        onClick={() => window.print()}
-                        preTextIconType="filled"
-                        size="default"
-                        type="button"
-                        variant="utility"
-                      >
-                        {formatMessage(m.print)}
-                      </Button>
-                    </Column>
-                    <Column width="content">
-                      <DropdownExport
-                        onGetCSV={() =>
-                          exportHreyfingarFile(recordsDataArray, 'csv')
-                        }
-                        onGetExcel={() =>
-                          exportHreyfingarFile(recordsDataArray, 'xlsx')
-                        }
-                      />
-                    </Column>
-                  </Columns>
-                </GridColumn>
-              </GridRow>
-            ) : null}
-            <GridRow>
-              <GridColumn
-                paddingBottom={[1, 0]}
-                span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+    <DynamicWrapper>
+      <Box marginBottom={[6, 6, 10]}>
+        <Stack space={2}>
+          <Text variant="h3" as="h1">
+            {formatMessage({
+              id: 'sp.finance-transactions:title',
+              defaultMessage: 'Hreyfingar',
+            })}
+          </Text>
+          <GridRow>
+            <GridColumn span={['11/12', '6/12']}>
+              <Text variant="default" marginBottom={6}>
+                {formatMessage({
+                  id: 'sp.finance-transactions:intro',
+                  defaultMessage:
+                    'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+                })}
+              </Text>
+              <Box
+                display="flex"
+                marginLeft="auto"
+                paddingRight={2}
+                printHidden
               >
-                <Select
-                  name="faerslur"
-                  backgroundColor="blue"
-                  placeholder={formatMessage(m.transactions)}
-                  label={formatMessage(m.transactionsLabel)}
-                  defaultValue={allChargeTypes}
-                  size="sm"
-                  options={[allChargeTypes, ...chargeTypeSelect]}
-                  onChange={(sel) => onDropdownSelect(sel)}
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                </Box>
+                <DropdownExport
+                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
+                  onGetExcel={() =>
+                    exportHreyfingarFile(recordsDataArray, 'xlsx')
+                  }
                 />
-              </GridColumn>
-              <GridColumn
-                paddingTop={[2, 2, 2, 2, 0]}
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-              >
-                <DatePicker
-                  backgroundColor="blue"
-                  handleChange={(d) => setFromDate(d)}
-                  selected={fromDate}
-                  icon="calendar"
-                  iconType="outline"
-                  size="sm"
-                  label={formatMessage(m.dateFrom)}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
-                />
-              </GridColumn>
-              <GridColumn
-                paddingTop={[2, 2, 2, 2, 0]}
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-              >
-                <DatePicker
-                  backgroundColor="blue"
-                  handleChange={(d) => setToDate(d)}
-                  selected={toDate}
-                  icon="calendar"
-                  iconType="outline"
-                  size="sm"
-                  label={formatMessage(m.dateTo)}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
-                />
-              </GridColumn>
-            </GridRow>
-            <Box marginTop={3}>
-              <Input
-                label="Leit"
-                name="Search"
-                placeholder={formatMessage(m.searchPlaceholder)}
-                size="sm"
-                onChange={(e) => setQ(e.target.value)}
-                value={q}
-              />
-            </Box>
-          </Box>
-        </Hidden>
-        <Box marginTop={2}>
-          {(error || chargeTypeDataError) && (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          )}
-          {(loading || chargeTypeDataLoading || !called) &&
-            !chargeTypesEmpty &&
-            !chargeTypeDataError &&
-            !error && (
-              <Box padding={3}>
-                <SkeletonLoader space={1} height={40} repeat={5} />
               </Box>
+            </GridColumn>
+          </GridRow>
+          <Hidden print={true}>
+            <Box marginTop={[1, 1, 2, 2, 5]}>
+              <Filter
+                variant="popover"
+                align="left"
+                reverse
+                labelClear={formatMessage(m.clearFilter)}
+                labelClearAll={formatMessage(m.clearAllFilters)}
+                labelOpen={formatMessage(m.openFilter)}
+                labelClose={formatMessage(m.closeFilter)}
+                filterInput={
+                  <FilterInput
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                    name="rafraen-skjol-input"
+                    value={q}
+                    onChange={(e) => setQ(e)}
+                    backgroundColor="blue"
+                  />
+                }
+                onFilterClear={clearAllFilters}
+              >
+                <FilterMultiChoice
+                  labelClear={formatMessage(m.clearSelected)}
+                  singleExpand={true}
+                  onChange={({ selected }) => {
+                    setDropdownSelect(selected)
+                  }}
+                  onClear={() => {
+                    setAllChargeTypes()
+                  }}
+                  categories={[
+                    {
+                      id: 'flokkur',
+                      label: formatMessage(m.transactionsLabel),
+                      selected: dropdownSelect ? [...dropdownSelect] : [],
+                      filters: chargeTypeSelect,
+                      inline: false,
+                      singleOption: false,
+                    },
+                  ]}
+                />
+                <Box className={styles.dateFilter} paddingX={3}>
+                  <Box
+                    borderBottomWidth="standard"
+                    borderColor="blue200"
+                    width="full"
+                  />
+                  <Box marginTop={1}>
+                    <Accordion
+                      dividerOnBottom={false}
+                      dividerOnTop={false}
+                      singleExpand={false}
+                    >
+                      <AccordionItem
+                        key="date-accordion-item"
+                        id="date-accordion-item"
+                        label={formatMessage(m.datesLabel)}
+                        labelColor="blue400"
+                        labelUse="h5"
+                        labelVariant="h5"
+                        iconVariant="small"
+                      >
+                        <Box
+                          className={styles.accordionBox}
+                          display="flex"
+                          flexDirection="column"
+                        >
+                          <DatePicker
+                            label={formatMessage(m.datepickerFromLabel)}
+                            placeholderText={formatMessage(m.datepickLabel)}
+                            locale="is"
+                            backgroundColor="blue"
+                            size="xs"
+                            handleChange={(d) => setFromDate(d)}
+                            selected={fromDate}
+                          />
+                          <Box marginTop={3}>
+                            <DatePicker
+                              label={formatMessage(m.datepickerToLabel)}
+                              placeholderText={formatMessage(m.datepickLabel)}
+                              locale="is"
+                              backgroundColor="blue"
+                              size="xs"
+                              handleChange={(d) => setToDate(d)}
+                              selected={toDate}
+                            />
+                          </Box>
+                        </Box>
+                      </AccordionItem>
+                    </Accordion>
+                  </Box>
+                </Box>
+              </Filter>
+            </Box>
+          </Hidden>
+
+          <Box marginTop={2}>
+            {(error || chargeTypeDataError) && (
+              <AlertBanner
+                description={formatMessage(m.errorFetch)}
+                variant="error"
+              />
             )}
-          {((recordsDataArray.length === 0 && called && !loading && !error) ||
-            chargeTypesEmpty) && (
-            <AlertBanner
-              description={formatMessage(m.noResultsTryAgain)}
-              variant="warning"
-            />
-          )}
-          {recordsDataArray.length > 0 ? (
-            <FinanceTransactionsTable recordsArray={recordsDataArray} />
-          ) : null}
-        </Box>
-      </Stack>
-    </Box>
+            {(loading || chargeTypeDataLoading || !called) &&
+              !chargeTypesEmpty &&
+              !chargeTypeDataError &&
+              !error && (
+                <Box padding={3}>
+                  <SkeletonLoader space={1} height={40} repeat={5} />
+                </Box>
+              )}
+            {((recordsDataArray.length === 0 && called && !loading && !error) ||
+              chargeTypesEmpty) && (
+              <AlertBanner
+                description={formatMessage(m.noResultsTryAgain)}
+                variant="warning"
+              />
+            )}
+            {recordsDataArray.length > 0 ? (
+              <FinanceTransactionsTable recordsArray={recordsDataArray} />
+            ) : null}
+          </Box>
+        </Stack>
+      </Box>
+    </DynamicWrapper>
   )
 }
 

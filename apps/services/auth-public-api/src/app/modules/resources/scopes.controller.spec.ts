@@ -1,25 +1,40 @@
 import request from 'supertest'
+import { getModelToken } from '@nestjs/sequelize'
 
-import { ApiScope } from '@island.is/auth-api-lib'
+import {
+  ApiScope,
+  ApiScopeGroup,
+  Domain,
+  Translation,
+} from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
-import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
 
 import {
+  Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
+import { getRequestMethod } from '../../../../test/utils'
+import {
+  createApiScopeGroup,
+  createTranslations,
+} from '../../../../test/fixtures'
 
-const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, scopes[0]],
+  scope: [
+    AuthScope.readDelegations,
+    Scopes[0].name,
+    Scopes[3].name,
+    Scopes[6].name,
+  ],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -31,6 +46,8 @@ describe('ScopesController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let apiScopeModel: typeof ApiScope
+    let apiScopeGroupModel: typeof ApiScopeGroup
+    let translationModel: typeof Translation
 
     beforeAll(async () => {
       // TestApp setup with auth and database
@@ -38,12 +55,15 @@ describe('ScopesController', () => {
         user,
         userName,
         nationalRegistryUser,
-        scopes,
       })
       server = request(app.getHttpServer())
 
       // Get reference on delegation and delegationScope models to seed DB
-      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
+      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+      apiScopeGroupModel = app.get<typeof ApiScopeGroup>(
+        getModelToken(ApiScopeGroup),
+      )
+      translationModel = app.get<typeof Translation>(getModelToken(Translation))
     })
 
     afterAll(async () => {
@@ -55,7 +75,7 @@ describe('ScopesController', () => {
         // Arrange
         const expectedScopes = await apiScopeModel.findAll({
           where: {
-            name: scopes[0],
+            name: Scopes[0].name,
           },
         })
 
@@ -71,6 +91,63 @@ describe('ScopesController', () => {
       })
     })
 
+    describe('GET /scopes?locale=en', () => {
+      beforeAll(async () => {
+        const scope = await apiScopeModel.findOne({
+          where: { name: Scopes[0].name },
+        })
+        if (!scope) {
+          throw new Error('Scope not found')
+        }
+
+        const group = await apiScopeGroupModel.create(
+          createApiScopeGroup({
+            displayName: 'Untranslated',
+            description: 'Untranslated',
+          }),
+          { include: [Domain] },
+        )
+        await scope.update({ groupId: group.id })
+
+        await translationModel.bulkCreate([
+          ...createTranslations(scope, 'en', {
+            displayName: 'Translated scope display name',
+            description: 'Translated scope description',
+          }),
+          ...createTranslations(group, 'en', {
+            displayName: 'Translated group display name',
+            description: 'Translated group description',
+          }),
+        ])
+      })
+
+      afterAll(() => {
+        return apiScopeModel.update(
+          { groupId: null },
+          { where: { name: Scopes[0].name } },
+        )
+      })
+
+      it('should return translated scopes and groups', async () => {
+        // Arrange
+
+        // Act
+        const res = await server.get('/v1/scopes?locale=en')
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expect(res.body[0]).toMatchObject({
+          displayName: 'Translated scope display name',
+          description: 'Translated scope description',
+          group: {
+            displayName: 'Translated group display name',
+            description: 'Translated group description',
+          },
+        })
+      })
+    })
+
     it('should return an empty array when user does not have any allowed scopes', async () => {
       // Arrange
       const app = await setupWithAuth({
@@ -80,7 +157,6 @@ describe('ScopesController', () => {
         },
         userName,
         nationalRegistryUser,
-        scopes,
       })
 
       // Act
@@ -90,6 +166,128 @@ describe('ScopesController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(0)
     })
+  })
+
+  it('should return some scope only for procuring holder delegations', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['ProcurationHolder'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should return some scope only for procuring holder and legal guardian delegations', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['ProcurationHolder', 'LegalGuardian'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name, Scopes[6].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(3)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should not return legal guardian delegation', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['ProcurationHolder', 'Custom'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should not return some scope for custom delegations', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['Custom'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(1)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
   })
 
   describe('withoutAuth and permissions', () => {

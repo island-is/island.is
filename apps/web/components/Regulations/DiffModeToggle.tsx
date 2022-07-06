@@ -5,8 +5,7 @@ import React from 'react'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useRegulationLinkResolver } from './regulationUtils'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { ISODate } from '@hugsmidjan/regulations-editor/types'
+import { ISODate, RegulationMaybeDiff } from '@island.is/regulations'
 import cl from 'classnames'
 
 export type DiffModeToggleProps = {
@@ -25,10 +24,11 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     publishedDate,
     lastAmendDate,
     showingDiff,
-    history,
+    history: regulationHistory,
   } = regulation
 
-  const firstEvent = regulation.history[0]
+  const history = regulationHistory.filter((h) => h.status === 'published')
+  const firstEvent = history[0]
 
   if (!firstEvent || firstEvent.effect !== 'amend') {
     return null

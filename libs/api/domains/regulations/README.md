@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # API Domains Regulations
 
 This domain implements regulations endpoints defined in the regulations client library.

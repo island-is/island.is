@@ -4,12 +4,12 @@ import {
   MinistrySlug,
   RegName,
   RegQueryName,
+  Regulation,
+  RegulationRedirect,
+  MinistryList,
   Year,
 } from '@island.is/regulations'
 import {
-  Regulation,
-  RegulationMinistryList,
-  RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
 } from '@island.is/regulations/web'
@@ -22,7 +22,7 @@ export const demoRegulationsYears: RegulationYears = [
   2021 as Year,
 ]
 
-export const demoRegulationsMinistries: RegulationMinistryList = [
+export const demoRegulationsMinistries: MinistryList = [
   {
     name: 'Forsætisráðuneyti',
     order: 1,

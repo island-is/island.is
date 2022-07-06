@@ -1,8 +1,16 @@
-import { callDataProviders } from './dataProviderUtils'
-import { BasicDataProvider } from '../types/BasicDataProvider'
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import { Application, ApplicationStatus } from '../types/Application'
-
+import {
+  callDataProviders,
+  getErrorReasonIfPresent,
+  isProviderErrorReason,
+  isTranslationObject,
+} from './dataProviderUtils'
+import { coreErrorMessages } from './messages'
+import {
+  BasicDataProvider,
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 
@@ -24,10 +32,10 @@ const application: Application = {
   assignees: [],
   state: 'draft',
   applicant: '111111-3000',
+  applicantActors: [],
   typeId: ApplicationTypes.EXAMPLE,
   modified: new Date(),
   created: new Date(),
-  attachments: {},
   answers: {},
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
@@ -84,5 +92,54 @@ describe('dataProviderUtils', () => {
         status: 'success',
       }),
     ])
+  })
+
+  it('Should not fail when providing custom error message with various test inputs for the error reason', async () => {
+    expect(isTranslationObject('test')).toBe(false)
+    const mockErrorReason = {
+      title: 'title',
+      summary: 'summary',
+    }
+    expect(isProviderErrorReason(mockErrorReason)).toBe(true)
+
+    expect(getErrorReasonIfPresent(mockErrorReason)).toEqual({
+      title: 'title',
+      summary: 'summary',
+    })
+
+    const mockErrorReasonWithTranslationString = {
+      title: coreErrorMessages.fileRemove,
+      summary: coreErrorMessages.fileUpload,
+    }
+
+    expect(
+      getErrorReasonIfPresent(mockErrorReasonWithTranslationString),
+    ).toEqual({
+      title: coreErrorMessages.fileRemove,
+      summary: coreErrorMessages.fileUpload,
+    })
+
+    const mockErrorReasonStringOnly = 'someError'
+
+    expect(isProviderErrorReason(mockErrorReasonStringOnly)).toBe(false)
+
+    expect(getErrorReasonIfPresent(mockErrorReasonStringOnly)).toEqual({
+      title: coreErrorMessages.errorDataProvider,
+      summary: 'someError',
+    })
+
+    const mockErrorReasonTranslationOnly = coreErrorMessages.fileUpload
+
+    expect(isProviderErrorReason(mockErrorReasonTranslationOnly)).toBe(false)
+
+    expect(getErrorReasonIfPresent(mockErrorReasonTranslationOnly)).toEqual({
+      title: coreErrorMessages.errorDataProvider,
+      summary: coreErrorMessages.fileUpload,
+    })
+
+    expect(getErrorReasonIfPresent(undefined)).toEqual({
+      title: coreErrorMessages.errorDataProvider,
+      summary: coreErrorMessages.failedDataProvider,
+    })
   })
 })

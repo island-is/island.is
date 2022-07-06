@@ -1,20 +1,24 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
+import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import { assign } from 'xstate'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -22,6 +26,7 @@ const States = {
   inReview: 'inReview',
   approved: 'approved',
   rejected: 'rejected',
+  waitingToAssign: 'waitingToAssign',
 }
 
 type ReferenceTemplateEvent =
@@ -29,6 +34,7 @@ type ReferenceTemplateEvent =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -73,7 +79,6 @@ const ExampleSchema = z.object({
     .nonempty(),
   dreamJob: z.string().optional(),
 })
-
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -84,6 +89,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
+  featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -108,6 +114,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -137,13 +144,49 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.inReview,
+          SUBMIT: [
+            {
+              target: States.waitingToAssign,
+            },
+          ],
+        },
+      },
+      [States.waitingToAssign]: {
+        meta: {
+          name: 'Waiting to assign',
+          progress: 0.75,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createApplication,
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/WaitingToAssign').then((val) =>
+                  Promise.resolve(val.PendingReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: States.inReview },
+          ASSIGN: { target: States.inReview },
+          EDIT: { target: States.draft },
         },
       },
       [States.inReview]: {
@@ -151,9 +194,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'In Review',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
-          },
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
           },
@@ -190,7 +230,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -207,7 +247,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.rejected]: {
         meta: {
           name: 'Rejected',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -221,14 +261,31 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === 'inReview') {
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNEE
     }
-    return Roles.APPLICANT
+    if (application.applicant === nationalId) {
+      if (application.state === 'inReview') {
+        return Roles.ASSIGNEE
+      }
+
+      return Roles.APPLICANT
+    }
   },
 }
 

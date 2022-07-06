@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
@@ -34,6 +34,7 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
+  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -43,6 +44,7 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -66,6 +68,11 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
+  const organizationNamespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [organization?.namespace],
+  )
+
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
   const successfullySent = data?.serviceWebForms?.sent
@@ -88,11 +95,30 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
+  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const pageTitle = `${
+    institutionSlug && organization && organization.title
+      ? organization.title + ' | '
+      : ''
+  }${headerTitle}`
+
+  const breadcrumbItems = [
+    {
+      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      typename: 'serviceweb',
+      href: linkResolver('serviceweb').href,
+    },
+    {
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+    },
+    {
+      title: 'Hafðu samband',
+      isTag: true,
+    },
+  ]
 
   return (
     <ServiceWebWrapper
@@ -115,24 +141,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n('serviceWeb', 'Þjónustuvefur'),
-                            typename: 'helpdesk',
-                            href: linkResolver('helpdesk').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'helpdesk',
-                            href: `${
-                              linkResolver('helpdesk').href
-                            }/${institutionSlug}`,
-                          },
-                          {
-                            title: 'Hafðu samband',
-                            isTag: true,
-                          },
-                        ]}
+                        items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
@@ -160,7 +169,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                           }}
                         >
                           <Text truncate>
-                            <a href={linkResolver('helpdesk').href}>
+                            <a href={linkResolver('serviceweb').href}>
                               <Button
                                 preTextIcon="arrowBack"
                                 preTextIconType="filled"
@@ -168,7 +177,10 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                                 type="button"
                                 variant="text"
                               >
-                                {n('serviceWeb', 'Þjónustuvefur')}
+                                {n(
+                                  'assistanceForIslandIs',
+                                  'Aðstoð fyrir Ísland.is',
+                                )}
                               </Button>
                             </a>
                           </Text>
@@ -198,6 +210,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   </Box>
                 ) : (
                   <ServiceWebStandardForm
+                    namespace={organizationNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
@@ -277,6 +290,10 @@ ServiceWebFormsPage.getInitialProps = async ({
       ),
   ])
 
+  if (slug === 'mannaudstorg') {
+    throw new CustomNextError(404, 'Mannaudstorg does not have a contact page')
+  }
+
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
       x.slug.startsWith('syslumadurinn'),
@@ -291,5 +308,5 @@ ServiceWebFormsPage.getInitialProps = async ({
 
 export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

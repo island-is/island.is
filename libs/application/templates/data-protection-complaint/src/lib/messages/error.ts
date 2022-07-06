@@ -26,7 +26,7 @@ export const error = defineMessages({
   concernsLibel: {
     id: 'dpac.application:error.concernsLibel',
     defaultMessage:
-      'Persónuvernd getur ekki fjallað um meiðyrði eða ærumeiðingar',
+      'Persónuvernd getur ekki fjallað um kvartanir yfir munnlegri miðlun persónuupplýsinga, meiðyrðum eða ærumeiðingum og tjáningu annarra',
     description: 'Error message when concernsLibel has been answered as yes',
   },
   concernsPersonalDataConflict: {

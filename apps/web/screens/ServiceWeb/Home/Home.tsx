@@ -5,12 +5,16 @@ import {
   ContentLanguage,
   Organization,
   Query,
+  QueryGetFeaturedSupportQnAsArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
+  SearchableTags,
+  SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
+  GET_FEATURED_SUPPORT_QNAS,
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES,
@@ -22,7 +26,9 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -35,45 +41,82 @@ import {
 import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import { getSlugPart } from '../utils'
+import sortAlpha from '@island.is/web/utils/sortAlpha'
 
 import * as styles from './Home.css'
 
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
+  organizationNamespace: Record<string, string>
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
+  featuredQNAs: Query['getFeaturedSupportQNAs']
 }
 
 const Home: Screen<HomeProps> = ({
   organization,
   supportCategories,
   namespace,
+  organizationNamespace,
+  featuredQNAs,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const o = useNamespace(organizationNamespace)
+
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const headerTitle = o(
+    'serviceWebHeaderTitle',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+  )
   const logoUrl = organization?.logo?.url ?? ''
-  const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const searchTitle = o(
+    'serviceWebSearchTitle',
+    n('canWeAssist', 'Getum við aðstoðað?'),
+  )
+
+  const pageTitle = o(
+    'serviceWebPageTitle',
+    `${
+      institutionSlug && organization && organization.title
+        ? organization.title + ' | '
+        : ''
+    }${o('serviceWebPageTitleSuffix', headerTitle)}`,
+  )
 
   const hasContent = !!supportCategories?.length
+
+  const sortedSupportCategories = sortSupportCategories(supportCategories)
+
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
+      searchTags={searchTags}
+      showLogoTitle={!institutionSlugBelongsToMannaudstorg}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -81,13 +124,20 @@ const Home: Screen<HomeProps> = ({
             <>
               <Box className={styles.categories}>
                 <GridContainer>
-                  <GridRow>
+                  <GridRow
+                    {...(!institutionSlugBelongsToMannaudstorg
+                      ? {}
+                      : { direction: 'column', alignItems: 'center' })}
+                  >
                     <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
                       <Text
                         variant="h3"
                         {...(textMode === 'dark' ? {} : { color: 'white' })}
                       >
-                        {n('answersByCategory', 'Svör eftir flokkum')}
+                        {o(
+                          'serviceWebCategoryTitle',
+                          n('answersByCategory', 'Svör eftir flokkum'),
+                        )}
                       </Text>
                     </GridColumn>
                   </GridRow>
@@ -96,7 +146,7 @@ const Home: Screen<HomeProps> = ({
                   itemWidth={280}
                   span={['12/12', '6/12', '6/12', '4/12']}
                 >
-                  {supportCategories.map(
+                  {sortedSupportCategories.map(
                     ({ title, slug, description, organization }, index) => {
                       return (
                         <Card
@@ -105,7 +155,7 @@ const Home: Screen<HomeProps> = ({
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
+                              href: `/adstod/${organization.slug}/${slug}`,
                             } as LinkResolverResponse
                           }
                         />
@@ -114,20 +164,61 @@ const Home: Screen<HomeProps> = ({
                   )}
                 </SimpleStackedSlider>
               </Box>
-              <Box marginY={[7, 10, 10]}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn
-                      offset={[null, null, null, '1/12']}
-                      span={['12/12', '12/12', '12/12', '10/12']}
-                    >
-                      <Box marginY={[10, 10, 20]}>
-                        <ContactBanner slug={institutionSlug} />
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
+              {featuredQNAs.length > 0 && (
+                <Box marginY={[4, 4, 8]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box
+                          borderRadius="large"
+                          border="standard"
+                          borderColor="blue200"
+                          paddingX={[4, 4, 14]}
+                          paddingY={[4, 4, 8]}
+                        >
+                          <Text variant="h3" as="h3" marginBottom={[4, 4, 8]}>
+                            {n('popularQuestions', 'Algengar spurningar')}
+                          </Text>
+                          <Stack space={2}>
+                            {featuredQNAs.map(
+                              ({ title, slug, category }, index) => {
+                                return (
+                                  <Box key={index}>
+                                    <TopicCard
+                                      href={`/adstod/${organization.slug}/${category.slug}/${slug}`}
+                                    >
+                                      {title}
+                                    </TopicCard>
+                                  </Box>
+                                )
+                              },
+                            )}
+                          </Stack>
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
+              {!institutionSlugBelongsToMannaudstorg && (
+                <Box marginY={[7, 10, 10]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box marginY={[2, 2, 4]}>
+                          <ContactBanner slug={institutionSlug} />
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
             </>
           )}
         </ServiceWebContext.Consumer>
@@ -185,6 +276,21 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         }),
   ])
 
+  const popularQuestionCount =
+    organization?.data?.getOrganization?.serviceWebPopularQuestionCount
+  const featuredQNAs = popularQuestionCount
+    ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({
+        query: GET_FEATURED_SUPPORT_QNAS,
+        variables: {
+          input: {
+            organization: slug,
+            lang: locale as ContentLanguage,
+            size: popularQuestionCount ?? 10,
+          },
+        },
+      })
+    : undefined
+
   let processedCategories = slug
     ? supportCategories?.data?.getSupportCategoriesInOrganization
     : supportCategories?.data?.getSupportCategories
@@ -204,14 +310,29 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     )
   }
 
+  const organizationNamespace = JSON.parse(
+    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+  )
+
   return {
     organization: organization?.data?.getOrganization,
     namespace,
+    organizationNamespace,
     supportCategories: processedCategories,
+    featuredQNAs: featuredQNAs
+      ? featuredQNAs?.data?.getFeaturedSupportQNAs
+      : [],
   }
 }
 
+const sortSupportCategories = (items: SupportCategory[]) =>
+  items
+    .sort(sortAlpha('title'))
+    .sort((a, b) =>
+      a.importance > b.importance ? -1 : a.importance === b.importance ? 0 : 1,
+    )
+
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

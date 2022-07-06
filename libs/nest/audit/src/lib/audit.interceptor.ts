@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators'
 import { AuditService, AuditTemplate } from './audit.service'
 import { Reflector } from '@nestjs/core'
 import { AUDIT_METADATA_KEY } from './audit.decorator'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
+import { getCurrentAuth } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
@@ -30,7 +30,7 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle()
     }
 
-    const user = getCurrentUser(context)
+    const auth = getCurrentAuth(context)
     const template = {
       action: handler.name,
       ...decorators[0],
@@ -42,7 +42,7 @@ export class AuditInterceptor implements NestInterceptor {
         this.auditService.auditPromise(
           {
             ...template,
-            user,
+            auth,
           },
           Promise.resolve(result),
         )

@@ -20,7 +20,7 @@ export const LifeEventsSection = ({
   return (
     <>
       <GridContainer>
-        <Text variant="h3" id={headingId}>
+        <Text variant="h3" as="h2" id={headingId}>
           {heading}
         </Text>
       </GridContainer>
@@ -44,6 +44,7 @@ export const LifeEventsSection = ({
                   heading={shortTitle || title}
                   imgSrc={tinyThumbnail?.url}
                   alt={tinyThumbnail?.title}
+                  dataTestId={'lifeevent-card'}
                   href={linkResolver(typename as LinkType, [slug]).href}
                 />
               )

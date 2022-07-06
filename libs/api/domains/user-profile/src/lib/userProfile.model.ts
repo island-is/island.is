@@ -22,4 +22,20 @@ export class UserProfile {
 
   @Field(() => Boolean)
   documentNotifications!: boolean
+
+  @Field(() => String, { nullable: true })
+  emailStatus?: string
+
+  @Field(() => String, { nullable: true })
+  mobileStatus?: string
+
+  @Field(() => Date, { nullable: true })
+  modified?: Date
+
+  // Temporary merge with islyklar service
+  @Field(() => Boolean, { nullable: true })
+  canNudge?: boolean
+
+  @Field(() => String, { nullable: true })
+  bankInfo?: string
 }

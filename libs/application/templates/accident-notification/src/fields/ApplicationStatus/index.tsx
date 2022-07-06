@@ -1,10 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
-import {
-  FieldBaseProps,
-  FormValue,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   AlertMessage,
@@ -17,7 +14,6 @@ import { useLocale } from '@island.is/localization'
 import React, { FC, useCallback, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { AccidentNotificationAnswers } from '../..'
-import { States } from '../../constants'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
 import { inReview } from '../../lib/messages'
 import { ReviewApprovalEnum, SubmittedApplicationData } from '../../types'
@@ -26,6 +22,7 @@ import {
   hasReceivedAllDocuments,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
   shouldRequestReview,
+  isUniqueAssignee,
 } from '../../utils'
 import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
 import { StatusStep } from './StatusStep'
@@ -53,10 +50,21 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
     getAccidentStatusQuery,
     {
       variables: { input: { ihiDocumentID: ihiDocumentID } },
+      // Fetch every 5 minutes in case user leaves screen
+      // open for long period of time and does not refresh.
+      // We might get information from organization during that time.
+      pollInterval: 300000,
     },
   )
 
   const answers = application?.answers as FormValue
+  const isAssigneeAndUnique = isUniqueAssignee(answers, isAssignee)
+
+  const errorMessage = getErrorMessageForMissingDocuments(
+    answers,
+    formatMessage,
+    isAssigneeAndUnique,
+  )
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -206,14 +214,14 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       tagVariant: hasReceivedAllDocuments(answers) ? 'blue' : 'rose',
       title: formatMessage(inReview.documents.title),
       description: formatMessage(inReview.documents.summary),
-      hasActionMessage: !hasReceivedAllDocuments(answers),
+      hasActionMessage: errorMessage.length > 0,
       action: {
         cta: () => {
           changeScreens('addAttachmentScreen')
         },
         title: formatMessage(inReview.action.documents.title),
         description: formatMessage(inReview.action.documents.description),
-        fileNames: getErrorMessageForMissingDocuments(answers, formatMessage), // We need to get this from first form
+        fileNames: errorMessage, // We need to get this from first form
         actionButtonTitle: formatMessage(
           inReview.action.documents.actionButtonTitle,
         ),
@@ -264,7 +272,10 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       tagVariant:
         tagMapperApplicationStatus[currentAccidentStatus.status].variant,
       title: formatMessage(inReview.sjukratrygging.title),
-      description: formatMessage(inReview.sjukratrygging.summary),
+      description:
+        hasReviewerSubmitted && hasReceivedAllDocuments(answers)
+          ? formatMessage(inReview.sjukratrygging.summaryDone)
+          : formatMessage(inReview.sjukratrygging.summary),
       hasActionMessage: false,
     },
   ] as Steps[]
@@ -287,7 +298,6 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
         </Button>
       </Box>
       {isAssignee &&
-        application.state === States.IN_FINAL_REVIEW &&
         (reviewApproval === ReviewApprovalEnum.APPROVED ||
           reviewApproval === ReviewApprovalEnum.REJECTED) && (
           <Box marginTop={4}>

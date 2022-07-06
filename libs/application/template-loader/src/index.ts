@@ -1,3 +1,4 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationTemplate,
@@ -5,11 +6,10 @@ import {
   ApplicationContext,
   ApplicationStateMeta,
   ApplicationStateSchema,
-  ApplicationTemplateHelper,
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
@@ -25,18 +25,28 @@ const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 async function loadTemplateLib(
   templateId: ApplicationTypes,
 ): Promise<TemplateLibraryModule> {
-  const loadedTemplateLib = loadedTemplateLibs[templateId]
-  if (loadedTemplateLib !== undefined) {
-    return loadedTemplateLib
+  const hasLoadedTemplateLib = Object.prototype.hasOwnProperty.call(
+    loadedTemplateLibs,
+    templateId,
+  )
+  if (hasLoadedTemplateLib) {
+    return loadedTemplateLibs[templateId]
   }
+
+  const hasTemplateLoader =
+    Object.prototype.hasOwnProperty.call(templateLoaders, templateId) &&
+    typeof templateLoaders[templateId] === 'function'
+  if (!hasTemplateLoader) {
+    throw new Error(`No template exists with id ${templateId}`)
+  }
+
   try {
-    const templateLib = (await templateLoaders[
-      templateId
-    ]()) as TemplateLibraryModule
+    const templateLoader = templateLoaders[templateId]
+    const templateLib = (await templateLoader()) as TemplateLibraryModule
     loadedTemplateLibs[templateId] = templateLib
     return templateLib
   } catch (e) {
-    return Promise.reject(`Could not load template with id ${templateId}`)
+    throw new Error(`Could not load template with id ${templateId}`)
   }
 }
 

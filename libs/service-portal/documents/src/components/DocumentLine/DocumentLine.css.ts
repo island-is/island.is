@@ -1,35 +1,26 @@
-import { keyframes, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const modalButtonWrapper = style({
+export const unopenedWrapper = style({
+  backgroundColor: 'unset',
   ...themeUtils.responsiveStyle({
     sm: {
-      width: '100%',
-    },
-    lg: {
-      width: 'fit-content',
+      backgroundColor: '#FBFBFC',
     },
   }),
 })
 
 export const line = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      borderBottom: `1px solid ${theme.color.blue200}`,
-    },
-  }),
+  fontSize: theme.typography.baseFontSize,
+  borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
 export const button = style({
   color: theme.color.blue400,
-  fontWeight: theme.typography.semiBold,
-  lineHeight: theme.typography.baseLineHeight,
+  fontSize: 16,
+  fontWeight: theme.typography.regular,
+  lineHeight: 1.5,
   textAlign: 'left',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.regular,
-    },
-  }),
   ':hover': {
     textDecoration: 'underline',
   },
@@ -38,50 +29,41 @@ export const button = style({
   },
 })
 
+export const unopened = style({
+  fontWeight: theme.typography.semiBold,
+})
+
 export const sender = style({
-  fontWeight: theme.typography.regular,
-  fontSize: 12,
+  fontWeight: theme.typography.light,
+  fontSize: 14,
   ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.light,
-      fontSize: 18,
-    },
-  }),
-})
-
-export const date = style({
-  fontWeight: theme.typography.regular,
-  fontSize: 12,
-  color: theme.color.dark300,
-  ...themeUtils.responsiveStyle({
-    sm: {
-      paddingBottom: 0,
-      color: theme.color.dark400,
-      fontWeight: theme.typography.light,
-      fontSize: 16,
-    },
     md: {
-      fontSize: 18,
+      fontWeight: theme.typography.regular,
+      fontSize: theme.typography.baseFontSize,
     },
   }),
-})
-
-export const isLoadingContainer = style({
-  opacity: 0.85,
-  animationName: keyframes({
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 0.85,
-    },
-  }),
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
 })
 
 export const image = style({
   width: 30,
   height: 30,
   marginRight: theme.spacing[2],
+})
+
+export const icon = style({
+  marginLeft: 6,
+})
+
+export const imageContainer = style({
+  minWidth: 30,
+  minHeight: 30,
+})
+
+export const linkWrapper = style({
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: theme.color.blueberry100,
+    },
+  }),
 })

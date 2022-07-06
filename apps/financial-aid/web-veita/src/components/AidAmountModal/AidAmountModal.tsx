@@ -3,59 +3,25 @@ import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './AidAmountModal.css'
 
-import format from 'date-fns/format'
+import * as modalStyles from '../StateModal/StateModal.css'
 
-import {
-  calculateAidFinalAmount,
-  calculatePersonalTaxAllowanceUsed,
-  calculateTaxOfAmount,
-} from '@island.is/financial-aid/shared/lib'
+import { Calculations } from '@island.is/financial-aid/shared/lib'
+
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 interface Props {
-  aidAmount: number
-  usePersonalTaxCredit: boolean
+  headline: string
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
+  calculations: Calculations[]
 }
 
 const AidAmountModal = ({
-  aidAmount,
-  usePersonalTaxCredit,
+  headline,
   isVisible,
   onVisibilityChange,
+  calculations,
 }: Props) => {
-  const currentYear = format(new Date(), 'yyyy')
-
-  const calculation = [
-    {
-      title: 'Grunnupphæð',
-      calculation: `+ ${aidAmount?.toLocaleString('de-DE')} kr.`,
-    },
-    {
-      title: 'Skattur',
-      calculation: `- ${calculateTaxOfAmount(
-        aidAmount,
-        currentYear,
-      ).toLocaleString('de-DE')} kr.`,
-    },
-    {
-      title: 'Persónuafsláttur',
-      calculation: `${
-        usePersonalTaxCredit ? '+ ' : ''
-      }${calculatePersonalTaxAllowanceUsed(
-        aidAmount,
-        usePersonalTaxCredit,
-        currentYear,
-      ).toLocaleString('de-DE')} kr. `,
-    },
-  ]
-
-  const estimatedCalc = `${calculateAidFinalAmount(
-    aidAmount,
-    Boolean(usePersonalTaxCredit),
-    currentYear,
-  ).toLocaleString('de-DE')} kr.`
-
   const closeModal = (): void => {
     onVisibilityChange(false)
   }
@@ -69,9 +35,14 @@ const AidAmountModal = ({
           onVisibilityChange(visibility)
         }
       }}
-      className={styles.modalBase}
+      className={modalStyles.modalBase}
     >
-      <Box onClick={closeModal} className={styles.modalContainer}>
+      <Box
+        className={modalStyles.closeModalBackground}
+        onClick={closeModal}
+      ></Box>
+
+      <Box className={modalStyles.modalContainer}>
         <Box
           position="relative"
           borderRadius="large"
@@ -80,42 +51,13 @@ const AidAmountModal = ({
           className={styles.modal}
         >
           <Text variant="h3" marginBottom={4}>
-            Áætluð aðstoð
+            {headline}
           </Text>
 
-          {calculation.map((item, index) => (
-            <span key={'calculation-' + index}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                paddingY={2}
-                paddingX={3}
-                borderTopWidth="standard"
-                borderColor="blue200"
-              >
-                <Text variant="small">{item.title}</Text>
-                <Text>{item.calculation}</Text>
-              </Box>
-            </span>
-          ))}
+          <Breakdown calculations={calculations} />
 
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            background="blue100"
-            borderTopWidth="standard"
-            borderBottomWidth="standard"
-            borderColor="blue200"
-            paddingY={2}
-            paddingX={3}
-            marginBottom={4}
-          >
-            <Text variant="small">Áætluð aðstoð (hámark)</Text>
-            <Text>{estimatedCalc}</Text>
-          </Box>
-
-          <Box display="flex" justifyContent="flexEnd" onClick={closeModal}>
-            <Button>Loka</Button>
+          <Box display="flex" justifyContent="flexEnd" marginTop={4}>
+            <Button onClick={closeModal}>Loka</Button>
           </Box>
         </Box>
       </Box>

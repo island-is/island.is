@@ -39,4 +39,19 @@ export class MunicipalityModel implements Municipality {
 
   @Field(() => [StaffModel], { nullable: true })
   readonly adminUsers?: StaffModel[]
+
+  @Field(() => [StaffModel], { nullable: true })
+  readonly allAdminUsers?: StaffModel[]
+
+  @Field()
+  readonly usingNav!: boolean
+
+  @Field({ nullable: true })
+  readonly navUrl?: string
+
+  @Field({ nullable: true })
+  readonly navUsername?: string
+
+  @Field({ nullable: true })
+  readonly navPassword?: string
 }

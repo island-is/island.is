@@ -1,10 +1,18 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
 
-export const containerDisabled = style({})
+export const containerDisabled = style({
+  opacity: 0.5,
+  backgroundColor: 'transparent',
+})
+
+export const readOnly = style({
+  backgroundColor: 'transparent',
+})
+
 export const noLabel = style({})
 
 export const container = style({
@@ -72,6 +80,7 @@ export const label = style({
   ...mixins.label,
   selectors: {
     [`${hasError} &`]: mixins.labelErrorState,
+    [`${readOnly} &`]: mixins.labelReadOnly,
   },
 })
 
@@ -94,9 +103,29 @@ export const fixedFocusState = style({
   },
 })
 
+export const spinner = style({
+  width: 24,
+  height: 24,
+  marginBottom: -3,
+  border: `3px solid ${theme.color.blue200}`,
+  borderBottomColor: theme.color.blue400,
+  animationName: keyframes({
+    from: {
+      transform: 'rotate(0deg)',
+    },
+    to: {
+      transform: 'rotate(360deg)',
+    },
+  }),
+  animationDuration: '1.5s',
+  animationIterationCount: 'infinite',
+  animationTimingFunction: 'linear',
+})
+
 export const icon = style({
   width: 24,
   height: 24,
+  flexShrink: 0,
   marginBottom: -3,
   color: theme.color.blue400,
   ...themeUtils.responsiveStyle({
@@ -118,6 +147,15 @@ export const iconError = style({
   color: theme.color.red600,
 })
 
-export const disabled = style({
-  opacity: 0.5,
+export const iconExtraSmall = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      selectors: {
+        [`${container}:not(${noLabel}) &`]: {
+          width: 21,
+          height: 21,
+        },
+      },
+    },
+  }),
 })

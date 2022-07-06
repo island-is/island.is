@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  ActionModal,
+  MultiSelectionMunicipality,
+} from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
-
+import {
+  CreateUpdateStaff,
+  selectionType,
+} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelectionMunicipality'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -13,35 +19,48 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
   predefinedRoles?: StaffRole[]
-  municipalityName?: string
 }
 
-interface newUsersModalState {
-  staffNationalId: string
-  staffName: string
-  staffEmail: string
-  hasError: boolean
-  hasSubmitError: boolean
-  roles: StaffRole[]
-}
+type newUsersModalState = CreateUpdateStaff<{
+  staffNationalId?: string
+  staffName?: string
+  staffEmail?: string
+  errorMessage?: string
+  municipalityNames: string[]
+}>
 
 const NewUserModal = ({
   isVisible,
   setIsVisible,
   onStaffCreated,
   predefinedRoles = [],
-  municipalityName,
 }: Props) => {
   const router = useRouter()
+
+  const getMunicipalityIds = () => {
+    if (predefinedRoles.length === 0) {
+      return []
+    }
+    if (predefinedRoles.includes(StaffRole.SUPERADMIN)) {
+      return ['0']
+    }
+    if (router.query.id) {
+      return [router.query.id as string]
+    }
+    return []
+  }
 
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
     staffName: '',
     staffEmail: '',
     hasError: false,
-    hasSubmitError: false,
+    errorMessage: undefined,
     roles: predefinedRoles,
+    municipalityNames: [],
+    municipalityIds: getMunicipalityIds(),
   })
+
   const [createStaff] = useMutation(StaffMutation)
 
   const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
@@ -59,7 +78,8 @@ const NewUserModal = ({
     !state.staffNationalId ||
     state.roles.length === 0 ||
     !isEmailValid(state.staffEmail) ||
-    state.staffNationalId.length !== 10
+    state.staffNationalId.length !== 10 ||
+    state.municipalityIds.length === 0
 
   const submit = async () => {
     if (areRequiredFieldsFilled) {
@@ -75,15 +95,22 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
-            municipalityName,
-            municipalityId: router.query.id as string,
+            municipalityNames: state.municipalityNames,
+            municipalityIds: state.municipalityIds, // TODO check on router.query.id
           },
         },
       }).then(() => {
         onStaffCreated()
       })
     } catch (e) {
-      setState({ ...state, hasSubmitError: true })
+      setState({
+        ...state,
+        errorMessage:
+          (e as ApolloError).graphQLErrors[0]?.extensions?.response.status ===
+          400
+            ? 'Mögulega er notandi með þessa kennitölu til nú þegar'
+            : 'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar',
+      })
     }
   }
 
@@ -92,8 +119,8 @@ const NewUserModal = ({
       isVisible={isVisible}
       setIsVisible={setIsVisible}
       header={'Nýr notandi'}
-      hasError={state.hasSubmitError}
-      errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
+      hasError={state.errorMessage !== undefined}
+      errorMessage={state.errorMessage}
       submitButtonText={'Stofna notanda'}
       onSubmit={submit}
     >
@@ -158,12 +185,41 @@ const NewUserModal = ({
           }
         />
       </Box>
-      <Text marginBottom={5} variant="small">
+      <Text marginBottom={3} variant="small">
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
       </Text>
       {predefinedRoles.length === 0 && (
         <>
+          <Box display="block" marginBottom={[3, 3, 5]}>
+            <MultiSelectionMunicipality
+              selectionUpdate={(
+                value: string,
+                label: string,
+                type: selectionType,
+              ) => {
+                if (type === 'add') {
+                  setState({
+                    ...state,
+                    municipalityIds: [...state.municipalityIds, value],
+                    municipalityNames: [...state.municipalityNames, label],
+                  })
+                }
+                if (type === 'remove') {
+                  setState({
+                    ...state,
+                    municipalityIds: state.municipalityIds.filter(
+                      (muni) => muni !== value,
+                    ),
+                    municipalityNames: state.municipalityNames.filter(
+                      (muni) => muni !== label,
+                    ),
+                  })
+                }
+              }}
+              state={state}
+            />
+          </Box>
           <Text marginBottom={3} variant="h4">
             Réttindi notanda
           </Text>

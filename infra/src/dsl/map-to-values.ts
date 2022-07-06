@@ -41,7 +41,10 @@ export const serializeService: SerializeMethod = (
     addToErrors(
       Object.keys(source)
         .filter((srcKey) => targetKeys.includes(srcKey))
-        .map((key) => `Collisions for environment or secrets for key ${key}`),
+        .map(
+          (key) =>
+            `Collisions in ${service.serviceDef.name} for environment or secrets for key ${key}`,
+        ),
     )
   }
   const mergeObjects = (
@@ -73,9 +76,13 @@ export const serializeService: SerializeMethod = (
     },
     env: {
       SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+      NODE_OPTIONS: `--max-old-space-size=${
+        parseInt(serviceDef.resources.limits.memory, 10) - 48
+      }`,
     },
     secrets: {},
     healthCheck: {
+      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
@@ -99,20 +106,41 @@ export const serializeService: SerializeMethod = (
   }
 
   // resources
-  if (serviceDef.resources) {
-    result.resources = serviceDef.resources
+  result.resources = serviceDef.resources
+  if (serviceDef.env.NODE_OPTIONS) {
+    throw new Error(
+      'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
+    )
   }
 
   // replicas
   if (serviceDef.replicaCount) {
-    result.replicaCount = serviceDef.replicaCount
+    result.replicaCount = {
+      min: serviceDef.replicaCount.min,
+      max: serviceDef.replicaCount.max,
+      default: serviceDef.replicaCount.default,
+    }
   } else {
     result.replicaCount = {
-      min: 2,
+      min: uberChart.env.defaultMinReplicas,
       max: uberChart.env.defaultMaxReplicas,
-      default: 2,
+      default: uberChart.env.defaultMinReplicas,
     }
   }
+
+  result.hpa = {
+    scaling: {
+      replicas: {
+        min: result.replicaCount.min,
+        max: result.replicaCount.max,
+      },
+      metric: {
+        cpuAverageUtilization: 70,
+      },
+    },
+  }
+  result.hpa.scaling.metric.nginxRequestsIrate =
+    serviceDef.replicaCount?.scalingMagicNumber || 2
 
   // extra attributes
   if (serviceDef.extraAttributes) {
@@ -260,7 +288,7 @@ export const serializeService: SerializeMethod = (
             ...acc,
             [`${ingressName}-alb`]: ingress,
           }
-        } catch (e) {
+        } catch (e: any) {
           addToErrors([e.message])
           return acc
         }
@@ -307,11 +335,14 @@ export const resolveDbHost = (
         break
       }
       case 'success': {
-        return resolved.value
+        return { writer: resolved.value, reader: resolved.value }
       }
     }
   } else {
-    return uberChart.env.auroraHost
+    return {
+      writer: uberChart.env.auroraHost,
+      reader: uberChart.env.auroraReplica ?? uberChart.env.auroraHost,
+    }
   }
 }
 
@@ -372,7 +403,9 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    env['DB_HOST'] = resolveDbHost(postgres, uberChart, service)
+    const { reader, writer } = resolveDbHost(postgres, uberChart, service)
+    env['DB_HOST'] = writer
+    env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
     errors.push(
       `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
@@ -391,9 +424,7 @@ function serializeIngress(
 ) {
   const ingress = ingressConf.host[env.type]
   if (ingress === MissingSetting) {
-    throw new Error(
-      `Missing ingress host info for service:${serviceDef.name}, ingress:${ingressName} in env:${env.type}`,
-    )
+    return
   }
   const hosts = (typeof ingress === 'string'
     ? [ingressConf.host[env.type] as string]
@@ -431,6 +462,16 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      resources: {
+        limits: {
+          memory: '256Mi',
+          cpu: '200m',
+        },
+        requests: {
+          memory: '128Mi',
+          cpu: '100m',
+        },
+      },
     }
     if (c.resources) {
       result.resources = c.resources

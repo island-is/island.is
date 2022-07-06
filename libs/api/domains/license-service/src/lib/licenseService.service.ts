@@ -12,7 +12,6 @@ import {
   GenericLicenseType,
   GenericLicenseClient,
   GenericLicenseMetadata,
-  GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
   GenericLicenseCached,
@@ -46,11 +45,11 @@ export class LicenseServiceService {
 
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
-    nationalId: string,
-    fetch: () => Promise<GenericLicenseUserdata | null>,
+    user: User,
+    fetch: () => Promise<GenericLicenseUserdataExternal | null>,
     ttl = 0,
   ): Promise<GenericLicenseCached> {
-    const cacheKey = `${CACHE_KEY}_${license.type}_${nationalId}`
+    const cacheKey = `${CACHE_KEY}_${license.type}_${user.nationalId}`
 
     if (ttl > 0) {
       const cachedData = await this.cacheManager.get(cacheKey)
@@ -72,9 +71,9 @@ export class LicenseServiceService {
       }
     }
 
-    const data = await fetch()
+    const fetchedData = await fetch()
 
-    if (!data) {
+    if (!fetchedData) {
       this.logger.warn('No data for generic license returned', {
         license,
       })
@@ -84,19 +83,25 @@ export class LicenseServiceService {
           status: GenericUserLicenseFetchStatus.Error,
           updated: new Date(),
         },
+        payload: undefined,
       }
     }
 
+    const { payload, ...userData } = fetchedData
+
     const dataWithFetch: GenericLicenseCached = {
-      data,
+      data: userData,
       fetch: {
         status: GenericUserLicenseFetchStatus.Fetched,
         updated: new Date(),
       },
+      payload: payload ?? undefined,
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
+      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
+        ttl,
+      })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,
@@ -107,7 +112,7 @@ export class LicenseServiceService {
   }
 
   async getAllLicenses(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     {
       includedTypes,
@@ -142,8 +147,8 @@ export class LicenseServiceService {
         } else {
           licenseDataFromService = await this.getCachedOrCache(
             license,
-            nationalId,
-            async () => await licenseService.getLicense(nationalId),
+            user,
+            async () => await licenseService.getLicense(user),
             force ? 0 : license.timeout,
           )
 
@@ -166,22 +171,21 @@ export class LicenseServiceService {
         updated: new Date(),
       }
       const combined: GenericUserLicense = {
-        nationalId,
+        nationalId: user.nationalId,
         license: {
           ...license,
           ...licenseUserdata,
         },
         fetch,
+        payload: licenseDataFromService?.payload ?? undefined,
       }
-
       licenses.push(combined)
     }
-
     return licenses
   }
 
   async getLicense(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<GenericUserLicense> {
@@ -194,13 +198,13 @@ export class LicenseServiceService {
     )
 
     if (license && licenseService) {
-      licenseUserdata = await licenseService.getLicenseDetail(nationalId)
+      licenseUserdata = await licenseService.getLicenseDetail(user)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
     return {
-      nationalId,
+      nationalId: user.nationalId,
       license: {
         ...license,
         status: licenseUserdata?.status ?? GenericUserLicenseStatus.Unknown,
@@ -219,11 +223,11 @@ export class LicenseServiceService {
   }
 
   async generatePkPass(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ) {
-    let pkPassUrl: string | null = null
+    let pkpassUrl: string | null = null
 
     const licenseService = await this.genericLicenseFactory(
       licenseType,
@@ -231,22 +235,47 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      pkPassUrl = await licenseService.getPkPassUrl(nationalId)
+      pkpassUrl = await licenseService.getPkPassUrl(user)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
-    if (!pkPassUrl) {
+    if (!pkpassUrl) {
       throw new Error(
-        `Unable to get pkpass for ${licenseType} for nationalId ${nationalId}`,
+        `Unable to get pkpass url for ${licenseType} for nationalId ${user.nationalId}`,
+      )
+    }
+    return { pkpassUrl }
+  }
+
+  async generatePkPassQrCode(
+    user: User,
+    locale: Locale,
+    licenseType: GenericLicenseType,
+  ) {
+    let pkpassQRCode: string | null = null
+
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      this.cacheManager,
+    )
+
+    if (licenseService) {
+      pkpassQRCode = await licenseService.getPkPassQRCode(user)
+    } else {
+      throw new Error(`${licenseType} not supported`)
+    }
+    if (!pkpassQRCode) {
+      throw new Error(
+        `Unable to get pkpass qr code for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
 
-    return pkPassUrl
+    return { pkpassQRCode }
   }
 
   async verifyPkPass(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
     data: string,
@@ -266,7 +295,7 @@ export class LicenseServiceService {
 
     if (!verification) {
       throw new Error(
-        `Unable to verify pkpass for ${licenseType} for nationalId ${nationalId}`,
+        `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
 

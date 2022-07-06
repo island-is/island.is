@@ -1,4 +1,6 @@
-# Core
+<!-- gitbook-navigation: "Core" -->
+
+# Application Core
 
 ## About
 
@@ -91,6 +93,31 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 The application's name will be picked up from the `name` field from the same object above.
 
+### Feature flags
+
+In order to introduce an application behind a featureflag you can follow the following steps:
+
+1.  Ask someone from DevOps for invite to ConfigCat.
+2.  Once you're in (https://app.configcat.com/) you can add your feature flag. The initial values should always be "On" in Dev and (probably always to start with) "Off" in Production and Staging.
+3.  Remember to add the label "applicationSystemFlag" to your flag.
+4.  Make sure that the `CONFIGCAT_SDK_KEY` environment variable is exported in .env.secret in the root of the repository. You can fetch it by calling for example `yarn get-secrets application-system-form`.
+5.  Add your flag to the package @island.is/feature-flags in libs/feature-flags/src/lib/features.ts
+6.  Now you can add the featureFlag to the application template under "featureFlag".
+
+```diff
+const ReferenceApplicationTemplate: ApplicationTemplate<
+ ApplicationContext,
+ ApplicationStateSchema<ReferenceTemplateEvent>,
+ ReferenceTemplateEvent
+ > = {
+ type: ApplicationTypes.EXAMPLE,
+ name: m.name,
+ institution: m.institutionName,
++ featureFlag: Feature.exampleApplication
+ translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
+ dataSchema: ExampleSchema,
+```
+
 #### DataSchema
 
 We are using zod to create the schema of the application. To pass a custom error message using a translation, we need to use the `params` field from the error message callback. You then can pass the "translatable" object from your message file.
@@ -135,7 +162,7 @@ Each application defines their own [states](https://xstate.js.org/docs/guides/st
 
 > A state is an abstract representation of a system (such as an application) at a specific point in time. As an application is interacted with, events cause it to change state. A finite state machine can be in only one of a finite number of states at any given time.
 
-You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
+You can see a simple example from the reference-template [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L60-L152), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
 
 #### Status
 
@@ -237,6 +264,38 @@ stateMachineConfig: {
 },
 ```
 
+### Delete Application
+
+In order to enable users to delete applications within a state simply add `delete: true` to the desired role and state.
+
+```diff
+stateMachineConfig: {
+  states: {
+    ...
+    draft: {
+      meta: {
+        name: 'Draft',
+        roles: [
+          {
+            id: 'applicant',
+            formLoader: () =>
+              import('../forms/Draft).then((val) =>
+                Promise.resolve(val.Draft),
+              ),
+            read: 'all',
++           delete: true
+          },
+        ],
+      },
+    ...
+  },
+},
+```
+
+This will add a delete button in the Draft state available only to the `Applicant` role like so:
+
+![image](https://user-images.githubusercontent.com/2643113/165759979-a267dd6f-dbe4-4bc9-b2b8-dad5508a44c0.png)
+
 ## Form
 
 The `Form` type describes how to structure the flow of a form. It is basically a big json object which is used by `application-ui-shell` to know what to render on the screen.
@@ -263,6 +322,57 @@ These are only used for cosmetic reasons. They group fields together so the `app
 
 Many applications rely on external data that should not be editable by any user or consumer of an api. The `externalData` of an application is only updated by the backend via custom-made `DataProviders`.
 
+### Custom errors for Data Providers
+
+You can add in custom error/warning title and summary to display for the user on the dataprovider screen when a dataprovider requirements fail according to the response received.
+
+An example of this would be if you dont meet the age requirements of an application and the team wants to stop the application from transitioning to the next state.
+
+In your dataprovider implementation add the following
+
+```diff
+  export class SampleDataProvider extends BasicDataProvider {
+  type = 'SampleDataProvider'
+
+  async provide(_application: Application): Promise<unknown> {
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const data: SampleProviderData = {
+      value: 'Hello world',
+    }
+
++    if (!SampleProviderData.value) {
++      return Promise.reject({
++        reason: {
++          title: error.someFailMessage.title,
++          summary: error.someFailMessage.summary,
++        },
++        statusCode: 404,
++      })
++    }
+
+    return Promise.resolve(data)
+  }
+
++  onProvideError(error: {
++    reason: ProviderErrorReason
++    statusCode?: number
++  }): FailedDataProviderResult {
++    return {
++      date: new Date(),
++      data: {},
++      reason: error.reason,
++      status: 'failure',
++      statusCode: error.statusCode,
++    }
++  }
+}
+```
+
+This would then display as a yellow box warning when the user has fetched the data and failed to meet the requirements like so:
+
+![image](https://user-images.githubusercontent.com/2814693/171011316-c97b0aec-7a8a-40a1-bbc5-64779ca7bc96.png)
+
 ## Code owners and maintainers
 
-- [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
+- [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)

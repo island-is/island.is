@@ -16,11 +16,14 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+import { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
-import { UploadPoliceCaseFileDto } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @Injectable()
 export class PoliceService {
@@ -41,129 +44,138 @@ export class PoliceService {
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly eventService: EventService,
     private readonly awsS3Service: AwsS3Service,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.logger.debug(
-      `Waiting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-    )
-
     await this.throttle.catch((reason) => {
-      this.logger.error('Previous upload failed', { reason })
+      this.logger.info('Previous upload failed', { reason })
     })
 
-    this.logger.debug(
-      `Starting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    const pdf = await fetch(
+      `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      {
+        headers: { 'X-Road-Client': environment.xRoad.clientId },
+        agent: this.agent,
+      } as RequestInit,
     )
+      .then(async (res) => {
+        if (res.ok) {
+          const response = await res.json()
 
-    let res: Response
+          return Base64.atob(response)
+        }
 
-    try {
-      res = await fetch(
-        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        {
-          headers: { 'X-Road-Client': environment.xRoad.clientId },
-          agent: this.agent,
-        } as RequestInit,
-      )
-    } catch (error) {
-      this.logger.error(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        error,
-      )
+        const reason = await res.text()
 
-      throw new BadGatewayException(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-      )
-    }
+        throw new NotFoundException({
+          message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
 
-    if (!res.ok) {
-      this.logger.warn(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        res,
-      )
+        this.eventService.postErrorEvent(
+          'Failed to get police case file',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            caseFileId: uploadPoliceCaseFile.id,
+            name: uploadPoliceCaseFile.name,
+          },
+          reason,
+        )
 
-      throw new NotFoundException(
-        `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-      )
-    }
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+          detail: reason.message,
+        })
+      })
 
-    const base64 = await res.json()
-    const pdf = Base64.atob(base64)
-
-    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
-
-    this.logger.debug(
-      `Done uploading police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-    )
 
     return { key, size: pdf.length }
   }
 
-  async getAllPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
-    this.logger.debug(`Getting all police files for case ${caseId}`)
-
-    let res: Response
-
-    try {
-      res = await fetch(
-        `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
-        {
-          headers: { 'X-Road-Client': environment.xRoad.clientId },
-          agent: this.agent,
-        } as RequestInit,
-      )
-    } catch (error) {
-      this.logger.error(
-        `Failed to get police case files for case ${caseId}`,
-        error,
-      )
-
-      throw new BadGatewayException(
-        `Failed to get police case files for case ${caseId}`,
-      )
-    }
-
-    if (!res.ok) {
-      this.logger.warn(
-        `Could not get police case files for case ${caseId}`,
-        res,
-      )
-
-      throw new NotFoundException(
-        `No police case files found for case ${caseId}`,
-      )
-    }
-
-    const files = await res.json()
-
-    return files.map(
-      (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
-        id: file.rvMalSkjolMals_ID,
-        name: file.heitiSkjals,
-      }),
+  async getAllPoliceCaseFiles(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceCaseFile[]> {
+    return await fetch(
+      `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
+      {
+        headers: { 'X-Road-Client': environment.xRoad.clientId },
+        agent: this.agent,
+      } as RequestInit,
     )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response = await res.json()
+
+          return response.map(
+            (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
+              id: file.rvMalSkjolMals_ID,
+              name: file.heitiSkjals.endsWith('.pdf')
+                ? file.heitiSkjals
+                : `${file.heitiSkjals}.pdf`,
+            }),
+          )
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When no files exist for the case, a stack trace is returned.
+        throw new NotFoundException({
+          message: `No police case files found for case ${caseId}`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police case files',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
   }
 
   async uploadPoliceCaseFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.logger.debug(
-      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
-    )
-
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       uploadPoliceCaseFile,
+      user,
     )
 
     return this.throttle

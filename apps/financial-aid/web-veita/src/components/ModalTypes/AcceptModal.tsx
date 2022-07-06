@@ -1,43 +1,44 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
-
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useRouter } from 'next/router'
 import {
   aidCalculator,
   Amount,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
+  FamilyStatus,
   HomeCircumstances,
+  Municipality,
+  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
-import format from 'date-fns/format'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
-import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (amount: Amount) => void
+  onSaveApplication: (amount: Amount, comment: string) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
-  spouseNationalId?: string
+  familyStatus: FamilyStatus
+  applicationMunicipality: Municipality
 }
 
 interface calculationsState {
   amount: number
   income?: number
   personalTaxCreditPercentage?: number
-  tax: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
   hasError: boolean
   hasSubmitError: boolean
   deductionFactor: Array<{ description: string; amount: number }>
+  comment: string
 }
 
 const AcceptModal = ({
@@ -45,32 +46,33 @@ const AcceptModal = ({
   onSaveApplication,
   isModalVisable,
   homeCircumstances,
-  spouseNationalId,
+  familyStatus,
+  applicationMunicipality,
 }: Props) => {
   const router = useRouter()
 
   const maximumInputLength = 6
 
-  const currentYear = format(new Date(), 'yyyy')
-
-  const { municipality } = useContext(AdminContext)
-
   const aidAmount = useMemo(() => {
-    if (municipality && homeCircumstances) {
+    if (applicationMunicipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
-        spouseNationalId
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+        showSpouseData[familyStatus]
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [homeCircumstances, municipality])
+  }, [homeCircumstances, applicationMunicipality])
 
   if (!aidAmount) {
     return (
-      <Text color="red400">
-        Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
-      </Text>
+      <>
+        {isModalVisable && (
+          <Text color="red400">
+            Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
+          </Text>
+        )}
+      </>
     )
   }
 
@@ -78,30 +80,29 @@ const AcceptModal = ({
     amount: aidAmount,
     income: undefined,
     personalTaxCreditPercentage: undefined,
-    tax: calculateTaxOfAmount(aidAmount, currentYear),
     secondPersonalTaxCredit: 0,
     showSecondPersonalTaxCredit: false,
     deductionFactor: [],
     hasError: false,
     hasSubmitError: false,
+    comment: '',
   })
 
-  const sumValues = (deductionFactor: calculationsState['deductionFactor']) =>
-    deductionFactor
-      .map((item) => {
-        return item.amount
-      })
-      .reduce((a, b) => {
-        return a + b
-      }, 0)
+  const sumValues = state.deductionFactor.reduce(
+    (n, { amount }) => n + amount,
+    0,
+  )
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    aidAmount - checkingValue(state.income) - sumValues(state.deductionFactor),
-    currentYear,
+    state.amount - checkingValue(state.income) - sumValues,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
+  )
+
+  const taxAmount = calculateTaxOfAmount(
+    (state.amount || 0) - checkingValue(state.income) - sumValues,
   )
 
   const areRequiredFieldsFilled =
@@ -116,16 +117,19 @@ const AcceptModal = ({
       return
     }
 
-    onSaveApplication({
-      applicationId: router.query.id as string,
-      aidAmount: state.amount,
-      income: state.income,
-      personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
-      spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-      tax: state.tax,
-      finalAmount: finalAmount,
-      deductionFactors: state.deductionFactor,
-    })
+    onSaveApplication(
+      {
+        applicationId: router.query.id as string,
+        aidAmount: state.amount,
+        income: state.income,
+        personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
+        spousePersonalTaxCredit: state.secondPersonalTaxCredit,
+        tax: taxAmount,
+        finalAmount: finalAmount,
+        deductionFactors: state.deductionFactor,
+      },
+      state.comment,
+    )
   }
 
   return (
@@ -315,23 +319,36 @@ const AcceptModal = ({
           variant="text"
         >
           {state.showSecondPersonalTaxCredit
-            ? 'Fjarlægðu skattkorti'
-            : 'Bættu við skattkorti'}
+            ? 'Fjarlægja persónuafslátt'
+            : 'Nýta persónuafslátt maka'}
         </Button>
       </Box>
 
-      <Box marginBottom={[3, 3, 5]}>
+      <Box marginBottom={3}>
         <Input
           label="Skattur "
           id="tax"
           name="tax"
-          value={calculateTaxOfAmount(
-            (aidAmount || 0) -
-              checkingValue(state.income) -
-              sumValues(state.deductionFactor),
-            currentYear,
-          ).toLocaleString('de-DE')}
+          value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
+        />
+      </Box>
+
+      <Box marginBottom={[3, 3, 5]}>
+        <Input
+          label="Skýring"
+          placeholder="Sláðu inn skýringu ef þarf"
+          id="comment"
+          name="comment"
+          textarea
+          value={state.comment}
+          onChange={(e) => {
+            setState({
+              ...state,
+              comment: e.target.value,
+            })
+          }}
+          backgroundColor="blue"
         />
       </Box>
 
@@ -353,6 +370,7 @@ const AcceptModal = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
+        alignItems="center"
         background="blue100"
         borderTopWidth="standard"
         borderBottomWidth="standard"

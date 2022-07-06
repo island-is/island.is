@@ -1,4 +1,3 @@
-import { accidentLocation } from '../lib/messages'
 import {
   AgricultureAccidentLocationEnum,
   FishermanWorkplaceAccidentLocationEnum,
@@ -14,39 +13,51 @@ export enum ApiActions {
   addAttachment = 'addAdditionalAttachment',
 }
 
-export const accidentLocationLabelMapper = {
-  [GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE]:
-    accidentLocation.generalWorkAccident.atTheWorkplace.defaultMessage,
-  [GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE]:
-    accidentLocation.generalWorkAccident.toOrFromTheWorkplace.defaultMessage,
-  [GeneralWorkplaceAccidentLocationEnum.OTHER]:
-    accidentLocation.generalWorkAccident.other.defaultMessage,
-  [FishermanWorkplaceAccidentLocationEnum.ONTHESHIP]:
-    accidentLocation.fishermanAccident.onTheShip.defaultMessage,
-  [FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE]:
-    accidentLocation.fishermanAccident.toOrFromTheWorkplace.defaultMessage,
-  [FishermanWorkplaceAccidentLocationEnum.OTHER]:
-    accidentLocation.fishermanAccident.other.defaultMessage,
-  [ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES]:
-    accidentLocation.professionalAthleteAccident.atTheClubsSportsFacilites
-      .defaultMessage,
-  [ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES]:
-    accidentLocation.professionalAthleteAccident.toOrFromTheSportsFacilites
-      .defaultMessage,
-  [ProfessionalAthleteAccidentLocationEnum.OTHER]:
-    accidentLocation.professionalAthleteAccident.other.defaultMessage,
-  [AgricultureAccidentLocationEnum.ATTHEWORKPLACE]:
-    accidentLocation.agricultureAccident.atTheWorkplace.defaultMessage,
-  [AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE]:
-    accidentLocation.agricultureAccident.toOrFromTheWorkplace.defaultMessage,
-  [RescueWorkAccidentLocationEnum.TOORFROMRESCUE]:
-    accidentLocation.rescueWorkAccident.toOrFromRescue.defaultMessage,
-  [RescueWorkAccidentLocationEnum.DURINGRESCUE]:
-    accidentLocation.rescueWorkAccident.duringRescue.defaultMessage,
-  [RescueWorkAccidentLocationEnum.OTHER]:
-    accidentLocation.rescueWorkAccident.other.defaultMessage,
-  [StudiesAccidentLocationEnum.ATTHESCHOOL]:
-    accidentLocation.studiesAccidentLocation.atTheSchool.defaultMessage,
-  [StudiesAccidentLocationEnum.OTHER]:
-    accidentLocation.studiesAccidentLocation.other.defaultMessage,
+export const accidentLocationLabelMapper = (
+  value:
+    | GeneralWorkplaceAccidentLocationEnum
+    | FishermanWorkplaceAccidentLocationEnum
+    | ProfessionalAthleteAccidentLocationEnum
+    | AgricultureAccidentLocationEnum
+    | RescueWorkAccidentLocationEnum
+    | StudiesAccidentLocationEnum,
+): number | undefined => {
+  switch (value) {
+    case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
+      return 0
+    case GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case GeneralWorkplaceAccidentLocationEnum.OTHER:
+      return 2
+    case FishermanWorkplaceAccidentLocationEnum.ONTHESHIP:
+      return 0
+    case FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case FishermanWorkplaceAccidentLocationEnum.OTHER:
+      return 2
+    case ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES:
+      return 0
+    case ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES:
+      return 1
+    case ProfessionalAthleteAccidentLocationEnum.OTHER:
+      return 2
+    case AgricultureAccidentLocationEnum.ATTHEWORKPLACE:
+      return 0
+    case AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case AgricultureAccidentLocationEnum.OTHER:
+      return 2
+    case RescueWorkAccidentLocationEnum.DURINGRESCUE:
+      return 0
+    case RescueWorkAccidentLocationEnum.TOORFROMRESCUE:
+      return 1
+    case RescueWorkAccidentLocationEnum.OTHER:
+      return 2
+    case StudiesAccidentLocationEnum.ATTHESCHOOL:
+      return 0
+    case StudiesAccidentLocationEnum.OTHER:
+      return 2
+    default:
+      return undefined
+  }
 }

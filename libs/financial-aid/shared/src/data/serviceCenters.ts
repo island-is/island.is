@@ -11,8 +11,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Laugavegi 77',
     addressPostalCode: '101 Reykjavík',
     postalCodes: [101, 102, 105, 107],
-    link:
-      'https://reykjavik.is/stadir/thjonustumidstod-vesturbaejar-midborgar-og-hlida',
+    link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Þjónustumiðstöð Laugardals og Háaleitis',
@@ -21,8 +20,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Efstaleiti 1',
     addressPostalCode: '103 Reykjavík',
     postalCodes: [103, 104, 105, 108],
-    link:
-      'https://reykjavik.is/stadir/thjonustumidstod-laugardals-og-haaleitis',
+    link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Þjónustumiðstöð Árbæjar og Grafarholts',
@@ -31,8 +29,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Hraunbær 115',
     addressPostalCode: '110 Reykjavík',
     postalCodes: [110, 113],
-    link:
-      'https://reykjavik.is/stadir/thjonustumidstod-arbaejar-og-grafarholts',
+    link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Þjónustumiðstöð Breiðholts',
@@ -41,7 +38,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Álfabakki 12',
     addressPostalCode: '109 Reykjavík',
     postalCodes: [109, 111],
-    link: 'https://reykjavik.is/stadir/thjonustumidstod-breidholts',
+    link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Þjónustumiðstöð Grafarvogs og Kjalarness - Miðgarður',
@@ -50,8 +47,7 @@ export const serviceCenters: ServiceCenter[] = [
     address: 'Gylfaflöt 5',
     addressPostalCode: '112 Reykjavík',
     postalCodes: [110, 112, 116, 162],
-    link:
-      'https://reykjavik.is/stadir/thjonustumidstod-grafarvogs-og-kjalarness-midgardur',
+    link: 'https://reykjavik.is/fjarhagsadstod',
   },
   {
     name: 'Kópavogur',

@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Family Matters Core
 
 This is an core library for family matter applications that holds shared components, utils, types etc. Created for the County Magistrate of Iceland by Kolibri.

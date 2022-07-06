@@ -55,10 +55,11 @@ const ConfirmInvoiceMutation = gql`
 
 const TODAY = new Date()
 
-const Admin: Screen = ({}) => {
+const Admin: Screen = () => {
   const { user } = useContext(UserContext)
   const [showModal, setModal] = useState(false)
   const [filters, setFilters] = useState<FilterInput>({
+    nationalId: '',
     state: [],
     period: {
       from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),

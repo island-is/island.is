@@ -21,6 +21,7 @@ import {
 } from '@island.is/web/components'
 import { TextModes } from '../types'
 import { linkResolver } from '@island.is/web/hooks'
+import { Tag } from '@island.is/web/graphql/schema'
 
 import * as styles from './Header.css'
 
@@ -28,11 +29,17 @@ interface HeaderProps {
   title?: string
   hideSearch?: boolean
   textMode?: TextModes
+  searchPlaceholder?: string
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
+export const Header = ({
+  title = '',
+  hideSearch,
+  textMode,
+  searchPlaceholder,
+}: HeaderProps) => {
   const dark = textMode === 'dark'
 
   return (
@@ -50,7 +57,7 @@ export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
                           <Link href="/">
                             <Hidden above="md">
                               <Logo
-                                id="helpdesk-logo-1"
+                                id="serviceweb-logo-1"
                                 width={40}
                                 iconOnly
                                 solid={!dark}
@@ -75,7 +82,7 @@ export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
                               })}
                             >
                               <NextLink
-                                href={`${linkResolver('helpdesk').href}${
+                                href={`${linkResolver('serviceweb').href}${
                                   institutionSlug ? '/' + institutionSlug : ''
                                 }`}
                               >
@@ -106,7 +113,10 @@ export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
                       >
                         {!hideSearch && (
                           <Box marginLeft={marginLeft}>
-                            <ServiceWebSearchInput size="medium" />
+                            <ServiceWebSearchInput
+                              size="medium"
+                              placeholder={searchPlaceholder}
+                            />
                           </Box>
                         )}
                       </Box>

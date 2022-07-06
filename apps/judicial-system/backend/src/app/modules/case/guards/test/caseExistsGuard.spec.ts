@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 
 import {
   BadRequestException,
@@ -6,10 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
+import { CaseState } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
+import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
-import { Case } from '../../models'
+import { Case } from '../../models/case.model'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {
@@ -56,12 +60,9 @@ describe('Case Exists Guard', () => {
 
     it('should query the database', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        where: { id: caseId },
         include: [
-          {
-            model: Institution,
-            as: 'court',
-          },
+          { model: Defendant, as: 'defendants' },
+          { model: Institution, as: 'court' },
           {
             model: User,
             as: 'creatingProsecutor',
@@ -91,6 +92,12 @@ describe('Case Exists Guard', () => {
           { model: Case, as: 'parentCase' },
           { model: Case, as: 'childCase' },
         ],
+        order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
+        where: {
+          id: caseId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
       })
     })
   })

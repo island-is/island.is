@@ -29,7 +29,19 @@
     "logform",
     "pg-native",
     "form-data",
-    "sequelize-replace-enum-postgres"
+    "sequelize-replace-enum-postgres",
+    "sequelize",
+    "swagger-ui-dist",
+    "@protobufjs/aspromise",
+    "@protobufjs/base64",
+    "@protobufjs/codegen",
+    "@protobufjs/eventemitter",
+    "@protobufjs/fetch",
+    "@protobufjs/float",
+    "@protobufjs/inquire",
+    "@protobufjs/path",
+    "@protobufjs/pool",
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

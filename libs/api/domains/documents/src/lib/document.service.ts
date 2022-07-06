@@ -1,10 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Document } from './models/document.model'
-import {
-  CategoryDTO,
-  DocumentInfoDTO,
-  DocumentDTO,
-} from '@island.is/clients/documents'
+import { CategoryDTO, DocumentInfoDTO } from '@island.is/clients/documents'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
@@ -23,19 +19,12 @@ export class DocumentService {
     documentId: string,
   ): Promise<DocumentDetails> {
     try {
-      const rawDocumentDTO = await this.documentClient.customersDocument({
-        kennitala: nationalId,
-        messageId: documentId,
-        authenticationType: 'HIGH',
-      })
-
-      const documentDTO: DocumentDTO = {
-        ...rawDocumentDTO,
-        fileType: rawDocumentDTO.fileType || '',
-        content: rawDocumentDTO.content || '',
-        htmlContent: rawDocumentDTO.htmlContent || '',
-        url: rawDocumentDTO.url || '',
-      }
+      const documentDTO =
+        (await this.documentClient.customersDocument({
+          kennitala: nationalId,
+          messageId: documentId,
+          authenticationType: 'HIGH',
+        })) || {}
 
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {

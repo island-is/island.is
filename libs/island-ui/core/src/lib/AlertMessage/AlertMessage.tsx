@@ -4,7 +4,6 @@ import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
-import * as styles from './AlertMessage.css'
 import { Stack } from '../Stack/Stack'
 
 export type AlertMessageType = 'error' | 'info' | 'success' | 'warning'
@@ -49,49 +48,60 @@ const variantStyles: VariantStyles = {
 
 export interface AlertMessageProps {
   type: AlertMessageType
-  title: string
-  message?: string | React.ReactNode
+  testid?: string
 }
 
-export const AlertMessage: React.FC<AlertMessageProps> = ({
+type TitleAndOrMessage =
+  | {
+      title: string
+      message: string | React.ReactNode
+    }
+  | {
+      title?: never
+      message: string | React.ReactNode
+    }
+  | {
+      title: string
+      message?: never
+    }
+
+export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
   type,
   title,
   message,
+  testid,
 }) => {
   const variant = variantStyles[type]
 
   return (
     <Box
-      padding={2}
+      padding={[1, 1, 2]}
       borderRadius="large"
       background={variant.background}
       borderColor={variant.borderColor}
       borderWidth="standard"
+      data-testid={testid ?? 'alertMessage'}
     >
-      <Stack space={1}>
-        <Box display="flex" alignItems="center">
-          <Box
-            display="flex"
-            alignItems="center"
-            marginRight={2}
-            flexShrink={0}
-          >
-            <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
-          </Box>
-          <Text as="h5" variant="h5">
-            {title}
-          </Text>
+      <Box display="flex">
+        <Box display="flex" marginRight={[1, 1, 2]}>
+          <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
         </Box>
-        {message && (
-          <Box className={styles.messageWrap}>
-            {React.isValidElement(message) ? (
-              message
-            ) : (
-              <Text variant="small">{message}</Text>
+        <Box display="flex" width="full" flexDirection="column">
+          <Stack space={1}>
+            {title && (
+              <Text as="h5" variant="h5">
+                {title}
+              </Text>
             )}
-          </Box>
-        )}
-      </Stack>
+            {message &&
+              (React.isValidElement(message) ? (
+                message
+              ) : (
+                <Text variant="small">{message}</Text>
+              ))}
+          </Stack>
+        </Box>
+      </Box>
     </Box>
   )
 }

@@ -5,11 +5,11 @@ import { IsOptional, IsString } from 'class-validator'
 export class ServiceWebFormsInput {
   @Field()
   @IsString()
-  name: string
+  name!: string
 
   @Field()
   @IsString()
-  email: string
+  email!: string
 
   @Field()
   @IsOptional()
@@ -18,19 +18,19 @@ export class ServiceWebFormsInput {
 
   @Field()
   @IsString()
-  syslumadur: string
+  syslumadur!: string
 
   @Field()
   @IsString()
-  category: string
+  category!: string
 
   @Field()
   @IsString()
-  message: string
+  message!: string
 
   @Field()
   @IsString()
-  institutionSlug: string
+  institutionSlug!: string
 
   @HideField()
   @IsString()

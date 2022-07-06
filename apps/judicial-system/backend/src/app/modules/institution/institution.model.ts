@@ -2,6 +2,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -15,7 +16,7 @@ import { InstitutionType } from '@island.is/judicial-system/types'
   tableName: 'institution',
   timestamps: true,
 })
-export class Institution extends Model<Institution> {
+export class Institution extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -46,12 +47,27 @@ export class Institution extends Model<Institution> {
     unique: true,
   })
   @ApiProperty()
-  name?: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active?: boolean
+  active!: boolean
+
+  @ForeignKey(() => Institution)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defaultCourtId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  policeCaseNumberPrefix?: string
 }

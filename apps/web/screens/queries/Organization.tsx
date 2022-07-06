@@ -9,6 +9,11 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
+        logo {
+          title
+          url
+        }
         link
         tag {
           id
@@ -24,10 +29,22 @@ export const GET_ORGANIZATION_QUERY = gql`
     getOrganization(input: $input) {
       id
       slug
+      email
+      phone
       title
       logo {
         title
         url
+      }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
       }
       link
       tag {
@@ -35,6 +52,9 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
       }
       description
+      namespace {
+        fields
+      }
     }
   }
 `
@@ -46,6 +66,25 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       menuLinks {
         primaryLink {
           text
@@ -64,14 +103,20 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
+        email
+        phone
         logo {
           url
         }
         footerItems {
           title
           content {
+            ...HtmlFields
+          }
+          serviceWebContent {
             ...HtmlFields
           }
           link {
@@ -101,6 +146,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         title
         content
         type
+        image {
+          url
+          title
+          width
+          height
+        }
         link {
           text
           url
@@ -110,6 +161,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        backgroundColor
+        darkText
+      }
+      externalLinks {
+        text
+        url
       }
     }
   }
@@ -119,6 +176,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
+      id
       title
       slug
       description {
@@ -133,7 +191,6 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title
@@ -150,6 +207,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }
@@ -206,23 +264,48 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      auctionTakesPlaceAt
     }
   }
 `
 
 export const GET_OPERATING_LICENSES_QUERY = gql`
-  query GetOperatingLicenses {
-    getOperatingLicenses {
-      location
-      name
-      street
-      postalCode
-      validUntil
-      type
-      category
-      issuedBy
-      licenseHolder
-      licenseNumber
+  query GetOperatingLicenses($input: GetOperatingLicensesInput!) {
+    getOperatingLicenses(input: $input) {
+      paginationInfo {
+        pageSize
+        pageNumber
+        totalCount
+        totalPages
+        currentPage
+        hasNext
+        hasPrevious
+      }
+      searchQuery
+      results {
+        id
+        issuedBy
+        licenseNumber
+        location
+        name
+        street
+        postalCode
+        type
+        type2
+        restaurantType
+        validFrom
+        validTo
+        licenseHolder
+        licenseResponsible
+        category
+        outdoorLicense
+        alcoholWeekdayLicense
+        alcoholWeekendLicense
+        alcoholWeekdayOutdoorLicense
+        alcoholWeekendOutdoorLicense
+        maximumNumberOfGuests
+        numberOfDiningGuests
+      }
     }
   }
 `

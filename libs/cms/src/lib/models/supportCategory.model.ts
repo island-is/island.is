@@ -19,6 +19,9 @@ export class SupportCategory {
 
   @Field()
   slug!: string
+
+  @Field()
+  importance!: number
 }
 
 export const mapSupportCategory = ({
@@ -32,4 +35,5 @@ export const mapSupportCategory = ({
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,
+  importance: fields.importance ?? 0,
 })

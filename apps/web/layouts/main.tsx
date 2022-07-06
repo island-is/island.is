@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import {
   Page,
@@ -12,15 +12,18 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/island-ui/core'
+import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -43,7 +46,7 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
-import { useNamespace } from '../hooks'
+import { useFeatureFlag, useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -53,11 +56,14 @@ import {
   LinkType,
   useLinkResolver,
   linkResolver as LinkResolver,
+  pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
@@ -95,6 +101,9 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
 }
@@ -111,6 +120,20 @@ if (environment.sentryDsn) {
         },
       }),
     ],
+  })
+}
+
+if (
+  publicRuntimeConfig.ddRumApplicationId &&
+  publicRuntimeConfig.ddRumClientToken &&
+  typeof window !== 'undefined'
+) {
+  userMonitoring.initDdRum({
+    service: 'islandis',
+    applicationId: publicRuntimeConfig.ddRumApplicationId,
+    clientToken: publicRuntimeConfig.ddRumClientToken,
+    env: publicRuntimeConfig.environment || 'local',
+    version: publicRuntimeConfig.appVersion || 'local',
   })
 }
 
@@ -134,6 +157,9 @@ const Layout: NextComponentType<
   footerMiddleMenu,
   namespace,
   alertBannerContent,
+  organizationAlertBannerContent,
+  articleAlertBannerContent,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -143,6 +169,11 @@ const Layout: NextComponentType<
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
+
+  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
+    'iswebfooterlinkingtosupportpage',
+    false,
+  )
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -180,9 +211,38 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = `alert-${stringHash(
-    JSON.stringify(alertBannerContent),
-  )}`
+  const [alertBanners, setAlertBanners] = useState([])
+
+  useEffect(() => {
+    setAlertBanners(
+      [
+        {
+          bannerId: `alert-${stringHash(
+            JSON.stringify(alertBannerContent ?? {}),
+          )}`,
+          ...alertBannerContent,
+        },
+        {
+          bannerId: `organization-alert-${stringHash(
+            JSON.stringify(organizationAlertBannerContent ?? {}),
+          )}`,
+          ...organizationAlertBannerContent,
+        },
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
+      ].filter(
+        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+      ),
+    )
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+  ])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -192,8 +252,10 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+
   return (
-    <GlobalContextProvider namespace={namespace}>
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -204,7 +266,7 @@ const Layout: NextComponentType<
                 href={href}
                 as="font"
                 type="font/woff2"
-                crossOrigin="true"
+                crossOrigin="anonymous"
               />
             )
           })}
@@ -275,30 +337,34 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+        {alertBanners.map((banner) => (
           <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
+            key={banner.bannerId}
+            title={banner.title}
+            description={banner.description}
             link={{
-              ...(!!alertBannerContent.link &&
-                !!alertBannerContent.linkTitle && {
-                  href: linkResolver(alertBannerContent.link.type as LinkType, [
-                    alertBannerContent.link.slug,
+              ...(!!banner.link &&
+                !!banner.linkTitle && {
+                  href: linkResolver(banner.link.type as LinkType, [
+                    banner.link.slug,
                   ]).href,
-                  title: alertBannerContent.linkTitle,
+                  title: banner.linkTitle,
                 }),
             }}
-            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
-            dismissable={alertBannerContent.isDismissable}
+            variant={banner.bannerVariant as AlertBannerVariants}
+            dismissable={banner.isDismissable}
             onDismiss={() => {
-              if (alertBannerContent.dismissedForDays !== 0) {
-                Cookies.set(alertBannerId, 'hide', {
-                  expires: alertBannerContent.dismissedForDays,
+              if (banner.dismissedForDays !== 0) {
+                Cookies.set(banner.bannerId, 'hide', {
+                  expires: banner.dismissedForDays,
                 })
               }
             }}
           />
-        )}
+        ))}
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -322,22 +388,40 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  {...(activeLocale === 'is'
+                    ? {
+                        linkToHelpWeb: isWebFooterLinkingToSupportPage
+                          ? linkResolver('serviceweb').href
+                          : '',
+                      }
+                    : { topLinksContact: footerUpperContact })}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              topLinksContact={footerUpperContact}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`
@@ -453,6 +537,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
+
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
@@ -577,12 +662,26 @@ export const withMainLayout = <T,>(
     ])
 
     const themeConfig: Partial<LayoutProps> =
-      'darkTheme' in componentProps
-        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
-        : {}
+      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
+
+    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'organizationPage' in componentProps
+        ? componentProps['organizationPage']['alertBanner']
+        : undefined
+
+    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'article' in componentProps
+        ? componentProps['article']['alertBanner']
+        : undefined
 
     return {
-      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
+      layoutProps: {
+        ...layoutProps,
+        ...layoutConfig,
+        ...themeConfig,
+        organizationAlertBannerContent,
+        articleAlertBannerContent,
+      },
       componentProps,
     }
   }

@@ -7,12 +7,16 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ContentfulRepository } from '@island.is/cms'
-
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
+import { AppModule } from '../../../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { MockFeatureFlagService } from './mockFeatureFlagService'
+import * as uuid from 'uuidv4'
+import jwt from 'jsonwebtoken'
 
 let app: INestApplication
 
@@ -51,24 +55,26 @@ class MockContentfulRepository {
   }
 }
 
-const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
+// eslint-disable-next-line local-rules/disallow-kennitalas
+const nationalId = '1234564321'
+const mockAuthGuard = new MockAuthGuard({
+  nationalId,
+  scope: [ApplicationScope.read, ApplicationScope.write],
+})
 
 beforeAll(async () => {
-  app = await setup({
+  app = await setup(AppModule, {
     override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-            scope: [ApplicationScope.read, ApplicationScope.write],
-          }),
-        ),
+        .useValue(mockAuthGuard),
   })
 
   server = request(app.getHttpServer())
@@ -186,6 +192,11 @@ describe('Application system API', () => {
       .send({ event: 'SUBMIT' })
       .expect(200)
 
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const newStateResponse = await server
       .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -241,7 +252,7 @@ describe('Application system API', () => {
       })
       .expect(200)
 
-    expect(newStateResponse.body.state).toBe('inReview')
+    expect(newStateResponse.body.state).toBe('waitingToAssign')
     expect(newStateResponse.body.answers).toEqual({
       careerHistoryCompanies: ['advania', 'aranja'],
       dreamJob: 'pilot',
@@ -269,6 +280,13 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+      })
+      .expect(200)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({
+        event: 'SUBMIT',
       })
       .expect(200)
 
@@ -351,6 +369,11 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['government'],
         },
       })
+      .expect(200)
+
+    await server
+      .put(`/applications/${response.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
       .expect(200)
 
     const newStateResponse = await server
@@ -735,6 +758,11 @@ describe('Application system API', () => {
     expect(draftStateResponse.body.state).toBe('draft')
     expect(draftStateResponse.body.externalData).toEqual({})
 
+    await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
     const inReviewStateResponse = await server
       .put(`/applications/${draftStateResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
@@ -770,6 +798,147 @@ describe('Application system API', () => {
     expect(
       approvedStateResponse.body.externalData.completeApplication.data,
     ).toEqual({ id: 1337 })
+  })
+
+  const mockExampleApplicationInAssignableState = async (
+    includeNonce = true,
+  ): Promise<{
+    token: string
+    applicationId: string
+  }> => {
+    const secret = environment.templateApi.jwtSecret
+
+    const nonce = uuid.uuid()
+    const uuidSpy = jest.spyOn(uuid, 'uuid')
+    uuidSpy.mockImplementationOnce(() => nonce)
+    //create applications in assign state.
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+    const answers = {
+      assigneeEmail: 'email@email.com',
+      person: {
+        age: '3123',
+        name: '123123',
+        email: 'another@email.com',
+        nationalId: '123',
+        phoneNumber: '5555555',
+      },
+    }
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers,
+      })
+      .expect(200)
+
+    const draftStateResponse = await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(draftStateResponse.body.state).toBe('draft')
+    expect(draftStateResponse.body.externalData).toEqual({})
+
+    const token = jwt.sign(
+      {
+        applicationId: creationResponse.body.id,
+        state: 'waitingToAssign',
+        ...(includeNonce && { nonce }),
+      },
+      secret,
+      { expiresIn: 100 },
+    )
+
+    console.log(
+      {
+        applicationId: creationResponse.body.id,
+        state: 'waitingToAssign',
+        ...(includeNonce && { nonce }),
+      },
+      secret,
+      { expiresIn: 100 },
+    )
+
+    const jwtspy = jest.spyOn(jwt, 'sign')
+    jwtspy.mockImplementationOnce(() => token)
+
+    const employerWaitingToAssignResponse = await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
+    expect(employerWaitingToAssignResponse.body.assignNonces).toStrictEqual([
+      nonce,
+    ])
+
+    return { token, applicationId: creationResponse.body.id }
+  }
+
+  it('PUT applications/assign should work just once', async () => {
+    const { token } = await mockExampleApplicationInAssignableState()
+
+    await server
+      .put('/applications/assign')
+      .send({
+        token,
+      })
+      .expect(200)
+
+    //switch to another user
+    mockAuthGuard.auth.nationalId = '1234567890'
+
+    const assignAgain = await server
+      .put('/applications/assign')
+      .send({
+        token,
+      })
+      .expect(404)
+    expect(assignAgain.body.detail).toBe('Token no longer usable.')
+  })
+
+  it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
+    const {
+      token,
+      applicationId,
+    } = await mockExampleApplicationInAssignableState()
+
+    await server
+      .put(`/applications/${applicationId}/submit`)
+      .send({ event: 'EDIT' })
+      .expect(200)
+
+    const employerWaitingToAssignResponse = await server
+      .put(`/applications/${applicationId}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(employerWaitingToAssignResponse.body.state).toBe('waitingToAssign')
+
+    const assignAgain = await server
+      .put('/applications/assign')
+      .send({
+        token,
+      })
+      .expect(404)
+
+    expect(assignAgain.body.detail).toBe('Token no longer usable.')
+  })
+
+  it('PUT applications/assign supports legacy tokens', async () => {
+    const { token } = await mockExampleApplicationInAssignableState(false)
+
+    await server
+      .put('/applications/assign')
+      .send({
+        token,
+      })
+      .expect(200)
   })
 
   // TODO: Validate that an application that is in a state that should be pruned

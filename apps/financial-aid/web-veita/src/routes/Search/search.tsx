@@ -20,7 +20,7 @@ import {
   Routes,
   Application,
   isNationalIdValid,
-  sanitizeNationalId,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 
@@ -33,11 +33,11 @@ export const Search = () => {
   useEffect(() => {
     if (
       searchNationalId &&
-      sanitizeNationalId(searchNationalId).length === 10
+      sanitizeOnlyNumbers(searchNationalId).length === 10
     ) {
       getApplications({
         variables: {
-          input: { nationalId: sanitizeNationalId(searchNationalId) },
+          input: { nationalId: sanitizeOnlyNumbers(searchNationalId) },
         },
       })
     }
@@ -53,10 +53,10 @@ export const Search = () => {
   const applicationSearchResult = useMemo(() => {
     router.push({
       query: {
-        search: sanitizeNationalId(searchNationalId),
+        search: sanitizeOnlyNumbers(searchNationalId),
       },
     })
-    if (data && sanitizeNationalId(searchNationalId).length === 10) {
+    if (data && sanitizeOnlyNumbers(searchNationalId).length === 10) {
       return data.applicationSearch
     }
     return []
@@ -70,12 +70,12 @@ export const Search = () => {
           value={searchNationalId}
           onChange={(e) => {
             if (
-              sanitizeNationalId(e.target.value).length === 10 &&
+              sanitizeOnlyNumbers(e.target.value).length === 10 &&
               isNationalIdValid(e.target.value)
             ) {
               getApplications({
                 variables: {
-                  input: { nationalId: sanitizeNationalId(e.target.value) },
+                  input: { nationalId: sanitizeOnlyNumbers(e.target.value) },
                 },
               })
             }

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
 
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
 
@@ -9,11 +9,13 @@ export const createAssignToken = (
   application: Application,
   secret: string,
   expiresIn: number,
+  nonce: string,
 ) => {
   const token = jwt.sign(
     {
       applicationId: application.id,
       state: application.state,
+      nonce,
     },
     secret,
     { expiresIn },

@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { I18nContext } from '../../i18n/I18n'
+import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
@@ -41,6 +41,10 @@ export const routesTemplate = {
     is: '/leit',
     en: '/en/search',
   },
+  articlecategories: {
+    is: '/flokkur',
+    en: '/en/category',
+  },
   articlecategory: {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
@@ -57,6 +61,10 @@ export const routesTemplate = {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
   },
+  organizationpublishedmaterial: {
+    is: '/s/[slug]/utgefid-efni',
+    en: '/en/o/[slug]/published-material',
+  },
   auctions: {
     is: '/s/syslumenn/uppbod',
     en: '',
@@ -68,6 +76,14 @@ export const routesTemplate = {
   apicataloguepage: {
     is: '/s/stafraent-island/vefthjonustur',
     en: '',
+  },
+  organizationnews: {
+    is: '/s/[organization]/frett/[slug]',
+    en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationnewsoverview: {
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
@@ -105,14 +121,7 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  organizationnews: {
-    is: '/s/[organization]/frett/[slug]',
-    en: '/en/o/[organization]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/s/[organization]/frett',
-    en: '/en/o/[organization]/news',
-  },
+
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -157,17 +166,21 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
-  helpdesk: {
-    is: '/thjonustuvefur',
-    en: '/en/helpdesk',
+  serviceweb: {
+    is: '/adstod',
+    en: '/en/help',
   },
-  helpdeskcategory: {
-    is: '/thjonustuvefur/[organizationSlug]/[categorySlug]',
-    en: '/en/helpdesk/[organizationSlug]/[categorySlug]',
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
   },
-  helpdesksearch: {
-    is: '/thjonustuvefur/leit',
-    en: '/en/helpdesk/search',
+  servicewebcategory: {
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
+  },
+  servicewebsearch: {
+    is: '/adstod/leit',
+    en: '/en/help/search',
   },
   homepage: {
     is: '/',
@@ -202,6 +215,20 @@ export const extractSlugsByRouteTemplate = (
   return pathParts.filter((_, index) => {
     return templateParts[index]?.startsWith('[') ?? false
   })
+}
+
+/** Check if path is of link type */
+export const pathIsRoute = (path: string, linkType: LinkType) => {
+  const segments = path.split('/').filter((x) => x)
+
+  const localeSegment = isLocale(segments[0]) ? segments[0] : ''
+  const firstSegment = (localeSegment ? segments[1] : segments[0]) ?? ''
+
+  const current = `/${
+    localeSegment ? localeSegment + '/' : ''
+  }${firstSegment}`.replace(/\/$/, '')
+
+  return current === linkResolver(linkType).href
 }
 
 /*

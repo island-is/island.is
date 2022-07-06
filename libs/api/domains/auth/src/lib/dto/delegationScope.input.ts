@@ -10,6 +10,6 @@ export class DelegationScopeInput {
   @Field(() => ScopeType)
   type!: ScopeType
 
-  @Field(() => Date, { nullable: true })
-  validTo?: Date
+  @Field(() => Date)
+  validTo!: Date
 }

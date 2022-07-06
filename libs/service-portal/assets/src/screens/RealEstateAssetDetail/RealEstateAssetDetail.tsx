@@ -7,14 +7,12 @@ import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
-  IntroHeader,
   NotFound,
+  amountFormat,
 } from '@island.is/service-portal/core'
-import TableUnits from '../../components/TableUnits'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
-import amountFormat from '../../utils/amountFormat'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import {
@@ -23,6 +21,7 @@ import {
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import { TableGrid, TableUnits } from '@island.is/service-portal/core'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
@@ -83,11 +82,11 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return <AssetLoader />
   }
 
-  if (!id || error) {
+  if (!id || error || (!loading && data?.assetsDetail === null)) {
     return (
       <NotFound
         title={defineMessage({
-          id: 'sp.assets',
+          id: 'sp.assets:not-found',
           defaultMessage: 'Fasteign fannst ekki',
         })}
       />
@@ -98,23 +97,9 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     ownersQuery?.data?.assetsPropertyOwners.paging?.hasNextPage ||
     (assetData.registeredOwners?.paging?.hasNextPage &&
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
+
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.assets:title',
-            defaultMessage: 'Fasteignir',
-          })}
-          intro={defineMessage({
-            id: 'sp.assets:intro',
-            defaultMessage:
-              'Hér færðu upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert skráður eigandi að.',
-          })}
-          img="./assets/images/sofa.svg"
-          hideImgPrint
-        />
-      </Box>
       <DetailHeader
         title={`${assetData?.defaultAddress?.displayShort} - ${assetData?.propertyNumber}`}
       />
@@ -156,6 +141,38 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           ]}
         />
       </Box>
+      {assetData.land?.landNumber ? (
+        <TableGrid
+          title={formatMessage(messages.land)}
+          mt
+          dataArray={[
+            [
+              {
+                title: formatMessage(messages.usage),
+                value: assetData.land?.useDisplay ?? '',
+              },
+              {
+                title: formatMessage(messages.landSize),
+                value: assetData.land?.area
+                  ? `${assetData.land?.area} ${assetData.land?.areaUnit}`
+                  : '',
+              },
+            ],
+            [
+              {
+                title: formatMessage(messages.landNumber),
+                value: assetData.land?.landNumber,
+              },
+              {
+                title: formatMessage(messages.landAppraisal),
+                value: assetData.land?.landAppraisal
+                  ? amountFormat(assetData.land?.landAppraisal)
+                  : '',
+              },
+            ],
+          ]}
+        />
+      ) : null}
       <Box marginTop={7}>
         {assetData?.unitsOfUse?.unitsOfUse &&
         assetData?.unitsOfUse?.unitsOfUse?.length > 0 ? (

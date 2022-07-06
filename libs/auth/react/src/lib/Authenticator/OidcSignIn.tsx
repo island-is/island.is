@@ -23,7 +23,7 @@ export const OidcSignIn = ({ authDispatch }: Props): ReactElement => {
       authDispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
 
       const url = typeof user.state === 'string' ? user.state : '/'
-      history.push(url)
+      history.replace(url)
     } catch (error) {
       if (error.error === 'login_required') {
         // If trying to switch delegations and the IDS session is expired, we'll

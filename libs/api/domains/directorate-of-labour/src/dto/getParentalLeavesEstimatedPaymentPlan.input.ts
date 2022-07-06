@@ -1,4 +1,4 @@
-import { Field, Float, InputType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsString, IsNumber, IsBoolean, IsArray } from 'class-validator'
 
 @InputType()
@@ -11,9 +11,9 @@ class Period {
   @IsString()
   to!: string
 
-  @Field(() => Float)
+  @Field(() => String)
   @IsNumber()
-  ratio!: number // Ratio of usage in period.
+  ratio!: string // Ratio of usage in period.
 
   @Field(() => Boolean)
   @IsBoolean()

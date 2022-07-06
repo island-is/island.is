@@ -9,8 +9,9 @@ import {
   ResponsiveProp,
   GridColumns,
 } from '@island.is/island-ui/core'
-interface CheckboxInfo {
-  title: string
+
+export interface CheckboxInfo {
+  title: MessageDescriptor
   id: string
   info: MessageDescriptor
 }
@@ -48,8 +49,8 @@ const CheckboxList: React.FC<Props> = ({
                 }
               >
                 <Checkbox
-                  name={checkbox.title}
-                  label={checkbox.title}
+                  name={formatMessage(checkbox.title)}
+                  label={formatMessage(checkbox.title)}
                   value={checkbox.id}
                   checked={selected && selected.indexOf(checkbox.id) > -1}
                   tooltip={formatMessage(checkbox.info)}

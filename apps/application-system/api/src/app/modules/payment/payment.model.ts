@@ -8,8 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Application } from '../application/application.model'
-
+import { Application } from '@island.is/application/api/core'
 @Table({
   tableName: 'payment',
   timestamps: true,
@@ -20,7 +19,7 @@ import { Application } from '../application/application.model'
     },
   ],
 })
-export class Payment extends Model<Application> {
+export class Payment extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

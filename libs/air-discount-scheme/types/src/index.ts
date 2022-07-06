@@ -9,3 +9,5 @@ export type {
   FlightLegsInput,
 } from './lib/flight'
 export type { User, BaseUser, Fund } from './lib/user'
+export type { AuthUser } from './lib/authUser'
+export { Role } from './lib/authUser'

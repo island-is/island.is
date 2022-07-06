@@ -155,36 +155,34 @@ const DocumentCard: FC<Props> = ({ document }) => {
         }}
       />
       {isModalOpen && (
-        <>
-          <Modal
-            id={`documentModal_${new Date().getMilliseconds()}`}
-            onCloseModal={handleOnModalClose}
-          >
-            <Stack space={2}>
-              <Text variant="h1">
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-title',
-                  defaultMessage: 'Ekki stuðningur við þetta skjal',
-                })}
-              </Text>
-              <Text>
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-description',
-                  defaultMessage:
-                    'Því miður bjóða mínar síður ekki upp á stuðning við þetta skjal eins og er. Þú getur farið á vef viðkomandi stofnunar til þess að skoða skjalið.',
-                })}
-              </Text>
-            </Stack>
-            <Box marginTop={5} className={styles.modalButtonWrapper}>
-              <Button fluid variant="primary" onClick={handleOnModalClose}>
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-closeModalBtnText',
-                  defaultMessage: 'Loka glugga',
-                })}
-              </Button>
-            </Box>
-          </Modal>
-        </>
+        <Modal
+          id={`documentModal_${new Date().getMilliseconds()}`}
+          onCloseModal={handleOnModalClose}
+        >
+          <Stack space={2}>
+            <Text variant="h3" as="h1">
+              {formatMessage({
+                id: 'sp.documents:document-notSupported-title',
+                defaultMessage: 'Ekki er hægt að sýna þetta skjal.',
+              })}
+            </Text>
+            <Text>
+              {formatMessage({
+                id: 'sp.documents:document-notSupported-description',
+                defaultMessage:
+                  'Því miður er ekki hægt að skoða þetta skjal á Mínum síðum eins og er. Þú getur skoðað skjalið á vef viðkomandi stofnunar.',
+              })}
+            </Text>
+          </Stack>
+          <Box marginTop={5} className={styles.modalButtonWrapper}>
+            <Button fluid variant="primary" onClick={handleOnModalClose}>
+              {formatMessage({
+                id: 'sp.documents:document-notSupported-closeModalBtnText',
+                defaultMessage: 'Loka glugga',
+              })}
+            </Button>
+          </Box>
+        </Modal>
       )}
     </>
   )

@@ -45,7 +45,7 @@ export class ClientAllowedScopeController {
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
   async findAvailabeScopes(): Promise<ApiScope[]> {
-    return this.clientsService.FindAvailabeScopes()
+    return this.clientsService.findAvailabeScopes()
   }
 
   /** Adds new scope to client */
@@ -77,7 +77,7 @@ export class ClientAllowedScopeController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: clientId,

@@ -1,9 +1,3 @@
-import { User } from 'oidc-client'
-
-export const userHasAccessToScope = (user: User, scope: string) => {
-  return true
-}
-
 export const getNameAbbreviation = (name: string) => {
   const names = name.split(' ')
   let initials = names[0].substring(0, 1).toUpperCase()
@@ -20,4 +14,43 @@ export const formatNationalId = (nationalId: string): string => {
   } else {
     return nationalId
   }
+}
+
+export const tableStyles = {
+  padding: '16px',
+}
+type DrivingLicenseSuspended = {
+  /* ANY because response was null */
+  dagsFra?: any
+  dagsTil?: any
+  skirteiniGlatad?: any
+  tegundSviptingarHeiti?: any
+  tegundSviptinar?: any
+  skirteiniUrGildi?: any
+  endurupptakaSkirteinis?: any
+}
+
+type DrivingLicenseCategoryType = {
+  id: number
+  nr: string
+  utgafuDags: string
+  gildirTil: string
+  aths: string
+}
+
+export type DrivingLicenseType = {
+  id: number
+  nafn: string
+  kennitala: string
+  faedingarstadur: string
+  faedingarStadurHeiti: string
+  utgafuDagsetning: string
+  gildirTil: string
+  nrUtgafustadur: string
+  nafnUtgafustadur: string
+  rettindi: Array<DrivingLicenseCategoryType>
+  athugasemdir?: []
+  mynd: string
+  undirskrift: string
+  svipting: Array<DrivingLicenseSuspended>
 }

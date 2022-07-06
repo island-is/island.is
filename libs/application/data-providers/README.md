@@ -1,4 +1,6 @@
-# Data Providers
+<!-- gitbook-navigation: "Shared Data Providers" -->
+
+# Application Shared Data Providers
 
 This library contains pre-built, reusable data providers used for the application system.
 

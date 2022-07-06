@@ -1,4 +1,5 @@
-import { FormValue, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import {
   isGeneralWorkplaceAccident,
   isStudiesAccident,
@@ -41,8 +42,11 @@ export const getWorkplaceData = (
   }
 
   const workplaceData = {
-    companyInfo: answers.companyInfo,
-    representitive: answers.representative,
+    companyInfo: getValueViaPath(answers, 'companyInfo') as CompanyInfo,
+    representitive: getValueViaPath(
+      answers,
+      'representative',
+    ) as RepresentativeInfo,
     representitiveMsg: representativeInfo,
   } as WorkplaceData
 

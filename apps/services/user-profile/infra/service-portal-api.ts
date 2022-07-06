@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
   service('service-portal-api')
@@ -12,9 +12,13 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         prod: 'https://island.is/minarsidur',
       },
       EMAIL_REGION: 'eu-west-1',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
     .secrets({
-      SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN',
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',
       NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD',
       NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME',
@@ -29,9 +33,30 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .replicaCount({
+      default: 2,
+      max: 30,
+      min: 2,
+    })
+    .ingress({
+      internal: {
+        host: {
+          dev: 'service-portal-api',
+          staging: 'service-portal-api',
+          prod: 'service-portal-api',
+        },
+        paths: ['/'],
+        public: false,
+      },
+    })
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '800m', memory: '1024Mi' },
+      requests: { cpu: '400m', memory: '512Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'user-notification',
+      'identity-server',
+    )

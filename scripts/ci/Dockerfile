@@ -1,5 +1,6 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-FROM node:14.17.0-alpine3.13 as deps
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:14.19.0-alpine3.14 as deps
 
 RUN apk add -U git
 
@@ -23,7 +24,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
-FROM node:14.17.0-alpine3.13 as output-base
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:14.19.0-alpine3.14 as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -39,26 +40,26 @@ ENV NODE_ENV=production
 
 WORKDIR /webapp
 
-RUN npm install -g \
-    sequelize \
-    sequelize-cli \
-    pg
-    # npx
-    # logform \
-    # dd-trace
-
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
+
+FROM output-base as output-base-with-pg
+
+RUN npm install -g \
+  sequelize \
+  sequelize-cli \
+  pg
+
 USER runner
 
-FROM output-base as output-express
+FROM output-base-with-pg as output-express
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
 CMD [ "node", "main.js" ]
 
-FROM output-base as output-next
+FROM output-base-with-pg as output-next
 
 ENV PORT=4200
 
@@ -68,7 +69,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM nginx:1.21.0-alpine as output-static
+FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -91,3 +92,15 @@ RUN apk update && \
 ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
+
+FROM output-base as output-jest
+
+RUN echo 'module.exports = {};' > jest.config.js
+
+RUN npm install -g jest
+
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+
+USER runner
+
+CMD [ "jest", "main.spec.js" ]

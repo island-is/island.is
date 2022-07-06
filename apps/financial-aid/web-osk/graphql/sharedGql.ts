@@ -8,14 +8,6 @@ export const CreateApplicationMutation = gql`
   }
 `
 
-export const ApplicationEventMutation = gql`
-  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
-    createApplicationEvent(input: $input) {
-      id
-    }
-  }
-`
-
 export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
@@ -43,7 +35,8 @@ export const CurrentUserQuery = gql`
       spouse {
         hasPartnerApplied
         hasFiles
-        spouseName
+        applicantName
+        applicantSpouseEmail
       }
       currentApplicationId
     }
@@ -53,6 +46,42 @@ export const CurrentUserQuery = gql`
 export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
+      id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      familyStatus
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
+export const ApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
       id
       homeCircumstances
       usePersonalTaxCredit
@@ -85,14 +114,6 @@ export const ApplicationQuery = gql`
   }
 `
 
-export const ApplicationMutation = gql`
-  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
-    updateApplication(input: $input) {
-      id
-    }
-  }
-`
-
 export const NationalRegistryUserQuery = gql`
   query getNationalRegistryUserQuery {
     municipalityNationalRegistryUserV2 {
@@ -108,6 +129,29 @@ export const NationalRegistryUserQuery = gql`
         nationalId
         maritalStatus
         name
+      }
+    }
+  }
+`
+
+export const GatherTaxDataQuery = gql`
+  query gatherTaxDataQuery($input: MunicipalitiesPersonalTaxReturnIdInput!) {
+    municipalitiesPersonalTaxReturn(input: $input) {
+      personalTaxReturn {
+        key
+        name
+        size
+      }
+    }
+    municipalitiesDirectTaxPayments {
+      success
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
       }
     }
   }

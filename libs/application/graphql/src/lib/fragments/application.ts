@@ -7,6 +7,7 @@ export const ApplicationFragment = gql`
     modified
     applicant
     assignees
+    applicantActors
     state
     actionCard {
       title
@@ -15,8 +16,8 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      deleteButton
     }
-    attachments
     typeId
     answers
     externalData

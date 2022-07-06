@@ -1,21 +1,20 @@
 import * as z from 'zod'
 import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
-import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import {
   Application,
   ApplicationStatus,
+  ApplicationTemplate,
+  ApplicationTypes,
   ExternalData,
   FormValue,
-} from '../types/Application'
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
-} from '../types/StateMachine'
-import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+} from '@island.is/application/types'
+import { buildForm } from './formBuilders'
+import { DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {
@@ -27,12 +26,12 @@ const createMockApplication = (
 ): Application => ({
   id: '123',
   assignees: [],
+  applicantActors: [],
   state: data.state || 'draft',
   applicant: '111111-3000',
   typeId: data.typeId || ApplicationTypes.EXAMPLE,
   modified: new Date(),
   created: new Date(),
-  attachments: {},
   answers: data.answers || {},
   externalData: data.externalData || {},
   status: ApplicationStatus.IN_PROGRESS,

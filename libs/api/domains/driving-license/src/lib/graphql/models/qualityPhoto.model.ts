@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('DrivingLicenseQualityPhoto')
 export class QualityPhoto {
   @Field()
-  success!: boolean
+  hasQualityPhoto!: boolean
 
   @Field({ nullable: true })
-  qualityPhoto!: string | null
+  dataUri?: string
 }

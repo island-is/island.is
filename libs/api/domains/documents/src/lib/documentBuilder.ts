@@ -1,18 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
+
 import { DocumentInfoDTO } from '@island.is/clients/documents'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
+
 import { Document } from './models/document.model'
-import {
-  DocumentTypeFilter,
-  DownloadServiceConfig,
-  DOWNLOAD_SERVICE_CONFIG,
-  FileType,
-} from './types'
+import { DocumentTypeFilter, FileType } from './types'
 
 @Injectable()
 export class DocumentBuilder {
   constructor(
-    @Inject(DOWNLOAD_SERVICE_CONFIG)
-    private downloadServiceConfig: DownloadServiceConfig,
+    @Inject(DownloadServiceConfig.KEY)
+    private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   // Handling edge case for documents that cant be presented due to requiring authentication through rsk.is
@@ -29,16 +28,18 @@ export class DocumentBuilder {
   public buildDocument(documentDto: DocumentInfoDTO): Document {
     const builtDocument = Document.fromDocumentInfo(documentDto)
     const { url, fileType } = this.getTypeFilter(documentDto)
+    const hasOpened = fileType === FileType.URL ? true : builtDocument.opened // URL documents should not display as unopened as we do not have the ability to mark them as read.
     return {
       ...builtDocument,
       url,
       fileType,
+      opened: hasOpened,
     }
   }
 
   private getTypeFilter(
     document: DocumentInfoDTO,
-  ): Partial<DocumentTypeFilter> {
+  ): Pick<DocumentTypeFilter, 'url' | 'fileType'> {
     const found = this.customDocuments.find(
       (x) =>
         document.subject.includes(x.subjectContains) &&
@@ -52,6 +53,6 @@ export class DocumentBuilder {
   }
 
   private formatDownloadServiceUrl(document: DocumentInfoDTO): string {
-    return `${this.downloadServiceConfig.downloadServiceBaseUrl}/download/v1/electronic-documents/${document.id}`
+    return `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${document.id}`
   }
 }

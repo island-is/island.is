@@ -25,14 +25,14 @@ export const DynamicFooter = ({
     return null
   }
 
-  const contactLink = `${linkResolver('helpdesk').href}/${slug}/hafa-samband`
+  const contactLink = `${linkResolver('serviceweb').href}/${slug}/hafa-samband`
 
   return footerEnabled.includes(slug) ? (
     <OrganizationFooter organizations={[organization]} />
   ) : (
     <ServiceWebFooter
       title={organization.title}
-      logoSrc={organization.logo.url}
+      logoSrc={organization.logo?.url}
       phone={organization.phone}
       contactLink={contactLink}
     />

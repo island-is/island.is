@@ -9,8 +9,11 @@ export const container = style({
   },
 })
 
+export const containerDisabled = style({
+  opacity: 0.4,
+})
+
 export const uploadedFile = style({
-  border: `1px solid ${theme.color.blue200}`,
   transition: 'background .5s ease',
   lineHeight: 0,
 })

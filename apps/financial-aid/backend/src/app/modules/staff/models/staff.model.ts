@@ -35,23 +35,17 @@ export class StaffModel extends Model<Staff> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   @ApiProperty()
   nationalId: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  municipalityId: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  municipalityName: string
+  municipalityIds: string[]
 
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
@@ -90,13 +84,6 @@ export class StaffModel extends Model<Staff> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  municipalityHomepage: string
 
   @Column({
     type: DataType.STRING,

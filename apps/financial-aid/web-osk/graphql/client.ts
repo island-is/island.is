@@ -6,7 +6,7 @@ import retryLink from './retryLink'
 
 const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-const cache = new InMemoryCache({ possibleTypes: {} })
+const cache = new InMemoryCache({ possibleTypes: {}, addTypename: false })
 
 const client = new ApolloClient({
   name: 'financial-aid-web-client',

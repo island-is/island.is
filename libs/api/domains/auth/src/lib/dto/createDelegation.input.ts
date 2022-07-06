@@ -8,5 +8,5 @@ export class CreateDelegationInput {
   toNationalId!: string
 
   @Field(() => [DelegationScopeInput], { nullable: true })
-  scopes?: DelegationScopeInput[] | null
+  scopes?: DelegationScopeInput[]
 }

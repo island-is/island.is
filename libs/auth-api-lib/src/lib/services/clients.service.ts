@@ -88,6 +88,7 @@ export class ClientsService {
       offset: offset,
       distinct: true,
       where: includeArchived ? {} : { archived: null },
+      order: ['clientId'],
     })
   }
 
@@ -160,6 +161,7 @@ export class ClientsService {
       where: includeArchived
         ? { nationalId: searchString }
         : { nationalId: searchString, archived: null },
+      order: ['clientId'],
       offset: offset,
       distinct: true,
     })
@@ -179,6 +181,7 @@ export class ClientsService {
       where: includeArchived
         ? { clientId: searchString }
         : { clientId: searchString, archived: null },
+      order: ['clientId'],
       offset: offset,
       distinct: true,
     })
@@ -536,7 +539,7 @@ export class ClientsService {
   }
 
   /** Finds available scopes for AdminUI to select allowed scopes */
-  async FindAvailabeScopes(): Promise<ApiScope[]> {
+  async findAvailabeScopes(): Promise<ApiScope[]> {
     const identityResources = (await this.identityResourceModel.findAll({
       where: { archived: null },
     })) as unknown

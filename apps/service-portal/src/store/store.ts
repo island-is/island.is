@@ -2,7 +2,6 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
-import uniqBy from 'lodash/uniqBy'
 import { modules, ModuleKeys } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 
@@ -11,6 +10,7 @@ export interface StoreState {
   modulesPending: boolean
   navigationState: AsyncActionState
   notificationMenuState: MenuState
+  sidebarState: MenuState
   mobileMenuState: MenuState
   userMenuState: MenuState
   routes: ServicePortalRoute[]
@@ -20,6 +20,7 @@ export const initialState: StoreState = {
   modules,
   modulesPending: true,
   navigationState: 'passive',
+  sidebarState: 'open',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
   userMenuState: 'closed',
@@ -49,16 +50,16 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         routes: action.payload,
       }
-    case ActionType.UpdateFulfilledRoutes:
-      return {
-        ...state,
-        routes: uniqBy([...action.payload, ...state.routes], 'path'),
-      }
     case ActionType.SetModulesList:
       return {
         ...state,
         modules: action.payload,
         modulesPending: false,
+      }
+    case ActionType.SetSidebarMenuState:
+      return {
+        ...state,
+        sidebarState: action.payload,
       }
     default:
       return state

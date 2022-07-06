@@ -1,4 +1,5 @@
-import { FormValue } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import {
   GeneralWorkplaceAccidentLocationEnum,
   ProfessionalAthleteAccidentLocationEnum,
@@ -9,11 +10,11 @@ import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
 // Location and purpose of accident only relevant in work and studies and never in home
 // activities
 export const hideLocationAndPurpose = (formValue: FormValue) => {
-  const answer = (formValue as {
-    accidentLocation: {
-      answer: GeneralWorkplaceAccidentLocationEnum & StudiesAccidentLocationEnum
-    }
-  })?.accidentLocation?.answer
+  const answer = getValueViaPath(formValue, 'accidentLocation.answer') as
+    | GeneralWorkplaceAccidentLocationEnum
+    | StudiesAccidentLocationEnum
+    | ProfessionalAthleteAccidentLocationEnum
+
   if (isHomeActivitiesAccident(formValue)) {
     return true
   }

@@ -38,6 +38,7 @@ const useMyApplication = () => {
 
   return {
     myApplication,
+    updateApplication,
     error,
     loading,
   }

@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNumber, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class GetRealEstateInput {
@@ -16,18 +16,18 @@ export class GetPagingTypes {
 
   @IsString()
   @Field({ nullable: true })
-  cursor?: string | null
+  cursor?: string
 
   @Field({ nullable: true })
-  limit?: number | null
+  limit?: number
 }
 
 @InputType()
 export class GetMultiPropertyInput {
   @IsString()
   @Field({ nullable: true })
-  cursor?: string | null
+  cursor?: string
 
   @Field({ nullable: true })
-  limit?: number | null
+  limit?: number
 }

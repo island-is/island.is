@@ -1,151 +1,12 @@
 import React, { FC, useEffect } from 'react'
-import { m } from '../../lib/messages'
-import type { Application, FieldBaseProps } from '@island.is/application/core'
+import type { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
-import { useQuery, gql } from '@apollo/client'
-import { DrivingLicenseFakeData, YES } from '../../lib/constants'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import { extractReasons } from './extractReasons'
+import { useEligibility } from './useEligibility'
 
-const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
-  return eligibility.requirements.map(({ key, requirementMet }) =>
-    requirementKeyToStep(key, requirementMet),
-  )
-}
-
-const QUERY = gql`
-  query EligibilityQuery($input: ApplicationEligibilityInput!) {
-    drivingLicenseApplicationEligibility(input: $input) {
-      isEligible
-      requirements {
-        key
-        requirementMet
-      }
-    }
-  }
-`
-
-// TODO: we need a better way of getting the translated string in here, outside
-// of react. Possibly we should just make a more flexible results screen.
-// This string ends up being used as the paramejter displayed as the error message
-// for the failed dataprovider
-const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
-  const step = {
-    state: isRequirementMet
-      ? ReviewSectionState.complete
-      : ReviewSectionState.requiresAction,
-  }
-
-  switch (key) {
-    case RequirementKey.DrivingSchoolMissing:
-      return {
-        ...step,
-        title: m.requirementUnmetDrivingSchoolTitle,
-        description: m.requirementUnmetDrivingSchoolDescription,
-      }
-    case RequirementKey.DrivingAssessmentMissing:
-      return {
-        ...step,
-        title: m.requirementUnmetDrivingAssessmentTitle,
-        description: m.requirementUnmetDrivingAssessmentDescription,
-      }
-    case RequirementKey.DeniedByService:
-      return {
-        ...step,
-        title: m.requirementUnmetDeniedByServiceTitle,
-        description: m.requirementUnmetDeniedByServiceDescription,
-      }
-    case RequirementKey.LocalResidency:
-      return {
-        ...step,
-        title: m.requirementUnmetLocalResidencyTitle,
-        description: m.requirementUnmetLocalResidencyDescription,
-      }
-    default:
-      throw new Error('Unknown requirement reason - should not happen')
-  }
-}
-
-interface UseEligibilityResult {
-  error?: Error
-  eligibility?: ApplicationEligibility
-  loading: boolean
-}
-
-const fakeEligibility = (
-  applicationFor: DrivingLicenseApplicationFor,
-): ApplicationEligibility => {
-  return {
-    isEligible: true,
-    requirements: [
-      ...(applicationFor === B_FULL
-        ? [
-            {
-              key: RequirementKey.DrivingAssessmentMissing,
-              requirementMet: true,
-            },
-            {
-              key: RequirementKey.DrivingSchoolMissing,
-              requirementMet: true,
-            },
-          ]
-        : [
-            {
-              key: RequirementKey.LocalResidency,
-              requirementMet: true,
-            },
-          ]),
-      {
-        key: RequirementKey.DeniedByService,
-        requirementMet: true,
-      },
-    ],
-  }
-}
-
-const useEligibility = (
-  answers: Application['answers'],
-): UseEligibilityResult => {
-  const fakeData = answers.fakeData as DrivingLicenseFakeData | undefined
-  const usingFakeData = fakeData?.useFakeData === YES
-
-  const applicationFor =
-    (answers.applicationFor as DrivingLicenseApplicationFor) || B_FULL
-
-  const { data = {}, error, loading } = useQuery(QUERY, {
-    skip: usingFakeData,
-    variables: {
-      input: {
-        applicationFor,
-      },
-    },
-  })
-
-  if (usingFakeData) {
-    return {
-      loading: false,
-      eligibility: fakeEligibility(applicationFor),
-    }
-  }
-
-  if (error) {
-    console.error(error)
-    // TODO: m.
-    return {
-      loading: false,
-      error: error,
-    }
-  }
-
-  return {
-    loading,
-    eligibility: data.drivingLicenseApplicationEligibility,
-  }
-}
-
-const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
+export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   const { eligibility, loading, error } = useEligibility(application.answers)
 
   const { setValue } = useFormContext()
@@ -185,5 +46,3 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
     </Box>
   )
 }
-
-export { EligibilitySummary }

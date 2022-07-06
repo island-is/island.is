@@ -1,6 +1,6 @@
 import each from 'jest-each'
 
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {
@@ -21,17 +21,6 @@ describe('transformCase', () => {
 
         // Assert
         expect(res.sendRequestToDefender).toBe(transformedValue)
-      })
-
-      it(`should transform ${originalValue} defenderIsSpokesperson to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = { defenderIsSpokesperson: originalValue } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.defenderIsSpokesperson).toBe(transformedValue)
       })
 
       it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
@@ -65,17 +54,6 @@ describe('transformCase', () => {
 
         // Assert
         expect(res.isHeightenedSecurityLevel).toBe(transformedValue)
-      })
-
-      it(`should transform ${originalValue} isMasked to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = { isMasked: originalValue } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.isMasked).toBe(transformedValue)
       })
     },
   )

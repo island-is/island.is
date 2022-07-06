@@ -1,5 +1,10 @@
 import { gql, useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
@@ -13,7 +18,6 @@ import kennitala from 'kennitala'
 import React, { useEffect } from 'react'
 import { employer } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
-import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
 
 const updateCurrentEmployerMutation = gql`
   mutation UpdateCurrentEmployer($input: UpdateCurrentEmployerInput!) {
@@ -45,19 +49,26 @@ const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
 export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const [updateCurrentEmployer] = useMutation(updateCurrentEmployerMutation)
-  const externalData = application.externalData as PaymentPlanExternalData
-  const correctedNationalId =
-    (application.answers as PublicDebtPaymentPlan)?.employer
-      ?.correctedNationalId?.id || ''
-  const conditions =
-    externalData.paymentPlanPrerequisites?.data?.conditions || null
-  const debts = externalData.paymentPlanPrerequisites?.data?.debts || null
+
+  const correctedNationalId = getValueViaPath(
+    application.answers,
+    'correctedEmployer.nationalId',
+    '',
+  ) as string
+  const conditions = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.conditions',
+  ) as PaymentScheduleConditions
+  const debts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
 
   const updateEmployer = async () => {
     const results = await updateCurrentEmployer({
       variables: {
         input: {
-          employerNationalId: kennitala.clean(correctedNationalId),
+          employerNationalId: kennitala.sanitize(correctedNationalId),
         },
       },
     })
@@ -84,7 +95,6 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
         </Link>
       </Text>
       <Box marginBottom={[3, 3, 5]}>
-        {/* TODO: Handle null values? */}
         <InfoBox
           title={`${
             conditions?.disposableIncome.toLocaleString('is-IS') || 0
@@ -100,7 +110,6 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
           percent: `${conditions?.percent}%`,
         })}
       </Text>
-      {/* TODO: Handle null values? */}
       <InfoBox
         title={`${conditions?.minPayment.toLocaleString('is-IS') || 0} kr.`}
         text={formatMessage(employer.labels.yourMinimumPayment)}

@@ -4,15 +4,12 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Link,
   Text,
-  Icon,
-  BulletList,
-  Bullet,
   ContentBlock,
   Button,
-  Tag,
   Hidden,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 import { SvgLogin } from '@island.is/web/components'
 import { LoginPageTexts } from '@island.is/web/components'
@@ -30,32 +27,6 @@ interface LoginProps {
 
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
-
-  const oldListItems: string[] = n('gomluSidurList', [
-    'Sjá Pósthólf',
-    'Þínar Upplýsingar',
-    'Fjármál',
-    'Starfsleyfi kennara',
-    'Samræmd könnunarpróf',
-  ])
-
-  const newListItems: string[] = n('nyjuSidurList', [
-    'Sjá Pósthólf',
-    'Þínar Upplýsingar',
-    'Fjármál',
-    'Starfsleyfi kennara',
-    'Samræmd könnunarpróf',
-  ])
-
-  const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
-  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
-
-  const oldHalf = Math.ceil(oldListItemsArray.length / 2)
-  const oldFirstHalf = oldListItemsArray.slice(0, oldHalf)
-  const oldSecondHalf = oldListItemsArray.slice(
-    oldHalf,
-    oldListItemsArray.length,
-  )
 
   const minarsidurLink = '/minarsidur/postholf'
 
@@ -79,6 +50,22 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     }
   }
 
+  const nyjarSidurText = n(
+    'nyjuSidurText',
+    'Nýjar Mínar síður hafa verið uppfærðar með því markmiði að auka þægindi, aðgengi og gagnsæi einstaklinga og fyrirtækja að upplýsingum hjá ríkinu.',
+  )
+
+  const nyjarSidurSubText = n(
+    'nyjuSidurSubText',
+    'Eldri Mínar síður (hlekkur á á https://innskraning.island.is/?id=minarsidur.island.is) eru fyrir einstaklinga sem eru ekki með rafræn skilríki. Rafræn skilríki eru öruggari og munu taka alfarið við Íslykli í komandi framtíð.',
+  )
+
+  const nyjarSidurBullets = n('nyjuSidurBullets', [
+    'Einstaklingar skrá sig inn með rafrænum skilríkjum.',
+    'Einstaklingar með prókúru fyrirtækis skrá sig inn með sínum rafrænu skilríkjum en hægt er að skipta yfir á fyrirtæki eða önnur umboð.',
+    'Ef fyrirtækið birtist ekki þarf að athuga skráningu prókúrhafa hjá Skattinum. ',
+  ])
+
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
@@ -86,18 +73,29 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 3, 4]}
+              paddingBottom={[3, 0]}
             >
-              <Tag disabled>{n('nyjuSidurTag', 'Beta útgáfa')}</Tag>
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
-                {n('nyjuSidurTitle', 'Ný útgáfa af mínum síðum á island.is')}
-              </Text>
-              <Text as="p" variant="default" marginBottom="p5">
                 {n(
-                  'nyjuSidurText',
-                  'Ný útgáfa minna síðna á ísland.is. Hér er um að ræða beta útgáfu að nýjum mínum síðum, ekki eru allir möguleikar sem eru á gömlu mínum síðum í boði hér ennþá.',
+                  'nyjuSidurTitle',
+                  'Mínar síður fyrir einstaklinga og fyrirtæki',
                 )}
               </Text>
+              {nyjarSidurText && (
+                <Text as="p" variant="default" marginBottom={4}>
+                  {nyjarSidurText}
+                </Text>
+              )}
+              <Box marginBottom={3}>
+                {nyjarSidurBullets?.length > 0 && (
+                  <BulletList type="ul" space={2}>
+                    {nyjarSidurBullets.map((x, index) => {
+                      return <Bullet key={index}>{x}</Bullet>
+                    })}
+                  </BulletList>
+                )}
+              </Box>
+
               <div>
                 <a
                   tabIndex={-1}
@@ -105,91 +103,50 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   href={minarsidurLink}
                   onClick={trackAndNavigateNew}
                 >
-                  <Button as="span">
-                    {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
-                  </Button>
+                  <Button as="span">{n('nyjuSidurLink', 'Innskráning')}</Button>
                 </a>
-                <Link
-                  href="//minarsidur.island.is/"
-                  color="blue400"
-                  underline="normal"
-                  underlineVisibility="always"
-                  onClick={() => webLoginButtonSelect('Old')}
-                  newTab
-                  className={styles.link}
-                >
-                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}{' '}
-                  <Icon icon="open" type="outline" />
-                </Link>
               </div>
             </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 4, 5]}
-            >
+            <GridColumn span={['12/12', '12/12', '6/12']}>
               <Hidden below="md">
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  alignItems="flexStart"
-                >
+                <Box display="flex" justifyContent="center" alignItems="center">
                   <SvgLogin />
                 </Box>
               </Hidden>
             </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '5/12']}
-              paddingBottom={[3, 3, 4]}
-            >
-              <Box flexDirection="column" display="flex">
-                {newListItemsArray.length > 0 ? (
-                  <Box marginTop={[1, 0]}>
-                    <Text as="h3" variant="h3" marginBottom="p3">
-                      {n('nyjuSidurListTitle', 'Á nýjum mínum síðum')}
-                    </Text>
-                    <BulletList type="ul">
-                      {newListItemsArray.map((li) => (
-                        <Bullet key={li}>{li}</Bullet>
-                      ))}
-                    </BulletList>
-                  </Box>
-                ) : null}
-              </Box>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '7/12']}
-              paddingBottom={[3, 3, 4]}
-            >
-              <Box flexDirection="column" display="flex">
-                {oldListItemsArray.length > 0 ? (
-                  <Box marginTop={[1, 0]}>
-                    <Text as="h3" variant="h3" marginBottom="p3">
-                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
-                    </Text>
-                    <GridContainer>
-                      <GridRow>
-                        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                          <BulletList type="ul">
-                            {oldFirstHalf.map((li) => (
-                              <Bullet key={li}>{li}</Bullet>
-                            ))}
-                          </BulletList>
-                        </GridColumn>
-                        <GridColumn
-                          paddingTop={[1, 1, 1, 0]}
-                          span={['12/12', '12/12', '12/12', '7/12']}
-                        >
-                          <BulletList type="ul">
-                            {oldSecondHalf.map((li) => (
-                              <Bullet key={li}>{li}</Bullet>
-                            ))}
-                          </BulletList>
-                        </GridColumn>
-                      </GridRow>
-                    </GridContainer>
-                  </Box>
-                ) : null}
-              </Box>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '6/12', '6/12']}>
+              {nyjarSidurSubText && (
+                <>
+                  <a
+                    href={n(
+                      'gomluSidurUrl',
+                      '//innskraning.island.is/?id=minarsidur.island.is',
+                    )}
+                    color="blue400"
+                    onClick={() => webLoginButtonSelect('Old')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="text"
+                      size="small"
+                      icon="open"
+                      iconType="outline"
+                    >
+                      {n('gomluSidurTitle', 'Gömlu Mínar síður')}
+                    </Button>
+                  </a>
+                  <Text as="span" variant="small">
+                    {' '}
+                    {n(
+                      'gomluSidurText',
+                      'eru fyrir einstaklinga sem eru ekki með rafræn skilríki. Rafræn skilríki eru öruggari og munu taka alfarið við Íslykli í komandi framtíð.',
+                    )}
+                  </Text>
+                </>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>

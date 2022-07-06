@@ -82,7 +82,7 @@ const Editor = () => {
           query: GET_ICELANDIC_NAME_BY_SEARCH,
           data: {
             getIcelandicNameBySearch: [
-              ...existingNames?.getIcelandicNameBySearch,
+              ...(existingNames?.getIcelandicNameBySearch ?? []),
               newName,
             ],
           },
@@ -212,7 +212,7 @@ const Editor = () => {
           ref={inputRef}
           label={formatMessage(m.searchName)}
           placeholder={formatMessage(m.searchForNameOrPartOfName)}
-          size="md"
+          size="xs"
           onChange={(e) => {
             setInputValue(e.target.value)
           }}

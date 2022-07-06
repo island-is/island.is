@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
@@ -110,8 +110,11 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =
+    application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
-    application.state === ApplicationStates.APPROVED
+    application.state === ApplicationStates.EMPLOYER_APPROVAL
+  // TODO: enable if user could Edit application after APPROVED
+  // application.state === ApplicationStates.APPROVED
 
   return (
     <Box marginBottom={10}>

@@ -1,1 +1,5 @@
-export type RecycleActionTypes = 'confirm' | 'handover' | 'completed'
+export type RecycleActionTypes =
+  | 'recycle'
+  | 'confirm'
+  | 'handover'
+  | 'completed'

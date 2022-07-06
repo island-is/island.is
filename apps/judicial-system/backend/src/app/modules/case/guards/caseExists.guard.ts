@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common'
 
 import { CaseService } from '../case.service'
@@ -21,13 +20,7 @@ export class CaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing case id')
     }
 
-    const theCase = await this.caseService.findById(caseId)
-
-    if (!theCase) {
-      throw new NotFoundException(`Case ${caseId} does not exist`)
-    }
-
-    request.case = theCase
+    request.case = await this.caseService.findById(caseId)
 
     return true
   }

@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
 import type { History } from 'history'
-import type { User } from 'oidc-client'
+import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'
 import OidcSilentSignIn from './OidcSilentSignIn'
@@ -82,14 +82,16 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
               prompt: 'none',
             }
           : {
-              login_hint: 'delegations',
+              prompt: 'select_account',
             }
 
       dispatch({
         type: ActionType.SWITCH_USER,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+        state:
+          authSettings.switchUserRedirectUrl ??
+          getReturnUrl(history, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
@@ -188,12 +190,14 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       <Switch>
         <Route
           exact
-          path={authSettings.redirectPath}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          path={authSettings.redirectPath!}
           render={() => <OidcSignIn authDispatch={dispatch} />}
         />
         <Route
           exact
-          path={authSettings.redirectPathSilent}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          path={authSettings.redirectPathSilent!}
           component={OidcSilentSignIn}
         />
         <Route>

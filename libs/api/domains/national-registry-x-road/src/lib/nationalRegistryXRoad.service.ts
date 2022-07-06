@@ -1,12 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { FetchError } from '@island.is/clients/middlewares'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import type { Logger } from '@island.is/logging'
+import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -50,12 +53,18 @@ export class NationalRegistryXRoadService {
   }
 
   async getNationalRegistryPerson(
-    user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
-    const person = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetEinstaklingur({ id: nationalId })
+    const response = await this.nationalRegistryApi
+      .einstaklingarGetEinstaklingurRaw({ id: nationalId })
       .catch(this.handle404)
+
+    // 2022-03-08: For some reason, the API now returns "204 No Content" when nationalId doesn't exist.
+    // Should remove this after they've fixed their API to return "404 Not Found".
+    const person: NationalRegistryClientPerson | undefined =
+      response === undefined || response.raw.status === 204
+        ? undefined
+        : await response.value()
 
     return (
       person && {
@@ -103,7 +112,7 @@ export class NationalRegistryXRoadService {
 
         const parentBNationalId = parents.find((id) => id !== parentNationalId)
         const parentB = parentBNationalId
-          ? await this.getNationalRegistryPerson(user, parentBNationalId)
+          ? await this.getNationalRegistryPerson(parentBNationalId)
           : undefined
 
         const livesWithApplicant = parentAFamily.einstaklingar?.some(
@@ -142,5 +151,26 @@ export class NationalRegistryXRoadService {
         maritalStatus: spouse.hjuskaparkodi,
       }
     )
+  }
+
+  async getFamily(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryFamilyMemberInfo[]> {
+    const family = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
+      .catch(this.handle404)
+
+    return (family?.einstaklingar || []).map((member) => ({
+      nationalId: member.kennitala,
+      fullName: member.fulltNafn ?? '',
+      genderCode: member.kynkodi.toString(),
+      address: {
+        streetName: member.adsetur?.heiti ?? '',
+        postalCode: member.adsetur?.postnumer ?? '',
+        city: member.adsetur?.stadur ?? '',
+        municipalityCode: null,
+      },
+    }))
   }
 }

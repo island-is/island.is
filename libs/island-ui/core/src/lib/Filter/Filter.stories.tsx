@@ -4,7 +4,8 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import { Filter } from './Filter'
+import { Text } from '../Text/Text'
+import { Filter, FilterProps } from './Filter'
 import { FilterMultiChoice } from './FilterMultiChoice/FilterMultiChoice'
 import { FilterInput } from './FilterInput/FilterInput'
 
@@ -13,7 +14,7 @@ export default {
   component: Filter,
 }
 
-export const Default = () => {
+const RenderVariant = (variant: FilterProps['variant']) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   useEffect(() => {
@@ -67,13 +68,14 @@ export const Default = () => {
 
   const renderDefaultFilter = (asDialog?: boolean) => (
     <Filter
+      labelClearAll="Hreinsa allar síur"
       labelClear="Hreinsa síu"
       labelOpen="Opna síu"
       labelClose="Loka síu"
       labelTitle="Sía API Vörulista"
       labelResult="Sýna niðurstöður"
       resultCount={64}
-      isDialog={asDialog}
+      variant={asDialog ? 'dialog' : variant}
       onFilterClear={() =>
         setFilter({
           price: [],
@@ -81,14 +83,15 @@ export const Default = () => {
           input: '',
         })
       }
+      filterInput={
+        <FilterInput
+          name="filter-input"
+          placeholder="Sía eftir leitarorði"
+          value={filter.input}
+          onChange={(value) => setFilter({ ...filter, input: value })}
+        />
+      }
     >
-      <FilterInput
-        name="filter-input"
-        placeholder="Sía eftir leitarorði"
-        value={filter.input}
-        onChange={(value) => setFilter({ ...filter, input: value })}
-      />
-
       <FilterMultiChoice
         labelClear="Hreinsa val"
         categories={categories}
@@ -114,3 +117,37 @@ export const Default = () => {
     </Box>
   )
 }
+
+export const Default = () => (
+  <>
+    <Box marginBottom={4}>{RenderVariant('default')}</Box>
+    <Box padding={2} background="blue100">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
+      suscipit non, facilis vero architecto accusantium cupiditate odit dolore
+      repellendus ab ex, dicta debitis explicabo culpa rerum reprehenderit atque
+      reiciendis fuga!
+    </Box>
+  </>
+)
+
+export const Popover = () => (
+  <Box style={{ height: 800 }}>
+    {RenderVariant('popover')}
+    <Box paddingX={2} paddingBottom={2} background="blue100">
+      <Text>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
+        suscipit non, facilis vero architecto accusantium cupiditate odit dolore
+        repellendus ab ex, dicta debitis explicabo culpa rerum reprehenderit
+        atque reiciendis fuga!
+      </Text>
+    </Box>
+    <Box paddingX={2} paddingBottom={2} background="blue100">
+      <Text>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
+        suscipit non, facilis vero architecto accusantium cupiditate odit dolore
+        repellendus ab ex, dicta debitis explicabo culpa rerum reprehenderit
+        atque reiciendis fuga!
+      </Text>
+    </Box>
+  </Box>
+)

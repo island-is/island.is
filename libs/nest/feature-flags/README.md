@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Feature Flags" -->
+
 # Nest Feature Flags
 
 A Nest module which wraps our low level [feature flagging library](../../feature-flags/README.md) with some handy nest utilities.
@@ -82,7 +84,26 @@ export class SomeController {
 }
 ```
 
-The guard works both for GraphQL resolvers as well as REST controllers.
+The guard works both for GraphQL resolvers as well as REST controllers. You can also feature flag an entire resolver or controller:
+
+```tsx
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
+
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
+@FeatureFlag(Features.someFeature)
+@Controller('some')
+export class SomeController {
+  @Get()
+  getSomething() {
+    // Will only reach here if someFeature is turned on, either globally or for the authenticated user.
+  }
+}
+```
 
 {% hint style="warning" %}
 The FeatureFlagGuard MUST be listed after IdsUserGuard in the `@UseGuards()` decorator if you want it to support user-specific feature flags.

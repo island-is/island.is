@@ -5,31 +5,42 @@ import React from 'react'
 import App from 'next/app'
 import { AppProps } from 'next/app'
 import getConfig from 'next/config'
-import NextCookies from 'next-cookies'
+import { Provider } from 'next-auth/client'
 
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
 
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
-import { isAuthenticated } from '../auth/utils'
+import { userMonitoring } from '@island.is/user-monitoring'
 
 const {
-  publicRuntimeConfig: { SENTRY_DSN },
+  publicRuntimeConfig: {
+    SENTRY_DSN,
+    ddRumApplicationId,
+    ddRumClientToken,
+    appVersion,
+    environment,
+  },
 } = getConfig()
+
+if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdRum({
+    service: 'skilavottord',
+    applicationId: ddRumApplicationId,
+    clientToken: ddRumClientToken,
+    env: environment,
+    version: appVersion,
+  })
+}
 
 Sentry.init({
   dsn: SENTRY_DSN,
 })
 
-interface Props extends AppProps {
-  isAuthenticated: boolean
-}
-
-class SupportApplication extends App<Props> {
+class Skilavottord extends App<AppProps> {
   static async getInitialProps(appContext: any) {
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
@@ -41,15 +52,9 @@ class SupportApplication extends App<Props> {
 
     const apolloState = apolloClient.cache.extract()
 
-    const readonlyCookies = NextCookies(appContext)
-    Sentry.configureScope((scope) => {
-      scope.setContext('cookies', readonlyCookies)
-    })
-
     return {
       pageProps,
       apolloState,
-      isAuthenticated: isAuthenticated(appContext.ctx),
     }
   }
 
@@ -61,7 +66,7 @@ class SupportApplication extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, isAuthenticated, router } = this.props
+    const { Component, pageProps, router } = this.props
 
     Sentry.configureScope((scope) => {
       scope.setExtra('lang', this.getLanguage(router.pathname))
@@ -84,19 +89,18 @@ class SupportApplication extends App<Props> {
     })
 
     return (
-      <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <AppLayout isAuthenticated={isAuthenticated}>
-          <Component {...pageProps} />
-        </AppLayout>
-      </ApolloProvider>
+      <Provider
+        session={pageProps.session}
+        options={{ clientMaxAge: 120, basePath: '/app/skilavottord/api/auth' }}
+      >
+        <ApolloProvider client={initApollo(pageProps.apolloState)}>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        </ApolloProvider>
+      </Provider>
     )
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
-
-export default appWithTranslation(
-  withHealthchecks(externalEndpointDependencies)(SupportApplication),
-)
+export default appWithTranslation(Skilavottord)

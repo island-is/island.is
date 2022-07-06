@@ -2,7 +2,8 @@ import {
   PaymentScheduleEmployer,
   PaymentSchedulePayment,
 } from '@island.is/api/schema'
-import { coreMessages, FieldBaseProps } from '@island.is/application/core'
+import { coreMessages, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import {
   AccordionItem,
@@ -17,41 +18,64 @@ import { useLocale } from '@island.is/localization'
 import React, { useEffect, useState } from 'react'
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
-import { YES } from '../../shared/constants'
-import { PaymentPlanExternalData, PublicDebtPaymentPlan } from '../../types'
+import {
+  NatRegResult,
+  PaymentPlan,
+  Applicant,
+  CorrectedEmployer,
+} from '../../types'
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
-  const externalData = application.externalData as PaymentPlanExternalData
-  const paymentPrerequisites = externalData.paymentPlanPrerequisites?.data
-  const answers = application.answers as PublicDebtPaymentPlan
   const [bankClaims, setBankClaims] = useState<{
     paymentPlan: string
     distribution: Array<PaymentSchedulePayment>
   }>({ paymentPlan: 'one', distribution: [] })
+
   const [wageDeduction, setWageDeduction] = useState<{
     paymentPlan: string
     distribution: Array<PaymentSchedulePayment>
   }>({ paymentPlan: 'one', distribution: [] })
+
   const [bankClaimsTotalAmount, setBankClaimsTotalAmount] = useState<number>(0)
+
   const [
     wageDeductionTotalAmount,
     setWageDeductionTotalAmount,
   ] = useState<number>(0)
 
   // Debts & payment plans
-  const paymentPlans = answers?.paymentPlans
+  const paymentPlans = getValueViaPath(
+    application.answers,
+    'paymentPlans',
+  ) as PaymentPlan[]
+
+  // National Registry
+  const nationalRegistry = getValueViaPath(
+    application.externalData,
+    'nationalRegistry',
+  ) as NatRegResult
 
   // Applicant
-  const nationalRegistry = externalData.nationalRegistry?.data
-  const applicant = answers?.applicant
+  const applicant = getValueViaPath(
+    application.answers,
+    'applicant',
+  ) as Applicant
 
   // Employer
-  const employerInfo = paymentPrerequisites?.employer as PaymentScheduleEmployer
-  const employer = answers?.employer
+  const employerInfo = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.employer',
+  ) as PaymentScheduleEmployer
+
+  // Corrected employer
+  const correctedEmployer = getValueViaPath(
+    application.answers,
+    'correctedEmployer',
+  ) as CorrectedEmployer
 
   const editAction = (screen: string) => {
     if (goToScreen) {
@@ -117,10 +141,10 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
       <ReviewGroup isEditable editAction={() => editAction('applicantSection')}>
         <GridRow>
           <GridColumn span={['6/12', '5/12']}>
-            {nationalRegistry?.fullName && (
+            {nationalRegistry?.data?.fullName && (
               <Box>
                 <Label>{formatMessage(overview.name)}</Label>
-                <Text>{nationalRegistry?.fullName}</Text>
+                <Text>{nationalRegistry?.data?.fullName}</Text>
               </Box>
             )}
             {applicant?.phoneNumber && (
@@ -133,12 +157,12 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             )}
           </GridColumn>
           <GridColumn span={['6/12', '5/12']}>
-            {nationalRegistry?.address?.streetAddress &&
-              nationalRegistry?.address?.postalCode &&
-              nationalRegistry?.address?.city && (
+            {nationalRegistry?.data?.address?.streetAddress &&
+              nationalRegistry?.data?.address?.postalCode &&
+              nationalRegistry?.data?.address?.city && (
                 <Box>
                   <Label>{formatMessage(overview.address)}</Label>
-                  <Text>{`${nationalRegistry?.address?.streetAddress}, ${nationalRegistry?.address?.postalCode} ${nationalRegistry?.address?.city}`}</Text>
+                  <Text>{`${nationalRegistry?.data?.address?.streetAddress}, ${nationalRegistry?.data?.address?.postalCode} ${nationalRegistry?.data?.address?.city}`}</Text>
                 </Box>
               )}
             {applicant?.email && (
@@ -150,32 +174,26 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-      {employer?.isCorrectInfo === YES && employerInfo?.nationalId && (
+      {employerInfo?.nationalId && (
         <ReviewGroup
           isEditable
           editAction={() => editAction('employerMultiField')}
         >
           <GridRow>
-            {employer?.isCorrectInfo === YES && (
-              <GridColumn span={['6/12', '5/12']}>
-                <Box>
-                  <Label>{formatMessage(overview.employer)}</Label>
-                  <Text>{employerInfo.name}</Text>
-                </Box>
-              </GridColumn>
-            )}
-            {employerInfo?.nationalId && (
-              <GridColumn span={['6/12', '5/12']}>
-                <Box>
-                  <Label>{formatMessage(overview.employerSsn)}</Label>
-                  <Text>
-                    {employer?.isCorrectInfo === YES
-                      ? employerInfo?.nationalId
-                      : employer?.correctedNationalId}
-                  </Text>
-                </Box>
-              </GridColumn>
-            )}
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employer)}</Label>
+                <Text>{correctedEmployer?.label || employerInfo.name}</Text>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['6/12', '5/12']}>
+              <Box>
+                <Label>{formatMessage(overview.employerSsn)}</Label>
+                <Text>
+                  {correctedEmployer?.nationalId || employerInfo?.nationalId}
+                </Text>
+              </Box>
+            </GridColumn>
           </GridRow>
         </ReviewGroup>
       )}

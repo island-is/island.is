@@ -126,7 +126,7 @@ export class ProviderController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateProvider',
       resources: id,

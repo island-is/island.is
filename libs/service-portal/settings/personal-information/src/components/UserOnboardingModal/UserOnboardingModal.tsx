@@ -1,183 +1,93 @@
-import { toast } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
-import { Locale } from '@island.is/shared/types'
-import { defaultLanguage } from '@island.is/shared/constants'
-import { useMutation } from '@apollo/client'
-import {
-  Modal,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
-import {
-  useCreateUserProfile,
-  useUpdateUserProfile,
-  useCreateIslykillSettings,
-  useUserProfile,
-  useUserProfileAndIslykill,
-  UPDATE_ISLYKILL_SETTINGS,
-} from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
-import { EmailFormData } from '../Forms/EmailForm'
-import { LanguageFormData, LanguageFormOption } from '../Forms/LanguageForm'
-import { PhoneFormData } from '../Forms/PhoneForm/Steps/FormStep'
-import { OnboardingStepper } from './OnboardingStepper'
-import { EmailStep } from './Steps/EmailStep'
-import { FormSubmittedStep } from './Steps/FormSubmittedStep'
-import { LanguageStep } from './Steps/LanguageStep'
-import { PhoneStep } from './Islykill/PhoneStep'
-import { SubmitFormStep } from './Steps/SubmitFormStep'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import {
-  servicePortalCloseOnBoardingModal,
-  servicePortalSubmitOnBoardingModal,
-} from '@island.is/plausible'
+  ModalBase,
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Button,
+  Box,
+  Columns,
+  Column,
+} from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
+import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
-
-export type OnboardingStep =
-  | 'language-form'
-  | 'tel-form'
-  | 'email-form'
-  | 'submit-form'
-  | 'form-submitted'
-
-const defaultLanguageOption: LanguageFormOption = {
-  value: 'is',
-  label: 'Íslenska',
-}
+import { OnboardingHeader } from './components/Header'
+import ProfileForm from '../Forms/ProfileForm/ProfileForm'
+import * as styles from './UserOnboardingModal.css'
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
+  useNamespaces('sp.settings')
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
-  const [step, setStep] = useState<OnboardingStep>('language-form')
-  const [tel, setTel] = useState('')
-  const [email, setEmail] = useState('')
-  const [language, setLanguage] = useState<LanguageFormOption | null>(
-    defaultLanguageOption,
-  )
+  const [canDropOverlay, setCanDropOverlay] = useState(false)
+  const [formLoading, setFormLoadingState] = useState(false)
+  const { formatMessage } = useLocale()
 
-  const { createUserProfile } = useCreateUserProfile()
-  const { updateUserProfile } = useUpdateUserProfile()
-
-  const { createIslykillSettings } = useCreateIslykillSettings()
-  const [updateIslykill] = useMutation(UPDATE_ISLYKILL_SETTINGS)
-
-  const { data: userProfile } = useUserProfile()
-  const { data: settings } = useUserProfileAndIslykill()
-
-  const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
 
-  // On close side effects
   const dropOnboardingSideEffects = () => {
-    toast.info('Notendaupplýsingum er hægt að breyta í stillingum')
     servicePortalCloseOnBoardingModal(pathname)
-  }
-
-  // Handles a close event directly in the onboarding component
-  const dropOnboarding = () => {
-    setToggleCloseModal(true)
-    dropOnboardingSideEffects()
   }
 
   const closeModal = () => {
     setToggleCloseModal(true)
-  }
-
-  const gotoStep = (step: OnboardingStep) => {
-    setStep(step)
-  }
-
-  const submitFormData = async (
-    email: string,
-    mobilePhoneNumber: string,
-    locale: Locale,
-  ) => {
-    gotoStep('submit-form')
-
-    try {
-      if (userProfile) {
-        await updateUserProfile({
-          locale,
-        })
-      } else {
-        await createUserProfile({
-          locale,
-        })
-      }
-      if (settings?.noUserFound) {
-        await createIslykillSettings({
-          email,
-          mobile: `+354-${mobilePhoneNumber}`,
-        })
-      } else {
-        await updateIslykill({
-          variables: {
-            input: {
-              email: email,
-              mobile: `+354-${mobilePhoneNumber}`,
-            },
-          },
-        })
-      }
-      gotoStep('form-submitted')
-      if (pathname) {
-        servicePortalSubmitOnBoardingModal(pathname)
-      }
-    } catch (err) {
-      gotoStep('email-form')
-      toast.error(
-        'Eitthvað fór úrskeiðis, ekki tókst að uppfæra notendaupplýsingar þínar',
-      )
-    }
-  }
-
-  const handleLanguageStepSubmit = (data: LanguageFormData) => {
-    if (data.language === null) return
-    setLanguage(data.language)
-    changeLanguage(data.language.value)
-    gotoStep('tel-form')
-  }
-
-  const handlePhoneStepSubmit = (data: PhoneFormData) => {
-    setTel(data.tel)
-    gotoStep('email-form')
-  }
-
-  const handleEmailStepSubmit = (data: EmailFormData) => {
-    setEmail(data.email)
-    submitFormData(data.email, tel, language?.value || defaultLanguage)
+    dropOnboardingSideEffects()
   }
 
   return (
-    <Modal
-      id="user-onboarding-modal"
-      onCloseModal={dropOnboardingSideEffects}
+    <ModalBase
+      baseId="user-onboarding-modal"
       toggleClose={toggleCloseModal}
+      hideOnClickOutside={false}
+      initialVisibility={true}
+      className={styles.dialog}
+      modalLabel="Onboarding"
+      preventBodyScroll={false}
     >
-      <OnboardingStepper activeStep={step} />
-      {step === 'language-form' && (
-        <LanguageStep
-          onClose={dropOnboarding}
-          language={language}
-          onSubmit={handleLanguageStepSubmit}
-          userInfo={userInfo}
-        />
-      )}
-      {step === 'tel-form' && (
-        <PhoneStep
-          onBack={gotoStep.bind(null, 'language-form')}
-          natReg={userInfo.profile.nationalId}
-          tel={tel}
-          onSubmit={handlePhoneStepSubmit}
-        />
-      )}
-      {step === 'email-form' && (
-        <EmailStep
-          onBack={gotoStep.bind(null, 'tel-form')}
-          email={email}
-          onSubmit={handleEmailStepSubmit}
-        />
-      )}
-      {step === 'submit-form' && <SubmitFormStep />}
-      {step === 'form-submitted' && <FormSubmittedStep onClose={closeModal} />}
-    </Modal>
+      <GridContainer>
+        <GridRow marginBottom={4}>
+          <GridColumn span="12/12">
+            <OnboardingHeader
+              hideClose={formLoading}
+              dropOnboarding={() => setCanDropOverlay(true)}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '3/12']} />
+          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+            <ProfileForm
+              title={userInfo?.profile?.name || ''}
+              onCloseOverlay={closeModal}
+              onCloseDropModal={() => setCanDropOverlay(false)}
+              canDrop={canDropOverlay}
+              setFormLoading={(val: boolean) => setFormLoadingState(val)}
+              showIntroTitle
+            />
+            <Columns>
+              <Column width="9/12">
+                <Box
+                  display="flex"
+                  alignItems="flexEnd"
+                  flexDirection="column"
+                  paddingTop={2}
+                >
+                  <Button
+                    icon="checkmark"
+                    onClick={() => setCanDropOverlay(true)}
+                    loading={formLoading}
+                  >
+                    {formatMessage(m.continue)}
+                  </Button>
+                </Box>
+              </Column>
+            </Columns>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </ModalBase>
   )
 }
 

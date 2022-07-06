@@ -15,6 +15,8 @@ import { FrontpageSyncService } from './importers/frontpage.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
+import { ProjectPageSyncService } from './importers/projectPage.service'
+import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 
 @Module({
   providers: [
@@ -31,9 +33,11 @@ import { LinkSyncService } from './importers/link.service'
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,
+    ProjectPageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,
     LinkSyncService,
+    EnhancedAssetSyncService,
   ],
   exports: [CmsSyncService],
 })

@@ -58,5 +58,5 @@ You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` to run the script locally. 
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

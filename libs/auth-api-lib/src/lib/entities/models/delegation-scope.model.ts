@@ -19,7 +19,7 @@ import { IdentityResource } from './identity-resource.model'
   tableName: 'delegation_scope',
   timestamps: false,
 })
-export class DelegationScope extends Model<DelegationScope> {
+export class DelegationScope extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -80,7 +80,7 @@ export class DelegationScope extends Model<DelegationScope> {
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: Date
+  validTo!: Date
 
   @CreatedAt
   @ApiProperty()

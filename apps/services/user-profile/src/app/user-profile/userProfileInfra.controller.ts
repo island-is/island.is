@@ -1,5 +1,10 @@
 import { InfraController } from '@island.is/infra-nest-server'
-import { BadRequestException, Controller, Get } from '@nestjs/common'
+import {
+  InternalServerErrorException,
+  BadRequestException,
+  Controller,
+  Get,
+} from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Readiness } from './dto/readinessDto'
 import dns from 'dns'
@@ -14,10 +19,10 @@ export class UserProfileInfraController extends InfraController {
   @Get('readiness')
   @ApiOkResponse({ type: Readiness })
   async readiness(): Promise<Readiness> {
-    const config = this.sequelizeConfigService.getSequelizeConfig()
-    const url = config.host
+    const { host } = this.sequelizeConfigService.createSequelizeOptions()
+    if (!host) throw new InternalServerErrorException()
     const result = await new Promise<boolean>((resolve, reject) => {
-      dns.lookup(url, (err) => {
+      dns.lookup(host, (err) => {
         if (err) reject(false)
         resolve(true)
       })

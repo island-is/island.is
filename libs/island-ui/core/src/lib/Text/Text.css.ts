@@ -7,6 +7,7 @@ import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 export type TextVariants =
   | 'default'
   | 'small'
+  | 'medium'
   | 'h1'
   | 'h2'
   | 'h3'
@@ -63,7 +64,8 @@ const availableLineHeights = {
 }
 
 const availableFontSizes = {
-  xs: { xs: 12, md: 14 },
+  xxs: { xs: 12, md: 14 },
+  xs: { xs: 14, md: 16 },
   sm: { xs: 16, md: 18 },
   md: { xs: 18, md: 20 },
   lg: { xs: 20, md: 24 },
@@ -87,6 +89,7 @@ const defaultFontWeightsMap: defaultFontWeights = {
   h4: theme.typography.headingsFontWeight,
   h5: theme.typography.headingsFontWeight,
   small: theme.typography.regular,
+  medium: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.semiBold,
 }
@@ -99,6 +102,7 @@ const defaultLineHeightsMap: defaultFontWeights = {
   h4: availableLineHeights.md,
   h5: availableLineHeights.md,
   small: availableLineHeights.md,
+  medium: availableLineHeights.md,
   intro: availableLineHeights.md,
   eyebrow: availableLineHeights.md,
 }
@@ -118,6 +122,20 @@ export const defaultFontWeights = styleVariants(
 export const defaultLineHeights = styleVariants(
   mapToStyleProperty(defaultLineHeightsMap, 'lineHeight'),
 )
+
+export const whiteSpace = {
+  ...styleVariants(
+    {
+      normal: { whiteSpace: 'normal' },
+      nowrap: { whiteSpace: 'nowrap' },
+      pre: { whiteSpace: 'pre' },
+      preWrap: { whiteSpace: 'pre-wrap' },
+      preLine: { whiteSpace: 'pre-line' },
+      breakSpaces: { whiteSpace: 'break-spaces' },
+    },
+    'whiteSpace',
+  ),
+}
 
 export const variants: Variants = {
   default: {
@@ -139,13 +157,16 @@ export const variants: Variants = {
     fontSize: availableFontSizes.sm,
   },
   small: {
+    fontSize: availableFontSizes.xxs,
+  },
+  medium: {
     fontSize: availableFontSizes.xs,
   },
   intro: {
     fontSize: availableFontSizes.lg,
   },
   eyebrow: {
-    fontSize: availableFontSizes.xs,
+    fontSize: availableFontSizes.xxs,
   },
 }
 
@@ -173,20 +194,6 @@ globalStyle(`${base} mark`, {
   backgroundColor: theme.color.mint400,
   color: theme.color.dark400,
   fontWeight: theme.typography.regular,
-})
-
-globalStyle(`${base} a`, {
-  cursor: 'pointer',
-  color: theme.color.blue400,
-  transition: 'color .2s, box-shadow .2s',
-  textDecoration: 'none',
-  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue400}`,
-})
-
-globalStyle(`${base} a:hover`, {
-  color: theme.color.blueberry400,
-  boxShadow: `inset 0 -2px 0 0 ${theme.color.blueberry400}`,
-  textDecoration: 'none',
 })
 
 globalStyle(`${base} a svg path`, {

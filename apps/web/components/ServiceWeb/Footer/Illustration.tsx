@@ -137,7 +137,7 @@ function SvgComponent(props: React.SVGProps<SVGSVGElement>) {
           y2={280.117}
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#4C90FF" />
+          <stop offset={0} stopColor="#4C90FF" />
           <stop offset={0.209} stopColor="#6D84E9" />
           <stop offset={0.666} stopColor="#BF65B0" />
           <stop offset={1} stopColor="#FF4C84" />

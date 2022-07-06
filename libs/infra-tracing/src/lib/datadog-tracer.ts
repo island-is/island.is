@@ -1,15 +1,10 @@
+import { maskNationalId } from '@island.is/shared/pii'
+
 import tracer from 'dd-trace'
-import { isPerson } from 'kennitala'
 import { Span } from 'opentracing'
 
 const PII_MASKING_ALWAYS_ON =
   process.env.DD_PII_MASKING_DISABLED_ON_FAILURE !== 'true'
-
-export const rewriteUrl = (url: string): string =>
-  url
-    .split('/')
-    .map((segm) => (isPerson(segm) ? '--MASKED--' : segm))
-    .join('/')
 
 export const shouldMask = (statusCode?: number): boolean =>
   PII_MASKING_ALWAYS_ON || !statusCode || statusCode < 400
@@ -22,7 +17,7 @@ export const maskSpan = (
   // Leaving here for future reference - an "ok" way to debug dd traces locally
   // span?.setTag('test_tag', 'your-unique-test-tag')
   if (shouldMask(statusCode)) {
-    span?.setTag('http.url', rewriteUrl(url))
+    span?.setTag('http.url', maskNationalId(url))
   }
 }
 

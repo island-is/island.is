@@ -95,10 +95,15 @@ export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
     .reduce((acc, cur) => {
       const from = new Date(cur.from)
       const to = new Date(cur.to)
-      const days = calculateNumberOfDaysForOnePeriod(from, to)
-      const daysWithRatio = Math.round((days * cur.ratio) / 100)
 
-      return acc + daysWithRatio
+      if (cur.ratio.toString().startsWith('D')) {
+        const [, rawDays] = cur.ratio.toString().split('D')[1]
+
+        return acc + Number(rawDays)
+      }
+      const ratio = Number(cur.ratio)
+
+      return acc + calculatePeriodLength(from, to, ratio / 100)
     }, 0)
 
 /**
@@ -161,7 +166,7 @@ export const calculatePeriodLength = (
   let currentDate = start
   let cost = 0
 
-  while (currentDate < end) {
+  while (currentDate <= end) {
     const daysInMonth = getDaysInMonth(currentDate)
     const dayOfMonth = currentDate.getDate()
     const daysTillEndOfMonth = daysInMonth - dayOfMonth
@@ -173,6 +178,19 @@ export const calculatePeriodLength = (
 
     if (dateAtEndOfIteration.getDate() === daysInMonth) {
       costOfMonth = 30 - dayOfMonth + 1
+      /* Scenarios:
+          13.feb - 28 feb
+          13.mar - 31.mar
+          13.mar - 02.apr
+      */
+      // if (
+      //   dayOfMonth !== 1 &&
+      //   addMonths(end, -1).getMonth() === start.getMonth()
+      // ) {
+      //   costOfMonth = daysInMonth - dayOfMonth + 1
+      // } else {
+      //   costOfMonth = 30 - dayOfMonth + 1
+      // }
     } else {
       costOfMonth = end.getDate() - dayOfMonth + 1
     }

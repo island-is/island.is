@@ -1,10 +1,10 @@
 import set from 'lodash/set'
 
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   getSelectedChild,
   NO,
@@ -18,6 +18,7 @@ import {
   getPensionFund,
   getPrivatePensionFundRatio,
   getRightsCode,
+  getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -26,6 +27,7 @@ const createApplicationBase = (): Application => ({
   answers: {},
   applicant: '',
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),
@@ -388,5 +390,23 @@ describe('getRightsCode', () => {
     const result = getRightsCode(base)
 
     expect(result).toBe(expected)
+  })
+})
+
+describe('getRatio', () => {
+  it('should return ratio when shouldUseLength=false', () => {
+    for (let i = 0; i <= 100; i += 1) {
+      const ratio = i.toString()
+
+      expect(getRatio(ratio, '', false)).toBe(ratio)
+    }
+  })
+
+  it('should use length prefixed with a D when shouldUseLength=true', () => {
+    for (let i = 0; i < 225; i += 1) {
+      const length = i.toString()
+
+      expect(getRatio('', length, true)).toBe(`D${length}`)
+    }
   })
 })

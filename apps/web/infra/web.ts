@@ -20,9 +20,12 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'false',
       },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       SENTRY_DSN: '/k8s/web/SENTRY_DSN',
+      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
@@ -32,9 +35,17 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         extraAnnotations: {
-          dev: {},
-          staging: {},
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
           prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
@@ -46,6 +57,11 @@ export const serviceSetup = (services: {
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '200m', memory: '256Mi' },
+    })
+    .replicaCount({
+      default: 10,
+      max: 50,
+      min: 10,
     })
     .extraAttributes({
       dev: {},

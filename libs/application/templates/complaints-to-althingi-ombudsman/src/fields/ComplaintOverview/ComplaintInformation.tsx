@@ -33,13 +33,13 @@ export const ComplaintInformation: FC<Props> = ({
       editAction={() => onEdit('section.complaintInformation')}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12']}>
+        <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
           <ValueLine
             label={complaintOverview.labels.complainee}
             value={complainee}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '6/12']}>
+        <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
           <ValueLine
             label={complaintOverview.labels.complaineeName}
             value={name}
@@ -47,7 +47,7 @@ export const ComplaintInformation: FC<Props> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={'12/12'}>
+        <GridColumn span="9/12">
           <ValueLine
             label={complaintOverview.labels.complaintDescription}
             value={description}

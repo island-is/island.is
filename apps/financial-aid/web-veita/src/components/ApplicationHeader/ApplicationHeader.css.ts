@@ -16,6 +16,8 @@ export const button = style({
   marginRight: '8px',
   fontSize: '14px',
   marginBottom: '1px',
+  display: 'flex',
+  alignItems: 'center',
   selectors: {
     '&:hover': {
       color: theme.color.blueberry400,

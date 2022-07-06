@@ -1,4 +1,4 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -9,14 +9,13 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import { ValidationRuleDto } from './dto/validationRule.dto'
 import { EndorsementTag } from './constants'
 import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
 
 @Table({
   tableName: 'endorsement_list',
 })
-export class EndorsementList extends Model<EndorsementList> {
+export class EndorsementList extends Model {
   @ApiProperty()
   @Column({
     type: DataType.UUID,
@@ -78,13 +77,6 @@ export class EndorsementList extends Model<EndorsementList> {
     type: DataType.ARRAY(DataType.STRING),
   })
   tags!: EndorsementTag[]
-
-  @ApiProperty({ type: [ValidationRuleDto] })
-  @Column({
-    type: DataType.JSONB,
-    defaultValue: '[]',
-  })
-  validationRules!: ValidationRuleDto[]
 
   @ApiProperty()
   @Column({

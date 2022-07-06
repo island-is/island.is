@@ -5,7 +5,7 @@ import { IsOptional, IsString } from 'class-validator'
 export class ContactUsInput {
   @Field()
   @IsString()
-  name: string
+  name!: string
 
   @Field()
   @IsOptional()
@@ -14,7 +14,7 @@ export class ContactUsInput {
 
   @Field()
   @IsString()
-  email: string
+  email!: string
 
   @Field()
   @IsOptional()
@@ -23,7 +23,7 @@ export class ContactUsInput {
 
   @Field()
   @IsString()
-  message: string
+  message!: string
 
   @HideField()
   @IsString()

@@ -33,15 +33,12 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
-
-const { publicRuntimeConfig } = getConfig()
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -65,21 +62,19 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   sort,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const Router = useRouter()
+
   useContentfulId(organizationPage.id)
+  useLocalLinkTypeResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
+      active:
+        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink.url.includes(`${organizationPage.slug}/services`),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -175,20 +170,20 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Select
               backgroundColor="white"
               icon="chevronDown"
-              label="Þjónustuflokkur"
+              label={n('services', 'Þjónustuflokkur')}
               isSearchable
               name="category"
               value={
                 categories.find(
                   (x) => x.value === parameters.categories[0],
                 ) ?? {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 }
               }
               options={[
                 {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 },
                 ...categories,
@@ -242,7 +237,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 <LinkCard
                   isFocused={isFocused}
                   tag={
-                    !!article.processEntry && n('applicationProcess', 'Umsókn')
+                    (!!article.processEntry ||
+                      article.processEntryButtonText) &&
+                    n(article.processEntryButtonText || 'application', 'Umsókn')
                   }
                 >
                   {article.title}
@@ -291,7 +288,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },
@@ -328,8 +325,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -338,7 +333,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

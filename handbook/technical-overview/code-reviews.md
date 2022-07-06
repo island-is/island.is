@@ -14,3 +14,33 @@ To minimize the likelihood of this happening we want to apply the following lang
 
 - Start comments with `Consider:` where you want to share knowledge, or do not have a strong opinion on if this change is necessary in order to get an approval for the pull request.
 - Start comments with `Should:` where the code in question should be changed because it is buggy, has some dangerous side effect or introduces a bad performance hit. These types of comments often spark a discussion, so try to keep it positive and rational. If you cannot back this comment on with meaningful arguments, you _should_ not have made this comment to begin with.
+
+## Code Coverage
+
+Code coverage is a measurement used to express which lines of code were executed by a test suite.
+
+Code coverage is measured by the test runner which can be configured to generate a coverage report at the end of a test run.
+
+Even though the coverage report can be viewed in a browser by itself it is quite limited.
+
+To enhance the experience we use a code coverage tool called [Codecov](https://about.codecov.io/).
+
+The main features are listed below and instructions on how to use them.
+
+### Dashboard
+
+The [Codecov dashboard](https://app.codecov.io/gh/island-is/island.is/) shows us an aggregated coverage report of all the apps and libraries in the monorepo.
+
+### Pull request comments
+
+The be able to read through a Codecov pull request comment we need to understand Codecov's coverage diff and calculations regarding hits, misses and partials. See the [documentation](https://docs.codecov.com/docs/codecov-delta) for details.
+
+Basically hits are lines are covered by tests, misses are lines that are not covered with tests and partials are lines partially covered with tests.
+
+To calculate the coverage ratio we do `hits / (hits + misses + partials)`
+
+Here is a [coverage diff](https://docs.codecov.com/docs/coverage-diff) to use as a reference while trying out these calcuations.
+
+### Merge checks
+
+Currently merge checks are not configured.

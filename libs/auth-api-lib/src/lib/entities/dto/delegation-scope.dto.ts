@@ -22,15 +22,13 @@ export class UpdateDelegationScopeDTO {
   @ApiProperty({ enum: ScopeType, enumName: 'ScopeType' })
   type!: ScopeType
 
-  @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional({
+  @ApiProperty({
     description:
       'A date that the delegation is valid to. Must be in the future.',
-    nullable: true,
   })
-  validTo?: Date | null
+  validTo!: Date
 }
 
 export class DelegationScopeDTO {

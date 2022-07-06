@@ -7,16 +7,17 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   CaseAppealDecision,
+  Gender,
   InstitutionType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+  core,
+  signedVerdictOverview,
+} from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -56,19 +57,19 @@ const AppealSection: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={1}>
         <Text variant="h3" as="h3">
-          Ákvörðun um kæru
+          {formatMessage(signedVerdictOverview.sections.appeal.title)}
         </Text>
       </Box>
-
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) &&
-        workingCase.rulingDate &&
+        workingCase.courtEndTime &&
         !isHighCourt && (
           <Box marginBottom={3}>
             <Text>
-              {`Kærufrestur ${
-                workingCase.isAppealDeadlineExpired ? 'rann' : 'rennur'
-              } út ${getAppealEndDate(workingCase.rulingDate)}`}
+              {formatMessage(signedVerdictOverview.sections.appeal.deadline, {
+                isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
+                appealDeadline: getAppealEndDate(workingCase.courtEndTime),
+              })}
             </Text>
           </Box>
         )}
@@ -76,15 +77,33 @@ const AppealSection: React.FC<Props> = (props) => {
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
-              text={formatMessage(signedVerdictOverview.accusedAppealed, {
-                genderedAccused: capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                ),
-                courtEndTime: `${formatDate(
-                  workingCase.rulingDate,
-                  'PP',
-                )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
-              })}
+              text={formatMessage(
+                signedVerdictOverview.sections.appeal.accusedAppealed,
+                {
+                  genderedAccused: capitalize(
+                    isRestrictionCase(workingCase.type)
+                      ? formatMessage(core.accused, {
+                          suffix:
+                            workingCase.defendants &&
+                            workingCase.defendants.length > 0 &&
+                            workingCase.defendants[0].gender === Gender.MALE
+                              ? 'i'
+                              : 'a',
+                        })
+                      : formatMessage(core.defendant, {
+                          suffix:
+                            workingCase.defendants &&
+                            workingCase.defendants?.length > 1
+                              ? 'ar'
+                              : 'i',
+                        }),
+                  ),
+                  courtEndTime: `${formatDate(
+                    workingCase.rulingDate,
+                    'PP',
+                  )} kl. ${formatDate(workingCase.rulingDate, 'p')}`,
+                },
+              )}
               fluid
               light
             />
@@ -95,15 +114,15 @@ const AppealSection: React.FC<Props> = (props) => {
         <div className={styles.appealContainer}>
           <BlueBox>
             <InfoBox
-              text={formatMessage(signedVerdictOverview.prosecutorAppealed, {
-                genderedAccused: capitalize(
-                  formatAccusedByGender(workingCase.accusedGender),
-                ),
-                courtEndTime: `${formatDate(
-                  workingCase.courtEndTime,
-                  'PP',
-                )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
-              })}
+              text={formatMessage(
+                signedVerdictOverview.sections.appeal.prosecutorAppealed,
+                {
+                  courtEndTime: `${formatDate(
+                    workingCase.courtEndTime,
+                    'PP',
+                  )} kl. ${formatDate(workingCase.courtEndTime, 'p')}`,
+                },
+              )}
               fluid
               light
             />
@@ -126,17 +145,16 @@ const AppealSection: React.FC<Props> = (props) => {
                   )}
               </AnimatePresence>
               <AnimatePresence>
-                {workingCase.accusedPostponedAppealDate &&
-                  workingCase.accusedGender && (
-                    <AccusedAppealInfo
-                      workingCase={workingCase}
-                      withdrawAccusedAppealDate={
-                        workingCase.isAppealGracePeriodExpired || isHighCourt
-                          ? undefined
-                          : withdrawAccusedAppealDate
-                      }
-                    />
-                  )}
+                {workingCase.accusedPostponedAppealDate && (
+                  <AccusedAppealInfo
+                    workingCase={workingCase}
+                    withdrawAccusedAppealDate={
+                      workingCase.isAppealGracePeriodExpired || isHighCourt
+                        ? undefined
+                        : withdrawAccusedAppealDate
+                    }
+                  />
+                )}
               </AnimatePresence>
             </BlueBox>
           </div>

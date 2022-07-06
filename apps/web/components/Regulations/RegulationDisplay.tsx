@@ -1,8 +1,11 @@
 import * as s from './RegulationDisplay.css'
 
 import React, { useState } from 'react'
-import { ISODate, prettyName } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import {
+  ISODate,
+  prettyName,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { Button, Stack, Text, Hidden, Link } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
@@ -11,7 +14,7 @@ import { useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationStatus } from './RegulationStatus'
 import { Appendixes } from './Appendixes'
-import { HTMLBox } from '@island.is/regulations/react'
+import { HTMLBox } from './HTMLBox'
 import { CommentsBox } from './CommentsBox'
 import { Disclaimer } from './Disclaimer'
 import { RegulationInfoBox } from './RegulationInfoBox'

@@ -2,7 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { Fund } from './fund.model'
 import { FlightLeg } from '../../flightLeg'
-import { Role } from '../../auth'
+import { Role } from '@island.is/air-discount-scheme/types'
 
 @ObjectType()
 export class User {

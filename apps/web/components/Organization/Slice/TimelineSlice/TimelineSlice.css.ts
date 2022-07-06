@@ -7,7 +7,7 @@ export const item = style({
   fontWeight: 300,
   position: 'relative',
   height: 104,
-  padding: '0 50',
+  padding: '0px 50px',
   width: 416,
   display: 'flex',
   justifyContent: 'center',

@@ -5,9 +5,15 @@ import {
   PaymentScheduleInitialSchedule,
   PaymentScheduleType,
 } from '@island.is/api/schema'
-import { SuccessfulDataProviderResult } from '@island.is/application/core'
+import { SuccessfulDataProviderResult } from '@island.is/application/types'
 import * as z from 'zod'
-import { PublicDebtPaymentPlanSchema } from '../lib/dataSchema'
+import {
+  PaymentPlanSchema,
+  PublicDebtPaymentPlanSchema,
+  ApplicantSchema,
+  CorrectedEmployerSchema,
+  PaymentPlansSchema,
+} from '../lib/dataSchema'
 import { AMOUNT, MONTHS } from '../shared/constants'
 
 export type PaymentPlanBuildIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
@@ -50,7 +56,7 @@ export const paymentPlanEntryKeys = [
   'ten',
 ]
 
-interface PrerequisitesResult extends SuccessfulDataProviderResult {
+export interface PrerequisitesResult extends SuccessfulDataProviderResult {
   data: {
     conditions: PaymentScheduleConditions
     debts: PaymentScheduleDebts[]
@@ -101,5 +107,9 @@ export type PaymentPlanExternalData = {
 
 const PaymentMode = z.enum([AMOUNT, MONTHS])
 export type PaymentModeState = z.infer<typeof PaymentMode>
+export type PaymentPlan = z.TypeOf<typeof PaymentPlanSchema>
+export type Applicant = z.TypeOf<typeof ApplicantSchema>
+export type CorrectedEmployer = z.TypeOf<typeof CorrectedEmployerSchema>
+export type PaymentPlans = z.TypeOf<typeof PaymentPlansSchema>
 
 export type PublicDebtPaymentPlan = z.TypeOf<typeof PublicDebtPaymentPlanSchema>

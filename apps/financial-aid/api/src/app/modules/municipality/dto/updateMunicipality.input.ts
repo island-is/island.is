@@ -25,4 +25,24 @@ export class UpdateMunicipalityInput {
   @Allow()
   @Field({ nullable: true })
   readonly email?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly usingNav?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly navUrl?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly navUsername?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly navPassword?: string
+
+  @Allow()
+  @Field()
+  readonly municipalityId!: string
 }

@@ -9,5 +9,5 @@ export class StudentInformation {
 @ObjectType()
 export class StudentInformationResult {
   @Field(() => StudentInformation, { nullable: true })
-  student!: StudentInformation | null
+  student?: StudentInformation
 }

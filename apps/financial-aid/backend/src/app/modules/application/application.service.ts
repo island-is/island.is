@@ -1,23 +1,41 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel, SpouseResponse } from './models'
+import {
+  ApplicationModel,
+  FilterApplicationsResponse,
+  SpouseResponse,
+} from './models'
 
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  FilterApplicationsDto,
+  SpouseEmailDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEventTypesFromService,
   getStateFromUrl,
-  RolesRule,
   User,
   Staff,
   FileType,
   getApplicantEmailDataFromEventType,
+  firstDateOfMonth,
+  UserType,
+  applicationPageSize,
+  Routes,
+  calculatePersonalTaxAllowanceFromAmount,
+  getNavEmploymentStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -33,8 +51,10 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
-import { AmountModel, AmountService } from '../amount'
+import { AmountModel, AmountService, CreateAmountDto } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
+import { DirectTaxPaymentService } from '../directTaxPayment'
+import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 
 interface Recipient {
   name: string
@@ -42,13 +62,11 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.oskBaseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}${Routes.statusPage(applicationId)}`
 }
 
-const firstDateOfMonth = () => {
-  const date = new Date()
-
-  return new Date(date.getFullYear(), date.getMonth(), 1)
+const linkToApplicationSystem = (applicationId: string) => {
+  return `${environment.applicationSystemBaseUrl}/${applicationId}`
 }
 
 @Injectable()
@@ -61,6 +79,7 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
+    private readonly directTaxPaymentService: DirectTaxPaymentService,
   ) {}
 
   async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
@@ -78,29 +97,28 @@ export class ApplicationService {
         )
       : false
 
-    const spouseName = application ? application.name : ''
-
     return {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
-      spouseName: spouseName,
+      applicantName: application ? application.name : '',
+      applicantSpouseEmail: application?.spouseEmail ?? '',
     }
   }
 
   async findByNationalId(
     nationalId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [
           {
             nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
           {
             spouseNationalId: nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
         ],
       },
@@ -141,7 +159,7 @@ export class ApplicationService {
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -149,11 +167,11 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             }
           : {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
@@ -162,7 +180,7 @@ export class ApplicationService {
 
   async findById(
     id: string,
-    service: RolesRule,
+    isEmployee: boolean,
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -174,7 +192,12 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[service],
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [
+                    ApplicationEventType.DATANEEDED,
+                    ApplicationEventType.APPROVED,
+                  ],
             },
           },
           order: [['created', 'DESC']],
@@ -189,16 +212,26 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
         },
       ],
     })
+
+    if (application?.amount) {
+      application.setDataValue('amount', application.amount['0'])
+    }
 
     return application
   }
 
   async getAllFilters(
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
@@ -210,7 +243,10 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item, municipalityCode },
+        where: {
+          state: item,
+          municipalityCode: { [Op.in]: municipalityCodes },
+        },
       }),
     )
 
@@ -218,7 +254,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
-          municipalityCode,
+          municipalityCode: { [Op.in]: municipalityCodes },
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
@@ -242,15 +278,30 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+    //When there is mismatch in DB between AS and financial-aid-backend
+    if (!application.applicationSystemId) {
+      const hasAppliedForPeriod = await this.getCurrentApplicationId(
+        user.nationalId,
+      )
 
-    await this.applicationEventService.create({
-      applicationId: appModel.id,
-      eventType: ApplicationEventType[appModel.state.toUpperCase()],
+      if (hasAppliedForPeriod) {
+        throw new ForbiddenException('User or spouse has applied for period')
+      }
+    }
+
+    const appModel = await this.applicationModel.create({
+      ...application,
+      nationalId: application.nationalId || user.nationalId,
     })
 
-    if (application.files) {
-      const promises = application.files.map((f) => {
+    await Promise.all([
+      application.directTaxPayments.map((d) => {
+        return this.directTaxPaymentService.create({
+          applicationId: appModel.id,
+          ...d,
+        })
+      }),
+      application.files?.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
@@ -258,12 +309,24 @@ export class ApplicationService {
           size: f.size,
           type: f.type,
         })
-      })
+      }),
+      this.applicationEventService.create({
+        applicationId: appModel.id,
+        eventType: ApplicationEventType[appModel.state.toUpperCase()],
+        emailSent: await this.createApplicationEmails(application, appModel),
+      }),
+    ])
 
-      await Promise.all(promises)
+    //For application system to map to json
+    if (appModel.getDataValue('files') === undefined) {
+      appModel.setDataValue('files', [])
     }
-
-    await this.createApplicationEmails(application, appModel, user)
+    if (appModel.getDataValue('applicationEvents') === undefined) {
+      appModel.setDataValue('applicationEvents', [])
+    }
+    if (appModel.getDataValue('directTaxPayments') === undefined) {
+      appModel.setDataValue('directTaxPayments', [])
+    }
 
     return appModel
   }
@@ -271,66 +334,130 @@ export class ApplicationService {
   private async createApplicationEmails(
     application: CreateApplicationDto,
     appModel: ApplicationModel,
-    user: User,
   ) {
-    const municipality = await this.municipalityService.findByMunicipalityId(
-      application.municipalityCode,
-    )
+    try {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        application.municipalityCode,
+      )
+      const isApplicationSystem = application.applicationSystemId != null
 
-    const emailData = getApplicantEmailDataFromEventType(
-      ApplicationEventType.NEW,
-      linkToStatusPage(appModel.id),
-      application.email,
-      municipality,
-      appModel.created,
-    )
-
-    const emailPromises: Promise<void>[] = []
-
-    emailPromises.push(
-      this.sendEmail(
-        {
-          name: user.name,
-          address: appModel.email,
-        },
-        emailData.subject,
-        ApplicantEmailTemplate(emailData.data),
-      ),
-    )
-
-    if (application.spouseNationalId) {
       const emailData = getApplicantEmailDataFromEventType(
-        'SPOUSE',
-        environment.oskBaseUrl,
-        appModel.spouseEmail,
+        ApplicationEventType.NEW,
+        isApplicationSystem
+          ? linkToApplicationSystem(application.applicationSystemId)
+          : linkToStatusPage(appModel.id),
+        application.email,
         municipality,
         appModel.created,
       )
+
+      const emailPromises: Promise<void>[] = []
+
       emailPromises.push(
         this.sendEmail(
           {
-            name: appModel.spouseName,
-            address: appModel.spouseEmail,
+            name: application.name,
+            address: appModel.email,
           },
           emailData.subject,
           ApplicantEmailTemplate(emailData.data),
         ),
       )
-    }
 
-    await Promise.all(emailPromises)
+      if (application.spouseNationalId && !isApplicationSystem) {
+        const emailData = getApplicantEmailDataFromEventType(
+          'SPOUSE',
+          environment.oskBaseUrl,
+          appModel.spouseEmail,
+          municipality,
+          appModel.created,
+        )
+        emailPromises.push(
+          this.sendEmail(
+            {
+              name: appModel.spouseName,
+              address: appModel.spouseEmail,
+            },
+            emailData.subject,
+            ApplicantEmailTemplate(emailData.data),
+          ),
+        )
+      }
+
+      await Promise.all(emailPromises)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  async sendSpouseEmail(data: SpouseEmailDto) {
+    try {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        data.municipalityCode,
+      )
+
+      const applicantEmailData = getApplicantEmailDataFromEventType(
+        'WAITINGSPOUSE',
+        linkToApplicationSystem(data.applicationSystemId),
+        data.email,
+        municipality,
+        data.created,
+      )
+
+      const spouseEmailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        linkToApplicationSystem(data.applicationSystemId),
+        data.spouseEmail,
+        municipality,
+        data.created,
+      )
+
+      await Promise.all([
+        this.sendEmail(
+          {
+            name: data.name,
+            address: data.email,
+          },
+          applicantEmailData.subject,
+          ApplicantEmailTemplate(applicantEmailData.data),
+        ),
+        this.sendEmail(
+          {
+            name: data.spouseName,
+            address: data.spouseEmail,
+          },
+          spouseEmailData.subject,
+          ApplicantEmailTemplate(spouseEmailData.data),
+        ),
+      ])
+
+      return { success: true }
+    } catch {
+      return { success: false }
+    }
   }
 
   async update(
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
+    }
+
+    if (update.event === ApplicationEventType.APPROVED) {
+      update.navSuccess = await this.sendToNav(id, update.amount)
+    } else if (
+      [
+        ApplicationEventType.NEW,
+        ApplicationEventType.INPROGRESS,
+        ApplicationEventType.DATANEEDED,
+        ApplicationEventType.REJECTED,
+      ].includes(update.event)
+    ) {
+      update.navSuccess = null
     }
 
     const [
@@ -341,15 +468,20 @@ export class ApplicationService {
       returning: true,
     })
 
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
     await this.applicationEventService.create({
       applicationId: id,
       eventType: update.event,
-      comment:
-        update?.rejection ||
-        update?.amount?.finalAmount.toLocaleString('de-DE') ||
-        update?.comment,
+      comment: update?.rejection || update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
+      emailSent: await this.sendApplicationUpdateEmail(
+        update,
+        updatedApplication,
+      ),
     })
 
     if (update.amount) {
@@ -369,13 +501,162 @@ export class ApplicationService {
         updatedApplication?.setDataValue('files', filesResolved)
       })
 
-    await Promise.all([
-      events,
-      files,
-      this.sendApplicationUpdateEmail(update, updatedApplication),
-    ])
+    const directTaxPayments = this.directTaxPaymentService
+      .getByApplicationId(id)
+      .then((resolved) => {
+        updatedApplication?.setDataValue('directTaxPayments', resolved)
+      })
 
-    return { numberOfAffectedRows, updatedApplication }
+    if (
+      update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
+      update.directTaxPayments
+    ) {
+      await Promise.all([
+        update.directTaxPayments.map((d) => {
+          return this.directTaxPaymentService.create({
+            applicationId: id,
+            userType: UserType.SPOUSE,
+            ...d,
+          })
+        }),
+      ])
+    }
+
+    await Promise.all([events, files, directTaxPayments])
+
+    return updatedApplication
+  }
+
+  async sendToNav(applicationId: string, amount: CreateAmountDto) {
+    try {
+      const application = await this.findById(applicationId, true)
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        application.municipalityCode,
+      )
+
+      if (!municipality.usingNav) {
+        return null
+      }
+
+      const calculateNavAmount = (amount: CreateAmountDto) => {
+        return amount.deductionFactors
+          ?.map((d) => d.amount)
+          .reduce(
+            (previousValue, currentValue) => previousValue - currentValue,
+            amount.aidAmount - (amount.income ?? 0),
+          )
+      }
+
+      const token = await fetch(
+        new URL('Authentication/Login', municipality.navUrl).href,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: municipality.navUsername,
+            password: municipality.navPassword,
+          }),
+        },
+      ).then((response) => response.text())
+
+      const createdDate = application.created
+      return await fetch(
+        new URL(
+          'WebApplication/CreateFinancialAssistanceApplication',
+          municipality.navUrl,
+        ).href,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'FJST',
+            status: 'Umsókn',
+            id: application.nationalId,
+            phoneNo: application.phoneNumber,
+            email: application.email,
+            bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
+            grantAmount: calculateNavAmount(amount),
+            referenceNo: application.id,
+            employmentStatus: getNavEmploymentStatus[application.employment],
+            personalTaxCredit: calculatePersonalTaxAllowanceFromAmount(
+              amount.tax,
+              amount.personalTaxCredit,
+              amount.spousePersonalTaxCredit,
+            ),
+            housingCode: application.homeCircumstances,
+            dateFrom: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth(),
+              1,
+            ), // First day of created month
+            dateTo: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth() + 1,
+              0,
+            ), // Last day of created month
+          }),
+        },
+      ).then((response) => response.ok)
+    } catch {
+      return false
+    }
+  }
+
+  async filter(
+    filters: FilterApplicationsDto,
+    municipalityCodes: string[],
+  ): Promise<FilterApplicationsResponse> {
+    const whereOptions = {
+      state: {
+        [Op.in]:
+          filters.states.length > 0
+            ? filters.states
+            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+      },
+      municipalityCode: { [Op.in]: municipalityCodes },
+    }
+
+    if (filters.months.length > 0) {
+      const date = new Date()
+      const currentYear = date.getFullYear()
+      const currentMonth = date.getMonth()
+
+      whereOptions[Op.or] = filters.months.map((month) =>
+        Sequelize.and(
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'month',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month + 1).toString(),
+          ),
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'year',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+          ),
+        ),
+      )
+    }
+
+    const results = await this.applicationModel.findAndCountAll({
+      where: whereOptions,
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+      offset: (filters.page - 1) * applicationPageSize,
+      limit: applicationPageSize,
+    })
+
+    return { applications: results.rows, totalCount: results.count }
   }
 
   private async sendApplicationUpdateEmail(
@@ -387,32 +668,44 @@ export class ApplicationService {
       update.event === ApplicationEventType.REJECTED ||
       update.event === ApplicationEventType.APPROVED
     ) {
-      const municipality = await this.municipalityService.findByMunicipalityId(
-        updatedApplication.municipalityCode,
-      )
-      const emailData = getApplicantEmailDataFromEventType(
-        update.event,
-        linkToStatusPage(updatedApplication.id),
-        updatedApplication.email,
-        municipality,
-        updatedApplication.created,
-        update.event === ApplicationEventType.DATANEEDED
-          ? update?.comment
-          : undefined,
-        update.event === ApplicationEventType.REJECTED
-          ? update?.rejection
-          : undefined,
-      )
+      try {
+        const municipality = await this.municipalityService.findByMunicipalityId(
+          updatedApplication.municipalityCode,
+        )
+        const isApplicationSystem =
+          updatedApplication.applicationSystemId != null
 
-      await this.sendEmail(
-        {
-          name: updatedApplication.name,
-          address: updatedApplication.email,
-        },
-        emailData.subject,
-        ApplicantEmailTemplate(emailData.data),
-      )
+        const emailData = getApplicantEmailDataFromEventType(
+          update.event,
+          isApplicationSystem
+            ? linkToApplicationSystem(updatedApplication.applicationSystemId)
+            : linkToStatusPage(updatedApplication.id),
+          updatedApplication.email,
+          municipality,
+          updatedApplication.created,
+          update.event === ApplicationEventType.DATANEEDED
+            ? update?.comment
+            : undefined,
+          update.event === ApplicationEventType.REJECTED
+            ? update?.rejection
+            : undefined,
+        )
+
+        await this.sendEmail(
+          {
+            name: updatedApplication.name,
+            address: updatedApplication.email,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        )
+        return true
+      } catch {
+        return false
+      }
     }
+
+    return null
   }
 
   private async sendEmail(

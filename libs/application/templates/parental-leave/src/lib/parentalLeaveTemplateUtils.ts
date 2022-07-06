@@ -1,4 +1,4 @@
-import { ApplicationContext } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
 
 import { YES, NO } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
@@ -16,4 +16,9 @@ export function needsOtherParentApproval(context: ApplicationContext) {
     context.application.answers,
     context.application.externalData,
   )
+}
+
+export function currentDateStartTime() {
+  const date = new Date().toDateString()
+  return new Date(date).getTime()
 }

@@ -3,15 +3,19 @@ import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
 import { ActionCard, Stack } from '@island.is/island-ui/core'
+import { coreMessages, getSlugFromType } from '@island.is/application/core'
 import {
   Application,
   ApplicationStatus,
-  coreMessages,
-  getSlugFromType,
   ActionCardTag,
-} from '@island.is/application/core'
+  ApplicationTypes,
+} from '@island.is/application/types'
+import { institutionMapper } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
+import { useDeleteApplication } from './hooks/useDeleteApplication'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { Organization } from '@island.is/shared/types'
 
 interface DefaultStateData {
   tag: {
@@ -63,16 +67,56 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       label: coreMessages.cardButtonInProgress,
     },
   },
+  [ApplicationStatus.NOT_STARTED]: {
+    tag: {
+      variant: 'blueberry',
+      label: coreMessages.newApplication,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: coreMessages.cardButtonNotStarted,
+    },
+  },
 }
 
 interface Props {
-  applications: Application[]
+  organizations?: Organization[]
+  applications: Pick<
+    Application,
+    'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  >[]
   onClick: (id: string) => void
+  refetch?: (() => void) | undefined
 }
 
-const ApplicationList = ({ applications, onClick }: Props) => {
+const ApplicationList = ({
+  organizations,
+  applications,
+  onClick,
+  refetch,
+}: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+
+  const { deleteApplication } = useDeleteApplication(refetch)
+
+  const handleDeleteApplication = (applicationId: string) => {
+    deleteApplication(applicationId)
+  }
+
+  const getLogo = (typeId: ApplicationTypes): string => {
+    if (!organizations) {
+      return ''
+    }
+    const institutionSlug = institutionMapper[typeId]
+    const institution = organizations.find((x) => x.slug === institutionSlug)
+    return getOrganizationLogoUrl(
+      institution?.title ?? 'stafraent-island',
+      organizations,
+    )
+  }
 
   return (
     <Stack space={2}>
@@ -89,6 +133,7 @@ const ApplicationList = ({ applications, onClick }: Props) => {
 
         return (
           <ActionCard
+            logo={getLogo(application.typeId)}
             key={`${application.id}-${index}`}
             date={format(new Date(application.modified), formattedDate)}
             tag={{
@@ -111,6 +156,20 @@ const ApplicationList = ({ applications, onClick }: Props) => {
               active: Boolean(application.progress),
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
+            }}
+            deleteButton={{
+              visible: actionCard?.deleteButton,
+              onClick: handleDeleteApplication.bind(null, application.id),
+              disabled: false,
+              icon: 'trash',
+              dialogTitle:
+                coreMessages.deleteApplicationDialogTitle.defaultMessage,
+              dialogDescription:
+                coreMessages.deleteApplicationDialogDescription.defaultMessage,
+              dialogConfirmLabel:
+                coreMessages.deleteApplicationDialogConfirmLabel.defaultMessage,
+              dialogCancelLabel:
+                coreMessages.deleteApplicationDialogCancelLabel.defaultMessage,
             }}
           />
         )
