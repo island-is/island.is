@@ -58,7 +58,13 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
+          // Note: should be pruned at some time, so we can delete the FJS charge with it
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 1 hour will be pruned automatically
+            whenToPrune: 1 * 3600 * 1000,
+          },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -71,6 +77,7 @@ const template: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
               ],
               write: 'all',
+              delete: true, // Note: Should be deletable, so user is able to delete the FJS charge with the application
             },
           ],
         },
