@@ -6,7 +6,7 @@ import {
   LiveChatIncChatPanel,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { liveChatIncConfig, watsonConfig } from './config'
+import { defaultWatsonConfig, excludedOrganizationWatsonConfig, liveChatIncConfig, watsonConfig } from './config'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']
@@ -45,7 +45,9 @@ export const ArticleChatPanel = ({
       (o) => o.id in boostChatPanelEndpoints,
     )?.id as keyof typeof boostChatPanelEndpoints
     Component = <BoostChatPanel endpoint={organizationId} pushUp={pushUp} />
-  }
+  } else if (!article.organization?.some(o => excludedOrganizationWatsonConfig.includes(o.id))) {
+    Component = <WatsonChatPanel {...defaultWatsonConfig} pushUp={pushUp} />
+  } 
 
   return Component
 }

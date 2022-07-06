@@ -290,10 +290,28 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     carbonTheme: 'g10',
     namespaceKey: 'default',
   },
-
-  // Stafrænt Ísland - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1JHJe1NDwbBjEr7OVdjuFD
-  '1JHJe1NDwbBjEr7OVdjuFD': {
-    ...defaultWatsonConfig,
-  },
 }
+
+// If these organizations are not connected to an article then we show the default watson config
+export const excludedOrganizationWatsonConfig: string[] = [
+  // Sjúkratryggingar Íslands
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+  '3pZwAagW0UY26giHaxHthe',
+
+
+  // Heilbrigðisstofnun Norðurlands
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+  'EM4Y0gF4OoGhH9ZY0Dxl6',
+
+  // Fiskistofa
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6rXUdfbMD515Z7guowj08E
+  '6rXUdfbMD515Z7guowj08E',
+
+  // Landlæknir
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7qgJZc8vO7ZHWmfSrZp9Kn
+  '7qgJZc8vO7ZHWmfSrZp9Kn',
+
+  // Útlendingastofnun
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+  '77rXck3sISbMsUv7BO1PG2'
+]
