@@ -188,6 +188,8 @@
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
+/libs/clients/charge-fjs-v2/                                                                        @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa
 
