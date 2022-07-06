@@ -256,16 +256,16 @@ describe('calculateExistingNumberOfDays', () => {
       paid: true,
     },
     {
-      from: '2017-02-01',
-      to: '2017-02-29',
+      from: '2020-02-01',
+      to: '2020-02-29',
       ratio: '100',
       approved: true,
       paid: true,
     },
   ]
 
-  it('should return 30 days for a normal February and 31 days for leap year', () => {
-    expect(calculateExistingNumberOfDays(periodFeb)).toBe(61)
+  it('should return 30 days for both a normal February and leap year', () => {
+    expect(calculateExistingNumberOfDays(periodFeb)).toBe(60)
   })
 
   const period31Days = [

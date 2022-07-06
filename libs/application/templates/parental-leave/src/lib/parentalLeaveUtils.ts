@@ -762,7 +762,7 @@ export const calculateEndDateForPeriodWithStartAndLength = (
 
   const wholeMonthsToAdd = Math.floor(lengthInMonths)
   const daysToAdd =
-    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 28
+    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 30
 
   return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
 }
