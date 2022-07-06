@@ -317,25 +317,26 @@ export const m = defineMessages({
   /* Waiting For Confirmation Section */
   waitingForConfirmationTitle: {
     id: 'pa.application:waitingForConfirmation.title',
-    defaultMessage: 'Title',
+    defaultMessage: 'Umsókn staðfest',
     description: 'Some description',
   },
   waitingForConfirmationDescription: {
-    id: 'pa.application:waitingForConfirmation.description',
-    defaultMessage: 'Description',
+    id: 'pa.application:waitingForConfirmation.description#markdown',
+    defaultMessage:
+      'Umsókn þín um vegabréf fyrir **{childsName}** hefur verið send til **{guardian2Name}** til samþykktar.',
     description: 'Some description',
   },
 
   /* ParentB Intro Section */
   parentBIntro: {
     id: 'pa.application:parentBIntro',
-    defaultMessage: 'sendi inn umsókn um vegabréf',
+    defaultMessage: 'Í þessu ferli samþykkir þú sem forsjáraðili umsókn ',
     description: 'Some description',
   },
   parentBIntroPart2: {
-    id: 'pa.application:parentBIntro.part2',
+    id: 'pa.application:parentBIntro.part2#markdown',
     defaultMessage:
-      'Til þess að halda áfram með ferlið þurfa bæði forráðamenn að senda frá sér persónuupplýsingar til samþykktar af sýslumanni.',
+      'Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
     description: 'Some description',
   },
 
@@ -382,6 +383,17 @@ export const m = defineMessages({
   },
   applicationCompleteNextStepsDescription: {
     id: 'pa.application:complete.nextSteps.description#markdown',
+    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+    description: 'Some description',
+  },
+  applicationCompleteNextStepsDescriptionParentA: {
+    id: 'pa.application:complete.nextSteps.descriptionParentA#markdown',
+    defaultMessage: `* Þegar forsjáraðili hefur samþykkt umsóknina mun berast staðfesting í pósthólf ykkar á Ísland.is.\\n\\n * Forsjáraðili skal mæta með einstaklingi í myndatöku á næsta afgreiðslustað sýslumanns og hafa meðferðis núgildandi vegabréf eða löggild skilríki með mynd sé vegabréfið glatað.\\n\\n * Tilkynning mun berast á Mínar síður á Ísland.is þegar vegabréfið er tilbúið auk upplýsinga um hvenær hægt verður að sækja það á þann afhendingarstað sem tilgreindur var í umsóknarferlinu.`,
+    description: 'Some description',
+  },
+  applicationCompleteNextStepsDescriptionPersonalApplication: {
+    id:
+      'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
   },

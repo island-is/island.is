@@ -13,8 +13,6 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/types'
-import format from 'date-fns/format'
-import localeIS from 'date-fns/locale/is'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
@@ -34,16 +32,13 @@ export const ParentB: Form = buildForm({
           id: 'introParentB',
           title: 'Umsókn um vegabréf',
           description: (application: Application) =>
-            (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-              .guardian1.name +
-            ' ' +
-            m.parentBIntro.defaultMessage +
-            ' ' +
-            format(new Date(application.created), 'dd.MMMM, yyyy', {
-              locale: localeIS,
-            }) +
-            '. ' +
-            m.parentBIntroPart2.defaultMessage,
+            `**${
+              (application.answers.childsPersonalInfo as ChildsPersonalInfo)
+                .guardian1.name
+            }** um vegabréf fyrir **${
+              (application.answers.childsPersonalInfo as ChildsPersonalInfo)
+                .name
+            }**.` + m.parentBIntroPart2.defaultMessage,
           children: [
             buildDividerField({
               title: ' ',
