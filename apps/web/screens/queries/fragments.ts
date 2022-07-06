@@ -347,6 +347,7 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
     }
     link {
       text

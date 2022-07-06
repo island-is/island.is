@@ -469,37 +469,39 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               )}
             </Box>
           )}
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
-                offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
-              >
-                {breadcrumbItems && (
-                  <Breadcrumbs
-                    items={breadcrumbItems ?? []}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
-                )}
-                {showExternalLinks && (
-                  <OrganizationExternalLinks
-                    organizationPage={organizationPage}
-                  />
-                )}
-                {pageDescription && (
-                  <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                    <Text variant="default">{pageDescription}</Text>
-                  </Box>
-                )}
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          {(!!breadcrumbItems || !!pageDescription) && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
+                >
+                  {breadcrumbItems && (
+                    <Breadcrumbs
+                      items={breadcrumbItems ?? []}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  )}
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+                  {pageDescription && (
+                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                      <Text variant="default">{pageDescription}</Text>
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
           {isMobile && sidebarContent}
           <Box paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}

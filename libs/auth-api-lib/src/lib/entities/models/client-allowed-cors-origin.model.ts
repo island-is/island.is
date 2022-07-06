@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_allowed_cors_origin',
 })
-export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
+export class ClientAllowedCorsOrigin extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

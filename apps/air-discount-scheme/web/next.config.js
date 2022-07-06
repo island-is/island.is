@@ -1,5 +1,5 @@
+const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withSourceMaps = require('@zeit/next-source-maps')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 
 const {
@@ -17,7 +17,7 @@ const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
 
-module.exports = withSourceMaps(
+module.exports = withNx(
   withVanillaExtract({
     webpack: (config, options) => {
       if (!options.isServer) {
