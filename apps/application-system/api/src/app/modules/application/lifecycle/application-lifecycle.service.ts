@@ -8,7 +8,6 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
-import { ExternalData } from '@island.is/application/types'
 
 export interface AttachmentMetaData {
   s3key: string

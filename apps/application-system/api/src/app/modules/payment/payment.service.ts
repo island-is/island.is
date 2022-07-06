@@ -8,7 +8,7 @@ import type {
   PaymentServiceOptions,
   Item,
 } from '@island.is/clients/payment'
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'

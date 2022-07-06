@@ -20,8 +20,6 @@ export const ChargeFjsV2ClientConfig = defineConfig({
       fetchTimeout: env.optionalJSON('XROAD_CHARGE_FJS_V2_TIMEOUT') ?? 20000,
       tokenExchangeScope: env.optionalJSON('XROAD_CHARGE_FJS_V2_SCOPE') ?? [
         '@fjs.is/finance',
-        // TODO: Remove when fjs has migrated to the scope above.
-        'api_resource.scope',
       ],
       requestActorToken:
         env.optionalJSON('XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN') ?? false,
