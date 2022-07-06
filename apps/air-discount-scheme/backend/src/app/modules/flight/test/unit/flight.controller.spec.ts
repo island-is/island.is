@@ -211,39 +211,6 @@ describe('PublicFlightController', () => {
       }
     })
 
-    // AIRTODO: Determine where to move this test
-    //        : since isADSPostalCode gets triggered somewhere else now
-
-    /*
-    it('should fail if user postalcode does not meet conditions', async () => {
-      const request: any = { airline }
-      jest
-        .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      jest
-        .spyOn(nationalRegistryService, 'getUser')
-        .mockImplementation(() => Promise.resolve(user))
-      jest
-        .spyOn(flightService, 'isADSPostalCode')
-        .mockImplementation(() => false)
-
-      try {
-        await publicFlightController.create(
-          { discountCode },
-          flightDto,
-          request,
-        )
-        expect('This should not happen').toEqual('')
-      } catch (e: any) {
-        expect(e.response).toEqual({
-          statusCode: 403,
-          error: 'Forbidden',
-          message: 'User postalcode does not meet conditions',
-        })
-      }
-    })
-    */
-
     it('should fail if user does not have flight quota', async () => {
       const request: any = { airline }
       jest

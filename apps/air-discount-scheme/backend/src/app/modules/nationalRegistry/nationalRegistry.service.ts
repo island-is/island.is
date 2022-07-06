@@ -2,9 +2,7 @@ import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  NationalRegistryUser,
-} from './nationalRegistry.types'
+import { NationalRegistryUser } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 import {
   EinstaklingarApi,
@@ -23,7 +21,6 @@ import { lastValueFrom } from 'rxjs'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
-export const MAX_AGE_LIMIT = 1800
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -337,39 +334,6 @@ export class NationalRegistryService {
     const mappedUser = this.createNationalRegistryUser(response)
     return mappedUser
   }
-
-  /*
-  async getUserOld(nationalId: string): Promise<NationalRegistryUser | null> {
-    if (environment.environment !== 'prod') {
-      const testUser = TEST_USERS.find(
-        (testUser) => testUser.nationalId === nationalId,
-      )
-      if (testUser) {
-        return testUser
-      }
-    }
-    const cacheKey = this.getCacheKey(nationalId, 'user')
-    const cacheValue = await this.cacheManager.get(cacheKey)
-    if (cacheValue) {
-      return cacheValue.user
-    }
-    const response: {
-      data: [NationalRegistryGeneralLookupResponse]
-    } = await lastValueFrom(
-      this.httpService.get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`),
-    )
-
-    const user = this.createNationalRegistryUser(response.data[0])
-    if (user) {
-      await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
-    } else if (user === null) {
-      this.logger.error(
-        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
-      )
-    }
-    return user
-  }
-  */
 
   private handle404(error: FetchError) {
     if (error.status === 404) {

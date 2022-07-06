@@ -10,34 +10,59 @@ import {
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
+import kennitala from 'kennitala'
+import { createTestUser } from '@island.is/air-discount-scheme-test'
 
-const user: User = {
-  nationalId: '1326487905',
-  firstName: 'Jón',
-  gender: 'kk',
-  lastName: 'Jónsson',
-  middleName: 'Gunnar',
-  address: 'Bessastaðir 1',
-  postalcode: 225,
-  city: 'Álftanes',
-  fund: {
-    credit: 2,
-    used: 2,
-    total: 2,
+function getAuthUser(nationalId: string): AuthUser {
+  return {
+    nationalId,
+    authorization: '',
+    client: '',
+    scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  }
+}
+
+const TEST_USERS = [
+  {
+    // Gervimadur Ameríka
+    nationalId: '0101302989',
+    firstName: 'Gervimaður',
+    middleName: '',
+    lastName: 'Ameríka',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 600,
+    city: 'Akureyri',
   },
-}
-
-const auth: AuthUser = {
-  nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
-  authorization: '',
-  client: '',
-}
+  {
+    // Gervibarn Ameríku
+    nationalId: '2222222229',
+    firstName: 'Litli',
+    middleName: 'Jói',
+    lastName: 'Ameríkuson',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 100,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Ameríku
+    nationalId: '3333333339',
+    firstName: 'Litla',
+    middleName: 'Jóna',
+    lastName: 'Ameríkudóttir',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 100,
+    city: 'Vestmannaeyjar',
+  },
+]
 
 describe('UserService', () => {
   let userService: UserService
   let flightService: FlightService
   let nationalRegistryService: NationalRegistryService
+  let cacheManager: CacheManager
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -48,7 +73,7 @@ describe('UserService', () => {
           useClass: jest.fn(() => ({
             countThisYearsFlightLegsByNationalId: () => 0,
             countThisYearsConnectedFlightsByNationalId: () => 0,
-            isADSPostalCode: () => ({}),
+            isADSPostalCode: (postalcode: number) => postalcode > 199,
           })),
         },
         {
@@ -79,10 +104,13 @@ describe('UserService', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
+    cacheManager = moduleRef.get<CacheManager>(CACHE_MANAGER)
   })
 
   describe('getUserInfoByNationalId', () => {
     it('should return user with correct postal code with credit', async () => {
+      const user = createTestUser()
+      const auth = getAuthUser(user.nationalId)
       const flightLegs = {
         unused: user.fund.credit,
         used: user.fund.used,
@@ -113,7 +141,199 @@ describe('UserService', () => {
       expect(result).toEqual(user)
     })
 
+    it('should return credit for a child who lives outside of the ADS region IFF any custodian lives in the ADS region', async () => {
+      const user = createTestUser(
+        100,
+        {
+          credit: 6,
+          total: 6,
+          used: 0,
+        },
+        '2222222229',
+      )
+      const custodians: User[] = [
+        createTestUser(100),
+        createTestUser(100),
+        createTestUser(600),
+        createTestUser(100),
+      ]
+      const auth = getAuthUser(user.nationalId)
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve({ custodians }))
+
+      const kennitalaSpy = jest
+        .spyOn(kennitala, 'info')
+        .mockImplementation((kennitala: string | number) => {
+          return {
+            kt: kennitala.toString(),
+            age: kennitala.toString().includes('222222') ? 17 : 30,
+            birthday: new Date(Date.now()),
+            birthdayReadable: '',
+            type: 'person',
+            valid: true,
+          }
+        })
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+
+      expect(result).toEqual(user)
+    })
+
+    it('should not return credit for a child living outside of the ADS region whose custodians are all outside the region too', async () => {
+      const user = createTestUser(
+        100,
+        {
+          credit: 6,
+          total: 6,
+          used: 0,
+        },
+        '2222222229',
+      )
+      const custodians: User[] = [
+        createTestUser(100),
+        createTestUser(100),
+        createTestUser(150),
+        createTestUser(100),
+      ]
+      const auth = getAuthUser(user.nationalId)
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve({ custodians }))
+
+      const kennitalaSpy = jest
+        .spyOn(kennitala, 'info')
+        .mockImplementation((kennitala: string | number) => {
+          return {
+            kt: kennitala.toString(),
+            age: kennitala.toString().includes('222222') ? 17 : 30,
+            birthday: new Date(Date.now()),
+            birthdayReadable: '',
+            type: 'person',
+            valid: true,
+          }
+        })
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+
+      expect(result).toEqual({
+        ...user,
+        fund: {
+          ...user.fund,
+          credit: 0,
+        },
+      })
+    })
+
+    it('should not return credit for a child living outside of the ADS who has no custodians', async () => {
+      const user = createTestUser(
+        100,
+        {
+          credit: 6,
+          total: 6,
+          used: 0,
+        },
+        '2222222229',
+      )
+      const custodians: User[] = []
+      const auth = getAuthUser(user.nationalId)
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve({ custodians }))
+
+      const kennitalaSpy = jest
+        .spyOn(kennitala, 'info')
+        .mockImplementation((kennitala: string | number) => {
+          return {
+            kt: kennitala.toString(),
+            age: kennitala.toString().includes('222222') ? 17 : 30,
+            birthday: new Date(Date.now()),
+            birthdayReadable: '',
+            type: 'person',
+            valid: true,
+          }
+        })
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countThisYearsFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countThisYearsFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId, auth)
+      expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(kennitalaSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(cacheManagerGetSpy).toBeCalledTimes(1)
+
+      expect(result).toEqual({
+        ...user,
+        fund: {
+          ...user.fund,
+          credit: 0,
+        },
+      })
+    })
+
     it('should return user with incorrect postal code with no credit', async () => {
+      const user = createTestUser()
+      const auth = getAuthUser(user.nationalId)
       const flightLegs = {
         unused: user.fund.credit,
         used: user.fund.used,
@@ -151,6 +371,8 @@ describe('UserService', () => {
     })
 
     it('should return null if nationalRegistryService does not return user', async () => {
+      const user = createTestUser()
+      const auth = getAuthUser(user.nationalId)
       const getUserSpy = jest
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(null))

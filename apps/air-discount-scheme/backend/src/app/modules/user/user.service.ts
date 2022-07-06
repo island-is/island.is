@@ -17,12 +17,12 @@ import {
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
-import * as kennitala from 'kennitala'
+import { info } from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
-const MAX_AGE_LIMIT = 1800
+const MAX_AGE_LIMIT = 18
 
 @Injectable()
 export class UserService {
@@ -92,10 +92,7 @@ export class UserService {
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
       meetsADSRequirements = true
-    } else if (
-      kennitala.info(user.nationalId).age < MAX_AGE_LIMIT &&
-      !user.nationalId.includes('010130')
-    ) {
+    } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)
