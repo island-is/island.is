@@ -16,19 +16,19 @@ export const createXRoadAPIPath = (
   xRoadMemberAPIPath: string,
 ) => {
   if (!xRoadBasePath) {
-    logger.error('XRoad XROAD_BASE_PATH_WITH_ENV not provided.')
+    logger.error('xRoad base path not provided.')
   }
 
   if (!xRoadMemberClass) {
-    logger.error('XRoad XROAD_VMST_MEMBER_CLASS not provided.')
+    logger.error('xRoad member class not provided.')
   }
 
   if (!xRoadMemberCode) {
-    logger.error('XRoad XROAD_VMST_MEMBER_CODE not provided.')
+    logger.error('xRoad member code not provided.')
   }
 
   if (!xRoadMemberAPIPath) {
-    logger.error('XRoad XROAD_VMST_API_PATH not provided.')
+    logger.error('xRoad member API path not provided.')
   }
 
   return `${xRoadBasePath}/${xRoadMemberClass}/${xRoadMemberCode}${xRoadMemberAPIPath}`

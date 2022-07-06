@@ -20,6 +20,7 @@ import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserDropdownProps {
   user: User
@@ -47,7 +48,7 @@ export const UserDropdown = ({
   }
 
   const actor = user.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(user)
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'

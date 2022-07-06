@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { m, tableStyles } from '@island.is/service-portal/core'
+import { tableStyles } from '../../utils/utils'
+import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
 
@@ -13,7 +14,7 @@ interface Props {
   paginateCallback?: () => void
 }
 
-const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
+export const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
   const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {
@@ -79,5 +80,3 @@ const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
     </>
   )
 }
-
-export default TableUnits
