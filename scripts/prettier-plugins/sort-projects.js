@@ -1,12 +1,8 @@
 const _ = require('lodash')
-const { parse: babelParser } = require('@babel/parser')
 const { parsers } = require('prettier/parser-babel')
 const { basename } = require('path')
-const sortPaths = require('sort-paths')
-const get = require('lodash/get')
 
 const jsonParser = parsers['json']
-const javascriptParser = parsers['babel']
 
 const sortObjectByKey = (obj) => {
   return _(obj).toPairs().sortBy(0).fromPairs().value()
@@ -48,42 +44,7 @@ const sortTsConfig = (text) => {
   })
 }
 
-const sortJestConfig = (text) => {
-  const projects = []
-  const ast = babelParser(text)
-  const elements = get(
-    ast,
-    'program.body[0].expression.right.properties[0].value.elements',
-    [],
-  )
-
-  for (const project of elements) {
-    projects.push(project.value.replace('<rootDir>', ''))
-  }
-
-  const sorted = sortPaths(projects, '/')
-  const paths = sorted.map((name) => `'<rootDir>${name}'`).join(',\n')
-
-  return `
-    module.exports = {
-      projects: [${paths}]
-    }
-  `
-}
-
 exports.parsers = {
-  babel: {
-    ...javascriptParser,
-    preprocess(text, options) {
-      switch (options.filepath) {
-        case 'jest.config.js':
-          return sortJestConfig(text)
-
-        default:
-          return text
-      }
-    },
-  },
   json: {
     ...jsonParser,
     preprocess(text, options) {

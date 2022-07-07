@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
@@ -49,7 +50,13 @@ export const createTestingFileModule = async () => {
       },
       FileService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .compile()
 
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
 

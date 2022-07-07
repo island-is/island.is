@@ -13,7 +13,8 @@ import {
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
 } from '@island.is/application/types'
-import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+import { buildForm } from './formBuilders'
+import { DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {
