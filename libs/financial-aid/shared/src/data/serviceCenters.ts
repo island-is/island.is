@@ -4,9 +4,9 @@ import { ServiceCenter } from '../lib'
 // https://is.wikipedia.org/wiki/Íslensk_sveitarfélög_eftir_sveitarfélagsnúmerum
 
 export const serviceCenters: Pick<
-  ServiceCenter[],
+  ServiceCenter,
   'name' & 'number' & 'link'
-> = [
+>[] = [
   {
     name: 'Þjónustumiðstöð Vesturbæjar, Miðborgar og Hlíða',
     number: 0,
