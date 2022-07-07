@@ -15,7 +15,7 @@ const jsScheduler = jsSchedulerSetup({ backend: jsBack })
 const jsMessageHandler = jsMessageHandlerSetup({ backend: jsBack })
 
 export const Services: EnvironmentServices = {
-  prod: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
-  staging: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
+  prod: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler],
+  staging: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler],
   dev: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler, jsMessageHandler],
 }
