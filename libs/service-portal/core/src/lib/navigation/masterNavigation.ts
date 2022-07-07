@@ -56,6 +56,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.family,
             navHide: true,
             path: ServicePortalPath.FamilyRoot,
+            children: [
+              {
+                name: m.familySpouse,
+                navHide: true,
+                path: ServicePortalPath.Spouse,
+              },
+              {
+                name: m.familyChild,
+                navHide: true,
+                path: ServicePortalPath.Child,
+              },
+            ],
           },
           {
             // Petitions
