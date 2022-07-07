@@ -41,7 +41,6 @@ import {
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
-import { last } from 'lodash'
 
 export function getExpectedDateOfBirth(
   application: Application,
