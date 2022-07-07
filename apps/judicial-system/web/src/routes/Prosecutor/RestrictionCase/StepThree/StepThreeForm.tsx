@@ -49,10 +49,10 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export interface DemandsAutofillProps {
   defentant: Defendant
