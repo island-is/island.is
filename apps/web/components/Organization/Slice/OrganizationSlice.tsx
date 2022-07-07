@@ -75,8 +75,6 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
-// Testing changed github settings, ignore this comment
-
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
