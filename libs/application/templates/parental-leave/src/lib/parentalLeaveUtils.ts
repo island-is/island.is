@@ -768,20 +768,26 @@ export const calculateEndDateForPeriodWithStartAndLength = (
     (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 30
 
   const lastMonthBeforeEndDate = addMonths(start, wholeMonthsToAdd)
-  let endDateMonth = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
+  let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
+  const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
+
+  // If endDate is the end of February and startDate is 15
+  if (daysInMonth === 28 && lastMonthBeforeEndDate.getDate() === 15){
+    endDate = addDays(endDate, -1)
+  }
 
   // February and months with 31 days
-  if (!isSameMonth(lastMonthBeforeEndDate, endDateMonth)) {
-    const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
+  if (!isSameMonth(lastMonthBeforeEndDate, endDate)) {
     if (daysInMonth === 31) {
-      endDateMonth = addDays(endDateMonth, 1)
+      endDate = addDays(endDate, 1)
     } else if (daysInMonth === 28) {
-      endDateMonth = addDays(endDateMonth, -2)
+      endDate = addDays(endDate, -2)
     } else if (daysInMonth === 29) {
-      endDateMonth = addDays(endDateMonth, -1)
+      endDate = addDays(endDate, -1)
     }
   }
-  return endDateMonth
+
+  return endDate
 }
 
 export const calculatePeriodLengthInMonths = (
