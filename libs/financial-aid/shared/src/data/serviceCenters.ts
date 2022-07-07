@@ -5,7 +5,7 @@ import { ServiceCenter } from '../lib'
 
 export const serviceCenters: Pick<
   ServiceCenter,
-  'name' & 'number' & 'link'
+  'name' | 'number' | 'link'
 >[] = [
   {
     name: 'Þjónustumiðstöð Vesturbæjar, Miðborgar og Hlíða',
