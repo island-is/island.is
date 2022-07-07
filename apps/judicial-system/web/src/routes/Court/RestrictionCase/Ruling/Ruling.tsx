@@ -229,7 +229,7 @@ export const Ruling: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
