@@ -72,8 +72,8 @@ const defaultFilterValues = {
   showUnread: false,
 }
 
-type SortKeyType = 'date' | 'subject' | 'senderName'
-type SortDirectionType = 'asc' | 'desc'
+type SortKeyType = 'Date' | 'Subject' | 'Sender' | 'Category' | 'Type'
+type SortDirectionType = 'Ascending' | 'Descending'
 
 type FilterValues = {
   dateFrom: Date | null
@@ -89,44 +89,9 @@ type GroupsValue = {
   label: string
 }
 
-const getFilteredDocuments = (
-  documents: Document[],
-  filterValues: FilterValues,
-): Document[] => {
-  const {
-    searchQuery,
-    showUnread,
-    activeGroups,
-    activeCategories,
-  } = filterValues
-  let filteredDocuments = documents
-
-  if (activeCategories && activeCategories.length > 0) {
-    filteredDocuments = filteredDocuments.filter((doc) =>
-      activeCategories.includes(doc.senderNatReg),
-    )
-  }
-
-  if (activeGroups && activeGroups.length > 0) {
-    filteredDocuments = filteredDocuments.filter((doc) =>
-      activeGroups.includes(doc?.categoryId || 'NO_ID'),
-    )
-  }
-
-  if (showUnread) {
-    filteredDocuments = filteredDocuments.filter((x) => !x.opened)
-  }
-
-  if (searchQuery) {
-    filteredDocuments = filteredDocuments.filter((x) =>
-      x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-  }
-  return filteredDocuments
-}
-
 const getSortDirection = (currentDirection: SortDirectionType) => {
-  const reverseDirection = currentDirection === 'asc' ? 'desc' : 'asc'
+  const reverseDirection =
+    currentDirection === 'Ascending' ? 'Descending' : 'Ascending'
   return reverseDirection
 }
 
@@ -145,8 +110,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     direction: SortDirectionType
     key: SortKeyType
   }>({
-    direction: 'desc',
-    key: 'date',
+    direction: 'Descending',
+    key: 'Date',
   })
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
     false,
@@ -157,19 +122,26 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
+  const [searchQuery, setSearchQuery] = useState<string>(
+    defaultFilterValues.searchQuery,
+  )
 
   const [groupsAvailable, setGroupsAvailable] = useState<
     GroupsValue[] | typeof NO_GROUPS_AVAILABLE
   >([])
-  const { data, loading, error } = useListDocuments(
-    filterValue.dateFrom?.toISOString(),
-    filterValue.dateTo?.toISOString(),
-    filterValue.activeGroups.join(),
-    null,
-    sortState.key === 'date' ? sortState.direction : null,
-    page,
-    pageSize + 1,
-  )
+  const { data, loading, error } = useListDocuments({
+    senderKennitala: filterValue.activeCategories.join(),
+    dateFrom: filterValue.dateFrom?.toISOString(),
+    dateTo: filterValue.dateTo?.toISOString(),
+    categoryId: filterValue.activeGroups.join(),
+    subjectContains: filterValue.searchQuery,
+    typeId: null,
+    sortBy: sortState.direction,
+    order: sortState.key,
+    opened: filterValue.showUnread ? false : null,
+    page: page,
+    pageSize: pageSize + 1,
+  })
   const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
 
   const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
@@ -203,25 +175,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }
   }, [groupData, data])
 
-  const getFilteredSorted = (
-    documents: Document[],
-    filterValues: FilterValues,
-  ): Document[] => {
-    const filteredArray = getFilteredDocuments(documents, filterValues)
-    const sortedFiltered =
-      sortState?.key && sortState?.direction
-        ? orderBy(
-            filteredArray,
-            sortState.key === 'date'
-              ? (item) => new Date(item[sortState.key])
-              : sortState.key,
-            sortState.direction,
-          )
-        : filteredArray
-    return sortedFiltered
-  }
   const categories = data.categories
-  const filteredDocuments = getFilteredSorted(data.documents, filterValue)
+  const filteredDocuments = data.documents
 
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
@@ -284,6 +239,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleClearFilters = useCallback(() => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues })
+    setSearchQuery(defaultFilterValues.searchQuery)
   }, [])
 
   const handleShowUnread = useCallback((showUnread: boolean) => {
@@ -347,13 +303,28 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             labelOpen={formatMessage(m.openFilter)}
             labelClose={formatMessage(m.closeFilter)}
             filterInput={
-              <FilterInput
-                placeholder={formatMessage(m.searchPlaceholder)}
-                name="rafraen-skjol-input"
-                value={filterValue.searchQuery}
-                onChange={(value) => handleSearchChange(value)}
-                backgroundColor="blue"
-              />
+              <>
+                <Button
+                  variant="utility"
+                  onClick={() => handleSearchChange(searchQuery)}
+                >
+                  {formatMessage(m.searchLabel)}
+                </Button>
+                <FilterInput
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  name="rafraen-skjol-input"
+                  value={searchQuery}
+                  onChange={(value) => setSearchQuery(value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      handleSearchChange(
+                        (event.target as HTMLInputElement).value,
+                      )
+                    }
+                  }}
+                  backgroundColor="blue"
+                />
+              </>
             }
             onFilterClear={handleClearFilters}
           >
@@ -562,13 +533,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
-                        active={sortState?.key === 'date'}
+                        active={sortState?.key === 'Date'}
                         direction={sortState?.direction}
                         title={formatMessage(messages.tableHeaderDate)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
-                            key: 'date',
+                            key: 'Date',
                           })
                         }
                       />
@@ -577,13 +548,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <GridColumn span={['1/1', '4/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
-                        active={sortState?.key === 'subject'}
+                        active={sortState?.key === 'Subject'}
                         direction={sortState?.direction}
                         title={formatMessage(messages.tableHeaderInformation)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
-                            key: 'subject',
+                            key: 'Subject',
                           })
                         }
                       />
@@ -592,13 +563,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <GridColumn span={['1/1', '3/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
-                        active={sortState?.key === 'senderName'}
+                        active={sortState?.key === 'Category'}
                         direction={sortState?.direction}
                         title={formatMessage(messages.tableHeaderGroup)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
-                            key: 'senderName',
+                            key: 'Category',
                           })
                         }
                       />
@@ -607,13 +578,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <GridColumn span={['1/1', '3/12']}>
                     <Box paddingX={2}>
                       <HeaderArrow
-                        active={sortState?.key === 'senderName'}
+                        active={sortState?.key === 'Sender'}
                         direction={sortState?.direction}
                         title={formatMessage(messages.tableHeaderInstitution)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
-                            key: 'senderName',
+                            key: 'Sender',
                           })
                         }
                       />

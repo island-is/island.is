@@ -84,22 +84,30 @@ export class DocumentClient {
   async getDocumentList(
     nationalId?: string,
     input?: {
+      senderKennitala?: string | null
       dateFrom?: string | null
       dateTo?: string | null
       categoryId?: string | null
       typeId?: string | null
       archived?: boolean | null
-      sortBy?: string | null
+      sortBy?: 'Subject' | 'Sender' | 'Category' | 'Date' | 'Type' | null
+      order?: 'Ascending' | 'Descending' | null
+      subjectContains?: string | null
+      opened?: boolean | null
       page?: number | null
       pageSize?: number | null
     },
   ): Promise<ListDocumentsResponse | null> {
-    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?sortBy=${
-      input?.sortBy ?? 'desc'
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?senderKennitala${
+      input?.senderKennitala ?? ''
     }&dateFrom=${input?.dateFrom ?? ''}&dateTo=${
       input?.dateTo ?? ''
     }&categoryId=${input?.categoryId ?? ''}&typeId=${
       input?.typeId ?? ''
+    }&sortBy=${input?.sortBy ?? 'Date'}&order=${
+      input?.order ?? 'Descending'
+    }&subjectContains=${input?.subjectContains ?? ''}&opened=${
+      input?.opened ?? ''
     }&page=${input?.page ?? 1}&pageSize=${input?.pageSize ?? 15}`
 
     console.log(requestRoute)

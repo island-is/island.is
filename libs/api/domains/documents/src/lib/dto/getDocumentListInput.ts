@@ -3,6 +3,9 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class GetDocumentListInput {
   @Field({ nullable: true })
+  senderKennitala?: string
+
+  @Field({ nullable: true })
   dateFrom?: string
 
   @Field({ nullable: true })
@@ -12,10 +15,19 @@ export class GetDocumentListInput {
   categoryId?: string
 
   @Field({ nullable: true })
+  subjectContains?: string
+
+  @Field({ nullable: true })
   typeId?: string
 
   @Field({ nullable: true })
-  sortBy?: string
+  sortBy?: 'Date' | 'Category' | 'Type' | 'Subject' | 'Sender'
+
+  @Field({ nullable: true })
+  order?: 'Ascending' | 'Descending'
+
+  @Field({ nullable: true })
+  opened?: boolean
 
   @Field({ nullable: true })
   page?: number
