@@ -69,10 +69,9 @@ export const JudgeOverview: React.FC = () => {
   const { setAndSendToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
   useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
+    if (isCaseUpToDate) {
       setAndSendToServer(
         [
           {
@@ -88,13 +87,10 @@ export const JudgeOverview: React.FC = () => {
         workingCase,
         setWorkingCase,
       )
-
-      setInitialAutoFillDone(true)
     }
   }, [
     setAndSendToServer,
     formatMessage,
-    initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,
     workingCase,
