@@ -1,4 +1,3 @@
-import { setup } from '@island.is/air-discount-scheme-test'
 import request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import {
@@ -8,6 +7,7 @@ import {
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { User } from '@island.is/air-discount-scheme/types'
 import { AuthGuard } from '../../../common'
+import { setup } from '../../../../../../test/setup'
 
 let app: INestApplication
 let cacheManager: CacheManager

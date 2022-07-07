@@ -1,18 +1,13 @@
 import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
-import { HttpModule, HttpService } from '@nestjs/axios'
-import { AxiosResponse } from 'axios'
-import { of } from 'rxjs'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { environment } from '../../../../../environments'
 import { NationalRegistryService } from '../../nationalRegistry.service'
 import { NationalRegistryUser } from '../../nationalRegistry.types'
 
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import {
-  EinstaklingarApi,
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
@@ -37,8 +32,6 @@ const auth: AuthUser = {
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
-  let einstaklingarApi: EinstaklingarApi
-  let cacheManager: CacheManager
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -70,9 +63,6 @@ describe('NationalRegistryService', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
-    cacheManager = moduleRef.get<CacheManager>(CACHE_MANAGER)
-
-    einstaklingarApi = moduleRef.get<EinstaklingarApi>(EinstaklingarApi)
   })
 
   describe('getUser', () => {
@@ -85,7 +75,6 @@ describe('NationalRegistryService', () => {
         user.nationalId,
         auth,
       )
-
       expect(result).toEqual(null)
     })
   })

@@ -3,19 +3,13 @@ import {
   Param,
   Get,
   UseGuards,
-  NotFoundException,
   BadRequestException,
 } from '@nestjs/common'
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiTags,
-  ApiExcludeEndpoint,
-} from '@nestjs/swagger'
+import { ApiExcludeEndpoint } from '@nestjs/swagger'
 
-import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
+import { GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
-import { AirlineUser, User } from './user.model'
+import { User } from './user.model'
 import {
   CurrentUser,
   IdsUserGuard,

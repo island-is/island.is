@@ -11,7 +11,7 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
 import kennitala from 'kennitala'
-import { createTestUser } from '@island.is/air-discount-scheme-test'
+import { createTestUser } from '../../../../../../test/createTestUser'
 
 function getAuthUser(nationalId: string): AuthUser {
   return {
@@ -21,42 +21,6 @@ function getAuthUser(nationalId: string): AuthUser {
     scope: ['@vegagerdin.is/air-discount-scheme-scope'],
   }
 }
-
-const TEST_USERS = [
-  {
-    // Gervimadur Ameríka
-    nationalId: '0101302989',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Ameríka',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 600,
-    city: 'Akureyri',
-  },
-  {
-    // Gervibarn Ameríku
-    nationalId: '2222222229',
-    firstName: 'Litli',
-    middleName: 'Jói',
-    lastName: 'Ameríkuson',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 100,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Ameríku
-    nationalId: '3333333339',
-    firstName: 'Litla',
-    middleName: 'Jóna',
-    lastName: 'Ameríkudóttir',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 100,
-    city: 'Vestmannaeyjar',
-  },
-]
 
 describe('UserService', () => {
   let userService: UserService

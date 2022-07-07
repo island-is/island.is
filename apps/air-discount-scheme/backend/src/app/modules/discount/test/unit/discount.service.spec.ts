@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
-import { createTestUser } from '@island.is/air-discount-scheme-test'
+import { createTestUser } from '../../../../../../test/createTestUser'
 
 describe('DiscountService', () => {
   let discountService: DiscountService

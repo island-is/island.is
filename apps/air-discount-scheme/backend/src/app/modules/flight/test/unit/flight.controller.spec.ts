@@ -11,7 +11,7 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { CACHE_MANAGER } from '@nestjs/common'
-import { createTestUser } from '@island.is/air-discount-scheme-test'
+import { createTestUser } from '../../../../../../test/createTestUser'
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController

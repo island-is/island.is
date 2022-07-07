@@ -6,13 +6,9 @@ import {
   PrivateDiscountController,
   PublicDiscountController,
 } from '../../discount.controller'
-import {
-  NationalRegistryService,
-  NationalRegistryUser,
-} from '../../../nationalRegistry'
+import { NationalRegistryService } from '../../../nationalRegistry'
 import { FlightService } from '../../../flight'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { createTestUser } from '@island.is/air-discount-scheme-test'
 import { UserService } from '../../../user/user.service'
 import {
   NationalRegistryClientConfig,
@@ -21,6 +17,7 @@ import {
 import { CACHE_MANAGER } from '@nestjs/common'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
+import { createTestUser } from '../../../../../../test/createTestUser'
 
 const auth: AuthUser = {
   nationalId: '1326487905',
@@ -123,16 +120,6 @@ describe('DiscountController', () => {
       const discountCode = 'ABCDEFG'
       const testUser = createTestUser()
       const discount = new Discount(testUser, discountCode, [], nationalId, 0)
-      const user: NationalRegistryUser = {
-        nationalId,
-        firstName: 'Jón',
-        gender: 'kk',
-        lastName: 'Jónsson',
-        middleName: 'Gunnar',
-        address: 'Bessastaðir 1',
-        postalcode: 225,
-        city: 'Álftanes',
-      }
       const createDiscountCodeSpy = jest
         .spyOn(discountService, 'createDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))

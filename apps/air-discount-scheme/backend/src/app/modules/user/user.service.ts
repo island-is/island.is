@@ -1,5 +1,5 @@
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
-import { AirlineUser, User } from './user.model'
+import { User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
 import {

@@ -17,7 +17,6 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { lastValueFrom } from 'rxjs'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
