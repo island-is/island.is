@@ -1,6 +1,8 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import isSameMonth from 'date-fns/isSameMonth'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
@@ -39,6 +41,7 @@ import {
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
 import { FormatMessage } from '@island.is/localization'
+import { last } from 'lodash'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -764,7 +767,21 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   const daysToAdd =
     (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 30
 
-  return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
+  const lastMonthBeforeEndDate = addMonths(start, wholeMonthsToAdd)
+  let endDateMonth = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
+
+  // February and months with 31 days
+  if (!isSameMonth(lastMonthBeforeEndDate, endDateMonth)) {
+    const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
+    if (daysInMonth === 31) {
+      endDateMonth = addDays(endDateMonth, 1)
+    } else if (daysInMonth === 28) {
+      endDateMonth = addDays(endDateMonth, -2)
+    } else if (daysInMonth === 29) {
+      endDateMonth = addDays(endDateMonth, -1)
+    }
+  }
+  return endDateMonth
 }
 
 export const calculatePeriodLengthInMonths = (
