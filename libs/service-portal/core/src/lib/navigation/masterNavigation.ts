@@ -4,18 +4,13 @@ import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: m.info,
+    name: m.overview,
+    systemRoute: true,
+    path: ServicePortalPath.MinarSidurRoot,
+    icon: {
+      icon: 'home',
+    },
     children: [
-      // Yfirlit
-      {
-        name: m.overview,
-        systemRoute: true,
-        path: ServicePortalPath.MinarSidurRoot,
-        icon: {
-          icon: 'home',
-        },
-      },
-
       // Rafraen skjol
       {
         name: m.documents,
@@ -231,6 +226,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.myVehicles,
             path: ServicePortalPath.AssetsMyVehicles,
+            children: [
+              {
+                // Path param reference
+                name: 'id',
+                navHide: true,
+                path: ServicePortalPath.AssetsVehiclesDetail,
+              },
+            ],
           },
           // {
           //   name: m.vehiclesLookup,
@@ -251,14 +254,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
-          },
-          {
-            name: m.accessControlGrant,
-            path: ServicePortalPath.SettingsAccessControlGrant,
-          },
-          {
-            name: m.accessControlAccess,
-            path: ServicePortalPath.SettingsAccessControlAccess,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.SettingsAccessControlGrant,
+              },
+              {
+                name: m.accessControlAccess,
+                path: ServicePortalPath.SettingsAccessControlAccess,
+              },
+            ],
           },
           {
             name: m.mySettings,
