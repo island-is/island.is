@@ -14,8 +14,8 @@ import {
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 
 export const ONE_MONTH = 2592000 // seconds

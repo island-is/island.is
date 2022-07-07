@@ -39,8 +39,7 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8",
-    "@island.is/auth-nest-tools"
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

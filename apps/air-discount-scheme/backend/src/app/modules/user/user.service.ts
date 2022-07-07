@@ -9,8 +9,8 @@ import {
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   EinstaklingarApi,
   EinstaklingarGetForsjaForeldriRequest,

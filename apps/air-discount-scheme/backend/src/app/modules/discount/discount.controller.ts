@@ -28,8 +28,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
