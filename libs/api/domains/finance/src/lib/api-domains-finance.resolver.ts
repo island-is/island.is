@@ -168,6 +168,7 @@ export class FinanceResolver {
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
   }

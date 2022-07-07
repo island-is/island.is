@@ -4,7 +4,6 @@ import differenceInDays from 'date-fns/differenceInDays'
 import isSameMonth from 'date-fns/isSameMonth'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
 import isSameDay from 'date-fns/isSameDay'
 import {
   ParentalLeave,
