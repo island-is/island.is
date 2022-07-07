@@ -241,11 +241,11 @@ judicial-system-message-handler:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
