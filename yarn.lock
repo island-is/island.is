@@ -2620,10 +2620,10 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.8", "@babel/runtime@^7.16.3", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
-  version "7.17.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
-  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.8", "@babel/runtime@^7.16.3", "@babel/runtime@^7.17.8", "@babel/runtime@^7.3.1", "@babel/runtime@^7.3.4", "@babel/runtime@^7.4.4", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.3.tgz#c7b654b57f6f63cf7f8b418ac9ca04408c4579f4"
+  integrity sha512-38Y8f7YUhce/K7RMwTp7m0uCumpv9hZkitCbBClqQIow1qSbCvGkcegKOXpEWCQLfWmevgRiWokZ1GkpfhbZug==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2633,13 +2633,6 @@
   integrity sha512-IvfvnMdSaLBateu0jfsYIpZTxAc2cKEXEMiezGGN75QcBcecDUKd3PgLAncT0oOgxKy8dd8hrJKj9MfzgfZd6g==
   dependencies:
     regenerator-runtime "^0.12.0"
-
-"@babel/runtime@^7.17.8":
-  version "7.18.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.3.tgz#c7b654b57f6f63cf7f8b418ac9ca04408c4579f4"
-  integrity sha512-38Y8f7YUhce/K7RMwTp7m0uCumpv9hZkitCbBClqQIow1qSbCvGkcegKOXpEWCQLfWmevgRiWokZ1GkpfhbZug==
-  dependencies:
-    regenerator-runtime "^0.13.4"
 
 "@babel/template@^7.0.0 <7.4.0":
   version "7.2.2"
@@ -22045,10 +22038,10 @@ netmask@2.0.1, netmask@^2.0.1:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-2.0.1.tgz#5a5cbdcbb7b6de650870e15e83d3e9553a414cf4"
   integrity sha512-gB8eG6ubxz67c7O2gaGiyWdRUIbH61q7anjgueDqCC9kvIs/b4CTtCMaQKeJbv1/Y7FT19I4zKwYmjnjInRQsg==
 
-next-auth@3.29.0:
-  version "3.29.0"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-3.29.0.tgz#60ddbfc7ed8ae7d43ebb02c16dc58eebf5dcb337"
-  integrity sha512-B//4QTv/1Of0D+roZ82URmI6L2JSbkKgeaKI7Mdrioq8lAzp9ff8NdmouvZL/7zwrPe2cUyM6MLYlasfuI3ZIQ==
+next-auth@3.29.8:
+  version "3.29.8"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-3.29.8.tgz#aedda4412bfd5f84a312fcbd29ded2c122211510"
+  integrity sha512-C4YxgeVTeYtAkKCpEq2qX9kNctWBav5mWHtL32xj5qDOpdmH4LocuAUVZdj0tAae1xv4fKZLtPkV6wN5iqi5Zg==
   dependencies:
     "@babel/runtime" "^7.14.0"
     "@next-auth/prisma-legacy-adapter" "0.1.2"

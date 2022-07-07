@@ -366,3 +366,13 @@ export const Vehicles = new XroadConf({
     },
   },
 })
+
+export const ChargeFjsV2 = new XroadConf({
+  env: {
+    XROAD_CHARGE_FJS_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+    },
+  },
+})
