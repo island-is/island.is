@@ -7,9 +7,12 @@ import {
   daysToMonths,
   DAYS_IN_MONTH,
   calculateMaxPercentageForPeriod,
+  monthsToDays,
+  calculateExistingNumberOfDays,
+  calculateMinPercentageForPeriod,
 } from './directorateOfLabour.utils'
 
-describe('monthsToDays', () => {
+describe('daysToMonths', () => {
   it('should return 6 months for the default period', () => {
     const months = 6
     const days = DAYS_IN_MONTH * months
@@ -42,6 +45,32 @@ describe('monthsToDays', () => {
     const sum = days + requestedDays
 
     expect(daysToMonths(sum)).toBe(7.5)
+  })
+})
+
+describe('monthsToDays', () => {
+  it('should return 180 days for the default period', () => {
+    const months = 6
+
+    expect(monthsToDays(months)).toBe(180)
+  })
+
+  it('should return 135 days for the minimum period', () => {
+    const months = 6
+    const givenDays = 45
+    const givenDaysInMonths = givenDays / DAYS_IN_MONTH
+    const sub = months - givenDaysInMonths
+
+    expect(monthsToDays(sub)).toBe(135)
+  })
+
+  it('should return 225 days for the maximum period available', () => {
+    const months = 6
+    const requestedDays = 45
+    const requestedDaysInMonths = requestedDays / DAYS_IN_MONTH
+    const sum = months + requestedDaysInMonths
+
+    expect(monthsToDays(sum)).toBe(225)
   })
 })
 
@@ -182,6 +211,85 @@ describe('calculateNumberOfDaysForOnePeriod', () => {
   })
 })
 
+describe('calculateExistingNumberOfDays', () => {
+  const periods = [
+    {
+      from: '2016-11-01',
+      to: '2016-11-30',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+    {
+      from: '2016-12-01',
+      to: '2016-12-31',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+    {
+      from: '2017-01-01',
+      to: '2017-01-31',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+    {
+      from: '2017-02-01',
+      to: '2017-02-28',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+  ]
+
+  it('should return 120 days for four whole months, including February', () => {
+    expect(calculateExistingNumberOfDays(periods)).toBe(120)
+  })
+
+  const periodFeb = [
+    {
+      from: '2017-02-01',
+      to: '2017-02-28',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+    {
+      from: '2017-02-01',
+      to: '2017-02-29',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+  ]
+
+  it('should return 30 days for a normal February and 31 days for leap year', () => {
+    expect(calculateExistingNumberOfDays(periodFeb)).toBe(61)
+  })
+
+  const period31Days = [
+    {
+      from: '2017-03-01',
+      to: '2017-03-30',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+    {
+      from: '2017-03-01',
+      to: '2017-03-31',
+      ratio: '100',
+      approved: true,
+      paid: true,
+    },
+  ]
+
+  it('should return 30 days for months with 31 days', () => {
+    expect(calculateExistingNumberOfDays(period31Days)).toBe(60)
+  })
+})
+
 describe('calculateRemainingNumberOfDays', () => {
   const mockUser = {
     applicationId: 'applicationId',
@@ -203,9 +311,11 @@ describe('calculateRemainingNumberOfDays', () => {
       },
       privatePensionFundRatio: 0,
     },
-    employers: [{ email: null, nationalRegistryId: 'nationalRegistryId' }],
+    employers: [
+      { email: 'test@test.is', nationalRegistryId: 'nationalRegistryId' },
+    ],
     status: 'In Process',
-    rightsCode: null,
+    rightsCode: '',
   }
 
   const parentalLeaves = [
@@ -217,35 +327,35 @@ describe('calculateRemainingNumberOfDays', () => {
         {
           from: '2016-10-01',
           to: '2016-10-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
         {
           from: '2016-11-01',
           to: '2016-11-30',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
         {
           from: '2016-12-01',
           to: '2016-12-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
         {
           from: '2017-03-01',
           to: '2017-03-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
         {
           from: '2017-04-01',
           to: '2017-04-30',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
@@ -259,42 +369,42 @@ describe('calculateRemainingNumberOfDays', () => {
         {
           from: '2017-10-01',
           to: '2017-10-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: true,
         },
         {
           from: '2017-11-01',
           to: '2017-11-30',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: false,
         },
         {
           from: '2017-12-01',
           to: '2017-12-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: false,
         },
         {
           from: '2018-01-01',
           to: '2018-01-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: false,
         },
         {
           from: '2018-02-01',
           to: '2018-02-28',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: false,
         },
         {
           from: '2018-03-01',
           to: '2018-03-31',
-          ratio: 100,
+          ratio: '100',
           approved: true,
           paid: false,
         },
@@ -308,21 +418,21 @@ describe('calculateRemainingNumberOfDays', () => {
         {
           from: '2019-05-01',
           to: '2019-05-31',
-          ratio: 50,
+          ratio: '50',
           approved: true,
           paid: true,
         },
         {
           from: '2019-06-01',
           to: '2019-06-30',
-          ratio: 50,
+          ratio: '50',
           approved: true,
           paid: false,
         },
         {
           from: '2019-07-01',
           to: '2019-07-31',
-          ratio: 50,
+          ratio: '50',
           approved: true,
           paid: false,
         },
@@ -480,5 +590,32 @@ describe('calculateMaxPercentageForPeriod', () => {
         fullRightsWithMaxRequestedDays,
       ),
     ).toBe(0.61)
+  })
+
+  describe('calculateMinPercentageForPeriod', () => {
+    it('should calculate 2% for a full year', () => {
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 2, 14),
+          new Date(2021, 2, 13),
+        ),
+      ).toBe(0.02)
+    })
+    it('should calculate 2% for 180 days', () => {
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 1, 1),
+          new Date(2020, 6, 30),
+        ),
+      ).toBe(0.02)
+    })
+    it('should calculate 2% for 180 - 45 days', () => {
+      expect(
+        calculateMinPercentageForPeriod(
+          new Date(2020, 1, 1),
+          new Date(2020, 5, 15),
+        ),
+      ).toBe(0.02)
+    })
   })
 })

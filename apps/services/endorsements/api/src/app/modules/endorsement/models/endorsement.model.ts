@@ -22,7 +22,7 @@ import { EndorsementListOpen } from './endorsementListOpen.model'
     },
   ],
 })
-export class Endorsement extends Model<Endorsement> {
+export class Endorsement extends Model {
   @ApiProperty()
   @Column({
     type: DataType.UUID,
