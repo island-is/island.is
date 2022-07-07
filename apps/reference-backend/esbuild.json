@@ -25,7 +25,8 @@
     "logform",
     "pg-native",
     "form-data",
-    "sequelize"
+    "sequelize",
+    "swagger-ui-dist"
   ],
   "keepNames": true
 }

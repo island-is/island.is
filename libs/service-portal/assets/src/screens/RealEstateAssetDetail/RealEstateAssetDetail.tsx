@@ -8,12 +8,11 @@ import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   NotFound,
+  amountFormat,
 } from '@island.is/service-portal/core'
-import TableUnits from '../../components/TableUnits'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
-import amountFormat from '../../utils/amountFormat'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
 import {
@@ -22,7 +21,7 @@ import {
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
-import TableGrid from '../../components/TableGrid/TableGrid'
+import { TableGrid, TableUnits } from '@island.is/service-portal/core'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
@@ -98,6 +97,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     ownersQuery?.data?.assetsPropertyOwners.paging?.hasNextPage ||
     (assetData.registeredOwners?.paging?.hasNextPage &&
       !ownersQuery?.data?.assetsPropertyOwners?.paging)
+
   return (
     <>
       <DetailHeader

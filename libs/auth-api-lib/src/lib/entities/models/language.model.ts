@@ -9,10 +9,20 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
+interface ModelAttributes {
+  isoKey: string
+  description: string
+  englishDescription: string
+  created: Date
+  modified: Date
+}
+
+type CreationAttributes = Omit<ModelAttributes, 'created' | 'modified'>
+
 @Table({
   tableName: 'language',
 })
-export class Language extends Model<Language> {
+export class Language extends Model<ModelAttributes, CreationAttributes> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

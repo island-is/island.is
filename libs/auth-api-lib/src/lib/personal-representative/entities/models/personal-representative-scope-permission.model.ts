@@ -22,7 +22,7 @@ import { PersonalRepresentativeRightType } from './personal-representative-right
     },
   ],
 })
-export class PersonalRepresentativeScopePermission extends Model<PersonalRepresentativeScopePermission> {
+export class PersonalRepresentativeScopePermission extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,

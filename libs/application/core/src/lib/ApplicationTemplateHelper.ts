@@ -16,10 +16,10 @@ import {
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
-  ApplicationTemplateAPIAction,
 } from '@island.is/application/types'
 
 enum FinalStates {
