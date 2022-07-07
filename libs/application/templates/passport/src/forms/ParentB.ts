@@ -30,7 +30,7 @@ export const ParentB: Form = buildForm({
       children: [
         buildMultiField({
           id: 'introParentB',
-          title: 'Umsókn um vegabréf',
+          title: m.formName,
           description: (application: Application) =>
             `**${
               (application.answers.childsPersonalInfo as ChildsPersonalInfo)
