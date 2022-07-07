@@ -3,10 +3,7 @@ import { ServiceCenter } from '../lib'
 // Compiled from https://www.samband.is/sveitarfelogin/ list and
 // https://is.wikipedia.org/wiki/Íslensk_sveitarfélög_eftir_sveitarfélagsnúmerum
 
-export const serviceCenters: Pick<
-  ServiceCenter,
-  'name' | 'number' | 'link'
->[] = [
+export const serviceCenters: ServiceCenter[] = [
   {
     name: 'Þjónustumiðstöð Vesturbæjar, Miðborgar og Hlíða',
     number: 0,
