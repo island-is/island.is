@@ -340,6 +340,11 @@ export const m = defineMessages({
   },
 
   /* Done Section */
+  actionCardDoneTag: {
+    id: 'pa.application:actionCard.done',
+    defaultMessage: 'Móttekin',
+    description: 'Some description',
+  },
   applicationCompleteTitle: {
     id: 'pa.application:complete.title',
     defaultMessage: 'Til greiðslu',

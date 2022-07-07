@@ -114,6 +114,9 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
+          onEntry: {
+            apiModuleAction: ApiActions.assignParentB,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -144,6 +147,11 @@ const PassportTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
+          actionCard: {
+            tag: {
+              label: m.actionCardDoneTag,
+            },
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitPassportApplication,
           },

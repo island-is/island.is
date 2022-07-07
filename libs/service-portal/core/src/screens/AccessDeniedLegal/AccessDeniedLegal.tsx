@@ -2,8 +2,9 @@ import React from 'react'
 import { Box, LinkContext, Tag, Text } from '@island.is/island-ui/core'
 import * as styles from './AccessDenied.css'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { theme } from '@island.is/island-ui/theme'
+
+import { ServicePortalModuleComponent } from '../../lib/service-portal-core'
 
 export const AccessDeniedLegal: ServicePortalModuleComponent = () => {
   useNamespaces('service.portal')

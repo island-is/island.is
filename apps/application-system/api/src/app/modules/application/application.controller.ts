@@ -96,6 +96,8 @@ import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
+import { PaymentService } from '../payment/payment.service'
+import { ApplicationChargeService } from './charge/application-charge.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -118,6 +120,8 @@ export class ApplicationController {
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
+    private paymentService: PaymentService,
+    private applicationChargeService: ApplicationChargeService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -1131,6 +1135,13 @@ export class ApplicationController {
         'Users role does not have permission to delete this application in this state',
       )
     }
+
+    // delete charge in FJS
+    await this.applicationChargeService.deleteCharge(existingApplication)
+
+    // delete the entry in Payment table to prevent FK error
+    await this.paymentService.delete(existingApplication.id, user)
+
     await this.applicationService.delete(existingApplication.id)
   }
 }

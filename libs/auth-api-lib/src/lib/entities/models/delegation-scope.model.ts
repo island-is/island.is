@@ -19,7 +19,7 @@ import { IdentityResource } from './identity-resource.model'
   tableName: 'delegation_scope',
   timestamps: false,
 })
-export class DelegationScope extends Model<DelegationScope> {
+export class DelegationScope extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -4,7 +4,7 @@ import * as z from 'zod'
 
 import {
   ServerSideFeatureClient,
-  ServerSideFeatureNames,
+  ServerSideFeature,
 } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
@@ -193,7 +193,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(true)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
+        serverSideFeature: 'test_feature' as ServerSideFeature,
         load: () => ({ test: 'asdf' }),
       })
 
@@ -212,7 +212,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(false)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
+        serverSideFeature: 'test_feature' as ServerSideFeature,
         load: () => ({}),
       })
 
@@ -233,7 +233,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(false)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
+        serverSideFeature: 'test_feature' as ServerSideFeature,
         load: (env) => ({ test: env.required('CONFIG_TEST') }),
       })
 
@@ -250,7 +250,7 @@ describe('Config definitions', () => {
       featureIsOn.mockReturnValue(false)
       const config = defineConfig({
         name: 'test',
-        serverSideFeature: 'test_feature' as ServerSideFeatureNames,
+        serverSideFeature: 'test_feature' as ServerSideFeature,
         load: (env) => ({ test: env.required('CONFIG_TEST') }),
       })
 
