@@ -147,6 +147,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     </a>
                   </Box>
                 )}
+
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
@@ -169,6 +170,13 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     exportGreidslustadaFile(financeStatusData, 'xlsx')
                   }
                   dropdownItems={[
+                    {
+                      title: formatMessage({
+                        id: 'sp.finance-status:get-debt-sertificate',
+                        defaultMessage: 'Skuldleysisvottorð',
+                      }),
+                      href: '/umsoknir/skuldleysisvottord/',
+                    },
                     {
                       title: formatMessage(endOfYearMessage, {
                         year: previousYear,
