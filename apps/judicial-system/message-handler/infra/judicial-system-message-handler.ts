@@ -16,5 +16,7 @@ export const serviceSetup = (services: {
     .secrets({
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
     })
+    .readiness('/liveness')
+    .liveness('/liveness')
     .command('node')
     .args('main.js')
