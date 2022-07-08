@@ -11,8 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as styles from './ExpandableTable.css'
-import { tableStyles } from '@island.is/service-portal/core'
-import { blue100, theme } from '@island.is/island-ui/theme'
+import { tableStyles } from '../../utils/utils'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   data: Array<{
