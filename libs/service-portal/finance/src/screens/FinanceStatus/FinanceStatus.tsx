@@ -98,6 +98,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>

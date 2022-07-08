@@ -93,6 +93,7 @@ export type PaymentSchedule = {
   scheduleNumber: string
   totalAmount: number
   unpaidAmount: number
+  unpaidWithInterest: number
   unpaidCount: string
   documentID: string
 }
