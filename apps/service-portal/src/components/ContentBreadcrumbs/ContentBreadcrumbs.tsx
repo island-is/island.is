@@ -1,48 +1,83 @@
 import React, { FC } from 'react'
-import { Link, useLocation, matchPath } from 'react-router-dom'
+import { MessageDescriptor } from 'react-intl'
+import { Link, match, matchPath, useLocation } from 'react-router-dom'
+
 import {
-  BreadcrumbsDeprecated as Breadcrumbs,
   Box,
-  Tag,
+  BreadcrumbsDeprecated as Breadcrumbs,
 } from '@island.is/island-ui/core'
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { useLocale } from '@island.is/localization'
+import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 
-const reduce = (
-  f: (
-    acc: ServicePortalNavigationItem[],
-    n: ServicePortalNavigationItem,
-  ) => ServicePortalNavigationItem[],
-  tree: ServicePortalNavigationItem,
-  acc: ServicePortalNavigationItem[],
-): ServicePortalNavigationItem[] => {
-  const { children } = tree
-  const newAcc = f(acc, tree)
+import useNavigation from '../../hooks/useNavigation/useNavigation'
 
-  if (!children) return newAcc
-  return children.reduce((iAcc, n) => reduce(f, n, iAcc), newAcc)
+interface ContentBreadcrumb {
+  name: string | MessageDescriptor
+  path?: string
 }
 
-const ContentBreadcrumbs: FC<{}> = () => {
+/**
+ * navItem.name can be set as a key of path parameter.
+ * This parses the activePath to check if to use route
+ * param instead of navItem name.
+ */
+const parseNavItemName = (
+  navItem: ServicePortalNavigationItem,
+  activePath: match<Record<string, string>> | null,
+) => {
+  if (activePath && activePath.params && typeof navItem.name === 'string') {
+    return activePath.params[navItem.name] || navItem.name
+  }
+
+  return navItem.name
+}
+
+/**
+ * Will explore all paths of the navigation tree
+ * and select the deepest path with an exact path
+ * match as the Breadcrumbs to render.
+ */
+const ContentBreadcrumbs: FC = () => {
   const navigation = useNavigation()
   const location = useLocation()
   const { formatMessage } = useLocale()
-  const items: ServicePortalNavigationItem[] = reduce(
-    (acc, n) => {
-      const isPathActive = matchPath(location.pathname, n.path || '')
-      if (isPathActive) {
-        return [...acc, n]
-      } else {
-        return acc
+  let items: ContentBreadcrumb[] = []
+
+  const findBreadcrumbsPath = (
+    navItem: ServicePortalNavigationItem,
+    currentBreadcrumbs: ContentBreadcrumb[],
+  ) => {
+    if (navItem) {
+      // Check if the current navItem is the active browser path
+      const activePath = matchPath(location.pathname, {
+        path: navItem.path,
+        exact: true,
+      })
+
+      // Push the nav item to the current array as we are currently located here in our search
+      currentBreadcrumbs.push({
+        name: parseNavItemName(navItem, activePath),
+        path: activePath ? location.pathname : navItem.path,
+      })
+
+      // Only update if we have found a deeper path
+      if (activePath && currentBreadcrumbs.length > items.length) {
+        items = [...currentBreadcrumbs]
       }
-    },
-    {
-      name: 'root',
-      children: navigation,
-    },
-    [] as ServicePortalNavigationItem[],
-  )
+
+      // Explore all of the childrens
+      if (navItem.children && navItem.children.length) {
+        for (const children of navItem.children) {
+          findBreadcrumbsPath(children, currentBreadcrumbs)
+        }
+      }
+
+      // Pop the nav item back of the array before we move on to the next item at the same level
+      currentBreadcrumbs.pop()
+    }
+  }
+
+  findBreadcrumbsPath(navigation[0], [])
 
   if (items.length < 2) return null
 
@@ -51,15 +86,9 @@ const ContentBreadcrumbs: FC<{}> = () => {
       <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           item.path !== undefined ? (
-            index === items.length - 1 ? (
-              <Tag key={index} variant="blue" disabled outlined>
-                {formatMessage(item.name)}
-              </Tag>
-            ) : (
-              <Link key={index} to={item.path}>
-                {formatMessage(item.name)}
-              </Link>
-            )
+            <Link key={index} to={item.path}>
+              {formatMessage(item.name)}
+            </Link>
           ) : null,
         )}
       </Breadcrumbs>
