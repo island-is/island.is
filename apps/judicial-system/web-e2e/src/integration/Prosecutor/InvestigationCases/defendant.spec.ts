@@ -8,7 +8,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.visit(NEW_IC_ROUTE)
   })
 
-  it.only('should require a valid police case number', () => {
+  it('should require a valid police case number', () => {
     // Police case number
     cy.getByTestid('policeCaseNumber').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
@@ -97,7 +97,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
-  it('should be able to select defender', () => {
+  it.only('should be able to select defender', () => {
     cy.wait('@lawyers')
 
     cy.getByTestid('creatable-select-defenderName')

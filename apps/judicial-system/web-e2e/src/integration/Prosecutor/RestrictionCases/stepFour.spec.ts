@@ -10,9 +10,8 @@ describe(`${STEP_FOUR_ROUTE}/:id`, () => {
     const caseData = makeRestrictionCase()
 
     cy.stubAPIResponses()
-    cy.visit(`${STEP_FOUR_ROUTE}/test_id`)
-
     intercept(caseData)
+    cy.visit(`${STEP_FOUR_ROUTE}/test_id`)
   })
 
   it('should validate form', () => {
