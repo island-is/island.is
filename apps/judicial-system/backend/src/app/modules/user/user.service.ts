@@ -56,7 +56,6 @@ export class UserService {
       if (admin) {
         return {
           ...admin,
-          title: '',
           mobileNumber: '',
           email: '',
           role: UserRole.ADMIN,
