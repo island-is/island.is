@@ -33,6 +33,7 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
           scheduleType
           totalAmount
           unpaidAmount
+          unpaidWithInterest
           unpaidCount
           documentID
           downloadServiceURL
