@@ -20,8 +20,8 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
 
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
   })
 
   it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
@@ -29,7 +29,7 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.url().should('include', MODIFY_RULING_ROUTE)
   })
 
-  it.only('should display appropriate components on page', () => {
+  it('should display appropriate components on page', () => {
     cy.get('[aria-controls="caseFilesAccordionItem"]')
   })
 
