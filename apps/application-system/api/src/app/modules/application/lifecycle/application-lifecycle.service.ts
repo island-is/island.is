@@ -7,6 +7,7 @@ import { AwsService } from '@island.is/nest/aws'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { ApplicationChargeService } from '../charge/application-charge.service'
 
 export interface AttachmentMetaData {
   s3key: string
@@ -22,6 +23,7 @@ export interface ApplicationPruning {
     'id' | 'attachments' | 'answers' | 'externalData'
   >
   failedAttachments: object
+  failedExternalData: object
 }
 
 @Injectable()
@@ -33,6 +35,7 @@ export class ApplicationLifeCycleService {
     private logger: Logger,
     private applicationService: ApplicationService,
     private awsService: AwsService,
+    private applicationChargeService: ApplicationChargeService,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
   }
@@ -41,6 +44,7 @@ export class ApplicationLifeCycleService {
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
+    await this.pruneApplicationCharge()
     await this.pruneApplicationData()
     this.reportResults()
     this.logger.info(`Application pruning done.`)
@@ -63,6 +67,7 @@ export class ApplicationLifeCycleService {
         pruned: true,
         application,
         failedAttachments: {},
+        failedExternalData: {},
       }
     })
   }
@@ -102,6 +107,33 @@ export class ApplicationLifeCycleService {
     }
   }
 
+  private async pruneApplicationCharge() {
+    for (const prune of this.processingApplications) {
+      try {
+        await this.applicationChargeService.deleteCharge(prune.application)
+      } catch (error) {
+        const chargeId = this.applicationChargeService.getChargeId(
+          prune.application,
+        )
+        if (chargeId) {
+          prune.failedExternalData = {
+            createCharge: {
+              data: {
+                id: chargeId,
+              },
+            },
+          }
+        }
+
+        prune.pruned = false
+        this.logger.error(
+          `Application charge prune error on id ${prune.application.id}`,
+          error,
+        )
+      }
+    }
+  }
+
   private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
@@ -109,7 +141,7 @@ export class ApplicationLifeCycleService {
           prune.application.id,
           {
             attachments: prune.failedAttachments,
-            externalData: {},
+            externalData: prune.failedExternalData,
             answers: {},
             pruned: prune.pruned,
           },

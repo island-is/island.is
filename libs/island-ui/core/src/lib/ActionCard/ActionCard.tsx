@@ -286,7 +286,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box>
+          <Box marginLeft={[0, 3]}>
             <Button
               variant={cta.variant}
               size="small"

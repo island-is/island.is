@@ -306,7 +306,7 @@ export const StepFive: React.FC = () => {
                     </Box>
                   ) : policeCaseFiles?.hasError ? (
                     policeCaseFiles?.errorCode ===
-                    'https://httpstatuses.com/404' ? (
+                    'https://httpstatuses.org/404' ? (
                       <PoliceCaseFilesMessageBox
                         icon="warning"
                         iconColor="yellow400"

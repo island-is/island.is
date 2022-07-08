@@ -1,13 +1,6 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import {
-  Text,
-  Hidden,
-  Column,
-  Columns,
-  Box,
-  Button,
-} from '@island.is/island-ui/core'
+import { Text, Hidden, Box, Button } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 
 interface Props {

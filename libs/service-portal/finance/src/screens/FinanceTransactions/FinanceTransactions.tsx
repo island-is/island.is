@@ -133,37 +133,33 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     'Hér sérð þú hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-              {recordsDataArray.length > 0 ? (
-                <Box
-                  display="flex"
-                  marginLeft="auto"
-                  paddingRight={2}
-                  printHidden
-                >
-                  <Box paddingRight={2}>
-                    <Button
-                      colorScheme="default"
-                      icon="print"
-                      iconType="filled"
-                      onClick={() => window.print()}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(m.print)}
-                    </Button>
-                  </Box>
-                  <DropdownExport
-                    onGetCSV={() =>
-                      exportHreyfingarFile(recordsDataArray, 'csv')
-                    }
-                    onGetExcel={() =>
-                      exportHreyfingarFile(recordsDataArray, 'xlsx')
-                    }
-                  />
+              <Box
+                display="flex"
+                marginLeft="auto"
+                paddingRight={2}
+                printHidden
+              >
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
                 </Box>
-              ) : null}
+                <DropdownExport
+                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
+                  onGetExcel={() =>
+                    exportHreyfingarFile(recordsDataArray, 'xlsx')
+                  }
+                />
+              </Box>
             </GridColumn>
           </GridRow>
           <Hidden print={true}>
