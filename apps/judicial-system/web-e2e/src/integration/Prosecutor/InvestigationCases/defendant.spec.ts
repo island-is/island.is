@@ -97,7 +97,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
-  it.only('should be able to select defender', () => {
+  it('should be able to select defender', () => {
     cy.wait('@lawyers')
 
     cy.getByTestid('creatable-select-defenderName')
