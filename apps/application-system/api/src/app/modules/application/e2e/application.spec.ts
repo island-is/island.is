@@ -343,7 +343,7 @@ describe('Application system API', () => {
         ],
         "status": 400,
         "title": "Bad Request",
-        "type": "https://httpstatuses.com/400",
+        "type": "https://httpstatuses.org/400",
       }
     `)
   })
