@@ -4,6 +4,7 @@ import {
   Case,
   CaseState,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
@@ -32,7 +33,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const caseFilesComments = faker.lorem.words(5)
 
   beforeEach(() => {
-    cy.login()
+    cy.login(UserRole.JUDGE)
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -56,9 +57,8 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
-
     intercept(caseDataAddition)
+    cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
