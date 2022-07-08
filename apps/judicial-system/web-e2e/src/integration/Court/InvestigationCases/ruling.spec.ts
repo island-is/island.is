@@ -4,7 +4,6 @@ import {
   IC_COURT_RECORD_ROUTE,
   IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system/types'
 
 import { makeInvestigationCase, intercept } from '../../../utils'
 
