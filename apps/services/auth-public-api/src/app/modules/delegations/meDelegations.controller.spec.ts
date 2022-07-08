@@ -515,7 +515,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(500)
         expect(res.body).toMatchObject({
           status: 500,
-          type: 'https://httpstatuses.com/500',
+          type: 'https://httpstatuses.org/500',
           title: 'Internal Server Error',
           detail:
             'Invalid state of delegation. User has two or more delegations with an other user.',
@@ -530,7 +530,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'direction=outgoing is currently the only supported value',
         })
@@ -544,7 +544,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'direction=outgoing is currently the only supported value',
         })
@@ -745,7 +745,7 @@ describe('MeDelegationsController', () => {
           Object {
             "status": 404,
             "title": "Not Found",
-            "type": "https://httpstatuses.com/404",
+            "type": "https://httpstatuses.org/404",
           }
         `)
       })
@@ -771,7 +771,7 @@ describe('MeDelegationsController', () => {
             "detail": "delegationId must be a valid uuid",
             "status": 400,
             "title": "Bad Request",
-            "type": "https://httpstatuses.com/400",
+            "type": "https://httpstatuses.org/400",
           }
         `)
       })
@@ -838,7 +838,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
         })
@@ -869,7 +869,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
         })
@@ -895,7 +895,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail:
             'When scope validTo property is provided it must be in the future',
@@ -921,7 +921,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: ['0.validTo must be a Date instance'],
         })
@@ -947,7 +947,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: ['0.type must be a valid enum value'],
         })
@@ -1107,7 +1107,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
         })
@@ -1140,7 +1140,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: 'User does not have access to the requested scopes.',
         })
@@ -1173,7 +1173,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail:
             'If scope validTo property is provided it must be in the future',
@@ -1207,7 +1207,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail: ['0.type must be a valid enum value'],
         })
@@ -1233,7 +1233,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(404)
         expect(res.body).toMatchObject({
           status: 404,
-          type: 'https://httpstatuses.com/404',
+          type: 'https://httpstatuses.org/404',
           title: 'Not Found',
         })
       })
@@ -1309,7 +1309,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(404)
         expect(res.body).toMatchObject({
           status: 404,
-          type: 'https://httpstatuses.com/404',
+          type: 'https://httpstatuses.org/404',
           title: 'Not Found',
         })
       })
@@ -1443,7 +1443,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(401)
         expect(res.body).toMatchObject({
           status: 401,
-          type: 'https://httpstatuses.com/401',
+          type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
 
@@ -1473,7 +1473,7 @@ describe('MeDelegationsController', () => {
         expect(res.status).toEqual(403)
         expect(res.body).toMatchObject({
           status: 403,
-          type: 'https://httpstatuses.com/403',
+          type: 'https://httpstatuses.org/403',
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })
