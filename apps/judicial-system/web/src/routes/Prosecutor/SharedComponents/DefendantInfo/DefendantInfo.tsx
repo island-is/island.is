@@ -307,10 +307,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
               options={genderOptions}
               label={formatMessage(core.gender)}
               value={
-                defendant.gender &&
                 genderOptions.find(
                   (option) => option.value === defendant.gender,
-                )
+                ) ?? null
               }
               onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                 onChange(defendant.id, {
