@@ -34,8 +34,8 @@ const useFileList = ({ caseId }: Parameters) => {
 
       // If the file no longer exists or access in no longer permitted
       if (
-        code === 'https://httpstatuses.com/404' ||
-        code === 'https://httpstatuses.com/403'
+        code === 'https://httpstatuses.org/404' ||
+        code === 'https://httpstatuses.org/403'
       ) {
         setFileNotFound(true)
         setWorkingCase((theCase) => ({
