@@ -190,6 +190,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'home',
         },
+        children: [
+          {
+            name: 'id',
+            navHide: true,
+            path: ServicePortalPath.AssetsRealEstateDetail,
+          },
+        ],
       },
 
       // Fjarmal
