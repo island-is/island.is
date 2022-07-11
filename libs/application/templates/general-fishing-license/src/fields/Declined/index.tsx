@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { declined } from '../../lib/messages'
 import { WarningSection } from './WarningSection'
 

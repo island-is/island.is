@@ -58,7 +58,7 @@ export const TopicCard: React.FC<TopicCardProps> = ({
         {children}
       </Text>
       {tag && (
-        <Box component="span" paddingLeft={2} marginLeft="auto">
+        <Box component="span" paddingLeft={2} marginLeft="auto" flexShrink={0}>
           <Tag
             variant={colorSchemes[colorScheme].tagVariant}
             outlined={colorSchemes[colorScheme].bordered}

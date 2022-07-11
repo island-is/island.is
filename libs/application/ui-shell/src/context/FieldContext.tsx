@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 
-import { FieldBaseProps, RepeaterProps } from '@island.is/application/core'
+import { FieldBaseProps, RepeaterProps } from '@island.is/application/types'
 import * as uiFields from '@island.is/application/ui-fields'
 
 type Fields = { [key: string]: FC<FieldBaseProps | RepeaterProps> }

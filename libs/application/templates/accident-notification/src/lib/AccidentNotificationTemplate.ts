@@ -1,14 +1,14 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'

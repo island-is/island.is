@@ -1,83 +1,16 @@
 import * as faker from 'faker'
-import { MessageDescriptor } from 'react-intl'
+import { DefaultStateLifeCycle, buildForm } from '@island.is/application/core'
+import { EventObject } from 'xstate'
+import * as z from 'zod'
 import {
+  ApplicationWithAttachments,
   ApplicationTypes,
   ApplicationStatus,
-  ApplicationStateSchema,
   ApplicationContext,
+  ApplicationStateSchema,
   ApplicationRole,
-  DefaultStateLifeCycle,
-  buildForm,
-  AnswerValidator,
-} from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
-import { AuthDelegationType } from '@island.is/auth-nest-tools'
-import {
-  EventObject,
-  MachineConfig,
-  MachineOptions,
-  StatesConfig,
-} from 'xstate'
-import * as z from 'zod'
-
-type RecordObject<T = unknown> = Record<string, T>
-
-type StaticTextObject = MessageDescriptor & {
-  values?: RecordObject<any>
-}
-
-type StaticText = StaticTextObject | string
-
-type ActionCardTag = 'red' | 'blueberry' | 'blue'
-
-interface ActionCardMetaData {
-  title?: string
-  description?: string
-  tag?: {
-    label?: string
-    variant?: ActionCardTag
-  }
-}
-
-type Answer = string | number | boolean | Answer[] | FormValue
-
-interface FormValue {
-  [key: string]: Answer
-}
-
-interface DataProviderResult {
-  data?: object | string | boolean | number
-  date: Date
-  reason?: StaticText
-  status: 'failure' | 'success'
-  statusCode?: number
-}
-
-interface ExternalData {
-  [key: string]: DataProviderResult
-}
-
-interface Application {
-  id: string
-  state: string
-  actionCard?: ActionCardMetaData
-  applicant: string
-  assignees: string[]
-  applicantActors: string[]
-  typeId: ApplicationTypes
-  modified: Date
-  created: Date
-  answers: FormValue
-  externalData: ExternalData
-  name?: string
-  institution?: string
-  progress?: number
-  status: ApplicationStatus
-}
-
-export interface ApplicationWithAttachments extends Application {
-  attachments: object
-}
+  ApplicationTemplate,
+} from '@island.is/application/types'
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
@@ -98,41 +31,15 @@ export const createApplication = (
   ...overrides,
 })
 
-type Schema = z.ZodObject<any>
-
-interface Template<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
-> {
-  readyForProduction?: boolean
-  featureFlag?: Features
-  type: ApplicationTypes
-  name: string
-  institution: string
-  translationNamespaces?: string[]
-  allowedDelegations?: AuthDelegationType[]
-  dataSchema: Schema
-  stateMachineConfig: MachineConfig<TContext, TStateSchema, TEvents> & {
-    states: StatesConfig<TContext, TStateSchema, TEvents> // TODO Extend StatesConfig to completely enforce meta being required attribute
-  }
-  stateMachineOptions?: Partial<MachineOptions<TContext, TEvents>>
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined
-  answerValidators?: Record<string, AnswerValidator>
-}
-
 export const createApplicationTemplate = (
   overrides?: Partial<
-    Template<
+    ApplicationTemplate<
       ApplicationContext,
       ApplicationStateSchema<EventObject>,
       EventObject
     >
   >,
-): Template<
+): ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EventObject>,
   EventObject

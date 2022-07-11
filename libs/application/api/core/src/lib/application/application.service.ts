@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions, Sequelize } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
   FormValue,
   ApplicationStatus,
-} from '@island.is/application/core'
+  ApplicationLifecycle,
+} from '@island.is/application/types'
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -142,10 +143,10 @@ export class ApplicationService {
   }
 
   async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments'>[]
+    Pick<Application, 'id' | 'attachments' | 'externalData'>[]
   > {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments'],
+      attributes: ['id', 'attachments', 'externalData'],
       where: {
         [Op.and]: {
           pruneAt: {

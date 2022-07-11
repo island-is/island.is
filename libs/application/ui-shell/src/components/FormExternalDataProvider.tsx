@@ -12,25 +12,27 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getValueViaPath,
+  coreMessages,
+  coreErrorMessages,
+  getErrorReasonIfPresent,
+  isTranslationObject,
+} from '@island.is/application/core'
+import {
   DataProviderItem,
   DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
   FormValue,
-  getValueViaPath,
-  coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
-  coreErrorMessages,
   StaticText,
-  getErrorReasonIfPresent,
-  isTranslationObject,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
-import { verifyExternalData } from '../utils'
+import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
 
 const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   title,
@@ -187,9 +189,18 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
+        const showSubmitError =
+          response.data &&
+          !hideSubmitErrorExternalData(
+            getExternalDataFromResponse(response.data),
+            relevantDataProviders,
+          )
+
         return [
           false,
-          formatMessage(coreErrorMessages.failedDataProviderSubmit),
+          showSubmitError
+            ? formatMessage(coreErrorMessages.failedDataProviderSubmit)
+            : '',
         ]
       })
     } else {

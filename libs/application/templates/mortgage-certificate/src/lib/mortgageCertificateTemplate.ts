@@ -1,4 +1,5 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,8 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Events, States, Roles, MCEvents } from './constants'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
@@ -124,6 +124,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -168,6 +169,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -229,8 +231,8 @@ const template: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
+            // Applications that stay in this state for 1 hour will be pruned automatically
+            whenToPrune: 1 * 3600 * 1000,
           },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
@@ -247,6 +249,7 @@ const template: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

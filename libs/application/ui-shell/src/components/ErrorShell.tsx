@@ -2,7 +2,8 @@ import React, { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { StaticText, coreMessages } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
+import { StaticText } from '@island.is/application/types'
 
 import * as styles from '../lib/FormShell.css'
 

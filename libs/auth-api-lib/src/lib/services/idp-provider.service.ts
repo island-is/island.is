@@ -4,7 +4,7 @@ import { IdpProviderDTO } from '../entities/dto/idp-provider.dto'
 import { IdpProvider } from '../entities/models/idp-provider.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class IdpProviderService {
@@ -68,7 +68,7 @@ export class IdpProviderService {
   /** Creates a new Idp Provider */
   async create(idpProvider: IdpProviderDTO) {
     this.logger.debug('creating and idp provider: ' + idpProvider)
-    return this.idpProvider.create(idpProvider)
+    return this.idpProvider.create({ ...idpProvider })
   }
 
   /** Updates an Idp Provider */
@@ -79,7 +79,7 @@ export class IdpProviderService {
     this.logger.debug('Updating a idp provider: ' + idpProvider)
     return this.idpProvider.update(
       { ...idpProvider },
-      { where: { name: name } },
+      { where: { name: name }, returning: true },
     )
   }
 

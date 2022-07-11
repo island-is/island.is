@@ -1,12 +1,10 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
+import { FileRejection } from 'react-dropzone'
 
-import {
-  getValueViaPath,
-  Application,
-  coreErrorMessages,
-} from '@island.is/application/core'
+import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   InputFileUpload,
   UploadFile,
@@ -73,6 +71,7 @@ interface FileUploadControllerProps {
   readonly multiple?: boolean
   readonly accept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: string
   readonly forImageUpload?: boolean
 }
 
@@ -86,6 +85,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   multiple,
   accept,
   maxSize,
+  maxSizeErrorText,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -225,6 +225,16 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     setUploadError(undefined)
   }
 
+  const onFileRejection = (files: FileRejection[]) => {
+    if (maxSize && maxSizeErrorText) {
+      files.forEach((file: FileRejection) => {
+        if (file.file.size > maxSize) {
+          return setUploadError(maxSizeErrorText)
+        }
+      })
+    }
+  }
+
   const FileUploadComponent = forImageUpload
     ? InputImageUpload
     : InputFileUpload
@@ -242,6 +252,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           buttonLabel={buttonLabel}
           onChange={onFileChange}
           onRemove={onRemoveFile}
+          onUploadRejection={onFileRejection}
           errorMessage={uploadError || error}
           multiple={multiple}
           accept={accept}

@@ -26,11 +26,11 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseState,
   CaseType,
   completedCaseStates,
-  MessageType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -54,6 +54,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
+  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -119,7 +120,12 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
+  @RolesRules(
+    prosecutorUpdateRule,
+    judgeUpdateRule,
+    registrarUpdateRule,
+    staffUpdateRule,
+  )
   @Put('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -214,11 +220,11 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    // if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-    //   this.logger.info(`Writing case ${caseId} to queue`)
+    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
+      this.logger.info(`Writing completed case ${caseId} to queue`)
 
-    //   this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
-    // }
+      this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
+    }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,

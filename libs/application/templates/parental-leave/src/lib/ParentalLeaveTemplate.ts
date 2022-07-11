@@ -4,17 +4,19 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import {
   YES,
@@ -709,7 +711,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           // have already been any applications created by the primary parent
           set(
             application.answers,
-            'otherParentId',
+            'otherParentObj.otherParentId',
             getOtherParentId(application),
           )
         }
@@ -867,11 +869,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         // Current parent is secondary parent, this will set otherParentId to the id of the primary parent
         set(
           answers,
-          'otherParentId',
+          'otherParentObj.otherParentId',
           selectedChild.primaryParentNationalRegistryId,
         )
 
-        set(answers, 'otherParent', MANUAL)
+        set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
 
         return context
       }),

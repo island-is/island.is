@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import {
   Case,
+  CaseState,
   InstitutionType,
   isRestrictionCase,
   User,
@@ -93,7 +94,8 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarRC(workingCase) &&
-                    isHearingArrangementsStepValidRC(workingCase))
+                    isHearingArrangementsStepValidRC(workingCase) &&
+                    workingCase.state !== CaseState.NEW)
                     ? `${constants.STEP_THREE_ROUTE}/${id}`
                     : undefined,
               },
@@ -181,7 +183,8 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarIC(workingCase) &&
-                    isHearingArrangementsStepValidIC(workingCase))
+                    isHearingArrangementsStepValidIC(workingCase) &&
+                    workingCase.state !== CaseState.NEW)
                     ? `${constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
                     : undefined,
               },
@@ -207,7 +210,8 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 4) ||
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase) &&
-                    isPoliceDemandsStepValidIC(workingCase))
+                    isPoliceDemandsStepValidIC(workingCase) &&
+                    isPoliceReportStepValidIC(workingCase))
                     ? `${constants.IC_CASE_FILES_ROUTE}/${id}`
                     : undefined,
               },
@@ -219,7 +223,8 @@ const useSections = () => {
                 href:
                   isDefendantStepValidForSidebarIC(workingCase) &&
                   isHearingArrangementsStepValidIC(workingCase) &&
-                  isPoliceDemandsStepValidIC(workingCase)
+                  isPoliceDemandsStepValidIC(workingCase) &&
+                  isPoliceReportStepValidIC(workingCase)
                     ? `${constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },

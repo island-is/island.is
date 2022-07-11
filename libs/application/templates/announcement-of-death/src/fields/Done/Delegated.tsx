@@ -1,7 +1,8 @@
 import React from 'react'
 import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const Delegated = ({ application }: FieldBaseProps): JSX.Element => {

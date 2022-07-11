@@ -468,6 +468,8 @@ export class CaseService {
     user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
+    await this.refreshFormatMessage()
+
     let rulingUploadedToS3 = false
     let rulingUploadedToCourt = false
     let courtRecordUploadedToCourt = false
@@ -522,17 +524,15 @@ export class CaseService {
       encoding: 'binary',
     }
 
-    const emailPromises = [
-      this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment),
-    ]
+    // No need to wait for email sending to complete
+
+    this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment)
 
     if (
       !rulingUploadedToCourt ||
       (!isModifyingRuling && !courtRecordUploadedToCourt)
     ) {
-      emailPromises.push(
-        this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
-      )
+      this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment)
     }
 
     if (
@@ -542,10 +542,8 @@ export class CaseService {
         theCase.sessionArrangements ===
           SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
-      emailPromises.push(this.sendEmailToDefender(theCase, rulingUploadedToS3))
+      this.sendEmailToDefender(theCase, rulingUploadedToS3)
     }
-
-    await Promise.all(emailPromises)
   }
 
   private async createCase(
@@ -553,8 +551,8 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create(caseToCreate, { transaction })
-      : this.caseModel.create(caseToCreate))
+      ? this.caseModel.create({ ...caseToCreate }, { transaction })
+      : this.caseModel.create({ ...caseToCreate }))
 
     return theCase.id
   }
@@ -759,11 +757,6 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<SigningServiceResponse> {
-    // Development without signing service access token
-    if (!this.config.production && !this.config.dokobitAccessToken) {
-      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
-    }
-
     await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
@@ -801,46 +794,43 @@ export class CaseService {
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestCourtRecordSignature
 
-    // Production, or development with signing service access token
-    if (this.config.production || this.config.dokobitAccessToken) {
-      try {
-        const courtRecordPdf = await this.signingService.waitForSignature(
-          'courtRecord.pdf',
-          documentToken,
-        )
+    try {
+      const courtRecordPdf = await this.signingService.waitForSignature(
+        'courtRecord.pdf',
+        documentToken,
+      )
 
-        this.awsS3Service
-          .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
-              { reason },
-            )
-          })
-      } catch (error) {
-        this.eventService.postErrorEvent(
-          'Failed to get a court record signature confirmation',
-          {
-            caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
-            courtCaseNumber: theCase.courtCaseNumber,
-            actor: user.name,
-            institution: user.institution?.name,
-          },
-          error as Error,
-        )
+      this.awsS3Service
+        .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
+        .catch((reason) => {
+          // Tolerate failure, but log error
+          this.logger.error(
+            `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
+            { reason },
+          )
+        })
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to get a court record signature confirmation',
+        {
+          caseId: theCase.id,
+          policeCaseNumber: theCase.policeCaseNumber,
+          courtCaseNumber: theCase.courtCaseNumber,
+          actor: user.name,
+          institution: user.institution?.name,
+        },
+        error as Error,
+      )
 
-        if (error instanceof DokobitError) {
-          return {
-            documentSigned: false,
-            code: error.code,
-            message: error.message,
-          }
+      if (error instanceof DokobitError) {
+        return {
+          documentSigned: false,
+          code: error.code,
+          message: error.message,
         }
-
-        throw error
       }
+
+      throw error
     }
 
     // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
@@ -857,11 +847,6 @@ export class CaseService {
   }
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
-    // Development without signing service access token
-    if (!this.config.production && !this.config.dokobitAccessToken) {
-      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
-    }
-
     await this.refreshFormatMessage()
 
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
@@ -899,40 +884,36 @@ export class CaseService {
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
 
-    // Production, or development with signing service access token
-    if (this.config.production || this.config.dokobitAccessToken) {
-      try {
-        const signedPdf = await this.signingService.waitForSignature(
-          'ruling.pdf',
-          documentToken,
-        )
+    try {
+      const signedPdf = await this.signingService.waitForSignature(
+        'ruling.pdf',
+        documentToken,
+      )
 
-        await this.refreshFormatMessage()
+      // No need to wait for this to complete
+      this.sendRulingAsSignedPdf(theCase, user, signedPdf)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to get a ruling signature confirmation',
+        {
+          caseId: theCase.id,
+          policeCaseNumber: theCase.policeCaseNumber,
+          courtCaseNumber: theCase.courtCaseNumber,
+          actor: user.name,
+          institution: user.institution?.name,
+        },
+        error as Error,
+      )
 
-        await this.sendRulingAsSignedPdf(theCase, user, signedPdf)
-      } catch (error) {
-        this.eventService.postErrorEvent(
-          'Failed to get a ruling signature confirmation',
-          {
-            caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
-            courtCaseNumber: theCase.courtCaseNumber,
-            actor: user.name,
-            institution: user.institution?.name,
-          },
-          error as Error,
-        )
-
-        if (error instanceof DokobitError) {
-          return {
-            documentSigned: false,
-            code: error.code,
-            message: error.message,
-          }
+      if (error instanceof DokobitError) {
+        return {
+          documentSigned: false,
+          code: error.code,
+          message: error.message,
         }
-
-        throw error
       }
+
+      throw error
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update

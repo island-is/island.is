@@ -7,14 +7,14 @@ import {
   Application as BaseApplication,
   ApplicationService,
 } from '@island.is/application/api/core'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTemplate,
-  ApplicationTemplateHelper,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
 @Injectable()
