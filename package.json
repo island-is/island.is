@@ -299,7 +299,7 @@
     "@graphql-codegen/typescript": "1.17.8",
     "@graphql-codegen/typescript-operations": "1.17.15",
     "@graphql-codegen/typescript-react-apollo": "1.17.7",
-    "@graphql-codegen/typescript-resolvers": "1.17.9",
+    "@graphql-codegen/typescript-resolvers": "2.7.1",
     "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "8.0.10",
     "@nestjs/testing": "8.4.4",
