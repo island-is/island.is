@@ -5,6 +5,7 @@ export const serviceSetup = (services: {
 }): ServiceBuilder<'judicial-system-message-handler'> =>
   service('judicial-system-message-handler')
     .namespace('judicial-system')
+    .serviceAccount('judicial-system-message-handler')
     .image('judicial-system-message-handler')
     .env({
       SQS_QUEUE_NAME: 'sqs-judicial-system',
@@ -15,5 +16,7 @@ export const serviceSetup = (services: {
     .secrets({
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
     })
+    .readiness('/liveness')
+    .liveness('/liveness')
     .command('node')
     .args('main.js')

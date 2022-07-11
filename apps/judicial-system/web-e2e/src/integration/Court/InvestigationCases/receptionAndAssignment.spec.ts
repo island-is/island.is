@@ -1,4 +1,4 @@
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
   IC_OVERVIEW_ROUTE,
   IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
@@ -16,11 +16,10 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
       court: makeCourt(),
     }
 
-    cy.login()
+    cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
-    cy.visit(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
-
     intercept(caseDataAddition)
+    cy.visit(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
   })
 
   it('should enable continue button when required fields are valid', () => {
