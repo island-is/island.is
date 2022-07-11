@@ -31,8 +31,8 @@ describe('Signed verdict overview - Staff - Restriction case', () => {
 
     cy.login(UserRole.STAFF)
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

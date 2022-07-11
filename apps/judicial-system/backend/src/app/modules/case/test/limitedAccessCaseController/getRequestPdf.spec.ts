@@ -48,7 +48,7 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
     it('should generate pdf', () => {
       expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })
