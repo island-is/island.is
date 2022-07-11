@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import { useEffect } from 'react'
 import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -51,6 +51,18 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       })),
     }),
   )
+
+  useEffect(() => {
+    if (!organizationPage.organization?.statusMonitoringScriptUrl) return
+    const element = document.createElement('script')
+    element.type = 'text/javascript'
+    element.src = organizationPage.organization.statusMonitoringScriptUrl
+    document.body.appendChild(element)
+
+    return () => {
+      document.body.removeChild(element)
+    }
+  }, [organizationPage.organization?.statusMonitoringScriptUrl])
 
   return (
     <OrganizationWrapper

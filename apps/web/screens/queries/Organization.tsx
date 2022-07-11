@@ -36,6 +36,7 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
         url
       }
+      statusMonitoringScriptUrl
       publishedMaterialSearchFilterGenericTags {
         id
         title

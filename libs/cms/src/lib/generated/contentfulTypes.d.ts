@@ -1939,6 +1939,9 @@ export interface IOrganizationFields {
 
   /** Shows up on the organizations page */
   showsUpOnTheOrganizationsPage?: boolean | undefined
+
+  /** Status Monitoring Script URL */
+  statusMonitoringScriptUrl?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
