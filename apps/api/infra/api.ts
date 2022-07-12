@@ -18,7 +18,6 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
-  ChargeFjsV2,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -205,7 +204,6 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       Vehicles,
-      ChargeFjsV2,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
