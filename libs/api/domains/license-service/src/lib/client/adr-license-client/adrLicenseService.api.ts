@@ -40,7 +40,7 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
       category: LOG_CATEGORY,
     })
 
-    throw new ApolloError('Failed to resolve request', error?.message)
+    return null
   }
 
   async fetchLicense(user: User) {
