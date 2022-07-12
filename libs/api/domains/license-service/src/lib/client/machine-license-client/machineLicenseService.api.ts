@@ -14,6 +14,8 @@ import {
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
+import { ApolloError } from 'apollo-server-express'
+import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -26,6 +28,26 @@ export class GenericMachineLicenseApi
     private machineApi: VinnuvelaApi,
   ) {}
 
+  handleError(error: any): any {
+    this.logger.error('Machine license fetch failed', {
+      exception: error,
+      message: (error as Error)?.message,
+      category: LOG_CATEGORY,
+    })
+
+    throw new ApolloError(
+      'Failed to resolve request',
+      error?.message ?? error?.response?.message,
+    )
+  }
+
+  private handle4xx(error: FetchError) {
+    if (error.status === 403 || error.status === 404) {
+      return null
+    }
+    this.handleError(error)
+  }
+
   async fetchLicense(user: User) {
     let license: unknown
 
@@ -34,12 +56,7 @@ export class GenericMachineLicenseApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getVinnuvela()
     } catch (e) {
-      this.logger.error('Machine license fetch failed', {
-        exception: e,
-        message: (e as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
+      this.handle4xx(e)
     }
     return license as VinnuvelaDto
   }
