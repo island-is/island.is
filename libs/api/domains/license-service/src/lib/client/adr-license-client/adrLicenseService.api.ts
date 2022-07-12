@@ -24,24 +24,23 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     private adrApi: AdrApi,
   ) {}
 
-  handleError(error: any): any {
+  private handleError(error: Partial<FetchError>): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`ADR license returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
     this.logger.error('ADR license fetch failed', {
       exception: error,
       message: (error as Error)?.message,
       category: LOG_CATEGORY,
     })
 
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
-  }
-
-  private handle4xx(error: FetchError) {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    this.handleError(error)
+    throw new ApolloError('Failed to resolve request', error?.message)
   }
 
   async fetchLicense(user: User) {
@@ -51,7 +50,7 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getAdr()
     } catch (e) {
-      this.handle4xx(e)
+      this.handleError(e)
     }
 
     return license as AdrDto

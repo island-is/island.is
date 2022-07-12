@@ -28,26 +28,24 @@ export class GenericMachineLicenseApi
     private machineApi: VinnuvelaApi,
   ) {}
 
-  handleError(error: any): any {
+  private handleError(error: Partial<FetchError>): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`Machine license returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
     this.logger.error('Machine license fetch failed', {
       exception: error,
       message: (error as Error)?.message,
       category: LOG_CATEGORY,
     })
 
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message ?? error?.response?.message,
-    )
+    throw new ApolloError('Failed to resolve request', error?.message)
   }
-
-  private handle4xx(error: FetchError) {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    this.handleError(error)
-  }
-
   async fetchLicense(user: User) {
     let license: unknown
 
@@ -56,7 +54,7 @@ export class GenericMachineLicenseApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getVinnuvela()
     } catch (e) {
-      this.handle4xx(e)
+      this.handleError(e)
     }
     return license as VinnuvelaDto
   }
