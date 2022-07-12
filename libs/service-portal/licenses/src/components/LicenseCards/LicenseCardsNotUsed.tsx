@@ -1,10 +1,22 @@
 import React, { useState } from 'react'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  GenericLicenseType,
+  useUserProfile,
+} from '@island.is/service-portal/graphql'
 
-import { GenericLicenseDataField, Query } from '@island.is/api/schema'
-import { Box, SkeletonLoader, Button } from '@island.is/island-ui/core'
+import {
+  GenericLicense,
+  GenericLicenseDataField,
+  Query,
+} from '@island.is/api/schema'
+import {
+  Box,
+  SkeletonLoader,
+  Button,
+  ActionCard,
+} from '@island.is/island-ui/core'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -245,6 +257,18 @@ const PkPassVerify = ({ licenseType }: PkPassProps) => {
   )
 }
 
+const mapLicenseToTitle = (type: GenericLicenseType) => {
+  switch (type) {
+    case GenericLicenseType.DriversLicense:
+      return 'Ökuréttindi'
+    case GenericLicenseType.AdrLicense:
+      return 'ADR réttingdi'
+    case GenericLicenseType.MachineLicense:
+      return 'Vinnuvélaréttindi'
+    default:
+      return 'Réttindi'
+  }
+}
 const LicenseCardsDeprecated = () => {
   const [showLicense, setShowLicense] = useState<boolean>(false)
   const { data: userProfile } = useUserProfile()
@@ -255,7 +279,11 @@ const LicenseCardsDeprecated = () => {
       variables: {
         locale,
         input: {
-          // includedTypes: [],
+          includedTypes: [
+            GenericLicenseType.DriversLicense,
+            GenericLicenseType.AdrLicense,
+            GenericLicenseType.MachineLicense,
+          ],
           // excludedTypes: [],
           // force: false,
           // onlyList: false,
@@ -273,6 +301,15 @@ const LicenseCardsDeprecated = () => {
     <>
       {genericLicenses.map((license, index) => (
         <Box marginBottom={3} key={index}>
+          <ActionCard
+            heading={mapLicenseToTitle(license.license.type)}
+            cta={{
+              label: 'Skoða nánar',
+              onClick: () => console.log(license),
+              variant: 'text',
+            }}
+          />
+
           <dl>
             <dt>Kennitala</dt>
             <dd>{license.nationalId}</dd>

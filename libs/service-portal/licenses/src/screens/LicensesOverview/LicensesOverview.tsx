@@ -11,11 +11,14 @@ import {
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
-import { useDrivingLicense } from '@island.is/service-portal/graphql'
+import {
+  useDrivingLicense,
+  useLicenses,
+} from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const { data, status, loading, error } = useDrivingLicense()
+  const { data, loading, error } = useLicenses()
 
   return (
     <>
@@ -28,13 +31,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       {loading && <LicenseLoader />}
       {data && <LicenseCards data={data} />}
 
-      {!loading &&
+      {/* {!loading &&
         !error &&
         (status === 'Unknown' || status === 'NotAvailable') && (
           <Box marginTop={8}>
             <EmptyState />
           </Box>
-        )}
+        )} */}
 
       {error && (
         <Box>
