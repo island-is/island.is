@@ -29,6 +29,14 @@ export const generateApplicationEmail: ApplicationEmail = (
     application.answers,
     'applicant.institution',
   )
+  const contactEmail = getValueViaPath(
+    application.answers,
+    'contact.email',
+  ) as string
+  const contactName = getValueViaPath(
+    application.answers,
+    'contact.name',
+  ) as string
 
   const subject = `Umsókn frá ${institutionName}`
   const mailAttachments = attachments
@@ -46,8 +54,8 @@ export const generateApplicationEmail: ApplicationEmail = (
 
   return {
     from: {
-      name: applicationSenderName,
-      address: applicationSenderEmail,
+      name: contactName || applicationSenderName,
+      address: contactEmail || applicationSenderEmail,
     },
     to: [
       {
