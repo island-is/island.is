@@ -14,7 +14,7 @@ import {
   GenericLicenseType,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { GenericUserLicenseStatus, Query } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -104,10 +104,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       {loading && <LicenseLoader />}
       {data &&
         genericLicenses
-          .filter(
-            (license) =>
-              license.license.status === GenericUserLicenseStatus.HasLicense,
-          )
+          .filter((license) => license.license.status === 'HasLicense')
           .map((license, index) => {
             return (
               <Box marginBottom={3} key={index}>
