@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, Fragment } from 'react'
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  Fragment,
+  useMemo,
+} from 'react'
 import { useQuery, gql } from '@apollo/client'
 import {
   Text,
@@ -19,6 +25,7 @@ import {
   AccordionItem,
   Accordion,
   Icon,
+  Input,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -47,6 +54,7 @@ import differenceInYears from 'date-fns/differenceInYears'
 import cn from 'classnames'
 import orderBy from 'lodash/orderBy'
 import { Pagination } from '../../components/Pagination/Pagination'
+import debounce from 'lodash/debounce'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -274,13 +282,31 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
+  const handleChange = (e: any) => {
+    setPage(1)
+    if (e) {
+      setFilterValue((prevFilter) => ({
+        ...prevFilter,
+        searchQuery: e.target?.value ?? '',
+      }))
+      if (!searchInteractionEventSent) {
+        documentsSearchDocumentsInitialized(pathname)
+        setSearchInteractionEventSent(true)
+      }
+    }
+  }
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel()
+    }
+  })
+  const debouncedResults = useMemo(() => {
+    return debounce(handleChange, 500)
+  }, [])
+
   if (isLegal && isOver15) {
     return <AccessDeniedLegal userInfo={userInfo} client={client} />
   }
-
-  console.log(data.documents)
-  console.log(data.categories)
-  console.log(groupData)
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -303,28 +329,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             labelOpen={formatMessage(m.openFilter)}
             labelClose={formatMessage(m.closeFilter)}
             filterInput={
-              <>
-                <Button
-                  variant="utility"
-                  onClick={() => handleSearchChange(searchQuery)}
-                >
-                  {formatMessage(m.searchLabel)}
-                </Button>
-                <FilterInput
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                  name="rafraen-skjol-input"
-                  value={searchQuery}
-                  onChange={(value) => setSearchQuery(value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      handleSearchChange(
-                        (event.target as HTMLInputElement).value,
-                      )
-                    }
-                  }}
-                  backgroundColor="blue"
-                />
-              </>
+              <Input
+                placeholder={formatMessage(m.searchPlaceholder)}
+                name="rafraen-skjol-input"
+                size="xs"
+                label={formatMessage(m.searchLabel)}
+                onChange={debouncedResults}
+                onKeyDown={() => debouncedResults(filterValue.searchQuery)}
+              />
             }
             onFilterClear={handleClearFilters}
           >
