@@ -27,6 +27,13 @@ import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+} from '@island.is/application/types'
+import { EventObject } from 'xstate'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -41,9 +48,18 @@ export const Applications: FC = () => {
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
+  const [template, setTemplate] = useState<
+    | ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    | undefined
+  >(undefined)
   const checkDelegation = useCallback(() => {
     setDelegationsChecked((d) => !d)
   }, [])
+  console.log(template)
 
   useApplicationNamespaces(type)
 
@@ -79,6 +95,18 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
+    async function getTemplate() {
+      if (type && !template) {
+        const appliTemplate = await getApplicationTemplateByTypeId(type)
+        if (appliTemplate) {
+          setTemplate(appliTemplate)
+        }
+      }
+    }
+    getTemplate()
+  })
+
+  useEffect(() => {
     if (
       type &&
       data &&
@@ -89,7 +117,7 @@ export const Applications: FC = () => {
     }
   }, [type, data, delegationsChecked])
 
-  if (loading) {
+  if (loading || !template) {
     return <ApplicationLoading />
   }
 
@@ -150,12 +178,14 @@ export const Applications: FC = () => {
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-
-              <Box marginTop={[2, 0]}>
-                <Button onClick={createApplication}>
-                  {formatMessage(coreMessages.newApplication)}
-                </Button>
-              </Box>
+              {template.allowsMultipleApplications ||
+              data?.applicationApplications.length < 1 ? (
+                <Box marginTop={[2, 0]}>
+                  <Button onClick={createApplication}>
+                    {formatMessage(coreMessages.newApplication)}
+                  </Button>
+                </Box>
+              ) : null}
             </Box>
 
             {data?.applicationApplications && (
