@@ -23,13 +23,10 @@ export const licensesModule: ServicePortalModule = {
         lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
     },
     {
-      name: m.drivingLicense,
-      path: ServicePortalPath.LicensesDrivingDetail,
+      name: 'Skírteini',
+      path: ServicePortalPath.LicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      render: () =>
-        lazy(() =>
-          import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),
-        ),
+      render: () => lazy(() => import('./screens/LicenseDetail/LicenseDetail')),
     },
   ],
 }

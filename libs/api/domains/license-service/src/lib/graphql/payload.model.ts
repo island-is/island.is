@@ -45,4 +45,10 @@ export class Payload {
   @IsObject()
   // eslint-disable-next-line @typescript-eslint/ban-types
   rawData?: object
+
+  @Field(() => String)
+  number?: string
+
+  @Field(() => Boolean)
+  expired?: boolean
 }

@@ -20,7 +20,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
 type PkPassProps = {
-  expireDate: string
+  expireDate?: string
   textButton?: boolean
 }
 export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {

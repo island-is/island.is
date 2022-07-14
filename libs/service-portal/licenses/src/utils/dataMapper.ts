@@ -1,3 +1,6 @@
+import { GenericLicenseType } from '@island.is/service-portal/graphql'
+import { m } from '../lib/messages'
+
 interface Category {
   id:
     | 'A'
@@ -428,5 +431,50 @@ export const mapCategory = (id: string): Category => {
         text: undefined,
         icon: undefined,
       }
+  }
+}
+
+export const getLicenseDetailHeading = (type: GenericLicenseType) => {
+  switch (type) {
+    case GenericLicenseType.DriversLicense:
+      return {
+        title: m.yourDrivingLicense,
+        text: m.drivingLicenseDescription,
+      }
+      break
+    case GenericLicenseType.AdrLicense:
+      return { title: m.yourADRLicense, text: m.adrLicenseDescription }
+      break
+    case GenericLicenseType.MachineLicense:
+      return {
+        title: m.yourMachineLicense,
+        text: m.machineLicenseDescription,
+      }
+      break
+    default:
+      return {
+        title: m.yourDrivingLicense,
+        text: m.drivingLicenseDescription,
+      }
+      break
+  }
+}
+
+export const getTitleAndLogo = (type: GenericLicenseType) => {
+  switch (type) {
+    case GenericLicenseType.DriversLicense:
+      return { title: m.drivingLicense, logo: './assets/images/island.svg' }
+    case GenericLicenseType.AdrLicense:
+      return {
+        title: m.ADRLicense,
+        logo: './assets/images/adr_machine.svg',
+      }
+    case GenericLicenseType.MachineLicense:
+      return {
+        title: m.machineLicense,
+        logo: './assets/images/adr_machine.svg',
+      }
+    default:
+      return { title: m.license, logo: './assets/images/island.svg' }
   }
 }

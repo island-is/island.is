@@ -66,6 +66,8 @@ export const parseMachineLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
+    number: license.skirteinisNumer?.toString() ?? '',
+    expired: false,
   }
 }
 

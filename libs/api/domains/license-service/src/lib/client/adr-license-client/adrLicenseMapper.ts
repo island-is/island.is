@@ -1,4 +1,5 @@
 import { AdrDto } from '@island.is/clients/adr-and-machine-license'
+import isAfter from 'date-fns/isAfter'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
@@ -96,6 +97,10 @@ export const parseAdrLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
+    number: license.skirteinisNumer?.toString() ?? '',
+    expired: license.gildirTil
+      ? !isAfter(new Date(license.gildirTil), new Date())
+      : false,
   }
 }
 

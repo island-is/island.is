@@ -92,8 +92,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.drivingLicense,
-            path: ServicePortalPath.LicensesDrivingDetail,
+            name: m.licenses,
+            path: ServicePortalPath.LicensesDetail,
           },
         ],
       },
