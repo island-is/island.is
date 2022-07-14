@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { EventObject } from 'xstate'
+
 @Injectable()
 export class ApplicationAccessService {
   constructor(private readonly applicationService: ApplicationService) {}
