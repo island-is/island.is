@@ -30,9 +30,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       ? ApplicationState.NEW
       : currentApplication?.state
 
-  if(loading) {
-    return <LoadingDots />    
-  }    
+  if (loading) {
+    return <LoadingDots />
+  }
 
   return (
     <Box paddingBottom={5} className={styles.container}>

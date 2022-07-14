@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box, AlertMessage, Input, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  AlertMessage,
+  Input,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import {
   ApplicationEventType,
   ApplicationState,
@@ -86,10 +92,10 @@ const MissingFiles = ({
       return [true, null]
     })
 
-  if(loading) {
-    return <LoadingDots />    
-  }    
- 
+  if (loading) {
+    return <LoadingDots />
+  }
+
   return (
     <>
       <Text marginBottom={[4, 4, 5]}>

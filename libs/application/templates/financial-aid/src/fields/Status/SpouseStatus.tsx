@@ -21,9 +21,9 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { nationalRegistry } = application.externalData
   const state = currentApplication?.state
 
-  if(loading) {
-    return <LoadingDots />    
-  }    
+  if (loading) {
+    return <LoadingDots />
+  }
 
   return (
     <Box paddingBottom={5} className={styles.container}>
