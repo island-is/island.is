@@ -4,13 +4,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   coreMessages,
-  Application,
   buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Form, FormModes, Application } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import { YES } from '../constants'

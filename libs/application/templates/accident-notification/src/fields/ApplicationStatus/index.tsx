@@ -1,10 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
-import {
-  FieldBaseProps,
-  FormValue,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   AlertMessage,

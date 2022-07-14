@@ -1,7 +1,6 @@
 import addDays from 'date-fns/addDays'
 
 import {
-  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
@@ -15,10 +14,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Form,
-  FormModes,
   NO_ANSWER,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
@@ -29,6 +27,7 @@ import {
   getApplicationAnswers,
   allowOtherParent,
   getLastValidPeriodEndDate,
+  removeCountryCode,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -96,9 +95,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
                   defaultValue: (application: Application) =>
-                    (application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    })?.mobilePhoneNumber,
+                    removeCountryCode(application),
                   id: 'applicant.phoneNumber',
                   variant: 'tel',
                   format: '###-####',

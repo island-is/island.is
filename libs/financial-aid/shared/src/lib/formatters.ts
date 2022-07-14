@@ -284,7 +284,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
           header: 'Umsóknin þín er samþykkt og lokaupphæð er tilbúin',
-          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
+          content: `Umsókn þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt. Þú getur skoðað lokaupphæð fjárhagsaðstoðarinnar með því að ýta á hnappinn hér að neðan. Ef þú hefur einhverjar athugasemdir hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>.`,
           applicationLinkText: 'Skoða lokaupphæð',
           applicationChange: 'Umsóknin er samþykkt',
           applicationMonth: getPeriod.month,
@@ -472,4 +472,11 @@ export const aidDescriptionFromName: KeyMapping<AidName, string> = {
   withOthers: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
   livesWithParents: 'Býr hjá foreldrum',
   unknown: 'Annað',
+}
+
+export const getNavEmploymentStatus: KeyMapping<Employment, number> = {
+  Working: 1,
+  Unemployed: 4,
+  CannotWork: 6,
+  Other: 10,
 }

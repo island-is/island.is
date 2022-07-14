@@ -4,6 +4,8 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   DataUploadResponse,
+  EstateAsset,
+  EstateMember,
   Person,
   PersonType,
   SyslumennService,
@@ -13,7 +15,11 @@ import {
   OtherPropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
-import { baseMapper } from './announcement-of-death-utils'
+import {
+  baseMapper,
+  dummyAsset,
+  dummyMember,
+} from './announcement-of-death-utils'
 
 import { isPerson } from 'kennitala'
 
@@ -48,6 +54,11 @@ export class AnnouncementOfDeathService {
       estates[estate].estateMembers = estates[estate].estateMembers.map(
         baseMapper,
       )
+      // TODO: remove once empty array diff problem is resolved
+      //       in the application system (property dropped before deepmerge)
+      estates[estate].assets.unshift(dummyAsset as EstateAsset)
+      estates[estate].vehicles.unshift(dummyAsset as EstateAsset)
+      estates[estate].estateMembers.unshift(dummyMember as EstateMember)
     }
 
     const relationOptions = (await this.syslumennService.getEstateRelations())
@@ -153,9 +164,15 @@ export class AnnouncementOfDeathService {
           relation: answers.applicantRelation,
         }),
         knowledgeOfOtherWill: answers.knowledgeOfOtherWills,
-        estateMembers: JSON.stringify(answers.estateMembers.members),
-        assets: JSON.stringify(answers.assets.assets),
-        vehicles: JSON.stringify(answers.vehicles.vehicles),
+        estateMembers: JSON.stringify(
+          answers.estateMembers.members.filter((member) => !member?.dummy),
+        ),
+        assets: JSON.stringify(
+          answers.assets.assets.filter((asset) => !asset?.dummy),
+        ),
+        vehicles: JSON.stringify(
+          answers.vehicles.vehicles.filter((vehicle) => !vehicle?.dummy),
+        ),
         bankcodeSecuritiesOrShares: otherProperties.includes(
           OtherPropertiesEnum.ACCOUNTS,
         )
