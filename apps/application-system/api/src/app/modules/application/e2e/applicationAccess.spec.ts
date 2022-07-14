@@ -27,7 +27,7 @@ describe('ApplicationAccesService', () => {
     )
   })
 
-  it('should return true when application is in draft and user is an applicant', async () => {
+  it('should return true when application is in draft and user is an applicant attempting to delete', async () => {
     const applicationInDraft = createApplication({
       state: 'draft',
       applicant: '111111-3000',
@@ -39,7 +39,7 @@ describe('ApplicationAccesService', () => {
     expect(results).toBe(true)
   })
 
-  it('should return false when application is in inReview and user is an applicant', async () => {
+  it('should return false when application is in inReview and user is an applicant attempting to delete', async () => {
     const applicationInReview = createApplication({
       state: 'inReview',
       applicant: '111111-3000',
@@ -51,7 +51,8 @@ describe('ApplicationAccesService', () => {
     expect(results).toBe(false)
   })
 
-  it('should return true when application is in draft and has both shouldBeListedForRole set as true for applicant and undefined for reviewer', async () => {
+  // true check for applicant in draft defined as true
+  it('should return true when application is in draft and user is applicant, shouldBeListedForRole defined as true for applicant', async () => {
     const applicationInDraft = createApplication({
       state: 'draft',
       applicant: '111111-3000',
@@ -63,16 +64,23 @@ describe('ApplicationAccesService', () => {
       testApplicationTemplate,
     )
     expect(results).toBe(true)
+  })
 
-    const results2 = await applicationAccessService.shouldShowApplicationOnOverview(
+  it('should return true when application is in draft and user is reviewer, shouldBeListedForRole is undefined for reviewer', async () => {
+    const applicationInDraft = createApplication({
+      state: 'draft',
+      applicant: '111111-3000',
+    })
+
+    const results = await applicationAccessService.shouldShowApplicationOnOverview(
       applicationInDraft,
       '111111-3001',
       testApplicationTemplate,
     )
-    expect(results2).toBe(true)
+    expect(results).toBe(true)
   })
 
-  it('should return correct ', async () => {
+  it('should return false when application is in review and user is reviewer, shouldBeListed defined as false', async () => {
     const applicationInReview = createApplication({
       state: 'inReview',
       applicant: '111111-3000',
@@ -83,22 +91,15 @@ describe('ApplicationAccesService', () => {
       testApplicationTemplate,
     )
     expect(results).toBe(false)
-
-    const results2 = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInReview,
-      '111111-3001',
-      testApplicationTemplate,
-    )
-    expect(results2).toBe(true)
   })
 
-  it('should return true when application is in rejected and should be listed is not defined for the role', async () => {
-    const applicationInRejected = createApplication({
-      state: 'rejected',
+  it('should return true when application is in review and user is applicant, shouldBeListed defined as true', async () => {
+    const applicationInReview = createApplication({
+      state: 'inReview',
       applicant: '111111-3000',
     })
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInRejected,
+      applicationInReview,
       '111111-3000',
       testApplicationTemplate,
     )
