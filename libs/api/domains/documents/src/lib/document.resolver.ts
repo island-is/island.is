@@ -12,11 +12,14 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 
 import { DocumentService } from './document.service'
-import { Document } from './models/document.model'
+import { DocumentListResponse } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import { DocumentType } from './models/documentType.model'
+
 import { GetDocumentListInput } from './dto/getDocumentListInput'
+import { DocumentSender } from './models/documentSender.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -44,11 +47,11 @@ export class DocumentResolver {
   }
 
   @Scopes(DocumentsScope.main)
-  @Query(() => [Document], { nullable: true })
+  @Query(() => DocumentListResponse, { nullable: true })
   listDocuments(
     @Args('input') input: GetDocumentListInput,
     @CurrentUser() user: User,
-  ): Promise<Document[]> {
+  ): Promise<DocumentListResponse> {
     return this.documentService.listDocuments(user.nationalId, input)
   }
 
@@ -58,5 +61,17 @@ export class DocumentResolver {
     @CurrentUser() user: User,
   ): Promise<DocumentCategory[]> {
     return this.documentService.getCategories(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => [DocumentType], { nullable: true })
+  getDocumentTypes(@CurrentUser() user: User): Promise<DocumentType[]> {
+    return this.documentService.getTypes(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Query(() => [DocumentSender], { nullable: true })
+  getDocumentSenders(@CurrentUser() user: User): Promise<DocumentSender[]> {
+    return this.documentService.getSenders(user.nationalId)
   }
 }

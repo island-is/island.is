@@ -6,6 +6,8 @@ import {
   DocumentDTO,
   CustomersDocumentRequest,
   ListDocumentsResponse,
+  TypesResponse,
+  SendersResponse,
 } from './models'
 import { DocumentOauthConnection } from './document.connection'
 import type { Logger } from '@island.is/logging'
@@ -127,5 +129,15 @@ export class DocumentClient {
   ): Promise<CategoriesResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/categories`
     return await this.getRequest<CategoriesResponse>(requestRoute)
+  }
+
+  async customersTypes(nationalId: string): Promise<TypesResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/types`
+    return await this.getRequest<TypesResponse>(requestRoute)
+  }
+
+  async customersSenders(nationalId: string): Promise<SendersResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/senders`
+    return await this.getRequest<SendersResponse>(requestRoute)
   }
 }

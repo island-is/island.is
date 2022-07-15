@@ -20,12 +20,11 @@ import {
   Hidden,
   Checkbox,
   Filter,
-  FilterInput,
   FilterMultiChoice,
   AccordionItem,
   Accordion,
-  Icon,
   Input,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -33,7 +32,7 @@ import {
   AccessDeniedLegal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { Document, Query } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
@@ -51,9 +50,7 @@ import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 import FilterTag from '../../components/FilterTag/FilterTag'
 import differenceInYears from 'date-fns/differenceInYears'
-import cn from 'classnames'
-import orderBy from 'lodash/orderBy'
-import { Pagination } from '../../components/Pagination/Pagination'
+
 import debounce from 'lodash/debounce'
 
 const GET_DOCUMENT_CATEGORIES = gql`
@@ -137,7 +134,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [groupsAvailable, setGroupsAvailable] = useState<
     GroupsValue[] | typeof NO_GROUPS_AVAILABLE
   >([])
-  const { data, loading, error } = useListDocuments({
+  const { data, totalCount, loading, error } = useListDocuments({
     senderKennitala: filterValue.activeCategories.join(),
     dateFrom: filterValue.dateFrom?.toISOString(),
     dateTo: filterValue.dateTo?.toISOString(),
@@ -185,7 +182,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const categories = data.categories
   const filteredDocuments = data.documents
-
+  const pagedDocuments = {
+    from: (page - 1) * pageSize,
+    to: pageSize * page,
+    totalPages: Math.ceil(totalCount / pageSize),
+  }
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => {
@@ -636,13 +637,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               ))}
             </Box>
           </Box>
-          {filteredDocuments.length > 0 && (
-            <Pagination
-              data={filteredDocuments}
-              page={page}
-              pageSize={pageSize}
-              handlePageChange={handlePageChange}
-            />
+
+          {filteredDocuments && filteredDocuments.length > pageSize && (
+            <Box marginTop={4}>
+              <Pagination
+                page={page}
+                totalPages={pagedDocuments.totalPages}
+                renderLink={(page, className, children) => (
+                  <button
+                    className={className}
+                    onClick={handlePageChange.bind(null, page)}
+                  >
+                    {children}
+                  </button>
+                )}
+              />
+            </Box>
           )}
         </Box>
       </Stack>

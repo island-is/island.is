@@ -7,6 +7,7 @@ interface UseListDocumentsProps {
     documents: Document[]
     categories: { label: string; value: string }[]
   }
+  totalCount: number
   unreadCounter: number
   loading?: boolean
   error?: any
@@ -45,7 +46,8 @@ export const useListDocuments = (
       },
     },
   })
-  const documents = data?.listDocuments || []
+  const documents = data?.listDocuments?.data || []
+  const totalCount = data?.listDocuments?.totalCount || 0
 
   const allCategories = documents.map((document) => ({
     label: document.senderName,
@@ -55,6 +57,7 @@ export const useListDocuments = (
   const categories = uniqBy(allCategories, (category) => category.value)
   return {
     data: { documents, categories },
+    totalCount,
     unreadCounter: documents.filter((x) => x.opened === false).length,
     loading,
     error,
