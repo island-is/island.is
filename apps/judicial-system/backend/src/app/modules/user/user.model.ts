@@ -19,7 +19,7 @@ import { Institution } from '../institution'
   tableName: 'user',
   timestamps: true,
 })
-export class User extends Model<User> {
+export class User extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

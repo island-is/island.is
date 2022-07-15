@@ -308,7 +308,7 @@ describe('ScopesController', () => {
         expect(res.status).toEqual(401)
         expect(res.body).toMatchObject({
           status: 401,
-          type: 'https://httpstatuses.com/401',
+          type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
 
@@ -334,7 +334,7 @@ describe('ScopesController', () => {
         expect(res.status).toEqual(403)
         expect(res.body).toMatchObject({
           status: 403,
-          type: 'https://httpstatuses.com/403',
+          type: 'https://httpstatuses.org/403',
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })

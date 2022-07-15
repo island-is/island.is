@@ -27,7 +27,7 @@ describe('HttpExceptionFilter', () => {
       Object {
         "status": 403,
         "title": "Forbidden",
-        "type": "https://httpstatuses.com/403",
+        "type": "https://httpstatuses.org/403",
       }
     `)
   })
@@ -50,7 +50,7 @@ describe('HttpExceptionFilter', () => {
         "detail": "Custom error",
         "status": 403,
         "title": "Forbidden",
-        "type": "https://httpstatuses.com/403",
+        "type": "https://httpstatuses.org/403",
       }
     `)
   })

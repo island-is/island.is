@@ -9,6 +9,8 @@ import * as styles from './MobileMenu.css'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
 import NavItem from '../Sidebar/NavItem/NavItem'
+import { sharedMessages } from '@island.is/shared/translations'
+import { useLocale } from '@island.is/localization'
 
 const MobileMenu = (): ReactElement | null => {
   const ref = useRef(null)
@@ -16,6 +18,7 @@ const MobileMenu = (): ReactElement | null => {
   const { signOut } = useAuth()
   const navigation = useNavigation()
   const { unreadCounter } = useListDocuments('')
+  const { formatMessage } = useLocale()
 
   const handleLinkClick = () =>
     dispatch({
@@ -63,7 +66,9 @@ const MobileMenu = (): ReactElement | null => {
           onClick={() => signOut()}
           active={false}
           icon={{ icon: 'logOut', type: 'outline' }}
-        />
+        >
+          {formatMessage(sharedMessages.logout)}
+        </NavItem>
       </Box>
     </Box>
   )

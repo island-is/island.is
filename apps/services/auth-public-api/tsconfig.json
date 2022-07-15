@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": true,
-    "strictPropertyInitialization": false //TODO: Perhaps needs to be removed
+    "strictPropertyInitialization": false
   },
   "include": [],
   "references": [

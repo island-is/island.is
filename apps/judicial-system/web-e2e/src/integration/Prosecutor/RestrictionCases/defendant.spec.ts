@@ -62,7 +62,7 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('defenderNotFound').should('exist')
   })
 
-  it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
+  it('should not allow users to move forward if they entered an invalid defender email address', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     cy.wait('@getPersonByNationalId')

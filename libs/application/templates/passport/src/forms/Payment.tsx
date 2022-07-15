@@ -1,10 +1,10 @@
-import { m } from '../lib/messages'
 import {
+  buildCustomField,
   buildForm,
   buildSection,
-  buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const payment: Form = buildForm({
   id: 'PassportApplicationPaymentForm',

@@ -352,6 +352,14 @@ export const m = defineMessages({
     id: 'service.portal:family-number',
     defaultMessage: 'Fjölskyldunúmer',
   },
+  familySpouse: {
+    id: 'service.portal:family-spouse',
+    defaultMessage: 'Maki',
+  },
+  familyChild: {
+    id: 'service.portal:family-child',
+    defaultMessage: 'Barn',
+  },
   endorsements: {
     id: 'service.portal:endorsements',
     defaultMessage: 'Meðmæli',

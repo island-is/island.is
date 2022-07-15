@@ -56,7 +56,6 @@ export class UserService {
       if (admin) {
         return {
           ...admin,
-          title: '',
           mobileNumber: '',
           email: '',
           role: UserRole.ADMIN,
@@ -81,7 +80,7 @@ export class UserService {
   }
 
   async create(userToCreate: CreateUserDto): Promise<User> {
-    return this.userModel.create(userToCreate)
+    return this.userModel.create({ ...userToCreate })
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {

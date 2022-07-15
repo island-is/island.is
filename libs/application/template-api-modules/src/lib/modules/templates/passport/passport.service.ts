@@ -6,6 +6,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
 import { info } from 'kennitala'
+import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 
 @Injectable()
 export class PassportService {
@@ -65,6 +66,13 @@ export class PassportService {
         }
       }
     }
+  }
+
+  async assignParentB({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateAssignParentBApplicationEmail,
+      application,
+    )
   }
 
   async submitPassportApplication({

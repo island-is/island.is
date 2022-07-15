@@ -11,6 +11,6 @@ module.exports = {
     '^@island.is/skilavottord-web/(.*)$': path.resolve(__dirname),
   },
   coverageDirectory: '../../../coverage/apps/skilavottord/web',
-  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'skilavottord-web',
 }

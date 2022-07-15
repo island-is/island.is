@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
-import { HttpModule, HttpService, CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/common'
+import { HttpModule, HttpService } from '@nestjs/axios'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 

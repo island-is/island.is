@@ -31,9 +31,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('courtAttendees').should('not.match', ':empty')
   })
@@ -48,9 +48,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -65,9 +65,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -82,9 +82,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -100,9 +100,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -118,9 +118,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -136,9 +136,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -155,9 +155,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -177,9 +177,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -198,8 +198,8 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
       ruling: undefined,
     }
 
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -220,9 +220,9 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.get('#prosecutor-appeal').check()
