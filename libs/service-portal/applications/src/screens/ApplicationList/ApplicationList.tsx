@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { defineMessage } from "react-intl";
-import { ValueType } from "react-select";
+import React, { useCallback, useEffect, useState } from 'react'
+import { defineMessage } from 'react-intl'
+import { ValueType } from 'react-select'
 
-import { useQuery } from "@apollo/client";
-import { institutionMapper } from "@island.is/application/core";
-import { Application, ApplicationStatus } from "@island.is/application/types";
-import { ApplicationList as List } from "@island.is/application/ui-components";
+import { useQuery } from '@apollo/client'
+import { institutionMapper } from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
+import { ApplicationList as List } from '@island.is/application/ui-components'
 import {
   Box,
   GridColumn,
@@ -13,23 +13,23 @@ import {
   Input,
   Option,
   Select,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
   EmptyState,
   IntroHeader,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import {
   GET_ORGANIZATIONS_QUERY,
-  useApplications
-} from "@island.is/service-portal/graphql";
-import { Organization } from "@island.is/shared/types";
-import * as Sentry from "@sentry/react";
+  useApplications,
+} from '@island.is/service-portal/graphql'
+import { Organization } from '@island.is/shared/types'
+import * as Sentry from '@sentry/react'
 
-import { m } from "../../lib/messages";
+import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')

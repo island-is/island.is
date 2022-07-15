@@ -1,8 +1,8 @@
-import { ApolloError } from "apollo-client";
-import React, { FC } from "react";
-import { defineMessage } from "react-intl";
+import { ApolloError } from 'apollo-client'
+import React, { FC } from 'react'
+import { defineMessage } from 'react-intl'
 
-import { NationalRegistryChild } from "@island.is/api/schema";
+import { NationalRegistryChild } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -10,18 +10,18 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
-  UserInfoLine
-} from "@island.is/service-portal/core";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 
-import { Parents } from "../../components/Parents/Parents";
+import { Parents } from '../../components/Parents/Parents'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',

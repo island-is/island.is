@@ -1,13 +1,13 @@
-import isNumber from "lodash/isNumber";
-import React from "react";
-import { useParams } from "react-router-dom";
+import isNumber from 'lodash/isNumber'
+import React from 'react'
+import { useParams } from 'react-router-dom'
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from '@apollo/client'
 import {
   Query,
   VehiclesCurrentOwnerInfo,
-  VehiclesOperator
-} from "@island.is/api/schema";
+  VehiclesOperator,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -16,20 +16,20 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
-  UserInfoLine
-} from "@island.is/service-portal/core";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 
-import OwnersTable from "../../components/DetailTable/OwnersTable";
-import { messages } from "../../lib/messages";
-import { GET_USERS_VEHICLE_DETAIL } from "../../queries/getUsersVehicleDetail";
+import OwnersTable from '../../components/DetailTable/OwnersTable'
+import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -38,9 +38,9 @@ import {
   operatorInfoArray,
   ownerInfoArray,
   registrationInfoArray,
-  technicalInfoArray
-} from "../../utils/createUnits";
-import { displayWithUnit } from "../../utils/displayWithUnit";
+  technicalInfoArray,
+} from '../../utils/createUnits'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')

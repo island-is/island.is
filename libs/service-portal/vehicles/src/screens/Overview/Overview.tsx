@@ -1,8 +1,8 @@
-import isEqual from "lodash/isEqual";
-import React, { useCallback, useState } from "react";
+import isEqual from 'lodash/isEqual'
+import React, { useCallback, useState } from 'react'
 
-import { useQuery } from "@apollo/client";
-import { Query, VehiclesVehicle } from "@island.is/api/schema";
+import { useQuery } from '@apollo/client'
+import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -10,20 +10,20 @@ import {
   GridRow,
   Input,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 
-import { VehicleCard } from "../../components/VehicleCard";
-import { messages } from "../../lib/messages";
-import { GET_USERS_VEHICLES } from "../../queries/getUsersVehicles";
+import { VehicleCard } from '../../components/VehicleCard'
+import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 
 const defaultFilterValues = {
   searchQuery: '',

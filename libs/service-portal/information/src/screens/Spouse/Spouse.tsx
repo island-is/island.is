@@ -1,28 +1,28 @@
-import React from "react";
-import { defineMessage } from "react-intl";
-import { useParams } from "react-router-dom";
+import React from 'react'
+import { defineMessage } from 'react-intl'
+import { useParams } from 'react-router-dom'
 
-import { useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
+import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
   GridColumn,
   GridRow,
   LoadingDots,
-  Stack
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Stack,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
   ServicePortalModuleComponent,
-  UserInfoLine
-} from "@island.is/service-portal/core";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 
-import { NATIONAL_REGISTRY_USER } from "../../lib/queries/getNationalRegistryUser";
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',

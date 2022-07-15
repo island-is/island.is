@@ -1,6 +1,6 @@
-import format from "date-fns/format";
-import React from "react";
-import { Link } from "react-router-dom";
+import format from 'date-fns/format'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 import {
   ActionCard,
@@ -8,17 +8,17 @@ import {
   Bullet,
   BulletList,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale } from "@island.is/localization";
-import { IntroHeader, ServicePortalPath } from "@island.is/service-portal/core";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
 
-import { m } from "../../lib/messages";
+import { m } from '../../lib/messages'
 import {
   PaginatedEndorsementListResponse,
-  PaginatedEndorsementResponse
-} from "../../types/schema";
-import { useGetListsUserSigned, useListsUserOwns } from "../queries";
+  PaginatedEndorsementResponse,
+} from '../../types/schema'
+import { useGetListsUserSigned, useListsUserOwns } from '../queries'
 
 const formatDate = (date: string) => {
   try {

@@ -1,16 +1,16 @@
-import React, { Fragment } from "react";
-import { useParams } from "react-router-dom";
+import React, { Fragment } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { gql, useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   SkeletonLoader,
   Table as T,
   Text,
-  TextProps
-} from "@island.is/island-ui/core";
-import { EmptyState, IntroHeader, m } from "@island.is/service-portal/core";
+  TextProps,
+} from '@island.is/island-ui/core'
+import { EmptyState, IntroHeader, m } from '@island.is/service-portal/core'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {

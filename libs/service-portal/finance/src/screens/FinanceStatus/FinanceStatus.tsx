@@ -1,10 +1,10 @@
-import subYears from "date-fns/subYears";
-import flatten from "lodash/flatten";
-import React from "react";
-import { defineMessage } from "react-intl";
+import subYears from 'date-fns/subYears'
+import flatten from 'lodash/flatten'
+import React from 'react'
+import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
@@ -13,9 +13,9 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
-  Table as T
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Table as T,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
   ExpandHeader,
@@ -23,17 +23,17 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
-import { checkDelegation } from "@island.is/shared/utils";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
 
-import DropdownExport from "../../components/DropdownExport/DropdownExport";
-import FinanceStatusTableRow from "../../components/FinanceStatusTableRow/FinanceStatusTableRow";
-import { exportGreidslustadaFile } from "../../utils/filesGreidslustada";
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
-  FinanceStatusOrganizationType
-} from "./FinanceStatusData.types";
+  FinanceStatusOrganizationType,
+} from './FinanceStatusData.types'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {

@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react'
 
-import { useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
-import { AlertMessage, Stack } from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { AlertMessage, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 
-import { FamilyMemberCard } from "../../components/FamilyMemberCard/FamilyMemberCard";
-import { FamilyMemberCardLoader } from "../../components/FamilyMemberCard/FamilyMemberCardLoader";
-import { spmm } from "../../lib/messages";
-import { NATIONAL_REGISTRY_CHILDREN } from "../../lib/queries/getNationalChildren";
-import { NATIONAL_REGISTRY_USER } from "../../lib/queries/getNationalRegistryUser";
+import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
+import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
+import { spmm } from '../../lib/messages'
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')

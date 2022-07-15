@@ -1,24 +1,22 @@
-import addMonths from "date-fns/addMonths";
-import differenceInYears from "date-fns/differenceInYears";
-import format from "date-fns/format";
-import isAfter from "date-fns/isAfter";
-import isBefore from "date-fns/isBefore";
-import isWithinInterval from "date-fns/isWithinInterval";
-import isEqual from "lodash/isEqual";
-import orderBy from "lodash/orderBy";
-import React, { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import addMonths from 'date-fns/addMonths'
+import differenceInYears from 'date-fns/differenceInYears'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isWithinInterval from 'date-fns/isWithinInterval'
+import isEqual from 'lodash/isEqual'
+import orderBy from 'lodash/orderBy'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
-import { gql, useQuery } from "@apollo/client";
-import { Document, Query } from "@island.is/api/schema";
+import { gql, useQuery } from '@apollo/client'
+import { Document, Query } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
   Box,
   Button,
   Checkbox,
-  Column,
-  Columns,
   DatePicker,
   Filter,
   FilterInput,
@@ -29,30 +27,30 @@ import {
   LoadingDots,
   Pagination,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
-import { documentsSearchDocumentsInitialized } from "@island.is/plausible";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import {
   AccessDeniedLegal,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
-  useScrollToRefOnUpdate
-} from "@island.is/service-portal/core";
+  useScrollToRefOnUpdate,
+} from '@island.is/service-portal/core'
 import {
   GET_ORGANIZATIONS_QUERY,
-  useListDocuments
-} from "@island.is/service-portal/graphql";
-import { dateFormat } from "@island.is/shared/constants";
-import { getOrganizationLogoUrl } from "@island.is/shared/utils";
-import * as Sentry from "@sentry/react";
+  useListDocuments,
+} from '@island.is/service-portal/graphql'
+import { dateFormat } from '@island.is/shared/constants'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import * as Sentry from '@sentry/react'
 
-import DocumentLine from "../../components/DocumentLine/DocumentLine";
-import FilterTag from "../../components/FilterTag/FilterTag";
-import HeaderArrow from "../../components/HeaderArrow/HeaderArrow";
-import { messages } from "../../utils/messages";
-import * as styles from "./Overview.css";
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import FilterTag from '../../components/FilterTag/FilterTag'
+import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
+import { messages } from '../../utils/messages'
+import * as styles from './Overview.css'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {

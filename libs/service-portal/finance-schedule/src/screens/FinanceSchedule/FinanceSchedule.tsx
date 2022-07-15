@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react'
 
-import { gql, useQuery } from "@apollo/client";
-import { PaymentSchedule, Query } from "@island.is/api/schema";
+import { gql, useQuery } from '@apollo/client'
+import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
@@ -10,17 +10,17 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   NoDataScreen,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
-import { checkDelegation } from "@island.is/shared/utils";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
 
-import FinanceScheduleTable from "../../components/FinanceScheduleTable/FinanceScheduleTable";
+import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {

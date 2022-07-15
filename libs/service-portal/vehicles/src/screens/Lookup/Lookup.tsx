@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
-import { useLazyQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
+import { useLazyQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
@@ -12,20 +12,20 @@ import {
   GridColumn,
   GridRow,
   Input,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
-  TableGrid
-} from "@island.is/service-portal/core";
+  TableGrid,
+} from '@island.is/service-portal/core'
 
-import { messages } from "../../lib/messages";
-import { GET_USERS_VEHICLES_SEARCH_LIMIT } from "../../queries/getUsersVehicleSearchLimit";
-import { GET_VEHICLES_SEARCH } from "../../queries/getVehiclesSearch";
+import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
+import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')

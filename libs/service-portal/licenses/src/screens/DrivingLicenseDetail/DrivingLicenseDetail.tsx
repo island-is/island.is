@@ -1,7 +1,7 @@
-import { info } from "kennitala";
-import React from "react";
-import ReactHtmlParser from "react-html-parser";
-import { defineMessage } from "react-intl";
+import { info } from 'kennitala'
+import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
+import { defineMessage } from 'react-intl'
 
 import {
   AlertBanner,
@@ -11,21 +11,21 @@ import {
   Icon,
   Link,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   ServicePortalModuleComponent,
-  UserInfoLine
-} from "@island.is/service-portal/core";
-import { useDrivingLicense } from "@island.is/service-portal/graphql";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
 
-import { PkPass } from "../../components/QRCodeModal/PkPass";
-import { m } from "../../lib/messages";
-import { mapCategory } from "../../utils/dataMapper";
-import { isExpired, toDate } from "../../utils/dateUtils";
-import ExpandableLine from "./ExpandableLine";
+import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { m } from '../../lib/messages'
+import { mapCategory } from '../../utils/dataMapper'
+import { isExpired, toDate } from '../../utils/dateUtils'
+import ExpandableLine from './ExpandableLine'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')

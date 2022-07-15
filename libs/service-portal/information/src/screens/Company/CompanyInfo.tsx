@@ -1,25 +1,25 @@
-import format from "date-fns/format";
-import React from "react";
-import { defineMessage } from "react-intl";
+import format from 'date-fns/format'
+import React from 'react'
+import { defineMessage } from 'react-intl'
 
-import { gql } from "@apollo/client";
-import { Divider, Stack } from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+import { gql } from '@apollo/client'
+import { Divider, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   formatNationalId,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
-  UserInfoLine
-} from "@island.is/service-portal/core";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 import {
   CompanyInfoFragment,
-  useCompanyRegistry
-} from "@island.is/service-portal/graphql";
-import { dateFormat } from "@island.is/shared/constants";
+  useCompanyRegistry,
+} from '@island.is/service-portal/graphql'
+import { dateFormat } from '@island.is/shared/constants'
 
-import { spmm } from "../../lib/messages";
+import { spmm } from '../../lib/messages'
 
 const COMPANY_REGISTRY_INFORMATION = gql`
   query companyRegistryCompanyQuery($input: RskCompanyInfoInput!) {

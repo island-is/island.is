@@ -1,8 +1,8 @@
-import format from "date-fns/format";
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import format from 'date-fns/format'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from '@apollo/client'
 import {
   AlertMessage,
   Box,
@@ -11,26 +11,26 @@ import {
   DialogPrompt,
   Stack,
   Text,
-  toast
-} from "@island.is/island-ui/core";
-import { useLocale } from "@island.is/localization";
-import { IntroHeader } from "@island.is/service-portal/core";
+  toast,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { IntroHeader } from '@island.is/service-portal/core'
 
-import { m } from "../../lib/messages";
+import { m } from '../../lib/messages'
 import {
   EndorsementList,
-  PaginatedEndorsementResponse
-} from "../../types/schema";
-import PetitionsTable from "../PetitionsTable";
+  PaginatedEndorsementResponse,
+} from '../../types/schema'
+import PetitionsTable from '../PetitionsTable'
 import {
   CloseList,
   OpenList,
   UnendorseList,
   useGetSingleEndorsement,
   useGetSinglePetition,
-  useGetSinglePetitionEndorsements
-} from "../queries";
-import Skeleton from "./Skeleton";
+  useGetSinglePetitionEndorsements,
+} from '../queries'
+import Skeleton from './Skeleton'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')

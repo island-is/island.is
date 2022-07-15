@@ -1,20 +1,20 @@
-import React from "react";
-import { defineMessage } from "react-intl";
+import React from 'react'
+import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
-import { Box, Button, GridColumn, GridRow } from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 
-import { AssetCardLoader } from "../../components/AssetCardLoader";
-import AssetListCards from "../../components/AssetListCards";
-import { DEFAULT_PAGING_ITEMS } from "../../utils/const";
+import { AssetCardLoader } from '../../components/AssetCardLoader'
+import AssetListCards from '../../components/AssetListCards'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
   query GetRealEstateQuery($input: GetMultiPropertyInput!) {

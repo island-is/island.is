@@ -1,25 +1,25 @@
-import React from "react";
-import { defineMessage } from "react-intl";
+import React from 'react'
+import { defineMessage } from 'react-intl'
 
-import { useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
-import { Box, Divider, Stack } from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { Box, Divider, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
-  UserInfoLine
-} from "@island.is/service-portal/core";
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 
 import {
   natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord
-} from "../../helpers/localizationHelpers";
-import { spmm } from "../../lib/messages";
-import { NATIONAL_REGISTRY_FAMILY } from "../../lib/queries/getNationalRegistryFamily";
-import { NATIONAL_REGISTRY_USER } from "../../lib/queries/getNationalRegistryUser";
+  natRegMaritalStatusMessageDescriptorRecord,
+} from '../../helpers/localizationHelpers'
+import { spmm } from '../../lib/messages'
+import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',

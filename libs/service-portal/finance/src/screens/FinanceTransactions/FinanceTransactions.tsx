@@ -1,9 +1,9 @@
-import format from "date-fns/format";
-import sub from "date-fns/sub";
-import React, { useEffect, useState } from "react";
+import format from 'date-fns/format'
+import sub from 'date-fns/sub'
+import React, { useEffect, useState } from 'react'
 
-import { useLazyQuery, useQuery } from "@apollo/client";
-import { Query } from "@island.is/api/schema";
+import { useLazyQuery, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
@@ -19,29 +19,29 @@ import {
   Hidden,
   SkeletonLoader,
   Stack,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import {
   GET_CUSTOMER_CHARGETYPE,
-  GET_CUSTOMER_RECORDS
-} from "@island.is/service-portal/graphql";
+  GET_CUSTOMER_RECORDS,
+} from '@island.is/service-portal/graphql'
 
-import DropdownExport from "../../components/DropdownExport/DropdownExport";
-import FinanceTransactionsTable from "../../components/FinanceTransactionsTable/FinanceTransactionsTable";
-import { exportHreyfingarFile } from "../../utils/filesHreyfingar";
-import { transactionFilter } from "../../utils/simpleFilter";
-import * as styles from "../Finance.css";
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { transactionFilter } from '../../utils/simpleFilter'
+import * as styles from '../Finance.css'
 import {
   CustomerChargeType,
-  CustomerRecords
-} from "./FinanceTransactionsData.types";
+  CustomerRecords,
+} from './FinanceTransactionsData.types'
 
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')

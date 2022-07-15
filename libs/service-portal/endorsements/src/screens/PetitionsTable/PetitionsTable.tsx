@@ -1,8 +1,8 @@
-import format from "date-fns/format";
-import React, { useEffect, useState } from "react";
+import format from 'date-fns/format'
+import React, { useEffect, useState } from 'react'
 
-import { useMutation } from "@apollo/client";
-import { ExportAsCSV } from "@island.is/application/ui-components";
+import { useMutation } from '@apollo/client'
+import { ExportAsCSV } from '@island.is/application/ui-components'
 import {
   Box,
   Button,
@@ -11,14 +11,14 @@ import {
   Stack,
   Table as T,
   Text,
-  toast
-} from "@island.is/island-ui/core";
-import { useLocale } from "@island.is/localization";
-import { IntroHeader } from "@island.is/service-portal/core";
+  toast,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { IntroHeader } from '@island.is/service-portal/core'
 
-import { m } from "../../lib/messages";
-import { PAGE_SIZE, pages, paginate } from "../pagination";
-import { SendEmailPdf } from "../queries";
+import { m } from '../../lib/messages'
+import { PAGE_SIZE, pages, paginate } from '../pagination'
+import { SendEmailPdf } from '../queries'
 
 const formatDate = (date: string) => {
   try {

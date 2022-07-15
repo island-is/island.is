@@ -1,9 +1,9 @@
-import isAfter from "date-fns/isAfter";
-import isEqual from "lodash/isEqual";
-import React, { useState } from "react";
+import isAfter from 'date-fns/isAfter'
+import isEqual from 'lodash/isEqual'
+import React, { useState } from 'react'
 
-import { useQuery } from "@apollo/client";
-import { Query, VehiclesVehicle } from "@island.is/api/schema";
+import { useQuery } from '@apollo/client'
+import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
   Checkbox,
@@ -13,19 +13,19 @@ import {
   LoadingDots,
   Stack,
   Tabs,
-  Text
-} from "@island.is/island-ui/core";
-import { useLocale, useNamespaces } from "@island.is/localization";
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   IntroHeader,
   m,
-  ServicePortalModuleComponent
-} from "@island.is/service-portal/core";
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 
-import { messages } from "../../lib/messages";
-import { GET_USERS_VEHICLES_HISTORY } from "../../queries/getUsersVehicleHistory";
-import TabContent from "./TabContent";
+import { messages } from '../../lib/messages'
+import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
+import TabContent from './TabContent'
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
