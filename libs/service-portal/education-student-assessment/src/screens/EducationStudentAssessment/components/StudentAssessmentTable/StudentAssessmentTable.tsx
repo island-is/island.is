@@ -1,17 +1,16 @@
-import React, { Fragment } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { Fragment } from "react";
+import { useParams } from "react-router-dom";
+
+import { gql, useQuery } from "@apollo/client";
+import { Query } from "@island.is/api/schema";
 import {
   Box,
   SkeletonLoader,
   Table as T,
   Text,
-  TextProps,
-} from '@island.is/island-ui/core'
-import { EmptyState, m } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
+  TextProps
+} from "@island.is/island-ui/core";
+import { EmptyState, IntroHeader, m } from "@island.is/service-portal/core";
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -76,8 +75,7 @@ type DataField = Pick<
 
 const StudentAssessmentTable = () => {
   const { familyIndex } = useParams<{ familyIndex: string }>()
-  const { formatMessage } = useLocale()
-  const { data, loading: queryLoading, error } = useQuery<Query>(
+  const { data, loading: queryLoading } = useQuery<Query>(
     EducationExamResultQuery,
     {
       variables: {
@@ -93,19 +91,15 @@ const StudentAssessmentTable = () => {
   return (
     <>
       {data?.educationExamResult && (
-        <Box marginBottom={7}>
-          <Text variant="h3" as="h1">
-            {data?.educationExamResult.fullName}
-          </Text>
-          <Text variant="default">
-            {formatMessage({
-              id:
-                'sp.education-student-assessment:education-student-assessment-intro',
-              defaultMessage:
-                'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
-            })}
-          </Text>
-        </Box>
+        <IntroHeader
+          title={data?.educationExamResult.fullName}
+          intro={{
+            id:
+              'sp.education-student-assessment:education-student-assessment-intro',
+            defaultMessage:
+              'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
+          }}
+        />
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
         <Box key={index} marginBottom={7}>

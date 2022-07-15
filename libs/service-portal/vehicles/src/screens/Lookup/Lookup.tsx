@@ -1,29 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
+
+import { useLazyQuery } from "@apollo/client";
+import { Query } from "@island.is/api/schema";
 import {
-  ServicePortalModuleComponent,
-  m,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
+  Accordion,
+  AccordionItem,
   Box,
-  Stack,
-  Text,
+  Bullet,
+  BulletList,
+  Button,
   GridColumn,
   GridRow,
   Input,
-  Button,
-  Accordion,
-  AccordionItem,
-  BulletList,
-  Bullet,
-} from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import { useLazyQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
-import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
-import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
-import { TableGrid } from '@island.is/service-portal/core'
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
+import {
+  EmptyState,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+  TableGrid
+} from "@island.is/service-portal/core";
+
+import { messages } from "../../lib/messages";
+import { GET_USERS_VEHICLES_SEARCH_LIMIT } from "../../queries/getUsersVehicleSearchLimit";
+import { GET_VEHICLES_SEARCH } from "../../queries/getVehiclesSearch";
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -113,20 +115,11 @@ export const Lookup: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
+        <IntroHeader
+          title={messages.vehiclesLookup}
+          intro={messages.searchIntro}
+        />
         <GridRow>
-          <GridColumn span={['1/1', '1/1', '1/2']}>
-            <Stack space={3}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.vehiclesLookup)}
-              </Text>
-
-              <Text as="p" variant="default">
-                {formatMessage(messages.searchIntro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-        <GridRow marginTop={6}>
           {!limitExceeded && (
             <GridColumn span="1/1">
               <Accordion dividerOnTop={false}>

@@ -1,26 +1,28 @@
-import React from 'react'
-import { defineMessage } from 'react-intl'
-import { useParams } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import React from "react";
+import { defineMessage } from "react-intl";
+import { useParams } from "react-router-dom";
+
+import { useQuery } from "@apollo/client";
+import { Query } from "@island.is/api/schema";
 import {
   Box,
   Divider,
   GridColumn,
   GridRow,
   LoadingDots,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+  Stack
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
 import {
   formatNationalId,
+  IntroHeader,
+  m,
   NotFound,
   ServicePortalModuleComponent,
-  UserInfoLine,
-  m,
-} from '@island.is/service-portal/core'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
-import { useLocale, useNamespaces } from '@island.is/localization'
+  UserInfoLine
+} from "@island.is/service-portal/core";
+
+import { NATIONAL_REGISTRY_USER } from "../../lib/queries/getNationalRegistryUser";
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -58,22 +60,21 @@ const FamilyMember: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={6}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            {loading ? (
+      {loading ? (
+        <Box marginBottom={6}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <LoadingDots />
-            ) : (
-              <Stack space={2}>
-                <Text variant="h3" as="h1">
-                  {person?.spouse?.name || ''}
-                </Text>
-                <Text>{formatMessage(dataInfoSpouse)}</Text>
-              </Stack>
-            )}
-          </GridColumn>
-        </GridRow>
-      </Box>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      ) : (
+        <IntroHeader
+          title={person?.spouse?.name || ''}
+          intro={dataInfoSpouse}
+        />
+      )}
+
       <Stack space={1}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}

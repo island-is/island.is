@@ -1,16 +1,18 @@
-import React from 'react'
-import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
+import React from "react";
+import { MessageDescriptor } from "react-intl";
+
 import {
+  Box,
   GridColumn,
   GridRow,
-  Text,
-  Box,
   Hidden,
-} from '@island.is/island-ui/core'
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale } from "@island.is/localization";
+
 interface Props {
   title: MessageDescriptor | string
-  intro?: MessageDescriptor
+  intro?: MessageDescriptor | string
   img?: string
   hideImgPrint?: boolean
 }
@@ -25,16 +27,22 @@ export const IntroHeader = ({
   return (
     <GridRow marginBottom={6}>
       <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
-        <Text variant="h3" as="h1" marginBottom={3}>
+        <Text variant="h3" as="h1">
           {formatMessage(title)}
         </Text>
-        {intro && <Text variant="default">{formatMessage(intro)}</Text>}
       </GridColumn>
+      {intro && (
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']} order={[3, 2]}>
+          <Text variant="default" paddingTop={2}>
+            {formatMessage(intro)}
+          </Text>
+        </GridColumn>
+      )}
       {img && (
         <GridColumn
           span={['8/8', '2/8']}
           offset={['0', '0', '1/8']}
-          order={[1, 2]}
+          order={[1, 3]}
         >
           <Hidden print={hideImgPrint}>
             <Box textAlign={['center', 'right']} padding={[6, 0]}>

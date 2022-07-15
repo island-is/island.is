@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import format from "date-fns/format";
+import React, { useEffect, useState } from "react";
+
+import { useMutation } from "@apollo/client";
+import { ExportAsCSV } from "@island.is/application/ui-components";
 import {
   Box,
-  Table as T,
+  Button,
+  Input,
   Pagination,
   Stack,
-  Button,
+  Table as T,
   Text,
-  Input,
-  toast,
-} from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import { pages, PAGE_SIZE, paginate } from '../pagination'
-import format from 'date-fns/format'
-import { ExportAsCSV } from '@island.is/application/ui-components'
-import { useMutation } from '@apollo/client'
-import { SendEmailPdf } from '../queries'
+  toast
+} from "@island.is/island-ui/core";
+import { useLocale } from "@island.is/localization";
+import { IntroHeader } from "@island.is/service-portal/core";
+
+import { m } from "../../lib/messages";
+import { PAGE_SIZE, pages, paginate } from "../pagination";
+import { SendEmailPdf } from "../queries";
 
 const formatDate = (date: string) => {
   try {
@@ -84,9 +87,8 @@ const PetitionsTable = (data: any) => {
   return (
     <Box>
       <Box display="flex" justifyContent="spaceBetween">
-        <Text variant="h3" marginBottom={2}>
-          {formatMessage(m.viewPetition.enorsementsTableTitle)}
-        </Text>
+        <IntroHeader title={m.viewPetition.enorsementsTableTitle} />
+
         {data.isViewTypeEdit && (
           <ExportAsCSV
             data={mapToCSVFile(data.petitions?.data) as object[]}

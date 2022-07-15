@@ -1,30 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import format from "date-fns/format";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+import { useMutation } from "@apollo/client";
 import {
-  Text,
-  DatePicker,
-  Stack,
   AlertMessage,
-} from '@island.is/island-ui/core'
-import { Box, Button, toast, DialogPrompt } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom'
+  Box,
+  Button,
+  DatePicker,
+  DialogPrompt,
+  Stack,
+  Text,
+  toast
+} from "@island.is/island-ui/core";
+import { useLocale } from "@island.is/localization";
+import { IntroHeader } from "@island.is/service-portal/core";
+
+import { m } from "../../lib/messages";
 import {
-  useGetSinglePetition,
-  UnendorseList,
-  useGetSingleEndorsement,
-  useGetSinglePetitionEndorsements,
+  EndorsementList,
+  PaginatedEndorsementResponse
+} from "../../types/schema";
+import PetitionsTable from "../PetitionsTable";
+import {
   CloseList,
   OpenList,
-} from '../queries'
-import { useMutation } from '@apollo/client'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import PetitionsTable from '../PetitionsTable'
-import {
-  PaginatedEndorsementResponse,
-  EndorsementList,
-} from '../../types/schema'
-import format from 'date-fns/format'
-import Skeleton from './Skeleton'
+  UnendorseList,
+  useGetSingleEndorsement,
+  useGetSinglePetition,
+  useGetSinglePetitionEndorsements
+} from "../queries";
+import Skeleton from "./Skeleton";
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -145,13 +151,10 @@ const ViewPetition = () => {
       {Object.entries(petition).length !== 0 ? (
         <>
           <Box marginBottom={5}>
-            <Text variant="h2" marginBottom={3}>
-              {petition?.title}
-            </Text>
-            <Text variant="default" marginBottom={3}>
-              {petition?.description}
-            </Text>
-
+            <IntroHeader
+              title={petition?.title}
+              intro={petition?.description?.toString()}
+            />
             <Box
               display={['block', 'flex']}
               justifyContent="spaceBetween"

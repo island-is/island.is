@@ -1,9 +1,10 @@
-import { gql, useQuery } from '@apollo/client'
-import subYears from 'date-fns/subYears'
-import flatten from 'lodash/flatten'
-import React from 'react'
-import { defineMessage } from 'react-intl'
-import { Query } from '@island.is/api/schema'
+import subYears from "date-fns/subYears";
+import flatten from "lodash/flatten";
+import React from "react";
+import { defineMessage } from "react-intl";
+
+import { gql, useQuery } from "@apollo/client";
+import { Query } from "@island.is/api/schema";
 import {
   AlertBanner,
   Box,
@@ -12,26 +13,27 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+  Table as T
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
 import {
   amountFormat,
   ExpandHeader,
   ExpandRow,
   formSubmit,
+  IntroHeader,
   m,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
-import { checkDelegation } from '@island.is/shared/utils'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
+  ServicePortalModuleComponent
+} from "@island.is/service-portal/core";
+import { checkDelegation } from "@island.is/shared/utils";
+
+import DropdownExport from "../../components/DropdownExport/DropdownExport";
+import FinanceStatusTableRow from "../../components/FinanceStatusTableRow/FinanceStatusTableRow";
+import { exportGreidslustadaFile } from "../../utils/filesGreidslustada";
 import {
   FinanceStatusDataType,
-  FinanceStatusOrganizationType,
-} from './FinanceStatusData.types'
+  FinanceStatusOrganizationType
+} from "./FinanceStatusData.types";
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -101,30 +103,23 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader
+        title={{
+          id: 'sp.finance-status:title',
+          defaultMessage: 'Staða við ríkissjóð og stofnanir',
+        }}
+        intro={{
+          id: 'sp.finance-status:intro',
+          defaultMessage:
+            'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+        }}
+      />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.finance-status:title',
-            defaultMessage: 'Staða við ríkissjóð og stofnanir',
-          })}
-        </Text>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.finance-status:intro',
-                defaultMessage:
-                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-              })}
-            </Text>
             {financeStatusData.organizations?.length > 0 ||
             financeStatusZero ? (
-              <Box
-                display="flex"
-                justifyContent="flexStart"
-                marginTop={6}
-                printHidden
-              >
+              <Box display="flex" justifyContent="flexStart" printHidden>
                 {!isDelegation && scheduleButtonVisible && (
                   <Box paddingRight={2}>
                     <a

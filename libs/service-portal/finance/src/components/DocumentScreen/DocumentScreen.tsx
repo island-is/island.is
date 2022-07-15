@@ -1,8 +1,9 @@
-import { gql, useLazyQuery } from '@apollo/client'
-import format from 'date-fns/format'
-import sub from 'date-fns/sub'
-import React, { FC, useEffect, useState } from 'react'
+import format from "date-fns/format";
+import sub from "date-fns/sub";
+import sortBy from "lodash/sortBy";
+import React, { FC, useEffect, useState } from "react";
 
+import { gql, useLazyQuery } from "@apollo/client";
 import {
   Accordion,
   AccordionItem,
@@ -19,21 +20,21 @@ import {
   SkeletonLoader,
   Stack,
   Table as T,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale } from "@island.is/localization";
 import {
   amountFormat,
   formSubmit,
+  IntroHeader,
   m,
-  tableStyles,
-} from '@island.is/service-portal/core'
-import { dateFormat } from '@island.is/shared/constants'
+  tableStyles
+} from "@island.is/service-portal/core";
+import { dateFormat } from "@island.is/shared/constants";
 
-import { billsFilter } from '../../utils/simpleFilter'
-import { DocumentsListItemTypes } from './DocumentScreen.types'
-import * as styles from '../../screens/Finance.css'
-import sortBy from 'lodash/sortBy'
+import * as styles from "../../screens/Finance.css";
+import { billsFilter } from "../../utils/simpleFilter";
+import { DocumentsListItemTypes } from "./DocumentScreen.types";
 
 const ITEMS_ON_PAGE = 20
 
@@ -118,15 +119,8 @@ const DocumentScreen: FC<Props> = ({
 
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader title={title} intro={intro} />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {title}
-        </Text>
-        <GridRow marginBottom={4}>
-          <GridColumn span={['12/12', '8/12']}>
-            <Text variant="default">{intro}</Text>
-          </GridColumn>
-        </GridRow>
         <GridRow>
           <Box display="flex" printHidden padding={0}>
             <GridColumn>

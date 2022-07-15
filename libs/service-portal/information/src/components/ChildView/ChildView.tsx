@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
-import { defineMessage } from 'react-intl'
-import { NationalRegistryChild } from '@island.is/api/schema'
-import { ApolloError } from 'apollo-client'
+import { ApolloError } from "apollo-client";
+import React, { FC } from "react";
+import { defineMessage } from "react-intl";
+
+import { NationalRegistryChild } from "@island.is/api/schema";
 import {
   Box,
   Divider,
@@ -9,16 +10,18 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text,
-} from '@island.is/island-ui/core'
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
 import {
   formatNationalId,
-  NotFound,
-  UserInfoLine,
+  IntroHeader,
   m,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { Parents } from '../../components/Parents/Parents'
+  NotFound,
+  UserInfoLine
+} from "@island.is/service-portal/core";
+
+import { Parents } from "../../components/Parents/Parents";
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -61,28 +64,25 @@ const ChildView: FC<Props> = ({
     )
   return (
     <>
-      <Box marginBottom={6}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            {loading ? (
+      {loading ? (
+        <Box marginBottom={6}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <LoadingDots />
-            ) : (
-              <Stack space={2}>
-                <Text variant="h3" as="h1">
-                  {person?.fullName || ''}
-                </Text>
-                <Text>
-                  {formatMessage({
-                    id: 'sp.family:data-info-child',
-                    defaultMessage:
-                      'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
-                  })}
-                </Text>
-              </Stack>
-            )}
-          </GridColumn>
-        </GridRow>
-      </Box>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      ) : (
+        <IntroHeader
+          title={person?.fullName ?? ''}
+          intro={{
+            id: 'sp.family:data-info-child',
+            defaultMessage:
+              'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+          }}
+        />
+      )}
+
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}

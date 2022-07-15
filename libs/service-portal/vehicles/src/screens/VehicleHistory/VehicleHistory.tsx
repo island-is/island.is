@@ -1,28 +1,31 @@
-import React, { useState } from 'react'
-import {
-  ServicePortalModuleComponent,
-  m,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-import { Query, VehiclesVehicle } from '@island.is/api/schema'
+import isAfter from "date-fns/isAfter";
+import isEqual from "lodash/isEqual";
+import React, { useState } from "react";
+
+import { useQuery } from "@apollo/client";
+import { Query, VehiclesVehicle } from "@island.is/api/schema";
 import {
   Box,
-  Stack,
-  Text,
+  Checkbox,
+  DatePicker,
   GridColumn,
   GridRow,
   LoadingDots,
-  DatePicker,
-  Checkbox,
+  Stack,
   Tabs,
-} from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
-import TabContent from './TabContent'
-import isAfter from 'date-fns/isAfter'
-import isEqual from 'lodash/isEqual'
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
+import {
+  EmptyState,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent
+} from "@island.is/service-portal/core";
+
+import { messages } from "../../lib/messages";
+import { GET_USERS_VEHICLES_HISTORY } from "../../queries/getUsersVehicleHistory";
+import TabContent from "./TabContent";
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
@@ -107,20 +110,10 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.historyTitle)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(messages.historyIntro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={messages.historyTitle}
+        intro={messages.historyIntro}
+      />
 
       {error && (
         <Box>
@@ -134,7 +127,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
       )}
       <Stack space={2}>
         {!loading && !error && vehicles.length > 0 && (
-          <GridRow marginTop={4}>
+          <GridRow>
             <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
               <DatePicker
                 backgroundColor="blue"

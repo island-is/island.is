@@ -1,41 +1,47 @@
-import React, { useState, useEffect } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import sub from 'date-fns/sub'
-import { Query } from '@island.is/api/schema'
+import format from "date-fns/format";
+import sub from "date-fns/sub";
+import React, { useEffect, useState } from "react";
+
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { Query } from "@island.is/api/schema";
 import {
-  GET_CUSTOMER_CHARGETYPE,
-  GET_CUSTOMER_RECORDS,
-} from '@island.is/service-portal/graphql'
-import format from 'date-fns/format'
-import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
-import {
-  CustomerChargeType,
-  CustomerRecords,
-} from './FinanceTransactionsData.types'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m, DynamicWrapper } from '@island.is/service-portal/core'
-import {
-  Box,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  SkeletonLoader,
+  Accordion,
+  AccordionItem,
   AlertBanner,
-  Hidden,
+  Box,
   Button,
+  DatePicker,
   Filter,
   FilterInput,
   FilterMultiChoice,
-  AccordionItem,
-  Accordion,
-} from '@island.is/island-ui/core'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import * as styles from '../Finance.css'
+  GridColumn,
+  GridRow,
+  Hidden,
+  SkeletonLoader,
+  Stack,
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
+import {
+  DynamicWrapper,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent
+} from "@island.is/service-portal/core";
+import {
+  GET_CUSTOMER_CHARGETYPE,
+  GET_CUSTOMER_RECORDS
+} from "@island.is/service-portal/graphql";
+
+import DropdownExport from "../../components/DropdownExport/DropdownExport";
+import FinanceTransactionsTable from "../../components/FinanceTransactionsTable/FinanceTransactionsTable";
+import { exportHreyfingarFile } from "../../utils/filesHreyfingar";
+import { transactionFilter } from "../../utils/simpleFilter";
+import * as styles from "../Finance.css";
+import {
+  CustomerChargeType,
+  CustomerRecords
+} from "./FinanceTransactionsData.types";
 
 const FinanceTransactions: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-transactions')
@@ -117,22 +123,20 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
   return (
     <DynamicWrapper>
       <Box marginBottom={[6, 6, 10]}>
+        <IntroHeader
+          title={{
+            id: 'sp.finance-transactions:title',
+            defaultMessage: 'Hreyfingar',
+          }}
+          intro={{
+            id: 'sp.finance-transactions:intro',
+            defaultMessage:
+              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+          }}
+        />
         <Stack space={2}>
-          <Text variant="h3" as="h1">
-            {formatMessage({
-              id: 'sp.finance-transactions:title',
-              defaultMessage: 'Hreyfingar',
-            })}
-          </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default" marginBottom={6}>
-                {formatMessage({
-                  id: 'sp.finance-transactions:intro',
-                  defaultMessage:
-                    'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-                })}
-              </Text>
               <Box
                 display="flex"
                 marginLeft="auto"

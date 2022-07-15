@@ -1,36 +1,35 @@
-import React from 'react'
+import isNumber from "lodash/isNumber";
+import React from "react";
+import { useParams } from "react-router-dom";
 
+import { useQuery } from "@apollo/client";
 import {
+  Query,
+  VehiclesCurrentOwnerInfo,
+  VehiclesOperator
+} from "@island.is/api/schema";
+import {
+  AlertMessage,
   Box,
   Divider,
   GridColumn,
   GridRow,
-  Table as T,
-  Stack,
-  Text,
   LoadingDots,
-  AlertMessage,
-} from '@island.is/island-ui/core'
+  Stack,
+  Text
+} from "@island.is/island-ui/core";
+import { useLocale, useNamespaces } from "@island.is/localization";
 import {
+  amountFormat,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
-import isNumber from 'lodash/isNumber'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { amountFormat } from '@island.is/service-portal/core'
-import { useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
-import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
-import {
-  VehiclesCurrentOwnerInfo,
-  Query,
-  VehiclesOperator,
-} from '@island.is/api/schema'
-import { messages } from '../../lib/messages'
-import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { displayWithUnit } from '../../utils/displayWithUnit'
+  UserInfoLine
+} from "@island.is/service-portal/core";
+
+import OwnersTable from "../../components/DetailTable/OwnersTable";
+import { messages } from "../../lib/messages";
+import { GET_USERS_VEHICLE_DETAIL } from "../../queries/getUsersVehicleDetail";
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -39,8 +38,9 @@ import {
   operatorInfoArray,
   ownerInfoArray,
   registrationInfoArray,
-  technicalInfoArray,
-} from '../../utils/createUnits'
+  technicalInfoArray
+} from "../../utils/createUnits";
+import { displayWithUnit } from "../../utils/displayWithUnit";
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
