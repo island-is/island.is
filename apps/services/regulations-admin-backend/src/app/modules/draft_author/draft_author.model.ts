@@ -6,7 +6,7 @@ import { Kennitala } from '@island.is/regulations'
 @Table({
   tableName: 'draft_author',
 })
-export class DraftAuthorModel extends Model<DraftAuthorModel> {
+export class DraftAuthorModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

@@ -21,7 +21,7 @@ import {
 @Table({
   tableName: 'draft_regulation_change',
 })
-export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel> {
+export class DraftRegulationChangeModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

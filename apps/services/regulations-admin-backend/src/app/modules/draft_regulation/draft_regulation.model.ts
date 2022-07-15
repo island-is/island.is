@@ -26,7 +26,7 @@ import { DraftRegulationCancelModel } from '../draft_regulation_cancel'
 @Table({
   tableName: 'draft_regulation',
 })
-export class DraftRegulationModel extends Model<DraftRegulationModel> {
+export class DraftRegulationModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

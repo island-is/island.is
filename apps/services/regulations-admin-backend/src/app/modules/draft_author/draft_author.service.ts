@@ -24,7 +24,10 @@ export class DraftAuthorService {
   ): Promise<DraftAuthorModel> {
     this.logger.debug('Creating a new DraftAuthor')
 
-    return await this.draftAuthorModel.create(draftAuthorToCreate)
+    return await this.draftAuthorModel.create({
+      name: draftAuthorToCreate.name,
+      authorId: draftAuthorToCreate.authorId,
+    })
   }
 
   async get(authorId: Kennitala): Promise<Author | null> {

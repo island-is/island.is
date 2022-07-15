@@ -15,7 +15,7 @@ import { ISODate, RegName } from '@island.is/regulations'
 @Table({
   tableName: 'draft_regulation_cancel',
 })
-export class DraftRegulationCancelModel extends Model<DraftRegulationCancelModel> {
+export class DraftRegulationCancelModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
