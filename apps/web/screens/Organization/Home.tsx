@@ -53,16 +53,16 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   )
 
   useEffect(() => {
-    if (!organizationPage.organization?.statusMonitoringScriptUrl) return
+    if (!organizationPage.organization?.externalScriptUrl) return
     const element = document.createElement('script')
     element.type = 'text/javascript'
-    element.src = organizationPage.organization.statusMonitoringScriptUrl
+    element.src = organizationPage.organization.externalScriptUrl
     document.body.appendChild(element)
 
     return () => {
       document.body.removeChild(element)
     }
-  }, [organizationPage.organization?.statusMonitoringScriptUrl])
+  }, [organizationPage.organization?.externalScriptUrl])
 
   return (
     <OrganizationWrapper
