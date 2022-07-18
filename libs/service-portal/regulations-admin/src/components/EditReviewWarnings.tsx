@@ -1,7 +1,7 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
-import { useHistory } from 'react-router'
+import { useHistory } from 'react-router-dom'
 import { editorMsgs, reviewMessagse } from '../messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'

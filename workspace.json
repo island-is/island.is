@@ -6738,7 +6738,7 @@
       "prefix": "regulations-admin-backend",
       "architect": {
         "build": {
-          "builder": "@irdnis/esbuildnx:build",
+          "builder": "@anatine/esbuildnx:build",
           "options": {
             "outputPath": "dist/apps/services/regulations-admin-backend",
             "main": "apps/services/regulations-admin-backend/src/main.ts",
@@ -6777,7 +6777,7 @@
           "outputs": ["{options.outputPath}"]
         },
         "serve": {
-          "builder": "@nrwl/node:execute",
+          "builder": "@nrwl/node:node",
           "options": {
             "buildTarget": "regulations-admin-backend:build"
           }

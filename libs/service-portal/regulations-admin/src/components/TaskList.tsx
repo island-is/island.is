@@ -9,7 +9,7 @@ import {
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { workingDaysUntil } from '../utils'
-import { useHistory } from 'react-router'
+import { useHistory } from 'react-router-dom'
 import { getEditUrl } from '../utils/routing'
 import { useRegulationTaskListQuery } from '../utils/dataHooks'
 import { useLocale } from '@island.is/localization'
