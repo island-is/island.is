@@ -36,7 +36,7 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
         url
       }
-      statusMonitoringScriptUrl
+      externalScriptUrl
       publishedMaterialSearchFilterGenericTags {
         id
         title
@@ -125,7 +125,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
             url
           }
         }
-        statusMonitoringScriptUrl
+        externalScriptUrl
       }
       slices {
         ...AllSlices

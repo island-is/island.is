@@ -63,7 +63,7 @@ export class Organization {
   showsUpOnTheOrganizationsPage?: boolean
 
   @Field()
-  statusMonitoringScriptUrl?: string
+  externalScriptUrl?: string
 }
 
 export const mapOrganization = ({
@@ -93,6 +93,6 @@ export const mapOrganization = ({
       ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
       : [],
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
-    statusMonitoringScriptUrl: fields.statusMonitoringScriptUrl ?? '',
+    externalScriptUrl: fields.externalScriptUrl ?? '',
   }
 }
