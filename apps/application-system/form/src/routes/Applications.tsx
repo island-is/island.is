@@ -169,7 +169,10 @@ export const Applications: FC = () => {
   ).length
 
   const shouldRenderNewApplicationButton =
-    template.allowMultipleApplicationsInDraft || numberOfApplicationsInDraft < 1
+    template.allowMultipleApplicationsInDraft === undefined
+      ? true
+      : template.allowMultipleApplicationsInDraft ||
+        numberOfApplicationsInDraft < 1
 
   return (
     <Page>
