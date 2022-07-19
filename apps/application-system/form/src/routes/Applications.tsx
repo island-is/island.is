@@ -29,6 +29,7 @@ import {
 } from '@island.is/shared/problem'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import {
+  Application,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTemplate,
@@ -95,7 +96,7 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    async function getTemplate() {
+    const getTemplate = async () => {
       if (type && !template) {
         const appliTemplate = await getApplicationTemplateByTypeId(type)
         if (appliTemplate) {
@@ -103,8 +104,8 @@ export const Applications: FC = () => {
         }
       }
     }
-    getTemplate()
-  })
+    getTemplate().catch(console.error)
+  }, [type, template])
 
   useEffect(() => {
     if (
@@ -163,6 +164,13 @@ export const Applications: FC = () => {
     return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
   }
 
+  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
+    (x: Application) => x.state === 'draft',
+  ).length
+
+  const shouldRenderNewApplicationButton =
+    template.allowMultipleApplicationsInDraft || numberOfApplicationsInDraft < 1
+
   return (
     <Page>
       <GridContainer>
@@ -178,8 +186,7 @@ export const Applications: FC = () => {
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-              {template.allowsMultipleApplications ||
-              data?.applicationApplications.length < 1 ? (
+              {shouldRenderNewApplicationButton ? (
                 <Box marginTop={[2, 0]}>
                   <Button onClick={createApplication}>
                     {formatMessage(coreMessages.newApplication)}

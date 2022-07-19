@@ -90,6 +90,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
+  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {

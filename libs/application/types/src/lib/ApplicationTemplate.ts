@@ -27,7 +27,7 @@ export interface ApplicationTemplate<
   readonly name: StaticText
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
-  readonly allowsMultipleApplications?: boolean
+  readonly allowMultipleApplicationsInDraft?: boolean
   readonly allowedDelegations?: AuthDelegationType[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
