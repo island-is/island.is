@@ -3,7 +3,8 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { delimitation, info, overview, section } from '../../lib/messages'
-import { DataProtectionComplaint } from '../../lib/dataSchema'
+import { DataProtectionComplaintAnswers } from '../../index'
+
 import {
   SectionHeading,
   ValueLine,
@@ -33,7 +34,7 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const { id } = field
-  const answers = (application as any).answers as DataProtectionComplaint
+  const answers = application.answers as DataProtectionComplaintAnswers
   useEffect(() => {
     // Send message from Contentful to make sure that information on
     // PDF is the same as in the form.
