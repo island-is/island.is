@@ -192,22 +192,24 @@ const ApplicationList = ({
             )
           })}
       </Stack>
-      <Box marginTop={4}>
-        <Pagination
-          page={page}
-          totalPages={pagedDocuments.totalPages}
-          renderLink={(page, className, children) => (
-            <button
-              className={className}
-              onClick={() => {
-                handlePageChange(page)
-              }}
-            >
-              {children}
-            </button>
-          )}
-        />
-      </Box>
+      {applications.length > pageSize ? (
+        <Box marginTop={4}>
+          <Pagination
+            page={page}
+            totalPages={pagedDocuments.totalPages}
+            renderLink={(page, className, children) => (
+              <button
+                className={className}
+                onClick={() => {
+                  handlePageChange(page)
+                }}
+              >
+                {children}
+              </button>
+            )}
+          />
+        </Box>
+      ) : null}
     </>
   )
 }
