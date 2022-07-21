@@ -5,9 +5,9 @@ import {
   Button,
   FocusableBox,
   Link,
-  LinkCard,
   Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
@@ -47,24 +47,16 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               ({ title, slug, processEntry, processEntryButtonText }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
-                  <FocusableBox
-                    key={slug}
-                    href={url.href}
-                    target={isMobile ? '' : '_blank'}
-                    borderRadius="large"
-                  >
-                    {({ isFocused }) => (
-                      <LinkCard
-                        isFocused={isFocused}
-                        tag={
-                          processEntryButtonText || !!processEntry
-                            ? n(processEntryButtonText || 'application', '')
-                            : undefined
-                        }
-                      >
-                        {title}
-                      </LinkCard>
-                    )}
+                  <FocusableBox key={slug} borderRadius="large">
+                    <TopicCard
+                      href={url.href}
+                      tag={
+                        (!!processEntry || processEntryButtonText) &&
+                        n(processEntryButtonText || 'application', 'Umsókn')
+                      }
+                    >
+                      {title}
+                    </TopicCard>
                   </FocusableBox>
                 )
               },
