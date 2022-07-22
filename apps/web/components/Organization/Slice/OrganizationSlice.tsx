@@ -2,7 +2,13 @@ import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import { RichText } from '@island.is/web/components'
 
 const DistrictsSlice = dynamic(() =>
@@ -75,6 +81,7 @@ interface OrganizationSliceProps {
   fullWidth?: boolean
   organizationPageSlug?: string
   renderedOnOrganizationSubpage?: boolean
+  marginBottom?: ResponsiveSpace
 }
 
 const fullWidthSlices = [
@@ -139,10 +146,11 @@ export const OrganizationSlice = ({
   fullWidth = false,
   organizationPageSlug = '',
   renderedOnOrganizationSubpage = false,
+  marginBottom = 0,
 }: OrganizationSliceProps) => {
   return !fullWidth ? (
     <GridContainer>
-      <GridRow>
+      <GridRow marginBottom={marginBottom}>
         <GridColumn
           paddingTop={6}
           span={
@@ -166,11 +174,13 @@ export const OrganizationSlice = ({
       </GridRow>
     </GridContainer>
   ) : (
-    renderSlice(
-      slice,
-      namespace,
-      organizationPageSlug,
-      renderedOnOrganizationSubpage,
-    )
+    <Box marginBottom={marginBottom}>
+      {renderSlice(
+        slice,
+        namespace,
+        organizationPageSlug,
+        renderedOnOrganizationSubpage,
+      )}
+    </Box>
   )
 }
