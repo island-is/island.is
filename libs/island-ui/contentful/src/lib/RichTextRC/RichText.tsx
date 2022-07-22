@@ -90,7 +90,6 @@ export type SliceType =
         | 'LogoListSlice'
         | 'BulletListSlice'
         | 'TabSection'
-        | 'Stepper'
       id: string
     }
 

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -414,7 +414,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           ],
     [article.category, article.group, inStepperView],
   )
-  console.log(article)
+
   return (
     <>
       <HeadWithSocialSharing
@@ -541,8 +541,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               <ProcessEntry {...processEntry} />
             </Box>
           )}
-          {/* TODO: remove */}
-          {/* {article.stepper?.title && !inStepperView && (
+          {article.stepper?.title && !inStepperView && (
             <Box marginTop={3} printHidden className="rs_read">
               <ProcessEntry
                 buttonText={n(
@@ -554,7 +553,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 newTab={false}
               />
             </Box>
-          )} */}
+          )}
           {(subArticle
             ? subArticle.showTableOfContents
             : article.showTableOfContents) && (
@@ -580,25 +579,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Box className="rs_read">
               {richText(
                 (subArticle ?? article).body as SliceType[],
-                {
-                  renderComponent: {
-                    Stepper: () => (
-                      <Box marginY={3} printHidden className="rs_read">
-                        <ProcessEntry
-                          buttonText={n(
-                            article.processEntryButtonText || 'application',
-                            '',
-                          )}
-                          processLink={asPath
-                            .split('?')[0]
-                            .concat('?stepper=true')}
-                          processTitle={article.stepper.title}
-                          newTab={false}
-                        />
-                      </Box>
-                    ),
-                  },
-                },
+                undefined,
                 activeLocale,
               )}
               <AppendedArticleComponents article={article} />

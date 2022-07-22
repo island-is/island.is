@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
 
 import {
@@ -59,6 +60,12 @@ interface StepperProps {
   webReaderClassName?: string
 }
 
+interface StepOptionSelectItem {
+  label: string
+  value: string
+  transition: string
+}
+
 interface QuestionAndAnswer {
   question: string
   answer: string
@@ -91,7 +98,7 @@ const getInitialStateAndAnswersByQueryParams = (
     if (stepType === STEP_TYPES.ANSWER) break
 
     const options = getStepOptions(step, activeLocale, optionsFromNamespace)
-    const selectedOption = options.find((o) => o.value === answer)
+    const selectedOption = options.find((o) => o.slug === answer)
     if (!selectedOption) break
 
     initialState = stepperMachine.transition(
@@ -104,7 +111,7 @@ const getInitialStateAndAnswersByQueryParams = (
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
-        slug: selectedOption.value,
+        slug: selectedOption.slug,
       })
     }
   }
@@ -203,7 +210,7 @@ const Stepper = ({
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
-  const stepOptions = useMemo(
+  const stepOptions = useMemo<StepOption[]>(
     () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
     [activeLocale, currentStep, optionsFromNamespace],
   )
@@ -225,7 +232,7 @@ const Stepper = ({
 
     // Select the option that was previously selected if we want to change an answer
     if (previousAnswer && selectedOption === null) {
-      const option = stepOptions.find((o) => o.value === previousAnswer) ?? null
+      const option = stepOptions.find((o) => o.slug === previousAnswer) ?? null
       setSelectedOption(option)
       previousAnswerIsValid = option !== null
     }
@@ -328,7 +335,7 @@ const Stepper = ({
                 pathname: pathnameWithoutQueryParams,
                 query: {
                   ...router.query,
-                  answers: `${previousAnswers}${selectedOption.value}`,
+                  answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
               .then(() => {
@@ -392,7 +399,7 @@ const Stepper = ({
                 hasClickedContinueWithoutSelecting && selectedOption === null
               }
               label={option.label}
-              checked={option.value === selectedOption?.value}
+              checked={option.slug === selectedOption?.slug}
               onChange={() => setSelectedOption(option)}
             />
           </Box>
@@ -408,11 +415,24 @@ const Stepper = ({
                 size="sm"
                 name="step-option-select"
                 noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
-                value={selectedOption}
-                onChange={(option) => {
-                  setSelectedOption(option as StepOption)
+                value={{
+                  label: selectedOption?.label ?? '',
+                  value: selectedOption?.slug ?? '',
                 }}
-                options={stepOptions}
+                onChange={(option: ValueType<StepOptionSelectItem>) => {
+                  const stepOptionSelectItem = option as StepOptionSelectItem
+                  const newSelectedOption = {
+                    label: stepOptionSelectItem.label,
+                    slug: stepOptionSelectItem.value,
+                    transition: stepOptionSelectItem.transition,
+                  }
+                  setSelectedOption(newSelectedOption)
+                }}
+                options={stepOptions.map((option) => ({
+                  label: option.label,
+                  value: option.slug,
+                  transition: option.transition,
+                }))}
               />
             </GridColumn>
           </GridRow>
@@ -452,10 +472,7 @@ const Stepper = ({
               {n('yourAnswers', 'Svörin þín')}
             </Text>
             <Box marginBottom={3} textAlign="right">
-              <Link
-                shallow={true}
-                href={`${router.asPath.split('?')[0]}?stepper=true`}
-              >
+              <Link shallow={true} href={router.asPath.split('?')[0]}>
                 <Button variant="text" icon="reload" size="small" nowrap={true}>
                   {n('startAgain', 'Byrja aftur')}
                 </Button>
