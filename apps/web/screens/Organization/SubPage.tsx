@@ -14,7 +14,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
