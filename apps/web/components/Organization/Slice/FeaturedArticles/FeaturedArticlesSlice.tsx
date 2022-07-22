@@ -47,9 +47,13 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               ({ title, slug, processEntry, processEntryButtonText }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
-                  <FocusableBox key={slug} borderRadius="large">
+                  <FocusableBox
+                    key={slug}
+                    borderRadius="large"
+                    href={url.href}
+                    target={isMobile ? '' : '_blank'}
+                  >
                     <TopicCard
-                      href={url.href}
                       tag={
                         (!!processEntry || processEntryButtonText) &&
                         n(processEntryButtonText || 'application', 'Umsókn')
