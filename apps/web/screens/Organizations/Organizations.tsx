@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import NextLink from 'next/link'
 import { useWindowSize } from 'react-use'
 import {
@@ -13,6 +13,7 @@ import {
   Pagination,
   CategoryCard,
   Stack,
+  Select,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import {
@@ -39,9 +40,15 @@ import {
   FilterOptions,
   FilterLabels,
 } from './FilterMenu'
-import { Organization } from '@island.is/web/graphql/schema'
+
+import * as styles from './Organizations.css'
 
 const CARDS_PER_PAGE = 12
+
+interface TitleSortOption {
+  label: string
+  value: 'asc' | 'desc'
+}
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -73,20 +80,28 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     input: '',
   })
 
-  const [selectedSortOption, setSelectedSortOption] = useState<{
-    field: keyof Organization
-    order: 'asc' | 'desc'
-  }>({ field: 'title', order: 'asc' })
+  const titleSortOptions = useMemo<TitleSortOption[]>(
+    () => [
+      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'asc' },
+      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'desc' },
+    ],
+    [],
+  )
+
+  const [
+    selectedTitleSortOption,
+    setSelectedTitleSortOption,
+  ] = useState<TitleSortOption>(titleSortOptions[0])
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
-    if (selectedSortOption.order === 'asc') {
+    if (selectedTitleSortOption.value === 'asc') {
       items.sort((a, b) => a.title.localeCompare(b.title))
     } else {
       items.sort((a, b) => b.title.localeCompare(a.title))
     }
     return items
-  }, [organizations, selectedSortOption])
+  }, [organizations, selectedTitleSortOption])
 
   const { items: tagsItems } = tags
 
@@ -199,7 +214,20 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                 align="right"
                 variant={isMobile ? 'dialog' : 'popover'}
               />
+              <Box className={styles.orderByContainer}>
+                <Select
+                  label={n('orderBy', 'Raða eftir')}
+                  name="sort-option-select"
+                  size="xs"
+                  onChange={(option) => {
+                    setSelectedTitleSortOption(option as TitleSortOption)
+                  }}
+                  value={selectedTitleSortOption}
+                  options={titleSortOptions}
+                />
+              </Box>
             </Box>
+
             <GridRow>
               {visibleItems.map(
                 ({ title, description, tag, link, logo }, index) => {
