@@ -18,7 +18,7 @@ export const PropertyOverviewRepeater: FC<FieldBaseProps> = ({
   return (
     <Box>
       {fields.map((item, index) => (
-        <PropertyItem field={item} index={index} />
+        <PropertyItem field={item} index={index} key={item.propertyNumber} />
       ))}
     </Box>
   )

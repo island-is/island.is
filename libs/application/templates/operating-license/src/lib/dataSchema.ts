@@ -16,6 +16,7 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+// TODO: Opening hours can exceed midnight how to validate from - to
 const Time = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
     params: error.invalidValue,

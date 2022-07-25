@@ -5,20 +5,21 @@ import {
   YES,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { string } from 'zod'
+import { OpeningHour } from './constants'
 
 type ValidationOperation = {
   operation?: APPLICATION_TYPES
   hotel?: {
     type?: string
-
     category?: OPERATION_CATEGORY[] | undefined
   }
   resturant?: {
     type?: string
-
     category?: OPERATION_CATEGORY | '' | undefined
   }
 }
+
 export const validateApplicationInfoCategory = ({
   operation,
   hotel,
@@ -43,13 +44,18 @@ export const hasYes = (answer: any) => {
   }
   return answer === YES
 }
+const getHoursMinutes = (value: string) => {
+  return {
+    hours: parseInt(value.slice(0, 2)),
+    minutes: parseInt(value.slice(0, 2)),
+  }
+}
 
 export const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) {
     return false
   }
-  const hours = parseInt(value.slice(0, 2))
-  const minutes = parseInt(value.slice(2, 4))
+  const { hours, minutes } = getHoursMinutes(value)
   if (hours > 23 || minutes > 59) {
     return false
   }
@@ -60,10 +66,15 @@ export const get24HFormatTime = (value: string) => {
   if (value.length !== 4) {
     return value
   }
-  const hours = value.slice(0, 2)
-  const minutes = value.slice(2, 4)
+  const { hours, minutes } = getHoursMinutes(value)
 
   return `${hours}:${minutes}`
+}
+
+// TODO: Opening hours can exceed midnight how to validate
+export const isValidFromToTime = ({ from, to }: OpeningHour) => {
+  const { hours: fH, minutes: fM } = getHoursMinutes(from)
+  const { hours: tH, minutes: tM } = getHoursMinutes(to)
 }
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
