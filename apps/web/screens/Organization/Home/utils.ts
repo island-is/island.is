@@ -61,7 +61,7 @@ const fetchSjukratryggingarStatusPageDetails = async (): Promise<Sjukratrygginga
 }
 
 export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
-  // As of right now Sjúkratryggingar is the only organization with alert banners that are automatically read from a
+  // As of right now Sjúkratryggingar is the only organization with alert banners that are automatically read from somewhere else than the CMS (Contentful)
   if (
     query?.slug !== 'sjukratryggingar' &&
     query?.slug !== 'icelandic-health-insurance'
