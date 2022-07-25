@@ -43,8 +43,16 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             {slice.title}
           </Text>
           <Stack space={2}>
-            {slice.articles.map(
-              ({ title, slug, processEntry, processEntryButtonText }) => {
+            {(slice.automaticallyFetchArticles
+              ? slice.resolvedArticles
+              : slice.articles
+            ).map(
+              ({
+                title,
+                slug,
+                processEntry = null,
+                processEntryButtonText = null,
+              }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
                   <FocusableBox

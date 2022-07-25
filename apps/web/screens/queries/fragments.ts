@@ -340,7 +340,17 @@ export const slices = gql`
     image {
       ...ImageFields
     }
+    automaticallyFetchArticles
     articles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+      processEntryButtonText
+    }
+    resolvedArticles {
       id
       slug
       title
