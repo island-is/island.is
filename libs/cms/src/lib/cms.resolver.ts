@@ -197,11 +197,10 @@ export class CmsResolver {
   getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
-    /*return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
       getElasticsearchIndex(input.lang),
       { type: 'webOrganizationPage', slug: input.slug },
-    )*/
+    )
   }
 
   @Directive(cacheControlDirective())
