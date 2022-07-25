@@ -551,6 +551,9 @@ export class FeaturedArticlesResolver {
   async resolvedArticles(
     @Parent() { resolvedArticles: input }: FeaturedArticles,
   ): Promise<Article[]> {
+    if (input.size === 0) {
+      return []
+    }
     return await this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
