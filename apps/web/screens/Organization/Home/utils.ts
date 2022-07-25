@@ -72,6 +72,9 @@ export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
   if (!sjukratryggingarPageDetails) return []
   const customAlertBanners: GetAlertBannerQuery['getAlertBanner'][] = []
 
+  // TODO: remove this console.log
+  console.log(sjukratryggingarPageDetails)
+
   for (const incident of sjukratryggingarPageDetails?.incidents ?? []) {
     const bannerVariant: AlertBannerVariants = 'warning'
     customAlertBanners.push({
@@ -101,7 +104,7 @@ export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
       // TODO: read link from cms
       link: {
         slug: 'https://status.sjukra.is',
-        type: '',
+        type: 'link',
       },
       linkTitle: 'Frekari upplýsingar',
     })
@@ -112,11 +115,11 @@ export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
     dismissedForDays: 1,
     isDismissable: true,
     showAlertBanner: true,
-    description: 'asdf',
-    // TODO: read link from cms
+    description: 'Prufa',
+    // TODO: read link from cms or use data
     link: {
       slug: 'https://status.sjukra.is',
-      type: '',
+      type: 'link',
     },
     linkTitle: 'Frekari upplýsingar',
   })
