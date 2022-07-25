@@ -2632,16 +2632,10 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/operating-license/tsconfig.lib.json",
-              "libs/application/templates/operating-license/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/operating-license/**/*"
+            "lintFilePatterns": [
+              "libs/application/templates/operating-license/**/*.{ts,tsx,js,jsx}"
             ]
           }
         },
