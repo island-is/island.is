@@ -21,8 +21,8 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
         <Box
           borderTopWidth="standard"
           borderColor="standard"
-          paddingTop={[8, 6, 10]}
-          paddingBottom={[4, 5, 10]}
+          paddingTop={[8, 6]}
+          paddingBottom={[4, 5]}
         >
           <GridRow>
             <GridColumn span="12/12">
