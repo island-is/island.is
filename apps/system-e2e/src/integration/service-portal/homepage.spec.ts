@@ -17,11 +17,10 @@ describe('Home page', () => {
     cy.visit('/')
   })
 
-  it('should have clickable navigation bar', () => {
-    cy.contains(fakeUsers['María'].name)
-    cy.get('div[data-testid^="nav-"]').each((el) => {
-      el.click()
-      cy.url().should('eq', el)
+  it.only('should have clickable navigation bar', () => {
+    cy.get('a:has(div[data-testid^="nav-"])').each((el) => {
+      cy.wrap(el).click()
+      cy.location('pathname').should('eq', el.attr('href'))
     })
   })
 
