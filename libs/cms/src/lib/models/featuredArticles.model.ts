@@ -9,7 +9,7 @@ import { ArticleReference, mapArticleReference } from './articleReference'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { SortField } from '@island.is/content-search-toolkit'
 import { GetArticlesInput } from '../dto/getArticles.input'
-import { Article } from '@island.is/cms'
+import { Article } from './article.model'
 
 @ObjectType()
 export class FeaturedArticles {
