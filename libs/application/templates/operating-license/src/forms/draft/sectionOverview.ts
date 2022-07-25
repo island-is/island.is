@@ -49,19 +49,16 @@ export const sectionOverview = buildMultiField({
       label: m.operationTypeResturantDescription,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).hotel.type,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.HOTEL,
+        (application.answers.applicationInfo as Operation).operation ===
+        APPLICATION_TYPES.HOTEL
+          ? (application.answers.applicationInfo as Operation).hotel.type
+          : (application.answers.applicationInfo as Operation).resturant.type,
     }),
-    buildKeyValueField({
-      label: m.operationTypeResturantTitle,
-      width: 'half',
-      value: (application: Application) =>
-        (application.answers.applicationInfo as Operation).resturant.type,
-      condition: (answers) =>
-        (answers.applicationInfo as Operation)?.operation ===
-        APPLICATION_TYPES.RESTURANT,
+    buildDescriptionField({
+      id: 'overview.space0',
+      title: '',
+      description: '',
+      space: 'gutter',
     }),
     buildKeyValueField({
       label: 'Flokkur',
@@ -80,6 +77,9 @@ export const sectionOverview = buildMultiField({
       titleVariant: 'h4',
       description: '',
       space: 'gutter',
+      condition: (answers) =>
+        (answers.applicationInfo as Operation)?.operation ===
+        APPLICATION_TYPES.HOTEL,
     }),
     buildDescriptionField({
       id: 'overview.space1',
@@ -114,6 +114,12 @@ export const sectionOverview = buildMultiField({
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL,
+    }),
+    buildDescriptionField({
+      id: 'overview.space1.2',
+      title: '',
+      description: '',
+      space: 'gutter',
     }),
     buildDividerField({}),
     buildDescriptionField({
@@ -170,13 +176,24 @@ export const sectionOverview = buildMultiField({
         return formatPhoneNumber(phone as string)
       },
     }),
+    buildDescriptionField({
+      id: 'overview.space2.2',
+      title: '',
+      description: '',
+      space: 'gutter',
+    }),
     buildDividerField({}),
     buildDescriptionField({
       id: 'overview.spaceInfo',
       title: m.propertyInfoSubtitle,
-      titleVariant: 'h4',
+      titleVariant: 'h3',
       description: '',
       space: 'gutter',
+    }),
+    buildCustomField({
+      id: 'propertiesOverview',
+      title: '',
+      component: 'PropertyOverviewRepeater',
     }),
     buildDescriptionField({
       id: 'overview.space3',
@@ -346,6 +363,7 @@ export const sectionOverview = buildMultiField({
       label: m.other,
       value: (application: Application) =>
         application.answers.otherInfoText as string,
+      condition: (answers) => !!answers.otherInfoText,
     }),
     buildDividerField({}),
     buildDescriptionField({
