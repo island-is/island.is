@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import {
   ActionCardLoader,
-  ServicePortalModuleComponent,
   EmptyState,
+  ServicePortalModuleProps,
 } from '@island.is/service-portal/core'
 import {
   Text,
@@ -16,23 +16,21 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { ApplicationList as List } from '@island.is/application/ui-components'
-import {
-  GET_ORGANIZATIONS_QUERY,
-  useApplications,
-} from '@island.is/service-portal/graphql'
+import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 
-import { m } from '../../lib/messages'
+import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
+
+import { m } from '../lib/messages'
 import { ValueType } from 'react-select'
 import { Application } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/core'
-import { useQuery } from '@apollo/client'
-import { Organization } from '@island.is/shared/types'
 import {
   sortApplicationsOrganziations,
   sortApplicationsStatus,
-} from '../../utils'
+} from '../shared/utils'
+import { ApplicationOverViewStatus } from '../shared/types'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -58,7 +56,11 @@ const baseUrlForm = isLocalhost
   ? 'https://beta.staging01.devland.is/umsoknir'
   : 'https://island.is/umsoknir'
 
-const ApplicationOverview: ServicePortalModuleComponent = () => {
+interface ApplicationOverviewProps extends ServicePortalModuleProps {
+  statusToShow: ApplicationOverViewStatus
+}
+
+const ApplicationOverview = (props: ApplicationOverviewProps) => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
 
@@ -67,8 +69,9 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
 
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations: Organization[] = orgData?.getOrganizations?.items || []
+  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
+
+  const [organizations, setOrganizations] = useState<any[]>([])
 
   const [incompleteApplications, setIncompleteApplications] = useState<
     Application[]
@@ -89,25 +92,21 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
+  const setAllApplications = useCallback((apps: Application[]) => {
+    const applicationsSorted = sortApplicationsStatus(apps)
+    setIncompleteApplications(applicationsSorted.incomplete)
+    setInProcessApplications(applicationsSorted.inProgress)
+    setFinishedApplications(applicationsSorted.finished)
+  }, [])
 
-  useEffect(() => {
-    setApplicationTypes()
-    searchApplications()
-  }, [filterValue])
-
-  useEffect(() => {
-    setApplicationTypes()
-    setAllApplications(applications)
-  }, [applications])
-
-  const setApplicationTypes = () => {
+  const setApplicationInstitutions = useCallback(() => {
     const institutions =
       sortApplicationsOrganziations(applications, organizations) || []
     setInstitutions([defaultInstitution, ...institutions])
-  }
+  }, [applications, organizations])
 
   // Search applications and add the results into filteredApplications
-  const searchApplications = () => {
+  const searchApplications = useCallback(() => {
     const searchQuery = filterValue.searchQuery
     const activeInstitution = filterValue.activeInstitution.value
     const filteredApps = (applications as Application[]).filter(
@@ -123,16 +122,24 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
           ? institutionMapper[application.typeId] === activeInstitution
           : true),
     )
-
     setAllApplications(filteredApps)
-  }
+  }, [applications, filterValue, setAllApplications])
 
-  const setAllApplications = (apps: Application[]) => {
-    const applicationsSorted = sortApplicationsStatus(apps)
-    setIncompleteApplications(applicationsSorted.incomplete)
-    setInProcessApplications(applicationsSorted.inProgress)
-    setFinishedApplications(applicationsSorted.finished)
-  }
+  useEffect(() => {
+    if (orgData?.getOrganizations?.items) {
+      setOrganizations(orgData?.getOrganizations?.items)
+    }
+  }, [orgData])
+
+  useEffect(() => {
+    setApplicationInstitutions()
+    searchApplications()
+  }, [filterValue, searchApplications, setApplicationInstitutions])
+
+  useEffect(() => {
+    setApplicationInstitutions()
+    setAllApplications(applications)
+  }, [applications, setApplicationInstitutions, setAllApplications])
 
   const handleSearchChange = useCallback((value: string) => {
     setFilterValue((oldFilter) => ({
@@ -150,6 +157,24 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
     },
     [],
   )
+
+  const applicationList = (applications: Application[]) => {
+    return (
+      <>
+        <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
+          {formatMessage(m.inProgressApplications)}
+        </Text>
+        <List
+          organizations={organizations}
+          applications={applications}
+          onClick={(applicationUrl) =>
+            window.open(`${baseUrlForm}/${applicationUrl}`)
+          }
+          refetch={refetch}
+        />
+      </>
+    )
+  }
 
   return (
     <>
@@ -169,7 +194,7 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
 
-      {loading && !orgData && <ActionCardLoader repeat={3} />}
+      {loading || (loadingOrg && !orgData && <ActionCardLoader repeat={3} />)}
 
       {error && <EmptyState description={m.error} />}
 
@@ -218,53 +243,20 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
             </GridRow>
           </Box>
 
-          {incompleteApplications?.length > 0 && (
-            <>
-              <Text paddingBottom={3} variant="eyebrow">
-                {formatMessage(m.incopmleteApplications)}
-              </Text>
-              <List
-                organizations={organizations}
-                applications={incompleteApplications}
-                onClick={(applicationUrl) =>
-                  window.open(`${baseUrlForm}/${applicationUrl}`)
-                }
-                refetch={refetch}
-              />
-            </>
-          )}
+          {incompleteApplications?.length > 0 &&
+            (props.statusToShow === ApplicationOverViewStatus.all ||
+              props.statusToShow === ApplicationOverViewStatus.incomplete) &&
+            applicationList(incompleteApplications)}
 
-          {inProcessApplications?.length > 0 && (
-            <>
-              <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
-                {formatMessage(m.inProgressApplications)}
-              </Text>
-              <List
-                organizations={organizations}
-                applications={inProcessApplications}
-                onClick={(applicationUrl) =>
-                  window.open(`${baseUrlForm}/${applicationUrl}`)
-                }
-                refetch={refetch}
-              />
-            </>
-          )}
+          {inProcessApplications?.length > 0 &&
+            (props.statusToShow === ApplicationOverViewStatus.all ||
+              props.statusToShow === ApplicationOverViewStatus.inprocess) &&
+            applicationList(inProcessApplications)}
 
-          {finishedApplications?.length > 0 && (
-            <>
-              <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
-                {formatMessage(m.finishedApplications)}
-              </Text>
-              <List
-                organizations={organizations}
-                applications={finishedApplications}
-                onClick={(applicationUrl) =>
-                  window.open(`${baseUrlForm}/${applicationUrl}`)
-                }
-                refetch={refetch}
-              />
-            </>
-          )}
+          {finishedApplications?.length > 0 &&
+            (props.statusToShow === ApplicationOverViewStatus.all ||
+              props.statusToShow === ApplicationOverViewStatus.finished) &&
+            applicationList(finishedApplications)}
         </>
       )}
     </>
