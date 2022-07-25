@@ -543,6 +543,7 @@ export class ArticleResolver {
 }
 
 @Resolver(() => FeaturedArticles)
+@Directive(cacheControlDirective())
 export class FeaturedArticlesResolver {
   constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
 
