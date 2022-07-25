@@ -6,6 +6,34 @@ import {
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+type ValidationOperation = {
+  operation?: APPLICATION_TYPES
+  hotel?: {
+    type?: string
+
+    category?: OPERATION_CATEGORY[] | undefined
+  }
+  resturant?: {
+    type?: string
+
+    category?: OPERATION_CATEGORY | '' | undefined
+  }
+}
+export const validateApplicationInfoCategory = ({
+  operation,
+  hotel,
+  resturant,
+}: ValidationOperation) => {
+  if (operation === APPLICATION_TYPES.RESTURANT) {
+    return (
+      resturant?.category === OPERATION_CATEGORY.ONE ||
+      resturant?.category === OPERATION_CATEGORY.TWO
+    )
+  } else {
+    return true
+  }
+}
+
 export const hasYes = (answer: any) => {
   if (Array.isArray(answer)) {
     return answer.includes(YES)

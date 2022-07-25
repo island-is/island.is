@@ -7,6 +7,7 @@ import {
   isValidEmail,
   isValidPhoneNumber,
   isValidVskNr,
+  validateApplicationInfoCategory,
 } from './utils'
 
 const FileSchema = z.object({
@@ -34,26 +35,31 @@ export const dataSchema = z.object({
   applicationInfo: z
     .object({
       operation: z.enum([APPLICATION_TYPES.HOTEL, APPLICATION_TYPES.RESTURANT]),
-      hotel: z.object({
-        type: z.string().nonempty(),
-        category: z
-          .array(z.enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO]))
-          .optional(),
-      }),
-      resturant: z.object({
-        type: z.string().nonempty(),
-        category: z.enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO]),
-      }),
+      hotel: z
+        .object({
+          type: z.string().optional(),
+          category: z
+            .array(z.enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO]))
+            .optional(),
+        })
+        .optional(),
+      resturant: z
+        .object({
+          type: z.string().optional(),
+          category: z
+            .enum([OPERATION_CATEGORY.ONE, OPERATION_CATEGORY.TWO, ''])
+            .optional(),
+        })
+        .optional(),
     })
     .partial()
     // Check category
     .refine(
       ({ operation, hotel, resturant }) =>
         (operation === APPLICATION_TYPES.HOTEL &&
-          (!!resturant?.category || !resturant?.category)) ||
+          validateApplicationInfoCategory({ operation, hotel, resturant })) ||
         (operation === APPLICATION_TYPES.RESTURANT &&
-          !!resturant?.category &&
-          resturant?.category?.length === 1),
+          validateApplicationInfoCategory({ operation, hotel, resturant })),
       {
         message: error.invalidValue.defaultMessage,
         path: ['resturant', 'category'],

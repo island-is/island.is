@@ -67,6 +67,7 @@ export const applicationInfo = buildMultiField({
       width: 'half',
       largeButtons: true,
       space: 'none',
+      defaultValue: '',
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.RESTURANT,

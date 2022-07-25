@@ -1,16 +1,9 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  ArrayField,
-} from 'react-hook-form'
+import { ArrayField } from 'react-hook-form'
 import { Property } from '../../lib/constants'
 import { getValueViaPath } from '@island.is/application/core'
 
