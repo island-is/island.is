@@ -694,8 +694,20 @@ export interface IFeaturedArticlesFields {
   /** Application Label */
   applicationLabel: string
 
+  /** Automatically Fetch Articles */
+  automaticallyFetchArticles: boolean
+
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
 
   /** Article Count */
   articleCount?: number | undefined

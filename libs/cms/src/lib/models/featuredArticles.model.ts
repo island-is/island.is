@@ -6,6 +6,10 @@ import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { SortField } from '@island.is/content-search-toolkit'
+import { GetArticlesInput } from '../dto/getArticles.input'
+import { Article } from '@island.is/cms'
 
 @ObjectType()
 export class FeaturedArticles {
@@ -21,6 +25,12 @@ export class FeaturedArticles {
   @Field(() => [ArticleReference])
   articles?: Array<ArticleReference>
 
+  @Field({ nullable: true })
+  automaticallyFetchArticles?: boolean
+
+  @Field(() => [Article])
+  resolvedArticles!: GetArticlesInput
+
   @Field(() => Link, { nullable: true })
   link?: Link | null
 }
@@ -34,5 +44,24 @@ export const mapFeaturedArticles = ({
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
   articles: (fields.articles ?? []).map(mapArticleReference),
+  automaticallyFetchArticles: fields.automaticallyFetchArticles ?? false,
+  resolvedArticles: {
+    lang:
+      sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
+    size: fields.automaticallyFetchArticles ? fields.articleCount ?? 5 : 0,
+    sort: SortField.POPULAR,
+    ...(!!fields.organization && {
+      organization: fields.organization?.fields.slug ?? '',
+    }),
+    ...(!!fields.category && {
+      category: fields.category?.fields.slug ?? '',
+    }),
+    ...(!!fields.group && {
+      group: fields.group?.fields.slug ?? '',
+    }),
+    ...(!!fields.subgroup && {
+      subgroup: fields.subgroup?.fields.slug ?? '',
+    }),
+  },
   link: fields.link ? mapLink(fields.link) : null,
 })
