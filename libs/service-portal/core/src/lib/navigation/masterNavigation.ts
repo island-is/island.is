@@ -28,6 +28,12 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+        children: [
+          {
+            name: m.unfinishedApplications,
+            path: ServicePortalPath.ApplicationUnfinishedApplications,
+          },
+        ],
       },
 
       // Company

@@ -7,6 +7,7 @@ export enum ServicePortalPath {
 
   // Applications
   ApplicationRoot = '/umsoknir',
+  ApplicationUnfinishedApplications = '/umsoknir/oklaradar-umsoknir',
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',

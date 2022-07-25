@@ -25,10 +25,14 @@ import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 import { ValueType } from 'react-select'
-import { Application, ApplicationStatus } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/core'
 import { useQuery } from '@apollo/client'
 import { Organization } from '@island.is/shared/types'
+import {
+  sortApplicationsOrganziations,
+  sortApplicationsStatus,
+} from '../../utils'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -54,7 +58,7 @@ const baseUrlForm = isLocalhost
   ? 'https://beta.staging01.devland.is/umsoknir'
   : 'https://island.is/umsoknir'
 
-const ApplicationList: ServicePortalModuleComponent = () => {
+const ApplicationOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
 
@@ -69,15 +73,19 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   const [incompleteApplications, setIncompleteApplications] = useState<
     Application[]
   >(applications)
+
   const [inProcessApplications, setInProcessApplications] = useState<
     Application[]
   >(applications)
+
   const [finishedApplications, setFinishedApplications] = useState<
     Application[]
   >(applications)
+
   const [institutions, setInstitutions] = useState<Option[]>([
     defaultInstitution,
   ])
+
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
@@ -92,31 +100,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     setAllApplications(applications)
   }, [applications])
 
-  // Set all types for institutions
   const setApplicationTypes = () => {
-    const mapper = institutionMapper
-    const apps: Application[] = applications
-    let institutions: Option[] = []
-    apps.map((elem, idx) => {
-      const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
-      institutions.push({
-        value: inst,
-        label: organizations.find((x) => x.slug === inst)?.title ?? inst,
-      })
-    })
-    // Remove duplicates
-    institutions = institutions.filter(
-      (value, index, self) =>
-        index === self.findIndex((t) => t.value === value.value),
-    )
-    // Sort alphabetically
-    institutions.sort((a, b) => a.label.localeCompare(b.label))
+    const institutions =
+      sortApplicationsOrganziations(applications, organizations) || []
     setInstitutions([defaultInstitution, ...institutions])
   }
 
   // Search applications and add the results into filteredApplications
   const searchApplications = () => {
-    const mapper = institutionMapper
     const searchQuery = filterValue.searchQuery
     const activeInstitution = filterValue.activeInstitution.value
     const filteredApps = (applications as Application[]).filter(
@@ -129,7 +120,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
         // otherwise it filters it.
         (activeInstitution !== ''
-          ? mapper[application.typeId] === activeInstitution
+          ? institutionMapper[application.typeId] === activeInstitution
           : true),
     )
 
@@ -137,25 +128,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   }
 
   const setAllApplications = (apps: Application[]) => {
-    const incomplete: Application[] = []
-    const inProgress: Application[] = []
-    const finished: Application[] = []
-
-    apps.map((application) => {
-      if (
-        application.state === 'draft' ||
-        application.state === 'prerequisites'
-      ) {
-        incomplete.push(application)
-      } else if (application.status === ApplicationStatus.IN_PROGRESS) {
-        inProgress.push(application)
-      } else {
-        finished.push(application)
-      }
-    })
-    setIncompleteApplications(incomplete)
-    setInProcessApplications(inProgress)
-    setFinishedApplications(finished)
+    const applicationsSorted = sortApplicationsStatus(apps)
+    setIncompleteApplications(applicationsSorted.incomplete)
+    setInProcessApplications(applicationsSorted.inProgress)
+    setFinishedApplications(applicationsSorted.finished)
   }
 
   const handleSearchChange = useCallback((value: string) => {
@@ -295,4 +271,4 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   )
 }
 
-export default ApplicationList
+export default ApplicationOverview
