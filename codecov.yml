@@ -1,5 +1,5 @@
 comment:
-  layout: "reach, diff, flags"
+  layout: 'reach, diff, flags'
 coverage:
   status:
     project: false

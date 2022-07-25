@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_secret',
 })
-export class ClientSecret extends Model<ClientSecret> {
+export class ClientSecret extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -17,8 +17,8 @@ describe('Signed verdict overview - Prosecutor - Investigation cases', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

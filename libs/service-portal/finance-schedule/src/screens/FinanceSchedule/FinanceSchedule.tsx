@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
+import { checkDelegation } from '@island.is/shared/utils'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
@@ -32,6 +33,7 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
           scheduleType
           totalAmount
           unpaidAmount
+          unpaidWithInterest
           unpaidCount
           documentID
           downloadServiceURL
@@ -45,8 +47,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(userInfo)
 
   const {
     data: paymentSchedulesData,
@@ -115,21 +116,11 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
               })}
             </Text>
           </GridColumn>
-          {!isDelegation && (
+        </GridRow>
+        {!isDelegation && (
+          <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box
-                paddingRight={2}
-                paddingTop={[2, 2, 2, 0]}
-                display="flex"
-                justifyContent={[
-                  'flexStart',
-                  'flexStart',
-                  'flexStart',
-                  'flexEnd',
-                ]}
-                alignItems="flexEnd"
-                height="full"
-              >
+              <Box paddingTop={5} display="flex" height="full">
                 <a
                   href="/umsoknir/greidsluaaetlun/"
                   target="_blank"
@@ -149,8 +140,8 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
                 </a>
               </Box>
             </GridColumn>
-          )}
-        </GridRow>
+          </GridRow>
+        )}
 
         <Box marginTop={4}>
           {paymentSchedulesError && (
