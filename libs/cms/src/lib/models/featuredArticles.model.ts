@@ -28,6 +28,9 @@ export class FeaturedArticles {
   @Field({ nullable: true })
   automaticallyFetchArticles?: boolean
 
+  @Field()
+  sortBy?: 'popularity' | 'importance'
+
   @Field(() => [Article])
   resolvedArticles!: GetArticlesInput
 
@@ -45,6 +48,7 @@ export const mapFeaturedArticles = ({
   image: fields.image ? mapImage(fields.image) : null,
   articles: (fields.articles ?? []).map(mapArticleReference),
   automaticallyFetchArticles: fields.automaticallyFetchArticles ?? false,
+  sortBy: fields.sortBy ?? 'popularity',
   resolvedArticles: {
     lang:
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),

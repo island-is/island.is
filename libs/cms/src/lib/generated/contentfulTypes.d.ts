@@ -697,6 +697,9 @@ export interface IFeaturedArticlesFields {
   /** Automatically Fetch Articles */
   automaticallyFetchArticles: boolean
 
+  /** Sort By */
+  sortBy?: 'popularity' | 'importance' | undefined
+
   /** Organization */
   organization?: IOrganization | undefined
 
