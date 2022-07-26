@@ -90,7 +90,12 @@ export interface Ingress {
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
+
 export type Resources = {
+  [name in OpsEnv]: Partial<ResourceValues>
+}
+
+export type ResourceValues = {
   limits: {
     cpu: string
     memory: string
