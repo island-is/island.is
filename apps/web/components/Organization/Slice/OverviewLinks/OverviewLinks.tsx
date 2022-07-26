@@ -26,7 +26,18 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
         <Box borderTopWidth="standard" borderColor="standard" paddingTop={4}>
           <Stack space={6}>
             {slice.overviewLinks.map(
-              ({ title, linkTitle, link, image, leftImage, intro }, index) => {
+              (
+                {
+                  title,
+                  linkTitle,
+                  link,
+                  image,
+                  leftImage,
+                  intro,
+                  openLinkInNewTab,
+                },
+                index,
+              ) => {
                 return (
                   <GridRow
                     key={index}
@@ -76,7 +87,7 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
                               link.slug,
                             ])}
                             skipTab
-                            newTab={true}
+                            newTab={openLinkInNewTab ?? true}
                           >
                             <Button icon="arrowForward" variant="text">
                               {linkTitle}
