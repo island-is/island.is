@@ -1,5 +1,6 @@
 export * from './lib/cms.module'
 export * from './lib/cms.health'
+export * from './lib/cms.contentful.service'
 export * from './lib/contentful.repository'
 export * from './lib/search'
 export * from './lib/models/article.model'

@@ -1,8 +1,8 @@
-import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { MailchimpSubscribeResponse } from './models/mailchimpSubscribeResponse.model'
 import { MailchimpSubscribeInput } from './dto/mailchimpSubscribe.input'
 import axios from 'axios'
-import { CmsContentfulService } from '../../../../../cms/src/lib/cms.contentful.service'
+import { CmsContentfulService } from '@island.is/cms'
 import { Injectable } from '@nestjs/common'
 
 @Resolver()
