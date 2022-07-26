@@ -752,6 +752,7 @@ export class CmsContentfulService {
 
   async getMailingListSignupSlice({
     id,
+    lang = 'is',
   }: GetMailingListSignupSliceInput): Promise<MailingListSignupSlice | null> {
     const params = {
       ['content_type']: 'mailingListSignup',
@@ -759,7 +760,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IMailingListSignupFields>('is', params)
+      .getLocalizedEntries<types.IMailingListSignupFields>(lang, params)
       .catch(errorHandler('getMailingListSignupSlice'))
 
     return (
