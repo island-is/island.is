@@ -149,23 +149,11 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
 
       # And you get this  => 
-      - name: DEBUG Print slug/short variables
+      - name: DEBUG echoi slug
+        if: "startsWith(${{ env.GITHUB_BASE_REF_SLUG_URL }}, 'release')"
         run: |
-          echo "Slug variables"
-          echo " - ${{ env.GITHUB_REF_SLUG }}"    
-          echo " - ${{ env.GITHUB_HEAD_REF_SLUG }}"
-          echo " - ${{ env.GITHUB_BASE_REF_SLUG }}"
-          echo " - ${{ env.GITHUB_REPOSITORY_SLUG }}"
-          # output e.g. : master feat-new-feature v1.0.0 product-1.0.0-rc.2 new-awesome-product
-          echo "Slug URL variables"
-          echo " - ${{ env.GITHUB_REF_SLUG_URL }}"
-          echo " - ${{ env.GITHUB_HEAD_REF_SLUG_URL }}"
-          echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}"
-          echo " - ${{ env.GITHUB_REPOSITORY_SLUG_URL }}"
-          # output e.g. : master feat-new-feature v1-0-0 product-1-0-0-rc-2 new-awesome-product
-          echo "Short SHA variables"
-          echo " - ${{ env.GITHUB_SHA_SHORT }}"
-          # output e.g. : ffac537e
+          echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}\n"
+          echo " SUCCESS "
       
       - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
