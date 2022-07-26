@@ -6,10 +6,10 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
-export const PendingReview: Form = buildForm({
-  id: 'ExamplePending',
+export const Draft: Form = buildForm({
+  id: 'Draft',
   title: 'Í vinnslu',
-  mode: FormModes.REVIEW,
+  mode: FormModes.EDITING,
   children: [
     buildMultiField({
       title: '',
