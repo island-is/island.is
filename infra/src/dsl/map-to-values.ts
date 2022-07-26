@@ -47,6 +47,7 @@ export const serializeService: SerializeMethod = (
         ),
     )
   }
+
   const mergeObjects = (
     target: { [name: string]: string },
     source: { [name: string]: string },
@@ -156,6 +157,11 @@ export const serializeService: SerializeMethod = (
   // target port
   if (typeof serviceDef.port !== 'undefined') {
     result.service = { targetPort: serviceDef.port }
+  }
+
+  // resources
+  if (Object.keys(serviceDef.resources).length > 0) {
+    const
   }
 
   // environment vars

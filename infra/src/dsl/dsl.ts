@@ -72,16 +72,7 @@ export class ServiceBuilder<ServiceType> implements Service {
         privileged: false,
         allowPrivilegeEscalation: false,
       },
-      resources: {
-        limits: {
-          memory: '256Mi',
-          cpu: '200m',
-        },
-        requests: {
-          memory: '128Mi',
-          cpu: '100m',
-        },
-      },
+      resources: {},
       xroadConfig: [],
       files: [],
     }
