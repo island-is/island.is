@@ -149,8 +149,14 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
 
       # And you get this  => 
-      - name: DEBUG echoi slug
-        if: "startsWith(${{ env.GITHUB_BASE_REF_SLUG_URL }}, 'release')"
+      - name: DEBUG release echoi slug
+        if: contains('release', ${{ env.GITHUB_BASE_REF_SLUG_URL }})
+        run: |
+          echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}\n"
+          echo " SUCCESS "
+      
+      - name: DEBUG main echoi slug
+        if: contains('main', ${{ env.GITHUB_BASE_REF_SLUG_URL }})
         run: |
           echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}\n"
           echo " SUCCESS "
