@@ -30,8 +30,12 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
+            name: m.inProgressApplications,
+            path: ServicePortalPath.ApplicationInProgressApplications,
+          },
+          {
             name: m.unfinishedApplications,
-            path: ServicePortalPath.ApplicationUnfinishedApplications,
+            path: ServicePortalPath.ApplicationIncompleteApplications,
           },
         ],
       },

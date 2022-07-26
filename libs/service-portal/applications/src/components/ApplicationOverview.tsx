@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { defineMessage } from 'react-intl'
+import { defineMessage, MessageDescriptor } from 'react-intl'
 import {
   ActionCardLoader,
   EmptyState,
-  ServicePortalModuleProps,
+  ServicePortalModuleComponent,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import {
   Text,
@@ -19,6 +20,7 @@ import { ApplicationList as List } from '@island.is/application/ui-components'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
+import { useLocation } from 'react-router-dom'
 
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 
@@ -56,28 +58,27 @@ const baseUrlForm = isLocalhost
   ? 'https://beta.staging01.devland.is/umsoknir'
   : 'https://island.is/umsoknir'
 
-interface ApplicationOverviewProps extends ServicePortalModuleProps {
-  statusToShow: ApplicationOverViewStatus
-}
-
-const ApplicationOverview = (props: ApplicationOverviewProps) => {
+const ApplicationOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
+  const location = useLocation()
 
-  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
-
+  const {
+    data: orgData,
+    loading: loadingOrg,
+    error: errorOrg,
+  } = useGetOrganizationsQuery()
   const [organizations, setOrganizations] = useState<any[]>([])
 
   const [incompleteApplications, setIncompleteApplications] = useState<
     Application[]
   >(applications)
 
-  const [inProcessApplications, setInProcessApplications] = useState<
+  const [inProgressApplications, setInProgressApplications] = useState<
     Application[]
   >(applications)
 
@@ -92,10 +93,26 @@ const ApplicationOverview = (props: ApplicationOverviewProps) => {
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
+
+  const [statusToShow, setStatusToShow] = useState<ApplicationOverViewStatus>(
+    ApplicationOverViewStatus.all,
+  )
+
+  const mapLinkToStatus = (link: string) => {
+    if (link === ServicePortalPath.ApplicationInProgressApplications) {
+      return ApplicationOverViewStatus.inProgress
+    }
+    if (link === ServicePortalPath.ApplicationIncompleteApplications) {
+      return ApplicationOverViewStatus.incomplete
+    }
+    return ApplicationOverViewStatus.all
+  }
+
+  // extract into hook?
   const setAllApplications = useCallback((apps: Application[]) => {
     const applicationsSorted = sortApplicationsStatus(apps)
     setIncompleteApplications(applicationsSorted.incomplete)
-    setInProcessApplications(applicationsSorted.inProgress)
+    setInProgressApplications(applicationsSorted.inProgress)
     setFinishedApplications(applicationsSorted.finished)
   }, [])
 
@@ -105,6 +122,7 @@ const ApplicationOverview = (props: ApplicationOverviewProps) => {
     setInstitutions([defaultInstitution, ...institutions])
   }, [applications, organizations])
 
+  // TODO REFACTOR HOOKS
   // Search applications and add the results into filteredApplications
   const searchApplications = useCallback(() => {
     const searchQuery = filterValue.searchQuery
@@ -130,6 +148,12 @@ const ApplicationOverview = (props: ApplicationOverviewProps) => {
       setOrganizations(orgData?.getOrganizations?.items)
     }
   }, [orgData])
+
+  useEffect(() => {
+    if (location) {
+      setStatusToShow(mapLinkToStatus(location.pathname))
+    }
+  }, [location])
 
   useEffect(() => {
     setApplicationInstitutions()
@@ -158,26 +182,29 @@ const ApplicationOverview = (props: ApplicationOverviewProps) => {
     [],
   )
 
-  const applicationList = (applications: Application[]) => {
+  const applicationList = (
+    applications: Application[],
+    label: MessageDescriptor,
+  ) => {
     return (
       <>
         <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
-          {formatMessage(m.inProgressApplications)}
+          {formatMessage(label)}
         </Text>
         <List
           organizations={organizations}
           applications={applications}
+          refetch={refetch}
           onClick={(applicationUrl) =>
             window.open(`${baseUrlForm}/${applicationUrl}`)
           }
-          refetch={refetch}
         />
       </>
     )
   }
 
   return (
-    <>
+    <Box key="applicatio-overview">
       <Box marginBottom={5}>
         <GridRow>
           <GridColumn>
@@ -244,22 +271,22 @@ const ApplicationOverview = (props: ApplicationOverviewProps) => {
           </Box>
 
           {incompleteApplications?.length > 0 &&
-            (props.statusToShow === ApplicationOverViewStatus.all ||
-              props.statusToShow === ApplicationOverViewStatus.incomplete) &&
-            applicationList(incompleteApplications)}
+            (statusToShow === ApplicationOverViewStatus.all ||
+              statusToShow === ApplicationOverViewStatus.incomplete) &&
+            applicationList(incompleteApplications, m.incompleteApplications)}
 
-          {inProcessApplications?.length > 0 &&
-            (props.statusToShow === ApplicationOverViewStatus.all ||
-              props.statusToShow === ApplicationOverViewStatus.inprocess) &&
-            applicationList(inProcessApplications)}
+          {inProgressApplications?.length > 0 &&
+            (statusToShow === ApplicationOverViewStatus.all ||
+              statusToShow === ApplicationOverViewStatus.inProgress) &&
+            applicationList(inProgressApplications, m.inProgressApplications)}
 
           {finishedApplications?.length > 0 &&
-            (props.statusToShow === ApplicationOverViewStatus.all ||
-              props.statusToShow === ApplicationOverViewStatus.finished) &&
-            applicationList(finishedApplications)}
+            (statusToShow === ApplicationOverViewStatus.all ||
+              statusToShow === ApplicationOverViewStatus.finished) &&
+            applicationList(finishedApplications, m.finishedApplications)}
         </>
       )}
-    </>
+    </Box>
   )
 }
 

@@ -1,6 +1,6 @@
 export enum ApplicationOverViewStatus {
   incomplete = 'incomplete',
-  inprocess = 'inprocess',
+  inProgress = 'inProgress',
   finished = 'finished',
   all = 'all',
 }

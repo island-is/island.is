@@ -1,4 +1,4 @@
-import React, { lazy } from 'react'
+import { lazy } from 'react'
 
 import { ApplicationScope } from '@island.is/auth/scopes'
 import {
@@ -6,6 +6,8 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
+
+const OverviewScreen = lazy(() => import('./screens/Overview'))
 
 export const applicationsModule: ServicePortalModule = {
   name: m.applications,
@@ -15,14 +17,19 @@ export const applicationsModule: ServicePortalModule = {
       name: m.applications,
       path: ServicePortalPath.ApplicationRoot,
       enabled: userInfo.scopes.includes(ApplicationScope.read),
-      render: () => lazy(() => import('./screens/Overview')),
+      render: () => OverviewScreen,
+    },
+    {
+      name: m.inProgressApplications,
+      path: ServicePortalPath.ApplicationInProgressApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      render: () => OverviewScreen,
     },
     {
       name: m.unfinishedApplications,
-      path: ServicePortalPath.ApplicationUnfinishedApplications,
+      path: ServicePortalPath.ApplicationIncompleteApplications,
       enabled: userInfo.scopes.includes(ApplicationScope.read),
-      render: () =>
-        lazy(() => import('./screens/IncompleteApplicationOverview')),
+      render: () => OverviewScreen,
     },
   ],
 }
