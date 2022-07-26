@@ -1,3 +1,5 @@
+const { fakeUsers, testEnvironment, authDomain } = Cypress.env()
+
 describe('Home page', () => {
   beforeEach(() => {
     cy.cognitoLogin({
@@ -8,7 +10,6 @@ describe('Home page', () => {
 
   beforeEach(() => {
     cy.log('fakeUsers', fakeUsers)
-    cy.log('authUrl', authUrl)
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
       phoneNumber: fakeUsers['María'].phoneNumber,
