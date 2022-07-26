@@ -1,6 +1,7 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   PASSPORT = 'Passport',
+  DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
@@ -36,6 +37,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
     translation: 'pa.application',
+  },
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
+    slug: 'aefingarakstur',
+    translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
