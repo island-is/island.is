@@ -1,6 +1,12 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { AlertBannerVariants } from '@island.is/island-ui/core'
-import { GetAlertBannerQuery } from '@island.is/web/graphql/schema'
+import {
+  GetAlertBannerQuery,
+  Query,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
 import { ParsedUrlQuery } from 'querystring'
+import { GET_NAMESPACE_QUERY } from '../../queries'
 
 interface SjukratryggingarStatusPageDetails {
   incidents: {
@@ -60,7 +66,11 @@ const fetchSjukratryggingarStatusPageDetails = async (): Promise<Sjukratrygginga
   }
 }
 
-export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
+export const getCustomAlertBanners = async (
+  query: ParsedUrlQuery,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  locale: string,
+) => {
   // As of right now Sjúkratryggingar is the only organization with alert banners that are automatically read from somewhere else than the CMS (Contentful)
   if (
     query?.slug !== 'sjukratryggingar' &&
@@ -68,7 +78,24 @@ export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
   )
     return []
 
-  const sjukratryggingarPageDetails = await fetchSjukratryggingarStatusPageDetails()
+  const [sjukratryggingarPageDetails, namespace] = await Promise.all([
+    fetchSjukratryggingarStatusPageDetails(),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Sjukratryggingar',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables?.data?.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
+  ])
   if (!sjukratryggingarPageDetails) return []
   const customAlertBanners: GetAlertBannerQuery['getAlertBanner'][] = []
 
@@ -77,52 +104,49 @@ export const getCustomAlertBanners = async (query: ParsedUrlQuery) => {
 
   for (const incident of sjukratryggingarPageDetails?.incidents ?? []) {
     const bannerVariant: AlertBannerVariants = 'warning'
+    const title = incident?.name
+    const description = incident?.incident_updates?.[0]?.body
+    const showAlertBanner = title?.length > 0 || description?.length > 0
+
     customAlertBanners.push({
       bannerVariant,
       dismissedForDays: 1,
       isDismissable: true,
-      showAlertBanner: true,
-      description: incident?.name,
-      // TODO: read link from cms
+      showAlertBanner,
+      title,
+      description,
       link: {
-        slug: 'https://status.sjukra.is',
-        type: '',
+        slug:
+          namespace['incidentStatusPageLink'] ??
+          `https://status.sjukra.is/incidents/${incident.id}`,
+        type: 'link',
       },
-      linkTitle: 'Frekari upplýsingar',
+      linkTitle: namespace['incidentSeeMoreText'] ?? 'Frekari upplýsingar',
     })
   }
 
   for (const maintenance of sjukratryggingarPageDetails?.scheduled_maintenances ??
     []) {
     const bannerVariant: AlertBannerVariants = 'info'
+    const title = maintenance?.name
+    const description = maintenance?.incident_updates?.[0]?.body
+    const showAlertBanner = title?.length > 0 || description?.length > 0
     customAlertBanners.push({
       bannerVariant,
       dismissedForDays: 1,
       isDismissable: true,
-      showAlertBanner: true,
-      description: maintenance?.name,
-      // TODO: read link from cms
+      showAlertBanner,
+      title,
+      description,
       link: {
-        slug: 'https://status.sjukra.is',
+        slug:
+          namespace['maintenanceStatusPageLink'] ??
+          `https://status.sjukra.is/incidents/${maintenance.id}`,
         type: 'link',
       },
-      linkTitle: 'Frekari upplýsingar',
+      linkTitle: namespace['maintenanceSeeMoreText'] ?? 'Frekari upplýsingar',
     })
   }
-
-  customAlertBanners.push({
-    bannerVariant: 'info',
-    dismissedForDays: 1,
-    isDismissable: true,
-    showAlertBanner: true,
-    description: 'Prufa',
-    // TODO: read link from cms or use data
-    link: {
-      slug: 'https://status.sjukra.is',
-      type: 'link',
-    },
-    linkTitle: 'Frekari upplýsingar',
-  })
 
   return customAlertBanners
 }

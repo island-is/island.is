@@ -132,11 +132,11 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables?.data?.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    getCustomAlertBanners(query),
+    getCustomAlertBanners(query, apolloClient, locale),
   ])
 
   if (!getOrganizationPage) {
