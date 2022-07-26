@@ -5,6 +5,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
+import { getFeatureFlag } from '@island.is/web/utils/featureFlag'
 import { ParsedUrlQuery } from 'querystring'
 import { GET_NAMESPACE_QUERY } from '../../queries'
 
@@ -66,11 +67,16 @@ const fetchSjukratryggingarStatusPageDetails = async (): Promise<Sjukratrygginga
   }
 }
 
+/** Gets all custom alert banners (banners that are read from somewhere else than the content management system) */
 export const getCustomAlertBanners = async (
   query: ParsedUrlQuery,
   apolloClient: ApolloClient<NormalizedCacheObject>,
   locale: string,
 ) => {
+  // Make sure that the feature flag is enabled
+  const flag = await getFeatureFlag('showSjukratryggingarStatusAlerts', false)
+  if (!flag) return []
+
   // As of right now Sjúkratryggingar is the only organization with alert banners that are automatically read from somewhere else than the CMS (Contentful)
   if (
     query?.slug !== 'sjukratryggingar' &&
@@ -98,9 +104,6 @@ export const getCustomAlertBanners = async (
   ])
   if (!sjukratryggingarPageDetails) return []
   const customAlertBanners: GetAlertBannerQuery['getAlertBanner'][] = []
-
-  // TODO: remove this console.log
-  console.log(sjukratryggingarPageDetails)
 
   for (const incident of sjukratryggingarPageDetails?.incidents ?? []) {
     const bannerVariant: AlertBannerVariants = 'warning'
