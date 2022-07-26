@@ -98,6 +98,36 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          SUBMIT: {
+            target: States.approved,
+          },
+        },
+      },
+      [States.approved]: {
+        meta: {
+          name: 'Umsókn móttekin',
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 31 * 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Done').then((module) =>
+                  Promise.resolve(module.Draft),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
       },
     },
   },
