@@ -150,13 +150,13 @@ jobs:
 
       # And you get this  => 
       - name: DEBUG release echoi slug
-        if: contains('release', ${{ env.GITHUB_BASE_REF_SLUG_URL }})
+        if: contains(github.ref, "release")
         run: |
           echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}\n"
           echo " SUCCESS "
       
       - name: DEBUG main echoi slug
-        if: contains('main', ${{ env.GITHUB_BASE_REF_SLUG_URL }})
+        if: contains(github.ref, "main")
         run: |
           echo " - ${{ env.GITHUB_BASE_REF_SLUG_URL }}\n"
           echo " SUCCESS "
