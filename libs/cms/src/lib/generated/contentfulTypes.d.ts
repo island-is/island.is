@@ -2102,6 +2102,9 @@ export interface IOrganizationSubpageFields {
       )[]
     | undefined
 
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
+
   /** Slice Custom Renderer */
   sliceCustomRenderer?: 'SliceDropdown' | undefined
 
