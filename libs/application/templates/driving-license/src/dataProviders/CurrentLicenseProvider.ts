@@ -8,10 +8,12 @@ import {
 import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
+import { B_FULL, B_TEMP } from '../shared'
 
 export interface CurrentLicenseProviderResult {
   currentLicense: Eligibility['name'] | null
   healthRemarks?: string[]
+  applicationFor: string
 }
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
@@ -30,6 +32,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
           fakeData.healthRemarks === YES
             ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
             : undefined,
+        applicationFor: fakeData.currentLicense === 'temp' ? B_TEMP : B_FULL
       }
     }
 
@@ -38,6 +41,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
         drivingLicense {
           categories {
             name
+            expires
           }
           healthRemarks
         }
@@ -64,10 +68,11 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
-
+    const applicationFor = !categoryB ? B_TEMP : B_FULL
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: response.data?.drivingLicense?.healthRemarks,
+      applicationFor
     }
   }
 

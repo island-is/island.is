@@ -83,3 +83,4 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
     ).length > 0
   )
 }
+

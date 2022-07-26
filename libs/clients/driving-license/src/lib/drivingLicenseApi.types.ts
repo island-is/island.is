@@ -56,3 +56,8 @@ export interface CanApplyForCategoryResult<
   result: boolean
   errorCode?: T | undefined
 }
+
+export interface Category {
+  id: string
+  name: string
+}

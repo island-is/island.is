@@ -1,4 +1,7 @@
+import { NationalRegistryUser } from '@island.is/api/schema'
 import {
+  buildCustomField,
+  buildKeyValueField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -16,36 +19,22 @@ export const sectionApplicationFor = buildSubSection({
       id: 'info',
       title: m.drivingLicenseApplyingForTitle,
       children: [
-        buildRadioField({
-          id: 'applicationFor',
-          backgroundColor: 'white',
-          title: '',
-          description: '',
-          space: 0,
-          largeButtons: true,
-          options: (app) => {
-            const {
-              currentLicense,
-            } = getValueViaPath<CurrentLicenseProviderResult>(
-              app.externalData,
-              'currentLicense.data',
-            ) ?? { currentLicense: null }
-
-            return [
-              {
-                label: m.applicationForTempLicenseTitle,
-                subLabel: m.applicationForTempLicenseDescription.defaultMessage,
-                value: B_TEMP,
-                disabled: !!currentLicense,
-              },
-              {
-                label: m.applicationForFullLicenseTitle,
-                subLabel: m.applicationForFullLicenseDescription.defaultMessage,
-                value: B_FULL,
-                disabled: !currentLicense,
-              },
-            ]
-          },
+        buildKeyValueField({
+          label: m.overviewName,
+          width: 'half',
+          value: ({ externalData: { nationalRegistry } }) =>
+            (nationalRegistry.data as NationalRegistryUser).fullName,
+        }),
+        buildKeyValueField({
+          label: 'Réttindi umsækjenda',
+          width: 'half',
+          value: ({ externalData: { nationalRegistry } }) =>
+            (nationalRegistry.data as NationalRegistryUser).fullName,
+        }),
+        buildCustomField({
+          title: m.eligibilityRequirementTitle,
+          component: 'EligibilitySummary',
+          id: 'eligsummary',
         }),
       ],
     }),

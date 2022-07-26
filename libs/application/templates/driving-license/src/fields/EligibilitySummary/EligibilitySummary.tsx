@@ -7,10 +7,10 @@ import { extractReasons } from './extractReasons'
 import { useEligibility } from './useEligibility'
 
 export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-  const { eligibility, loading, error } = useEligibility(application.answers)
+  const { eligibility, loading, error } = useEligibility(application)
 
   const { setValue } = useFormContext()
-
+  
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)
   }, [eligibility?.isEligible, setValue])

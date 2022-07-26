@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { NO, YES } from '../../lib/constants'
+import { NO, qualityPhotoBullets, YES } from '../../lib/constants'
 import { B_FULL } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
@@ -76,6 +76,8 @@ export const subSectionQualityPhoto = buildSubSection({
           id: 'photodescription',
           title: '',
           component: 'Bullets',
+        }, {
+          textArray: qualityPhotoBullets
         }),
         buildCheckboxField({
           id: 'willBringQualityPhoto',

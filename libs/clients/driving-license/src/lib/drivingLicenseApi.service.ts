@@ -10,6 +10,7 @@ import * as v1 from '../v1'
 import * as v2 from '../v2'
 import {
   CanApplyErrorCodeBTemporary,
+  Category,
   DriversLicense,
   Teacher,
 } from './drivingLicenseApi.types'
@@ -312,5 +313,12 @@ export class DrivingLicenseApi {
     return {
       data: image,
     }
+  }
+
+  async getCategories(): Promise<Category[]> {
+    const response = await this.v1.apiOkuskirteiniTegundirrettindaGet({
+      apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
+    })
+    return response.map((v) => ({ id: v.nr || '', name: v.heiti || '' }))
   }
 }

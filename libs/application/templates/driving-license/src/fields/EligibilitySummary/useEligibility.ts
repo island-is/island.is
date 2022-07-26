@@ -5,6 +5,8 @@ import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
 import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
 import { fakeEligibility } from './fakeEligibility'
+import { useFormContext } from 'react-hook-form'
+import { useEffect } from 'react'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -23,18 +25,25 @@ export interface UseEligibilityResult {
   loading: boolean
 }
 
-export const useEligibility = (
-  answers: Application['answers'],
-): UseEligibilityResult => {
+export const useEligibility = ({
+  answers,
+  externalData,
+}: Application): UseEligibilityResult => {
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
+  const { setValue } = useFormContext()
+
   const applicationFor =
     getValueViaPath<DrivingLicenseApplicationFor>(
-      answers,
+      externalData,
       'applicationFor',
       B_FULL,
     ) ?? B_FULL
+
+  useEffect(() => {
+    setValue('applicationFor', applicationFor)
+  }, [applicationFor, setValue])
 
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,

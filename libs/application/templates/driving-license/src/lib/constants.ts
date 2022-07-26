@@ -1,4 +1,5 @@
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, FormTextArray } from '@island.is/application/types'
+import { m } from './messages'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -31,3 +32,12 @@ export interface DrivingLicenseFakeData {
   currentLicense?: FakeCurrentLicense
   healthRemarks?: YesOrNo
 }
+
+export const qualityPhotoBullets: FormTextArray = [
+  m.qualityPhotoInstructionsBulletOne,
+  m.qualityPhotoInstructionsBulletTwo,
+  m.qualityPhotoInstructionsBulletThree,
+  m.qualityPhotoInstructionsBulletFour,
+  m.qualityPhotoInstructionsBulletFive,
+  m.qualityPhotoInstructionsBulletSix,
+]

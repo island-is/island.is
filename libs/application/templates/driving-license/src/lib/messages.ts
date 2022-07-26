@@ -103,6 +103,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsækjandi',
     description: 'Applicant',
   },
+  drivingLicenseB: {
+    id: 'dl.application:information.drivingLicenseB',
+    defaultMessage: 'B flokkur (fólksbifreið)',
+    description: 'Applicant',
+  },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
     defaultMessage: 'Heilbrigðisyfirlýsing',
