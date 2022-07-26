@@ -4,7 +4,6 @@ set -euo pipefail
 ROOT=$(git rev-parse --show-toplevel)
 env_secret_file="$ROOT/.env.secret"
 
-
 function show-help() {
   echo "Usage:"
   echo "  yarn get-secrets [--reset|-r] <project>..."
@@ -45,7 +44,7 @@ function main {
     : >"$env_secret_file"
   fi
 
-  pre_total=$(wc -l < "$env_secret_file")
+  pre_total=$(wc -l <"$env_secret_file")
   for project in "$@"; do
     case "$project" in
     '-r' | '--reset')
@@ -61,7 +60,7 @@ function main {
     esac
     shift
   done
-  post_total=$(wc -l < "$env_secret_file")
+  post_total=$(wc -l <"$env_secret_file")
   echo "Got $(expr $post_total - $pre_total) total new secret lines"
 }
 
