@@ -22,7 +22,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
   const labelId = 'sliceTitle-' + slice.id
 
   return (
-    <section key={slice.id} aria-labelledby={labelId}>
+    <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
       <Box
         borderTopWidth="standard"
         borderColor="standard"

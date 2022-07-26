@@ -21,7 +21,11 @@ export const OverviewLinksSlice: React.FC<SliceProps> = ({ slice }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box borderTopWidth="standard" borderColor="standard" paddingTop={4}>
           <Stack space={6}>
