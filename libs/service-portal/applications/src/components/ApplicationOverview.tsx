@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { defineMessage, MessageDescriptor } from 'react-intl'
+import { defineMessage } from 'react-intl'
 import {
   ActionCardLoader,
   EmptyState,
@@ -150,14 +150,11 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
     }))
   }
 
-  const applicationList = (
-    applications: Application[],
-    label: MessageDescriptor,
-  ) => {
+  const applicationList = (applications: Application[], label: string) => {
     return (
       <>
         <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
-          {formatMessage(label)}
+          {label}
         </Text>
         <List
           organizations={organizations}
@@ -244,7 +241,7 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
               statusToShow === ApplicationOverViewStatus.incomplete) &&
             applicationList(
               applicationsByStatus.incomplete,
-              m.incompleteApplications,
+              formatMessage(m.incompleteApplications),
             )}
 
           {applicationsByStatus.inProgress?.length > 0 &&
@@ -252,7 +249,7 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
               statusToShow === ApplicationOverViewStatus.inProgress) &&
             applicationList(
               applicationsByStatus.inProgress,
-              m.inProgressApplications,
+              formatMessage(m.inProgressApplications),
             )}
 
           {applicationsByStatus.finished?.length > 0 &&
@@ -260,7 +257,7 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
               statusToShow === ApplicationOverViewStatus.finished) &&
             applicationList(
               applicationsByStatus.finished,
-              m.finishedApplications,
+              formatMessage(m.finishedApplications),
             )}
         </>
       )}
