@@ -2,6 +2,8 @@ import { Application, ApplicationStatus } from '@island.is/application/types'
 import { Option } from '@island.is/island-ui/core'
 import { institutionMapper } from '@island.is/application/core'
 import { Organization } from '@island.is/shared/types'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ApplicationOverViewStatus } from '../types'
 
 interface SortedApplication {
   incomplete: Application[]
@@ -60,4 +62,28 @@ export const sortApplicationsOrganziations = (
   // Sort alphabetically
   institutions.sort((a, b) => a.label.localeCompare(b.label))
   return institutions
+}
+
+export const mapLinkToStatus = (link: string) => {
+  if (link === ServicePortalPath.ApplicationInProgressApplications) {
+    return ApplicationOverViewStatus.inProgress
+  }
+  if (link === ServicePortalPath.ApplicationIncompleteApplications) {
+    return ApplicationOverViewStatus.incomplete
+  }
+  return ApplicationOverViewStatus.all
+}
+
+export const getBaseUrlForm = () => {
+  const isLocalhost = window.location.origin.includes('localhost')
+  const isDev = window.location.origin.includes('beta.dev01.devland.is')
+  const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+
+  return isLocalhost
+    ? 'http://localhost:4242/umsoknir'
+    : isDev
+    ? 'https://beta.dev01.devland.is/umsoknir'
+    : isStaging
+    ? 'https://beta.staging01.devland.is/umsoknir'
+    : 'https://island.is/umsoknir'
 }

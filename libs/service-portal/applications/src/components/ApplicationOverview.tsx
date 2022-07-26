@@ -4,7 +4,6 @@ import {
   ActionCardLoader,
   EmptyState,
   ServicePortalModuleComponent,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import {
   Text,
@@ -21,7 +20,6 @@ import { useApplications } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 import { useLocation } from 'react-router-dom'
-
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
 
 import { m } from '../lib/messages'
@@ -29,14 +27,12 @@ import { ValueType } from 'react-select'
 import { Application } from '@island.is/application/types'
 import { institutionMapper } from '@island.is/application/core'
 import {
+  getBaseUrlForm,
+  mapLinkToStatus,
   sortApplicationsOrganziations,
   sortApplicationsStatus,
 } from '../shared/utils'
 import { ApplicationOverViewStatus } from '../shared/types'
-
-const isLocalhost = window.location.origin.includes('localhost')
-const isDev = window.location.origin.includes('beta.dev01.devland.is')
-const isStaging = window.location.origin.includes('beta.staging01.devland.is')
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -49,14 +45,6 @@ const defaultFilterValues: FilterValues = {
   activeInstitution: defaultInstitution,
   searchQuery: '',
 }
-
-const baseUrlForm = isLocalhost
-  ? 'http://localhost:4242/umsoknir'
-  : isDev
-  ? 'https://beta.dev01.devland.is/umsoknir'
-  : isStaging
-  ? 'https://beta.staging01.devland.is/umsoknir'
-  : 'https://island.is/umsoknir'
 
 const ApplicationOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
@@ -74,17 +62,15 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
   } = useGetOrganizationsQuery()
   const [organizations, setOrganizations] = useState<any[]>([])
 
-  const [incompleteApplications, setIncompleteApplications] = useState<
-    Application[]
-  >(applications)
-
-  const [inProgressApplications, setInProgressApplications] = useState<
-    Application[]
-  >(applications)
-
-  const [finishedApplications, setFinishedApplications] = useState<
-    Application[]
-  >(applications)
+  const [applicationsByStatus, setApplicationsByStatus] = useState<{
+    incomplete: Application[]
+    inProgress: Application[]
+    finished: Application[]
+  }>({
+    incomplete: [],
+    inProgress: [],
+    finished: [],
+  })
 
   const [institutions, setInstitutions] = useState<Option[]>([
     defaultInstitution,
@@ -98,22 +84,9 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
     ApplicationOverViewStatus.all,
   )
 
-  const mapLinkToStatus = (link: string) => {
-    if (link === ServicePortalPath.ApplicationInProgressApplications) {
-      return ApplicationOverViewStatus.inProgress
-    }
-    if (link === ServicePortalPath.ApplicationIncompleteApplications) {
-      return ApplicationOverViewStatus.incomplete
-    }
-    return ApplicationOverViewStatus.all
-  }
-
-  // extract into hook?
   const setAllApplications = useCallback((apps: Application[]) => {
     const applicationsSorted = sortApplicationsStatus(apps)
-    setIncompleteApplications(applicationsSorted.incomplete)
-    setInProgressApplications(applicationsSorted.inProgress)
-    setFinishedApplications(applicationsSorted.finished)
+    setApplicationsByStatus(applicationsSorted)
   }, [])
 
   const setApplicationInstitutions = useCallback(() => {
@@ -122,8 +95,6 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
     setInstitutions([defaultInstitution, ...institutions])
   }, [applications, organizations])
 
-  // TODO REFACTOR HOOKS
-  // Search applications and add the results into filteredApplications
   const searchApplications = useCallback(() => {
     const searchQuery = filterValue.searchQuery
     const activeInstitution = filterValue.activeInstitution.value
@@ -165,22 +136,19 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
     setAllApplications(applications)
   }, [applications, setApplicationInstitutions, setAllApplications])
 
-  const handleSearchChange = useCallback((value: string) => {
+  const handleSearchChange = (value: string) => {
     setFilterValue((oldFilter) => ({
       ...oldFilter,
       searchQuery: value,
     }))
-  }, [])
+  }
 
-  const handleInstitutionChange = useCallback(
-    (newInstitution: ValueType<Option>) => {
-      setFilterValue((oldFilter) => ({
-        ...oldFilter,
-        activeInstitution: newInstitution as Option,
-      }))
-    },
-    [],
-  )
+  const handleInstitutionChange = (newInstitution: ValueType<Option>) => {
+    setFilterValue((oldFilter) => ({
+      ...oldFilter,
+      activeInstitution: newInstitution as Option,
+    }))
+  }
 
   const applicationList = (
     applications: Application[],
@@ -196,7 +164,7 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
           applications={applications}
           refetch={refetch}
           onClick={(applicationUrl) =>
-            window.open(`${baseUrlForm}/${applicationUrl}`)
+            window.open(`${getBaseUrlForm()}/${applicationUrl}`)
           }
         />
       </>
@@ -212,7 +180,6 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
               <Text variant="h3" as="h1">
                 {formatMessage(m.heading)}
               </Text>
-
               <Text as="p" variant="default">
                 {formatMessage(m.introCopy)}
               </Text>
@@ -262,7 +229,9 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
                     defaultValue={institutions[0]}
                     options={institutions}
                     value={filterValue.activeInstitution}
-                    onChange={handleInstitutionChange}
+                    onChange={(e) => {
+                      handleInstitutionChange(e)
+                    }}
                     label={formatMessage(m.searchInstitutiontLabel)}
                   />
                 </Box>
@@ -270,20 +239,29 @@ const ApplicationOverview: ServicePortalModuleComponent = () => {
             </GridRow>
           </Box>
 
-          {incompleteApplications?.length > 0 &&
+          {applicationsByStatus.incomplete?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.incomplete) &&
-            applicationList(incompleteApplications, m.incompleteApplications)}
+            applicationList(
+              applicationsByStatus.incomplete,
+              m.incompleteApplications,
+            )}
 
-          {inProgressApplications?.length > 0 &&
+          {applicationsByStatus.inProgress?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.inProgress) &&
-            applicationList(inProgressApplications, m.inProgressApplications)}
+            applicationList(
+              applicationsByStatus.inProgress,
+              m.inProgressApplications,
+            )}
 
-          {finishedApplications?.length > 0 &&
+          {applicationsByStatus.finished?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.finished) &&
-            applicationList(finishedApplications, m.finishedApplications)}
+            applicationList(
+              applicationsByStatus.finished,
+              m.finishedApplications,
+            )}
         </>
       )}
     </Box>
