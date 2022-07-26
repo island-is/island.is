@@ -1127,6 +1127,9 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+
+  /** Open Link in New Tab */
+  openLinkInNewTab: boolean
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {

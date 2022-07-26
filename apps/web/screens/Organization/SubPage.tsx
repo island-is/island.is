@@ -208,13 +208,14 @@ const renderSlices = (
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice) => (
+      return slices.map((slice, index) => (
         <OrganizationSlice
           key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}
           renderedOnOrganizationSubpage={true}
+          marginBottom={index === slices.length - 1 ? 5 : 0}
         />
       ))
   }

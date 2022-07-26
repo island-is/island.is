@@ -448,6 +448,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
