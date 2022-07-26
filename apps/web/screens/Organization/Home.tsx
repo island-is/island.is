@@ -64,12 +64,13 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice) => (
+      mainContent={organizationPage.slices.map((slice, index) => (
         <OrganizationSlice
           key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
+          marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
         />
       ))}
       sidebarContent={

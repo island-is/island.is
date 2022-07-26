@@ -593,6 +593,7 @@ application-system-api-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'

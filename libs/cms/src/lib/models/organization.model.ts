@@ -69,10 +69,10 @@ export const mapOrganization = ({
 }: IOrganization): Organization => {
   return {
     id: sys.id,
-    title: fields.title ?? '',
+    title: fields.title?.trim() ?? '',
     shortTitle: fields.shortTitle ?? '',
     description: fields.description ?? '',
-    slug: fields.slug ?? '',
+    slug: fields.slug?.trim() ?? '',
     tag: (fields.tag ?? []).map(mapOrganizationTag),
     logo: fields.logo ? mapImage(fields.logo) : null,
     link: fields.link ?? '',
