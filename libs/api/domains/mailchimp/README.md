@@ -1,6 +1,8 @@
-# API Domains Mailchimp
+<!-- gitbook-ignore -->
 
-This library was generated with [Nx](https://nx.dev).
+# Mailchimp Module
+
+Module for Mailchimp subscription endpoints.
 
 ## Running unit tests
 
