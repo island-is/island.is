@@ -8,6 +8,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/reference-template',
-  displayName: 'application-templates-reference-template',
+    '../../../../coverage/libs/application/templates/driving-learners-permit',
+  displayName: 'application-templates-driving-learners-permit',
 }

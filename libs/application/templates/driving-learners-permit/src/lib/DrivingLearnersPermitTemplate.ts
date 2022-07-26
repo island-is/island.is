@@ -79,7 +79,7 @@ const ExampleSchema = z.object({
     .nonempty(),
   dreamJob: z.string().optional(),
 })
-const ReferenceApplicationTemplate: ApplicationTemplate<
+const DrivingLearnersPermitTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
   ReferenceTemplateEvent
@@ -289,4 +289,4 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default ReferenceApplicationTemplate
+export default DrivingLearnersPermitTemplate

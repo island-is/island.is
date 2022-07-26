@@ -197,6 +197,9 @@
       "@island.is/application/templates/driving-instructor-registrations": [
         "libs/application/templates/driving-instructor-registrations/src/index.ts"
       ],
+      "@island.is/application/templates/driving-learners-permit": [
+        "libs/application/templates/driving-learners-permit/src/index.ts"
+      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
