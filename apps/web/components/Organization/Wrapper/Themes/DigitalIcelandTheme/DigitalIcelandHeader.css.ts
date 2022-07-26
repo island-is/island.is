@@ -30,15 +30,12 @@ export const title = style({
   width: 200,
   marginTop: 80,
   marginLeft: 16,
-  '@supports': {
-    '(-webkit-text-fill-color: transparent)': {
-      background:
-        'linear-gradient(122.37deg, #0161FD -20.11%, #3F46D2 19.5%, #812EA4 60.71%, #C21578 101.91%, #FD0050 138.36%)',
-      backgroundClip: 'text',
-      ['-webkit-background-clip' as any]: 'text',
-      ['-webkit-text-fill-color' as any]: 'transparent',
-    },
-  },
+  background:
+    'linear-gradient(122.37deg, #0161FD -20.11%, #3F46D2 19.5%, #812EA4 60.71%, #C21578 101.91%, #FD0050 138.36%)',
+  backgroundClip: 'text',
+  ['-webkit-background-clip' as any]: 'text',
+  ['-webkit-text-fill-color' as any]: 'transparent',
+  textShadow: '0px 0px #00000000',
 })
 
 export const iconCircle = style({
