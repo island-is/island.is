@@ -47,4 +47,10 @@ export const m = defineMessages({
     defaultMessage: 'Eldri umsóknir',
     description: 'Label for finished application list',
   },
+  noApplicationsAvailable: {
+    id: 'sp.applications:no-applications-available',
+    defaultMessage: 'Engar umsóknir fundust hjá Ísland.is á þessari kennitölu',
+    description:
+      'Error message when no applications are found in the overview for national id',
+  },
 })
