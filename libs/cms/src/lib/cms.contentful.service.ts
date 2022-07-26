@@ -70,6 +70,11 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import {
+  MailingListSignupSlice,
+  mapMailingListSignup,
+} from './models/mailingListSignupSlice.model'
+import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -742,6 +747,25 @@ export class CmsContentfulService {
     return (
       (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
       null
+    )
+  }
+
+  async getMailingListSignupSlice({
+    id,
+  }: GetMailingListSignupSliceInput): Promise<MailingListSignupSlice | null> {
+    const params = {
+      ['content_type']: 'mailingListSignup',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IMailingListSignupFields>('is', params)
+      .catch(errorHandler('getMailingListSignupSlice'))
+
+    return (
+      (result.items as types.IMailingListSignup[]).map(
+        mapMailingListSignup,
+      )[0] ?? null
     )
   }
 }
