@@ -5,12 +5,18 @@ import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
 import { extractReasons } from './extractReasons'
 import { useEligibility } from './useEligibility'
+import { formatText } from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
 
-export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
+export const EligibilitySummary: FC<FieldBaseProps> = ({
+  application,
+  field,
+}) => {
   const { eligibility, loading, error } = useEligibility(application)
 
   const { setValue } = useFormContext()
-  
+  const { formatMessage } = useLocale()
+
   useEffect(() => {
     setValue('requirementsMet', eligibility?.isEligible || false)
   }, [eligibility?.isEligible, setValue])
@@ -26,12 +32,16 @@ export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   const requirements = extractReasons(eligibility)
 
   return (
-    <Box marginBottom={10}>
+    <Box marginBottom={10} marginTop={4}>
       <Box
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
-      ></Box>
-      <Box marginTop={7} marginBottom={8}>
+      >
+        <Text variant="h3">
+          {formatText(field.title, application, formatMessage)}
+        </Text>
+      </Box>
+      <Box marginTop={4} marginBottom={8}>
         {requirements.map((requirement, i) => {
           return (
             <ReviewSection

@@ -72,13 +72,16 @@ export const subSectionQualityPhoto = buildSubSection({
           component: 'QualityPhoto',
           id: 'qphoto',
         }),
-        buildCustomField({
-          id: 'photodescription',
-          title: '',
-          component: 'Bullets',
-        }, {
-          textArray: qualityPhotoBullets
-        }),
+        buildCustomField(
+          {
+            id: 'photodescription',
+            title: '',
+            component: 'Bullets',
+          },
+          {
+            textArray: qualityPhotoBullets,
+          },
+        ),
         buildCheckboxField({
           id: 'willBringQualityPhoto',
           title: '',

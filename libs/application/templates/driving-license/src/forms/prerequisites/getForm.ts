@@ -5,7 +5,6 @@ import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
-import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
 
 export const getForm = ({
@@ -27,8 +26,7 @@ export const getForm = ({
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
           sectionExistingApplication,
-          ...(allowPickLicense ? [sectionApplicationFor] : []),
-          sectionRequirements,
+          sectionApplicationFor,
         ],
       }),
       buildSection({

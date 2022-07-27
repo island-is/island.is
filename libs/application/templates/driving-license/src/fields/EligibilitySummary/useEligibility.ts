@@ -3,7 +3,11 @@ import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import {
+  DrivingLicenseApplicationFor,
+  B_FULL,
+  B_TEMP,
+} from '../../shared/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { useFormContext } from 'react-hook-form'
 import { useEffect } from 'react'
@@ -33,16 +37,15 @@ export const useEligibility = ({
   const usingFakeData = fakeData?.useFakeData === YES
 
   const { setValue } = useFormContext()
-
   const applicationFor =
     getValueViaPath<DrivingLicenseApplicationFor>(
       externalData,
-      'applicationFor',
+      'currentLicense.data.applicationFor',
       B_FULL,
     ) ?? B_FULL
 
   useEffect(() => {
-    setValue('applicationFor', applicationFor)
+    setValue('applicationFor', B_TEMP)
   }, [applicationFor, setValue])
 
   const { data = {}, error, loading } = useQuery(QUERY, {

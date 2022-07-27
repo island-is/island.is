@@ -149,12 +149,15 @@ export class DrivingLicenseService {
       },
     )
 
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user,
-      nationalId,
-    )
-    const localRecidencyHistory = hasResidenceHistory(residenceHistory)
-    const localRecidency = hasLocalResidence(residenceHistory)
+    const residenceHistory = await this.nationalRegistryXRoadService
+      .getNationalRegistryResidenceHistory(user, nationalId)
+      .catch((e) => this.handleGetLicenseError(e))
+    const localRecidencyHistory = residenceHistory
+      ? hasResidenceHistory(residenceHistory)
+      : false
+    const localRecidency = residenceHistory
+      ? hasLocalResidence(residenceHistory)
+      : false
 
     const canApply = await this.canApplyFor(nationalId, type)
 

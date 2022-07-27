@@ -8,7 +8,7 @@ import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const sectionExistingApplication = buildSubSection({
-  id: 'applicationFor',
+  id: 'existingInfo',
   title: m.existingApplicationTitle,
   condition: (_answers, externalData) => {
     const existing =

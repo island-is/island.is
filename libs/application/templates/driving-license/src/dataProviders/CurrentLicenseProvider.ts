@@ -32,7 +32,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
           fakeData.healthRemarks === YES
             ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
             : undefined,
-        applicationFor: fakeData.currentLicense === 'temp' ? B_TEMP : B_FULL
+        applicationFor: fakeData.currentLicense === 'temp' ? B_FULL : B_TEMP,
       }
     }
 
@@ -68,11 +68,10 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
-    const applicationFor = !categoryB ? B_TEMP : B_FULL
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: response.data?.drivingLicense?.healthRemarks,
-      applicationFor
+      applicationFor: categoryB ? B_FULL : B_TEMP,
     }
   }
 
