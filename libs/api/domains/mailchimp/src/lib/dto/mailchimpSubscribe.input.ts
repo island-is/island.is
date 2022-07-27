@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class MailchimpSubscribeInput {
@@ -8,7 +8,7 @@ export class MailchimpSubscribeInput {
   signupID!: string
 
   @Field()
-  @IsString()
+  @IsEmail()
   email!: string
 
   @Field({ nullable: true })
