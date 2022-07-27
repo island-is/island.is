@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { FC, useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -8,6 +8,7 @@ import {
   Link,
   NavigationItem,
   Stack,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -39,11 +40,40 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Query['getNamespace']
+}
+
+const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
+  const navigation = useMemo(
+    () =>
+      slices
+        .map((slice) => ({
+          id: slice.id,
+          text: slice['title'] ?? slice['leftTitle'] ?? '',
+        }))
+        .filter((item) => !!item.text),
+    [slices],
+  )
+  if (navigation.length === 0) {
+    return null
+  }
+  return (
+    <Box marginY={2}>
+      <TableOfContents
+        tableOfContentsTitle={title}
+        headings={navigation.map(({ id, text }) => ({
+          headingTitle: text,
+          headingId: id,
+        }))}
+        onClick={(id) => scrollTo(id, { smooth: true })}
+      />
+    </Box>
+  )
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -118,6 +148,12 @@ const SubPage: Screen<SubPageProps> = ({
                     </Box>
                   </GridColumn>
                 </GridRow>
+                {subpage.showTableOfContents && (
+                  <TOC
+                    slices={subpage.slices}
+                    title={n('navigationTitle', 'Efnisyfirlit')}
+                  />
+                )}
                 <GridRow>
                   <GridColumn
                     span={[
