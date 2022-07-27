@@ -241,7 +241,7 @@ services-auth-api:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
-    IDENTITY_SERVER_ISSUER_URL: 'https://ids-duende-identity-server.dev01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://feature-ids-duende.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
