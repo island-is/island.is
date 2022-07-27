@@ -31,5 +31,11 @@ export const applicationsModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApplicationScope.read),
       render: () => OverviewScreen,
     },
+    {
+      name: m.finishedApplications,
+      path: ServicePortalPath.ApplicationCompleteApplications,
+      enabled: userInfo.scopes.includes(ApplicationScope.read),
+      render: () => OverviewScreen,
+    },
   ],
 }

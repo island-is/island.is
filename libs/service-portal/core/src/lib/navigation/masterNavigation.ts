@@ -37,6 +37,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.unfinishedApplications,
             path: ServicePortalPath.ApplicationIncompleteApplications,
           },
+          {
+            name: m.finishedApplications,
+            path: ServicePortalPath.ApplicationCompleteApplications,
+          },
         ],
       },
 

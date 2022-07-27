@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { defineMessage } from 'react-intl'
+import { useState } from 'react'
 import {
   ActionCardLoader,
   EmptyState,
@@ -21,18 +20,17 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
 import { useLocation } from 'react-router-dom'
 import { useGetOrganizationsQuery } from '../../../graphql/src/schema'
-
 import { m } from '../lib/messages'
 import { ValueType } from 'react-select'
 import { Application } from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
 import {
   getBaseUrlForm,
+  getFilteredApplicationsByStatus,
+  getInstitutions,
   mapLinkToStatus,
-  sortApplicationsOrganziations,
-  sortApplicationsStatus,
 } from '../shared/utils'
 import { ApplicationOverViewStatus } from '../shared/types'
+import { applicationGroup } from '../components/applicationGroup'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -54,84 +52,17 @@ const Overview: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
+  const statusToShow = mapLinkToStatus(location.pathname)
 
-  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
-
-  const [organizations, setOrganizations] = useState<any[]>([])
-
-  const [applicationsByStatus, setApplicationsByStatus] = useState<{
-    incomplete: Application[]
-    inProgress: Application[]
-    finished: Application[]
-  }>({
-    incomplete: [],
-    inProgress: [],
-    finished: [],
-  })
-
-  const [institutions, setInstitutions] = useState<Option[]>([
-    defaultInstitution,
-  ])
+  const {
+    data: orgData,
+    loading: loadingOrg,
+    error: orgError,
+  } = useGetOrganizationsQuery()
 
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
-
-  const [statusToShow, setStatusToShow] = useState<ApplicationOverViewStatus>(
-    ApplicationOverViewStatus.all,
-  )
-
-  const setAllApplications = useCallback((apps: Application[]) => {
-    const applicationsSorted = sortApplicationsStatus(apps)
-    setApplicationsByStatus(applicationsSorted)
-  }, [])
-
-  const setApplicationInstitutions = useCallback(() => {
-    const institutions =
-      sortApplicationsOrganziations(applications, organizations) || []
-    setInstitutions([defaultInstitution, ...institutions])
-  }, [applications, organizations])
-
-  const searchApplications = useCallback(() => {
-    const searchQuery = filterValue.searchQuery
-    const activeInstitution = filterValue.activeInstitution.value
-    const filteredApps = (applications as Application[]).filter(
-      (application: Application) =>
-        // Search in name and description
-        (application.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          application.actionCard?.description
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase())) &&
-        // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
-        // otherwise it filters it.
-        (activeInstitution !== ''
-          ? institutionMapper[application.typeId] === activeInstitution
-          : true),
-    )
-    setAllApplications(filteredApps)
-  }, [applications, filterValue, setAllApplications])
-
-  useEffect(() => {
-    if (orgData?.getOrganizations?.items) {
-      setOrganizations(orgData?.getOrganizations?.items)
-    }
-  }, [orgData])
-
-  useEffect(() => {
-    if (location) {
-      setStatusToShow(mapLinkToStatus(location.pathname))
-    }
-  }, [location])
-
-  useEffect(() => {
-    setApplicationInstitutions()
-    searchApplications()
-  }, [filterValue, searchApplications, setApplicationInstitutions])
-
-  useEffect(() => {
-    setApplicationInstitutions()
-    setAllApplications(applications)
-  }, [applications, setApplicationInstitutions, setAllApplications])
 
   const handleSearchChange = (value: string) => {
     setFilterValue((oldFilter) => ({
@@ -147,23 +78,26 @@ const Overview: ServicePortalModuleComponent = () => {
     }))
   }
 
-  const applicationList = (applications: Application[], label: string) => {
-    return (
-      <>
-        <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
-          {label}
-        </Text>
-        <List
-          organizations={organizations}
-          applications={applications}
-          refetch={refetch}
-          onClick={(applicationUrl) =>
-            window.open(`${getBaseUrlForm()}/${applicationUrl}`)
-          }
-        />
-      </>
-    )
+  if (
+    orgError ||
+    error ||
+    (!loading && !applications) ||
+    (!loadingOrg && !orgData)
+  ) {
+    return <EmptyState description={m.error} />
   }
+  const organizations = orgData?.getOrganizations?.items || ([] as any)
+
+  const institutions = getInstitutions(
+    defaultInstitution,
+    applications,
+    organizations,
+  )
+
+  const applicationsSortedByStatus = getFilteredApplicationsByStatus(
+    filterValue,
+    applications,
+  )
 
   return (
     <Box key="application-overview">
@@ -182,76 +116,87 @@ const Overview: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
 
-      {loading || (loadingOrg && !orgData && <ActionCardLoader repeat={3} />)}
+      {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
 
-      {error && <EmptyState description={m.error} />}
+      {(error || orgError) && <EmptyState description={m.error} />}
 
       {!error && !loading && !applications && (
         <EmptyState description={m.noApplicationsAvailable} />
       )}
 
-      {applications && orgData && !loading && !error && (
-        <>
-          <Box paddingBottom={[3, 5]}>
-            <GridRow alignItems="flexEnd">
-              <GridColumn span={['1/1', '1/2']}>
-                <Box height="full">
-                  <Input
-                    icon="search"
-                    backgroundColor="blue"
-                    size="xs"
-                    value={filterValue.searchQuery}
-                    onChange={(ev) => handleSearchChange(ev.target.value)}
-                    name="umsoknir-leit"
-                    label={formatMessage(m.searchLabel)}
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                  />
-                </Box>
-              </GridColumn>
-              <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
-                <Box height="full">
-                  <Select
-                    name="institutions"
-                    backgroundColor="blue"
-                    size="xs"
-                    defaultValue={institutions[0]}
-                    options={institutions}
-                    value={filterValue.activeInstitution}
-                    onChange={(e) => {
-                      handleInstitutionChange(e)
-                    }}
-                    label={formatMessage(m.searchInstitutiontLabel)}
-                  />
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </Box>
+      {applications &&
+        orgData &&
+        !loading &&
+        !loadingOrg &&
+        !error &&
+        !orgError && (
+          <>
+            <Box paddingBottom={[3, 5]}>
+              <GridRow alignItems="flexEnd">
+                <GridColumn span={['1/1', '1/2']}>
+                  <Box height="full">
+                    <Input
+                      icon="search"
+                      backgroundColor="blue"
+                      size="xs"
+                      value={filterValue.searchQuery}
+                      onChange={(ev) => handleSearchChange(ev.target.value)}
+                      name="umsoknir-leit"
+                      label={formatMessage(m.searchLabel)}
+                      placeholder={formatMessage(m.searchPlaceholder)}
+                    />
+                  </Box>
+                </GridColumn>
+                <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
+                  <Box height="full">
+                    <Select
+                      name="institutions"
+                      backgroundColor="blue"
+                      size="xs"
+                      defaultValue={institutions[0]}
+                      options={institutions}
+                      value={filterValue.activeInstitution}
+                      onChange={(e) => {
+                        handleInstitutionChange(e)
+                      }}
+                      label={formatMessage(m.searchInstitutiontLabel)}
+                    />
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </Box>
 
-          {applicationsByStatus.incomplete?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.incomplete) &&
-            applicationList(
-              applicationsByStatus.incomplete,
-              formatMessage(m.incompleteApplications),
-            )}
+            {applicationsSortedByStatus.incomplete?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.incomplete) &&
+              applicationGroup(
+                applicationsSortedByStatus.incomplete,
+                formatMessage(m.incompleteApplications),
+                organizations,
+                refetch,
+              )}
 
-          {applicationsByStatus.inProgress?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.inProgress) &&
-            applicationList(
-              applicationsByStatus.inProgress,
-              formatMessage(m.inProgressApplications),
-            )}
+            {applicationsSortedByStatus.inProgress?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.inProgress) &&
+              applicationGroup(
+                applicationsSortedByStatus.inProgress,
+                formatMessage(m.inProgressApplications),
+                organizations,
+                refetch,
+              )}
 
-          {applicationsByStatus.finished?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.finished) &&
-            applicationList(
-              applicationsByStatus.finished,
-              formatMessage(m.finishedApplications),
-            )}
-        </>
-      )}
+            {applicationsSortedByStatus.finished?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.finished) &&
+              applicationGroup(
+                applicationsSortedByStatus.finished,
+                formatMessage(m.finishedApplications),
+                organizations,
+                refetch,
+              )}
+          </>
+        )}
     </Box>
   )
 }

@@ -38,7 +38,7 @@ export const sortApplicationsStatus = (
   }
 }
 
-export const sortApplicationsOrganziations = (
+export const sortApplicationsOrganizations = (
   applications: Application[],
   organizations?: Organization[],
 ): Option[] | undefined => {
@@ -71,6 +71,9 @@ export const mapLinkToStatus = (link: string) => {
   if (link === ServicePortalPath.ApplicationIncompleteApplications) {
     return ApplicationOverViewStatus.incomplete
   }
+  if (link === ServicePortalPath.ApplicationCompleteApplications) {
+    return ApplicationOverViewStatus.finished
+  }
   return ApplicationOverViewStatus.all
 }
 
@@ -86,4 +89,39 @@ export const getBaseUrlForm = () => {
     : isStaging
     ? 'https://beta.staging01.devland.is/umsoknir'
     : 'https://island.is/umsoknir'
+}
+
+export const getFilteredApplicationsByStatus = (
+  filterValue: any,
+  applications = [],
+) => {
+  const { searchQuery } = filterValue
+  const activeInstitution = filterValue?.activeInstitution?.value
+  const filteredApps = (applications as Application[]).filter(
+    (application: Application) =>
+      // Search in name and description
+      (application.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        application.actionCard?.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase())) &&
+      // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
+      // otherwise it filters it.
+      (activeInstitution !== ''
+        ? institutionMapper[application.typeId] === activeInstitution
+        : true),
+  )
+  return sortApplicationsStatus(filteredApps)
+}
+
+export const getInstitutions = (
+  defaultInstitution: any,
+  applications: any,
+  organizations: any,
+) => {
+  if (!applications || !organizations) {
+    return [defaultInstitution]
+  }
+  const institutions =
+    sortApplicationsOrganizations(applications, organizations) || []
+  return [defaultInstitution, ...institutions]
 }
