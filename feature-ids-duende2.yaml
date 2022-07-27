@@ -120,9 +120,9 @@ services-auth-api:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'serviceauth'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'serviceauth'
+    DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://ids-duende-identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -191,9 +191,9 @@ services-auth-api:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'serviceauth'
+      DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'serviceauth'
+      DB_USER: 'servicesauth'
       SERVERSIDE_FEATURES_ON: 'INAO_Client'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
