@@ -88,7 +88,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
         },
       })
         .then((result) => {
-          if (result.data.mailchimpSubscribe.subscribed) {
+          if (result?.data?.mailchimpSubscribe?.subscribed) {
             setMessage({
               type: 'success',
               text: n('formSuccessTitle', 'Skráning tókst, takk fyrir!'),

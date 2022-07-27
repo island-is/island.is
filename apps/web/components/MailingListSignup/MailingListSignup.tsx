@@ -56,7 +56,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
     if (isValidEmail.test(email)) {
       submit({ variables: { input: { signupID, email } } })
         .then((result) => {
-          if (result.data.mailchimpSubscribe.subscribed) {
+          if (result?.data?.mailchimpSubscribe?.subscribed) {
             const successMessage: string = n(
               'formSuccess',
               'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
