@@ -1,6 +1,50 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* --------------------- */
+  /* PREREQUISITES SECTION */
+  /* --------------------- */
+
+  /* Current License Provider */
+  titleCurrentLicenseProvider: {
+    id: 'dlp.application:titleCurrentLicenseProvider',
+    defaultMessage: 'Upplýsingar úr Ökuskírteinaskrá',
+    description: 'Current License Provider Title',
+  },
+  descriptionCurrentLicenseProvider: {
+    id: 'dlp.application:descriptionCurrentLicenseProvider',
+    defaultMessage:
+      'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
+    description: 'Current License Provider Title',
+  },
+  errorCurrentLicenseProvider: {
+    id: 'dlp.application:errorCurrentLicenseProvider',
+    defaultMessage:
+      'Tókst ekki að sækja upplýsingar um núgildandi ökuskírteini',
+    description:
+      "Message to display when user's Driver License Data cannot be retrieved",
+  },
+
+  /* Requirements Subsection */
+  applicationEligibilityTitle: {
+    id: 'dlp.application:applicationEligibilityTitle',
+    defaultMessage: 'Skilyrði umsóknar',
+    description: 'title for requirement section',
+  },
+  eligibilityRequirementTitle: {
+    id: 'dlp.application:eligibilityTitle',
+    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
+    description: 'title for requirement component',
+  },
+  externalDataComplete: {
+    id: 'dlp.application:externalData.complete',
+    defaultMessage: 'Uppfletting í lagi',
+    description: 'Information',
+  },
+
+  /* ----- */
+  /* OTHER */
+  /* ----- */
   conditionsSection: {
     id: 'example.application:conditions.section',
     defaultMessage: 'Skilyrði',
@@ -142,5 +186,77 @@ export const m = defineMessages({
     id: 'example.application:dataSchema.national.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+})
+
+export const requirementsMessages = defineMessages({
+  rlsAcceptedDescription: {
+    id: 'dlp.application:requirementunmet.accepted',
+    defaultMessage: 'Þú uppfyllir þær kröfur sem gerðar eru',
+    description: 'RLS / driving license api approves of the applicant',
+  },
+  rlsDefaultDeniedDescription: {
+    id: 'dlp.application:requirementunmet.deniedbyservicedescription',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  invalidLicense: {
+    id: 'dlp.application:requirementunmet.invalidlicense',
+    defaultMessage:
+      'Bráðabirgðaskírteini er ekki til staðar. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description:
+      'requirement unmet api returned NO_TEMP_LICENSE / NO_LICENSE_FOUND',
+  },
+  hasPointsOrDeprivation: {
+    id: 'dlp.application:requirementunmet.haspointsordeprivation',
+    defaultMessage:
+      'Þú ert með punkta eða sviptingu. Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'requirement unmet api returned HAS_DEPRIVATION / HAS_POINTS',
+  },
+  drivingAssessmentTitle: {
+    id: 'dlp.application:requirementunmet.drivingassessmenttitle',
+    defaultMessage: 'Akstursmat',
+    description: 'requirement unmet assessment',
+  },
+  drivingAssessmentDescription: {
+    id: 'dlp.application:requirementunmet.drivingassessmentdescription',
+    defaultMessage:
+      'Ef þú ert búinn að fara í akstursmat hjá ökukennara biddu hann um að staðfesta það rafrænt.',
+    description: 'requirement unmet assessment',
+  },
+  drivingSchoolTitle: {
+    id: 'dlp.application:requirementunmet.drivingschooltitle',
+    defaultMessage: 'Ökuskóli 3',
+    description: 'requirement unmet driving school',
+  },
+  drivingSchoolDescription: {
+    id: 'dlp.application:requirementunmet.drivingschooldescription',
+    defaultMessage:
+      'Umsækjandi þarf að hafa klárað Ökuskóla 3 til að fá fullnaðarskírteini.',
+    description: 'requirement unmet driving school',
+  },
+  rlsTitle: {
+    id: 'dlp.application:requirementunmet.deniedbyservicetitle',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyTitle: {
+    id: 'dlp.application:requirementunmet.localResidencyTitle',
+    defaultMessage: 'Búseta á Íslandi',
+    description: 'requirement unmet api returned false',
+  },
+  localResidencyDescription: {
+    id: 'dlp.application:requirementunmet.localResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
+  currentLocalResidencyDescription: {
+    id: 'dlp.application:requirementunmet.currentLocalResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
+    description: 'requirement unmet api returned false',
   },
 })

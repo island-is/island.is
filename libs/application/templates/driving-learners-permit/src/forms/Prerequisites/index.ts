@@ -9,7 +9,8 @@ import {
   buildDataProviderItem,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
+import { sectionRequirements } from './sectionRequirements'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -25,14 +26,14 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'sampleData',
-              type: 'SampleDataProvider',
-              title: 'Staðfesting á ákveðnu atriði',
-              subTitle:
-                'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
+              id: 'currentLicense',
+              type: 'CurrentLicenseProvider',
+              title: m.titleCurrentLicenseProvider,
+              subTitle: m.descriptionCurrentLicenseProvider,
             }),
           ],
         }),
+        sectionRequirements,
         buildMultiField({
           id: 'externalDataSuccess',
           title: 'Tókst að sækja gögn',
