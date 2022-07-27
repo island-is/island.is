@@ -571,8 +571,20 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+      
+      - name: Docker build image IDS
+        working-directory: infra
+        run: |
+          ./scripts/build-docker-container.sh $DOCKER_TAG
+          echo "COMMENT<<EOF" >> $GITHUB_ENV
+          printf "Affected services are: ${{needs.prepare.outputs.IMAGES}}\n" >> $GITHUB_ENV
+          docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=identity-server --feature=$FEATURE_NAME >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        env:
+          PUBLISH: 'true'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
-      - name: Docker build image
+      - name: Docker build image island-is
         working-directory: infra
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
