@@ -1,4 +1,4 @@
-import { MailchimpResolver } from '@island.is/api/domains/mailchimp'
+import { MailchimpResolver } from './mailchimp.resolver'
 import { Test } from '@nestjs/testing'
 import {
   CmsContentfulService,
