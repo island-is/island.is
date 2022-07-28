@@ -83,6 +83,22 @@ const Overview: ServicePortalModuleComponent = () => {
     applications,
   )
 
+  const GetIntroductionHeadingOrIntro = (
+    status: ApplicationOverViewStatus,
+    heading = false,
+  ) => {
+    switch (status) {
+      case ApplicationOverViewStatus.finished:
+        return heading ? m.headingFinished : m.introCopyFinished
+      case ApplicationOverViewStatus.inProgress:
+        return heading ? m.headingInProgress : m.introCopyInProgress
+      case ApplicationOverViewStatus.incomplete:
+        return heading ? m.headingIncomplete : m.introCopyIncomplete
+      default:
+        return heading ? m.heading : m.introCopy
+    }
+  }
+
   return (
     <Box key="application-overview">
       <Box marginBottom={5}>
@@ -90,10 +106,12 @@ const Overview: ServicePortalModuleComponent = () => {
           <GridColumn>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {formatMessage(m.heading)}
+                {formatMessage(
+                  GetIntroductionHeadingOrIntro(statusToShow, true),
+                )}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage(m.introCopy)}
+                {formatMessage(GetIntroductionHeadingOrIntro(statusToShow))}
               </Text>
             </Stack>
           </GridColumn>
@@ -149,7 +167,7 @@ const Overview: ServicePortalModuleComponent = () => {
               statusToShow === ApplicationOverViewStatus.incomplete) && (
               <ApplicationGroup
                 applications={applicationsSortedByStatus.incomplete}
-                label={formatMessage(m.incompleteApplications) + 're'}
+                label={formatMessage(m.incompleteApplications)}
                 organizations={organizations}
                 refetch={refetch}
               />

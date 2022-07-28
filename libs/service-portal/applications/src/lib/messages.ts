@@ -6,11 +6,47 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknir',
     description: `Main title for the applications portal`,
   },
+  headingFinished: {
+    id: 'sp.applications:headingFinished',
+    defaultMessage: 'Kláraðar umsóknir',
+    description: `heading for applications that are finished`,
+  },
+  headingInProgress: {
+    id: 'sp.applications:headingInProgress',
+    defaultMessage: 'Umsóknir í vinnslu',
+    description: `heading for applications that are in progress`,
+  },
+  headingIncomplete: {
+    id: 'sp.applications:headingIncomplete',
+    defaultMessage: 'Ókláraðar umsóknir',
+    description: `heading for applications that are incomplete`,
+  },
   introCopy: {
     id: 'sp.applications:intro.copy',
     defaultMessage:
-      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+      'Hér sérðu yfirlit yfir allar umsóknir sem þú hefur stofnað í gegnum Ísland.is.',
     description: 'Intro copy to introduce to all applications available',
+  },
+  introCopyFinished: {
+    id: 'sp.applications:intro.copyFinished',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
+    description:
+      'Intro copy to introduce to all applications that are finished',
+  },
+  introCopyInProgress: {
+    id: 'sp.applications:intro.Inprogress',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær umsóknir í vinnslu sem þú hefur hafið í gegnum Ísland.is.',
+    description:
+      'Intro copy to introduce to all applications that are in progress',
+  },
+  introCopyIncomplete: {
+    id: 'sp.applications:intro.copyIncomplete',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir þær ókláruðu umsóknir sem þú hefur hafið í gegnum Ísland.is.',
+    description:
+      'Intro copy to introduce to all applications that are incomplete',
   },
   error: {
     id: 'sp.applications:error',

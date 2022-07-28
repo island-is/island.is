@@ -45,7 +45,7 @@ export const ApplicationGroup: FC<Props> = ({
         }
       />
       {applications.length > pageSize ? (
-        <Box margin={4}>
+        <Box marginX={[0, 4]} marginTop={[1, 4]}>
           <Pagination
             page={page}
             totalPages={pagedDocuments.totalPages}
