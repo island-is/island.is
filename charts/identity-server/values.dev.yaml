@@ -1,9 +1,9 @@
 auth-admin-web:
   enabled: true
   env:
-    BASE_URL: 'https://identity-server.dev01.devland.is/admin'
-    IDENTITYSERVER_DOMAIN: 'identity-server.dev01.devland.is'
-    NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
+    BASE_URL: 'https://ids-duende-identity-server.dev01.devland.is/admin'
+    IDENTITYSERVER_DOMAIN: 'ids-duende-identity-server.dev01.devland.is'
+    NEXTAUTH_URL: 'https://ids-duende-identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
@@ -181,7 +181,7 @@ services-auth-admin-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://ids-duende-identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
