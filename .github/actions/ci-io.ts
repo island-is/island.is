@@ -80,10 +80,6 @@ export class LocalRunner implements GitActionStatus {
           shell: git.shell,
         },
       )
-      if (printAffected.status !== 0) {
-        log("Change detection failed: %O", printAffected.error);
-        throw printAffected.error
-      }
       let affectedComponents = printAffected.stdout
         .split(',')
         .map((s) => s.trim())
