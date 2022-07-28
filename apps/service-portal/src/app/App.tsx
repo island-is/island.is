@@ -27,6 +27,7 @@ export const App = () => {
           initialState={store.initialState}
           reducer={store.reducer}
         >
+          {/* Some comment */}
           <LocaleProvider locale={defaultLanguage} messages={{}}>
             <ApplicationErrorBoundary>
               <Router basename="/minarsidur">
