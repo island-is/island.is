@@ -474,6 +474,22 @@ export const slices = gql`
     }
   }
 
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    recipient
+    fields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    successText
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -503,6 +519,7 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
   }
 
   fragment AllSlices on Slice {
