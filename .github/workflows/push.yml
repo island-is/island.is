@@ -227,7 +227,7 @@ jobs:
 
       - name: Send Slack notification
         id: slack
-        if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
+        if: contains(github.ref, "main") ## Supposed to be release. Main for testing
         uses: 8398a7/action-slack@v3
         with:
           status: custom
