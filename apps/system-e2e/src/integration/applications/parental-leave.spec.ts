@@ -185,5 +185,13 @@ describe('Parental leave', () => {
       name: label(parentalLeaveFormMessages.duration.monthsOption),
     }).click()
     cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.duration.title),
+    })
+    cy.findByRole('button', {
+      name: '6 months',
+    }).click()
+    cy.get('[data-testid="proceed"]').click()
   })
 })
