@@ -3,6 +3,7 @@ import { HealthCheck, HealthCheckService } from '@nestjs/terminus'
 
 import { CmsHealthIndicator } from '@island.is/cms'
 
+// Some comment
 @Controller('health')
 export class HealthController {
   constructor(

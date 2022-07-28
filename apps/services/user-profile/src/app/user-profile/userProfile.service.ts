@@ -14,6 +14,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 
+// Some comment
 @Injectable()
 export class UserProfileService {
   constructor(
