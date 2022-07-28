@@ -21,14 +21,14 @@ describe('mailchimpResolver', () => {
   })
 
   describe('subscribeMailchimp', () => {
-    it('should try to subscribe to a valid mailing list', async () => {
-      const testInput = {
-        signupID: '123',
-        email: 'test@example.com',
-        name: 'Tester',
-        toggle: true,
-      }
+    const testInput = {
+      signupID: '123',
+      email: 'test@example.com',
+      name: 'Tester',
+      toggle: true,
+    }
 
+    it('should try to subscribe to a valid mailing list', async () => {
       jest
         .spyOn(cmsContentfulService, 'getMailingListSignupSlice')
         .mockImplementation(({ id }) =>
@@ -52,13 +52,6 @@ describe('mailchimpResolver', () => {
     })
 
     it('should try to subscribe to a mailing list that responds with an error', async () => {
-      const testInput = {
-        signupID: '123',
-        email: 'test@example.com',
-        name: 'Tester',
-        toggle: true,
-      }
-
       jest
         .spyOn(cmsContentfulService, 'getMailingListSignupSlice')
         .mockImplementation(({ id }) =>
@@ -74,13 +67,6 @@ describe('mailchimpResolver', () => {
     })
 
     it('should try to subscribe to a mailing list that has an invalid URL', async () => {
-      const testInput = {
-        signupID: '123',
-        email: 'invalid_email',
-        name: 'Tester',
-        toggle: true,
-      }
-
       const testEmailSlice = {
         ...emailSlice,
         signupUrl: 'https://example.com/invalid_url',
