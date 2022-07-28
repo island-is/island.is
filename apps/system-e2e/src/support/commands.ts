@@ -1,4 +1,5 @@
 import { DocumentNode } from '@apollo/client'
+import {uuid} from 'uuidv4'
 
 console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
 const testEnvironment = Cypress.env('testEnvironment')
@@ -106,5 +107,23 @@ Cypress.Commands.add(
       },
       method: 'POST',
     })
+  },
+)
+
+const applications: Record<string, string> = {}
+Cypress.Commands.add(
+  'createApplication',
+  (
+    applicationType: ApplicationType,
+    applicationId: string = uuid(),
+  ) => {
+    // Application has already been created before
+    if (applications[applicationId]) return
+
+    cy.visit(`${Cypress.config('baseUrl')}/umsoknir/${applicationType}`)
+    cy.get('button[type=submit]').click()
+    
+    // Cleanup, store
+    applications[applicationId] = applicationId
   },
 )

@@ -14,6 +14,7 @@ describe('P-sign', () => {
   beforeEach(() => {
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
+      url: '/',
     })
     cy.visit('/umsoknir/p-merki')
     cy.get('form').should('exist')
@@ -31,5 +32,10 @@ describe('P-sign', () => {
         .its('data.applicationApplication')
         .should('not.be.empty')
     })
+  })
+
+  it('should filter applications', () => {
+    cy.createApplication(ApplicationType.pSign)
+    cy.log("hi")
   })
 })
