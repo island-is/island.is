@@ -185,8 +185,8 @@ export const getExtensionInfoText = (
 
   return rejectReason === 'none'
     ? undefined
-    : formatMessage(m.sections.caseExtension.extensionInfo, {
-        hasChildCase: workingCase.childCase ? 'yes' : 'no',
+    : formatMessage(m.sections.caseExtension.extensionInfoV2, {
+        hasChildCase: Boolean(workingCase.childCase),
         caseType: workingCase.type,
         rejectReason,
       })

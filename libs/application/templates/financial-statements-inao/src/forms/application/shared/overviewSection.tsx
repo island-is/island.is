@@ -2,10 +2,10 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  DefaultEvents,
   buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import { GREATER, LESS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 

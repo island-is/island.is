@@ -1,13 +1,13 @@
+import { getValueViaPath } from '@island.is/application/core'
 import {
   DataProviderItem,
   ExternalData,
   FieldTypes,
   FormItemTypes,
   FormValue,
-  getValueViaPath,
   RecordObject,
   SubmitField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FormScreen } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'

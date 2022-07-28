@@ -51,10 +51,12 @@ const InfoCard: React.FC<Props> = (props) => {
                     fontWeight="semiBold"
                   >{`${defendant.name}, `}</Text>
                   <Text as="span" fontWeight="semiBold">
-                    {`${formatDOB(
-                      defendant.nationalId,
-                      defendant.noNationalId,
-                    )}, `}
+                    {defendant.nationalId
+                      ? `${formatDOB(
+                          defendant.nationalId,
+                          defendant.noNationalId,
+                        )}, `
+                      : ''}
                   </Text>
                   <Text as="span">
                     {defendant.citizenship && ` (${defendant.citizenship}), `}

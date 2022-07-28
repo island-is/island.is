@@ -1,27 +1,29 @@
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import {
+  findSectionIndex,
+  findSubSectionIndex,
+  getSectionsInForm,
+  getSubSectionsInSection,
+  getValueViaPath,
+  isValidScreen,
+  shouldShowFormItem,
+} from '@island.is/application/core'
+import {
   ExternalData,
   ExternalDataProvider,
   Field,
-  findSectionIndex,
-  findSubSectionIndex,
   Form,
   FormItemTypes,
   FieldTypes,
   FormLeaf,
   FormNode,
   FormValue,
-  getSectionsInForm,
-  getSubSectionsInSection,
-  getValueViaPath,
-  isValidScreen,
   MultiField,
   Repeater,
   Section,
-  shouldShowFormItem,
   SubSection,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import {
   ExternalDataProviderScreen,

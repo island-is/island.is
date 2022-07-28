@@ -1195,6 +1195,9 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+
+  /** Open Link in New Tab */
+  openLinkInNewTab: boolean
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -2166,6 +2169,9 @@ export interface IOrganizationSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Slice Custom Renderer */
   sliceCustomRenderer?: 'SliceDropdown' | undefined

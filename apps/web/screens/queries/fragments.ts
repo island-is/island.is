@@ -347,6 +347,7 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
     }
     link {
       text
@@ -447,6 +448,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text

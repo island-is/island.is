@@ -5,9 +5,9 @@ import {
   Button,
   FocusableBox,
   Link,
-  LinkCard,
   Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
@@ -32,7 +32,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 
   return (
     !!slice.articles.length && (
-      <section key={slice.id} aria-labelledby={labelId}>
+      <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box
           borderTopWidth="standard"
           borderColor="standard"
@@ -43,26 +43,28 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             {slice.title}
           </Text>
           <Stack space={2}>
-            {slice.articles.map(({ title, slug, processEntry }) => {
-              const url = linkResolver('Article' as LinkType, [slug])
-              return (
-                <FocusableBox
-                  key={slug}
-                  href={url.href}
-                  target={isMobile ? '' : '_blank'}
-                  borderRadius="large"
-                >
-                  {({ isFocused }) => (
-                    <LinkCard
-                      isFocused={isFocused}
-                      tag={!!processEntry && n('applicationProcess', 'Umsókn')}
+            {slice.articles.map(
+              ({ title, slug, processEntry, processEntryButtonText }) => {
+                const url = linkResolver('Article' as LinkType, [slug])
+                return (
+                  <FocusableBox
+                    key={slug}
+                    borderRadius="large"
+                    href={url.href}
+                    target={isMobile ? '' : '_blank'}
+                  >
+                    <TopicCard
+                      tag={
+                        (!!processEntry || processEntryButtonText) &&
+                        n(processEntryButtonText || 'application', 'Umsókn')
+                      }
                     >
                       {title}
-                    </LinkCard>
-                  )}
-                </FocusableBox>
-              )
-            })}
+                    </TopicCard>
+                  </FocusableBox>
+                )
+              },
+            )}
           </Stack>
           {!!slice.link && (
             <Box display="flex" justifyContent="flexEnd" paddingTop={6}>

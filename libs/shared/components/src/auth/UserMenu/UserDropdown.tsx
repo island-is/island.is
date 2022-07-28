@@ -16,12 +16,11 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserDropdownProps {
   user: User
@@ -49,10 +48,13 @@ export const UserDropdown = ({
   }
 
   const actor = user.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(user)
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
+  const isProcurationHolder = user.profile.delegationType?.includes(
+    'ProcurationHolder',
+  )
 
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -109,7 +111,7 @@ export const UserDropdown = ({
                 <Icon icon="business" type="filled" color="blue400" />
               </Box>
             ) : (
-              <UserAvatar username={isDelegation ? actorName : userName} />
+              <UserAvatar username={userName} />
             )}
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">
@@ -130,7 +132,7 @@ export const UserDropdown = ({
             <UserDelegations user={user} onSwitchUser={onSwitchUser} />
           </Box>
 
-          {(!isDelegation || isDelegationCompany) && (
+          {(!isDelegation || isProcurationHolder) && (
             <Box paddingTop={1}>
               <UserProfileInfo onClick={() => onClose()} />
             </Box>
