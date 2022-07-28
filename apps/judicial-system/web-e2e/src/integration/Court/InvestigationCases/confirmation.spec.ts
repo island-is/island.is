@@ -9,12 +9,6 @@ describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
   const ruling = faker.lorem.sentence()
   const conclusion = faker.lorem.sentence()
 
-  beforeEach(() => {
-    cy.login(UserRole.JUDGE)
-    cy.stubAPIResponses()
-    cy.visit(`${IC_CONFIRMATION_ROUTE}/test_id_stadfesting`)
-  })
-
   it('should display the ruling', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
@@ -23,7 +17,10 @@ describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
       ruling,
     }
 
+    cy.login(UserRole.JUDGE)
+    cy.stubAPIResponses()
     intercept(caseDataAddition)
+    cy.visit(`${IC_CONFIRMATION_ROUTE}/test_id_stadfesting`)
 
     cy.contains(ruling)
   })

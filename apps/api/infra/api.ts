@@ -17,6 +17,7 @@ import {
   FishingLicense,
   MunicipalitiesFinancialAid,
   Vehicles,
+  AdrAndMachine,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -120,6 +121,7 @@ export const serviceSetup = (services: {
       SYSLUMENN_TIMEOUT: '30000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
+      XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -184,6 +186,7 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(
+      AdrAndMachine,
       Base,
       Client,
       HealthInsurance,
@@ -226,6 +229,11 @@ export const serviceSetup = (services: {
     .resources({
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '200m', memory: '512Mi' },
+    })
+    .replicaCount({
+      default: 10,
+      max: 50,
+      min: 10,
     })
     .grantNamespaces(
       'nginx-ingress-external',

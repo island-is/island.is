@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery, gql, useMutation } from '@apollo/client'
+import { formatText } from '@island.is/application/core'
 import {
   CustomField,
   FieldBaseProps,
-  formatText,
   DefaultEvents,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'

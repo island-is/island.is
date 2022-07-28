@@ -2,10 +2,10 @@ import React, { FC, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import {
-  FieldBaseProps,
   NO_ANSWER,
   extractRepeaterIndexFromField,
 } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,

@@ -1,18 +1,16 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildCustomField,
   buildSubSection,
   buildMultiField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
-import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DataProviderTypes } from '../types'
 import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'

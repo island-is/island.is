@@ -16,10 +16,52 @@ import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
 import { DelegationScope } from './delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/entities/models/personal-representative-scope-permission.model'
+import { Optional } from 'sequelize/types'
+
+interface ModelAttributes {
+  name: string
+  enabled: boolean
+  displayName: string
+  description: string
+  groupId?: string | null
+  showInDiscoveryDocument: boolean
+  grantToLegalGuardians: boolean
+  grantToProcuringHolders: boolean
+  grantToPersonalRepresentatives: boolean
+  allowExplicitDelegationGrant: boolean
+  automaticDelegationGrant: boolean
+  alsoForDelegatedUser: boolean
+  isAccessControlled?: boolean
+  userClaims?: ApiScopeUserClaim[]
+  required: boolean
+  emphasize: boolean
+  archived?: Date | null
+  created: Date
+  modified?: Date
+  group?: ApiScopeGroup
+  delegationScopes?: DelegationScope[]
+  personalRepresentativesScopePermissions?: PersonalRepresentativeScopePermission[]
+}
+
+type CreationAttributes = Optional<
+  ModelAttributes,
+  | 'enabled'
+  | 'showInDiscoveryDocument'
+  | 'grantToLegalGuardians'
+  | 'grantToProcuringHolders'
+  | 'grantToPersonalRepresentatives'
+  | 'allowExplicitDelegationGrant'
+  | 'automaticDelegationGrant'
+  | 'alsoForDelegatedUser'
+  | 'required'
+  | 'emphasize'
+  | 'created'
+>
+
 @Table({
   tableName: 'api_scope',
 })
-export class ApiScope extends Model<ApiScope> {
+export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey
@@ -150,7 +192,7 @@ export class ApiScope extends Model<ApiScope> {
     defaultValue: null,
   })
   @ApiProperty({ nullable: true })
-  archived!: Date | null
+  archived?: Date | null
 
   @CreatedAt
   @ApiProperty()

@@ -3,7 +3,8 @@ import {
   PaymentScheduleConditions,
   PaymentScheduleDebts,
 } from '@island.is/api/schema'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
@@ -67,7 +68,7 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
     const results = await updateCurrentEmployer({
       variables: {
         input: {
-          employerNationalId: kennitala.clean(correctedNationalId),
+          employerNationalId: kennitala.sanitize(correctedNationalId),
         },
       },
     })

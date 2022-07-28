@@ -23,6 +23,7 @@ import {
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
+  AccessDeniedLegal,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { Document, Query } from '@island.is/api/schema'
@@ -33,7 +34,7 @@ import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
 import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -46,6 +47,7 @@ import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 import FilterTag from '../../components/FilterTag/FilterTag'
+import differenceInYears from 'date-fns/differenceInYears'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -86,24 +88,6 @@ type FilterValues = {
 type GroupsValue = {
   value: string
   label: string
-}
-
-type FilterCategory = {
-  /** Id for the category. */
-  id: string
-  /** The category label to display on screen. */
-  label: string
-  /** The array of currently selected active filters. */
-  selected: Array<string>
-  /** Array of available filters in this category. */
-  filters: {
-    value: string
-    label: string
-  }[]
-  /** Display checkboxes inline */
-  inline?: boolean
-  /** Allow only one option at a time */
-  singleOption?: boolean
 }
 
 const getFilteredDocuments = (
@@ -158,6 +142,7 @@ const getSortDirection = (currentDirection: SortDirectionType) => {
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
+  client,
 }) => {
   useNamespaces('sp.documents')
   Sentry.configureScope((scope) =>
@@ -189,6 +174,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
   const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
 
+  const isLegal = userInfo.profile.delegationType?.includes('LegalGuardian')
+  const dateOfBirth = userInfo?.profile.dateOfBirth
+  let isOver15 = false
+  if (dateOfBirth) {
+    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
+  }
   useEffect(() => {
     const groupArray = groupData?.getDocumentCategories ?? []
     const docs = data.documents ?? []
@@ -330,6 +321,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
+  if (isLegal && isOver15) {
+    return <AccessDeniedLegal userInfo={userInfo} client={client} />
+  }
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -347,10 +341,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             variant="popover"
             align="left"
             reverse
-            labelClear={formatMessage(messages.clearFilter)}
-            labelClearAll={formatMessage(messages.clearAllFilters)}
-            labelOpen={formatMessage(messages.openFilter)}
-            labelClose={formatMessage(messages.closeFilter)}
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -384,7 +378,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear={formatMessage(messages.clearSelected)}
+              labelClear={formatMessage(m.clearSelected)}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -408,28 +402,26 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   }))
                 }
               }}
-              categories={
-                [
-                  {
-                    id: 'institution',
-                    label: formatMessage(messages.institutionLabel),
-                    selected: [...filterValue.activeCategories],
-                    filters: categories,
-                    inline: false,
-                    singleOption: false,
-                  },
-                  {
-                    id: 'group',
-                    label: formatMessage(messages.groupLabel),
-                    selected: [...filterValue.activeGroups],
-                    filters: Array.isArray(groupsAvailable)
-                      ? groupsAvailable
-                      : [],
-                    inline: false,
-                    singleOption: false,
-                  },
-                ] as FilterCategory[]
-              }
+              categories={[
+                {
+                  id: 'institution',
+                  label: formatMessage(messages.institutionLabel),
+                  selected: [...filterValue.activeCategories],
+                  filters: categories,
+                  inline: false,
+                  singleOption: false,
+                },
+                {
+                  id: 'group',
+                  label: formatMessage(messages.groupLabel),
+                  selected: [...filterValue.activeGroups],
+                  filters: Array.isArray(groupsAvailable)
+                    ? groupsAvailable
+                    : [],
+                  inline: false,
+                  singleOption: false,
+                },
+              ]}
             ></FilterMultiChoice>
             <Box className={styles.dateFilter} paddingX={3}>
               <Box
@@ -446,15 +438,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <AccordionItem
                     key="date-accordion-item"
                     id="date-accordion-item"
-                    label={formatMessage(messages.datesLabel)}
+                    label={formatMessage(m.datesLabel)}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
                   >
                     <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage(messages.datepickerFromLabel)}
-                        placeholderText={formatMessage(messages.datepickLabel)}
+                        label={formatMessage(m.datepickerFromLabel)}
+                        placeholderText={formatMessage(m.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
@@ -463,10 +455,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                       <Box marginTop={3}>
                         <DatePicker
-                          label={formatMessage(messages.datepickerToLabel)}
-                          placeholderText={formatMessage(
-                            messages.datepickLabel,
-                          )}
+                          label={formatMessage(m.datepickerToLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
                           locale="is"
                           backgroundColor="blue"
                           size="xs"
@@ -523,7 +513,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateFromInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerFromLabel,
+                            m.datepickerFromLabel,
                           )} - ${format(filterValue.dateFrom, dateFormat.is)}`}
                         />
                       )}
@@ -531,7 +521,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         <FilterTag
                           onClick={() => handleDateToInput(null)}
                           title={`${formatMessage(
-                            messages.datepickerToLabel,
+                            m.datepickerToLabel,
                           )} - ${format(filterValue.dateTo, dateFormat.is)}`}
                         />
                       )}
@@ -549,7 +539,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         variant="text"
                         onClick={handleClearFilters}
                       >
-                        {formatMessage(messages.clearFilter)}
+                        {formatMessage(m.clearFilter)}
                       </Button>
                     </Box>
                   </Box>

@@ -21,6 +21,7 @@ export const GET_ARTICLES_QUERY = gql`
       }
       slug
       title
+      processEntryButtonText
       processEntry {
         id
       }
@@ -33,6 +34,9 @@ export const GET_ARTICLES_QUERY = gql`
       subgroup {
         title
         importance
+      }
+      otherCategories {
+        title
       }
       otherSubgroups {
         title

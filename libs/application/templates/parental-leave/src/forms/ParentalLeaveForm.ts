@@ -1,7 +1,6 @@
 import addDays from 'date-fns/addDays'
 
 import {
-  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
@@ -15,10 +14,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Form,
-  FormModes,
   NO_ANSWER,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {

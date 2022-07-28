@@ -23,6 +23,6 @@ import { CmsHealthIndicator } from './cms.health'
     CmsHealthIndicator,
     LatestNewsSliceResolver,
   ],
-  exports: [ContentfulRepository, CmsHealthIndicator],
+  exports: [ContentfulRepository, CmsHealthIndicator, CmsContentfulService],
 })
 export class CmsModule {}

@@ -12,20 +12,22 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getValueViaPath,
+  coreMessages,
+  coreErrorMessages,
+  getErrorReasonIfPresent,
+  isTranslationObject,
+} from '@island.is/application/core'
+import {
   DataProviderItem,
   DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
   FormValue,
-  getValueViaPath,
-  coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
-  coreErrorMessages,
   StaticText,
-  getErrorReasonIfPresent,
-  isTranslationObject,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 

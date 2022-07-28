@@ -1,8 +1,8 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  coreErrorMessages,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { HasQualityPhotoProvider } from '@island.is/application/data-providers'
 
 export class QualityPhotoProvider extends HasQualityPhotoProvider {

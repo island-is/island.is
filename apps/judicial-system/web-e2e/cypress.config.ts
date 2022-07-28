@@ -11,6 +11,8 @@ export default defineConfig({
   chromeWebSecurity: false,
   pageLoadTimeout: 240000,
   responseTimeout: 120000,
+  viewportHeight: 1080,
+  viewportWidth: 1600,
   retries: {
     runMode: 2,
     openMode: 0,

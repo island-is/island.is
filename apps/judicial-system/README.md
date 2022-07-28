@@ -46,19 +46,22 @@ NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: mobileNumbers:
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
-To enable email sending via AWS SES turn off email test account and provide an email region:
+In local development you can preview emails with ethereal nodemailer previews by following the urls in the logs.
+Alternatively, you can enable email sending via AWS SES turn off email test account and provide an email region:
 
 ```bash
 EMAIL_USE_TEST_ACCOUNT=false EMAIL_REGION=eu-west-1 yarn start judicial-system-backend
 ```
 
-You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
+You need to be authenticated against AWS for this to work.
 
 To enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL=<prison administration email>`
 
 To enable writing to AWS S3 you need to be authenticated against AWS.
 
 Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
+
+To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
 
 ### Unit tests
 
@@ -211,9 +214,49 @@ Install <https://github.com/cameronhunter/local-ssl-proxy>:
 - start project
 - `local-ssl-proxy --source 4200 --target 4202`
 
-## Lawyer directory
+## XRD API
 
-We are using data from [lmfi](https://lmfi.is/logmannalisti) to search for lawyers to use as defenders for defendants in the system. We are currently scraping that data and the scraper can be found in a [private repo under Kolibri's GitHub org.](https://github.com/KolibriDev/lawyer-scraper). This is a temporary solution until we get access to an API from lmfi.
+This service is for access from xRoad.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-xrd-api
+```
+
+## Scheduler
+
+This service is for running scheduled tasks. Currently, archiving old cases is the only task.
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-scheduler
+```
+
+## Message Handler
+
+This service handles messages posted by other services for downstream processing.
+
+### Initial setup
+
+First, make sure you have docker, then run:
+
+```bash
+yarn dev-services judicial-system-message-handler
+```
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-message-handler
+```
 
 ## Code owners and maintainers
 

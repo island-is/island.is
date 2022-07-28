@@ -48,7 +48,9 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
       text={text}
       show={show}
       onCancel={onCancel}
-      onContinue={() => {}}
+      onContinue={() => {
+        // Intentionally left empty
+      }}
       continueButtonText={t.modal.buttons.continue}
       cancelButtonText={t.modal.buttons.cancel}
     >

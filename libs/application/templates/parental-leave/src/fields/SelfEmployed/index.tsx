@@ -2,12 +2,12 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box } from '@island.is/island-ui/core'
+import { getErrorViaPath } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 
 import { NO, YES } from '../../constants'

@@ -309,19 +309,19 @@ export function formatPrisonCourtDateEmailNotification(
   )
 
   const isolationText = formatMessage(
-    notifications.prisonCourtDateEmail.isolationText,
-    { isolation: isolation ? 'TRUE' : 'FALSE' },
+    notifications.prisonCourtDateEmail.isolationTextV2,
+    { isolation: isolation },
   )
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.body, {
+  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension,
     courtDateText,
     requestText,
     isolationText,
@@ -387,7 +387,6 @@ export function formatDefenderCourtDateEmailNotification(
 
 export function formatDefenderCourtDateLinkEmailNotification(
   formatMessage: FormatMessage,
-  sendRequestToDefender?: boolean,
   overviewUrl?: string,
   court?: string,
   courtCaseNumber?: string,
@@ -397,14 +396,12 @@ export function formatDefenderCourtDateLinkEmailNotification(
     courtCaseNumber,
   })
 
-  const link = sendRequestToDefender
-    ? formatMessage(cf.link, {
-        defenderHasAccessToRvg: Boolean(overviewUrl),
-        courtName: court?.replace('dómur', 'dómi'),
-        linkStart: `<a href="${overviewUrl}">`,
-        linkEnd: '</a>',
-      })
-    : ''
+  const link = formatMessage(cf.link, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: court?.replace('dómur', 'dómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
 
   return `${body}${link}`
 }
@@ -501,10 +498,10 @@ export function formatPrisonRevokedEmailNotification(
   const defenderText = formatMessage(cf.defender, {
     defenderName: defenderName || 'NONE',
   })
-  const revokedCaseText = formatMessage(cf.revokedCase, {
+  const revokedCaseText = formatMessage(cf.revokedCaseV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension,
     courtText,
     courtDateText,
   })

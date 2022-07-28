@@ -1,8 +1,5 @@
-import {
-  Application,
-  formatText,
-  coreMessages,
-} from '@island.is/application/core'
+import { formatText, coreMessages } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'

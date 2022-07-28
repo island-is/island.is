@@ -1,14 +1,17 @@
 import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
+  Field,
+  FieldComponents,
+  FieldTypes,
   FormValue,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations } from '../constants'
+import { NO, MANUAL, ParentalRelations, YES } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -22,6 +25,13 @@ import {
   applicantIsMale,
   getOtherParentName,
   removeCountryCode,
+  getSpouseDeprecated,
+  getSpouse,
+  getOtherParentOptions,
+  isEligibleForParentalLeave,
+  getPeriodIndex,
+  getApplicationExternalData,
+  requiresOtherParentApproval,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -40,10 +50,21 @@ function buildApplication(data?: {
     created: new Date(),
     modified: new Date(),
     attachments: {},
+    applicantActors: [],
     answers,
     state,
     externalData,
     status: ApplicationStatus.IN_PROGRESS,
+  }
+}
+
+function buildField(): Field {
+  return {
+    type: FieldTypes.TEXT,
+    component: FieldComponents.TEXT,
+    id: 'periods',
+    title: 'fieldTitle',
+    children: undefined,
   }
 }
 
@@ -197,6 +218,74 @@ describe('getAvailableRightsInMonths', () => {
   })
 })
 
+describe('getSpouseDeprecated', () => {
+  it('should return undefined without spouse', () => {
+    const application = buildApplication()
+    expect(getSpouseDeprecated(application)).toEqual(undefined)
+  })
+})
+
+describe('getSpouse', () => {
+  it('should return null with no spouse', () => {
+    const application = buildApplication()
+    expect(getSpouse(application)).toEqual(null)
+  })
+  it('should return name and national ID of spouse', () => {
+    const application = buildApplication({
+      externalData: {
+        person: {
+          data: {
+            spouse: {
+              name: 'my spouse',
+              nationalId: 'spouse national ID',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getSpouse(application)).toEqual({
+      name: 'my spouse',
+      nationalId: 'spouse national ID',
+    })
+  })
+})
+
+describe('getOtherParentOptions', () => {
+  it('should return default options for the other parent', () => {
+    const application = buildApplication()
+    expect(getOtherParentOptions(application)).toEqual([
+      {
+        label: {
+          defaultMessage: 'Ég vil ekki staðfesta hitt foreldrið að svo stöddu',
+          description:
+            'I do not want to confirm the other parent at this time.',
+          id: 'pl.application:otherParent.none',
+        },
+        value: 'no',
+      },
+      {
+        label: {
+          defaultMessage: 'Hitt foreldrið er:',
+          description: 'The other parent is:',
+          id: 'pl.application:otherParent.option',
+        },
+        value: 'manual',
+      },
+    ])
+  })
+})
+
+describe('isEligableForParentalLeave', () => {
+  it('should return undefined without data', () => {
+    const application = buildApplication()
+    expect(isEligibleForParentalLeave(application.externalData)).toEqual(
+      undefined,
+    )
+  })
+})
+
 describe('getSelectedChild', () => {
   it('should return null if it cannot find a child', () => {
     const answers = {}
@@ -242,6 +331,86 @@ describe('getSelectedChild', () => {
   })
 })
 
+describe('getPeriodIndex', () => {
+  it('should return -1 if field id is missing', () => {
+    expect(getPeriodIndex()).toEqual(-1)
+  })
+  it('should return 0 if field id === periods', () => {
+    const field = buildField()
+    expect(getPeriodIndex(field)).toEqual(0)
+  })
+})
+
+describe('getApplicationExternalData', () => {
+  it('should get external data from application with expected return values', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: 'Mock child',
+            existingApplications: 'Mock application',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        userProfile: {
+          data: {
+            email: 'mock@email.is',
+            mobilePhoneNumber: 'Mock number',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        person: {
+          data: {
+            genderCode: 'Mock gender code',
+            fullName: 'Mock name',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getApplicationExternalData(application.externalData)).toEqual({
+      applicantGenderCode: 'Mock gender code',
+      applicantName: 'Mock name',
+      children: 'Mock child',
+      dataProvider: {
+        children: 'Mock child',
+        existingApplications: 'Mock application',
+      },
+      existingApplications: 'Mock application',
+      userEmail: 'mock@email.is',
+      userPhoneNumber: 'Mock number',
+    })
+  })
+})
+
+describe('requiresOtherParentApproval', () => {
+  it('should return false when conditions not met', () => {
+    const application = buildApplication()
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(false)
+  })
+  it('should return true when usePersonalAllowanceFromSpouse === YES ', () => {
+    const application = buildApplication({
+      answers: {
+        usePersonalAllowanceFromSpouse: YES,
+      },
+    })
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
+  })
+})
+
 describe('getOtherParentId', () => {
   let id = 0
   const createApplicationBase = (): Application => ({
@@ -251,6 +420,7 @@ describe('getOtherParentId', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',
@@ -313,6 +483,7 @@ describe('getOtherParentName', () => {
     attachments: {},
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     externalData: {},
     id: (id++).toString(),
     state: '',

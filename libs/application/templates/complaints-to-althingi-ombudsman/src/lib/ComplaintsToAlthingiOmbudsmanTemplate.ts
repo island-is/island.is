@@ -1,3 +1,4 @@
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
   ApplicationConfigurations,
@@ -7,8 +8,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
