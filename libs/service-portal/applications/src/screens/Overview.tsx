@@ -144,18 +144,16 @@ const Overview: ServicePortalModuleComponent = () => {
               </GridColumn>
             </GridRow>
           </Box>
-
           {applicationsSortedByStatus.incomplete?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.incomplete) && (
               <ApplicationGroup
                 applications={applicationsSortedByStatus.incomplete}
-                label={formatMessage(m.incompleteApplications)}
+                label={formatMessage(m.incompleteApplications) + 're'}
                 organizations={organizations}
                 refetch={refetch}
               />
             )}
-
           {applicationsSortedByStatus.inProgress?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.inProgress) && (
@@ -166,7 +164,6 @@ const Overview: ServicePortalModuleComponent = () => {
                 refetch={refetch}
               />
             )}
-
           {applicationsSortedByStatus.finished?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.finished) && (
