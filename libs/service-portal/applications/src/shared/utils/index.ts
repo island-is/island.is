@@ -3,7 +3,7 @@ import { Option } from '@island.is/island-ui/core'
 import { institutionMapper } from '@island.is/application/core'
 import { Organization } from '@island.is/shared/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { ApplicationOverViewStatus } from '../types'
+import { ApplicationOverViewStatus, FilterValues } from '../types'
 
 interface SortedApplication {
   incomplete: Application[]
@@ -92,8 +92,8 @@ export const getBaseUrlForm = () => {
 }
 
 export const getFilteredApplicationsByStatus = (
-  filterValue: any,
-  applications = [],
+  filterValue: FilterValues,
+  applications: Application[] = [],
 ) => {
   const { searchQuery } = filterValue
   const activeInstitution = filterValue?.activeInstitution?.value
@@ -114,8 +114,8 @@ export const getFilteredApplicationsByStatus = (
 }
 
 export const getInstitutions = (
-  defaultInstitution: any,
-  applications: any,
+  defaultInstitution: { value: string; label: string },
+  applications: Application[],
   organizations: any,
 ) => {
   if (!applications || !organizations) {
