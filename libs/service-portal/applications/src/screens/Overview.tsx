@@ -27,7 +27,7 @@ import {
   mapLinkToStatus,
 } from '../shared/utils'
 import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
-import { ApplicationGroup } from '../components/applicationGroup'
+import { ApplicationGroup } from '../components/ApplicationGroup'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
