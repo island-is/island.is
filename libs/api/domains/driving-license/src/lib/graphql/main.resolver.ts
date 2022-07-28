@@ -99,6 +99,14 @@ export class MainResolver {
     )
   }
 
+  @Query(() => ApplicationEligibility)
+  learnerMentorEligibility(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getLearnerMentorEligibility(
+      user,
+      user.nationalId,
+    )
+  }
+
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()

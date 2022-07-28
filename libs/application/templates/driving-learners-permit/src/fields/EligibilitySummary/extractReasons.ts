@@ -61,6 +61,18 @@ const requirementKeyToStep = (
           ? requirementsMessages.rlsAcceptedDescription
           : getDeniedByServiceMessageDescription(key),
       }
+    case RequirementKey.PersonNotAtLeast24YearsOld:
+      return {
+        title: requirementsMessages.ageRequirementTitle,
+        description: requirementMet
+          ? requirementsMessages.rlsAcceptedDescription
+          : requirementsMessages.ageRequirementDescription,
+      }
+    case RequirementKey.HasHadValidCategoryForFiveYearsOrMore:
+      return {
+        title: requirementsMessages.validForFiveYearsTitle,
+        description: requirementsMessages.validForFiveYearsDescription,
+      }
     case RequirementKey.LocalResidency:
       return {
         title: requirementsMessages.localResidencyTitle,

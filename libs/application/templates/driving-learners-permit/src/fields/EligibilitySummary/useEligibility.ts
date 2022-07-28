@@ -3,12 +3,10 @@ import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
-import { fakeEligibility } from './fakeEligibility'
 
 const QUERY = gql`
-  query EligibilityQuery($input: ApplicationEligibilityInput!) {
-    drivingLicenseApplicationEligibility(input: $input) {
+  query EligibilityQuery {
+    learnerMentorEligibility {
       isEligible
       requirements {
         key
@@ -29,26 +27,13 @@ export const useEligibility = (
   const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
-  const applicationFor =
-    getValueViaPath<DrivingLicenseApplicationFor>(
-      answers,
-      'applicationFor',
-      B_FULL,
-    ) ?? B_FULL
-
   const { data = {}, error, loading } = useQuery(QUERY, {
     skip: usingFakeData,
-    variables: {
-      input: {
-        applicationFor,
-      },
-    },
   })
 
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(applicationFor),
     }
   }
 
@@ -63,6 +48,6 @@ export const useEligibility = (
 
   return {
     loading,
-    eligibility: data.drivingLicenseApplicationEligibility,
+    eligibility: data.learnerMentorEligibility,
   }
 }

@@ -76,6 +76,11 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
+      disqualification: skirteini?.svipting?.dagsTil
+        ? {
+            to: skirteini.svipting.dagsTil,
+          }
+        : null,
     }
   }
 

@@ -37,6 +37,7 @@ import {
   hasLocalResidence,
   hasResidenceHistory,
 } from './util/hasResidenceHistory'
+import { info } from 'kennitala'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -134,6 +135,60 @@ export class DrivingLicenseService {
       }
 
       throw e
+    }
+  }
+
+  async getLearnerMentorEligibility(
+    user: User,
+    nationalId: string,
+  ): Promise<ApplicationEligibility> {
+    const license = await this.getDrivingLicense(nationalId)
+    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      user,
+      nationalId,
+    )
+
+    const localRecidency = hasLocalResidence(residenceHistory)
+
+    const fiveYearsAgo = new Date(Date.now() - 1000 * 3600 * 24 * 365.25 * 5)
+    const categoryB = license?.categories
+      ? license.categories.find(
+          (category) => category.name.toLocaleUpperCase() === 'B',
+        )
+      : undefined
+
+    const requirements: ApplicationEligibilityRequirement[] = [
+      {
+        key: RequirementKey.hasDeprivation,
+        requirementMet: license?.disqualification?.to
+          ? Date.now() > license.disqualification.to.getTime()
+          : true,
+      },
+      {
+        key: RequirementKey.currentLocalResidency,
+        requirementMet: localRecidency,
+      },
+      {
+        key: RequirementKey.personNotAtLeast24YearsOld,
+        requirementMet: info(nationalId).age >= 24,
+      },
+      {
+        key: RequirementKey.hasHadValidCategoryForFiveYearsOrMore,
+        requirementMet:
+          categoryB && categoryB.issued
+            ? categoryB.issued < fiveYearsAgo
+            : false,
+      },
+    ]
+
+    // only eligible if we dont find an unmet requirement
+    const isEligible = !requirements.find(
+      ({ requirementMet }) => requirementMet === false,
+    )
+
+    return {
+      requirements,
+      isEligible,
     }
   }
 

@@ -63,6 +63,8 @@ export enum RequirementKey {
   personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
   hasDeprivation = 'HasDeprivation',
   hasPoints = 'HasPoints',
+  personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
+  hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
 }
 
 export interface ApplicationEligibilityRequirement {

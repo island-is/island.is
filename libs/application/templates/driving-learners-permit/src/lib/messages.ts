@@ -190,6 +190,17 @@ export const m = defineMessages({
 })
 
 export const requirementsMessages = defineMessages({
+  ageRequirementTitle: {
+    id: 'dlp.application:requirementunmet.ageRequirementTitle',
+    defaultMessage: 'Leiðbeinandi 24 ára eða eldri',
+    description: 'Learner age requirement title',
+  },
+  ageRequirementDescription: {
+    id: 'dlp.application:requirementunmet.ageRequirementTitle',
+    defaultMessage:
+      'Leiðbeinandi þarf að hafa náð 24 ára aldri a.m.k til að gerast leiðbeinandi',
+    description: 'Learner age requirement description',
+  },
   rlsAcceptedDescription: {
     id: 'dlp.application:requirementunmet.accepted',
     defaultMessage: 'Þú uppfyllir þær kröfur sem gerðar eru',
@@ -258,5 +269,17 @@ export const requirementsMessages = defineMessages({
     defaultMessage:
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
+  },
+  validForFiveYearsTitle: {
+    id: 'dlp.application:requirementunmet.validForFiveYearsTitle',
+    defaultMessage: 'Gilt skírteini í a.m.k 5 ár',
+    description: 'requirement unmet valid license for five years or more title',
+  },
+  validForFiveYearsDescription: {
+    id: 'dlp.application:requirementunmet.validForFiveYearsDescription',
+    defaultMessage:
+      'Leiðbeinandi þarf að hafa haft gild ökuréttindi fyrir bifreiðar, ekki bifhjól, í að minnsta kosti 5 ár',
+    description:
+      'requirement unmet valid license for five years or more description',
   },
 })

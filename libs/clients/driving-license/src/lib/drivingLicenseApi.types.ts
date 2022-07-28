@@ -6,6 +6,10 @@ export interface DriversLicenseCategory {
   comments: string | null
 }
 
+export interface Disqualification {
+  to: Date
+}
+
 export interface DriversLicense {
   id: number
   name: string
@@ -13,6 +17,7 @@ export interface DriversLicense {
   expires?: Date | null
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
+  disqualification?: Disqualification | null
 }
 
 export interface Teacher {
