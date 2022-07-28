@@ -4,6 +4,7 @@ import React from 'react'
 
 import '../styles/App.scss'
 
+// Some comment
 class AuthAdminWebApp extends App {
   render() {
     const { Component, pageProps } = this.props

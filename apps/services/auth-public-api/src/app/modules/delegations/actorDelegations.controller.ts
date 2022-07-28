@@ -26,6 +26,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
+// Some comment
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('actor-delegations')
 @Controller('v1/actor/delegations')

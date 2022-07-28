@@ -37,6 +37,7 @@ import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/access`
 
+// Some comment
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('api-access')
 @Controller('backend/api-access')
