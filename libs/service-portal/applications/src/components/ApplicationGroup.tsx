@@ -19,7 +19,6 @@ export const ApplicationGroup: FC<Props> = ({
   organizations,
   refetch,
 }) => {
-  console.log(typeof applications)
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
   const pagedDocuments = {
