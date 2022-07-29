@@ -45,7 +45,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 
   return (
     !!slice.articles.length && (
-      <section key={slice.id} aria-labelledby={labelId}>
+      <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box
           borderTopWidth="standard"
           borderColor="standard"

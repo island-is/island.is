@@ -57,6 +57,8 @@ export default {
     'namespace',
     'timeline',
     'timelineEvent',
+    'form',
+    'formField',
     'stepperSlice',
   ],
   contentful: {

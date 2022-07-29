@@ -25,6 +25,6 @@ import { CmsHealthIndicator } from './cms.health'
     LatestNewsSliceResolver,
     FeaturedArticlesResolver,
   ],
-  exports: [ContentfulRepository, CmsHealthIndicator],
+  exports: [ContentfulRepository, CmsHealthIndicator, CmsContentfulService],
 })
 export class CmsModule {}

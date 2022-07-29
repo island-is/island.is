@@ -460,6 +460,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
@@ -483,6 +484,22 @@ export const slices = gql`
       width
       height
     }
+  }
+
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    recipient
+    fields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    successText
   }
 
   fragment BaseSlices on Slice {
@@ -514,6 +531,7 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
   }
 
   fragment AllSlices on Slice {
