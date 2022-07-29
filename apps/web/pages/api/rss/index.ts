@@ -13,6 +13,7 @@ import { linkResolver } from '@island.is/web/hooks'
 export default async function handler(req, res) {
   const tag = (req.query?.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
   const locale = isLocale(req.query?.lang) ? req.query.lang : defaultLanguage
+  const organization = req.query?.organization
 
   const apolloClient = initApollo({}, locale)
 
@@ -27,26 +28,34 @@ export default async function handler(req, res) {
     },
   })
 
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://island.is'
+      : 'https://beta.dev01.devland.is'
+
+  const newsItem = (item: GetNewsQuery['getNews']['items'][0]) => {
+    const url = organization
+      ? linkResolver('organizationnews', [organization, item.slug]).href
+      : linkResolver('news', [item.slug]).href
+    const date = new Date(item.date).toUTCString()
+
+    return `<item>
+      <title>${item.title}</title>
+      <link>${baseUrl}${url}</link>
+      <description>${item.intro}</description>
+      <pubDate>${date}</pubDate>
+    </item>`
+  }
+
   const feed = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
-  <channel>
-    <title>Ísland.is</title>
-    <link>https://island.is</link>
-    <description>Ísland.is</description>${news?.data?.getNews?.items
-      ?.map(
-        (newsItem) => `
-    <item>
-      <title>${newsItem.title}</title>
-      <link>https://island.is${
-        linkResolver('news', [newsItem.slug]).href
-      }</link>
-      <description>${newsItem.intro}</description>
-      <pubDate>${new Date(newsItem.date).toUTCString()}</pubDate>
-    </item>`,
-      )
-      .join('')}
-  </channel>
-</rss>`
+    <rss version="2.0">
+      <channel>
+        <title>Ísland.is</title>
+        <link>${baseUrl}</link>
+        <description>Ísland.is</description>
+        ${news?.data?.getNews?.items?.map((item) => newsItem(item)).join('')}
+      </channel>
+    </rss>`
 
   res.set('Content-Type', 'text/xml;charset=UTF-8')
   return res.status(200).send(feed)
