@@ -48,13 +48,14 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: dataSchema,
-  featureFlag: Features.exampleApplication,
+  //TODO: set up a feature flag
+  //featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
       [States.prerequisites]: {
         meta: {
-          name: 'Skilyrði',
+          name: 'Prerequisities',
           progress: 0,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -74,39 +75,13 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.draft,
-          },
-        },
-      },
-      [States.draft]: {
-        meta: {
-          name: 'Uppkast',
-          progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Draft').then((module) =>
-                  Promise.resolve(module.Draft),
-                ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          SUBMIT: {
             target: States.approved,
           },
         },
       },
       [States.approved]: {
         meta: {
-          name: 'Umsókn móttekin',
+          name: 'Approved',
           progress: 1,
           lifecycle: {
             shouldBeListed: false,
@@ -120,9 +95,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                 import('../forms/Done').then((module) =>
                   Promise.resolve(module.Draft),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
               write: 'all',
               delete: true,
             },

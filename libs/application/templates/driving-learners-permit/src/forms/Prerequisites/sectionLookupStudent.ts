@@ -7,7 +7,7 @@ import { m } from '../../lib/messages'
 
 export const sectionLookupStudent = buildSubSection({
   id: 'requirements',
-  title: m.applicationEligibilityTitle,
+  title: m.applicationStudentRequirementsTitle,
   children: [
     buildMultiField({
       id: 'studentLookup',

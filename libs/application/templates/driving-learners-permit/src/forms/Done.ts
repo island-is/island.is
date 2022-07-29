@@ -1,14 +1,14 @@
 import {
   buildForm,
   buildDescriptionField,
-  buildSubmitField,
   buildMultiField,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
 
 export const Draft: Form = buildForm({
-  id: 'Draft',
-  title: 'Í vinnslu',
+  id: 'Done',
+  title: m.doneTitle.defaultMessage,
   mode: FormModes.EDITING,
   children: [
     buildMultiField({
@@ -16,22 +16,10 @@ export const Draft: Form = buildForm({
       children: [
         buildDescriptionField({
           id: 'waitingToAssign',
-          title: 'Í bið',
-          description: 'Beðið eftir umsjón.',
-        }),
-        buildSubmitField({
-          id: 'submitWaiting',
-          placement: 'footer',
-          title: 'Halda áfram',
-          refetchApplicationAfterSubmit: true,
-          actions: [{ event: 'SUBMIT', name: 'Halda áfram', type: 'primary' }],
+          title: m.doneTitle,
+          description: m.doneInfo,
         }),
       ],
-    }),
-    buildDescriptionField({
-      id: 'neverDisplayed',
-      title: '',
-      description: '',
     }),
   ],
 })

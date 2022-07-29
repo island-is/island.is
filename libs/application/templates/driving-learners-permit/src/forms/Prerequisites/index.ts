@@ -17,10 +17,11 @@ export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Skilyrði',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'conditions',
-      title: m.conditionsSection,
+      title: m.externalDataSectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -36,55 +37,11 @@ export const Prerequisites: Form = buildForm({
         }),
         sectionLookupStudent,
         sectionRequirements,
-        buildMultiField({
-          id: 'externalDataSuccess',
-          title: 'Tókst að sækja gögn',
-          children: [
-            buildDescriptionField({
-              id: 'externalDataSuccessDescription',
-              title: '',
-              description: (application: Application) =>
-                `Gildið frá data provider: ${get(
-                  application.externalData,
-                  'sampleData.data.value',
-                  'fannst ekki',
-                )}`,
-            }),
-            buildSubmitField({
-              id: 'toDraft',
-              placement: 'footer',
-              title: 'Hefja umsókn',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: 'Hefja umsókn',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildDescriptionField({
-          id: 'neverDisplayed',
-          title: '',
-          description: '',
-        }),
       ],
     }),
     buildSection({
-      id: 'intro',
-      title: m.introSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'career',
-      title: m.career,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: 'Staðfesta',
+      id: '',
+      title: m.doneTitle,
       children: [],
     }),
   ],
