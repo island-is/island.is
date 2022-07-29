@@ -58,12 +58,25 @@ describe('Serialization with env resources set', () => {
     sut,
     new UberChart(Staging),
   ) as SerializeSuccess
+  it('resource requests', () => {
+    expect(result.serviceDef.resources?.requests.cpu).toBe('200m')
+    expect(result.serviceDef.resources?.requests.memory).toBe('11MB')
+  })
+
   it('resource limits', () => {
     expect(result.serviceDef.resources?.limits?.cpu).toBe('500m')
     expect(result.serviceDef.resources?.limits?.memory).toBe('1000MB')
   })
-  it('resource requests', () => {
-    expect(result.serviceDef.resources?.requests.cpu).toBe('200m')
-    expect(result.serviceDef.resources?.requests.memory).toBe('11MB')
+  it('resources', () => {
+    expect(result.serviceDef.resources).toStrictEqual({
+      requests: {
+        cpu: '200m',
+        memory: '11MB',
+      },
+      limits: {
+        cpu: '500m',
+        memory: '1000MB',
+      },
+    })
   })
 })
