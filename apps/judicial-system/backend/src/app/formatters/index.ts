@@ -23,6 +23,8 @@ export {
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatRulingModifiedHistory,
+  formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'

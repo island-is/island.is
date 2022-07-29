@@ -631,7 +631,7 @@ describe('User profile API', () => {
           message: expect.stringMatching(/SMS code is not a match/),
         })
         expect(response.body.message).toContain(
-          SMS_VERIFICATION_MAX_TRIES - (i + 1),
+          `${SMS_VERIFICATION_MAX_TRIES - (i + 1)}`,
         )
       }
       const response = await request(app.getHttpServer())
@@ -720,14 +720,22 @@ describe('User profile API', () => {
         },
       })
 
-      // Assert
+      // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
         .send({
           code: verification.smsCode,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: '1234567',
         })
         .expect(200)
+
+      // Assert
+      expect(response.body).toMatchInlineSnapshot(`
+          Object {
+            "confirmed": false,
+            "message": "Sms verification does not exist for this user",
+          }
+        `)
     })
   })
 

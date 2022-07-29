@@ -19,7 +19,7 @@ import { DelegationScope } from './delegation-scope.model'
   tableName: 'delegation',
   timestamps: false,
 })
-export class Delegation extends Model<Delegation> {
+export class Delegation extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

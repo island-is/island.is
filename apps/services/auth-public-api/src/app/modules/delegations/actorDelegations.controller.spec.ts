@@ -293,7 +293,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail:
             "'direction' can only be set to incoming for the /actor alias",
@@ -303,13 +303,13 @@ describe('ActorDelegationsController', () => {
       describe('when scope is no longer allowed for delegation', () => {
         beforeAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: false } as ApiScope,
+            { allowExplicitDelegationGrant: false },
             { where: { name: Scopes[1].name } },
           )
         })
         afterAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: true } as ApiScope,
+            { allowExplicitDelegationGrant: true },
             { where: { name: Scopes[1].name } },
           )
         })
@@ -725,7 +725,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(401)
         expect(res.body).toMatchObject({
           status: 401,
-          type: 'https://httpstatuses.com/401',
+          type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
 
@@ -751,7 +751,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(403)
         expect(res.body).toMatchObject({
           status: 403,
-          type: 'https://httpstatuses.com/403',
+          type: 'https://httpstatuses.org/403',
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })

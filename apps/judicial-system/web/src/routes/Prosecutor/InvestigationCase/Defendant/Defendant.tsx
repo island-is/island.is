@@ -320,7 +320,12 @@ const Defendant = () => {
                     >
                       <DefendantInfo
                         defendant={defendant}
-                        onDelete={index > 0 ? handleDeleteDefendant : undefined}
+                        onDelete={
+                          workingCase.defendants &&
+                          workingCase.defendants.length > 1
+                            ? handleDeleteDefendant
+                            : undefined
+                        }
                         onChange={handleUpdateDefendant}
                         updateDefendantState={updateDefendantState}
                       />
@@ -330,6 +335,7 @@ const Defendant = () => {
             </AnimatePresence>
             <Box display="flex" justifyContent="flexEnd" marginTop={3}>
               <Button
+                data-testid="addDefendantButton"
                 variant="ghost"
                 icon="add"
                 onClick={handleCreateDefendantClick}

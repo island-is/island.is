@@ -2,6 +2,7 @@ import {
   IC_HEARING_ARRANGEMENTS_ROUTE,
   IC_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -20,11 +21,10 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       court: makeCourt(),
     }
 
-    cy.setCookie('judicial-system.csrf', 'test')
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
-    cy.visit(`${IC_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
-
     intercept(caseDataAddition)
+    cy.visit(`${IC_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
   })
 
   it('should require a valid requested court date time', () => {

@@ -1,11 +1,8 @@
 import React, { FC } from 'react'
-import Markdown from 'markdown-to-jsx'
+import { Markdown } from '@island.is/application/ui-components'
 
-import {
-  Application,
-  formatText,
-  DescriptionField,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { Application, DescriptionField } from '@island.is/application/types'
 import { Text, Tooltip, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 

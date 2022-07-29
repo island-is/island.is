@@ -122,6 +122,14 @@ const Category: Screen<CategoryProps> = ({
         content.otherArticles.push(article)
         return content
       }
+      // Check if article belongs to multiple groups in this category
+      else if (
+        article?.otherCategories
+          .map((category) => category.title)
+          .includes(getCurrentCategory().title)
+      ) {
+        content.otherArticles.push(article)
+      }
 
       if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
@@ -348,7 +356,13 @@ const Category: Screen<CategoryProps> = ({
                   )}
                   <Stack space={2}>
                     {sortedArticles.map(
-                      ({ __typename: typename, title, slug, processEntry }) => {
+                      ({
+                        __typename: typename,
+                        title,
+                        slug,
+                        processEntry,
+                        processEntryButtonText,
+                      }) => {
                         return (
                           <FocusableBox key={slug} borderRadius="large">
                             <TopicCard
@@ -359,8 +373,11 @@ const Category: Screen<CategoryProps> = ({
                                 ).href
                               }
                               tag={
-                                !!processEntry &&
-                                n('applicationProcess', 'Umsókn')
+                                (!!processEntry || processEntryButtonText) &&
+                                n(
+                                  processEntryButtonText || 'application',
+                                  'Umsókn',
+                                )
                               }
                             >
                               {title}

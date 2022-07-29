@@ -12,9 +12,8 @@ describe(`${IC_POLICE_DEMANDS_ROUTE}/:id`, () => {
     const caseData = makeInvestigationCase()
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_DEMANDS_ROUTE}/test_id`)
-
     intercept(caseData)
+    cy.visit(`${IC_POLICE_DEMANDS_ROUTE}/test_id`)
   })
 
   it('should require a valid demands value', () => {

@@ -2,13 +2,15 @@ import { Test } from '@nestjs/testing'
 import { createApplication } from '@island.is/testing/fixtures'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '@island.is/application/api/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { AwsService } from '@island.is/nest/aws'
 import {
   ApplicationConfig,
   APPLICATION_CONFIG,
 } from '../../application.configuration'
 import { LoggingModule } from '@island.is/logging'
+import { ApplicationChargeService } from '../../charge/application-charge.service'
+
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService
 
@@ -71,6 +73,12 @@ class ApplicationServiceMock {
   }
 }
 
+class ApplicationChargeServiceMock {
+  async deleteCharge(application: Pick<Application, 'id' | 'externalData'>) {
+    // do nothing
+  }
+}
+
 describe('ApplicationLifecycleService Unit tests', () => {
   beforeAll(async () => {
     const config: ApplicationConfig = {
@@ -84,6 +92,10 @@ describe('ApplicationLifecycleService Unit tests', () => {
         {
           provide: ApplicationService,
           useClass: ApplicationServiceMock,
+        },
+        {
+          provide: ApplicationChargeService,
+          useClass: ApplicationChargeServiceMock,
         },
         ApplicationLifeCycleService,
         { provide: APPLICATION_CONFIG, useValue: config },

@@ -189,6 +189,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      showTableOfContents
       sliceCustomRenderer
       sliceExtraText
       featuredImage {
@@ -207,6 +208,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }
