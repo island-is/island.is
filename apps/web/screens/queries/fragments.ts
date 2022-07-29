@@ -490,6 +490,23 @@ export const slices = gql`
     successText
   }
 
+  fragment StepperFields on Stepper {
+    __typename
+    id
+    title
+    steps {
+      id
+      title
+      slug
+      stepType
+      subtitle {
+        ...HtmlFields
+      }
+      config
+    }
+    config
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -520,6 +537,7 @@ export const slices = gql`
     ...OverviewLinksField
     ...EventSliceFields
     ...FormFields
+    ...StepperFields
   }
 
   fragment AllSlices on Slice {
