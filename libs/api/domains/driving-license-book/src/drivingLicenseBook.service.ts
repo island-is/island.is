@@ -22,8 +22,10 @@ import {
   DrivingLicenseBookStudentOverview,
   Organization,
   SchoolType,
+  StudentMentorability,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
+import { StudentMentorabilityInput } from './dto/studentMentorability.input'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -251,6 +253,17 @@ export class DrivingLicenseBookService {
     throw new NotFoundException(
       `Student for nationalId ${nationalId} not found`,
     )
+  }
+
+  async getStudentMentorability(
+    input: StudentMentorabilityInput,
+  ): Promise<StudentMentorability> {
+    const student = await this.getStudent(input)
+    const minimumRequiredLessonTime = 540
+
+    return {
+      eligible: student.book.totalLessonTime >= minimumRequiredLessonTime,
+    }
   }
 
   async getPracticalDrivingLessons(

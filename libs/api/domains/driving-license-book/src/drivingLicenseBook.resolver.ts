@@ -25,6 +25,8 @@ import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.re
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
 import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
 import { DrivingInstructorOrEmployeeGuard } from './guards/drivingInstructorOrEmployee.guard'
+import { StudentMentorability } from './models/studentMentorability.response'
+import { StudentMentorabilityInput } from './dto/studentMentorability.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -107,6 +109,11 @@ export class DrivingLicenseBookResolver {
   @Query(() => [DrivingSchoolType])
   drivingLicenseBookSchoolTypes() {
     return this.drivingLicenseBookService.getSchoolTypes()
+  }
+
+  @Query(() => StudentMentorability)
+  studentMentorability(@Args('input') input: StudentMentorabilityInput) {
+    return this.drivingLicenseBookService.getStudentMentorability(input)
   }
 
   @UseGuards(DrivingSchoolEmployeeGuard)

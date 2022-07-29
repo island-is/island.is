@@ -104,6 +104,10 @@ export interface Organization {
   allowedDrivingSchoolTypes: SchoolType[]
 }
 
+export interface StudentMentorability {
+  eligible: boolean
+}
+
 export interface SchoolType {
   schoolTypeId: number
   schoolTypeName: string
