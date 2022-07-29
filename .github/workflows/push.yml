@@ -382,7 +382,7 @@ jobs:
           fi
 
       - name: check pre-release
-        if: contains(github.ref, "pre-release/")
+        if: contains('pre-release/', github.ref)
         run: |
           echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
 
