@@ -114,8 +114,21 @@ jobs:
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
+          else
+            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
+                  echo "::set-output name=PRE_CHECK::feature-deploy"
+                  exit 0
+                fi
+            done
           fi
           echo "::set-output name=PRE_CHECK::push"
+
+          
 
   prepare:
     runs-on: ec2-runners
@@ -155,12 +168,6 @@ jobs:
         run: |
           node -v
           ls -l `which node`
-
-      # - name: check pre-release
-      #   if: contains(github.ref, "pre-release/")
-      #   run: |
-      #     echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
-      #     echo "::set-output name=PRE_CHECK::feature-deploy"
 
       - name: Git refs
         id: git_refs
@@ -376,6 +383,11 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
           fi
+
+      - name: check pre-release
+        if: contains(github.ref, "pre-release/")
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
 
       - name: Prepare deployment targets
         id: deploy_map
