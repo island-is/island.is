@@ -24,10 +24,6 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
-import { env, number } from 'yargs'
-import { Resource } from 'aws-sdk/clients/efs'
-import { resourceUsage } from 'process'
-
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
