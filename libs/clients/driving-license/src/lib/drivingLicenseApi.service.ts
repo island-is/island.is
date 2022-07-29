@@ -9,6 +9,7 @@ import {
 import * as v1 from '../v1'
 import * as v2 from '../v2'
 import {
+  CanApplyErrorCodeBRenew,
   CanApplyErrorCodeBTemporary,
   Category,
   DriversLicense,
@@ -320,5 +321,48 @@ export class DrivingLicenseApi {
       apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
     })
     return response.map((v) => ({ id: v.nr || '', name: v.heiti || '' }))
+  }
+
+  public async getCanApplyForCategoryRenew(params: {
+    category: string
+    nationalId: string
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBRenew>> {
+    // TODO: Normalize once deprivation is added to normalize funtion
+    const skirteini = await this.v2.getCurrentLicenseV2({
+      kennitala: params.nationalId,
+      // apiVersion header indicates that this method will return a single license, rather
+      // than an array
+      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+    })
+
+    // Check if license exists
+    if (!skirteini || !skirteini.id || !skirteini.gildirTil) {
+      return {
+        result: false,
+        errorCode: 'NO_LICENSE_FOUND' as CanApplyErrorCodeBRenew,
+      }
+    }
+    // Check if deprivation
+    if (!!skirteini.svipting?.dagsTil) {
+      const hasActiveDeprivation = skirteini.svipting?.dagsTil
+        ? skirteini.svipting?.dagsTil > new Date()
+        : false
+      return {
+        result: hasActiveDeprivation,
+        errorCode: hasActiveDeprivation
+          ? ('HAS_DEPRIVATION' as CanApplyErrorCodeBRenew)
+          : undefined,
+      }
+    }
+    // Check if license expires this yea or is expired
+    const canRenew =
+      skirteini.gildirTil.getFullYear() <= new Date().getFullYear()
+
+    return {
+      result: canRenew,
+      errorCode: !canRenew
+        ? ('LICENSE_NOT_RENEWABLE' as CanApplyErrorCodeBRenew)
+        : undefined,
+    }
   }
 }

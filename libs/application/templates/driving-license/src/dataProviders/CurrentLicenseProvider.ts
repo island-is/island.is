@@ -8,7 +8,7 @@ import {
 import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
-import { B_FULL, B_TEMP } from '../shared'
+import { B_FULL, B_RENEW, B_TEMP } from '../shared'
 
 export interface CurrentLicenseProviderResult {
   currentLicense: Eligibility['name'] | null
@@ -68,10 +68,14 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
+
+    const canRenew = categoryB?.expires
+      ? new Date(categoryB?.expires).getFullYear() <= new Date().getFullYear()
+      : false
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: response.data?.drivingLicense?.healthRemarks,
-      applicationFor: categoryB ? B_FULL : B_TEMP,
+      applicationFor: categoryB ? (canRenew ? B_RENEW : B_FULL) : B_TEMP,
     }
   }
 

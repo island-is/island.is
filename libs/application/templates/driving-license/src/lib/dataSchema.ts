@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { YES, NO } from './constants'
-import { B_FULL, B_TEMP } from '../shared/constants'
+import { B_FULL, B_TEMP, B_RENEW } from '../shared/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -31,7 +31,7 @@ export const dataSchema = z.object({
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP]),
+  applicationFor: z.enum([B_FULL, B_TEMP, B_RENEW]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().nonempty(),

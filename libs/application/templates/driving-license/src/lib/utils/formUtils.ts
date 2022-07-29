@@ -11,6 +11,7 @@ import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
+  B_RENEW,
 } from '../../shared/constants'
 import { hasYes } from './hasYes'
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'

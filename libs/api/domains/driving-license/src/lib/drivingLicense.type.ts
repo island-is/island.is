@@ -7,7 +7,7 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'B-renew'
 
 export interface NewDrivingLicenseInput {
   juristictionId: number
@@ -63,6 +63,7 @@ export enum RequirementKey {
   personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
   hasDeprivation = 'HasDeprivation',
   hasPoints = 'HasPoints',
+  licenseNotRenewable = 'LicenseNotRenewable',
 }
 
 export interface ApplicationEligibilityRequirement {

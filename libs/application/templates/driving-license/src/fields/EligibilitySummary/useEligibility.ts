@@ -45,7 +45,7 @@ export const useEligibility = ({
     ) ?? B_FULL
 
   useEffect(() => {
-    setValue('applicationFor', B_TEMP)
+    setValue('applicationFor', applicationFor)
   }, [applicationFor, setValue])
 
   const { data = {}, error, loading } = useQuery(QUERY, {

@@ -17,6 +17,7 @@ import {
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
+  CanApplyErrorCodeBRenew,
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   DrivingAssessment,
@@ -142,6 +143,10 @@ export class DrivingLicenseService {
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
+    // TODO: Add renew
+    // expires this year
+    // residency
+    // no sviptingar
     const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
     const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
       {
@@ -188,6 +193,14 @@ export class DrivingLicenseService {
             },
           ]
         : []),
+      ...(type === 'B-renew'
+        ? [
+            {
+              key: RequirementKey.currentLocalResidency,
+              requirementMet: localRecidency,
+            },
+          ]
+        : []),
       {
         key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
         requirementMet: canApply.result,
@@ -206,7 +219,10 @@ export class DrivingLicenseService {
   }
 
   private canApplyErrorCodeToRequirementKey(
-    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+    errorCode?:
+      | CanApplyErrorCodeBFull
+      | CanApplyErrorCodeBTemporary
+      | CanApplyErrorCodeBRenew,
   ): RequirementKey {
     if (errorCode === undefined) {
       return RequirementKey.deniedByService
@@ -229,6 +245,8 @@ export class DrivingLicenseService {
         return RequirementKey.personNot17YearsOld
       case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
         return RequirementKey.personNotFoundInNationalRegistry
+      case 'LICENSE_NOT_RENEWABLE':
+        return RequirementKey.licenseNotRenewable
       default:
         this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 
@@ -236,7 +254,7 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(nationalId: string, type: 'B-full' | 'B-temp') {
+  async canApplyFor(nationalId: string, type: DrivingLicenseApplicationType) {
     if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         nationalId,
@@ -245,6 +263,11 @@ export class DrivingLicenseService {
     } else if (type === 'B-temp') {
       return this.drivingLicenseApi.getCanApplyForCategoryTemporary({
         nationalId,
+      })
+    } else if (type === 'B-renew') {
+      return this.drivingLicenseApi.getCanApplyForCategoryRenew({
+        nationalId,
+        category: 'B',
       })
     } else {
       throw new Error('unhandled license type')

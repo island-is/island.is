@@ -28,7 +28,7 @@ export const EligibilitySummary: FC<FieldBaseProps> = ({
   if (error || !eligibility) {
     return <Text>Villa kom upp við að sækja upplýsingar</Text>
   }
-
+  console.log(eligibility)
   const requirements = extractReasons(eligibility)
 
   return (

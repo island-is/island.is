@@ -2,16 +2,21 @@ export const m = {
   drivingLicenseSubject: {
     'B-temp': 'Umsókn um ökunám móttekin',
     'B-full': 'Umsókn um fullnaðarskírteini móttekin',
+    'B-renew': 'Umsókn um endurnýjun fullnaðarskírteinis móttekin',
   },
   drivingLicenseHeading: {
     'B-temp': 'Umsókn þín um ökunám hefur verið móttekin',
     'B-full': 'Umsókn þín um fullnaðarskírteinið hefur verið móttekin',
+    'B-renew':
+      'Umsókn þín um endurnýjun fullnaðarskírteinis hefur verið móttekin',
   },
   inPersonRequirements: {
     title: {
       'B-temp':
         'Til að klára umsóknina þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
       'B-full':
+        'Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
+      'B-renew':
         'Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
     },
     healthDeclaration: {

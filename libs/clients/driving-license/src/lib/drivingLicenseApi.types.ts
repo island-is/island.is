@@ -50,8 +50,17 @@ export type CanApplyErrorCodeBFull =
   | 'NO_TEMP_LICENSE'
   | 'HAS_DEPRIVATION'
 
+export type CanApplyErrorCodeBRenew =
+  | 'HAS_POINTS'
+  | 'NO_LICENSE_FOUND'
+  | 'HAS_DEPRIVATION'
+  | 'LICENSE_NOT_RENEWABLE'
+
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
+  T extends
+    | CanApplyErrorCodeBFull
+    | CanApplyErrorCodeBTemporary
+    | CanApplyErrorCodeBRenew
 > {
   result: boolean
   errorCode?: T | undefined

@@ -71,6 +71,11 @@ const requirementKeyToStep = (
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.currentLocalResidencyDescription,
       }
+    case RequirementKey.LicenseNotRenewable:
+      return {
+        title: requirementsMessages.licenseNotRenewableTitle,
+        description: requirementsMessages.licenseNotRenewableDescription,
+      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }

@@ -780,4 +780,15 @@ export const requirementsMessages = defineMessages({
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
+  licenseNotRenewableTitle: {
+    id: 'dl.application:requirementunmet.licenseNotRenewableTitle',
+    defaultMessage: 'Ekki er hægt að endurnýja ökuréttindi að svo stöddu',
+    description: 'requirement unmet api returned LICENSE_NOT_RENEWABLE',
+  },
+  licenseNotRenewableDescription: {
+    id: 'dl.application:requirementunmet.licenseNotRenewableDescription',
+    defaultMessage:
+      'Til að endurnýja þurfa ökuréttindi að vera útrunnin eða renna út á árinu.',
+    description: 'requirement unmet api returned LICENSE_NOT_RENEWABLE',
+  },
 })
