@@ -5,13 +5,15 @@ import {
   ServiceDefinition,
   ValueType,
   MissingSetting,
-  Resources,
   Hash,
   ExtraValues,
   EnvironmentVariableValue,
   PostgresInfo,
+  Resources,
+  ResourceValues,
   Feature,
   Features,
+  ResourceEnvValues,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
@@ -22,6 +24,9 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
+import { env, number } from 'yargs'
+import { Resource } from 'aws-sdk/clients/efs'
+import { resourceUsage } from 'process'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -59,6 +64,39 @@ export const serializeService: SerializeMethod = (
     allErrors.push(...errors)
   }
   const serviceDef = service.serviceDef
+  const isResourceValues = (
+    resource: ResourceEnvValues | ResourceValues,
+  ): resource is ResourceValues => {
+    return (resource as ResourceValues)?.limits?.memory !== undefined
+  }
+
+  const isResourceEnvValues = (
+    resource: ResourceEnvValues | ResourceValues,
+  ): resource is ResourceEnvValues => {
+    return (resource as ResourceEnvValues)[uberChart.env.type] !== undefined
+  }
+  const getNodeMemory = (resource: Resources): number | null => {
+    if (serviceDef.env.NODE_OPTIONS) {
+      throw new Error('Node options set, not doing anything.')
+    }
+    let memory: number
+    if (
+      isResourceEnvValues(serviceDef.resources) &&
+      serviceDef.resources?.[uberChart.env.type]?.limits?.memory !== undefined
+    ) {
+      return (memory =
+        parseInt(
+          serviceDef.resources?.[uberChart.env.type]?.limits?.memory as string,
+          10,
+        ) - 48)
+    } else {
+      if (isResourceValues(serviceDef.resources)) {
+        return parseInt(serviceDef.resources.limits.memory, 10) - 48
+      }
+    }
+    return NaN
+  }
+
   const {
     grantNamespaces,
     grantNamespacesEnabled,
@@ -77,9 +115,9 @@ export const serializeService: SerializeMethod = (
     },
     env: {
       SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
+      NODE_OPTIONS: `--max-old-space-size=${getNodeMemory(
+        serviceDef.resources,
+      )}`,
     },
     secrets: {},
     healthCheck: {
@@ -107,7 +145,28 @@ export const serializeService: SerializeMethod = (
   }
 
   // resources
-  result.resources = serviceDef.resources
+  // result.resources = serviceDef.resources
+  if (serviceDef.resources) {
+    if (isResourceValues(serviceDef.resources)) {
+      result.resources = {
+        limits: serviceDef.resources.limits,
+        requests: serviceDef.resources.requests,
+      }
+    } else if (
+      isResourceEnvValues(serviceDef.resources) &&
+      serviceDef.resources?.[uberChart.env.type]?.requests !== undefined
+    ) {
+      {
+        result.resources = {
+          limits: serviceDef.resources?.[uberChart.env.type]?.limits,
+          requests: serviceDef.resources?.[uberChart.env.type]?.requests as {
+            cpu: string
+            memory: string
+          },
+        }
+      }
+    }
+  }
   if (serviceDef.env.NODE_OPTIONS) {
     throw new Error(
       'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
@@ -157,11 +216,6 @@ export const serializeService: SerializeMethod = (
   // target port
   if (typeof serviceDef.port !== 'undefined') {
     result.service = { targetPort: serviceDef.port }
-  }
-
-  // resources
-  if (Object.keys(serviceDef.resources).length > 0) {
-    const
   }
 
   // environment vars
@@ -461,7 +515,7 @@ function serializeContainerRuns(
     command: string
     args?: string[]
     name?: string
-    resources?: Resources
+    resources?: ResourceValues
   }[],
 ): ContainerRunHelm[] {
   return containers.map((c) => {
