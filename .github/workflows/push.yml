@@ -128,8 +128,6 @@ jobs:
           fi
           echo "::set-output name=PRE_CHECK::push"
 
-          
-
   prepare:
     runs-on: ec2-runners
     container:
