@@ -31,10 +31,10 @@ interface FindStudentFieldBaseProps extends FieldBaseProps {
 const prefix = 'studentMentorability'
 
 const fieldNames = {
-  studentNationalId: `${prefix}.electedPersonNationalId`,
+  studentNationalId: `${prefix}.studentNationalId`,
   lookupError: `${prefix}.lookupError`,
   studentMentorabilityError: `${prefix}.studentMentorabilityError`,
-  studentName: `${prefix}.electedPersonName`,
+  studentName: `${prefix}.studentName`,
   studentIsMentorable: `${prefix}.studentIsMentorable`,
 }
 
