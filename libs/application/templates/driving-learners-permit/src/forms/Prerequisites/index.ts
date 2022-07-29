@@ -11,6 +11,7 @@ import {
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { sectionRequirements } from './sectionRequirements'
+import { sectionLookupStudent } from './sectionLookupStudent'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -33,6 +34,7 @@ export const Prerequisites: Form = buildForm({
             }),
           ],
         }),
+        sectionLookupStudent,
         sectionRequirements,
         buildMultiField({
           id: 'externalDataSuccess',

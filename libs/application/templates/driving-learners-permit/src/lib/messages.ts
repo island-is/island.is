@@ -42,6 +42,40 @@ export const m = defineMessages({
     description: 'Information',
   },
 
+  /* Lookup Student Subsection */
+  applicationStudentLookupTitle: {
+    id: 'dlp.application:applicationStudentLookupTitle',
+    defaultMessage: 'Uppfletting nemanda',
+    description: 'Application title for student lookup subssection',
+  },
+  errorNationalIdNoName: {
+    id: 'dlp.application:error.errorNationalIdNoName',
+    defaultMessage:
+      'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
+    description: 'No name found for national id in national registry',
+  },
+  errorNationalIdMentorableLookup: {
+    id: 'dlp.application:error.errorNationalIdMentorableLookup',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar um hvort nemandi eigi rétt á að hefja æfingaakstur',
+    description: "Error: Student learner's driving eligibility lookup error",
+  },
+  studentNationalIdLabel: {
+    id: 'dlp.application:studentNationalIdLabel',
+    defaultMessage: 'Kennitala nemanda',
+    description: 'Label for student national id input',
+  },
+  studentNameLabel: {
+    id: 'dlp.application:studentNameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Label for student lookup name',
+  },
+  studentInfoHeading: {
+    id: 'dlp.application:studentInfoHeading',
+    defaultMessage: 'Upplýsingar nemanda',
+    description: 'Heading text for student info',
+  },
+
   /* ----- */
   /* OTHER */
   /* ----- */
