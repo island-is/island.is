@@ -45,7 +45,6 @@ export const GET_ARTICLE_QUERY = gql`
       }
       processEntry {
         id
-        type
         processTitle
         processLink
         openLinkInModal

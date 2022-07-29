@@ -119,9 +119,6 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
-
   /** Category (Main) */
   category: IArticleCategory
 
@@ -1520,7 +1517,7 @@ export interface IMailingListSignupFields {
   title: string
 
   /** Variant */
-  variant: 'default' | 'conference'
+  variant: 'default' | 'conference' | 'categories'
 
   /** Description */
   description?: string | undefined
@@ -1542,6 +1539,12 @@ export interface IMailingListSignupFields {
 
   /** Disclaimer Label */
   disclaimerLabel?: string | undefined
+
+  /** Category Label */
+  categoryLabel?: string | undefined
+
+  /** Categories */
+  categories?: Record<string, any> | undefined
 
   /** Submit button text */
   buttonText: string
@@ -2065,6 +2068,9 @@ export interface IOrganizationPageFields {
     | 'sjukratryggingar'
     | 'syslumenn'
     | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
 
   /** Slices */
   slices?:
@@ -2089,7 +2095,13 @@ export interface IOrganizationPageFields {
 
   /** Bottom slices */
   bottomSlices?:
-    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
     | undefined
 
   /** News tag */
@@ -2174,6 +2186,7 @@ export interface IOrganizationSubpageFields {
         | IDistricts
         | IMailingListSignup
         | IEventSlice
+        | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2318,6 +2331,9 @@ export interface IProcessEntryFields {
 
   /** Process link */
   processLink: string
+
+  /** Process asset */
+  processAsset?: Asset | undefined
 
   /** Open link in modal */
   openLinkInModal?: boolean | undefined
