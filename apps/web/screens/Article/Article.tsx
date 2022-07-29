@@ -541,20 +541,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
               <ProcessEntry {...processEntry} />
             </Box>
           )}
-          {/* TODO: remove */}
-          {/* {article.stepper?.title && !inStepperView && (
-            <Box marginTop={3} printHidden className="rs_read">
-              <ProcessEntry
-                buttonText={n(
-                  article.processEntryButtonText || 'application',
-                  '',
-                )}
-                processLink={asPath.split('?')[0].concat('?stepper=true')}
-                processTitle={article.stepper.title}
-                newTab={false}
-              />
-            </Box>
-          )} */}
           {(subArticle
             ? subArticle.showTableOfContents
             : article.showTableOfContents) && (
