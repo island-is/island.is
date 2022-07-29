@@ -82,7 +82,6 @@ jobs:
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
                   echo "::set-output name=PRE_CHECK::feature-deploy"
-                  echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
                   exit 0
                 fi
             done
