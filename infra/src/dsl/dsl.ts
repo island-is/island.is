@@ -15,6 +15,7 @@ import {
   ValueType,
   XroadConfig,
   MountedFile,
+  ResourceValues,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -72,7 +73,16 @@ export class ServiceBuilder<ServiceType> implements Service {
         privileged: false,
         allowPrivilegeEscalation: false,
       },
-      resources: {},
+      resources: {
+        limits: {
+          memory: '256Mi',
+          cpu: '200m',
+        },
+        requests: {
+          memory: '128Mi',
+          cpu: '100m',
+        },
+      },
       xroadConfig: [],
       files: [],
     }

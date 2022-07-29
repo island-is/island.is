@@ -90,9 +90,10 @@ export interface Ingress {
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
+export type Resources = ResourceValues | ResourceEnvValues
 
-export type Resources = {
-  [name in OpsEnv]: Partial<ResourceValues>
+export type ResourceEnvValues = {
+  [name in OpsEnv]?: ResourceValues
 }
 
 export type ResourceValues = {
@@ -125,7 +126,7 @@ export type InitContainers = {
     command: string
     args?: string[]
     name?: string
-    resources?: Resources
+    resources?: ResourceValues
   }[]
   postgres?: PostgresInfo
 }

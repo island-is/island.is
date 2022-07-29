@@ -1,4 +1,4 @@
-import { Hash, ReplicaCount, Service, Resources } from './input-types'
+import { Hash, ReplicaCount, Service, ResourceValues } from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
 
@@ -89,8 +89,16 @@ export interface ServiceHelm {
 
   command?: string[]
   args?: string[]
-  resources?: Resources
-
+  resources?: {
+    limits?: {
+      cpu: string
+      memory: string
+    }
+    requests: {
+      cpu: string
+      memory: string
+    }
+  }
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
