@@ -782,7 +782,7 @@ export const requirementsMessages = defineMessages({
   },
   licenseNotRenewableTitle: {
     id: 'dl.application:requirementunmet.licenseNotRenewableTitle',
-    defaultMessage: 'Ekki er hægt að endurnýja ökuréttindi að svo stöddu',
+    defaultMessage: 'Endurnýjun leyfð',
     description: 'requirement unmet api returned LICENSE_NOT_RENEWABLE',
   },
   licenseNotRenewableDescription: {

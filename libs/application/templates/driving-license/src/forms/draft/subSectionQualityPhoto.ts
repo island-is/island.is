@@ -9,7 +9,7 @@ import {
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
 import { NO, qualityPhotoBullets, YES } from '../../lib/constants'
-import { B_FULL } from '../../shared/constants'
+import { B_FULL, B_RENEW } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   hasYes,
@@ -19,9 +19,10 @@ import {
 
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
+
   title: m.applicationQualityPhotoTitle,
   condition: isVisible(
-    isApplicationForCondition(B_FULL),
+    isApplicationForCondition([B_FULL, B_RENEW]),
     hasNoDrivingLicenseInOtherCountry,
   ),
   children: [

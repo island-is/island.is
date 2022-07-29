@@ -9,11 +9,12 @@ import { m } from '../lib/messages'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
 import { B_FULL, B_RENEW, B_TEMP } from '../shared'
+import { getFakeCurrentLicense } from '../lib/utils/formUtils'
 
 export interface CurrentLicenseProviderResult {
   currentLicense: Eligibility['name'] | null
   healthRemarks?: string[]
-  applicationFor: string
+  expires?: string
 }
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
@@ -25,21 +26,24 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       application.answers,
       'fakeData',
     )
+
     if (fakeData?.useFakeData === YES) {
       return {
-        currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+        currentLicense: getFakeCurrentLicense(fakeData.currentLicense),
         healthRemarks:
           fakeData.healthRemarks === YES
             ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
             : undefined,
-        applicationFor: fakeData.currentLicense === 'temp' ? B_FULL : B_TEMP,
+        expires: fakeData.expires,
       }
     }
 
     const query = `
       query LicenseQuery {
         drivingLicense {
+          issued
           categories {
+            issued
             name
             expires
           }
@@ -69,13 +73,20 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       (cat) => cat.name === 'B',
     )
 
-    const canRenew = categoryB?.expires
-      ? new Date(categoryB?.expires).getFullYear() <= new Date().getFullYear()
-      : false
-    return {
-      currentLicense: categoryB ? categoryB.name : null,
-      healthRemarks: response.data?.drivingLicense?.healthRemarks,
-      applicationFor: categoryB ? (canRenew ? B_RENEW : B_FULL) : B_TEMP,
+    if (!categoryB) {
+      return {
+        currentLicense: null,
+      }
+    } else {
+      const name =
+        response.data?.drivingLicense?.issued === categoryB.issued
+          ? 'B'
+          : 'B-full'
+      return {
+        currentLicense: name,
+        healthRemarks: response.data?.drivingLicense?.healthRemarks,
+        expires: categoryB?.expires,
+      }
     }
   }
 

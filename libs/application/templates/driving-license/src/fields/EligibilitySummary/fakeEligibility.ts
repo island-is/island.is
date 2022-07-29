@@ -1,8 +1,13 @@
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import {
+  DrivingLicenseApplicationFor,
+  B_FULL,
+  B_RENEW,
+} from '../../shared/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
+  expired?: string,
 ): ApplicationEligibility => {
   return {
     isEligible: true,
@@ -24,6 +29,16 @@ export const fakeEligibility = (
               requirementMet: true,
             },
           ]),
+      ...(applicationFor === B_RENEW
+        ? [
+            {
+              key: RequirementKey.LicenseNotRenewable,
+              requirementMet: expired
+                ? new Date(expired).getFullYear() <= new Date().getFullYear()
+                : true,
+            },
+          ]
+        : []),
       {
         key: RequirementKey.DeniedByService,
         requirementMet: true,

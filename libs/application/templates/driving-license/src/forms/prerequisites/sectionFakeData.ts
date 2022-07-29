@@ -1,4 +1,5 @@
 import {
+  buildDateField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -64,6 +65,10 @@ export const sectionFakeData = buildSubSection({
               value: 'temp',
               label: 'Bráðabirgðaskírteini',
             },
+            {
+              value: 'full',
+              label: 'Fullnaðarskírteini',
+            },
           ],
         }),
         buildRadioField({
@@ -106,6 +111,20 @@ export const sectionFakeData = buildSubSection({
               label: 'Tákntala',
             },
           ],
+        }),
+        buildDateField({
+          id: 'fakeData.expires',
+          title: 'Gildir til',
+          condition: (answers) => {
+            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+              answers,
+              'fakeData',
+            )
+            return (
+              fakeData?.currentLicense === 'full' &&
+              fakeData?.useFakeData === YES
+            )
+          },
         }),
       ],
     }),

@@ -20,21 +20,21 @@ export const sectionApplicationFor = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: '', //m.applicationDrivingLicenseTitle,
+      title: m.applicationDrivingLicenseTitle,
       children: [
-        buildDescriptionField({
-          id: 'dynamicApplicationTitle',
-          title: ({ externalData }) => {
-            const applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
-              externalData,
-              'currentLicense.data.applicationFor',
-            )
-            return applicationFor === B_TEMP
-              ? 'Tegund umsóknar: Bráðabirgðaskírteini'
-              : 'Tegund umsóknar: Fullnaðarskírteini'
-          },
-          marginBottom: 4,
-        }),
+        // buildDescriptionField({
+        //   id: 'dynamicApplicationTitle',
+        //   title: ({ externalData }) => {
+        //     const applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
+        //       externalData,
+        //       'currentLicense.data.applicationFor',
+        //     )
+        //     return applicationFor === B_TEMP
+        //       ? 'Tegund umsóknar: Bráðabirgðaskírteini'
+        //       : 'Tegund umsóknar: Fullnaðarskírteini'
+        //   },
+        //   marginBottom: 4,
+        // }),
         buildKeyValueField({
           label: m.overviewName,
           width: 'half',
@@ -45,11 +45,10 @@ export const sectionApplicationFor = buildSubSection({
           label: 'Réttindi umsækjenda',
           width: 'half',
           value: ({ externalData }) =>
-            getValueViaPath<DrivingLicenseApplicationFor>(
+            getValueViaPath<string | null>(
               externalData,
-              'currentLicense.data.applicationFor',
-              B_FULL,
-            ) === B_FULL
+              'currentLicense.data.currentLicense',
+            ) === 'B'
               ? 'Almenn ökuréttindi - B flokkur (fólksbifreið)'
               : 'Engin',
         }),

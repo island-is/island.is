@@ -7,10 +7,12 @@ import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
+  B_RENEW,
 } from '../../shared/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { useFormContext } from 'react-hook-form'
 import { useEffect } from 'react'
+import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -27,6 +29,7 @@ export interface UseEligibilityResult {
   error?: Error
   eligibility?: ApplicationEligibility
   loading: boolean
+  applicationFor?: DrivingLicenseApplicationFor
 }
 
 export const useEligibility = ({
@@ -37,13 +40,15 @@ export const useEligibility = ({
   const usingFakeData = fakeData?.useFakeData === YES
 
   const { setValue } = useFormContext()
-  const applicationFor =
-    getValueViaPath<DrivingLicenseApplicationFor>(
-      externalData,
-      'currentLicense.data.applicationFor',
-      B_FULL,
-    ) ?? B_FULL
-
+  const currentLicenseData = getValueViaPath<CurrentLicenseProviderResult>(
+    externalData,
+    'currentLicense.data',
+  )
+  const applicationFor = !currentLicenseData?.currentLicense
+    ? B_TEMP
+    : currentLicenseData?.currentLicense === 'B'
+    ? B_FULL
+    : B_RENEW
   useEffect(() => {
     setValue('applicationFor', applicationFor)
   }, [applicationFor, setValue])
@@ -60,7 +65,8 @@ export const useEligibility = ({
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(applicationFor),
+      eligibility: fakeEligibility(applicationFor, currentLicenseData?.expires),
+      applicationFor,
     }
   }
 
@@ -76,5 +82,6 @@ export const useEligibility = ({
   return {
     loading,
     eligibility: data.drivingLicenseApplicationEligibility,
+    applicationFor,
   }
 }

@@ -23,7 +23,7 @@ export enum States {
 export const YES = 'yes'
 export const NO = 'no'
 
-type FakeCurrentLicense = 'none' | 'temp'
+type FakeCurrentLicense = 'none' | 'temp' | 'full'
 type YesOrNo = 'yes' | 'no'
 
 export interface DrivingLicenseFakeData {
@@ -31,6 +31,7 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   healthRemarks?: YesOrNo
+  expires?: string
 }
 
 export const qualityPhotoBullets: FormTextArray = [
