@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import {
   Text,
   Button,
@@ -34,6 +34,11 @@ export const ProcessEntryLinkButton: FC<
   newTab = true,
   ...buttonProps
 }) => {
+  // Make sure that links without a protocol get prefixed with https:
+  const url = processLink.startsWith('//')
+    ? `https:${processLink}`
+    : processLink
+
   const button = (
     <Button icon="open" iconType="outline" nowrap {...buttonProps}>
       {buttonText}
@@ -45,10 +50,10 @@ export const ProcessEntryLinkButton: FC<
       title={processTitle}
       baseId="process-entry-modal-iframe"
       disclosure={button}
-      src={processLink}
+      src={url}
     />
   ) : (
-    <Link href={processLink} newTab={newTab} skipTab>
+    <Link href={url} newTab={newTab} skipTab>
       {button}
     </Link>
   )
