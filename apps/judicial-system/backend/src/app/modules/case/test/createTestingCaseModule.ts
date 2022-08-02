@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
@@ -5,10 +6,10 @@ import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
 import { QueueModule } from '@island.is/message-queue'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
+import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
@@ -28,7 +29,6 @@ import { CaseController } from '../case.controller'
 import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
-jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
 jest.mock('../../court/court.service')
 jest.mock('../../event/event.service')
@@ -57,6 +57,7 @@ export const createTestingCaseModule = async () => {
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
+      ConfigModule.forRoot({ load: [signingModuleConfig, caseModuleConfig] }),
     ],
     controllers: [
       CaseController,
@@ -70,15 +71,17 @@ export const createTestingCaseModule = async () => {
       AwsS3Service,
       EventService,
       SigningService,
-      EmailService,
       DefendantService,
+      {
+        provide: EmailService,
+        useValue: { sendEmail: jest.fn(async () => uuid()) },
+      },
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({}),
+          useIntl: async () => ({ formatMessage: jest.fn() }),
         },
       },
-
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Case),
@@ -92,12 +95,10 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseArchive),
         useValue: { create: jest.fn() },
       },
-      { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
       LimitedAccessCaseService,
     ],
   })
-
     .useMocker((token) => {
       if (typeof token === 'function') {
         return mock()

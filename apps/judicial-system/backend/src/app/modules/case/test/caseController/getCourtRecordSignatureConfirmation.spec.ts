@@ -5,6 +5,7 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -22,12 +23,18 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get court record signature confirmation', () => {
+  let mockAwsS3Service: AwsS3Service
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseController } = await createTestingCaseModule()
+    const {
+      awsS3Service,
+      caseModel,
+      caseController,
+    } = await createTestingCaseModule()
 
+    mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
 
     givenWhenThen = async (
@@ -64,6 +71,11 @@ describe('CaseController - Get court record signature confirmation', () => {
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
     ;((theCase as unknown) as { [key: string]: string })[assignedRole] = userId
     const documentToken = uuid()
+
+    beforeEach(() => {
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockResolvedValueOnce(Promise.resolve())
+    })
 
     describe('database update', () => {
       beforeEach(async () => {
