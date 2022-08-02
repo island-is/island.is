@@ -173,32 +173,29 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
             defaultValue="default"
           />
         </Box>
+      </GridRow>
 
+      <GridRow marginBottom={2} marginTop={2}>
         <GridColumn span="12/12">
-          <ContentBlock>
-            {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (
-              <AlertMessage
-                type="success"
-                title="Má æfingarleyfi"
-                message="Notandi má æfingarleyfi"
-              />
-            )}
-            {getValues(fieldNames.studentIsMentorable) ===
-              'isNotMentorable' && (
-              <AlertMessage
-                type="error"
-                title="Má ekki æfingarleyfi"
-                message="Notandi má ekki æfingarleyfi"
-              />
-            )}
-            {getValues(fieldNames.studentIsMentorable) === 'default' && (
-              <AlertMessage
-                type="info"
-                title="Kannski má? Kannski ekki"
-                message="Verður að fletta uppi notanda fyrst"
-              />
-            )}
-          </ContentBlock>
+          {getValues(fieldNames.studentIsMentorable) !== 'default' && (
+            <ContentBlock>
+              {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (
+                <AlertMessage
+                  type="success"
+                  title={formatMessage(m.studentIsMentorableHeader)}
+                  message={formatMessage(m.studentIsMentorableDescription)}
+                />
+              )}
+              {getValues(fieldNames.studentIsMentorable) ===
+                'isNotMentorable' && (
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(m.studentIsNotMentorableHeader)}
+                  message={formatMessage(m.studentIsNotMentorableDescription)}
+                />
+              )}
+            </ContentBlock>
+          )}
         </GridColumn>
       </GridRow>
     </Box>

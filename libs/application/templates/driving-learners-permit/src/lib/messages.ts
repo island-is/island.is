@@ -87,6 +87,28 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar nemanda',
     description: 'Heading text for student info',
   },
+  studentIsMentorableHeader: {
+    id: 'dlp.application:studentIsMentorableHeader',
+    defaultMessage: 'Æfingarleyfi gilt',
+    description: 'Heading text for a student who is mentorable',
+  },
+  studentIsMentorableDescription: {
+    id: 'dlp.application:studentIsMentorableDescription',
+    defaultMessage:
+      'Nemandi uppfyllir þær kröfur sem gerðar eru til þess að mega byrja æfingaakstur',
+    description: 'Description text for a student who is mentorable',
+  },
+  studentIsNotMentorableHeader: {
+    id: 'dlp.application:studentIsNotMentorableHeader',
+    defaultMessage: 'Æfingarleyfi ógilt',
+    description: 'Heading text for a student who is not mentorable',
+  },
+  studentIsNotMentorableDescription: {
+    id: 'dlp.application:studentIsNotMentorableDescription',
+    defaultMessage:
+      'Nemandi uppfyllir ekki þær kröfur sem gerðar eru til þess að mega byrja æfingaakstur',
+    description: 'Description text for a student who is not mentorable',
+  },
 
   /* ------------ */
   /* DONE SECTION */
