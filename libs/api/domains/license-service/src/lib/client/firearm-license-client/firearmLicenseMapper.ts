@@ -5,21 +5,6 @@ import {
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 
-const parseField = (
-  type: GenericLicenseDataFieldType,
-  label: string,
-  value: string | null | undefined,
-) => {
-  if (value) {
-    return {
-      type: type,
-      label: 'Nafn',
-      value: value,
-    }
-  }
-  return null
-}
-
 export const parseFirearmLicensePayload = (
   license: LicenseInfo,
 ): GenericUserLicensePayload | null => {
