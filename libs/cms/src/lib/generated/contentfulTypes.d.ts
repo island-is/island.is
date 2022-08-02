@@ -119,9 +119,6 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
-
   /** Category (Main) */
   category: IArticleCategory
 
@@ -694,8 +691,23 @@ export interface IFeaturedArticlesFields {
   /** Application Label */
   applicationLabel: string
 
+  /** Automatically Fetch Articles */
+  automaticallyFetchArticles: boolean
+
+  /** Sort By */
+  sortBy?: 'popularity' | 'importance' | undefined
+
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
 
   /** Article Count */
   articleCount?: number | undefined
@@ -2303,6 +2315,9 @@ export interface IProcessEntryFields {
 
   /** Process link */
   processLink: string
+
+  /** Process asset */
+  processAsset?: Asset | undefined
 
   /** Open link in modal */
   openLinkInModal?: boolean | undefined
