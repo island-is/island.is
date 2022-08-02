@@ -21,7 +21,11 @@ export const EventSlice: React.FC<SliceProps> = ({ slice }) => {
   const date = slice.date.split('-')
 
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <Box
         className={styles.wrapper}
         style={{

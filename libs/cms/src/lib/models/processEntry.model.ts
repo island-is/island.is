@@ -8,13 +8,10 @@ export class ProcessEntry {
   id!: string
 
   @Field()
-  type!: string
-
-  @Field()
   processTitle!: string
 
   @Field()
-  processLink!: string
+  processLink?: string
 
   @Field({ nullable: true })
   openLinkInModal?: boolean
@@ -26,12 +23,25 @@ export class ProcessEntry {
 export const mapProcessEntry = ({
   fields,
   sys,
-}: IProcessEntry): SystemMetadata<ProcessEntry> => ({
-  typename: 'ProcessEntry',
-  id: sys.id,
-  type: fields.type ?? '',
-  processTitle: fields.processTitle ?? '',
-  processLink: fields.processLink ?? '',
-  openLinkInModal: Boolean(fields.openLinkInModal),
-  buttonText: fields.buttonText ?? '',
-})
+}: IProcessEntry): SystemMetadata<ProcessEntry> => {
+  let processLink = ''
+
+  if (fields.processLink?.length > 0) {
+    processLink = fields.processLink
+  } else if (fields.processAsset?.fields?.file?.url) {
+    let prefix = ''
+    if (fields.processAsset.fields.file.url.startsWith('//')) {
+      prefix = 'https:'
+    }
+    processLink = prefix + fields.processAsset.fields.file.url
+  }
+
+  return {
+    typename: 'ProcessEntry',
+    id: sys.id,
+    processTitle: fields.processTitle ?? '',
+    processLink,
+    openLinkInModal: Boolean(fields.openLinkInModal),
+    buttonText: fields.buttonText ?? '',
+  }
+}
