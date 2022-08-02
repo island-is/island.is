@@ -25,7 +25,11 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  LiveChatIncChatPanel,
+  Sticky,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -40,7 +44,7 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
-import { watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
@@ -279,10 +283,27 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
-  const id = organizationIds.find((id) => {
+  const organizationIdWithLiveChat = organizationIds.find((id) => {
+    return id in liveChatIncConfig
+  })
+
+  if (organizationIdWithLiveChat) {
+    return (
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[organizationIdWithLiveChat]}
+      />
+    )
+  }
+
+  const organizationIdWithWatson = organizationIds.find((id) => {
     return id in watsonConfig
   })
-  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
+
+  if (organizationIdWithWatson) {
+    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+  }
+
+  return null
 }
 
 const SecondaryMenu = ({
