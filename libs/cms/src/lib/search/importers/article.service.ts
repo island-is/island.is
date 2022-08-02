@@ -173,6 +173,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'group',
               },
               {
+                key: entry.fields?.subgroup?.fields?.slug ?? '',
+                value: entry.fields?.subgroup?.fields?.title,
+                type: 'subgroup',
+              },
+              {
                 key: entry.fields?.category?.fields?.slug ?? '',
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
