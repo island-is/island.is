@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator'
+import { IsEmail } from 'class-validator'
 
 @InputType()
 export class MailchimpSubscribeInput {
