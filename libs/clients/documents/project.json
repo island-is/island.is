@@ -1,0 +1,22 @@
+{
+  "root": "libs/clients/documents",
+  "sourceRoot": "libs/clients/documents/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/documents/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/documents"],
+      "options": {
+        "jestConfig": "libs/clients/documents/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

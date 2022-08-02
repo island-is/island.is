@@ -1,0 +1,30 @@
+{
+  "root": "libs/service-portal/information",
+  "sourceRoot": "libs/service-portal/information/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/information"],
+      "options": {
+        "jestConfig": "libs/service-portal/information/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{screens,components}/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}

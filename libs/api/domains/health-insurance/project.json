@@ -1,0 +1,25 @@
+{
+  "root": "libs/api/domains/health-insurance",
+  "sourceRoot": "libs/api/domains/health-insurance/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/health-insurance/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/api/domains/health-insurance"]
+    }
+  },
+  "tags": []
+}
