@@ -80,6 +80,10 @@ export class LocalRunner implements GitActionStatus {
           shell: git.shell,
         },
       )
+      if (printAffected.status !== 0) {
+        log(`Error running nx print-affected. Error is %O, stderr is %O`, printAffected.error, printAffected.stderr)
+        throw printAffected.error
+      }
       let affectedComponents = printAffected.stdout
         .split(',')
         .map((s) => s.trim())
