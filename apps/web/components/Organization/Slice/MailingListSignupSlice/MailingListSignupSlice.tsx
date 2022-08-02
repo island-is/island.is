@@ -41,7 +41,7 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
             description={slice.description}
             inputLabel={slice.inputLabel}
             buttonText={slice.buttonText}
-            mailingListUrl={slice.signupUrl}
+            signupID={slice.id}
           />
         </Box>
       )}
