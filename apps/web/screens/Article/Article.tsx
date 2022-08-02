@@ -531,7 +531,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -592,7 +592,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -636,7 +636,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(

@@ -193,7 +193,6 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    type
     processTitle
     processLink
     openLinkInModal
