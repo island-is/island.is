@@ -24,7 +24,6 @@ import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 export async function generateComplaintPdf(
   application: Application,
   attachedFiles: DocumentInfo[],
-  r,
 ): Promise<Buffer> {
   const dto = applicationToComplaintPDF(application, attachedFiles)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
