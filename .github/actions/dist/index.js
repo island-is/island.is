@@ -85288,6 +85288,10 @@ class LocalRunner {
                         cwd: git.cwd,
                         shell: git.shell,
                     });
+                    if (printAffected.status !== 0) {
+                        log(`Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`, printAffected.stderr, printAffected.stdout);
+                        throw printAffected.error;
+                    }
                 }
                 let affectedComponents = printAffected.stdout
                     .split(',')
