@@ -189,6 +189,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      showTableOfContents
       sliceCustomRenderer
       sliceExtraText
       featuredImage {

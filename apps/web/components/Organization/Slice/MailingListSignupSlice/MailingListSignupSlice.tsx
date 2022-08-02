@@ -19,7 +19,11 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
   namespace,
 }) => {
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       {slice.variant === 'conference' ? (
         <GridContainer>
           <GridRow>
