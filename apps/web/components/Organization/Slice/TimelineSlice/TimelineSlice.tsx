@@ -189,7 +189,11 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
   const monthEvents = eventMap.get(months[month].year).get(months[month].month)
 
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box paddingLeft={1}>
           <GridContainer>

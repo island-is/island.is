@@ -19,9 +19,8 @@ describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_REPORT_ROUTE}/test_id`)
-
     intercept(caseDataAddition)
+    cy.visit(`${IC_POLICE_REPORT_ROUTE}/test_id`)
   })
 
   it('should display the demand', () => {
