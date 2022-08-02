@@ -770,6 +770,7 @@ export class CmsContentfulService {
         mapMailingListSignup,
       )[0] ?? null
     )
+  }
 
   async getForm(input: GetFormInput): Promise<Form | null> {
     const params = {
