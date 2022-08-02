@@ -175,6 +175,7 @@ export const Draft: Form = buildForm({
               id: 'paymentCharge',
               title: '',
               component: 'PaymentCharge',
+              doesNotRequireAnswer: true,
             }),
             buildSubmitField({
               id: 'payment',

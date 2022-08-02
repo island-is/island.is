@@ -7,6 +7,9 @@ import {
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { string } from 'zod'
 import { OpeningHour } from './constants'
+import { Application } from '@island.is/api/schema'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
   operation?: APPLICATION_TYPES
@@ -82,6 +85,8 @@ const vskNrRegex = /([0-9]){6}/
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
 
+export const getCurrencyString = (n: number) =>
+  n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 export const isValidEmail = (value: string) => emailRegex.test(value)
 export const isValidVskNr = (value: string) => vskNrRegex.test(value)
 export const isValidTime = (value: string) => timeRegex.test(value)
@@ -99,4 +104,36 @@ export const displayOpeningHours = (answers: any) => {
     ) ||
     false
   )
+}
+
+export const getChargeItemCode = (answers: FormValue) => {
+  const applicationInfo = getValueViaPath(
+    answers,
+    'applicationInfo',
+  ) as Operation
+  if (
+    applicationInfo.operation === APPLICATION_TYPES.RESTURANT &&
+    applicationInfo.resturant.category
+  ) {
+    if (applicationInfo.resturant.category === OPERATION_CATEGORY.ONE) {
+      return 'AY123'
+    } else if (applicationInfo.resturant.category === OPERATION_CATEGORY.TWO) {
+      return 'AY122'
+    }
+  } else if (applicationInfo.operation === APPLICATION_TYPES.HOTEL) {
+    if (applicationInfo.hotel.category) {
+      if (
+        applicationInfo.hotel.category.length > 1 ||
+        applicationInfo.hotel.category.includes(OPERATION_CATEGORY.TWO)
+      ) {
+        return 'AY123'
+      } else if (
+        applicationInfo.hotel.category.includes(OPERATION_CATEGORY.ONE)
+      ) {
+        return 'AY122'
+      }
+    } else {
+      return 'AY121'
+    }
+  }
 }

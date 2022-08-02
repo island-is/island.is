@@ -148,4 +148,5 @@ export const dataSchema = z.object({
       })
       .optional(),
   }),
+  chargeItemCode: z.string(),
 })

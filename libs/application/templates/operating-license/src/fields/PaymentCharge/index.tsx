@@ -1,12 +1,29 @@
 import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { getValueViaPath } from '@island.is/application/core'
+import { Operation } from '../../lib/constants'
+import { getChargeItemCode, getCurrencyString } from '../../lib/utils'
+import { PaymentCatalogItem } from '@island.is/api/schema'
+import { useFormContext } from 'react-hook-form'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
+  const chargeCode = getChargeItemCode(application.answers)
+  const chargeItems = getValueViaPath(
+    application.externalData,
+    'payment.data',
+  ) as PaymentCatalogItem[]
+  const chargeItem = chargeItems.find(
+    (item) => item.chargeItemCode === chargeCode,
+  )
+  useEffect(() => {
+    setValue('chargeItemCode', chargeCode)
+  }, [chargeCode, setValue])
 
   return (
     <Box paddingTop="smallGutter">
@@ -16,12 +33,12 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
             <Text variant="h4">
               {formatMessage(m.applicationCompleteTitle)}
             </Text>
-            <Text marginTop="smallGutter">Rekstarleyfi</Text>
+            <Text marginTop="smallGutter">{chargeItem?.chargeItemName}</Text>
           </Box>
         </Column>
         <Column>
           <Box display="flex" justifyContent="flexEnd" marginBottom="gutter">
-            <Text>123 kr</Text>
+            <Text>{getCurrencyString(chargeItem?.priceAmount || 0)}</Text>
           </Box>
         </Column>
       </Columns>
@@ -37,7 +54,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
         <Column>
           <Box display="flex" justifyContent="flexEnd">
             <Text variant="h4" color="blue400">
-              123 kr
+              {getCurrencyString(chargeItem?.priceAmount || 0)}
             </Text>
           </Box>
         </Column>

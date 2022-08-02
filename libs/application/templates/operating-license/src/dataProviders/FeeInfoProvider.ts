@@ -6,7 +6,7 @@ import {
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 import { m } from '../lib/messages'
 
-const CHARGE_ITEM_CODES = ['AY105', 'AY106', 'AY107', 'AY108']
+const CHARGE_ITEM_CODES = ['AY121', 'AY122', 'AY123']
 
 const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
@@ -16,6 +16,7 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
   async provide(): Promise<PaymentCatalogItem[]> {
     const items =
       (await this.getCatalogForOrganization(SYSLUMADUR_NATIONAL_ID)) || []
+    console.log('ITEMS', items)
     return items.filter(({ chargeItemCode }) =>
       CHARGE_ITEM_CODES.includes(chargeItemCode),
     )
