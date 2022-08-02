@@ -28,10 +28,9 @@ export default async function handler(req, res) {
     },
   })
 
-  const baseUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://island.is'
-      : 'https://beta.dev01.devland.is'
+  const host: string = req.headers.host
+  const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
+  const baseUrl = `${protocol}${host}`
 
   const newsItem = (item: GetNewsQuery['getNews']['items'][0]) => {
     const url = organization
