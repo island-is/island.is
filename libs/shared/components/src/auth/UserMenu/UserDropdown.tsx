@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
@@ -42,7 +42,6 @@ export const UserDropdown = ({
   showDropdownLanguage,
 }: UserDropdownProps) => {
   const { formatMessage } = useLocale()
-  useNamespaces('global')
   const isVisible = dropdownState === 'open'
   const onClose = () => {
     setDropdownState('closed')
