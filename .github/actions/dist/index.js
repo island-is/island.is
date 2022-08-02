@@ -85278,12 +85278,7 @@ class LocalRunner {
                 });
                 if (printAffected.status !== 0) {
                     log(`Error running nx print-affected. Error is %O, stderr is %O`, printAffected.error, printAffected.stderr);
-                    printAffected = (0,external_child_process_.spawnSync)(`npx`, [
-                        `nx`,
-                        `print-affected`,
-                        `--select=projects`,
-                        '--all',
-                    ], {
+                    printAffected = (0,external_child_process_.spawnSync)(`npx`, [`nx`, `print-affected`, `--select=projects`, '--all'], {
                         encoding: 'utf-8',
                         cwd: git.cwd,
                         shell: git.shell,

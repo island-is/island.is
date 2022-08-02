@@ -81,15 +81,14 @@ export class LocalRunner implements GitActionStatus {
         },
       )
       if (printAffected.status !== 0) {
-        log(`Error running nx print-affected. Error is %O, stderr is %O`, printAffected.error, printAffected.stderr)
+        log(
+          `Error running nx print-affected. Error is %O, stderr is %O`,
+          printAffected.error,
+          printAffected.stderr,
+        )
         printAffected = spawnSync(
           `npx`,
-          [
-            `nx`,
-            `print-affected`,
-            `--select=projects`,
-            '--all',
-          ],
+          [`nx`, `print-affected`, `--select=projects`, '--all'],
           {
             encoding: 'utf-8',
             cwd: git.cwd,
@@ -97,7 +96,11 @@ export class LocalRunner implements GitActionStatus {
           },
         )
         if (printAffected.status !== 0) {
-          log(`Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`, printAffected.stderr, printAffected.stdout)
+          log(
+            `Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`,
+            printAffected.stderr,
+            printAffected.stdout,
+          )
           throw printAffected.error
         }
       }
