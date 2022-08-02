@@ -46,7 +46,7 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
-import { useNamespace } from '../hooks'
+import { useFeatureFlag, useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -171,6 +171,11 @@ const Layout: NextComponentType<
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
+
+  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
+    'iswebfooterlinkingtosupportpage',
+    false,
+  )
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -404,7 +409,9 @@ const Layout: NextComponentType<
                   topLinks={footerUpperInfo}
                   {...(activeLocale === 'is'
                     ? {
-                        linkToHelpWeb: linkResolver('serviceweb').href,
+                        linkToHelpWeb: isWebFooterLinkingToSupportPage
+                          ? linkResolver('serviceweb').href
+                          : '',
                       }
                     : { topLinksContact: footerUpperContact })}
                   bottomLinks={footerLowerMenu}
