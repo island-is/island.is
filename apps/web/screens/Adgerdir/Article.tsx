@@ -133,7 +133,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           <Text variant="h1" as="h1">
             {article.title}
           </Text>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
               <ProcessEntry {...processEntry} />
             </Box>
@@ -145,7 +145,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
           activeLocale,
         )}
         <Box>
-          {!!processEntry &&
+          {processEntry?.processLink &&
             mounted &&
             createPortal(
               <Box
