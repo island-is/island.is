@@ -1517,7 +1517,7 @@ export interface IMailingListSignupFields {
   title: string
 
   /** Variant */
-  variant: 'default' | 'conference' | 'categories'
+  variant: 'default' | 'conference'
 
   /** Description */
   description?: string | undefined
@@ -1539,12 +1539,6 @@ export interface IMailingListSignupFields {
 
   /** Disclaimer Label */
   disclaimerLabel?: string | undefined
-
-  /** Category Label */
-  categoryLabel?: string | undefined
-
-  /** Categories */
-  categories?: Record<string, any> | undefined
 
   /** Submit button text */
   buttonText: string
@@ -2068,9 +2062,6 @@ export interface IOrganizationPageFields {
     | 'sjukratryggingar'
     | 'syslumenn'
     | 'digital_iceland'
-    | 'hsn'
-    | 'fiskistofa'
-    | 'landlaeknir'
 
   /** Slices */
   slices?:
@@ -2095,13 +2086,7 @@ export interface IOrganizationPageFields {
 
   /** Bottom slices */
   bottomSlices?:
-    | (
-        | ILatestNewsSlice
-        | ILogoListSlice
-        | IOneColumnText
-        | ITimeline
-        | ITwoColumnText
-      )[]
+    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
     | undefined
 
   /** News tag */
@@ -2186,7 +2171,6 @@ export interface IOrganizationSubpageFields {
         | IDistricts
         | IMailingListSignup
         | IEventSlice
-        | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
