@@ -310,3 +310,11 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
     }
   }
 `
+
+export const MAILING_LIST_SIGNUP_MUTATION = gql`
+  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
+    mailchimpSubscribe(input: $input) {
+      subscribed
+    }
+  }
+`

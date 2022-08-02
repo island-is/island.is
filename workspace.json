@@ -1147,6 +1147,29 @@
       },
       "tags": []
     },
+    "api-domains-mailchimp": {
+      "root": "libs/api/domains/mailchimp",
+      "sourceRoot": "libs/api/domains/mailchimp/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/mailchimp/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/mailchimp"],
+          "options": {
+            "jestConfig": "libs/api/domains/mailchimp/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "api-domains-mortgage-certificate": {
       "root": "libs/api/domains/mortgage-certificate",
       "sourceRoot": "libs/api/domains/mortgage-certificate/src",
