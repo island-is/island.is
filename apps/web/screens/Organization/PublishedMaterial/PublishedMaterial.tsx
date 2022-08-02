@@ -12,6 +12,8 @@ import {
   Inline,
   LoadingDots,
   NavigationItem,
+  Option,
+  Select,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -33,7 +35,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -49,10 +51,8 @@ import {
   getFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
-  Ordering,
 } from './utils'
-import { OrderByItem } from './components/OrderByItem'
-import { useSelect } from 'downshift'
+import { ValueType } from 'react-select'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -72,11 +72,41 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
-  const [ordering, setOrdering] = useState<Ordering>({
-    field: 'releaseDate',
-    order: 'desc',
-  })
+
   const n = useNamespace(namespace)
+
+  const orderByOptions = useMemo(() => {
+    return [
+      {
+        label: n('orderByTitleAscending', 'Titill (a-ö)'),
+        value: 'order-by-title-ascending',
+        field: 'title.sort',
+        order: 'asc',
+      },
+      {
+        label: n('orderByTitleDescending', 'Titill (ö-a)'),
+        value: 'order-by-title-descending',
+        field: 'title.sort',
+        order: 'desc',
+      },
+      {
+        label: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
+        value: 'order-by-release-date-descending',
+        field: 'releaseDate',
+        order: 'desc',
+      },
+      {
+        label: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
+        value: 'order-by-release-date-ascending',
+        field: 'releaseDate',
+        order: 'asc',
+      },
+    ]
+  }, [])
+
+  const [selectedOrderOption, setSelectedOrderOption] = useState<
+    ValueType<Option>
+  >(orderByOptions?.[0])
 
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
@@ -111,7 +141,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         searchString: searchValue,
         size: ASSETS_PER_PAGE,
         tagGroups: {},
-        sort: ordering,
+        sort: selectedOrderOption,
       },
     },
   })
@@ -163,7 +193,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           searchString: searchValue,
           size: ASSETS_PER_PAGE,
           tagGroups: getGenericTagGroupHierarchy(filterCategories),
-          sort: ordering,
+          sort: selectedOrderOption,
         },
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -195,14 +225,14 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             searchString: searchValue,
             size: ASSETS_PER_PAGE,
             tagGroups: getGenericTagGroupHierarchy(filterCategories),
-            sort: ordering,
+            sort: selectedOrderOption,
           },
         },
       })
       setIsTyping(false)
     },
     DEBOUNCE_TIME_IN_MS,
-    [parameters, activeLocale, searchValue, ordering],
+    [parameters, activeLocale, searchValue, selectedOrderOption],
   )
 
   const pageTitle = n('pageTitle', 'Útgefið efni')
@@ -214,60 +244,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     page * ASSETS_PER_PAGE
 
   const selectedFilters = getFilterTags(filterCategories)
-
-  const orderByItems = [
-    {
-      title: n('orderByTitleAscending', 'Titill (a-ö)'),
-      onClick: () =>
-        setOrdering({
-          field: 'title.sort',
-          order: 'asc',
-        }),
-      isSelected: ordering.field === 'title.sort' && ordering.order === 'asc',
-    },
-    {
-      title: n('orderByTitleDescending', 'Titill (ö-a)'),
-      onClick: () =>
-        setOrdering({
-          field: 'title.sort',
-          order: 'desc',
-        }),
-      isSelected: ordering.field === 'title.sort' && ordering.order === 'desc',
-    },
-    {
-      title: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
-      onClick: () =>
-        setOrdering({
-          field: 'releaseDate',
-          order: 'desc',
-        }),
-      isSelected: ordering.field === 'releaseDate' && ordering.order === 'desc',
-    },
-    {
-      title: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
-      onClick: () =>
-        setOrdering({
-          field: 'releaseDate',
-          order: 'asc',
-        }),
-      isSelected: ordering.field === 'releaseDate' && ordering.order === 'asc',
-    },
-  ]
-
-  const {
-    isOpen,
-    selectedItem,
-    getToggleButtonProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect({ items: orderByItems })
-
-  useEffect(() => {
-    if (selectedItem?.onClick) selectedItem.onClick()
-  }, [selectedItem])
-
-  const orderByButtonRef = useRef<HTMLDivElement | null>(null)
 
   return (
     <OrganizationWrapper
@@ -349,6 +325,21 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </Filter>
           </GridRow>
 
+          <GridRow align="flexStart" marginBottom={3} marginTop={3}>
+            <Box className={styles.orderBySelect}>
+              <Select
+                name="order-by-select"
+                label={n('orderBy', 'Raða eftir')}
+                size="xs"
+                options={orderByOptions}
+                value={selectedOrderOption}
+                onChange={(option) => {
+                  setSelectedOrderOption(option)
+                }}
+              />
+            </Box>
+          </GridRow>
+
           <GridRow marginTop={2} align="center">
             <Box
               style={{
@@ -358,6 +349,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               <LoadingDots />
             </Box>
           </GridRow>
+
           <GridRow alignItems="center">
             <GridColumn span="8/12">
               <Inline space={1}>
@@ -379,48 +371,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 ))}
               </Inline>
             </GridColumn>
-            <GridColumn span="4/12">
-              <GridRow align="flexEnd">
-                <div ref={orderByButtonRef}>
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className={styles.orderByToggleButton}
-                    {...getToggleButtonProps()}
-                  >
-                    <div className={styles.orderByToggleButtonText}>
-                      {n('orderBy', 'Raða eftir')}
-                    </div>
-                    <Icon size="small" icon="chevronDown" />
-                  </button>
-                </div>
-                <ul
-                  style={{
-                    display: isOpen ? 'block' : 'none',
-                    marginTop: orderByButtonRef.current
-                      ? (orderByButtonRef.current.getBoundingClientRect()
-                          ?.height ?? 24) + 4
-                      : 28,
-                  }}
-                  className={styles.orderByItemContainer}
-                  {...getMenuProps()}
-                >
-                  {orderByItems.map((item, index) => (
-                    <li key={index} {...getItemProps({ item, index })}>
-                      <OrderByItem
-                        isSelected={item.isSelected}
-                        isHighlighted={highlightedIndex === index}
-                        hasBorderTop={index !== 0}
-                        onClick={item.onClick}
-                      >
-                        {item.title}
-                      </OrderByItem>
-                    </li>
-                  ))}
-                </ul>
-              </GridRow>
-            </GridColumn>
           </GridRow>
+
           {(publishedMaterial?.items ?? []).map((item, index) => {
             return (
               <GridRow

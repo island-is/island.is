@@ -119,9 +119,6 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
-
   /** Category (Main) */
   category: IArticleCategory
 
@@ -694,8 +691,23 @@ export interface IFeaturedArticlesFields {
   /** Application Label */
   applicationLabel: string
 
+  /** Automatically Fetch Articles */
+  automaticallyFetchArticles: boolean
+
+  /** Sort By */
+  sortBy?: 'popularity' | 'importance' | undefined
+
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
 
   /** Article Count */
   articleCount?: number | undefined
@@ -742,6 +754,74 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
     contentType: {
       sys: {
         id: 'footerItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Recipient */
+  recipient: string
+
+  /** Fields */
+  fields?: IFormField[] | undefined
+
+  /** Success Text */
+  successText?: string | undefined
+}
+
+export interface IForm extends Entry<IFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'form'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFieldFields {
+  /** Title */
+  title: string
+
+  /** Placeholder */
+  placeholder?: string | undefined
+
+  /** Type */
+  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+
+  /** Required */
+  required?: boolean | undefined
+
+  /** Options */
+  options?: string[] | undefined
+}
+
+export interface IFormField extends Entry<IFormFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'formField'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2236,6 +2316,9 @@ export interface IProcessEntryFields {
   /** Process link */
   processLink: string
 
+  /** Process asset */
+  processAsset?: Asset | undefined
+
   /** Open link in modal */
   openLinkInModal?: boolean | undefined
 
@@ -3564,6 +3647,8 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'footerItem'
+  | 'form'
+  | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
   | 'genericOverviewPage'
