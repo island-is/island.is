@@ -64,7 +64,7 @@ export class LocalRunner implements GitActionStatus {
 
     if (changedFiles.length === 0) return []
     try {
-      const printAffected = spawnSync(
+      let printAffected = spawnSync(
         `npx`,
         [
           `nx`,
@@ -82,7 +82,20 @@ export class LocalRunner implements GitActionStatus {
       )
       if (printAffected.status !== 0) {
         log(`Error running nx print-affected. Error is %O, stderr is %O`, printAffected.error, printAffected.stderr)
-        throw printAffected.error
+        printAffected = spawnSync(
+          `npx`,
+          [
+            `nx`,
+            `print-affected`,
+            `--select=projects`,
+            '--all',
+          ],
+          {
+            encoding: 'utf-8',
+            cwd: git.cwd,
+            shell: git.shell,
+          },
+        )
       }
       let affectedComponents = printAffected.stdout
         .split(',')
