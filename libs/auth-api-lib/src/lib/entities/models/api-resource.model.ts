@@ -16,7 +16,7 @@ import { ApiResourceScope } from './api-resource-scope.model'
 @Table({
   tableName: 'api_resource',
 })
-export class ApiResource extends Model<ApiResource> {
+export class ApiResource extends Model {
   // Common properties for all resources (no single table inheritance)
 
   @PrimaryKey

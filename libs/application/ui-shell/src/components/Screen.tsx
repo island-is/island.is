@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
+import { formatText, mergeAnswers } from '@island.is/application/core'
 import {
   Application,
   Answer,
@@ -16,10 +17,8 @@ import {
   FormModes,
   FormValue,
   Schema,
-  formatText,
-  mergeAnswers,
   BeforeSubmitCallback,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   Box,
   GridColumn,

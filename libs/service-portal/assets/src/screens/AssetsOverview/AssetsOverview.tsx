@@ -77,8 +77,8 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             prevResult.assetsOverview?.properties
           ) {
             fetchMoreResult.assetsOverview.properties = [
-              ...prevResult.assetsOverview?.properties,
-              ...fetchMoreResult.assetsOverview?.properties,
+              ...(prevResult.assetsOverview?.properties ?? []),
+              ...(fetchMoreResult.assetsOverview?.properties ?? []),
             ]
           }
           return fetchMoreResult
@@ -95,7 +95,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           defaultMessage: 'Fasteignir',
         })}
       </Text>
-      <GridRow marginBottom={7}>
+      <GridRow marginBottom={6}>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text variant="default" paddingTop={2}>
             {formatMessage({
@@ -105,37 +105,41 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             })}
           </Text>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            alignItems="flexEnd"
-            marginTop={2}
-            printHidden
-            height="full"
-          >
-            <a
-              href="/umsoknir/vedbokarvottord/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button
-                colorScheme="default"
-                icon="document"
-                iconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.mortageCertificate)}
-              </Button>
-            </a>
-          </Box>
-        </GridColumn>
       </GridRow>
+
       {loading && <AssetCardLoader />}
-      {data && (
-        <AssetListCards paginateCallback={paginate} assets={assetData} />
+      {assetData?.properties && assetData?.properties?.length > 0 && (
+        <>
+          <GridRow>
+            <GridColumn span="1/1">
+              <Box
+                display="flex"
+                justifyContent="flexStart"
+                printHidden
+                height="full"
+                marginBottom={4}
+              >
+                <a
+                  href="/umsoknir/vedbokarvottord/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button
+                    colorScheme="default"
+                    icon="document"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.mortageCertificate)}
+                  </Button>
+                </a>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <AssetListCards paginateCallback={paginate} assets={assetData} />
+        </>
       )}
 
       {!loading &&

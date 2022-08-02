@@ -97,15 +97,14 @@ module.exports = {
               modified: new Date(),
             },
             { id: user.id },
-            model,
-            { transaction: t },
+            { transaction: t, model },
           ),
         ),
       ),
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.bulkDelete('user', null, { transaction: t }),
     )

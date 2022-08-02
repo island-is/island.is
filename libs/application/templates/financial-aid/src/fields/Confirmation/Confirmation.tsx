@@ -3,6 +3,7 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
@@ -23,6 +24,7 @@ const Confirmation = ({
   municipalityHomepage,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   return (
     <>
@@ -71,7 +73,7 @@ const Confirmation = ({
         <Box marginTop={2}>
           <DescriptionText
             text={confirmation.nextSteps.content}
-            format={{ nextMonth: getNextPeriod.month }}
+            format={{ nextMonth: getNextPeriod(lang).month }}
           />
         </Box>
       </Box>

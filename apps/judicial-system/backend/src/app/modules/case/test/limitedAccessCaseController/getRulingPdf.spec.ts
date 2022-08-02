@@ -119,7 +119,7 @@ describe('LimitedAccessCaseController - Get ruling pdf', () => {
     it('should generate pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })

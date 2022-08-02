@@ -1,15 +1,13 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildTextField,
   buildMultiField,
   buildFileUploadField,
-  DefaultEvents,
   buildSubmitField,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
 import {
   section,

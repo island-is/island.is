@@ -32,7 +32,6 @@ auth-admin-web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
@@ -242,7 +241,7 @@ services-auth-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
@@ -274,7 +273,7 @@ services-auth-api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 10
+        max: 15
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
@@ -317,15 +316,15 @@ services-auth-api:
   namespace: 'identity-server'
   replicaCount:
     default: 2
-    max: 10
+    max: 15
     min: 2
   resources:
     limits:
-      cpu: '400m'
-      memory: '256Mi'
+      cpu: '800m'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '128Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
@@ -417,6 +416,10 @@ services-auth-public-api:
 services-personal-representative:
   enabled: true
   env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
@@ -463,13 +466,17 @@ services-personal-representative:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 services-personal-representative-public:
   enabled: true
   env:
-    DB_REPLICAS_HOST: ''
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
@@ -523,6 +530,7 @@ services-personal-representative-public:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

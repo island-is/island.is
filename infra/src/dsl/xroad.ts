@@ -194,6 +194,17 @@ export const Properties = new XroadConf({
   },
 })
 
+export const AdrAndMachine = new XroadConf({
+  env: {
+    XROAD_ADR_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
@@ -352,6 +363,16 @@ export const Vehicles = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
+  },
+})
+
+export const ChargeFjsV2 = new XroadConf({
+  env: {
+    XROAD_CHARGE_FJS_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
     },
   },
 })

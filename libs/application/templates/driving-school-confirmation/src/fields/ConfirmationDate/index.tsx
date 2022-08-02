@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { DatePickerController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 

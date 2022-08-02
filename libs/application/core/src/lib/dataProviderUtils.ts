@@ -1,17 +1,15 @@
-import { Application } from '../types/Application'
-import {
-  DataProviderResult,
-  ProviderErrorReason,
-} from '../types/DataProviderResult'
-import {
-  BasicDataProvider,
-  CustomTemplateFindQuery,
-} from '../types/BasicDataProvider'
-import { StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
 import isObject from 'lodash/isObject'
 import isString from 'lodash/isString'
-import { FormatMessage } from '../types/external'
+import {
+  FormatMessage,
+  StaticText,
+  BasicDataProvider,
+  CustomTemplateFindQuery,
+  DataProviderResult,
+  ProviderErrorReason,
+  Application,
+} from '@island.is/application/types'
 
 export const isTranslationObject = (text?: StaticText) => {
   if (!isObject(text)) {

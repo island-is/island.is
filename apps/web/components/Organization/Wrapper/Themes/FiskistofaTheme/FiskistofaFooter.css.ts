@@ -14,12 +14,13 @@ export const iconContainer = style({
   display: 'flex',
   flexFlow: 'row wrap',
   gap: '8px',
-  marginTop: '4px',
+  marginTop: '12px',
 })
 
 export const linkContainer = style({
-  alignSelf: 'center',
-  marginTop: '16px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
   ...themeUtils.responsiveStyle({
     md: {
       marginLeft: 0,
@@ -30,6 +31,10 @@ export const linkContainer = style({
   }),
 })
 
+export const linkRow = style({
+  marginLeft: '72px',
+})
+
 export const bsiLogo = style({
-  height: '75px',
+  height: '60px',
 })

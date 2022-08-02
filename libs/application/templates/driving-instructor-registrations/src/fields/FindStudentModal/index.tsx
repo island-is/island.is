@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, ModalBase, Button, Text, Input } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Box, ModalBase, Button, Text } from '@island.is/island-ui/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import * as styles from '../style.css'

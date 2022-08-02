@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { gql } from '@apollo/client'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
 
 const GET_DEBT_STATUS = gql`

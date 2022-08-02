@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -101,6 +102,8 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
@@ -156,6 +159,8 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  articleAlertBannerContent,
+  customAlertBanners,
   footerVersion = 'default',
   respOrigin,
   children,
@@ -225,11 +230,31 @@ const Layout: NextComponentType<
           )}`,
           ...organizationAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
+      ]
+        .concat(
+          customAlertBanners.map((banner) => ({
+            bannerId: `custom-alert-${stringHash(
+              JSON.stringify(banner ?? {}),
+            )}`,
+            ...banner,
+          })),
+        )
+        .filter(
+          (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+        ),
     )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+    customAlertBanners,
+  ])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -324,7 +349,6 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
         {alertBanners.map((banner) => (
           <AlertBanner
             key={banner.bannerId}
@@ -350,7 +374,9 @@ const Layout: NextComponentType<
             }}
           />
         ))}
-
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -655,12 +681,24 @@ export const withMainLayout = <T,>(
         ? componentProps['organizationPage']['alertBanner']
         : undefined
 
+    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'article' in componentProps
+        ? componentProps['article']['alertBanner']
+        : undefined
+
+    const customAlertBanners =
+      'customAlertBanners' in componentProps
+        ? componentProps['customAlertBanners']
+        : []
+
     return {
       layoutProps: {
         ...layoutProps,
         ...layoutConfig,
         ...themeConfig,
         organizationAlertBannerContent,
+        articleAlertBannerContent,
+        customAlertBanners,
       },
       componentProps,
     }

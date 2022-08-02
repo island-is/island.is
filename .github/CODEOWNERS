@@ -43,6 +43,8 @@
 /libs/contentful-extensions/mideind-translation/                                                    @island-is/juni
 /libs/contentful-extensions/parent-slug/                                                            @island-is/juni
 /libs/clients/driving-license/                                                                      @island-is/juni
+/libs/application/templates/announcement-of-death/                                                  @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death              @island-is/juni
 /libs/application/templates/driving-license/                                                        @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                            @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission         @island-is/juni
@@ -103,6 +105,7 @@
 /libs/api/domains/vehicles/                                                                         @island-is/hugsmidjan
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
+/libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
@@ -138,6 +141,7 @@
 /libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
+/libs/shared/form-fields/                                                                           @island-is/sendiradid @island-is/island-ui
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 
@@ -183,6 +187,8 @@
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
+
+/libs/clients/charge-fjs-v2/                                                                        @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                   @island-is/qa

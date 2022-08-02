@@ -1,15 +1,15 @@
 import React, { FC } from 'react'
 
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
-  formatText,
   FormValue,
   FieldTypes,
   RecordObject,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -38,12 +38,7 @@ const FormMultiField: FC<{
   setBeforeSubmitCallback,
   setFieldLoadingState,
 }) => {
-  const {
-    description,
-    descriptionMarkdownOptions,
-    children,
-    space = 0,
-  } = multiField
+  const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -58,7 +53,6 @@ const FormMultiField: FC<{
         <GridColumn>
           <FieldDescription
             description={formatText(description, application, formatMessage)}
-            markdownOptions={descriptionMarkdownOptions}
           />
         </GridColumn>
       )}

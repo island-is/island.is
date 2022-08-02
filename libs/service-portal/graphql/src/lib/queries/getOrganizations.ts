@@ -4,6 +4,7 @@ const OrganizationFragment = gql`
   fragment OrganizationFragment on Organization {
     id
     title
+    slug
     logo {
       id
       url

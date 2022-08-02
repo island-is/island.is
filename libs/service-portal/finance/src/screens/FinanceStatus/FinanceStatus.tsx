@@ -3,7 +3,6 @@ import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
 import React from 'react'
 import { defineMessage } from 'react-intl'
-
 import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
@@ -25,7 +24,7 @@ import {
   m,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-
+import { checkDelegation } from '@island.is/shared/utils'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
@@ -55,8 +54,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = userInfo && checkDelegation(userInfo)
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -100,6 +98,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -118,13 +117,12 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
-          </GridColumn>
-          {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            {financeStatusData.organizations?.length > 0 ||
+            financeStatusZero ? (
               <Box
                 display="flex"
-                justifyContent="flexEnd"
-                marginTop={1}
+                justifyContent="flexStart"
+                marginTop={6}
                 printHidden
               >
                 {!isDelegation && scheduleButtonVisible && (
@@ -195,10 +193,10 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   ]}
                 />
               </Box>
-            </GridColumn>
-          ) : null}
+            ) : null}
+          </GridColumn>
         </GridRow>
-        <Box marginTop={[3, 4, 4, 4, 5]}>
+        <Box marginTop={2}>
           {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />

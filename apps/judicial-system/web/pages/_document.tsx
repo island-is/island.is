@@ -1,12 +1,10 @@
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { SkipToContent } from '../src/components'
 
 export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="is">
-        <SkipToContent />
         <Head></Head>
         <body>
           <div id="main">

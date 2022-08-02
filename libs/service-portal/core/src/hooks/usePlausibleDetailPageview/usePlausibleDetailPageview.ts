@@ -1,4 +1,4 @@
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath } from '../../lib/navigation/paths'
 
 // Custom location helper for dynamic paths in service portal: https://plausible.io/docs/custom-locations
 export const PlausiblePageviewDetail = (

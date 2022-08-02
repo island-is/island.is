@@ -95,6 +95,9 @@ export const slices = gql`
       }
     }
     readMoreText
+    readMoreLink {
+      url
+    }
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -337,6 +340,8 @@ export const slices = gql`
     image {
       ...ImageFields
     }
+    automaticallyFetchArticles
+    sortBy
     articles {
       id
       slug
@@ -344,6 +349,17 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
+    }
+    resolvedArticles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+      processEntryButtonText
+      importance
     }
     link {
       text
@@ -400,6 +416,7 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+      ...AssetFields
     }
     dividerOnTop
   }
@@ -414,6 +431,7 @@ export const slices = gql`
       title
       content {
         ...HtmlFields
+        ...AssetFields
       }
       link {
         url
@@ -442,6 +460,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
@@ -465,6 +484,22 @@ export const slices = gql`
       width
       height
     }
+  }
+
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    recipient
+    fields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    successText
   }
 
   fragment BaseSlices on Slice {
@@ -496,6 +531,7 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
   }
 
   fragment AllSlices on Slice {

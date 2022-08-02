@@ -54,7 +54,7 @@ describe('CaseController - Get custody pdf', () => {
     it('should generate pdf', () => {
       expect(getCustodyNoticePdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })

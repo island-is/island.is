@@ -25,7 +25,11 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  LiveChatIncChatPanel,
+  Sticky,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -40,11 +44,12 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
-import { watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import * as styles from './OrganizationWrapper.css'
@@ -254,7 +259,13 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <LandlaeknirFooter footerItems={organization.footerItems} />
       )
       break
-
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
+      )
+      break
     case 'fiskistofa':
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
@@ -272,10 +283,27 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
-  const id = organizationIds.find((id) => {
+  const organizationIdWithLiveChat = organizationIds.find((id) => {
+    return id in liveChatIncConfig
+  })
+
+  if (organizationIdWithLiveChat) {
+    return (
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[organizationIdWithLiveChat]}
+      />
+    )
+  }
+
+  const organizationIdWithWatson = organizationIds.find((id) => {
     return id in watsonConfig
   })
-  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
+
+  if (organizationIdWithWatson) {
+    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+  }
+
+  return null
 }
 
 const SecondaryMenu = ({
@@ -462,37 +490,39 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               )}
             </Box>
           )}
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
-                offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
-              >
-                {breadcrumbItems && (
-                  <Breadcrumbs
-                    items={breadcrumbItems ?? []}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
-                )}
-                {showExternalLinks && (
-                  <OrganizationExternalLinks
-                    organizationPage={organizationPage}
-                  />
-                )}
-                {pageDescription && (
-                  <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                    <Text variant="default">{pageDescription}</Text>
-                  </Box>
-                )}
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          {(!!breadcrumbItems || !!pageDescription) && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
+                >
+                  {breadcrumbItems && (
+                    <Breadcrumbs
+                      items={breadcrumbItems ?? []}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  )}
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+                  {pageDescription && (
+                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                      <Text variant="default">{pageDescription}</Text>
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
           {isMobile && sidebarContent}
           <Box paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}

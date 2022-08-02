@@ -8,7 +8,7 @@ import {
 import { AwsService } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
 import { Application } from '@island.is/application/api/core'
-import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
+import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
