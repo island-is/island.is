@@ -47,14 +47,14 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
     message: '',
   })
 
-  const [submit, { data: result, loading, error }] = useMutation<
+  const [subscribeToMailchimp, { data: result, loading, error }] = useMutation<
     MailchimpSubscribeMutation,
     MailchimpSubscribeMutationVariables
   >(MAILING_LIST_SIGNUP_MUTATION)
 
   const handleSubmit = ({ email }: FormProps) => {
     if (isValidEmail.test(email)) {
-      submit({ variables: { input: { signupID, email } } })
+      subscribeToMailchimp({ variables: { input: { signupID, email } } })
         .then((result) => {
           if (result?.data?.mailchimpSubscribe?.subscribed) {
             const successMessage: string = n(

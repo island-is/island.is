@@ -60,7 +60,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
   }
 
   const [
-    submit,
+    subscribeToMailchimp,
     { data: result, loading: mutationLoading, error },
   ] = useMutation<
     MailchimpSubscribeMutation,
@@ -77,7 +77,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
     validate,
     onSubmit: () => {
       setLoading(true)
-      submit({
+      subscribeToMailchimp({
         variables: {
           input: {
             signupID: slice.id,
