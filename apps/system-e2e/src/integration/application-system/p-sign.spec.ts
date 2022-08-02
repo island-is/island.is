@@ -31,11 +31,15 @@ describe('P-sign', () => {
       )
         .its('data.applicationApplication')
         .should('not.be.empty')
+        .should('have.length.greaterThan', 0)
     })
   })
 
-  it('should filter applications', () => {
-    cy.createApplication(ApplicationType.pSign)
-    cy.log("hi")
+  it('should be able to modify default information', () => {
+    // cy.intercept(userprofile), return default email & phonenumber
+    // Edit email, with invalid, missing etc.
+    // Try clicking unselectable elements
+    // Continue with no phonenumber
+    // Successfully go to next step
   })
 })

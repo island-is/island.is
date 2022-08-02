@@ -46,14 +46,5 @@ declare namespace Cypress {
       op: string,
       query: string | DocumentNode,
     ): Chainable<Cypress.Response>
-
-    /**
-     * Create a new application, storing state at application start.
-     * Application should not be removed at any point unless specified.
-     */
-    createApplication(
-      applicationType: ApplicationType,
-      applicationId?: string,
-    ): void
   }
 }
