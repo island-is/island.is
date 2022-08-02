@@ -24,8 +24,8 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
 
     cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

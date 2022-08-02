@@ -10,7 +10,6 @@ export const caseModuleConfig = defineConfig({
       replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
     },
-    dokobitAccessToken: env.optional('DOKOBIT_ACCESS_TOKEN'),
     deepLinks: {
       completedCaseOverviewUrl: env.required(
         'COMPLETED_CASE_OVERVIEW_URL',
