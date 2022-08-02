@@ -1,8 +1,7 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
 import TaxBreakdownItem from './TaxBreakdownItem'
-import { formatNationalId, getMonth } from '../../lib/utils'
-import { DirectTaxPayment } from '../../lib/interfaces'
+import { formatNationalId, DirectTaxPayment, getMonth } from '../../lib'
 import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
 interface Dictionary<T> {

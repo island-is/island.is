@@ -230,6 +230,11 @@ export const serviceSetup = (services: {
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '200m', memory: '512Mi' },
     })
+    .replicaCount({
+      default: 10,
+      max: 50,
+      min: 10,
+    })
     .grantNamespaces(
       'nginx-ingress-external',
       'api-catalogue',

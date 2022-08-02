@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
 import { NavigationItem } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -8,8 +7,8 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
-import { Screen } from '../../types'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
@@ -19,6 +18,7 @@ import {
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { getCustomAlertBanners } from './utils'
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -64,12 +64,13 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice) => (
+      mainContent={organizationPage.slices.map((slice, index) => (
         <OrganizationSlice
           key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
+          marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
         />
       ))}
       sidebarContent={
@@ -109,6 +110,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getOrganizationPage },
     },
     namespace,
+    customAlertBanners,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -130,10 +132,11 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables?.data?.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    getCustomAlertBanners(query, apolloClient, locale),
   ])
 
   if (!getOrganizationPage) {
@@ -144,6 +147,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
+    customAlertBanners,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }

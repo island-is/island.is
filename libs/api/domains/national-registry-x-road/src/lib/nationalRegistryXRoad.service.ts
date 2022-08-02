@@ -30,6 +30,13 @@ export class NationalRegistryXRoadService {
     throw error
   }
 
+  private handle400(error: FetchError) {
+    if (error.status === 400) {
+      return undefined
+    }
+    throw error
+  }
+
   async getNationalRegistryResidenceHistory(
     user: User,
     nationalId: string,
@@ -142,7 +149,7 @@ export class NationalRegistryXRoadService {
   ): Promise<NationalRegistrySpouse | undefined> {
     const spouse = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetHjuskapur({ id: nationalId })
-      .catch(this.handle404)
+      .catch(this.handle400)
 
     return (
       spouse && {
