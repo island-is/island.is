@@ -81611,7 +81611,7 @@ try {
 "use strict";
 
 
-var iconvLite = __nccwpck_require__(1377);
+var iconvLite = __nccwpck_require__(301);
 
 // Expose to the world
 module.exports.O = convert;
@@ -81696,7 +81696,7 @@ function checkEncoding(name) {
 
 /***/ }),
 
-/***/ 4263:
+/***/ 2773:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -82301,7 +82301,7 @@ function findIdx(table, val) {
 
 /***/ }),
 
-/***/ 4638:
+/***/ 2241:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -82347,7 +82347,7 @@ module.exports = {
 
     'shiftjis': {
         type: '_dbcs',
-        table: function() { return __nccwpck_require__(9372) },
+        table: function() { return __nccwpck_require__(6593) },
         encodeAdd: {'\u00a5': 0x5C, '\u203E': 0x7E},
         encodeSkipVals: [{from: 0xED40, to: 0xF940}],
     },
@@ -82364,7 +82364,7 @@ module.exports = {
 
     'eucjp': {
         type: '_dbcs',
-        table: function() { return __nccwpck_require__(9715) },
+        table: function() { return __nccwpck_require__(382) },
         encodeAdd: {'\u00a5': 0x5C, '\u203E': 0x7E},
     },
 
@@ -82391,13 +82391,13 @@ module.exports = {
     '936': 'cp936',
     'cp936': {
         type: '_dbcs',
-        table: function() { return __nccwpck_require__(9227) },
+        table: function() { return __nccwpck_require__(5833) },
     },
 
     // GBK (~22000 chars) is an extension of CP936 that added user-mapped chars and some other.
     'gbk': {
         type: '_dbcs',
-        table: function() { return (__nccwpck_require__(9227).concat)(__nccwpck_require__(1689)) },
+        table: function() { return (__nccwpck_require__(5833).concat)(__nccwpck_require__(38)) },
     },
     'xgbk': 'gbk',
     'isoir58': 'gbk',
@@ -82409,8 +82409,8 @@ module.exports = {
     // http://www.khngai.com/chinese/charmap/tblgbk.php?page=0
     'gb18030': {
         type: '_dbcs',
-        table: function() { return (__nccwpck_require__(9227).concat)(__nccwpck_require__(1689)) },
-        gb18030: function() { return __nccwpck_require__(1846) },
+        table: function() { return (__nccwpck_require__(5833).concat)(__nccwpck_require__(38)) },
+        gb18030: function() { return __nccwpck_require__(4685) },
         encodeSkipVals: [0x80],
         encodeAdd: {'€': 0xA2E3},
     },
@@ -82425,7 +82425,7 @@ module.exports = {
     '949': 'cp949',
     'cp949': {
         type: '_dbcs',
-        table: function() { return __nccwpck_require__(4359) },
+        table: function() { return __nccwpck_require__(6509) },
     },
 
     'cseuckr': 'cp949',
@@ -82466,14 +82466,14 @@ module.exports = {
     '950': 'cp950',
     'cp950': {
         type: '_dbcs',
-        table: function() { return __nccwpck_require__(6636) },
+        table: function() { return __nccwpck_require__(9745) },
     },
 
     // Big5 has many variations and is an extension of cp950. We use Encoding Standard's as a consensus.
     'big5': 'big5hkscs',
     'big5hkscs': {
         type: '_dbcs',
-        table: function() { return (__nccwpck_require__(6636).concat)(__nccwpck_require__(3802)) },
+        table: function() { return (__nccwpck_require__(9745).concat)(__nccwpck_require__(4439)) },
         encodeSkipVals: [
             // Although Encoding Standard says we should avoid encoding to HKSCS area (See Step 1 of
             // https://encoding.spec.whatwg.org/#index-big5-pointer), we still do it to increase compatibility with ICU.
@@ -82497,7 +82497,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2228:
+/***/ 5761:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -82506,15 +82506,15 @@ module.exports = {
 // Update this array if you add/rename/remove files in this directory.
 // We support Browserify by skipping automatic module discovery and requiring modules directly.
 var modules = [
-    __nccwpck_require__(8199),
-    __nccwpck_require__(60),
-    __nccwpck_require__(6290),
-    __nccwpck_require__(1935),
-    __nccwpck_require__(9967),
-    __nccwpck_require__(6630),
-    __nccwpck_require__(7117),
-    __nccwpck_require__(4263),
-    __nccwpck_require__(4638),
+    __nccwpck_require__(4644),
+    __nccwpck_require__(6042),
+    __nccwpck_require__(6918),
+    __nccwpck_require__(3769),
+    __nccwpck_require__(5379),
+    __nccwpck_require__(2),
+    __nccwpck_require__(2746),
+    __nccwpck_require__(2773),
+    __nccwpck_require__(2241),
 ];
 
 // Put all encoding/alias/codec definitions to single object and export it.
@@ -82528,7 +82528,7 @@ for (var i = 0; i < modules.length; i++) {
 
 /***/ }),
 
-/***/ 8199:
+/***/ 4644:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -82734,7 +82734,7 @@ InternalDecoderCesu8.prototype.end = function() {
 
 /***/ }),
 
-/***/ 9967:
+/***/ 5379:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -82814,7 +82814,7 @@ SBCSDecoder.prototype.end = function() {
 
 /***/ }),
 
-/***/ 7117:
+/***/ 2746:
 /***/ ((module) => {
 
 "use strict";
@@ -83272,7 +83272,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6630:
+/***/ 2:
 /***/ ((module) => {
 
 "use strict";
@@ -83459,7 +83459,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6290:
+/***/ 6918:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -83664,7 +83664,7 @@ function detectEncoding(bufs, defaultEncoding) {
 
 /***/ }),
 
-/***/ 60:
+/***/ 6042:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -83991,7 +83991,7 @@ function detectEncoding(bufs, defaultEncoding) {
 
 /***/ }),
 
-/***/ 1935:
+/***/ 3769:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -84289,7 +84289,7 @@ Utf7IMAPDecoder.prototype.end = function() {
 
 /***/ }),
 
-/***/ 4162:
+/***/ 1862:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -84349,7 +84349,7 @@ StripBOMWrapper.prototype.end = function() {
 
 /***/ }),
 
-/***/ 1377:
+/***/ 301:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -84357,7 +84357,7 @@ StripBOMWrapper.prototype.end = function() {
 
 var Buffer = (__nccwpck_require__(2340).Buffer);
 
-var bomHandling = __nccwpck_require__(4162),
+var bomHandling = __nccwpck_require__(1862),
     iconv = module.exports;
 
 // All codecs and aliases are kept here, keyed by encoding name/alias.
@@ -84415,7 +84415,7 @@ iconv.fromEncoding = iconv.decode;
 iconv._codecDataCache = {};
 iconv.getCodec = function getCodec(encoding) {
     if (!iconv.encodings)
-        iconv.encodings = __nccwpck_require__(2228); // Lazy load all encoding definitions.
+        iconv.encodings = __nccwpck_require__(5761); // Lazy load all encoding definitions.
     
     // Canonicalize encoding name: strip all non-alphanumeric chars and appended year.
     var enc = iconv._canonicalizeEncoding(encoding);
@@ -84496,7 +84496,7 @@ iconv.enableStreamingAPI = function enableStreamingAPI(stream_module) {
         return;
 
     // Dependency-inject stream module to create IconvLite stream classes.
-    var streams = __nccwpck_require__(2409)(stream_module);
+    var streams = __nccwpck_require__(1900)(stream_module);
 
     // Not public API yet, but expose the stream classes.
     iconv.IconvLiteEncoderStream = streams.IconvLiteEncoderStream;
@@ -84535,7 +84535,7 @@ if (false) {}
 
 /***/ }),
 
-/***/ 2409:
+/***/ 1900:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -85025,7 +85025,7 @@ module.exports = {"version":"1.0.0"};
 
 /***/ }),
 
-/***/ 3802:
+/***/ 4439:
 /***/ ((module) => {
 
 "use strict";
@@ -85033,7 +85033,7 @@ module.exports = JSON.parse('[["8740","䏰䰲䘃䖦䕸𧉧䵷䖳𧲱䳢𧳅㮕�
 
 /***/ }),
 
-/***/ 9227:
+/***/ 5833:
 /***/ ((module) => {
 
 "use strict";
@@ -85041,7 +85041,7 @@ module.exports = JSON.parse('[["0","\\u0000",127,"€"],["8140","丂丄丅丆丏
 
 /***/ }),
 
-/***/ 4359:
+/***/ 6509:
 /***/ ((module) => {
 
 "use strict";
@@ -85049,7 +85049,7 @@ module.exports = JSON.parse('[["0","\\u0000",127],["8141","갂갃갅갆갋",4,"�
 
 /***/ }),
 
-/***/ 6636:
+/***/ 9745:
 /***/ ((module) => {
 
 "use strict";
@@ -85057,7 +85057,7 @@ module.exports = JSON.parse('[["0","\\u0000",127],["a140","　，、。．‧；
 
 /***/ }),
 
-/***/ 9715:
+/***/ 382:
 /***/ ((module) => {
 
 "use strict";
@@ -85065,7 +85065,7 @@ module.exports = JSON.parse('[["0","\\u0000",127],["8ea1","｡",62],["a1a1","　
 
 /***/ }),
 
-/***/ 1846:
+/***/ 4685:
 /***/ ((module) => {
 
 "use strict";
@@ -85073,7 +85073,7 @@ module.exports = JSON.parse('{"uChars":[128,165,169,178,184,216,226,235,238,244,
 
 /***/ }),
 
-/***/ 1689:
+/***/ 38:
 /***/ ((module) => {
 
 "use strict";
@@ -85081,7 +85081,7 @@ module.exports = JSON.parse('[["a140","",62],["a180","",32],["a240","",
 
 /***/ }),
 
-/***/ 9372:
+/***/ 6593:
 /***/ ((module) => {
 
 "use strict";
@@ -85597,6 +85597,9 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                     branch: headBranch,
                     ref: mergeCommitSha,
                 });
+            }
+            catch (e) {
+                log(`Error processing PR candidate(${prRun.run_nr}) but continuing: %O`, e);
             }
             finally {
                 yield git.checkout(prBranch);
