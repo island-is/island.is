@@ -172,7 +172,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   dropdownItems={[
                     {
                       title: formatMessage({
-                        id: 'sp.finance-status:get-debt-sertificate',
+                        id: 'sp.finance-status:get-debt-certificate',
                         defaultMessage: 'Skuldleysisvottorð',
                       }),
                       href: '/umsoknir/skuldleysisvottord/',
