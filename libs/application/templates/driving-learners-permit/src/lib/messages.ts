@@ -45,8 +45,13 @@ export const m = defineMessages({
   },
   eligibilityRequirementTitle: {
     id: 'dlp.application:eligibilityTitle',
-    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
+    defaultMessage: 'Gögnin þín',
     description: 'title for requirement component',
+  },
+  applicationEligibilityRequirementDescription: {
+    id: 'dlp.application:applicationEligibilityDescription',
+    defaultMessage: 'Skilyrði sem leiðbeinandi þarf að uppfylla',
+    description: 'description for requirement section of mentor',
   },
   externalDataComplete: {
     id: 'dlp.application:externalData.complete',
@@ -84,7 +89,8 @@ export const m = defineMessages({
   },
   studentInfoHeading: {
     id: 'dlp.application:studentInfoHeading',
-    defaultMessage: 'Upplýsingar nemanda',
+    defaultMessage:
+      'Vinsamlegast sláðu inn kennitölu þess nemanda sem þú hyggst leiðbeina.',
     description: 'Heading text for student info',
   },
   studentIsMentorableHeader: {

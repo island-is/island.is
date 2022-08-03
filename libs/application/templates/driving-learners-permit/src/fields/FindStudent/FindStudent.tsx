@@ -150,11 +150,8 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
   }, [studentName, studentNationalId, getIdentity, setValue])
 
   return (
-    <Box marginTop={5}>
-      <Text>
-        {formatText(m.studentInfoHeading, application, formatMessage)}
-      </Text>
-      <GridRow marginBottom={2} marginTop={2}>
+    <Box>
+      <GridRow marginBottom={2} marginTop={4}>
         <GridColumn span="6/12">
           <InputController
             id={fieldNames.studentNationalId}
@@ -195,7 +192,7 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
         </Box>
       </GridRow>
 
-      <GridRow marginBottom={2} marginTop={2}>
+      <GridRow marginBottom={3} marginTop={3}>
         <GridColumn span="12/12">
           {getValues(fieldNames.studentIsMentorable) !== 'default' && (
             <ContentBlock>
