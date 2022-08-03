@@ -7,11 +7,12 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import WarningSection, { Step } from './WarningSection'
 import { hasYes } from '../../lib/utils'
+import { B_FULL, DrivingLicenseApplicationFor } from '../../shared'
 
 interface ReasonsProps {
   key: string
@@ -63,7 +64,9 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
   const name = application.externalData.nationalRegistry?.data as Name
   const picture = hasYes(answers?.willBringQualityPhoto)
   const certificate = hasYes(answers?.healthDeclaration)
-
+  const applicationFor =
+    getValueViaPath<DrivingLicenseApplicationFor>(answers, 'applicationFor') ??
+    B_FULL
   const reasons = [
     { key: 'picture', requirementMet: picture },
     { key: 'certificate', requirementMet: certificate },
@@ -83,11 +86,19 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
                 application,
                 formatMessage,
               )} ${name.fullName}`}
-              message={formatText(
-                m.congratulationsTitleSuccess,
-                application,
-                formatMessage,
-              )}
+              message={
+                applicationFor === B_FULL
+                  ? formatText(
+                      m.congratulationsTitleSuccess,
+                      application,
+                      formatMessage,
+                    )
+                  : formatText(
+                      m.congratulationsTempTitleSuccess,
+                      application,
+                      formatMessage,
+                    )
+              }
             />
           </ContentBlock>
         </Box>
@@ -99,7 +110,13 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
     <>
       <Box paddingTop={2}>
         <Text>
-          {formatText(m.congratulationsHelpText, application, formatMessage)}
+          {applicationFor === B_FULL
+            ? formatText(m.congratulationsHelpText, application, formatMessage)
+            : formatText(
+                m.congratulationsTempHelpText,
+                application,
+                formatMessage,
+              )}
         </Text>
       </Box>
       <Box marginTop={5} marginBottom={8}>
