@@ -119,9 +119,6 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
-
   /** Category (Main) */
   category: IArticleCategory
 
@@ -2318,6 +2315,9 @@ export interface IProcessEntryFields {
 
   /** Process link */
   processLink: string
+
+  /** Process asset */
+  processAsset?: Asset | undefined
 
   /** Open link in modal */
   openLinkInModal?: boolean | undefined

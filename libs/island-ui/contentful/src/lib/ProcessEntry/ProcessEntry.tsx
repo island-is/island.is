@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import {
   Text,
   Button,
@@ -11,22 +11,6 @@ import {
 import IframeModal from '../IframeModal/IframeModal'
 
 import * as styles from './ProcessEntry.css'
-
-export const Titles: {
-  [Digital: string]: { is: string; en: string }
-} = {
-  Digital: { is: 'Stafræn umsókn', en: 'Digital application' },
-  'Digital w/login': {
-    is: 'Aðgangsstýrð stafræn umsókn',
-    en: 'Digital application with access control',
-  },
-  'Not digital': { is: 'Handvirk umsókn', en: 'Manual application' },
-  'Not digital w/login': {
-    is: 'Handvirk umsókn með innskráningu',
-    en: 'Manual application with access control',
-  },
-  'No type': { is: '', en: '' },
-}
 
 export interface ProcessEntryProps {
   processTitle: string
