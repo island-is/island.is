@@ -17,7 +17,7 @@ interface UseListDocumentsProps {
   error?: any
 }
 
-export const useListDocuments = (): UseListDocumentsProps => {
+export const useListDocuments = (natReg: string): UseListDocumentsProps => {
   const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS)
 
   const documents = data?.listDocuments || []
