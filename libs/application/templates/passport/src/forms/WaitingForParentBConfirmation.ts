@@ -15,13 +15,15 @@ export const WaitingForParentBConfirmation: Form = buildForm({
     buildMultiField({
       id: 'waitingForConfirmation',
       title: m.waitingForConfirmationTitle,
-      description: (application: Application) =>
-        `Umsókn þín um vegabréf fyrir **${
-          (application.answers.childsPersonalInfo as ChildsPersonalInfo)?.name
-        }** hefur verið send til **${
-          (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-            ?.guardian2.name
-        }** til samþykktar.`,
+      description: (application: Application) => ({
+        ...m.waitingForConfirmationDescription,
+        values: {
+          childsName: (application.answers
+            .childsPersonalInfo as ChildsPersonalInfo)?.name,
+          guardian2Name: (application.answers
+            .childsPersonalInfo as ChildsPersonalInfo)?.guardian2.name,
+        },
+      }),
       children: [
         buildDescriptionField({
           id: 'nextStepsDescription',

@@ -366,9 +366,10 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn staðfest',
     description: 'Some description',
   },
-  applicationCompleteDescription: {
-    id: 'pa.application:complete.description',
-    defaultMessage: 'Einhver texti hérna sem segir eitthvað um eitthvað.',
+  applicationCompleteDescriptionText: {
+    id: 'pa.application:complete.descriptionText',
+    defaultMessage:
+      'Umsókn þín um vegabréf fyrir **{name}** hefur verið móttekin.',
     description: 'Some description',
   },
   applicationCompleteNumber: {

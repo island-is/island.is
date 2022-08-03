@@ -15,11 +15,14 @@ export const Done: Form = buildForm({
     buildMultiField({
       id: 'done',
       title: m.applicationComplete,
-      description: (application: Application) =>
-        `Umsókn þín um vegabréf fyrir **${
-          (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-            ?.name ?? (application.answers.personalInfo as any)?.name
-        }** hefur verið móttekin.`,
+      description: (application: Application) => ({
+        ...m.applicationCompleteDescriptionText,
+        values: {
+          name:
+            (application.answers.childsPersonalInfo as ChildsPersonalInfo)
+              ?.name ?? (application.answers.personalInfo as any)?.name,
+        },
+      }),
       children: [
         buildDescriptionField({
           id: 'applicationNr',
