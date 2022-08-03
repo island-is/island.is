@@ -21,7 +21,7 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: 'Þitt Barn',
+      defaultValue: 'Adam Jónsson',
     }),
     buildTextField({
       id: 'childsPersonalInfo.nationalId',

@@ -1620,6 +1620,11 @@
                 "glob": "*",
                 "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
                 "output": "./driving-license-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/passport/emailGenerators/assets",
+                "output": "./passport-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -6989,7 +6994,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens,utils,widgets}/**/*.{js,ts,tsx}'"
           }
         }
       },
