@@ -45,7 +45,8 @@ export class MailchimpResolver {
         selectedCategories.map((category) => `${category.name}=1`).join('&'),
       )
 
-    return axios(populatedUrl)
+    return axios
+      .get(populatedUrl)
       .then((response) => ({
         subscribed: true,
       }))
