@@ -455,28 +455,17 @@ export const m = defineMessages({
   },
   applicationComplete: {
     id: 'ol.application:complete',
-    defaultMessage: 'Umsókn staðfest',
+    defaultMessage: 'Staðfesting',
     description: 'Some description',
   },
-  applicationCompleteDescription: {
-    id: 'ol.application:complete.description',
-    defaultMessage: 'Umsókn þín um vegabréf hefur verið móttekin.',
+  applicationCompleteAlertTitle: {
+    id: 'ol.application:complete.alert',
+    defaultMessage: 'Umsókn þín um rekstrarleyfi hefur verið móttekin.',
     description: 'Some description',
   },
-  applicationCompleteNumber: {
-    id: 'ol.application:complete.number',
-    defaultMessage: 'Númer umsóknar',
-    description: 'Some description',
-  },
-  applicationCompleteNextSteps: {
-    id: 'ol.application:complete.nextSteps',
-    defaultMessage: 'Næstu skref',
-    description: 'Some description',
-  },
-  applicationCompleteNextStepsDescription: {
-    id: 'ol.application:complete.nextSteps.description#markdown',
-    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n
-    * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+  applicationCompleteAlertDescription: {
+    id: 'ol.application:complete.alertDescription',
+    defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
     description: 'Some description',
   },
 })
