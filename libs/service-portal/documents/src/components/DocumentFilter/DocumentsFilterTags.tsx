@@ -1,7 +1,7 @@
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import React from 'react'
-import FilterTag from '../../components/FilterTag/FilterTag'
+import FilterTag from '../FilterTag/FilterTag'
 import { m } from '@island.is/service-portal/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'

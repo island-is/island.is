@@ -6,8 +6,6 @@ import {
   Stack,
   Columns,
   Column,
-  GridRow,
-  GridColumn,
   LoadingDots,
   Hidden,
   Pagination,
@@ -31,16 +29,17 @@ import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
 import isAfter from 'date-fns/isAfter'
-import isEqual from 'lodash/isEqual'
-
 import * as Sentry from '@sentry/react'
-import * as styles from './Overview.css'
 import differenceInYears from 'date-fns/differenceInYears'
-import DocumentsFilter from './DocumentsFilter'
+import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import debounce from 'lodash/debounce'
-import DocumentsFilterTags from './DocumentsFilterTags'
+import {
+  defaultFilterValues,
+  FilterValuesType,
+  SortType,
+} from '../../utils/types'
+import TableHeading from '../../components/TableHeading/TableHeading'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -70,35 +69,6 @@ const GET_DOCUMENT_SENDERS = gql`
 `
 
 const pageSize = 15
-const defaultStartDate = null
-const defaultEndDate = null
-
-const defaultFilterValues = {
-  dateFrom: defaultStartDate,
-  dateTo: defaultEndDate,
-  activeCategories: [],
-  activeSenders: [],
-  searchQuery: '',
-  showUnread: false,
-}
-
-type SortKeyType = 'Date' | 'Subject' | 'Sender' | 'Category' | 'Type'
-type SortDirectionType = 'Ascending' | 'Descending'
-
-type FilterValues = {
-  dateFrom: Date | null
-  dateTo: Date | null
-  searchQuery: string
-  showUnread: boolean
-  activeCategories: string[]
-  activeSenders: string[]
-}
-
-const getSortDirection = (currentDirection: SortDirectionType) => {
-  const reverseDirection =
-    currentDirection === 'Ascending' ? 'Descending' : 'Ascending'
-  return reverseDirection
-}
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
@@ -109,12 +79,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     scope.setTransactionName('Electronic-Documents'),
   )
 
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [sortState, setSortState] = useState<{
-    direction: SortDirectionType
-    key: SortKeyType
-  }>({
+  const [sortState, setSortState] = useState<SortType>({
     direction: 'Descending',
     key: 'Date',
   })
@@ -124,7 +91,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { scrollToRef } = useScrollToRefOnUpdate([page])
   const { pathname } = useLocation()
 
-  const [filterValue, setFilterValue] = useState<FilterValues>(
+  const [filterValue, setFilterValue] = useState<FilterValuesType>(
     defaultFilterValues,
   )
   const { data, totalCount, loading, error } = useListDocuments({
@@ -205,6 +172,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     totalPages: Math.ceil(totalCount / pageSize),
   }
 
+  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const organizations = orgData?.getOrganizations?.items || {}
+
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => {
@@ -264,17 +234,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }))
   }, [])
 
-  const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
-
-  const documentsFoundText = () =>
-    filteredDocuments.length === 1 ||
-    (lang === 'is' && filteredDocuments.length % 10 === 1)
-      ? messages.foundSingular
-      : messages.found
-
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
-
   const handleSearchChange = (e: any) => {
     setPage(1)
     if (e) {
@@ -288,6 +247,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       }
     }
   }
+
   useEffect(() => {
     return () => {
       debouncedResults.cancel()
@@ -297,16 +257,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     return debounce(handleSearchChange, 500)
   }, [])
 
-  const mapToFilterItem = (
-    array: DocumentCategory[] | DocumentSender[] | DocumentType[],
-  ) => {
-    return array.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-      }
-    })
-  }
   if (isLegal && isOver15) {
     return <AccessDeniedLegal userInfo={userInfo} client={client} />
   }
@@ -325,8 +275,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <DocumentsFilter
             filterValue={filterValue}
-            categories={mapToFilterItem(categoriesAvailable)}
-            senders={mapToFilterItem(sendersAvailable)}
+            categories={categoriesAvailable}
+            senders={sendersAvailable}
             debounceChange={debouncedResults}
             clearCategories={() =>
               setFilterValue((oldFilter) => ({
@@ -346,104 +296,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             handleDateToChange={handleDateToInput}
             handleShowUnread={handleShowUnread}
             handleClearFilters={handleClearFilters}
+            documentsLength={filteredDocuments.length}
           />
-          <Hidden print>
-            {hasActiveFilters() && (
-              <Box marginTop={4}>
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="spaceBetween"
-                >
-                  <DocumentsFilterTags
-                    filterValue={filterValue}
-                    categories={mapToFilterItem(categoriesAvailable)}
-                    senders={mapToFilterItem(sendersAvailable)}
-                    handleCategoriesChange={handleCategoriesChange}
-                    handleSendersChange={handleSendersChange}
-                    handleDateFromChange={handleDateFromInput}
-                    handleDateToChange={handleDateToInput}
-                    handleShowUnread={handleShowUnread}
-                    handleClearFilters={handleClearFilters}
-                  />
 
-                  <Text variant="eyebrow" as="h3">{`${
-                    filteredDocuments.length
-                  } ${formatMessage(documentsFoundText())}`}</Text>
-                </Box>
-              </Box>
-            )}
-          </Hidden>
           <Box marginTop={[0, 3]}>
             <Hidden below="sm">
-              <Box
-                className={styles.tableHeading}
-                paddingY={2}
-                background="blue100"
-              >
-                <GridRow>
-                  <GridColumn span={['1/1', '2/12']}>
-                    <Box paddingX={2}>
-                      <HeaderArrow
-                        active={sortState?.key === 'Date'}
-                        direction={sortState?.direction}
-                        title={formatMessage(messages.tableHeaderDate)}
-                        onClick={() =>
-                          setSortState({
-                            direction: getSortDirection(sortState?.direction),
-                            key: 'Date',
-                          })
-                        }
-                      />
-                    </Box>
-                  </GridColumn>
-                  <GridColumn span={['1/1', '4/12']}>
-                    <Box paddingX={2}>
-                      <HeaderArrow
-                        active={sortState?.key === 'Subject'}
-                        direction={sortState?.direction}
-                        title={formatMessage(messages.tableHeaderInformation)}
-                        onClick={() =>
-                          setSortState({
-                            direction: getSortDirection(sortState?.direction),
-                            key: 'Subject',
-                          })
-                        }
-                      />
-                    </Box>
-                  </GridColumn>
-                  <GridColumn span={['1/1', '3/12']}>
-                    <Box paddingX={2}>
-                      <HeaderArrow
-                        active={sortState?.key === 'Category'}
-                        direction={sortState?.direction}
-                        title={formatMessage(messages.tableHeaderGroup)}
-                        onClick={() =>
-                          setSortState({
-                            direction: getSortDirection(sortState?.direction),
-                            key: 'Category',
-                          })
-                        }
-                      />
-                    </Box>
-                  </GridColumn>
-                  <GridColumn span={['1/1', '3/12']}>
-                    <Box paddingX={2}>
-                      <HeaderArrow
-                        active={sortState?.key === 'Sender'}
-                        direction={sortState?.direction}
-                        title={formatMessage(messages.tableHeaderInstitution)}
-                        onClick={() =>
-                          setSortState({
-                            direction: getSortDirection(sortState?.direction),
-                            key: 'Sender',
-                          })
-                        }
-                      />
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              </Box>
+              <TableHeading sortState={sortState} setSortState={setSortState} />
             </Hidden>
             {loading && (
               <Box display="flex" justifyContent="center" padding={4}>

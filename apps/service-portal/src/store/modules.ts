@@ -48,7 +48,7 @@ export type ModuleKeys =
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
-  // 'documentProvider',
+  'documentProvider',
   'icelandicNamesRegistry',
   'petitions',
   'financeSchedule',
