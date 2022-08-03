@@ -189,6 +189,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      showTableOfContents
       sliceCustomRenderer
       sliceExtraText
       featuredImage {
@@ -306,6 +307,14 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         maximumNumberOfGuests
         numberOfDiningGuests
       }
+    }
+  }
+`
+
+export const MAILING_LIST_SIGNUP_MUTATION = gql`
+  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
+    mailchimpSubscribe(input: $input) {
+      subscribed
     }
   }
 `

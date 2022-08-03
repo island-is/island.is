@@ -35,3 +35,10 @@ export const hreyfingarHeaders = [
   'Aðgerðarflokkur',
   'Tilvísun',
 ]
+export const generalHeaders = [
+  'Dagsetning',
+  'Tegund',
+  'Framkvæmdaaðili',
+  'Upphæð',
+  'Skýring',
+]
