@@ -113,12 +113,6 @@ export class DrivingLicenseBookResolver {
 
   @Query(() => StudentMentorability)
   studentMentorability(@Args('input') input: StudentMentorabilityInput) {
-    //TODO remove hardcoded results
-    if (input.nationalId.startsWith('0101302')) {
-      return {
-        isMentorable: input.nationalId.endsWith('399'),
-      }
-    }
     return this.drivingLicenseBookService.getStudentMentorability(input)
   }
 

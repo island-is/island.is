@@ -22,12 +22,16 @@ export enum States {
 export const YES = 'yes'
 export const NO = 'no'
 
-type FakeCurrentLicense = 'none' | 'temp'
+type FakeCurrentLicense = 'none' | 'temp' | 'B-full'
 type YesOrNo = 'yes' | 'no'
 
-export interface DrivingLicenseFakeData {
+export interface LearnersPermitFakeData {
   useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
+  mentorLicenseIssuedDate?: string
+  mentorableStudents?: string
+  useDeprivation?: YesOrNo
+  deprivationDateTo?: string
+  mentorAge?: string
   healthRemarks?: YesOrNo
 }

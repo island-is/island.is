@@ -6,7 +6,7 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { DrivingLicenseFakeData, YES } from '../lib/constants'
+import { LearnersPermitFakeData, YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
@@ -21,17 +21,16 @@ export class CurrentLicenseProvider extends BasicDataProvider {
   async provide(
     application: Application,
   ): Promise<CurrentLicenseProviderResult> {
-    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+    const fakeData = getValueViaPath<LearnersPermitFakeData>(
       application.answers,
       'fakeData',
     )
     if (fakeData?.useFakeData === YES) {
       return {
-        currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
-        healthRemarks:
-          fakeData.healthRemarks === YES
-            ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
-            : undefined,
+        currentLicense: fakeData?.currentLicense === 'B-full' ? 'B' : null,
+        healthRemarks: undefined,
+        expires: '0',
+        issued: '0',
       }
     }
 

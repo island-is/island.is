@@ -61,10 +61,16 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
-                ),
+              //TODO: set up a feature flag for allowFakeData?
+              formLoader: async () => {
+                const getForm = await import('../forms/Prerequisites').then(
+                  (val) => val.getForm,
+                )
+
+                return getForm({
+                  allowFakeData: true,
+                })
+              },
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],

@@ -2,7 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
-import { DrivingLicenseFakeData, YES } from '../../lib/constants'
+import { LearnersPermitFakeData, YES } from '../../lib/constants'
+import { fakeEligibility } from './fakeEligibility'
 
 const QUERY = gql`
   query EligibilityQuery {
@@ -24,7 +25,7 @@ export interface UseEligibilityResult {
 export const useEligibility = (
   answers: Application['answers'],
 ): UseEligibilityResult => {
-  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
+  const fakeData = getValueViaPath<LearnersPermitFakeData>(answers, 'fakeData')
   const usingFakeData = fakeData?.useFakeData === YES
 
   const { data = {}, error, loading } = useQuery(QUERY, {
@@ -34,6 +35,13 @@ export const useEligibility = (
   if (usingFakeData) {
     return {
       loading: false,
+      eligibility: fakeEligibility({
+        categoryIssued: fakeData?.mentorLicenseIssuedDate ?? '2020-01-01',
+        categoryType: fakeData?.currentLicense === 'B-full' ? 'B' : 'none',
+        deprivationDateTo:
+          fakeData?.deprivationDateTo ?? new Date(Date.now()).toDateString(),
+        mentorAge: fakeData?.mentorAge ?? '20',
+      }),
     }
   }
 

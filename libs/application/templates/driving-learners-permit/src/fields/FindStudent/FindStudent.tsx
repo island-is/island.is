@@ -10,7 +10,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -23,6 +23,7 @@ import {
 } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql/'
 import { STUDENT_MENTORABILITY_QUERY } from '../../graphql'
+import { LearnersPermitFakeData, YES } from '../../lib/constants'
 
 interface FindStudentFieldBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
@@ -40,6 +41,10 @@ const fieldNames = {
 
 const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const fakeData = getValueViaPath<LearnersPermitFakeData>(
+    application.answers,
+    'fakeData',
+  )
   const {
     setValue,
     watch,
@@ -112,15 +117,30 @@ const FindStudent: FC<FindStudentFieldBaseProps> = ({ application }) => {
     if (studentNationalId?.length === 10) {
       const isValidSSN = kennitala.isPerson(studentNationalId)
       if (isValidSSN) {
-        const nationalIdInput = {
-          variables: {
-            input: {
-              nationalId: studentNationalId,
+        if (fakeData?.useFakeData === YES) {
+          if (
+            fakeData?.mentorableStudents
+              ?.split(',')
+              .map((v) => v.trim())
+              .includes(studentNationalId)
+          ) {
+            setValue(fieldNames.studentIsMentorable, 'isMentorable')
+            setValue(fieldNames.studentName, 'Æfinga Leyfisbur')
+          } else {
+            setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
+            setValue(fieldNames.studentName, 'Óleyf Keyra Vagnsdóttir')
+          }
+        } else {
+          const nationalIdInput = {
+            variables: {
+              input: {
+                nationalId: studentNationalId,
+              },
             },
-          },
+          }
+          getIdentity(nationalIdInput)
+          getStudentMentorability(nationalIdInput)
         }
-        getIdentity(nationalIdInput)
-        getStudentMentorability(nationalIdInput)
       } else if (studentName !== '') {
         setValue(fieldNames.studentName, '')
       }
