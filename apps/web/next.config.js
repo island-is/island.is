@@ -26,6 +26,10 @@ module.exports = withNx(
           source: '/umsoknir/:slug',
           destination: 'https://island.is/umsoknir/:slug',
         },
+        {
+          source: '/rss.xml',
+          destination: '/api/rss',
+        },
       ]
     },
     webpack: (config, { isServer }) => {

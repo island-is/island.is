@@ -1,5 +1,5 @@
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
-import { AirlineUser, User } from './user.model'
+import { User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
 import {
@@ -9,15 +9,15 @@ import {
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   EinstaklingarApi,
   EinstaklingarGetForsjaForeldriRequest,
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
-import * as kennitala from 'kennitala'
+import { info } from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
 const ONE_WEEK = 604800 // seconds
@@ -92,7 +92,7 @@ export class UserService {
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
       meetsADSRequirements = true
-    } else if (kennitala.info(user.nationalId).age < MAX_AGE_LIMIT) {
+    } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)
@@ -104,8 +104,10 @@ export class UserService {
       } else if (auth) {
         // We have access to auth if a user is logged in
         custodians = [
-          auth.nationalId,
-          ...(await this.getCustodians(auth, user.nationalId)),
+          ...(await this.nationalRegistryService.getCustodians(
+            auth,
+            user.nationalId,
+          )),
         ]
         await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
       }
@@ -113,12 +115,9 @@ export class UserService {
       // Check child custodians if they have valid ADS postal code.
       if (custodians) {
         for (const custodian of custodians) {
-          const personCustodian = await this.nationalRegistryService.getUser(
-            custodian,
-          )
           if (
-            personCustodian &&
-            this.flightService.isADSPostalCode(personCustodian.postalcode)
+            custodian &&
+            this.flightService.isADSPostalCode(custodian.postalcode)
           ) {
             meetsADSRequirements = true
           }
@@ -136,20 +135,14 @@ export class UserService {
   private async getUserByNationalId<T>(
     nationalId: string,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
-    auth?: AuthUser,
+    auth: AuthUser,
   ): Promise<T | null> {
-    const user = await this.nationalRegistryService.getUser(nationalId)
+    const user = await this.nationalRegistryService.getUser(nationalId, auth)
     if (!user) {
       return null
     }
     const fund = await this.getFund(user, auth)
     return new model(user, fund)
-  }
-
-  async getAirlineUserInfoByNationalId(
-    nationalId: string,
-  ): Promise<AirlineUser | null> {
-    return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
   }
 
   async getUserInfoByNationalId(
