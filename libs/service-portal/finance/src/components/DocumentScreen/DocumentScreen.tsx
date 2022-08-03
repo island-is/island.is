@@ -35,8 +35,6 @@ import { dateFormat } from '@island.is/shared/constants'
 import * as styles from '../../screens/Finance.css'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
-import * as styles from '../../screens/Finance.css'
-import sortBy from 'lodash/sortBy'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
