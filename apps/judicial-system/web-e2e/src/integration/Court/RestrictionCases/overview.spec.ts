@@ -47,9 +47,8 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {

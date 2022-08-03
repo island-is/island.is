@@ -131,7 +131,7 @@ export const useCourtUpload = (
                 ?.detail,
           }
 
-          if (errorCode === 'https://httpstatuses.com/404') {
+          if (errorCode === 'https://httpstatuses.org/404') {
             if (detail?.startsWith('Case Not Found')) {
               setFileUploadStatus(workingCase, file, 'case-not-found')
             } else {
@@ -142,7 +142,7 @@ export const useCourtUpload = (
               )
             }
           } else if (
-            errorCode === 'https://httpstatuses.com/415' // Unsupported Media Type
+            errorCode === 'https://httpstatuses.org/415' // Unsupported Media Type
           ) {
             setFileUploadStatus(workingCase, file, 'unsupported')
           } else {

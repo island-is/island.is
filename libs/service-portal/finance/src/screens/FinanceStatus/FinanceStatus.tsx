@@ -98,6 +98,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -147,6 +148,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     </a>
                   </Box>
                 )}
+
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
@@ -169,6 +171,13 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     exportGreidslustadaFile(financeStatusData, 'xlsx')
                   }
                   dropdownItems={[
+                    {
+                      title: formatMessage({
+                        id: 'sp.finance-status:get-debt-certificate',
+                        defaultMessage: 'Skuldleysisvottorð',
+                      }),
+                      href: '/umsoknir/skuldleysisvottord/',
+                    },
                     {
                       title: formatMessage(endOfYearMessage, {
                         year: previousYear,

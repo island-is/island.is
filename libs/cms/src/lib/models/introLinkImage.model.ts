@@ -23,6 +23,9 @@ export class IntroLinkImage {
 
   @Field(() => ReferenceLink)
   link!: ReferenceLink | null
+
+  @Field(() => Boolean)
+  openLinkInNewTab?: boolean
 }
 
 export const mapIntroLinkImage = ({
@@ -35,4 +38,5 @@ export const mapIntroLinkImage = ({
   leftImage: fields.leftImage ?? false,
   linkTitle: fields.linkTitle ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,
+  openLinkInNewTab: fields.openLinkInNewTab ?? true,
 })

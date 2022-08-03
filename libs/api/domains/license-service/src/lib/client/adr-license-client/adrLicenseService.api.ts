@@ -11,6 +11,8 @@ import {
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
+import { FetchError } from '@island.is/clients/middlewares'
+import { ApolloError } from 'apollo-server-express'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -22,20 +24,33 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     private adrApi: AdrApi,
   ) {}
 
+  private handleError(error: Partial<FetchError>): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`ADR license returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+    this.logger.error('ADR license fetch failed', {
+      exception: error,
+      message: (error as Error)?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
+
   async fetchLicense(user: User) {
     let license: unknown
-
     try {
       license = await this.adrApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getAdr()
     } catch (e) {
-      this.logger.error('ADR license fetch failed', {
-        exception: e,
-        message: (e as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
+      this.handleError(e)
     }
 
     return license as AdrDto

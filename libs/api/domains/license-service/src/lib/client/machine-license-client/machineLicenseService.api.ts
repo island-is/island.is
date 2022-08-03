@@ -14,6 +14,8 @@ import {
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
+import { ApolloError } from 'apollo-server-express'
+import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -26,6 +28,24 @@ export class GenericMachineLicenseApi
     private machineApi: VinnuvelaApi,
   ) {}
 
+  private handleError(error: Partial<FetchError>): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`Machine license returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+    this.logger.error('Machine license fetch failed', {
+      exception: error,
+      message: (error as Error)?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
   async fetchLicense(user: User) {
     let license: unknown
 
@@ -34,12 +54,7 @@ export class GenericMachineLicenseApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getVinnuvela()
     } catch (e) {
-      this.logger.error('Machine license fetch failed', {
-        exception: e,
-        message: (e as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
+      this.handleError(e)
     }
     return license as VinnuvelaDto
   }
