@@ -1,5 +1,5 @@
-import {SimpleGit} from './simple-git'
-import {GitActionStatus, WorkflowID} from './git-action-status'
+import { SimpleGit } from './simple-git'
+import { GitActionStatus, WorkflowID } from './git-action-status'
 import Debug from 'debug'
 
 const app = Debug('change-detection')
@@ -150,7 +150,10 @@ export async function findBestGoodRefPR(
         ref: mergeCommitSha,
       })
     } catch (e) {
-      log(`Error processing PR candidate(${prRun.run_nr}) but continuing: %O`, e)
+      log(
+        `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+        e,
+      )
     } finally {
       await git.checkout(prBranch)
     }
