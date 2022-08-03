@@ -116,9 +116,9 @@ export const getChargeItemCode = (answers: FormValue) => {
     applicationInfo.resturant.category
   ) {
     if (applicationInfo.resturant.category === OPERATION_CATEGORY.ONE) {
-      return 'AY123'
+      return 'AY124'
     } else if (applicationInfo.resturant.category === OPERATION_CATEGORY.TWO) {
-      return 'AY122'
+      return 'AY125'
     }
   } else if (applicationInfo.operation === APPLICATION_TYPES.HOTEL) {
     if (applicationInfo.hotel.category) {

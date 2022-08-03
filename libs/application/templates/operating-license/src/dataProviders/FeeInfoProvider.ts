@@ -6,7 +6,7 @@ import {
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 import { m } from '../lib/messages'
 
-const CHARGE_ITEM_CODES = ['AY121', 'AY122', 'AY123']
+const CHARGE_ITEM_CODES = ['AY121', 'AY122', 'AY123', 'AY124', 'AY125']
 
 const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
