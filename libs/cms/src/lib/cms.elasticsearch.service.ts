@@ -72,6 +72,14 @@ export class CmsElasticsearchService {
       query.tags.push({ type: 'category', key: input.category })
     }
 
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
+    }
+
     if (input.organization) {
       query.tags.push({ type: 'organization', key: input.organization })
     }

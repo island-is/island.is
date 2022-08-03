@@ -130,7 +130,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 {formatMessage({
                   id: 'sp.finance-transactions:intro',
                   defaultMessage:
-                    'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+                    'Hér sérð þú hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
               <Box
