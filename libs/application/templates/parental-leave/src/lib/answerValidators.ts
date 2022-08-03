@@ -80,6 +80,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
+  // TODO: should we add validation for otherParent's email?
   [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
     const otherParentObj = newAnswer as OtherParentObj
 
