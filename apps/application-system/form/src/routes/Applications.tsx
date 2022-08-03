@@ -60,7 +60,6 @@ export const Applications: FC = () => {
   const checkDelegation = useCallback(() => {
     setDelegationsChecked((d) => !d)
   }, [])
-  console.log(template)
 
   useApplicationNamespaces(type)
 
