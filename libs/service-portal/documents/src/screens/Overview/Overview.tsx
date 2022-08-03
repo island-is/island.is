@@ -138,9 +138,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     order: sortState.direction,
     opened: filterValue.showUnread ? false : null,
     page: page,
-    pageSize: pageSize + 1,
+    pageSize: pageSize,
   })
-  // TODO: rename to categories
+
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
     GET_DOCUMENT_CATEGORIES,
   )
@@ -204,6 +204,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     to: pageSize * page,
     totalPages: Math.ceil(totalCount / pageSize),
   }
+
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
     setFilterValue((oldState) => {
@@ -230,8 +231,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     }))
   }, [])
 
-  const handlePageChange = useCallback((page: number) => {
-    setPage(page)
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage)
   }, [])
 
   const handleCategoriesChange = useCallback((selected: string[]) => {
