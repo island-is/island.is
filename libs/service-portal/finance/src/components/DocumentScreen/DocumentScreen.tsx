@@ -35,6 +35,10 @@ import { dateFormat } from '@island.is/shared/constants'
 import * as styles from '../../screens/Finance.css'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
+import * as styles from '../../screens/Finance.css'
+import sortBy from 'lodash/sortBy'
+import DropdownExport from '../DropdownExport/DropdownExport'
+import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
 const ITEMS_ON_PAGE = 20
 
@@ -122,22 +126,32 @@ const DocumentScreen: FC<Props> = ({
       <IntroHeader title={title} intro={intro} />
       <Stack space={2}>
         <GridRow>
-          <Box display="flex" printHidden padding={0}>
-            <GridColumn>
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            </GridColumn>
-          </Box>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <Box display="flex" printHidden>
+              <Box paddingRight={2}>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Box>
+              <DropdownExport
+                onGetCSV={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'csv')
+                }
+                onGetExcel={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                }
+              />
+            </Box>
+          </GridColumn>
         </GridRow>
         <Hidden print={true}>
           <Box marginTop={[1, 1, 2, 2, 5]}>
