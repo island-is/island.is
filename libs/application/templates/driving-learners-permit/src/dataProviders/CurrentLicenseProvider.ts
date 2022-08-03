@@ -68,8 +68,6 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       (cat) => cat.name === 'B',
     )
 
-    console.log(response.data?.drivingLicense)
-
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: response.data?.drivingLicense?.healthRemarks,

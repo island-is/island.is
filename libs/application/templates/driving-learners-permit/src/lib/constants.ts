@@ -32,6 +32,7 @@ export interface LearnersPermitFakeData {
   mentorableStudents?: string
   useDeprivation?: YesOrNo
   deprivationDateTo?: string
+  deprivationDateFrom?: string
   mentorAge?: string
   healthRemarks?: YesOrNo
 }

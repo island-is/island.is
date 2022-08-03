@@ -40,6 +40,8 @@ export const useEligibility = (
         categoryType: fakeData?.currentLicense === 'B-full' ? 'B' : 'none',
         deprivationDateTo:
           fakeData?.deprivationDateTo ?? new Date(Date.now()).toDateString(),
+        deprivationDateFrom:
+          fakeData?.deprivationDateFrom ?? new Date(Date.now()).toDateString(),
         mentorAge: fakeData?.mentorAge ?? '20',
       }),
     }

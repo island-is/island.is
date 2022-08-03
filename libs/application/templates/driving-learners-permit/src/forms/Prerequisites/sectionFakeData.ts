@@ -64,10 +64,6 @@ export const sectionFakeData = buildSubSection({
               label: 'Engin',
             },
             {
-              value: 'temp',
-              label: 'Bráðabirgðaskírteini',
-            },
-            {
               value: 'B-full',
               label: 'B réttindi',
             },
@@ -77,7 +73,13 @@ export const sectionFakeData = buildSubSection({
           id: 'fakeData.mentorLicenseIssuedDate',
           title: 'Útgáfudagur ökuréttinda',
           placeholder: 'Útgáfudagur ökuréttinda',
-          condition: allowFakeCondition(YES),
+          condition: (answers) => {
+            const fakeData = getValueViaPath<LearnersPermitFakeData>(
+              answers,
+              'fakeData',
+            )
+            return fakeData?.currentLicense === 'B-full'
+          },
         }),
         buildSelectField({
           id: 'fakeData.mentorAge',
@@ -115,8 +117,20 @@ export const sectionFakeData = buildSubSection({
           ],
         }),
         buildDateField({
+          id: 'fakeData.deprivationDateFrom',
+          title: 'Gildistími sviptingar frá...',
+          placeholder: 'Svipting gildir frá...',
+          condition: (answers) => {
+            const fakeData = getValueViaPath<LearnersPermitFakeData>(
+              answers,
+              'fakeData',
+            )
+            return fakeData?.useDeprivation === YES
+          },
+        }),
+        buildDateField({
           id: 'fakeData.deprivationDateTo',
-          title: 'Gildistími sviptingar',
+          title: 'Gildistími sviptingar til...',
           placeholder: 'Svipting gildir til...',
           condition: (answers) => {
             const fakeData = getValueViaPath<LearnersPermitFakeData>(

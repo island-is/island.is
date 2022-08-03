@@ -150,19 +150,30 @@ export class DrivingLicenseService {
 
     const localRecidency = hasLocalResidence(residenceHistory)
 
-    const fiveYearsAgo = new Date(Date.now() - 1000 * 3600 * 24 * 365.25 * 5)
+    const year = 1000 * 3600 * 24 * 365.25
+    const twelveMonthsAgo = new Date(Date.now() - year)
+    const fiveYearsAgo = new Date(Date.now() - year * 5)
+
     const categoryB = license?.categories
       ? license.categories.find(
           (category) => category.name.toLocaleUpperCase() === 'B',
         )
       : undefined
 
+    const activeDisqualification = license?.disqualification?.to
+      ? Date.now() < license.disqualification.to.getTime()
+      : false
+    const disqualificationInTheLastTwelveMonths = license?.disqualification
+      ?.from
+      ? license.disqualification.from > twelveMonthsAgo
+      : false
+
     const requirements: ApplicationEligibilityRequirement[] = [
       {
         key: RequirementKey.hasDeprivation,
-        requirementMet: license?.disqualification?.to
-          ? Date.now() > license.disqualification.to.getTime()
-          : true,
+        requirementMet: !(
+          activeDisqualification || disqualificationInTheLastTwelveMonths
+        ),
       },
       {
         key: RequirementKey.currentLocalResidency,

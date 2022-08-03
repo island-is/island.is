@@ -8,6 +8,7 @@ export interface DriversLicenseCategory {
 
 export interface Disqualification {
   to: Date
+  from: Date
 }
 
 export interface DriversLicense {
