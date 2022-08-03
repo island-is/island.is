@@ -32,7 +32,7 @@ export const UserLanguageSwitcher = ({
           },
         })
       } catch (e) {
-        console.warn('Could not update user language')
+        console.log(e)
       }
     }
   }
