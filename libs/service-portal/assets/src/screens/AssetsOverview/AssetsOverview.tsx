@@ -101,7 +101,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             {formatMessage({
               id: 'sp.assets:intro',
               defaultMessage:
-                'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+                'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
             })}
           </Text>
         </GridColumn>

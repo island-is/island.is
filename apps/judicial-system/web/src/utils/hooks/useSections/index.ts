@@ -210,7 +210,8 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 4) ||
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase) &&
-                    isPoliceDemandsStepValidIC(workingCase))
+                    isPoliceDemandsStepValidIC(workingCase) &&
+                    isPoliceReportStepValidIC(workingCase))
                     ? `${constants.IC_CASE_FILES_ROUTE}/${id}`
                     : undefined,
               },
@@ -222,7 +223,8 @@ const useSections = () => {
                 href:
                   isDefendantStepValidForSidebarIC(workingCase) &&
                   isHearingArrangementsStepValidIC(workingCase) &&
-                  isPoliceDemandsStepValidIC(workingCase)
+                  isPoliceDemandsStepValidIC(workingCase) &&
+                  isPoliceReportStepValidIC(workingCase)
                     ? `${constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },

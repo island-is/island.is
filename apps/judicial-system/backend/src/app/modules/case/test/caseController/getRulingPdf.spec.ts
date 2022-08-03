@@ -129,7 +129,7 @@ describe('CaseController - Get ruling pdf', () => {
     it('should generate pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })
@@ -150,7 +150,7 @@ describe('CaseController - Get ruling pdf', () => {
     it('should generate pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })
@@ -168,7 +168,7 @@ describe('CaseController - Get ruling pdf', () => {
     it('should generate pdf', () => {
       expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        undefined, // TODO Mock IntlService
+        expect.any(Function),
       )
     })
   })

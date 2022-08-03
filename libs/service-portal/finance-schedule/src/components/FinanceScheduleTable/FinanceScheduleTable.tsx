@@ -5,8 +5,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
-// import FinanceScheduleTableRow from './FinanceScheduleTableRow'
-import FinanceScheduleTableRowCompressed from './FinanceScheduleTableRowCompressed'
+import FinanceScheduleTableRow from './FinanceScheduleTableRow'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
@@ -49,6 +48,9 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
         <ExpandHeader
           data={[
             {
+              value: '',
+            },
+            {
               value: formatMessage({
                 id: 'sp.finance-schedule:created-date',
                 defaultMessage: 'Stofndagur',
@@ -62,13 +64,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
             },
             {
               value: formatMessage({
-                id: 'sp.finance-schedule:total-amount',
-                defaultMessage: 'Heildarupphæð',
+                id: 'sp.finance-schedule:total-schedule-amount',
+                defaultMessage: 'Upphæð áætlunar',
               }),
+              align: 'right',
             },
             {
               value: (
-                <Box display="flex">
+                <Box display="flex" justifyContent="flexEnd">
                   {formatMessage({
                     id: 'sp.finance-schedule:amount-left-without-interest',
                     defaultMessage: 'Eftirstöðvar án vaxta',
@@ -84,6 +87,15 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                   />
                 </Box>
               ),
+              align: 'right',
+              element: true,
+            },
+            {
+              value: formatMessage({
+                id: 'sp.finance-schedule:amount-left-with-interest',
+                defaultMessage: 'Eftirstöðvar með vöxtum',
+              }),
+              align: 'right',
               element: true,
             },
             {
@@ -92,14 +104,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 defaultMessage: 'Staða',
               }),
             },
-            { value: '', align: 'right' },
+            { value: '' },
           ]}
         />
         <T.Body>
           {datedArray
             .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
             .map((x) => (
-              <FinanceScheduleTableRowCompressed
+              <FinanceScheduleTableRow
                 key={x.scheduleNumber}
                 paymentSchedule={x}
               />

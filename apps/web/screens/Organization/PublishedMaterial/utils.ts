@@ -1,10 +1,5 @@
 import { GenericTag, GenericTagGroup } from '@island.is/web/graphql/schema'
 
-export interface Ordering {
-  field: 'title.sort' | 'releaseDate'
-  order: 'asc' | 'desc'
-}
-
 interface FilterCategory {
   id: string
   label: string
