@@ -59,10 +59,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
     return errors
   }
 
-  const [
-    subscribeToMailchimp,
-    { data: result, loading: mutationLoading, error },
-  ] = useMutation<
+  const [subscribeToMailchimp] = useMutation<
     MailchimpSubscribeMutation,
     MailchimpSubscribeMutationVariables
   >(MAILING_LIST_SIGNUP_MUTATION)
@@ -103,7 +100,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
             })
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setMessage({
             type: 'error',
             text: n(

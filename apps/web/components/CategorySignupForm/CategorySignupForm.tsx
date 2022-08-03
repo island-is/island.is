@@ -8,7 +8,6 @@ import {
   GridColumn,
   GridRow,
   Input,
-  RadioButton,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -61,10 +60,7 @@ export const CategorySignupForm = ({
     return errors
   }
 
-  const [
-    subscribeToMailchimp,
-    { data: result, loading: mutationLoading, error },
-  ] = useMutation<
+  const [subscribeToMailchimp] = useMutation<
     MailchimpSubscribeMutation,
     MailchimpSubscribeMutationVariables
   >(MAILING_LIST_SIGNUP_MUTATION)
@@ -110,7 +106,7 @@ export const CategorySignupForm = ({
             })
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setMessage({
             type: 'error',
             text: n(
