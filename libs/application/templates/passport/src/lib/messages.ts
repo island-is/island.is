@@ -328,15 +328,10 @@ export const m = defineMessages({
   },
 
   /* ParentB Intro Section */
-  parentBIntro: {
-    id: 'pa.application:parentBIntro',
-    defaultMessage: 'Í þessu ferli samþykkir þú sem forsjáraðili umsókn ',
-    description: 'Some description',
-  },
-  parentBIntroPart2: {
-    id: 'pa.application:parentBIntro.part2#markdown',
+  parentBIntroText: {
+    id: 'pa.application:parentBIntroText',
     defaultMessage:
-      'Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
+      'Í þessu ferli samþykkir þú sem forsjáraðili umsókn **{guardianName}** um vegabréf fyrir **{childsName}**. Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
     description: 'Some description',
   },
 

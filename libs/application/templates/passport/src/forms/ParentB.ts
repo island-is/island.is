@@ -31,14 +31,15 @@ export const ParentB: Form = buildForm({
         buildMultiField({
           id: 'introParentB',
           title: m.formName,
-          description: (application: Application) =>
-            `**${
-              (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-                .guardian1.name
-            }** um vegabréf fyrir **${
-              (application.answers.childsPersonalInfo as ChildsPersonalInfo)
-                .name
-            }**.` + m.parentBIntroPart2.defaultMessage,
+          description: (application: Application) => ({
+            ...m.parentBIntroText,
+            values: {
+              childsName: (application.answers
+                .childsPersonalInfo as ChildsPersonalInfo)?.name,
+              guardianName: (application.answers
+                .childsPersonalInfo as ChildsPersonalInfo)?.guardian1.name,
+            },
+          }),
           children: [
             buildDividerField({
               title: ' ',
