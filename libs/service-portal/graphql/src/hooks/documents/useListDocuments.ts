@@ -5,7 +5,6 @@ import uniqBy from 'lodash/uniqBy'
 interface UseListDocumentsProps {
   data: {
     documents: Document[]
-    categories: { label: string; value: string }[]
   }
   totalCount: number
   unreadCounter: number
@@ -49,14 +48,8 @@ export const useListDocuments = (
   const documents = data?.listDocuments?.data || []
   const totalCount = data?.listDocuments?.totalCount || 0
 
-  const allCategories = documents.map((document) => ({
-    label: document.senderName,
-    value: document.senderNatReg,
-  }))
-  // Note: Getting unique categories
-  const categories = uniqBy(allCategories, (category) => category.value)
   return {
-    data: { documents, categories },
+    data: { documents },
     totalCount,
     unreadCounter: documents.filter((x) => x.opened === false).length,
     loading,
