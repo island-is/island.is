@@ -74,7 +74,7 @@ jobs:
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           echo "::set-output name=PRE_RELEASE::false"
-          
+
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
 
@@ -200,7 +200,7 @@ jobs:
           git config --global user.name "CI Bot"
 
       - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks-outputs.PRE_RELEASE != 'true'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
