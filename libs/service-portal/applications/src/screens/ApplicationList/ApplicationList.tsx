@@ -98,7 +98,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const mapper = institutionMapper
     const apps: Application[] = applications
     let institutions: Option[] = []
-    apps.map((elem, idx) => {
+    apps.forEach((elem) => {
       const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
       institutions.push({
         value: inst,
@@ -142,7 +142,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const inProgress: Application[] = []
     const finished: Application[] = []
 
-    apps.map((application) => {
+    apps.forEach((application) => {
       if (
         application.state === 'draft' ||
         application.state === 'prerequisites'
