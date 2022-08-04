@@ -3,7 +3,11 @@ import {
   Box,
   Divider,
   FocusableBox,
+  GridColumn,
+  GridColumns,
+  GridRow,
   Icon,
+  ResponsiveProp,
   Text,
 } from '@island.is/island-ui/core'
 import ReactHtmlParser from 'react-html-parser'
@@ -48,24 +52,21 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
     str && !!str.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
 
   const isDriversLicense = type === GenericLicenseType.DriversLicense
+  const columnSpan: ResponsiveProp<GridColumns> =
+    data.length > 0
+      ? ['1/1', '1/1', '4/12']
+      : data.length === 3
+      ? ['1/1', '1/1', '3/12']
+      : '1/1'
+
   return (
     <>
       <Box paddingBottom={3} paddingTop={3}>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="spaceBetween"
-          width="full"
-        >
-          <Box
-            display="flex"
-            flexDirection={['column', 'column', 'column', 'row']}
+        <GridRow>
+          <GridColumn
+            span={isDriversLicense ? ['1/1', '1/1', '1/1', '2/12'] : columnSpan}
           >
-            <Box
-              display="flex"
-              alignItems={'center'}
-              className={isDriversLicense && styles.categoryContainer}
-            >
+            <Box display="flex" alignItems={'center'}>
               <Text variant="h5" as="span" lineHeight="lg">
                 {title}
               </Text>
@@ -85,71 +86,61 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
                 ''
               )}
             </Box>
-            {data.map((item) => {
-              return (
-                item.label &&
-                item.value && (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={[
-                      'flexStart',
-                      'flexStart',
-                      'flexStart',
-                      'center',
-                    ]}
-                    className={styles.content}
-                    marginLeft={[0, 0, 0, 5]}
-                  >
-                    <>
-                      <Text variant="default">{item.label}</Text>
-                      <Box marginLeft={1} />
-                      <Text variant="default" fontWeight="semiBold">
-                        {String(item.value ?? '')
-                          .split(' ')
-                          .map((part) =>
-                            isJSONDate(part)
-                              ? format(+new Date(part).getTime(), dateFormat.is)
-                              : part,
-                          )
-                          .join(' ')}
-                      </Text>
-                    </>
+          </GridColumn>
+          {data.map((item) => {
+            return (
+              item.label && (
+                <GridColumn
+                  span={[
+                    isDriversLicense ? '8/12' : '1/1',
+                    isDriversLicense ? '8/12' : '1/1',
+                    isDriversLicense ? '8/12' : '1/1',
+                    '3/12',
+                  ]}
+                  key={`expandable-item-${item.label}`}
+                >
+                  <Box display="flex" alignItems="center" height="full">
+                    <Text variant="default">{item.label}</Text>
+                    <Box marginLeft={1} />
+                    <Text variant="default" fontWeight="semiBold">
+                      {String(item.value ?? '')
+                        .split(' ')
+                        .map((part) =>
+                          isJSONDate(part)
+                            ? format(+new Date(part).getTime(), dateFormat.is)
+                            : part,
+                        )
+                        .join(' ')}
+                    </Text>
                   </Box>
-                )
+                </GridColumn>
               )
-            })}
-          </Box>
+            )
+          })}
+
           {isDriversLicense && (
-            <Box
-              display="flex"
-              justifyContent={[
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'flexEnd',
-              ]}
-              alignItems="center"
-            >
-              <FocusableBox
-                borderRadius="circle"
-                background="blue100"
-                onClick={onExpandButton}
-                padding={1}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                cursor="pointer"
-              >
-                <Icon
-                  type="filled"
-                  icon={expanded ? 'remove' : 'add'}
-                  color="blue400"
-                />
-              </FocusableBox>
-            </Box>
+            <GridColumn span={['4/12', '4/12', '4/12', '1/12']}>
+              <Box display="flex" justifyContent="flexEnd" alignItems="center">
+                <FocusableBox
+                  borderRadius="circle"
+                  background="blue100"
+                  onClick={onExpandButton}
+                  padding={1}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                >
+                  <Icon
+                    type="filled"
+                    icon={expanded ? 'remove' : 'add'}
+                    color="blue400"
+                  />
+                </FocusableBox>
+              </Box>
+            </GridColumn>
           )}
-        </Box>
+        </GridRow>
         {isDriversLicense && (
           <AnimateHeight
             className={expanded ? styles.animatedContent : undefined}
@@ -165,7 +156,6 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
           </AnimateHeight>
         )}
       </Box>
-
       <Divider />
     </>
   )

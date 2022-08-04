@@ -55,6 +55,7 @@ type ActionCardProps = {
     message?: string
   }
   avatar?: boolean
+  image?: string
   deleteButton?: {
     visible?: boolean
     onClick?: () => void
@@ -115,6 +116,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   progressMeter: _progressMeter,
   deleteButton: _delete,
   avatar,
+  image,
   logo,
 }) => {
   const cta = { ...defaultCta, ..._cta }
@@ -128,6 +130,25 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       : backgroundColor === 'red'
       ? 'red100'
       : 'blue100'
+
+  const renderImage = () => {
+    if (!image || avatar || logo) {
+      return null
+    }
+
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexShrink={0}
+        marginRight={[2, 3]}
+        borderRadius="circle"
+      >
+        <img className={styles.avatar} src={image} alt="action-card" />
+      </Box>
+    )
+  }
 
   const renderAvatar = () => {
     if (!avatar) {
@@ -372,6 +393,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
+        {renderImage()}
         {renderAvatar()}
         <Box flexDirection="row" width="full">
           {heading && (

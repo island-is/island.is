@@ -109,7 +109,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             return (
               <Box marginBottom={3} key={index}>
                 <ActionCard
-                  logo={getTitleAndLogo(license.license.type).logo}
+                  image={getTitleAndLogo(license.license.type).logo}
                   text={
                     formatMessage(m.licenseNumber) +
                     ': ' +
