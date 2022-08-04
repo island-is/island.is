@@ -5,7 +5,6 @@ on:
     branches:
       - 'main'
       - 'release/**'
-      - 'pre-release/**'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -37,7 +36,6 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
-      PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
@@ -75,17 +73,6 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
 
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
-            do
-                echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
-                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
-                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
-                  echo "::set-output name=PRE_CHECK::feature-deploy"
-                  exit 0
-                fi
-            done
-
             for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
             do
                 echo "Checking branch against pattern '$pattern'"
@@ -113,17 +100,6 @@ jobs:
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
-          else
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
-            do
-                echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
-                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
-                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
-                  echo "::set-output name=PRE_CHECK::feature-deploy"
-                  exit 0
-                fi
-            done
           fi
           echo "::set-output name=PRE_CHECK::push"
 
@@ -380,11 +356,6 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
           fi
-
-      - name: check pre-release
-        if: contains(github.ref, "pre-release/")
-        run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
 
       - name: Prepare deployment targets
         id: deploy_map
