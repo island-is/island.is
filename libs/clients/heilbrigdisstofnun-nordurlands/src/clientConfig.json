@@ -1,0 +1,3352 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Saga External Services - Aurora Dev 1.0",
+    "description": "Saga external services for 3rd party developers",
+    "contact": {
+      "name": "Origo",
+      "url": "https://www.origo.is",
+      "email": "thjonusta@origo.is"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/Appointments": {
+      "get": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Get all appointments for a specific person",
+        "parameters": [
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppointmentResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Create an appointment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAppointmentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Appointments/{appointmentId}": {
+      "put": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Reschedule an appointment at a different date and time",
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleAppointmentRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleAppointmentRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Cancel an appointment",
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/Login": {
+      "post": {
+        "tags": [
+          "AppointmentAPI",
+          "Auth"
+        ],
+        "description": "",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/IsTokenValid": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/IsMyTokenValid": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Auth/WhoAmI": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhoAmIResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/GetAllActiveKiosks": {
+      "get": {
+        "tags": [
+          "Kiosk"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KioskRes"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/GetKioskInfo": {
+      "get": {
+        "tags": [
+          "Kiosk"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KioskInfoRes"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/Barcode": {
+      "post": {
+        "tags": [
+          "Kiosk"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BarcodeReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BarcodeReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BarcodeReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KioskResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/SSN": {
+      "post": {
+        "tags": [
+          "Kiosk"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsnReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsnReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SsnReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KioskResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/ConfirmArrival": {
+      "post": {
+        "tags": [
+          "Kiosk"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskArrivalReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskArrivalReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskArrivalReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KioskResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Kiosk/ConfirmPayment": {
+      "post": {
+        "tags": [
+          "Kiosk"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskPaymentReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskPaymentReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmKioskPaymentReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KioskResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/CreateSheetSimpleNoteEb1": {
+      "post": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSimpleNoteEb1NewSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSimpleNoteEb1NewSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSimpleNoteEb1NewSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/CreateSheetOperationEb11": {
+      "post": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewOperationEb11NewSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewOperationEb11NewSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewOperationEb11NewSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/CreateSheetEmergencyNote418": {
+      "post": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewEmergencyNoteEb418NewSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewEmergencyNoteEb418NewSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewEmergencyNoteEb418NewSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/UpdateSheetSimpleNoteEb1": {
+      "put": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSimpleNoteEb1UpdateSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSimpleNoteEb1UpdateSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSimpleNoteEb1UpdateSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/UpdateSheetOperationEb11": {
+      "put": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOperationEb11UpdateSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOperationEb11UpdateSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOperationEb11UpdateSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/UpdateSheetEmergencyNote418": {
+      "put": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmergencyNoteEb418UpdateSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmergencyNoteEb418UpdateSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmergencyNoteEb418UpdateSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/FetchSheetSimpleNoteEb1": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "SheetInt",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleNoteEb1FetchSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/FetchSheetOperationEb11": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "SheetInt",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationEb11FetchSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/FetchSheetEmergencyNoteEb418": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "SheetInt",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmergencyNoteEb418FetchSheetRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/FetchEncounterTemplates": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "GroupId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchEncounterTemplatesRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/FetchSheetTypesForGroup": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "GroupId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchSheetTypesForGroupRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/GetSheetsWithHierarchy": {
+      "get": {
+        "tags": [
+          "Leviosa"
+        ],
+        "parameters": [
+          {
+            "name": "FromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "PersonId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ToDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSheetsWithHierarchyRes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Leviosa/ConfirmSheet": {
+      "post": {
+        "tags": [
+          "Leviosa"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmSheetReq"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmSheetReq"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmSheetReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/v1/Resources": {
+      "get": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Get all bookable resources",
+        "parameters": [
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResourceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Resources/{resourceId}": {
+      "get": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Get a bookable resource based on Id",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Resources/Timeslots": {
+      "get": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Get next available timeslots",
+        "parameters": [
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "contactIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          {
+            "name": "numberOfTimeslots",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 3
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NextAvailableTimeslotResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Resources/{resourceId}/Timeslots": {
+      "get": {
+        "tags": [
+          "AppointmentAPI"
+        ],
+        "description": "Get available time slots for a specific resource and date range",
+        "parameters": [
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "personSsn",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "contactId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookableResourceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The body contains a message describing why the request failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SagaError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AppointmentResponse": {
+        "type": "object",
+        "properties": {
+          "dateAndTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "contactApiDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelThroughApiAllowed": {
+            "type": "boolean"
+          },
+          "contactInteractionType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contactDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resourceGroupAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceGroupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceGroupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "resourceApiDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bookedFromWeb": {
+            "type": "boolean"
+          },
+          "appointmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appointmentLengthInMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "videoConversationUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Arrival": {
+        "type": "object",
+        "properties": {
+          "arrivalInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "appointmentInt": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "contactInt": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceInt": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "resourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "mdNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "encounterList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Encounter"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssessmentCode": {
+        "type": "object",
+        "properties": {
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codingSystem": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappingCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "term": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "assesmentType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BarcodeReq": {
+        "type": "object",
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "kioskId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Bill": {
+        "type": "object",
+        "properties": {
+          "totalAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientDiscount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "$ref": "#/components/schemas/BillType"
+          },
+          "serviceItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BillType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "BookableResourceResponse": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceMdNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceType": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "resourceTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxBookingsPerPatient": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeSlots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimeSlot"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConfirmKioskArrivalReq": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kioskId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConfirmKioskPaymentReq": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "posTransactionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "kioskId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConfirmSheetReq": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ignoreWarnings": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAppointmentRequest": {
+        "required": [
+          "contactId",
+          "dateAndTime",
+          "groupId",
+          "personSsn",
+          "resourceId"
+        ],
+        "type": "object",
+        "properties": {
+          "personSsn": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dateAndTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "gsm": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionnaireAnswers": {
+            "$ref": "#/components/schemas/QuestionnaireAnswer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAppointmentResponse": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmergencyNoteEb418": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "encounterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "kindOfSheetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "originalDepartmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "orginalDepartmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "organization": {
+            "$ref": "#/components/schemas/SheetOrganizationPart"
+          },
+          "patient": {
+            "$ref": "#/components/schemas/SheetPatientPart"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/SignaturePart"
+          },
+          "createdByEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "currentEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "senderEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isRegistered": {
+            "type": "boolean"
+          },
+          "isChanged": {
+            "type": "boolean"
+          },
+          "isCanceled": {
+            "type": "boolean"
+          },
+          "receiverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "string",
+            "nullable": true
+          },
+          "examination": {
+            "type": "string",
+            "nullable": true
+          },
+          "assessment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentCode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmergencyNoteEb418FetchSheetRes": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/EmergencyNoteEb418"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Encounter": {
+        "type": "object",
+        "properties": {
+          "encId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sheetList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SheetInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EncounterTemplate": {
+        "type": "object",
+        "properties": {
+          "templateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isDefaultTemplate": {
+            "type": "boolean"
+          },
+          "templateType": {
+            "$ref": "#/components/schemas/EncounterTemplateTypeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EncounterTemplateTypeEnum": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "FetchEncounterTemplatesRes": {
+        "type": "object",
+        "properties": {
+          "encounterTemplateList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EncounterTemplate"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FetchSheetTypesForGroupRes": {
+        "type": "object",
+        "properties": {
+          "sheetTypes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetSheetsWithHierarchyRes": {
+        "type": "object",
+        "properties": {
+          "getSheetsWithHierarchy": {
+            "$ref": "#/components/schemas/SheetContext"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InPatientTreatment": {
+        "type": "object",
+        "properties": {
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specTratmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "specTreatmentStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "encounterList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Encounter"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Int32StringKeyValuePair": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KioskInfoRes": {
+        "type": "object",
+        "properties": {
+          "nextActionDoc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Int32StringKeyValuePair"
+            },
+            "nullable": true
+          },
+          "billTypeDoc": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Int32StringKeyValuePair"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KioskPayment": {
+        "type": "object",
+        "properties": {
+          "totalAmount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amountToCharge": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientDiscount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bill"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KioskRes": {
+        "type": "object",
+        "properties": {
+          "kioskId": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "autoClearTimer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "welcomeMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createSpecUnitsReceipt": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "KioskResponse": {
+        "type": "object",
+        "properties": {
+          "appointmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "patientSsn": {
+            "type": "string",
+            "nullable": true
+          },
+          "patientName": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayText": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextAction": {
+            "$ref": "#/components/schemas/NextAction"
+          },
+          "paymentInfo": {
+            "$ref": "#/components/schemas/KioskPayment"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewAssessmentCode": {
+        "type": "object",
+        "properties": {
+          "qualifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewQualifier"
+            },
+            "nullable": true
+          },
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewEmergencyNoteEb418": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "receiverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "string",
+            "nullable": true
+          },
+          "examination": {
+            "type": "string",
+            "nullable": true
+          },
+          "assessment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewAssessmentCode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewEmergencyNoteEb418NewSheetReq": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "managedByUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "signatureUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sheet": {
+            "$ref": "#/components/schemas/NewEmergencyNoteEb418"
+          },
+          "encounterTemplate": {
+            "type": "string",
+            "nullable": true
+          },
+          "encounterTemplateGroupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "adtArrivalId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewOperationCode": {
+        "type": "object",
+        "properties": {
+          "qualifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewQualifier"
+            },
+            "nullable": true
+          },
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewOperationEb11": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewOperationCode"
+            },
+            "nullable": true
+          },
+          "assessments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewAssessmentCode"
+            },
+            "nullable": true
+          },
+          "operationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "generalDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "proOpAssessment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewOperationEb11NewSheetReq": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "managedByUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "signatureUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sheet": {
+            "$ref": "#/components/schemas/NewOperationEb11"
+          },
+          "encounterTemplate": {
+            "type": "string",
+            "nullable": true
+          },
+          "encounterTemplateGroupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "adtArrivalId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewQualifier": {
+        "type": "object",
+        "properties": {
+          "qualifierInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qualifierValue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewSheetRes": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "encId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewSimpleNoteEb1": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NewSimpleNoteEb1NewSheetReq": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "managedByUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "signatureUserId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patientInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sheet": {
+            "$ref": "#/components/schemas/NewSimpleNoteEb1"
+          },
+          "encounterTemplate": {
+            "type": "string",
+            "nullable": true
+          },
+          "encounterTemplateGroupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "adtArrivalId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NextAction": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "NextAvailableTimeslotResponse": {
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scheduleWebBookableType": {
+            "$ref": "#/components/schemas/ScheduleWebBookable"
+          },
+          "timeslotLengthInMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperationCode": {
+        "type": "object",
+        "properties": {
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codingSystem": {
+            "type": "string",
+            "nullable": true
+          },
+          "mappingCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "term": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperationEb11": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "encounterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "kindOfSheetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "originalDepartmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "orginalDepartmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "organization": {
+            "$ref": "#/components/schemas/SheetOrganizationPart"
+          },
+          "patient": {
+            "$ref": "#/components/schemas/SheetPatientPart"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/SignaturePart"
+          },
+          "createdByEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "currentEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "senderEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isRegistered": {
+            "type": "boolean"
+          },
+          "isChanged": {
+            "type": "boolean"
+          },
+          "isCanceled": {
+            "type": "boolean"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OperationCode"
+            },
+            "nullable": true
+          },
+          "assessments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentCode"
+            },
+            "nullable": true
+          },
+          "operationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "generalDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "proOpAssessment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OperationEb11FetchSheetRes": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/OperationEb11"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OutPatientTreatment": {
+        "type": "object",
+        "properties": {
+          "specTreatmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specTratmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "specTreatmentStartDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arrivalList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Arrival"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Questionnaire": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "question": {
+            "type": "string",
+            "nullable": true
+          },
+          "answerRows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireRow"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireAnswer": {
+        "type": "object",
+        "properties": {
+          "questionnaireId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "answerRows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireAnswerRow"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireAnswerRow": {
+        "type": "object",
+        "properties": {
+          "answerRowId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isChecked": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireRow": {
+        "type": "object",
+        "properties": {
+          "colId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "colText": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RescheduleAppointmentRequest": {
+        "required": [
+          "dateAndTime"
+        ],
+        "type": "object",
+        "properties": {
+          "dateAndTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResourceResponse": {
+        "type": "object",
+        "properties": {
+          "resourceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resourceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceMdNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceType": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "resourceTypeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxBookingsPerPatient": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionnaireData": {
+            "$ref": "#/components/schemas/Questionnaire"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResourceType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "SagaError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScheduleWebBookable": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ServiceItem": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "priceWithoutDiscount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "speciality": {
+            "type": "boolean"
+          },
+          "nonSpecialityPayedBySi": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SheetContext": {
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "string",
+            "nullable": true
+          },
+          "outPatientTreatmentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutPatientTreatment"
+            },
+            "nullable": true
+          },
+          "inPatientTreatmentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InPatientTreatment"
+            },
+            "nullable": true
+          },
+          "encounterList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Encounter"
+            },
+            "nullable": true
+          },
+          "arrivalList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Arrival"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SheetEmployeePart": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SheetInfo": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kindOfSheet": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kindOfSheetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "createUser": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentUser": {
+            "type": "string",
+            "nullable": true
+          },
+          "signatureUser": {
+            "type": "string",
+            "nullable": true
+          },
+          "encounterId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SheetOrganizationPart": {
+        "type": "object",
+        "properties": {
+          "organizationInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipRegion": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SheetPatientPart": {
+        "type": "object",
+        "properties": {
+          "patientInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "homePhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "workPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "mobilePhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "employment": {
+            "type": "string",
+            "nullable": true
+          },
+          "relativeSsn": {
+            "type": "string",
+            "nullable": true
+          },
+          "relative": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignaturePart": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "profession": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SimpleNoteEb1": {
+        "type": "object",
+        "properties": {
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "encounterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "kindOfSheetName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "originalDepartmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "orginalDepartmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "organization": {
+            "$ref": "#/components/schemas/SheetOrganizationPart"
+          },
+          "patient": {
+            "$ref": "#/components/schemas/SheetPatientPart"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/SignaturePart"
+          },
+          "createdByEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "currentEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "senderEmployee": {
+            "$ref": "#/components/schemas/SheetEmployeePart"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "confirmDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isRegistered": {
+            "type": "boolean"
+          },
+          "isChanged": {
+            "type": "boolean"
+          },
+          "isCanceled": {
+            "type": "boolean"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SimpleNoteEb1FetchSheetRes": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/SimpleNoteEb1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SsnReq": {
+        "type": "object",
+        "properties": {
+          "patientSsn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kioskId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TimeSlot": {
+        "type": "object",
+        "properties": {
+          "contactId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactInteractionType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "booked": {
+            "type": "boolean"
+          },
+          "bookedByUser": {
+            "type": "boolean"
+          },
+          "webBookable": {
+            "type": "boolean"
+          },
+          "maxBookingAtOnce": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "alreadyBookedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelThroughApiAllowed": {
+            "type": "boolean"
+          },
+          "contactApiDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timeslotLengthInMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAssessmentCode": {
+        "type": "object",
+        "properties": {
+          "qualifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateQualifier"
+            },
+            "nullable": true
+          },
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateEmergencyNoteEb418": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "receiverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "history": {
+            "type": "string",
+            "nullable": true
+          },
+          "examination": {
+            "type": "string",
+            "nullable": true
+          },
+          "assessment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateAssessmentCode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateEmergencyNoteEb418UpdateSheetReq": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/UpdateEmergencyNoteEb418"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateOperationCode": {
+        "type": "object",
+        "properties": {
+          "qualifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateQualifier"
+            },
+            "nullable": true
+          },
+          "conceptCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "termId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateOperationEb11": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateOperationCode"
+            },
+            "nullable": true
+          },
+          "assessments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateAssessmentCode"
+            },
+            "nullable": true
+          },
+          "operationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "generalDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "operationComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "proOpAssessment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateOperationEb11UpdateSheetReq": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/UpdateOperationEb11"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateQualifier": {
+        "type": "object",
+        "properties": {
+          "qualifierInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qualifierValue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateSimpleNoteEb1": {
+        "type": "object",
+        "properties": {
+          "kindOfSheetId": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "externalSystem": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "sheetInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateSimpleNoteEb1UpdateSheetReq": {
+        "type": "object",
+        "properties": {
+          "sheet": {
+            "$ref": "#/components/schemas/UpdateSimpleNoteEb1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidateTokenRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WhoAmIResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "profession": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "nullable": true
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "typeDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "allowElectricSign": {
+            "type": "boolean"
+          },
+          "orgName": {
+            "type": "string",
+            "nullable": true
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

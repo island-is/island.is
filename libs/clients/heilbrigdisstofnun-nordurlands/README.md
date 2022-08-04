@@ -9,3 +9,17 @@ Run `nx test clients-heilbrigdisstofnun-nordurlands` to execute the unit tests v
 ## Running lint
 
 Run `nx lint clients-heilbrigdisstofnun-nordurlands` to execute the lint via [ESLint](https://eslint.org/).
+
+## Usage
+
+### Updating the open api definition (clientConfig.json)
+
+```sh
+yarn nx run clients-heilbrigdisstofnun-nordurlands:update-openapi-document
+```
+
+### Regenerating the client:
+
+```sh
+yarn nx run clients-heilbrigdisstofnun-nordurlands:schemas/external-openapi-generator
+```
