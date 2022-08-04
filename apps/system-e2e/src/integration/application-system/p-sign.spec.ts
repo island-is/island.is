@@ -28,10 +28,10 @@ describe('P-sign', () => {
     cy.pathUuid().as('firstApplication')
   })
 
-  it.only('should be able to create application', function() {
+  it.only('should be able to create application', function () {
     cy.pathUuid()
       .should('match', uuidRegex.v4)
-      .then(function(uuid) {
+      .then(function (uuid) {
         cy.wrap(uuid).should('eq', this.firstApplication)
       })
     cy.get('input[name="approveExternalData"]').click()
