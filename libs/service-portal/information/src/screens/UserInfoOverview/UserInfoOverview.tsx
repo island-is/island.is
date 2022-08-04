@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { AlertMessage, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,8 +13,27 @@ import {
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { spmm } from '../../lib/messages'
-import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+
+const NATIONAL_REGISTRY_CHILDREN = gql`
+  query NationalRegistryChildrenQuery {
+    nationalRegistryChildren {
+      nationalId
+      fullName
+      displayName
+    }
+  }
+`
+
+const NATIONAL_REGISTRY_USER = gql`
+  query NationalRegistryUserQuery {
+    nationalRegistryUser {
+      spouse {
+        name
+        nationalId
+      }
+    }
+  }
+`
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')

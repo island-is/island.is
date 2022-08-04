@@ -2,7 +2,7 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
@@ -22,7 +22,16 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+const NATIONAL_REGISTRY_USER = gql`
+  query NationalRegistryUserQuery {
+      spouse {
+        name
+        cohabitant
+      }
+     
+    }
+  }
+`
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',

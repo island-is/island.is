@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { useLazyQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Accordion,
@@ -24,8 +24,13 @@ import {
 } from '@island.is/service-portal/core'
 
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
 import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
+
+const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
+  query GetUsersVehiclesSearchLimit {
+    vehiclesSearchLimit
+  }
+`
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')

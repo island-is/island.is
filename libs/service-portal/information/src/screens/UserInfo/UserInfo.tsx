@@ -1,7 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -18,8 +18,35 @@ import {
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
 import { spmm } from '../../lib/messages'
-import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+
+const NATIONAL_REGISTRY_FAMILY = gql`
+  query NationalRegistryFamilyQuery {
+    nationalRegistryFamily {
+      fullName
+      nationalId
+    }
+  }
+`
+
+const NATIONAL_REGISTRY_USER = gql`
+  query NationalRegistryUserQuery {
+    nationalRegistryUser {
+      fullName
+      legalResidence
+      birthPlace
+      familyNr
+      maritalStatus
+      religion
+      banMarking {
+        banMarked
+      }
+      gender
+      citizenship {
+        name
+      }
+    }
+  }
+`
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',

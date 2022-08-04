@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
-import { useLazyQuery } from '@apollo/client'
+import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { m, TableGrid } from '@island.is/service-portal/core'
 import { Query, UnitsOfUseModel, PropertyLocation } from '@island.is/api/schema'
 import { Text, Box, Button } from '@island.is/island-ui/core'
 import { unitsArray } from '../../utils/createUnits'
-import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 interface Props {
@@ -15,6 +14,26 @@ interface Props {
   assetId?: string | number | null
 }
 
+const GET_UNITS_OF_USE_QUERY = gql`
+  query GetAssetsUnitsOfUse($input: GetPagingTypes!) {
+    assetsUnitsOfUse(input: $input) {
+      paging {
+        hasNextPage
+      }
+      unitsOfUse {
+        propertyNumber
+        unitOfUseNumber
+        marking
+        usageDisplay
+        displaySize
+        buildYearDisplay
+        fireAssessment
+        explanation
+      }
+    }
+  }
+`
+
 const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
   const { formatMessage } = useLocale()
   const [getUnitsOfUseQuery, { fetchMore, data }] = useLazyQuery<Query>(
@@ -23,6 +42,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
   const eigendurPaginationData = data?.assetsUnitsOfUse
 
   const paginateData = eigendurPaginationData?.unitsOfUse || []
+
   const paginate = () => {
     const paginateData = eigendurPaginationData?.unitsOfUse || []
     const variableObject = {

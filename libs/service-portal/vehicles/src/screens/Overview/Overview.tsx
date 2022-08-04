@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual'
 import React, { useCallback, useState } from 'react'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
@@ -23,8 +23,24 @@ import {
 
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 
+const GET_USERS_VEHICLES = gql`
+  query GetUsersVehicles {
+    vehiclesList {
+      vehicleList {
+        permno
+        regno
+        type
+        color
+        firstRegDate
+        productYear
+        nextInspection {
+          nextInspectionDate
+        }
+      }
+    }
+  }
+`
 const defaultFilterValues = {
   searchQuery: '',
 }

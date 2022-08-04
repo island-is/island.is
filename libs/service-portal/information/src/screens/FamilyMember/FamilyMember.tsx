@@ -1,11 +1,35 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import ChildView from '../../components/ChildView/ChildView'
 
-import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../lib/queries/getNationalRegistryFamily'
+// eslint-disable-next-line local-rules/disallow-kennitalas
+const NATIONAL_REGISTRY_FAMILY_DETAIL = gql`
+  query NationalRegistryFamilyDetailQuery($input: GetFamilyInfoInput!) {
+    nationalRegistryFamilyDetail(input: $input) {
+      nationalId
+      fullName
+      legalResidence
+      birthplace
+      religion
+      genderDisplay
+      nationality
+      fate
+      parent1
+      parent2
+      nameParent1
+      nameParent2
+      nameCustody1
+      nameCustody2
+      custody1
+      custody2
+      custodyText1
+      custodyText2
+    }
+  }
+`
 
 const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalId }: { nationalId: string | undefined } = useParams()

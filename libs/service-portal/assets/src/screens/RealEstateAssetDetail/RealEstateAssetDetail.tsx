@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -15,13 +15,70 @@ import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
-import {
-  GET_SINGLE_PROPERTY_QUERY,
-  GET_PROPERTY_OWNERS_QUERY,
-} from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
+
+const GET_SINGLE_PROPERTY_QUERY = gql`
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        displayShort
+      }
+      appraisal {
+        activeAppraisal
+        plannedAppraisal
+        activeYear
+        plannedYear
+      }
+      registeredOwners {
+        registeredOwners {
+          name
+          ssn
+          ownership
+          purchaseDate
+          grantDisplay
+        }
+      }
+      land {
+        landNumber
+        landAppraisal
+        useDisplay
+        area
+        areaUnit
+      }
+      unitsOfUse {
+        unitsOfUse {
+          unitOfUseNumber
+          marking
+          usageDisplay
+          displaySize
+          buildYearDisplay
+          fireAssessment
+          explanation
+        }
+      }
+    }
+  }
+`
+
+const GET_PROPERTY_OWNERS_QUERY = gql`
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+    assetsPropertyOwners(input: $input) {
+      registeredOwners {
+        name
+        ssn
+        ownership
+        purchaseDate
+        grantDisplay
+      }
+      paging {
+        hasNextPage
+      }
+    }
+  }
+`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
