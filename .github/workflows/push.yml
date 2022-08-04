@@ -99,6 +99,18 @@ jobs:
             exit 0
           fi
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            if
+              for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+              do
+                  echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                  echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                  if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                    echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
+                    echo "::set-output name=PRE_CHECK::feature-deploy"
+                    exit 0
+                  fi
+              done
+            fi
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
@@ -113,18 +125,7 @@ jobs:
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
-          else
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
-            do
-                echo "Checking branch against pre_release_pattern '$pre_pattern'"
-                echo "Check if this is a pre-release and if it should generate a feature-deploy"
-                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
-                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
-                  echo "::set-output name=PRE_CHECK::feature-deploy"
-                  exit 0
-                fi
-            done
-          fi
+          
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
