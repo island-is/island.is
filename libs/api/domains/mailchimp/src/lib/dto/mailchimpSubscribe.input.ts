@@ -15,4 +15,7 @@ export class MailchimpSubscribeInput {
 
   @Field({ nullable: true })
   toggle?: boolean
+
+  @Field(() => [Number], { nullable: true })
+  categories?: Array<number>
 }
