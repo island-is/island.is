@@ -7,10 +7,14 @@ import * as styles from './Cases.css'
 const TableSkeleton = () => {
   return (
     <>
-      <div className={styles.logoContainer}>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        marginBottom={[5, 5, 9]}
+      >
         <SkeletonLoader width={200} height={64} borderRadius="standard" />
         <SkeletonLoader width={200} height={64} borderRadius="standard" />
-      </div>
+      </Box>
       <Box marginBottom={3}>
         <SkeletonLoader width={200} height={40} borderRadius="standard" />
       </Box>
