@@ -1,7 +1,7 @@
 import { HeilbrigdisstofnunNordurlandsClientService } from '@island.is/clients/heilbrigdisstofnun-nordurlands'
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GetResourcesInput } from './dto/getResorces.input'
-import { Resource } from './models/Resource'
+import { GetResourcesInput } from './dto/getResources.input'
+import { Resource } from './models/resource'
 
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
