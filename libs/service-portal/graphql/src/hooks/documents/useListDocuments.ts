@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { Document, GetDocumentListInput, Query } from '@island.is/api/schema'
 import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
-import uniqBy from 'lodash/uniqBy'
+
 interface UseListDocumentsProps {
   data: {
     documents: Document[]
@@ -15,34 +15,9 @@ interface UseListDocumentsProps {
 export const useListDocuments = (
   input?: GetDocumentListInput,
 ): UseListDocumentsProps => {
-  const {
-    senderKennitala,
-    dateFrom,
-    dateTo,
-    categoryId,
-    subjectContains,
-    typeId,
-    sortBy,
-    order,
-    opened,
-    page,
-    pageSize,
-  } = input ?? {}
   const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
     variables: {
-      input: {
-        senderKennitala,
-        dateFrom,
-        dateTo,
-        categoryId,
-        subjectContains,
-        typeId,
-        sortBy,
-        order,
-        opened,
-        page,
-        pageSize,
-      },
+      input: input,
     },
   })
   const documents = data?.listDocuments?.data || []

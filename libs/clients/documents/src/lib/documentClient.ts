@@ -112,7 +112,6 @@ export class DocumentClient {
       input?.opened ?? ''
     }&page=${input?.page ?? 1}&pageSize=${input?.pageSize ?? 15}`
 
-    console.log(requestRoute)
     return await this.getRequest<ListDocumentsResponse>(encodeURI(requestRoute))
   }
 
