@@ -13,7 +13,11 @@ interface SliceProps {
 
 export const TabSectionSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
         <Tabs
           label={slice?.title}
