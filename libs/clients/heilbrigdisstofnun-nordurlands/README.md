@@ -1,4 +1,4 @@
-# clients-heilbrigdisstofnun-nordurlands
+# Clients Heilbrigdisstofnun Nordurlands
 
 This library was generated with [Nx](https://nx.dev).
 

@@ -125,6 +125,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains Heilbrigdisstofnun Nordurlands](libs/api/domains/heilbrigdisstofnun-nordurlands/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -163,6 +164,7 @@
   - [Finance](libs/clients/finance/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
+  - [Clients Heilbrigdisstofnun Nordurlands](libs/clients/heilbrigdisstofnun-nordurlands/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)

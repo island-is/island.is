@@ -1,4 +1,4 @@
-# api-domains-heilbrigdisstofnun-nordurlands
+# API Domains Heilbrigdisstofnun Nordurlands
 
 This library was generated with [Nx](https://nx.dev).
 

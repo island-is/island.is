@@ -3664,7 +3664,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "curl https://external.api.saga.dev.hc.t.is/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+              "curl https://external.api.saga.dev.hc.t.is/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+              "yarn format"
             ],
             "parallel": false,
             "cwd": "libs/clients/heilbrigdisstofnun-nordurlands"
