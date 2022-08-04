@@ -42,9 +42,9 @@ export class HeilbrigdisstofnunNordurlandsClientService {
     return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${accessToken}`))
   }
 
-  async getResources() {
+  async getResources(personSsn: string) {
     const api = await this.createApi()
-    const resources = await api.apiV1ResourcesGet({ personSsn: '0101302129' })
+    const resources = await api.apiV1ResourcesGet({ personSsn })
     return resources
   }
 }

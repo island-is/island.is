@@ -23,6 +23,7 @@ export const HeilbrigdisstofnunNordurlandsClientConfig = defineConfig({
           env.optionalJSON('HEILBRIGDISSTOFNUN_NORDURLANDS_API_TIMEOUT') ??
           10000,
       },
+      // TODO: add to AWS env
       apiKey: env.required('HEILBRIGDISSTOFNUN_NORDURLANDS_API_KEY'),
     }
   },

@@ -319,13 +319,12 @@ export const MAILING_LIST_SIGNUP_MUTATION = gql`
   }
 `
 
-// TODO: create query
-// export const GET_HEILBRIGDISSTOFNUN_NORDURLANDS_SPECIALISTS_QUERY = gql`
-//   query GetHeilbrigdisstofnunNordurlandsSpecialists(
-//     $input: GetResourcesInput!
-//   ) {
-//     getResources(input: $input) {
-//       resourceName
-//     }
-//   }
-// `
+export const GET_HEILBRIGDISSTOFNUN_NORDURLANDS_SPECIALISTS_QUERY = gql`
+  query GetHeilbrigdisstofnunNordurlandsSpecialists(
+    $input: GetResourcesInput!
+  ) {
+    getResources(input: $input) {
+      resourceName
+    }
+  }
+`

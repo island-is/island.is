@@ -1,5 +1,7 @@
 import { HeilbrigdisstofnunNordurlandsClientService } from '@island.is/clients/heilbrigdisstofnun-nordurlands'
-import { Directive, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
+import { GetResourcesInput } from './dto/getResorces.input'
+import { Resource } from './models/Resource'
 
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
@@ -11,8 +13,10 @@ export class HeilbrigdisstofnunNordurlandsResolver {
   ) {}
 
   @Directive(cacheControlDirective())
-  // TODO: @Query(() => ResourceResponse)
-  getResources() {
-    return this.heilbrigdisstofnunNordurlandsClientService.getResources()
+  @Query(() => [Resource])
+  getResources(@Args('input') input: GetResourcesInput) {
+    return this.heilbrigdisstofnunNordurlandsClientService.getResources(
+      input.personSsn,
+    )
   }
 }
