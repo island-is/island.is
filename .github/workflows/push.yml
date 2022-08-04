@@ -106,7 +106,15 @@ jobs:
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             fi
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            if [[ "$deployFeature" == "true" ]]; then
+              echo "Pull request contains deploy-feature label, continuing with feature deployment"
+              echo "::set-output name=PRE_CHECK::feature-deploy"
+              exit 0
+            fi
+            echo "Pull request does not have deploy-feature label, exiting..."
+            exit 0
+          fi
+          for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
@@ -116,13 +124,6 @@ jobs:
                   exit 0
                 fi
             done
-            if [[ "$deployFeature" == "true" ]]; then
-              echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "::set-output name=PRE_CHECK::feature-deploy"
-              exit 0
-            fi
-            echo "Pull request does not have deploy-feature label, exiting..."
-            exit 0
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
