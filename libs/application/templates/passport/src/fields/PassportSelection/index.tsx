@@ -51,6 +51,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
                 variant: 'red',
                 label:
                   formatMessage(m.validTag) +
+                  ' ' +
                   format(
                     new Date(identityDocument?.expirationDate),
                     'dd/MM/yy',
