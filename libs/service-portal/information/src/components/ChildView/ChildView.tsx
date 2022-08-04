@@ -1,4 +1,3 @@
-import { ApolloError } from 'apollo-client'
 import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 
@@ -15,16 +14,16 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
-  IntroHeader,
-  m,
   NotFound,
   UserInfoLine,
+  m,
+  IntroHeader,
 } from '@island.is/service-portal/core'
-
-import { Parents } from '../../components/Parents/Parents'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
+import { ApolloError } from '@apollo/client/errors'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -199,56 +198,88 @@ const ChildView: FC<Props> = ({
         <Box marginY={3} />
         {(person?.parent1 || person?.parent2 || loading) && (
           <>
-            <Parents
+            <TwoColumnUserInfoLine
               title={formatMessage({
-                id: 'sp.family:custody-and-parents',
-                defaultMessage: 'Forsjá & foreldrar',
-              })}
-              label={formatMessage({
-                id: 'sp.family:parents',
+                id: 'sp.family:TwoColumnUserInfoLine',
                 defaultMessage: 'Foreldrar',
               })}
-              parent1={person?.nameParent1}
-              parent2={person?.nameParent2}
+              label={formatMessage({
+                id: 'sp.family:name',
+                defaultMessage: 'Nafn',
+              })}
+              firstValue={person?.nameParent1}
+              secondValue={person?.nameParent2}
               loading={loading}
             />
-            <Parents
+            <Divider />
+            <TwoColumnUserInfoLine
               label={formatMessage(m.natreg)}
-              parent1={person?.parent1 ? formatNationalId(person.parent1) : ''}
-              parent2={person?.parent2 ? formatNationalId(person.parent2) : ''}
+              firstValue={
+                person?.parent1 ? formatNationalId(person.parent1) : ''
+              }
+              secondValue={
+                person?.parent2 ? formatNationalId(person.parent2) : ''
+              }
               loading={loading}
             />
             <Divider />
           </>
         )}
+        <Box marginY={3} />
         {!person?.fate && !error && hasDetails ? (
           <>
-            <Parents
-              label={formatMessage({
-                id: 'sp.family:custody-parents',
+            <TwoColumnUserInfoLine
+              title={formatMessage({
+                id: 'sp.family:custody-TwoColumnUserInfoLine',
                 defaultMessage: 'Forsjáraðilar',
               })}
-              parent1={person?.nameCustody1}
-              parent2={person?.nameCustody2}
+              label={formatMessage({
+                id: 'sp.family:name',
+                defaultMessage: 'Nafn',
+              })}
+              firstValue={person?.nameCustody1}
+              secondValue={person?.nameCustody2}
               loading={loading}
             />
-            <Parents
+            <Divider />
+            <TwoColumnUserInfoLine
               label={formatMessage(m.natreg)}
-              parent1={
+              firstValue={
                 person?.custody1 ? formatNationalId(person.custody1) : ''
               }
-              parent2={
+              secondValue={
                 person?.custody2 ? formatNationalId(person.custody2) : ''
               }
               loading={loading}
             />
-            <Parents
+            <Divider />
+            <TwoColumnUserInfoLine
               label={formatMessage({
                 id: 'sp.family:custody-status',
                 defaultMessage: 'Staða forsjár',
               })}
-              parent1={person?.custodyText1}
-              parent2={person?.custodyText2}
+              firstValue={person?.custodyText1}
+              secondValue={person?.custodyText2}
+              loading={loading}
+            />
+            <Divider />
+            <TwoColumnUserInfoLine
+              label={formatMessage({
+                id: 'sp.family:legal-residence-parent',
+                defaultMessage: 'Lögheimilsforeldri',
+              })}
+              firstValue={'TODO'}
+              secondValue={'TODO'}
+              loading={loading}
+            />
+            <Divider />
+            <TwoColumnUserInfoLine
+              label={formatMessage({
+                id: 'sp.family:place-of-residence-parent',
+                defaultMessage: 'Búsetuforeldri',
+              })}
+              firstValue={'TODO'}
+              secondValue={'TODO'}
               loading={loading}
             />
             <Divider />
