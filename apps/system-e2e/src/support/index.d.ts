@@ -42,9 +42,6 @@ declare namespace Cypress {
     cognitoLogin(): Chainable<void>
     patchSameSiteCookie(interceptUrl: string): void
     pathUuid(): Chainable<string>
-    gqlRequest(
-      op: string,
-      query: string | DocumentNode,
-    ): Chainable<Cypress.Response>
+    gqlRequest({ query: DocumentNode }): Chainable<Cypress.Response>
   }
 }

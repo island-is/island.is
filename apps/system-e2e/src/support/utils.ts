@@ -18,11 +18,24 @@ export const getCognitoCredentials = () => {
 export const testEnvironment = process.env.TEST_ENVIRONMENT || 'local'
 
 export const getApplicationQuery = (id: string) => {
-  return gql`{
-    getApplication(input: {id: "${id}"}) {
-      id
-      created
-      applicant
-    }
-  }`
+  return {
+    query: `{
+      applicationApplication(input: { id: "${id}" }, locale: "is") {
+        id
+        created
+        modified
+        applicant
+        assignees
+        applicantActors
+        state
+        typeId
+        answers
+        externalData
+        name
+        institution
+        progress
+        status
+      }
+    }`,
+  }
 }

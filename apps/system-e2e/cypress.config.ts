@@ -5,9 +5,9 @@ export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: 60000,
-  pageLoadTimeout: 60000,
-  responseTimeout: 12000,
+  defaultCommandTimeout: 3000,
+  pageLoadTimeout: 3000,
+  responseTimeout: 2000,
   videosFolder: '../../dist/cypress/apps/web-e2e/videos',
   screenshotsFolder: '../../dist/cypress/apps/web-e2e/screenshots',
   chromeWebSecurity: false,
@@ -24,6 +24,7 @@ export default defineConfig({
     supportFile: './src/support/index.ts',
     setupNodeEvents(on, config) {
       config.env.testEnvironment = testEnvironment
+      config.env.apiUrl = config.env[testEnvironment].apiUrl
       if (testEnvironment !== 'local') {
         const { cognitoUsername, cognitoPassword } = getCognitoCredentials()
         config.env.cognitoUsername = cognitoUsername

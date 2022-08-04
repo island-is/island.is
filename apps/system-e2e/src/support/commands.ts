@@ -1,8 +1,9 @@
-import { DocumentNode } from '@apollo/client'
-import {uuid} from 'uuidv4'
+import { DocumentNode, operationName } from '@apollo/client'
+import { uuid } from 'uuidv4'
 
 console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
 const testEnvironment = Cypress.env('testEnvironment')
+const apiUrl = Cypress.env('apiUrl')
 const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
 const { baseUrl } = Cypress.config()
 const { cognitoUsername, cognitoPassword } = Cypress.env()
@@ -63,7 +64,6 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
 })
 
 Cypress.Commands.add('idsLogin', ({ phoneNumber, url = '/' }) => {
-  cy.log('foobar', testEnvironment)
   if (testEnvironment !== 'local') {
     cy.session('idsLogin', () => {
       cy.session('cognitoLogin', () =>
@@ -97,15 +97,14 @@ Cypress.Commands.add('pathUuid', () => {
     .then((path: string) => path.split('/').pop()?.split('?').shift())
 })
 
-Cypress.Commands.add(
-  'gqlRequest',
-  (op: string, query: string | DocumentNode) => {
-    return cy.request({
-      url: `${baseUrl}?op=${op}`,
-      body: {
-        query,
-      },
-      method: 'POST',
-    })
-  },
-)
+Cypress.Commands.add('gqlRequest', ({ query }) => {
+  const body = {
+    //operationName: operationName,
+    query: query,
+  }
+  return cy.request({
+    url: `${apiUrl}/graphql`,
+    body: body,
+    method: 'POST',
+  })
+})
