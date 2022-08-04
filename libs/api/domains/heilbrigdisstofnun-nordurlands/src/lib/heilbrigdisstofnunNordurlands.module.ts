@@ -6,4 +6,4 @@ import { HeilbrigdisstofnunNordurlandsClientModule } from '@island.is/clients/he
   imports: [HeilbrigdisstofnunNordurlandsClientModule],
   providers: [HeilbrigdisstofnunNordurlandsResolver],
 })
-export class SyslumennModule {}
+export class HeilbrigdisstofnunNordurlandsModule {}

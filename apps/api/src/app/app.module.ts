@@ -15,6 +15,8 @@ import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { MailchimpModule } from '@island.is/api/domains/mailchimp'
+import { HeilbrigdisstofnunNordurlandsModule } from '@island.is/api/domains/heilbrigdisstofnun-nordurlands'
+import { HeilbrigdisstofnunNordurlandsClientConfig } from '@island.is/clients/heilbrigdisstofnun-nordurlands'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -184,6 +186,7 @@ const autoSchemaFile = environment.production
     }),
     CommunicationsModule,
     MailchimpModule,
+    HeilbrigdisstofnunNordurlandsModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
@@ -260,6 +263,7 @@ const autoSchemaFile = environment.production
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        HeilbrigdisstofnunNordurlandsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
