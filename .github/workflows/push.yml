@@ -43,6 +43,7 @@ jobs:
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
+      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -82,6 +83,7 @@ jobs:
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
                   echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
                   exit 0
                 fi
             done
@@ -121,10 +123,15 @@ jobs:
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
                   echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
                   exit 0
                 fi
             done
           echo "::set-output name=PRE_CHECK::push"
+      
+      - name: Debug - What is my PRE_CHECK
+        run: |
+          echo "My Pre-check is: '$PRE_CHECK'"
 
   prepare:
     runs-on: ec2-runners
@@ -181,8 +188,21 @@ jobs:
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
+      - name: Checking out relevant branches for a pre-release
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        run: |
+          git checkout $GITHUB_BASE_REF
+          git checkout $GITHUB_SHA
+          
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
+          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+
       - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks-outputs.PRE_RELEASE != 'true'
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
