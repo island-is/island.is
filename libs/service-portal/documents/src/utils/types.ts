@@ -6,7 +6,7 @@ export type FilterValuesType = {
   dateFrom: Date | null
   dateTo: Date | null
   searchQuery: string
-  showUnread: boolean
+  showUnread: boolean | undefined
   activeCategories: string[]
   activeSenders: string[]
 }

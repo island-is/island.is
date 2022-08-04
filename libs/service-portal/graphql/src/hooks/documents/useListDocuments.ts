@@ -15,9 +15,34 @@ interface UseListDocumentsProps {
 export const useListDocuments = (
   input?: GetDocumentListInput,
 ): UseListDocumentsProps => {
+  const {
+    senderKennitala,
+    dateFrom,
+    dateTo,
+    categoryId,
+    subjectContains,
+    typeId,
+    sortBy,
+    order,
+    opened,
+    page,
+    pageSize,
+  } = input ?? {}
   const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
     variables: {
-      input: input,
+      input: {
+        senderKennitala,
+        dateFrom,
+        dateTo,
+        categoryId,
+        subjectContains,
+        typeId,
+        sortBy,
+        order,
+        opened,
+        page,
+        pageSize,
+      },
     },
   })
   const documents = data?.listDocuments?.data || []

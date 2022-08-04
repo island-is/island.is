@@ -17,23 +17,15 @@ import { messages } from '../../utils/messages'
 import * as styles from './DocumentsFilter.css'
 import DocumentsFilterTags from './DocumentsFilterTags'
 import isEqual from 'lodash/isEqual'
-import { defaultFilterValues } from '../../utils/types'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 import {
   DocumentCategory,
   DocumentSender,
   DocumentType,
 } from '@island.is/api/schema'
 
-type FilterValues = {
-  dateFrom: Date | null
-  dateTo: Date | null
-  searchQuery: string
-  showUnread: boolean
-  activeCategories: string[]
-  activeSenders: string[]
-}
 interface Props {
-  filterValue: FilterValues
+  filterValue: FilterValuesType
   debounceChange: (e: any) => void
   handleClearFilters: () => void
   handleShowUnread: (value: boolean) => void
@@ -43,8 +35,8 @@ interface Props {
   handleDateToChange: (date: Date | null) => void
   clearCategories: () => void
   clearSenders: () => void
-  categories: DocumentCategory[] // { label: string; value: string }[]
-  senders: DocumentSender[] //{ label: string; value: string }[]
+  categories: DocumentCategory[]
+  senders: DocumentSender[]
   documentsLength: number
 }
 const DocumentsFilter = ({

@@ -6,17 +6,10 @@ import { m } from '@island.is/service-portal/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { messages } from '../../utils/messages'
+import { FilterValuesType } from '../../utils/types'
 
-type FilterValues = {
-  dateFrom: Date | null
-  dateTo: Date | null
-  searchQuery: string
-  showUnread: boolean
-  activeCategories: string[]
-  activeSenders: string[]
-}
 interface Props {
-  filterValue: FilterValues
+  filterValue: FilterValuesType
   handleShowUnread: (value: boolean) => void
   handleCategoriesChange: (values: string[]) => void
   handleSendersChange: (values: string[]) => void
