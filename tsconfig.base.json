@@ -97,6 +97,9 @@
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
+      "@island.is/api/domains/heilbrigdisstofnun-nordurlands": [
+        "libs/api/domains/heilbrigdisstofnun-nordurlands/src/index.ts"
+      ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
@@ -310,6 +313,9 @@
       ],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
+      ],
+      "@island.is/clients/heilbrigdisstofnun-nordurlands": [
+        "libs/clients/heilbrigdisstofnun-nordurlands/src/index.ts"
       ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
