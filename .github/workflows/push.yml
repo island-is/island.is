@@ -193,8 +193,7 @@ jobs:
       - name: Checking out relevant branches for a pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
         run: |
-          echo "BaseREF: $GITHUB_BASE_REF"
-          echo "HeadREF: $GITHUB_HEAD_REF"
+          echo "Feature Name: $FEATURE_NAME"
 
           git checkout main
           git checkout $GITHUB_SHA
@@ -621,6 +620,10 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+
+      - name: Debug - Affected Services
+        run: |
+          printf "Affected services are: ${{needs.prepare.outputs.IMAGES}}\n"
 
       - name: Docker build image
         working-directory: infra
