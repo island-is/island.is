@@ -1,4 +1,16 @@
-import { WatsonChatPanelProps } from '../../ChatPanel'
+import {
+  LiveChatIncChatPanelProps,
+  WatsonChatPanelProps,
+} from '../../ChatPanel'
+
+export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
+  // HSN - Organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+  EM4Y0gF4OoGhH9ZY0Dxl6: {
+    license: 8996030,
+    version: '2.0',
+  },
+}
 
 export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // District Commissioners (Sýslumenn) - Organization
