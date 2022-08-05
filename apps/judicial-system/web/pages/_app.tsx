@@ -1,8 +1,6 @@
 import React from 'react'
-import App, { AppProps } from 'next/app'
+import App, { AppContext, AppProps } from 'next/app'
 import Head from 'next/head'
-import ApolloClient from 'apollo-client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
 
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
@@ -15,11 +13,7 @@ import { UserProvider, FeatureProvider } from '../src/components'
 import HeaderContainer from '../src/components/Header/Header'
 import ViewportProvider from '../src/components/ViewportProvider/ViewportProvider'
 
-const getTranslationStrings = ({
-  apolloClient,
-}: {
-  apolloClient: ApolloClient<NormalizedCacheObject>
-}) => {
+const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {
     return null
   }
@@ -50,14 +44,14 @@ interface Props extends AppProps {
 }
 
 class JudicialSystemApplication extends App<Props> {
-  static async getInitialProps(appContext: any) {
+  static async getInitialProps(appContext: AppContext) {
     const { ctx } = appContext
     const pageProps = await App.getInitialProps(appContext)
     const customContext = {
       ...ctx,
       apolloClient: client,
     }
-    const translations = await getTranslationStrings(customContext)
+    const translations = await getTranslationStrings(customContext.apolloClient)
 
     return {
       ...pageProps,
