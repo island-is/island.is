@@ -20,8 +20,9 @@ import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.mod
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
+import {addMonths, formatISO} from "date-fns";
 
-const isRunningInDevelopment = process.env.NODE_ENV === 'development'
+const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
 const df = 'yyyy-MM-dd'
 
 enum PensionFundType {
@@ -284,7 +285,7 @@ export class DirectorateOfLabourRepository {
     if (isRunningInDevelopment) {
       return {
         hasActivePregnancy: true,
-        expectedDateOfBirth: '2021-06-17',
+        expectedDateOfBirth: formatISO(addMonths(new Date(), 6), {representation: 'date'}),
       }
     }
 
