@@ -34,7 +34,7 @@ describe('Parental leave', () => {
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
       phoneNumber: (
-        fakeUsers.find((user) => user.name.endsWith('Afríka')) || {
+        fakeUsers.find((user) => user.name.endsWith('Ameríku')) || {
           phoneNumber: '',
         }
       ).phoneNumber,
@@ -135,14 +135,6 @@ describe('Parental leave', () => {
       name: label(parentalLeaveFormMessages.employer.title),
     })
       .findByRole('textbox', {
-        name: label(parentalLeaveFormMessages.employer.phoneNumber),
-      })
-      .type('6666666')
-
-    cy.findByRole('region', {
-      name: label(parentalLeaveFormMessages.employer.title),
-    })
-      .findByRole('textbox', {
         name: label(parentalLeaveFormMessages.employer.email),
       })
       .type(employerEmail)
@@ -193,5 +185,17 @@ describe('Parental leave', () => {
       name: '6 months',
     }).click()
     cy.get('[data-testid="proceed"]').click()
+
+    cy.findByTestId('select-percentage-use').focus().type('50%{enter}')
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('button', {
+      name: label(parentalLeaveFormMessages.leavePlan.addAnother),
+    })
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('button', {
+      name: label(parentalLeaveFormMessages.confirmation.title),
+    }).click()
   })
 })

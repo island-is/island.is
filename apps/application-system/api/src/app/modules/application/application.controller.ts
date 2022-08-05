@@ -15,6 +15,7 @@ import {
   UnauthorizedException,
   Delete,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -98,6 +99,8 @@ import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -117,6 +120,7 @@ export class ApplicationController {
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -347,6 +351,7 @@ export class ApplicationController {
       assignApplicationDto.token,
     )
 
+    this.logger.info('Application assign started.')
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
     }
@@ -417,8 +422,14 @@ export class ApplicationController {
     )
 
     if (hasError) {
+      this.logger.error(
+        `Application (ID: ${existingApplication.id}) assignment finished with an error: ${error}`,
+      )
       throw new BadRequestException(error)
     }
+    this.logger.info(
+      `Application (ID: ${existingApplication.id}) assignment finished with no errors.`,
+    )
 
     if (hasChanged) {
       return updatedApplication
@@ -646,8 +657,10 @@ export class ApplicationController {
     })
 
     if (hasError) {
+      this.logger.error(`Application submission ended with an error: ${error}`)
       throw new BadRequestException(error)
     }
+    this.logger.info(`Application submission ended successfully`)
 
     if (hasChanged) {
       return updatedApplication
@@ -668,7 +681,11 @@ export class ApplicationController {
       externalDataId,
       throwOnError,
     } = action
-
+    this.logger.debug(
+      `Performing action ${apiModuleAction} on ${JSON.stringify(
+        template.name,
+      )}`,
+    )
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
       type: apiModuleAction,
@@ -677,6 +694,11 @@ export class ApplicationController {
         auth,
       },
     })
+    this.logger.debug(
+      `Performing action ${apiModuleAction} on ${JSON.stringify(
+        template.name,
+      )} ended with ${actionResult.success ? 'success' : 'failure'}`,
+    )
 
     let updatedApplication: BaseApplication = application
 
@@ -690,6 +712,9 @@ export class ApplicationController {
             : actionResult.error,
         },
       }
+      this.logger.debug(
+        `Updating external data for application with ID ${updatedApplication.id}`,
+      )
 
       const {
         updatedApplication: withExternalData,
@@ -747,6 +772,7 @@ export class ApplicationController {
       updatedApplication = withUpdatedExternalData
 
       if (hasError) {
+        console.log(`Error 1`)
         return {
           hasChanged: false,
           application: updatedApplication,
@@ -797,6 +823,7 @@ export class ApplicationController {
       updatedApplication = withUpdatedExternalData
 
       if (hasError) {
+        console.log(`Error 2`)
         return {
           hasError: true,
           hasChanged: false,
@@ -818,6 +845,7 @@ export class ApplicationController {
 
       updatedApplication = update.updatedApplication as BaseApplication
     } catch (e) {
+      console.log(`Error 3`)
       return {
         hasChanged: false,
         hasError: true,
