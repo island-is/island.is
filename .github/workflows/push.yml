@@ -130,7 +130,7 @@ jobs:
                 fi
             done
           echo "::set-output name=PRE_CHECK::push"
-      
+
       - name: Debug - What is my PRE_CHECK
         run: |
           echo "My Pre-check is: '$PRE_CHECK'"
@@ -197,7 +197,7 @@ jobs:
 
           git checkout main
           git checkout $GITHUB_SHA
-          
+
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
@@ -298,7 +298,7 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
-      
+
       - name: Preparing BASE tags
         id: git_nx_base
         env:
@@ -321,7 +321,6 @@ jobs:
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-        
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
