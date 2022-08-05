@@ -131,10 +131,6 @@ jobs:
             done
           echo "::set-output name=PRE_CHECK::push"
 
-      - name: Debug - What is my PRE_CHECK
-        run: |
-          echo "My Pre-check is: '$PRE_CHECK'"
-
   prepare:
     runs-on: ec2-runners
     container:
@@ -619,10 +615,6 @@ jobs:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-
-      - name: Debug - Affected Services
-        run: |
-          printf "Affected services are: ${{needs.prepare.outputs.IMAGES}}\n"
 
       - name: Docker build image
         working-directory: infra
