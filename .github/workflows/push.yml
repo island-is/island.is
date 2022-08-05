@@ -423,6 +423,10 @@ jobs:
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
+      - name: Debug - List Unaffected
+        run: |
+          echo "Unaffected: $UNAFFECTED"
+
   tests:
     needs:
       - prepare
@@ -654,18 +658,6 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
-
-      - name: Push pre-release to slack
-        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'true'
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_PRE_RELEASE_WEBHOOK }}
-          SLACK_CHANNEL: pre-release-bot
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 'Post Content :rocket:'
-          SLACK_TITLE: ${{ needs.prepare.outputs.DOCKER_TAG}}
-          SLACK_USERNAME: Pre-Release Info Bot
 
   retag-unaffected:
     runs-on: ec2-runners
