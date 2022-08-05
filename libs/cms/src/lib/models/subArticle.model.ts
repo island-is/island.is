@@ -3,7 +3,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { ArticleReference, mapArticleReference } from './articleReference'
-import { mapStepper, Stepper } from './stepper.model'
 
 @ObjectType()
 export class SubArticle {

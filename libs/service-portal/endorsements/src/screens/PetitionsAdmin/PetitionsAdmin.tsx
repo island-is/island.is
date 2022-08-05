@@ -1,19 +1,21 @@
+import format from 'date-fns/format'
 import React from 'react'
-import {
-  Box,
-  Text,
-  ActionCard,
-  Stack,
-  BulletList,
-  Bullet,
-} from '@island.is/island-ui/core'
-import { useGetAllPetitionLists } from '../queries'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+
+import {
+  ActionCard,
+  Box,
+  Bullet,
+  BulletList,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { IntroHeader, ServicePortalPath } from '@island.is/service-portal/core'
+
 import { m } from '../../lib/messages'
 import { PaginatedEndorsementListResponse } from '../../types/schema'
-import format from 'date-fns/format'
+import { useGetAllPetitionLists } from '../queries'
 
 const formatDate = (date: string) => {
   try {
@@ -47,15 +49,8 @@ const PetitionsAdmin = () => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage(m.petition.introTitle)}
-        </Text>
+      <IntroHeader title={m.petition.introTitle} intro={m.petition.intro} />
 
-        <Text as="p" variant="default">
-          {formatMessage(m.petition.intro)}
-        </Text>
-      </Stack>
       <Box padding="gutter">
         <BulletList type="ul">
           <Bullet>{formatMessage(m.petition.bullet1Admin)}</Bullet>

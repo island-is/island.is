@@ -5,6 +5,7 @@ import {
   CmsResolver,
   ArticleResolver,
   LatestNewsSliceResolver,
+  FeaturedArticlesResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -22,7 +23,8 @@ import { CmsHealthIndicator } from './cms.health'
     ContentfulRepository,
     CmsHealthIndicator,
     LatestNewsSliceResolver,
+    FeaturedArticlesResolver,
   ],
-  exports: [ContentfulRepository, CmsHealthIndicator],
+  exports: [ContentfulRepository, CmsHealthIndicator, CmsContentfulService],
 })
 export class CmsModule {}

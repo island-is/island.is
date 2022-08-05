@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -531,7 +531,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -539,19 +539,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
               className="rs_read"
             >
               <ProcessEntry {...processEntry} />
-            </Box>
-          )}
-          {article.stepper?.title && !inStepperView && (
-            <Box marginTop={3} printHidden className="rs_read">
-              <ProcessEntry
-                buttonText={n(
-                  article.processEntryButtonText || 'application',
-                  '',
-                )}
-                processLink={asPath.split('?')[0].concat('?stepper=true')}
-                processTitle={article.stepper.title}
-                newTab={false}
-              />
             </Box>
           )}
           {(subArticle
@@ -579,7 +566,25 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Box className="rs_read">
               {richText(
                 (subArticle ?? article).body as SliceType[],
-                undefined,
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                  },
+                },
                 activeLocale,
               )}
               <AppendedArticleComponents article={article} />
@@ -592,7 +597,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -636,7 +641,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(
