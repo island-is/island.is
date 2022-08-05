@@ -25,7 +25,7 @@ import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
 
 const GET_USERS_VEHICLES = gql`
-  query GetUsersVehicles {
+  query GetUsersVehiclesQuery {
     vehiclesList {
       vehicleList {
         permno

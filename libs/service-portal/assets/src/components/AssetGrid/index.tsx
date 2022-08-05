@@ -15,7 +15,7 @@ interface Props {
 }
 
 const GET_UNITS_OF_USE_QUERY = gql`
-  query GetAssetsUnitsOfUse($input: GetPagingTypes!) {
+  query AssetsUnitsOfUseQuery($input: GetPagingTypes!) {
     assetsUnitsOfUse(input: $input) {
       paging {
         hasNextPage

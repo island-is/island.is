@@ -17,7 +17,7 @@ import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
-  query GetRealEstateQuery($input: GetMultiPropertyInput!) {
+  query AssetsOverviewQuery($input: GetMultiPropertyInput!) {
     assetsOverview(input: $input) {
       properties {
         propertyNumber
