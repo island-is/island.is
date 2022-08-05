@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
 
+import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
@@ -20,6 +21,7 @@ import {
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
+import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
@@ -273,43 +275,42 @@ const PastCases: React.FC<Props> = (props) => {
     [cases],
   )
 
-  return (
+  const { width } = useViewport()
+
+  return width < theme.breakpoints.md ? (
     <>
-      <Box display={['block', 'block', 'none']}>
-        {pastCasesData.map((theCase) => (
-          <Box marginTop={2}>
-            <MobileCase
-              key={theCase.id}
-              theCase={theCase}
-              onClick={() => onRowClick(theCase.id)}
-              isCourtRole={false}
-            >
-              <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(
-                  requests.sections.pastRequests.table.headers.duration,
-                )} ${getDurationDate(
-                  theCase.state,
-                  theCase.validToDate,
-                  theCase.initialRulingDate,
-                  theCase.rulingDate,
-                  theCase.courtEndTime,
-                )}`}
-              </Text>
-            </MobileCase>
-          </Box>
-        ))}
-      </Box>
-      <Box display={['none', 'none', 'block']}>
-        <Table
-          testid="pastCasesTable"
-          columns={pastCasesColumns}
-          data={pastCasesData ?? []}
-          handleRowClick={onRowClick}
-          className={styles.table}
-          sortableColumnIds={sortableColumnIds}
-        />
-      </Box>
+      {pastCasesData.map((theCase) => (
+        <Box marginTop={2}>
+          <MobileCase
+            key={theCase.id}
+            theCase={theCase}
+            onClick={() => onRowClick(theCase.id)}
+            isCourtRole={false}
+          >
+            <Text fontWeight={'medium'} variant="small">
+              {`${formatMessage(
+                requests.sections.pastRequests.table.headers.duration,
+              )} ${getDurationDate(
+                theCase.state,
+                theCase.validToDate,
+                theCase.initialRulingDate,
+                theCase.rulingDate,
+                theCase.courtEndTime,
+              )}`}
+            </Text>
+          </MobileCase>
+        </Box>
+      ))}
     </>
+  ) : (
+    <Table
+      testid="pastCasesTable"
+      columns={pastCasesColumns}
+      data={pastCasesData ?? []}
+      handleRowClick={onRowClick}
+      className={styles.table}
+      sortableColumnIds={sortableColumnIds}
+    />
   )
 }
 

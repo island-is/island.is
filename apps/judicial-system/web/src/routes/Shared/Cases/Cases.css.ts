@@ -5,6 +5,17 @@ export const casesContainer = style({
   maxWidth: '1440px',
 })
 
+export const logoContainer = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing[9],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginBottom: theme.spacing[5],
+    },
+  },
+})
+
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',

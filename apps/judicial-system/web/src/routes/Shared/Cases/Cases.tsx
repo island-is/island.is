@@ -36,12 +36,12 @@ import * as styles from './Cases.css'
 const SectionTitle: React.FC = ({ children }) => {
   return (
     <>
-      <Box display={['block', 'block', 'none']} marginBottom={3}>
+      <Box marginBottom={3} display={['block', 'block', 'none']}>
         <Text variant="h2" as="h2">
           {children}
         </Text>
       </Box>
-      <Box display={['none', 'none', 'block']} marginBottom={3}>
+      <Box marginBottom={3} display={['none', 'none', 'block']}>
         <Text variant="h3" as="h3">
           {children}
         </Text>
@@ -193,11 +193,7 @@ export const Cases: React.FC = () => {
           <TableSkeleton />
         ) : (
           user && (
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              marginBottom={[5, 5, 9]}
-            >
+            <div className={styles.logoContainer}>
               <Logo />
               {isProsecutor && (
                 <Box display={['none', 'none', 'block']}>
@@ -222,7 +218,7 @@ export const Cases: React.FC = () => {
                   />
                 </Box>
               )}
-            </Box>
+            </div>
           )
         )}
         {activeCases || pastCases ? (
