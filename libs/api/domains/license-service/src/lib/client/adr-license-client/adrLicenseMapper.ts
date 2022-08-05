@@ -97,10 +97,11 @@ export const parseAdrLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    number: license.skirteinisNumer?.toString() ?? '',
+    licenseNumber: license.skirteinisNumer?.toString() ?? '',
     expired: license.gildirTil
       ? !isAfter(new Date(license.gildirTil), new Date())
       : false,
+    title: 'ADR réttindi',
   }
 }
 

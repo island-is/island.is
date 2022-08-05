@@ -66,8 +66,9 @@ export const parseMachineLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    number: license.skirteinisNumer?.toString() ?? '',
+    licenseNumber: license.skirteinisNumer?.toString() ?? '',
     expired: false,
+    title: 'Vinnuvélaréttindi',
   }
 }
 

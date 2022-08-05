@@ -47,8 +47,14 @@ export class Payload {
   rawData?: object
 
   @Field(() => String)
-  number?: string
+  licenseNumber?: string
 
   @Field(() => Boolean)
   expired?: boolean
+
+  @Field(() => String)
+  title?: string
+
+  @Field(() => String)
+  logo?: string
 }

@@ -76,7 +76,8 @@ const GenericLicenseQuery = gql`
           ...genericLicenseDataFieldFragment
         }
         rawData
-        number
+        licenseNumber
+        title
       }
     }
   }

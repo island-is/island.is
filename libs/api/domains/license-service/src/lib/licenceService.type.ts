@@ -82,8 +82,10 @@ export type GenericLicenseDataField = {
 export type GenericUserLicensePayload = {
   data: Array<GenericLicenseDataField>
   rawData: unknown
-  number: string
+  licenseNumber: string
   expired: boolean
+  title: string
+  logo?: string
 }
 
 export type GenericLicenseUserdata = {

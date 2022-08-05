@@ -111,7 +111,8 @@ export const parseDrivingLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    number: license.id?.toString() ?? '',
+    licenseNumber: license.id?.toString() ?? '',
     expired,
+    title: 'Ökuréttindi',
   }
 }

@@ -65,7 +65,8 @@ const GenericLicensesQuery = gql`
           ...genericLicenseDataFieldFragment
         }
         rawData
-        number
+        licenseNumber
+        title
         expired
       }
     }
@@ -113,7 +114,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   text={
                     formatMessage(m.licenseNumber) +
                     ': ' +
-                    license.payload?.number
+                    license.payload?.licenseNumber
                   }
                   heading={formatMessage(
                     getTitleAndLogo(license.license.type).title,
