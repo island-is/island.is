@@ -4,7 +4,7 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
-import { SubmitResponse } from '../lib/constants'
+import { ChildsPersonalInfo, Passport, SubmitResponse } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -15,7 +15,14 @@ export const Done: Form = buildForm({
     buildMultiField({
       id: 'done',
       title: m.applicationComplete,
-      description: m.applicationCompleteDescription,
+      description: (application: Application) => ({
+        ...m.applicationCompleteDescriptionText,
+        values: {
+          name:
+            (application.answers.childsPersonalInfo as ChildsPersonalInfo)
+              ?.name ?? (application.answers.personalInfo as any)?.name,
+        },
+      }),
       children: [
         buildDescriptionField({
           id: 'applicationNr',
@@ -30,7 +37,10 @@ export const Done: Form = buildForm({
           id: 'nextStepsDescription',
           title: m.applicationCompleteNextSteps,
           titleVariant: 'h3',
-          description: m.applicationCompleteNextStepsDescription,
+          description: (application: Application) =>
+            (application.answers.passport as Passport)?.userPassport !== ''
+              ? m.applicationCompleteNextStepsDescriptionPersonalApplication
+              : m.applicationCompleteNextStepsDescription,
           space: 'containerGutter',
         }),
       ],

@@ -27,7 +27,7 @@ export const messages = defineMessages({
   },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -144,7 +144,7 @@ export const messages = defineMessages({
   },
   passengers: {
     id: 'sp.vehicles:passengers',
-    defaultMessage: 'Farþegar',
+    defaultMessage: 'Farþegar án ökumanns',
   },
   specialName: {
     id: 'sp.vehicles:special-name',

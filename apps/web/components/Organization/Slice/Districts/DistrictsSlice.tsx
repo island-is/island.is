@@ -17,12 +17,16 @@ interface SliceProps {
 export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     !!slice.links.length && (
-      <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+      <section
+        key={slice.id}
+        id={slice.id}
+        aria-labelledby={'sliceTitle-' + slice.id}
+      >
         <Box
           borderTopWidth="standard"
           borderColor="standard"
-          paddingTop={[8, 6, 10]}
-          paddingBottom={[4, 5, 10]}
+          paddingTop={[8, 6]}
+          paddingBottom={[4, 5]}
         >
           <GridRow>
             <GridColumn span="12/12">
