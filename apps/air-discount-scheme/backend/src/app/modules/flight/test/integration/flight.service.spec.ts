@@ -2,10 +2,10 @@ import { INestApplication } from '@nestjs/common'
 
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
-import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
 import { CreateFlightBody } from '../../dto'
+import { setup } from '../../../../../../test/setup'
 
 let app: INestApplication
 let flightService: FlightService
