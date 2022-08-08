@@ -11,6 +11,7 @@ interface Props {
   label: string
   organizations: any[]
   refetch: () => void
+  focus?: boolean
 }
 
 export const ApplicationGroup: FC<Props> = ({
@@ -18,6 +19,7 @@ export const ApplicationGroup: FC<Props> = ({
   label,
   organizations,
   refetch,
+  focus = false,
 }) => {
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
@@ -42,6 +44,7 @@ export const ApplicationGroup: FC<Props> = ({
         onClick={(applicationUrl) =>
           window.open(`${getBaseUrlForm()}/${applicationUrl}`)
         }
+        focus={focus}
       />
       {applications.length > pageSize ? (
         <Box marginX={[0, 4]} marginTop={[1, 4]}>

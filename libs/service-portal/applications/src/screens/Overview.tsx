@@ -28,6 +28,7 @@ import {
 } from '../shared/utils'
 import { ApplicationOverViewStatus, FilterValues } from '../shared/types'
 import { ApplicationGroup } from '../components/ApplicationGroup'
+import { Application } from '@island.is/application/types'
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -45,6 +46,7 @@ const Overview: ServicePortalModuleComponent = () => {
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
+  let focusedApplication: Application | undefined
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
 
@@ -97,6 +99,12 @@ const Overview: ServicePortalModuleComponent = () => {
       default:
         return heading ? m.heading : m.introCopy
     }
+  }
+
+  if (applications && location.hash) {
+    focusedApplication = applications.find(
+      (item: Application) => item.id === location.hash.slice(1),
+    )
   }
 
   return (
@@ -162,6 +170,15 @@ const Overview: ServicePortalModuleComponent = () => {
               </GridColumn>
             </GridRow>
           </Box>
+          {focusedApplication && (
+            <ApplicationGroup
+              applications={[focusedApplication]}
+              label={formatMessage(m.focusedApplication)}
+              organizations={organizations}
+              refetch={refetch}
+              focus={true}
+            />
+          )}
           {applicationsSortedByStatus.incomplete?.length > 0 &&
             (statusToShow === ApplicationOverViewStatus.all ||
               statusToShow === ApplicationOverViewStatus.incomplete) && (

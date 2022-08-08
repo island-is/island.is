@@ -83,6 +83,11 @@ export const m = defineMessages({
     defaultMessage: 'Eldri umsóknir',
     description: 'Label for finished application list',
   },
+  focusedApplication: {
+    id: 'sp.applications:focusedApplication-label',
+    defaultMessage: 'Umsóknin sem þú varst að klára',
+    description: 'Label for incomplete application list',
+  },
   noApplicationsAvailable: {
     id: 'sp.applications:no-applications-available',
     defaultMessage: 'Engar umsóknir fundust hjá Ísland.is á þessari kennitölu',
