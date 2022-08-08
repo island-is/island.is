@@ -27,7 +27,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   const { application } = props
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
   const contactEmail = getValueViaPath(
     application.answers,

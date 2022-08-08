@@ -24,7 +24,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
 
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
 
   const contactEmail = getValueViaPath(application.answers, 'contact.email')
