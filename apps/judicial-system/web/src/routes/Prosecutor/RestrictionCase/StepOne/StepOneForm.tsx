@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Input, Box, Tooltip } from '@island.is/island-ui/core'
@@ -49,16 +49,16 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const { updateDefendant } = useDefendants()
   const { updateCase } = useCase()
 
-  const handleUpdateDefendant = async (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => {
-    updateDefendantState(defendantId, updatedDefendant)
+  const handleUpdateDefendant = useCallback(
+    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant)
 
-    if (defendantId) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
-    }
-  }
+      if (defendantId) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      }
+    },
+    [workingCase.id, updateDefendantState, updateDefendant],
+  )
 
   return (
     <>

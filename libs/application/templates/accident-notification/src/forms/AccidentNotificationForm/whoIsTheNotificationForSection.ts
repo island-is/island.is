@@ -9,13 +9,14 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { UPLOAD_ACCEPT, YES } from '../../constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   childInCustody,
   injuredPersonInformation,
   juridicalPerson,
   powerOfAttorney,
   whoIsTheNotificationFor,
+  error,
 } from '../../lib/messages'
 import {
   PowerOfAttorneyUploadEnum,
@@ -246,6 +247,8 @@ export const whoIsTheNotificationForSection = buildSection({
               id: 'attachments.powerOfAttorneyFile.file',
               title: '',
               introduction: '',
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: powerOfAttorney.upload.uploadHeader,
               uploadDescription: powerOfAttorney.upload.uploadDescription,
