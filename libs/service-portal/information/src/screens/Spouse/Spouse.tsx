@@ -23,7 +23,7 @@ import {
 } from '@island.is/service-portal/core'
 
 const NATIONAL_REGISTRY_USER = gql`
-  query NationalRegistryUserSpouseQuery {
+  query NationalRegistryUserQuery {
       spouse {
         name
         cohabitant

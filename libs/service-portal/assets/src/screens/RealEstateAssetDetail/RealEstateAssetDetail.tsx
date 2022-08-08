@@ -20,7 +20,7 @@ import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
 
 const GET_SINGLE_PROPERTY_QUERY = gql`
-  query AssetsDetailQuery($input: GetRealEstateInput!) {
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
     assetsDetail(input: $input) {
       propertyNumber
       defaultAddress {
@@ -64,7 +64,7 @@ const GET_SINGLE_PROPERTY_QUERY = gql`
 `
 
 const GET_PROPERTY_OWNERS_QUERY = gql`
-  query AssetsPropertyOwnersQuery($input: GetPagingTypes!) {
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
     assetsPropertyOwners(input: $input) {
       registeredOwners {
         name

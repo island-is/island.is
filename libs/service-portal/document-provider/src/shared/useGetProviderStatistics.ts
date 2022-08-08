@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 
 export const getStatisticsTotal = gql`
-  query StatisticsTotalQuery($input: StatisticsInput!) {
+  query GetStatisticsTotal($input: StatisticsInput!) {
     getStatisticsTotal(input: $input) {
       published
       notifications

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
-  query GetUsersVehiclesDetailQuery($input: GetVehicleDetailInput!) {
+  query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
     vehiclesDetail(input: $input) {
       mainInfo {
         model

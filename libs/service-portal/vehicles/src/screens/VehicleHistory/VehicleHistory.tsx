@@ -27,7 +27,7 @@ import { messages } from '../../lib/messages'
 import TabContent from './TabContent'
 
 const GET_USERS_VEHICLES_HISTORY = gql`
-  query GetUsersVehiclesHistoryQuery {
+  query GetUsersVehicles {
     vehiclesHistoryList {
       vehicleList {
         permno

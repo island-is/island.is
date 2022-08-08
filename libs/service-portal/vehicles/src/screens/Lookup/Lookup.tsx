@@ -27,7 +27,7 @@ import { messages } from '../../lib/messages'
 import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
 
 const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
-  query GetUsersVehiclesSearchLimitQuery {
+  query GetUsersVehiclesSearchLimit {
     vehiclesSearchLimit
   }
 `

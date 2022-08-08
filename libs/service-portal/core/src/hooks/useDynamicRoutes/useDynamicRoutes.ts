@@ -6,7 +6,7 @@ import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
 
 const GET_DEBT_STATUS = gql`
-  query FinanceGetDebtStatusQuery {
+  query FinanceGetDebtStatus {
     getDebtStatus {
       myDebtStatus {
         approvedSchedule
@@ -17,7 +17,7 @@ const GET_DEBT_STATUS = gql`
 `
 
 export const GET_TAPS_QUERY = gql`
-  query FinanceGetCustomerTapControlQuery {
+  query GetTapsQuery {
     getCustomerTapControl {
       RecordsTap
       employeeClaimsTap

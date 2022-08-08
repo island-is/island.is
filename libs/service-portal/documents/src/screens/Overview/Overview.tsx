@@ -53,7 +53,7 @@ import { messages } from '../../utils/messages'
 import * as styles from './Overview.css'
 
 const GET_DOCUMENT_CATEGORIES = gql`
-  query DocumentCategoriesQuery {
+  query documentCategories {
     getDocumentCategories {
       id
       name
