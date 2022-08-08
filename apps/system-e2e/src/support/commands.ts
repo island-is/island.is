@@ -35,6 +35,7 @@ const idsLogin = (phoneNumber: string, urlPath: string) => {
     },
   }
   cy.patchSameSiteCookie(`${authUrl}/login/app?*`)
+  cy.patchSameSiteCookie(`${authUrl}/login?*`)
   cy.visit(urlPath, { log: true })
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
