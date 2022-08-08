@@ -217,8 +217,8 @@ export class MunicipalityService {
     return { numberOfAffectedRows, updatedMunicipality }
   }
 
-  decryptNavPassword(municipality: MunicipalityModel) {
-    if (municipality.navPassword) {
+  decryptNavPassword(municipality?: MunicipalityModel) {
+    if (municipality?.navPassword) {
       municipality.navPassword = CryptoJS.AES.decrypt(
         municipality.navPassword,
         environment.navEncryptionKey,

@@ -51,6 +51,8 @@ export const slices = gql`
     yesLabel
     noLabel
     disclaimerLabel
+    categoryLabel
+    categories
     buttonText
     signupUrl
   }
@@ -193,7 +195,6 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    type
     processTitle
     processLink
     openLinkInModal
@@ -340,6 +341,8 @@ export const slices = gql`
     image {
       ...ImageFields
     }
+    automaticallyFetchArticles
+    sortBy
     articles {
       id
       slug
@@ -348,6 +351,16 @@ export const slices = gql`
         id
       }
       processEntryButtonText
+    }
+    resolvedArticles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+      processEntryButtonText
+      importance
     }
     link {
       text
@@ -448,6 +461,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
@@ -471,6 +485,39 @@ export const slices = gql`
       width
       height
     }
+  }
+
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    recipient
+    fields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    successText
+  }
+
+  fragment StepperFields on Stepper {
+    __typename
+    id
+    title
+    steps {
+      id
+      title
+      slug
+      stepType
+      subtitle {
+        ...HtmlFields
+      }
+      config
+    }
+    config
   }
 
   fragment BaseSlices on Slice {
@@ -502,6 +549,8 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
+    ...StepperFields
   }
 
   fragment AllSlices on Slice {

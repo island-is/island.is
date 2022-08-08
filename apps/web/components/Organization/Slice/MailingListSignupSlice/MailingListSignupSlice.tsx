@@ -7,7 +7,11 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { Namespace } from '@island.is/api/schema'
-import { MailingListSignup, NameSignupForm } from '@island.is/web/components'
+import {
+  CategorySignupForm,
+  MailingListSignup,
+  NameSignupForm,
+} from '@island.is/web/components'
 
 interface SliceProps {
   slice: MailingListSignupSliceSchema
@@ -19,8 +23,12 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
   namespace,
 }) => {
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      {slice.variant === 'conference' ? (
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
+      {slice.variant === 'conference' && (
         <GridContainer>
           <GridRow>
             <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
@@ -28,7 +36,17 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
             </GridColumn>
           </GridRow>
         </GridContainer>
-      ) : (
+      )}
+      {slice.variant === 'categories' && (
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
+              <CategorySignupForm namespace={namespace} slice={slice} />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )}
+      {slice.variant === 'default' && (
         <Box paddingBottom={6} marginLeft={[0, 0, 0, 0, 6]}>
           <MailingListSignup
             namespace={namespace}
@@ -37,7 +55,7 @@ export const MailingListSignupSlice: React.FC<SliceProps> = ({
             description={slice.description}
             inputLabel={slice.inputLabel}
             buttonText={slice.buttonText}
-            mailingListUrl={slice.signupUrl}
+            signupID={slice.id}
           />
         </Box>
       )}
