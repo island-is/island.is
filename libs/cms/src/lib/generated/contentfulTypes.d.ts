@@ -1517,7 +1517,7 @@ export interface IMailingListSignupFields {
   title: string
 
   /** Variant */
-  variant: 'default' | 'conference'
+  variant: 'default' | 'conference' | 'categories'
 
   /** Description */
   description?: string | undefined
@@ -1539,6 +1539,12 @@ export interface IMailingListSignupFields {
 
   /** Disclaimer Label */
   disclaimerLabel?: string | undefined
+
+  /** Category Label */
+  categoryLabel?: string | undefined
+
+  /** Categories */
+  categories?: Record<string, any> | undefined
 
   /** Submit button text */
   buttonText: string

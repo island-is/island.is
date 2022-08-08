@@ -33,7 +33,7 @@ function NoBenefits({ misc }: PropTypes) {
         padding={3}
       >
         <Box marginRight={2}>
-          <Icon type="alert" color="red400" width={26} />
+          <Icon aria-hidden="true" type="alert" color="red400" width={26} />
         </Box>
         <Box marginRight={2}>
           <Stack space={1}>

@@ -12,6 +12,8 @@ export const emailSlice: MailingListSignupSlice = {
   noLabel: 'no',
   disclaimerLabel: 'disclaimer',
   buttonText: 'submit',
+  categoryLabel: 'Test',
+  categories: '',
   signupUrl:
     'https://example.com/signup?email={{EMAIL}}&name={{NAME}}&toggle={{TOGGLE}}',
 }
