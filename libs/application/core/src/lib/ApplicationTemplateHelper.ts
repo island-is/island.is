@@ -187,10 +187,7 @@ export class ApplicationTemplateHelper<
     }
     const { read, write } = roleInState
 
-    if (read === 'all') {
-      return { answers, externalData }
-    }
-    if (write === 'all') {
+    if (read === 'all' || write === 'all') {
       return { answers, externalData }
     }
 

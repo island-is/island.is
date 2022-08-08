@@ -83,16 +83,4 @@ export class NationalRegistryXRoadResolver {
       person.nationalId,
     )
   }
-
-  @Query(() => [NationalRegistryFamilyMemberInfo], {
-    name: 'nationalRegistryUserV2Family',
-    nullable: true,
-  })
-  @Audit()
-  async nationalRegistryFamily(
-    @Context('req') { user }: { user: User },
-    @Args('nationalId') nationalId: string,
-  ): Promise<NationalRegistryFamilyMemberInfo[] | null> {
-    return this.nationalRegistryXRoadService.getFamily(user, nationalId)
-  }
 }

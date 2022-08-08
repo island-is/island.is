@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { useFormik } from 'formik'
 import {
@@ -8,11 +8,9 @@ import {
   GridColumn,
   GridRow,
   Input,
-  RadioButton,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './NameSignupForm.css'
 import {
   MailchimpSubscribeMutation,
   MailchimpSubscribeMutationVariables,
@@ -39,12 +37,15 @@ interface NameSignupFormProps {
   slice: MailingListSignupSlice
 }
 
-export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
-  const [checked, setChecked] = useState(false)
+export const CategorySignupForm = ({
+  namespace,
+  slice,
+}: NameSignupFormProps) => {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<MessageProps>({ type: '', text: '' })
 
   const n = useNamespace(namespace)
+  const categories = useMemo(() => JSON.parse(slice.categories), [slice])
 
   const validate = async (values) => {
     const errors: FormProps = {}
@@ -69,6 +70,9 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
       name: '',
       email: '',
       toggle: 'Yes',
+      ...Object.fromEntries(
+        categories.map((category, idx) => [`category-${idx}`, false]),
+      ),
     },
     validateOnChange: false,
     validate,
@@ -80,7 +84,9 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
             signupID: slice.id,
             email: formik.values.email,
             name: formik.values.name,
-            toggle: formik.values.toggle === 'Yes',
+            categories: categories
+              .map((category, idx) => idx)
+              .filter((idx) => formik.values[`category-${idx}`]),
           },
         },
       })
@@ -171,45 +177,38 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
                 </GridColumn>
               </GridRow>
               <GridRow>
-                <GridColumn span={'12/12'} paddingBottom={2}>
-                  <Text fontWeight="semiBold">{slice.questionLabel}</Text>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '9/12']}>
+                  <Text variant="h4" as="h4" color="blue600" marginBottom={2}>
+                    {slice.categoryLabel}
+                  </Text>
+                  {categories.map((category, idx) => (
+                    <Box marginBottom={2} marginLeft={2}>
+                      <Checkbox
+                        label={category.label}
+                        name={`category-${idx}`}
+                        checked={formik.values[`category-${idx}`]}
+                        onChange={formik.handleChange}
+                      />
+                    </Box>
+                  ))}
                 </GridColumn>
-                <GridColumn span={['12/12', '6/12']}>
-                  <RadioButton
-                    id="yes"
-                    name="toggle"
-                    value="Yes"
-                    label={slice.yesLabel}
-                    checked={formik.values.toggle === 'Yes'}
-                    onChange={formik.handleChange}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '6/12']} paddingTop={[2, 0]}>
-                  <RadioButton
-                    id="no"
-                    name="toggle"
-                    value="No"
-                    label={slice.noLabel}
-                    checked={formik.values.toggle === 'No'}
-                    onChange={formik.handleChange}
-                  />
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Checkbox
-                    label={slice.disclaimerLabel}
-                    checked={checked}
-                    onChange={(e) => setChecked(e.target.checked)}
-                  />
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span={'12/12'}>
-                  <Box className={styles.justifyContentFlexEnd}>
-                    <Button type="submit" disabled={!checked || loading}>
-                      {slice.buttonText}
-                    </Button>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/12']}>
+                  <Box
+                    display="flex"
+                    flexDirection={[
+                      'row',
+                      'row',
+                      'row',
+                      'row',
+                      'columnReverse',
+                    ]}
+                    height="full"
+                  >
+                    <Box marginTop={2}>
+                      <Button type="submit" disabled={loading}>
+                        {slice.buttonText}
+                      </Button>
+                    </Box>
                   </Box>
                 </GridColumn>
               </GridRow>
