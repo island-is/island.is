@@ -62,6 +62,7 @@ const GenericLicenseQuery = gql`
         type
         provider {
           id
+          name
         }
         pkpass
         timeout
@@ -77,7 +78,6 @@ const GenericLicenseQuery = gql`
         }
         rawData
         licenseNumber
-        title
       }
     }
   }

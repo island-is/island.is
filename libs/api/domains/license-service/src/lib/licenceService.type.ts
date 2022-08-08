@@ -44,6 +44,8 @@ export enum GenericUserLicensePkPassStatus {
 
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
+  name: string
+  logo?: string
 
   // TODO(osk) should these be here? or be resolved by client via contentful?
   // Commented out until talked about, to limit scope of v1
@@ -84,8 +86,6 @@ export type GenericUserLicensePayload = {
   rawData: unknown
   licenseNumber: string
   expired: boolean
-  title: string
-  logo?: string
 }
 
 export type GenericLicenseUserdata = {

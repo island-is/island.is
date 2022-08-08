@@ -41,6 +41,9 @@ export class GenericLicenseProvider {
     description: 'ID of license provider',
   })
   id!: GenericLicenseProviderId
+
+  @Field({ description: 'Display name of license' })
+  name?: string
 }
 
 @ObjectType()

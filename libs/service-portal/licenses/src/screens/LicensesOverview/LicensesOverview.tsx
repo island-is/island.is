@@ -49,6 +49,7 @@ const GenericLicensesQuery = gql`
         type
         provider {
           id
+          name
         }
         pkpass
         pkpassVerify
@@ -66,7 +67,6 @@ const GenericLicensesQuery = gql`
         }
         rawData
         licenseNumber
-        title
         expired
       }
     }
