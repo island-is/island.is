@@ -9,7 +9,7 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
+import { NO, UPLOAD_ACCEPT, YES, FILE_SIZE_LIMIT } from '../../constants'
 import {
   accidentDetails,
   accidentLocation,
@@ -28,8 +28,9 @@ import {
   workMachine,
   representativeInfo,
   addDocuments,
+  attachments,
+  error,
 } from '../../lib/messages'
-import { attachments } from '../../lib/messages/attachments'
 import {
   AgricultureAccidentLocationEnum,
   AttachmentsEnum,
@@ -666,6 +667,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.injuryCertificateFile.file',
               title: attachments.general.heading,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: injuredPersonInformation.upload.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
@@ -746,6 +749,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.deathCertificateFile.file',
               title: attachments.general.uploadHeader,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
               uploadDescription: attachments.general.uploadDescription,
@@ -798,6 +803,8 @@ export const aboutTheAccidentSection = buildSection({
             buildFileUploadField({
               id: 'attachments.additionalFiles.file',
               title: attachments.general.heading,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText: error.attachmentMaxSizeError,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.general.uploadHeader,
               uploadDescription: addDocuments.general.uploadDescription,
