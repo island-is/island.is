@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationConfigurations,
@@ -12,8 +9,8 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { ApiActions, FakeDataFeature } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
@@ -48,8 +45,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: dataSchema,
-  //TODO: set up a feature flag
-  //featureFlag: Features.exampleApplication,
+  featureFlag: Features.drivingLearnersPermit,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -61,14 +57,22 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              //TODO: set up a feature flag for allowFakeData?
-              formLoader: async () => {
+              formLoader: async ({
+                featureFlagClient,
+              }: {
+                featureFlagClient: FeatureFlagClient
+              }) => {
                 const getForm = await import('../forms/Prerequisites').then(
                   (val) => val.getForm,
                 )
 
+                const allowFakeData = !!(await featureFlagClient.getValue(
+                  FakeDataFeature.allowFake,
+                  false,
+                ))
+
                 return getForm({
-                  allowFakeData: true,
+                  allowFakeData,
                 })
               },
               actions: [

@@ -3,6 +3,11 @@ export enum ApiActions {
   doStuffThatFails = 'doStuffThatFails',
   completeApplication = 'completeApplication',
 }
+
+export enum FakeDataFeature {
+  allowFake = 'applicationTemplateDrivingLearnersPermitAllowFakeData',
+}
+
 export const B_FULL = 'B-full'
 export const B_TEMP = 'B-temp'
 
