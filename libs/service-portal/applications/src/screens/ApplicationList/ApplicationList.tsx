@@ -1,34 +1,35 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
+import { ValueType } from 'react-select'
+
+import { useQuery } from '@apollo/client'
+import { institutionMapper } from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
+import { ApplicationList as List } from '@island.is/application/ui-components'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Input,
+  Option,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
-  ServicePortalModuleComponent,
   EmptyState,
+  IntroHeader,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-  Input,
-  Select,
-  Option,
-} from '@island.is/island-ui/core'
-import { ApplicationList as List } from '@island.is/application/ui-components'
 import {
   GET_ORGANIZATIONS_QUERY,
   useApplications,
 } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { Organization } from '@island.is/shared/types'
 import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
-import { ValueType } from 'react-select'
-import { Application, ApplicationStatus } from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
-import { useQuery } from '@apollo/client'
-import { Organization } from '@island.is/shared/types'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -97,7 +98,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const mapper = institutionMapper
     const apps: Application[] = applications
     let institutions: Option[] = []
-    apps.map((elem, idx) => {
+    apps.forEach((elem) => {
       const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
       institutions.push({
         value: inst,
@@ -141,7 +142,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const inProgress: Application[] = []
     const finished: Application[] = []
 
-    apps.map((application) => {
+    apps.forEach((application) => {
       if (
         application.state === 'draft' ||
         application.state === 'prerequisites'
@@ -177,21 +178,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(m.heading)}
-              </Text>
-
-              <Text as="p" variant="default">
-                {formatMessage(m.introCopy)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={m.heading} intro={m.introCopy} />
 
       {loading && !orgData && <ActionCardLoader repeat={3} />}
 
