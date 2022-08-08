@@ -9,6 +9,7 @@ import {
   ServiceWebFormsInput,
   ServiceWebFormsInputWithInstitutionEmail,
 } from './dto/serviceWebForms.input'
+import { CmsModule } from '@island.is/cms'
 
 describe('communicationsService', () => {
   const fakeServiceWebInput: ServiceWebFormsInput = {
@@ -53,6 +54,7 @@ describe('communicationsService', () => {
           token: 'token',
           subdomain: 'subdomain',
         }),
+        CmsModule,
       ],
       providers: [CommunicationsService],
     }).compile()
