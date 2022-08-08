@@ -97,7 +97,6 @@ export const Draft: Form = buildForm({
               id: 'overview.attachments.one',
               title: attachmentNames.one,
               titleVariant: 'h3',
-              description: '',
               space: 'gutter',
             }),
             buildFileUploadField({
@@ -112,7 +111,6 @@ export const Draft: Form = buildForm({
               id: 'overview.attachments.two',
               title: attachmentNames.two,
               titleVariant: 'h3',
-              description: '',
               space: 'gutter',
             }),
             buildFileUploadField({
@@ -127,7 +125,6 @@ export const Draft: Form = buildForm({
               id: 'overview.attachments.three',
               title: attachmentNames.three,
               titleVariant: 'h3',
-              description: '',
               space: 'gutter',
             }),
             buildFileUploadField({
@@ -142,7 +139,6 @@ export const Draft: Form = buildForm({
               id: 'overview.attachments.four',
               title: attachmentNames.four,
               titleVariant: 'h3',
-              description: '',
               space: 'gutter',
             }),
             buildFileUploadField({
@@ -160,7 +156,6 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.overview,
-
       children: [sectionOverview],
     }),
     buildSection({

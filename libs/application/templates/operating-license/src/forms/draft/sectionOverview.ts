@@ -12,6 +12,7 @@ import {
   OPERATION_CATEGORY,
   OpeningHours,
   YES,
+  NO,
 } from '../../lib/constants'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { displayOpeningHours, get24HFormatTime } from '../../lib/utils'
@@ -37,7 +38,7 @@ export const sectionOverview = buildMultiField({
       space: 'gutter',
     }),
     buildKeyValueField({
-      label: 'Tegund reksturs',
+      label: m.operationType,
       width: 'half',
       value: (application: Application) =>
         (application.answers.applicationInfo as Operation).operation ===
@@ -95,8 +96,8 @@ export const sectionOverview = buildMultiField({
           .applicationInfo as Operation).hotel.category?.includes(
           OPERATION_CATEGORY.ONE,
         )
-          ? 'Já'
-          : 'Nei',
+          ? YES
+          : NO,
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL,
@@ -109,8 +110,8 @@ export const sectionOverview = buildMultiField({
           .applicationInfo as Operation).hotel.category?.includes(
           OPERATION_CATEGORY.TWO,
         )
-          ? 'Já'
-          : 'Nei',
+          ? YES
+          : NO,
       condition: (answers) =>
         (answers.applicationInfo as Operation)?.operation ===
         APPLICATION_TYPES.HOTEL,

@@ -98,7 +98,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: {
-            apiModuleAction: ApiActions.submitPassportApplication,
+            apiModuleAction: ApiActions.submitOperatingLicenseApplication,
           },
           roles: [
             {
@@ -108,7 +108,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                   Promise.resolve(val.Done),
                 ),
               read: {
-                externalData: ['submitPassportApplication'],
+                externalData: ['submitOperatingLicenseApplication'],
               },
             },
           ],

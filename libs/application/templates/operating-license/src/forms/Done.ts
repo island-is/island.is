@@ -21,7 +21,7 @@ export const Done: Form = buildForm({
         buildCustomField({
           id: 'overview',
           component: 'Congratulations',
-          title: 'Umsókn móttekin',
+          title: m.applicationCompleteTitle,
         }),
       ],
     }),

@@ -19,7 +19,7 @@ export enum Roles {
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
-  submitPassportApplication = 'submitPassportApplication',
+  submitOperatingLicenseApplication = 'submitOperatingLicenseApplication',
 }
 
 export enum APPLICATION_TYPES {

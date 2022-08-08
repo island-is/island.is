@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { removeCountryCode } from '../../lib/utils'
 
 export const subSectionOperationInfo = buildSubSection({
   id: 'info',
@@ -42,9 +43,8 @@ export const subSectionOperationInfo = buildSubSection({
           variant: 'tel',
           format: '###-####',
           defaultValue: (application: Application) =>
-            (application.externalData.userProfile?.data as {
-              mobilePhoneNumber?: string
-            })?.mobilePhoneNumber,
+            removeCountryCode(application),
+          placeholder: '000-0000',
         }),
       ],
     }),

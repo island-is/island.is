@@ -6,7 +6,7 @@ import {
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 
 type ValidationOperation = {
   operation?: APPLICATION_TYPES
@@ -125,4 +125,18 @@ export const getChargeItemCode = (answers: FormValue) => {
       return 'AY121'
     }
   }
+}
+
+const getMobilePhoneNumber = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber
+}
+
+export const removeCountryCode = (application: Application) => {
+  return getMobilePhoneNumber(application)?.startsWith('+354')
+    ? getMobilePhoneNumber(application)?.slice(4)
+    : getMobilePhoneNumber(application)?.startsWith('00354')
+    ? getMobilePhoneNumber(application)?.slice(5)
+    : getMobilePhoneNumber(application)
 }

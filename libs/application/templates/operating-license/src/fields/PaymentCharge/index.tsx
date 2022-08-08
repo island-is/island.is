@@ -30,9 +30,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
       <Columns alignY="bottom" space="gutter">
         <Column>
           <Box marginBottom="gutter">
-            <Text variant="h4">
-              {formatMessage(m.applicationCompleteTitle)}
-            </Text>
+            <Text variant="h4">{formatMessage(m.applicationPaymentTitle)}</Text>
             <Text marginTop="smallGutter">{chargeItem?.chargeItemName}</Text>
           </Box>
         </Column>

@@ -11,20 +11,19 @@ interface BulletsData {
 
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
+  const bullets = [
+    m.attachmentsBulletOne,
+    m.attachmentsBulletTwo,
+    m.attachmentsBulletThree,
+    m.attachmentsBulletFour,
+  ]
   return (
     <BulletList>
-      <Bullet>
-        {formatText(m.attachmentsBulletOne, application, formatMessage)}
-      </Bullet>
-      <Bullet>
-        {formatText(m.attachmentsBulletTwo, application, formatMessage)}
-      </Bullet>
-      <Bullet>
-        {formatText(m.attachmentsBulletThree, application, formatMessage)}
-      </Bullet>
-      <Bullet>
-        {formatText(m.attachmentsBulletFour, application, formatMessage)}
-      </Bullet>
+      {bullets.map((bullet, i) => (
+        <Bullet key={i}>
+          {formatText(bullet, application, formatMessage)}
+        </Bullet>
+      ))}
     </BulletList>
   )
 }

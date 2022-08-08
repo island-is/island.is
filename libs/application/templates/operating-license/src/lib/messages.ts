@@ -398,6 +398,11 @@ export const m = defineMessages({
       'Endilega lestu yfir til að vera viss um að réttar upplýsingar hafi verið gefnar.',
     description: 'Some description',
   },
+  operationType: {
+    id: 'ol.application:overview.operationType',
+    defaultMessage: 'Tegund reksturs',
+    description: 'Some description',
+  },
   availableService: {
     id: 'ol.application:overview.availableService',
     defaultMessage: 'Þjónusta í boði:',
@@ -443,7 +448,7 @@ export const m = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
   },
-  applicationCompleteTitle: {
+  applicationPaymentTitle: {
     id: 'ol.application:complete.title',
     defaultMessage: 'Til greiðslu',
     description: 'Some description',
@@ -456,6 +461,11 @@ export const m = defineMessages({
   applicationComplete: {
     id: 'ol.application:complete',
     defaultMessage: 'Staðfesting',
+    description: 'Some description',
+  },
+  applicationCompleteTitle: {
+    id: 'ol.application:complete.title',
+    defaultMessage: 'Umsókn móttekin',
     description: 'Some description',
   },
   applicationCompleteAlertTitle: {

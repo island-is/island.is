@@ -36,7 +36,7 @@ export class OperatingLicenseService {
     return response
   }
 
-  async submitPassportApplication({
+  async submitOperatingLicenseApplication({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<{
@@ -52,7 +52,7 @@ export class OperatingLicenseService {
 
     if (!isPayment?.fulfilled) {
       this.logger.error(
-        'Trying to submit Passportapplication that has not been paid.',
+        'Trying to submit OperatingLicenseapplication that has not been paid.',
       )
       throw new Error(
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
