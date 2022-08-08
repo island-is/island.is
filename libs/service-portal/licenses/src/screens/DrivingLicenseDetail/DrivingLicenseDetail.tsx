@@ -1,34 +1,31 @@
+import { info } from 'kennitala'
 import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
+import { defineMessage } from 'react-intl'
+
 import {
-  GenericLicenseType,
-  useDrivingLicense,
-} from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
+  AlertBanner,
   Box,
+  Button,
   Divider,
-  GridColumn,
-  GridRow,
   Icon,
+  Link,
   Stack,
   Text,
-  Button,
-  AlertBanner,
-  Link,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  IntroHeader,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
-import { isExpired, toDate } from '../../utils/dateUtils'
-import { mapCategory } from '../../utils/dataMapper'
-import ReactHtmlParser from 'react-html-parser'
-import ExpandableLine from './ExpandableLine'
-import * as styles from './DrivingLicenseDetail.css'
-import { info } from 'kennitala'
-import { m } from '../../lib/messages'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
+
 import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { m } from '../../lib/messages'
+import { mapCategory } from '../../utils/dataMapper'
+import { isExpired, toDate } from '../../utils/dateUtils'
+import ExpandableLine from './ExpandableLine'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
@@ -53,20 +50,10 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         </Box>
       )}
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {formatMessage(m.yourDrivingLicense)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(m.drivingLicenseDescription)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={m.yourDrivingLicense}
+        intro={m.drivingLicenseDescription}
+      />
       {data && (
         <Stack space={2}>
           <Box
