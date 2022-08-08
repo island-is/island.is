@@ -28,7 +28,11 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -57,7 +61,11 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           onEntry: {
             apiModuleAction: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,

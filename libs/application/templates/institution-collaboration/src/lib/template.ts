@@ -87,7 +87,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Umsókn um Umsokn',
           progress: 0.43,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -116,7 +120,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,

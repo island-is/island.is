@@ -12,7 +12,7 @@ export enum Roles {
   SPOUSE = 'spouse',
 }
 
-export const ONE_MONTH = 24 * 3600 * 1000 * 31
+export const ONE_MONTH = 24 * 3600 * 1000 * 30
 export const ONE_DAY = 24 * 3600 * 1000
 
 export enum Routes {

@@ -31,7 +31,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Draft',
           progress: 0.4,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -89,7 +93,11 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

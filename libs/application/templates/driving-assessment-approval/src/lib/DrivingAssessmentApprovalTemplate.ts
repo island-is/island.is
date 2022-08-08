@@ -62,8 +62,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {
@@ -92,8 +91,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onEntry: {
             apiModuleAction: ApiActions.submitAssessmentConfirmation,

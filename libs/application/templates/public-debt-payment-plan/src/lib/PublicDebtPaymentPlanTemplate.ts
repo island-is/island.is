@@ -86,11 +86,10 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 0.5,
-          // Application is only suppose to live for an hour
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {
@@ -144,7 +143,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {

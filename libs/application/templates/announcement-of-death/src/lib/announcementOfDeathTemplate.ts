@@ -21,6 +21,12 @@ const HalfYearLifeCycle: StateLifeCycle = {
   whenToPrune: 1000 * 3600 * 24 * 182, // 6 months
 }
 
+const MonthLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+}
+
 const DayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
   shouldBePruned: true,
@@ -88,7 +94,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             title: m.applicationTitle,
           },
           progress: 0.5,
-          lifecycle: HalfYearLifeCycle,
+          lifecycle: MonthLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -120,7 +126,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: HalfYearLifeCycle,
+          lifecycle: MonthLifeCycle,
 
           roles: [
             {

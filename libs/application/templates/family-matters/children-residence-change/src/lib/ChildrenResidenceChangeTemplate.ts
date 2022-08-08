@@ -31,6 +31,7 @@ const applicationName = 'Umsókn um breytt lögheimili barns'
 
 const oneYear = 24 * 3600 * 1000 * 365
 const twentyEightDays = 24 * 3600 * 1000 * 28
+const oneMonth = 30 * 24 * 3600 * 1000
 
 const pruneAfter = (time: number) => {
   return {
@@ -58,7 +59,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.draft,
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfter(oneMonth),
           roles: [
             {
               id: Roles.ParentA,
@@ -165,7 +166,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.submitted,
             tag: { label: stateLabels.submitted },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfter(oneMonth),
           onEntry: {
             apiModuleAction: TemplateApiActions.submitApplication,
           },
@@ -201,7 +202,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               label: stateLabels.rejected,
             },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfter(oneMonth),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectApplication,
           },
@@ -231,7 +232,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.rejected,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfter(oneMonth),
           onEntry: {
             apiModuleAction: TemplateApiActions.rejectedApplication,
           },
@@ -262,7 +263,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.approved,
             tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
-          lifecycle: pruneAfter(oneYear),
+          lifecycle: pruneAfter(oneMonth),
           onEntry: {
             apiModuleAction: TemplateApiActions.approveApplication,
           },

@@ -34,7 +34,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 5 * 60000, //5 minutes
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {
@@ -67,7 +67,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 5 * 60000, //5 minutes
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,

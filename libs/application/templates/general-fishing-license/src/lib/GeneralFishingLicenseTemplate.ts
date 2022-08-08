@@ -79,7 +79,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.3,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -153,7 +157,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
@@ -178,7 +183,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {

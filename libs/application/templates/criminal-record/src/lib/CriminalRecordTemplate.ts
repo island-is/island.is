@@ -44,8 +44,7 @@ const template: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {
@@ -119,8 +118,7 @@ const template: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
-            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           actionCard: {
             tag: {

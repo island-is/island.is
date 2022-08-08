@@ -43,7 +43,11 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.draft,
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,7 +74,11 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.submitted,
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

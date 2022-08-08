@@ -75,7 +75,11 @@ const HealthInsuranceTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -107,7 +111,11 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           roles: [
             {
               id: Roles.APPLICANT,

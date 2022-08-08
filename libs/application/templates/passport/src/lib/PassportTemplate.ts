@@ -44,7 +44,11 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           progress: 0.33,
-          lifecycle: pruneAfter(twoDays),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           onExit: {
             apiModuleAction: ApiActions.checkForDiscount,
           },
@@ -150,7 +154,11 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: pruneAfter(sixtyDays),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           actionCard: {
             tag: {
               label: m.actionCardDoneTag,

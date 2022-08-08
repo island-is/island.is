@@ -56,7 +56,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.4,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           roles: [
             {
@@ -190,7 +191,8 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: {
             shouldBeListed: true,
-            shouldBePruned: false,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onEntry: {
             apiModuleAction: ApiActions.reviewApplication,

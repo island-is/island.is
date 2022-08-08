@@ -36,7 +36,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
@@ -72,7 +72,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
 
           roles: [

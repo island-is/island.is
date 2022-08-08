@@ -37,7 +37,7 @@ const PSignTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: false,
             shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
@@ -70,7 +70,11 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
 
           roles: [
             {
