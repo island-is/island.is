@@ -11,6 +11,7 @@ import {
   NationalRegistry,
   FishingLicense,
   MunicipalitiesFinancialAid,
+  ChargeFjsV2,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
@@ -43,6 +44,11 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         prod:
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+      XROAD_CHARGE_FJS_V2_PATH: {
+        dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+        staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+        prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
       },
     })
     .xroad(Base, Client)
@@ -81,6 +87,7 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       REDIS_URL_NODE_01: {
         dev:
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -171,6 +178,7 @@ export const serviceSetup = (services: {
       DataProtectionComplaint,
       FishingLicense,
       MunicipalitiesFinancialAid,
+      ChargeFjsV2,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

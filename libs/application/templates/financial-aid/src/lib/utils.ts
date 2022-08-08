@@ -59,7 +59,7 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
     externalData,
     `nationalRegistry.data.municipality.`,
   ) as Municipality | null
-  return municipality == null
+  return municipality == null || !municipality.active
 }
 
 export const encodeFilenames = (filename: string) =>

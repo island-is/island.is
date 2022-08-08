@@ -103,6 +103,7 @@ export interface LayoutProps {
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
@@ -159,6 +160,7 @@ const Layout: NextComponentType<
   alertBannerContent,
   organizationAlertBannerContent,
   articleAlertBannerContent,
+  customAlertBanners,
   footerVersion = 'default',
   respOrigin,
   children,
@@ -234,14 +236,24 @@ const Layout: NextComponentType<
           )}`,
           ...articleAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+      ]
+        .concat(
+          customAlertBanners.map((banner) => ({
+            bannerId: `custom-alert-${stringHash(
+              JSON.stringify(banner ?? {}),
+            )}`,
+            ...banner,
+          })),
+        )
+        .filter(
+          (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+        ),
     )
   }, [
     alertBannerContent,
     articleAlertBannerContent,
     organizationAlertBannerContent,
+    customAlertBanners,
   ])
 
   const preloadedFonts = [
@@ -674,6 +686,11 @@ export const withMainLayout = <T,>(
         ? componentProps['article']['alertBanner']
         : undefined
 
+    const customAlertBanners =
+      'customAlertBanners' in componentProps
+        ? componentProps['customAlertBanners']
+        : []
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -681,6 +698,7 @@ export const withMainLayout = <T,>(
         ...themeConfig,
         organizationAlertBannerContent,
         articleAlertBannerContent,
+        customAlertBanners,
       },
       componentProps,
     }

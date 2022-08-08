@@ -122,6 +122,14 @@ const Category: Screen<CategoryProps> = ({
         content.otherArticles.push(article)
         return content
       }
+      // Check if article belongs to multiple groups in this category
+      else if (
+        article?.otherCategories
+          .map((category) => category.title)
+          .includes(getCurrentCategory().title)
+      ) {
+        content.otherArticles.push(article)
+      }
 
       if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
