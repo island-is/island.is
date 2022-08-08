@@ -10,6 +10,7 @@ import {
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
+import { Features } from '@island.is/feature-flags'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -29,6 +30,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
+  featureFlag: Features.operatingLicense,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

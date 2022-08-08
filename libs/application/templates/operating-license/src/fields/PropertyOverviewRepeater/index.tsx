@@ -36,7 +36,7 @@ const PropertyItem = ({
   return (
     <Box position="relative" marginTop={2}>
       <Text variant="h4" as="h4" paddingBottom={2}>
-        Rými {index + 1}
+        {`${formatMessage(m.space)} ${index + 1}`}
       </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

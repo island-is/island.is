@@ -234,6 +234,11 @@ export const m = defineMessages({
     defaultMessage: 'Fasteignanúmer',
     description: 'Some description',
   },
+  space: {
+    id: 'ol.application:propertyInfo.space',
+    defaultMessage: 'Rými',
+    description: 'Some description',
+  },
   address: {
     id: 'ol.application:propertyInfo.address',
     defaultMessage: 'Heimilisfang',
@@ -441,11 +446,6 @@ export const m = defineMessages({
   applicationCompleteTitle: {
     id: 'ol.application:complete.title',
     defaultMessage: 'Til greiðslu',
-    description: 'Some description',
-  },
-  applicationCompletePassport: {
-    id: 'ol.application:complete.passport',
-    defaultMessage: 'Vegabréf',
     description: 'Some description',
   },
   applicationCompleteTotal: {

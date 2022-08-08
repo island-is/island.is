@@ -5,9 +5,6 @@ import {
   YES,
 } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { string } from 'zod'
-import { OpeningHour } from './constants'
-import { Application } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 
@@ -25,7 +22,6 @@ type ValidationOperation = {
 
 export const validateApplicationInfoCategory = ({
   operation,
-  hotel,
   resturant,
 }: ValidationOperation) => {
   if (operation === APPLICATION_TYPES.RESTURANT) {
@@ -74,13 +70,6 @@ export const get24HFormatTime = (value: string) => {
   return `${hours}:${minutes}`
 }
 
-// TODO: Opening hours can exceed midnight how to validate
-export const isValidFromToTime = ({ from, to }: OpeningHour) => {
-  const { hours: fH, minutes: fM } = getHoursMinutes(from)
-  const { hours: tH, minutes: tM } = getHoursMinutes(to)
-}
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const vskNrRegex = /([0-9]){6}/
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
