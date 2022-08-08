@@ -51,7 +51,6 @@ describe('ApplicationAccesService', () => {
     expect(results).toBe(false)
   })
 
-  // true check for applicant in draft defined as true
   it('should return true when application is in draft and user is applicant, shouldBeListedForRole defined as true for applicant', async () => {
     const applicationInDraft = createApplication({
       state: 'draft',
