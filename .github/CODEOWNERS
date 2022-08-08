@@ -47,7 +47,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death              @island-is/juni
 /libs/application/templates/driving-license/                                                        @island-is/juni
 /libs/application/templates/driving-learners-permit/                                                @island-is/juni
-/libs/application/templates-api-modules/src/lib/modules/templates/driving-learners-permit/          @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/           @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                            @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission         @island-is/juni
 /apps/application-system/api/src/app/modules/payment                                                @island-is/juni
