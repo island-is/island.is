@@ -149,6 +149,11 @@ export async function findBestGoodRefPR(
         branch: headBranch,
         ref: mergeCommitSha,
       })
+    } catch (e) {
+      log(
+        `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+        e,
+      )
     } finally {
       await git.checkout(prBranch)
     }

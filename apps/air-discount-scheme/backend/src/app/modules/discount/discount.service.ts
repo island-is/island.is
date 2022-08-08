@@ -8,8 +8,10 @@ import {
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
 import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
+import { User } from '../user/user.model'
 
 interface CachedDiscount {
+  user: User
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
@@ -72,6 +74,7 @@ export class DiscountService {
   }
 
   async createDiscountCode(
+    user: User,
     nationalId: string,
     connectableFlights: Flight[],
   ): Promise<Discount> {
@@ -142,6 +145,7 @@ export class DiscountService {
     })
 
     await this.setCache<CachedDiscount>(cacheId, {
+      user,
       nationalId,
       discountCode,
       connectionDiscountCodes,
@@ -150,6 +154,7 @@ export class DiscountService {
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
 
     return new Discount(
+      user,
       discountCode,
       connectionDiscountCodes,
       nationalId,
@@ -176,6 +181,7 @@ export class DiscountService {
     const ttl = await this.cacheManager.ttl(cacheKey)
 
     return new Discount(
+      cacheValue.user,
       cacheValue.discountCode,
       cacheValue.connectionDiscountCodes ?? [],
       nationalId,
@@ -195,6 +201,7 @@ export class DiscountService {
 
     const ttl = await this.cacheManager.ttl(cacheKey)
     return new Discount(
+      cacheValue.user,
       discountCode,
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,
@@ -223,6 +230,7 @@ export class DiscountService {
 
     const ttl = await this.cacheManager.ttl(cacheKey)
     return new Discount(
+      cacheValue.user,
       cacheValue.discountCode,
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,

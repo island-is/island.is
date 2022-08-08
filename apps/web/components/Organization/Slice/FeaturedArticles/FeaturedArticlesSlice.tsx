@@ -30,6 +30,19 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const isMobile = width < theme.breakpoints.md
   const labelId = 'sliceTitle-' + slice.id
 
+  const sortedArticles =
+    slice.sortBy === 'importance'
+      ? slice.resolvedArticles
+          .slice()
+          .sort((a, b) =>
+            a.importance > b.importance
+              ? -1
+              : a.importance === b.importance
+              ? a.title.localeCompare(b.title)
+              : 1,
+          )
+      : slice.resolvedArticles
+
   return (
     !!slice.articles.length && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
@@ -43,8 +56,16 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             {slice.title}
           </Text>
           <Stack space={2}>
-            {slice.articles.map(
-              ({ title, slug, processEntry, processEntryButtonText }) => {
+            {(slice.automaticallyFetchArticles
+              ? sortedArticles
+              : slice.articles
+            ).map(
+              ({
+                title,
+                slug,
+                processEntry = null,
+                processEntryButtonText = null,
+              }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
                   <FocusableBox

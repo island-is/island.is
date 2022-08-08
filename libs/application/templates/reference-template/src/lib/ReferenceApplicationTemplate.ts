@@ -210,6 +210,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               ],
               write: { answers: ['careerHistoryCompanies'] },
               read: 'all',
+              shouldBeListedForRole: false,
             },
             {
               id: Roles.APPLICANT,
