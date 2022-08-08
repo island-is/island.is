@@ -1,20 +1,19 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import {
-  Text,
   Box,
   Stack,
-  Columns,
-  Column,
   LoadingDots,
   Hidden,
   Pagination,
+  Text,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
   AccessDeniedLegal,
   ServicePortalModuleComponent,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
@@ -263,15 +262,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
+      <IntroHeader title={messages.title} intro={messages.intro} />
       <Stack space={3}>
-        <Text variant="h3" as="h1">
-          {formatMessage(messages.title)}
-        </Text>
-        <Columns collapseBelow="sm">
-          <Column width="7/12">
-            <Text variant="default">{formatMessage(messages.intro)}</Text>
-          </Column>
-        </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <DocumentsFilter
             filterValue={filterValue}

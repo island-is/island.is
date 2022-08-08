@@ -36,7 +36,7 @@ export const messages = defineMessages({
   },
   clearFilters: {
     id: 'sp.documents:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   tableHeaderDate: {
     id: 'sp.documents:table-header-date',
