@@ -115,8 +115,8 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
           checkboxValue === undefined
             ? Boolean(existingScope?.name)
             : checkboxValue.length > 0
-        const defaultDate = add(new Date(), { months: 3 })
 
+        const defaultDate = add(new Date(), { years: 1 })
         return (
           <>
             <GridRow key={index}>

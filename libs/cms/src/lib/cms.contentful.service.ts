@@ -70,6 +70,13 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import {
+  MailingListSignupSlice,
+  mapMailingListSignup,
+} from './models/mailingListSignupSlice.model'
+import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
+import { Form, mapForm } from './models/form.model'
+import { GetFormInput } from './dto/getForm.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -743,5 +750,38 @@ export class CmsContentfulService {
       (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
       null
     )
+  }
+
+  async getMailingListSignupSlice({
+    id,
+    lang = 'is',
+  }: GetMailingListSignupSliceInput): Promise<MailingListSignupSlice | null> {
+    const params = {
+      ['content_type']: 'mailingListSignup',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IMailingListSignupFields>(lang, params)
+      .catch(errorHandler('getMailingListSignupSlice'))
+
+    return (
+      (result.items as types.IMailingListSignup[]).map(
+        mapMailingListSignup,
+      )[0] ?? null
+    )
+  }
+
+  async getForm(input: GetFormInput): Promise<Form | null> {
+    const params = {
+      ['content_type']: 'form',
+      'sys.id': input.id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IFormFields>(input.lang, params)
+      .catch(errorHandler('getForm'))
+
+    return (result.items as types.IForm[]).map(mapForm)[0] ?? null
   }
 }
