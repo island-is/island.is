@@ -3,7 +3,10 @@ import { ComplaintPDF, ExternalDataMessages, Information } from '../../models'
 import { Application } from '@island.is/application/types'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
-import { messages } from '@island.is/application/templates/data-protection-complaint'
+import {
+  messages,
+  OnBehalf,
+} from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
   addHeader,
@@ -18,7 +21,6 @@ import { dataProtectionLogo } from '../assets/logo'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export async function generateComplaintPdf(

@@ -1,23 +1,26 @@
+import isEqual from 'lodash/isEqual'
 import React, { useCallback, useState } from 'react'
-import {
-  ServicePortalModuleComponent,
-  m,
-  CardLoader,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import { useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
-  Stack,
-  Text,
+  Button,
   GridColumn,
   GridRow,
   Input,
-  Button,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import isEqual from 'lodash/isEqual'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  EmptyState,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
@@ -82,20 +85,8 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.title)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(messages.intro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={messages.title} intro={messages.intro} />
+
       {error && (
         <Box>
           <EmptyState description={m.errorFetch} />
@@ -147,7 +138,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
         {hasActiveFilters() && (
           <GridRow>
             <GridColumn span={['12/12', '12/12']}>
-              <Box marginTop={4}>
+              <Box>
                 <Box
                   display="flex"
                   alignItems="center"

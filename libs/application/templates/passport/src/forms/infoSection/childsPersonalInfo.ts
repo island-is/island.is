@@ -8,6 +8,7 @@ import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
+import { removeCountryCode } from '../../utils/removeCountryCode'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
@@ -21,7 +22,7 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: 'Þitt Barn',
+      defaultValue: 'Adam Jónsson',
     }),
     buildTextField({
       id: 'childsPersonalInfo.nationalId',
@@ -77,10 +78,14 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
-      defaultValue: (application: Application) =>
-        (application.externalData.userProfile?.data as {
-          mobilePhoneNumber?: string
-        })?.mobilePhoneNumber ?? '',
+      defaultValue: (application: Application) => {
+        const phone =
+          (application.externalData.userProfile?.data as {
+            mobilePhoneNumber?: string
+          })?.mobilePhoneNumber ?? ''
+
+        return removeCountryCode(phone)
+      },
     }),
     buildDescriptionField({
       id: 'childsPersonalInfo.guardian2',
