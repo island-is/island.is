@@ -4,8 +4,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
-import { info } from 'kennitala'
 
 @Injectable()
 export class OperatingLicenseService {
@@ -82,6 +80,6 @@ export class OperatingLicenseService {
   }
 
   private log(lvl: 'error' | 'info', message: string, meta: unknown) {
-    this.logger.log(lvl, `[passport] ${message}`, meta)
+    this.logger.log(lvl, `[operation-license] ${message}`, meta)
   }
 }

@@ -2,7 +2,6 @@ import * as z from 'zod'
 import { error } from './error'
 import { APPLICATION_TYPES, NO, OPERATION_CATEGORY, YES } from './constants'
 import {
-  hasYes,
   isValid24HFormatTime,
   isValidEmail,
   isValidPhoneNumber,
@@ -143,7 +142,6 @@ export const dataSchema = z.object({
     outsideBlueprints: z
       .object({
         file: z.array(FileSchema),
-        // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
   }),
