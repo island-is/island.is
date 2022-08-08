@@ -36,12 +36,10 @@ export const useEligibility = (
     return {
       loading: false,
       eligibility: fakeEligibility({
-        categoryIssued: fakeData?.mentorLicenseIssuedDate ?? '2020-01-01',
+        categoryIssued: fakeData?.mentorLicenseIssuedDate ?? undefined,
         categoryType: fakeData?.currentLicense === 'B-full' ? 'B' : 'none',
-        deprivationDateTo:
-          fakeData?.deprivationDateTo ?? new Date(Date.now()).toDateString(),
-        deprivationDateFrom:
-          fakeData?.deprivationDateFrom ?? new Date(Date.now()).toDateString(),
+        deprivationDateTo: fakeData?.deprivationDateTo ?? undefined,
+        deprivationDateFrom: fakeData?.deprivationDateFrom ?? undefined,
         mentorAge: fakeData?.mentorAge ?? '20',
       }),
     }

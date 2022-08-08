@@ -5,14 +5,23 @@ import {
 } from '../../types/schema'
 import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
 
+interface FakeEligibilityInput {
+  categoryType?: string
+  localResidency?: boolean
+  deprivationDateTo?: string
+  deprivationDateFrom?: string
+  mentorAge?: string
+  categoryIssued?: string
+}
+
 export const fakeEligibility = ({
   categoryType = 'none',
   localResidency = true,
-  deprivationDateTo = '2022-02-02',
-  deprivationDateFrom = '2022-02-02',
+  deprivationDateTo,
+  deprivationDateFrom,
   mentorAge = '20',
   categoryIssued = '2022-02-02',
-}): ApplicationEligibility => {
+}: FakeEligibilityInput): ApplicationEligibility => {
   // Make sure to update with /libs/api/domains/driving-license/src/lib/drivingLicense.service.ts section of
   // getLearnerMentorEligitibility when using this to validate logic
 
@@ -22,9 +31,13 @@ export const fakeEligibility = ({
 
   const categoryB = categoryType === 'B'
 
-  const activeDisqualification = Date.now() < Date.parse(deprivationDateTo)
-  const disqualificationInTheLastTwelveMonths =
-    new Date(Date.parse(deprivationDateFrom)) > twelveMonthsAgo
+  let activeDisqualification, disqualificationInTheLastTwelveMonths
+
+  if (deprivationDateFrom && deprivationDateTo) {
+    activeDisqualification = Date.now() < Date.parse(deprivationDateTo)
+    disqualificationInTheLastTwelveMonths =
+      new Date(Date.parse(deprivationDateFrom)) > twelveMonthsAgo
+  }
 
   const requirements: ApplicationEligibilityRequirement[] = [
     {
