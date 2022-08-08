@@ -288,7 +288,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             handleDateToChange={handleDateToInput}
             handleShowUnread={handleShowUnread}
             handleClearFilters={handleClearFilters}
-            documentsLength={filteredDocuments.length}
+            documentsLength={totalCount}
           />
 
           <Box marginTop={[0, 3]}>
