@@ -478,4 +478,14 @@ export const m = defineMessages({
     defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
     description: 'Some description',
   },
+  yes: {
+    id: 'ol.application:yes',
+    defaultMessage: 'Já',
+    description: 'Some description',
+  },
+  no: {
+    id: 'ol.application:yes',
+    defaultMessage: 'Nei',
+    description: 'Some description',
+  },
 })
