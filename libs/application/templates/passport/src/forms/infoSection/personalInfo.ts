@@ -9,6 +9,7 @@ import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { Passport, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
+import { removeCountryCode } from '../../utils/removeCountryCode'
 
 export const personalInfo = buildMultiField({
   id: 'personalInfo',
@@ -57,10 +58,14 @@ export const personalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
-      defaultValue: (application: Application) =>
-        (application.externalData.userProfile?.data as {
-          mobilePhoneNumber?: string
-        })?.mobilePhoneNumber ?? '',
+      defaultValue: (application: Application) => {
+        const phone =
+          (application.externalData.userProfile?.data as {
+            mobilePhoneNumber?: string
+          })?.mobilePhoneNumber ?? ''
+
+        return removeCountryCode(phone)
+      },
     }),
     buildDescriptionField({
       id: 'personalInfo.space',
