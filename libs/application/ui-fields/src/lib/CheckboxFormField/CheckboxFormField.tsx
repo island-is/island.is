@@ -59,7 +59,7 @@ export const CheckboxFormField: FC<Props> = ({
         />
       )}
 
-      <Box paddingTop={3}>
+      <Box paddingTop={2}>
         <CheckboxController
           id={id}
           disabled={disabled}
