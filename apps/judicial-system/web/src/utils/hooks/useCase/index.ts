@@ -158,7 +158,9 @@ const useCase = () => {
   const [
     updateCaseMutation,
     { loading: isUpdatingCase },
-  ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation)
+  ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation, {
+    fetchPolicy: 'no-cache',
+  })
   const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
