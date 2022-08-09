@@ -4,8 +4,8 @@ import {
   ApplicationContext,
   ExternalData,
 } from '@island.is/application/types'
-import { m } from '../messages'
-import { ConditionFn } from '../types'
+import { applicationForMessages, m } from '../messages'
+import { ApplicationInfoMessage, ConditionFn } from '../types'
 import { YES, DrivingLicenseFakeData } from '../constants'
 import {
   DrivingLicenseApplicationFor,
@@ -96,12 +96,47 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
   )
 }
 
-export const getFakeCurrentLicense = (currentLicense: string | undefined) => {
+export const getFakeCurrentLicense = (currentLicense?: string) => {
   if (currentLicense === 'temp') {
     return 'B'
   } else if (currentLicense === 'full') {
     return B_FULL
   } else {
     return null
+  }
+}
+export type ApplictionInfo = {
+  applicationFor: DrivingLicenseApplicationFor
+  currentM: ApplicationInfoMessage
+  nextM: ApplicationInfoMessage
+}
+export const getApplicationInfo = (
+  currentLicense?: CurrentLicenseProviderResult,
+): ApplictionInfo => {
+  const applicationFor = !currentLicense?.currentLicense
+    ? B_TEMP
+    : currentLicense?.currentLicense === 'B'
+    ? B_FULL
+    : B_RENEW
+
+  switch (applicationFor) {
+    case B_TEMP:
+      return {
+        applicationFor,
+        currentM: applicationForMessages.NONE,
+        nextM: applicationForMessages.B_TEMP,
+      }
+    case B_FULL:
+      return {
+        applicationFor,
+        currentM: applicationForMessages.B_TEMP,
+        nextM: applicationForMessages.B_FULL,
+      }
+    case B_RENEW:
+      return {
+        applicationFor,
+        currentM: applicationForMessages.B_FULL,
+        nextM: applicationForMessages.B_RENEW,
+      }
   }
 }

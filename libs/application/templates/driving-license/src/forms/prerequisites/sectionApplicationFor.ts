@@ -20,33 +20,8 @@ export const sectionApplicationFor = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: m.applicationDrivingLicenseTitle,
+      title: m.applicantRights,
       children: [
-        // buildDescriptionField({
-        //   id: 'dynamicApplicationTitle',
-        //   title: ({ externalData }) => {
-        //     const applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
-        //       externalData,
-        //       'currentLicense.data.applicationFor',
-        //     )
-        //     return applicationFor === B_TEMP
-        //       ? 'Tegund umsóknar: Bráðabirgðaskírteini'
-        //       : 'Tegund umsóknar: Fullnaðarskírteini'
-        //   },
-        //   marginBottom: 4,
-        // }),
-        buildKeyValueField({
-          label: 'Réttindi umsækjenda',
-          width: 'half',
-          value: ({ externalData }) =>
-            getValueViaPath<string | null>(
-              externalData,
-              'currentLicense.data.currentLicense',
-            ) === 'B'
-              ? 'Almenn ökuréttindi - B flokkur (fólksbifreið)'
-              : 'Engin',
-        }),
-        buildCustomField({title:'asdf', component: 'ContentCard', id:'for'}),
         buildCustomField({
           title: m.eligibilityRequirementTitle,
           component: 'EligibilitySummary',

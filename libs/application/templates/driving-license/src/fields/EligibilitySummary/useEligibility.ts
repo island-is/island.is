@@ -31,24 +31,20 @@ export interface UseEligibilityResult {
   loading: boolean
   applicationFor?: DrivingLicenseApplicationFor
 }
-
+interface UseEligibilityProps {
+  fakeData?: DrivingLicenseFakeData
+  applicationFor: DrivingLicenseApplicationFor
+  currentLicense?: CurrentLicenseProviderResult
+}
 export const useEligibility = ({
-  answers,
-  externalData,
-}: Application): UseEligibilityResult => {
-  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
+  fakeData,
+  applicationFor,
+  currentLicense,
+}: UseEligibilityProps): UseEligibilityResult => {
   const usingFakeData = fakeData?.useFakeData === YES
 
   const { setValue } = useFormContext()
-  const currentLicenseData = getValueViaPath<CurrentLicenseProviderResult>(
-    externalData,
-    'currentLicense.data',
-  )
-  const applicationFor = !currentLicenseData?.currentLicense
-    ? B_TEMP
-    : currentLicenseData?.currentLicense === 'B'
-    ? B_FULL
-    : B_RENEW
+
   useEffect(() => {
     setValue('applicationFor', applicationFor)
   }, [applicationFor, setValue])
@@ -65,7 +61,7 @@ export const useEligibility = ({
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(applicationFor, currentLicenseData?.expires),
+      eligibility: fakeEligibility(applicationFor, currentLicense?.expires),
       applicationFor,
     }
   }

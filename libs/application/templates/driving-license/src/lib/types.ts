@@ -1,4 +1,5 @@
-import { FormValue, ExternalData } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
 
 export type HasQualityPhotoData = {
   data: {
@@ -7,3 +8,9 @@ export type HasQualityPhotoData = {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+
+export type ApplicationInfoMessage = {
+  title: MessageDescriptor
+  rightsDescription?: MessageDescriptor
+  applicationDescription?: MessageDescriptor
+}
