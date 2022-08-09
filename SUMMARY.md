@@ -127,7 +127,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-  - [API Domains Electronic Registrations](libs/api/domains/electronic-registrations/README.md)
+    - [Clients Electronic Registrations](libs/api/domains/electronic-registrations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
