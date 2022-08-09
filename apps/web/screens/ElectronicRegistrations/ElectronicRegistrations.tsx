@@ -48,7 +48,7 @@ ElectronicRegistrations.getInitialProps = async ({ apolloClient }) => {
       query: GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY,
       variables: {
         input: {
-          dateFrom: setMonth(new Date(), 0),
+          dateFrom: new Date(2022, 0, 1),
           dateTo: new Date(),
         },
       },
