@@ -36,12 +36,6 @@ export const sectionApplicationFor = buildSubSection({
         //   marginBottom: 4,
         // }),
         buildKeyValueField({
-          label: m.overviewName,
-          width: 'half',
-          value: ({ externalData: { nationalRegistry } }) =>
-            (nationalRegistry.data as NationalRegistryUser).fullName,
-        }),
-        buildKeyValueField({
           label: 'Réttindi umsækjenda',
           width: 'half',
           value: ({ externalData }) =>
@@ -52,6 +46,7 @@ export const sectionApplicationFor = buildSubSection({
               ? 'Almenn ökuréttindi - B flokkur (fólksbifreið)'
               : 'Engin',
         }),
+        buildCustomField({title:'asdf', component: 'ContentCard', id:'for'}),
         buildCustomField({
           title: m.eligibilityRequirementTitle,
           component: 'EligibilitySummary',

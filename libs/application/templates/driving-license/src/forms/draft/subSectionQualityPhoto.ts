@@ -50,12 +50,17 @@ export const subSectionQualityPhoto = buildSubSection({
             { value: YES, label: m.qualityPhotoAcknowledgement },
           ],
         }),
-        buildCustomField({
-          id: 'photdesc',
-          title: '',
-          component: 'Bullets',
-          condition: (answers) => hasYes(answers.willBringQualityPhoto),
-        }),
+        buildCustomField(
+          {
+            id: 'photdesc',
+            title: '',
+            component: 'Bullets',
+            condition: (answers) => hasYes(answers.willBringQualityPhoto),
+          },
+          {
+            textArray: qualityPhotoBullets,
+          },
+        ),
       ],
     }),
     buildMultiField({
