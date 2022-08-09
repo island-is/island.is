@@ -17,11 +17,16 @@ export const DelegationModal = ({ onClose, closeModal }: Props) => {
   return (
     <Modal id="notifyDelegationModal" toggleClose={closeModal}>
       <GridRow align="flexStart" alignItems="flexStart">
-        <GridColumn span={['7/8', '3/8']}>
+        <GridColumn span={['7/8', '5/8']}>
           <Text variant="h4" as="h2" marginBottom={1}>
-            Kæri Forráðamaður
+            Kæri forráðamaður, fara skal með gát um einkamál barnsins
           </Text>
-          <Text>Skv barnasáttmála etc...</Text>
+          <Text>
+            16. gr. <br /> Öll börn eiga rétt á einkalífi. Lögin eiga að vernda
+            einkalíf barna, fjölskyldur og heimili. Börn eiga líka rétt á því að
+            samskipti þeirra við aðra, orðspor þeirra og fjölskyldna þeirra sé
+            verndað með lögum.
+          </Text>
         </GridColumn>
         <GridColumn span={['2/8', '3/8']}>
           <Hidden below="sm">
