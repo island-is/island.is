@@ -1,1 +1,2 @@
-export * from './lib/api-domains-electronic-registrations'
+export * from './lib/electronicRegistrations.module'
+export * from './lib/electronicRegistrations.resolver'

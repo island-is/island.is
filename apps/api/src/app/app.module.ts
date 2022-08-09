@@ -27,8 +27,9 @@ import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
-import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registrations'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registrations'
+import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registrations'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
@@ -197,6 +198,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    ElectronicRegistrationsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,

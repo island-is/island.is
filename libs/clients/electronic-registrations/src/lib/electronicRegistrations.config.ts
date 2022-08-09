@@ -6,7 +6,6 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int(),
   }),
-  apiKey: z.string(),
 })
 
 export const ElectronicRegistrationsClientConfig = defineConfig({

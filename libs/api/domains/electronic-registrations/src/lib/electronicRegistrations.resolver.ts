@@ -1,23 +1,23 @@
 import { ElectronicRegistrationsClientService } from '@island.is/clients/electronic-registrations'
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GetBrokwnDownRegistrationStatisticsInput } from './dto/getBrokenDownRegistrationStatistics.input'
+import { GetBrokenDownElectronicRegistrationStatisticsInput } from './dto/getBrokenDownElectronicRegistrationStatistics.input'
 import { BrokenDownRegistrationStatistic } from './models/brokenDownRegistrationStatistic'
 
-const cacheTime = process.env.CACHE_TIME || 300
+const cacheTime = process.env.ELECTRONIC_REGISTRATIONS_CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
 @Resolver()
-export class HeilbrigdisstofnunNordurlandsResolver {
+export class ElectronicRegistrationsResolver {
   constructor(
-    private readonly heilbrigdisstofnunNordurlandsClientService: ElectronicRegistrationsClientService,
+    private readonly electronicRegistrationsClientService: ElectronicRegistrationsClientService,
   ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => [BrokenDownRegistrationStatistic])
-  getBrokenDownRegistrationStatistics(
-    @Args('input') input: GetBrokwnDownRegistrationStatisticsInput,
+  getBrokenDownElectronicRegistrationStatistics(
+    @Args('input') input: GetBrokenDownElectronicRegistrationStatisticsInput,
   ) {
-    return this.heilbrigdisstofnunNordurlandsClientService.getBrokenDownRegistrationStatistics(
+    return this.electronicRegistrationsClientService.getBrokenDownElectronicRegistrationStatistics(
       input,
     )
   }
