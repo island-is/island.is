@@ -31,7 +31,7 @@ import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const path = window.location.origin
-// Have to check if localhost because the application system is hosted in different port.
+// Have to check if localhost because the application system is hosted in different port locally.
 // Otherwise continue with existing router path.
 const baseUrlForm = isLocalhost
   ? 'http://localhost:4242/umsoknir'
