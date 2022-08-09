@@ -11,28 +11,31 @@ const baseUrl = Cypress.config().baseUrl
 const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
 const applications: Application[] = []
 
-describe('P-sign', () => {
+describe('P-sign', function() {
+  /*
   before(() => {
     // Disable all translations
     // Note: this intercept is causing issues in the front-end throwing errors,
     // so I've disabled it for now.
     //cy.intercept(`${Cypress.env('apiUrl')}/graphql?op=GetTranslations`, {getTranslations: {}})
   })
+  */
   beforeEach(() => {
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
       url: '/',
     })
-    cy.visit('/umsoknir/p-merki')
-    cy.get('form').should('exist')
-    cy.pathUuid().as('firstApplication')
+    cy.visit('/')
+    cy.wait('@started')
   })
 
-  it.only('should be able to create application', function () {
+  it('should be able to create application', () => {
+    cy.visit('/')
+    cy.wait('@started')
     cy.pathUuid()
       .should('match', uuidRegex.v4)
       .then(function (uuid) {
-        cy.wrap(uuid).should('eq', this.firstApplication)
+        cy.wrap(uuid).should('eq', this.firstApplicationId)
       })
     cy.get('input[name="approveExternalData"]').click()
     cy.get('button[type="submit"]').click()
@@ -41,7 +44,7 @@ describe('P-sign', () => {
   })
 
   it('should be error for invalid email', () => {
-    cy.get('button[name="approveExternalData"]').click()
+    cy.get('input[name="approveExternalData"]').click()
     cy.get('button[type="submit"]').click()
     // cy.intercept(userprofile), return default email & phonenumber
     // Edit email, with invalid, missing etc.
@@ -52,7 +55,6 @@ describe('P-sign', () => {
 
   it.skip('should have application in db', () => {
     cy.pathUuid().then((applicationId) => {
-      const applicationQuery = getApplicationQuery(applicationId)
       cy.gqlRequest(getApplicationQuery(applicationId)).its('body').as('body')
 
       // Debug errors, if any
