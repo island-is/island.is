@@ -33,7 +33,7 @@ export class ElectronicRegistrationsClientService {
     )
   }
 
-  async getBrokenDownRegistrationStatistics(
+  async getBrokenDownElectronicRegistrationStatistics(
     filter: FaSundurlidadaThinglysingarTolfraediAsyncRequest,
   ) {
     const api = await this.createApi()

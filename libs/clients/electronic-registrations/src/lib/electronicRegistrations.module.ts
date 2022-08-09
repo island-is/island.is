@@ -5,4 +5,4 @@ import { ElectronicRegistrationsClientService } from './electronicRegistrations.
   providers: [ElectronicRegistrationsClientService],
   exports: [ElectronicRegistrationsClientService],
 })
-export class ElectronicRegistrationsModule {}
+export class ElectronicRegistrationsClientModule {}

@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 class RegistrationTypeStatistic {
   @Field()
-  registrationType?: string | null
+  registrationType?: string
 
   @Field()
   totalRegistrationsOfType?: number

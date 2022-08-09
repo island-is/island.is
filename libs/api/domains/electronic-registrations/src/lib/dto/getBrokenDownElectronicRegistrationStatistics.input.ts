@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetBrokwnDownRegistrationStatisticsInput {
+export class GetBrokenDownElectronicRegistrationStatisticsInput {
   @Field(() => Date)
   dateFrom?: Date
   @Field(() => Date)
