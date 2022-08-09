@@ -25,6 +25,7 @@ export const getTemplate = (input: TellUsAStoryInput): SendMailOptions => ({
     Date: ${input.dateOfStory}
     Title: ${input.subject}
     Story: ${input.message}
+
     Name: ${input.name}
     Email: ${input.email}
     Is publication allowed? ${input.publicationAllowed ? 'Yes' : 'No'}
