@@ -8,7 +8,6 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  NotificationType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { Box, Text, toast } from '@island.is/island-ui/core'
@@ -124,7 +123,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { transitionCase, sendNotification } = useCase()
+  const { transitionCase } = useCase()
 
   const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
     RulingSignatureConfirmationQuery,
@@ -141,7 +140,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const commitDecision = useCallback(
     async (decision: CaseDecision | undefined) => {
-      const transitioned = await transitionCase(
+      await transitionCase(
         workingCase,
         decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
@@ -150,14 +149,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
           : CaseTransition.ACCEPT,
         setWorkingCase,
       )
-
-      if (transitioned) {
-        sendNotification(workingCase.id, NotificationType.RULING)
-      } else {
-        // TODO: handle error
-      }
     },
-    [transitionCase, workingCase, setWorkingCase, sendNotification],
+    [transitionCase, workingCase, setWorkingCase],
   )
 
   useEffect(() => {

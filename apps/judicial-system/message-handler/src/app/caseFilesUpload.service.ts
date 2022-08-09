@@ -20,7 +20,7 @@ export class CaseFilesUploadService {
   private async uploadRemainingCaseFilesToCourt(
     caseId: string,
     caseFiles: CaseFile[],
-  ) {
+  ): Promise<void> {
     for (const caseFile of caseFiles?.filter(
       (caseFile) => caseFile.state === CaseFileState.STORED_IN_RVG,
     ) ?? []) {
@@ -60,7 +60,7 @@ export class CaseFilesUploadService {
     }
   }
 
-  async uploadCaseFilesToCourt(caseId: string) {
+  async uploadCaseFilesToCourt(caseId: string): Promise<void> {
     logger.debug(`Uploading files of case ${caseId} to court`)
 
     return fetch(

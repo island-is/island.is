@@ -415,8 +415,14 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for ready for court notifications',
+      )
+    }
+
     // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
       where: {
@@ -669,9 +675,15 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
     eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for court date notifications',
+      )
+    }
+
     this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
 
     if (eventOnly) {
@@ -816,8 +828,14 @@ export class NotificationService {
 
   private async sendModifiedNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for modified notifications',
+      )
+    }
+
     const subject = this.formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
@@ -1056,7 +1074,7 @@ export class NotificationService {
   async sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 

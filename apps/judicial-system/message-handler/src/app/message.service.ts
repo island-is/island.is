@@ -10,33 +10,42 @@ import type {
 } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from './app.config'
+import { RulingNotificationService } from './rulingNotification.service'
 import { CaseFilesUploadService } from './caseFilesUpload.service'
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectWorker(appModuleConfig().sqsQueueName) private worker: WorkerService,
+    private readonly rulingNotificationService: RulingNotificationService,
     private readonly caseFilesUploadService: CaseFilesUploadService,
   ) {}
 
-  private async handleCaseCompletedMessage(message: CaseCompletedMessage) {
-    await this.caseFilesUploadService.uploadCaseFilesToCourt(message.caseId)
+  private async handleCaseCompletedMessage(
+    message: CaseCompletedMessage,
+  ): Promise<void> {
+    await Promise.all([
+      this.rulingNotificationService.sendRulingNotification(message.caseId),
+      this.caseFilesUploadService.uploadCaseFilesToCourt(message.caseId),
+    ])
   }
 
-  async run() {
+  async run(): Promise<void> {
     logger.info('Initiating message handler')
 
-    await this.worker.run(async (message: Message) => {
-      logger.debug('Handling message', message)
+    await this.worker.run(
+      async (message: Message): Promise<void> => {
+        logger.debug('Handling message', message)
 
-      switch (message.type) {
-        case MessageType.CASE_COMPLETED:
-          return this.handleCaseCompletedMessage(
-            message as CaseCompletedMessage,
-          )
-        default:
-          logger.error('Unknown message type', message)
-      }
-    })
+        switch (message.type) {
+          case MessageType.CASE_COMPLETED:
+            return this.handleCaseCompletedMessage(
+              message as CaseCompletedMessage,
+            )
+          default:
+            logger.error('Unknown message type', message)
+        }
+      },
+    )
   }
 }

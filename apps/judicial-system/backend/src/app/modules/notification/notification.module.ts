@@ -10,6 +10,7 @@ import { CaseModule, UserModule, CourtModule, EventModule } from '../index'
 import { Notification } from './models/notification.model'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
+import { InternalNotificationController } from './internalNotification.controller'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { NotificationController } from './notification.controller'
     forwardRef(() => EventModule),
     SequelizeModule.forFeature([Notification]),
   ],
-  controllers: [NotificationController],
+  controllers: [NotificationController, InternalNotificationController],
   providers: [NotificationService],
 })
 export class NotificationModule {}
