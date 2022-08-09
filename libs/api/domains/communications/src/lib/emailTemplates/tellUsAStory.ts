@@ -5,8 +5,8 @@ import { environment } from '../environments/environment'
 
 export const getTemplate = (input: TellUsAStoryInput): SendMailOptions => ({
   from: {
-    name: 'Island.is communications',
-    address: environment.emailOptions.sendFrom!,
+    name: input.name,
+    address: input.email,
   },
   replyTo: {
     name: input.name,
