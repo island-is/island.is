@@ -2,7 +2,10 @@ import { ApolloError } from 'apollo-client'
 import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 
-import { NationalRegistryChild } from '@island.is/api/schema'
+import {
+  NationalRegistryChild,
+  NationalRegistryChildGuardianship,
+} from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -40,6 +43,7 @@ interface Props {
   loading?: boolean
   isChild?: boolean
   hasDetails?: boolean
+  guardianship?: NationalRegistryChildGuardianship | null
 }
 
 const ChildView: FC<Props> = ({
@@ -49,6 +53,7 @@ const ChildView: FC<Props> = ({
   person,
   isChild,
   hasDetails,
+  guardianship,
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()

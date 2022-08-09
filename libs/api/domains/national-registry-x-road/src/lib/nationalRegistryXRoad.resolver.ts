@@ -23,6 +23,8 @@ import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { NationalRegistryChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
+import { GetChildGuardianshipInput } from '../dto/nationalRegistryChildGuardianshipInput'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -81,6 +83,32 @@ export class NationalRegistryXRoadResolver {
     return await this.nationalRegistryXRoadService.getSpouse(
       user,
       person.nationalId,
+    )
+  }
+  @Query(() => [NationalRegistryFamilyMemberInfo], {
+    name: 'nationalRegistryUserV2Family',
+    nullable: true,
+  })
+  @Audit()
+  async nationalRegistryFamily(
+    @Context('req') { user }: { user: User },
+    @Args('nationalId') nationalId: string,
+  ): Promise<NationalRegistryFamilyMemberInfo[] | null> {
+    return this.nationalRegistryXRoadService.getFamily(user, nationalId)
+  }
+
+  @Query(() => NationalRegistryChildGuardianship, {
+    name: 'nationalRegistryUserV2ChildGuardianship',
+    nullable: true,
+  })
+  @Audit()
+  async nationalRegistryChildGuardianship(
+    @Context('req') { user }: { user: User },
+    @Args('input') input: GetChildGuardianshipInput,
+  ): Promise<NationalRegistryChildGuardianship | undefined> {
+    return this.nationalRegistryXRoadService.getNationalRegistryChildGuardianship(
+      user,
+      input.childNationalId,
     )
   }
 }

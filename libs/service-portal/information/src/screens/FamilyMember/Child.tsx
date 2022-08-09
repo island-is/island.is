@@ -6,6 +6,7 @@ import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import ChildView from '../../components/ChildView/ChildView'
 
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
+import { NATIONAL_REGISTRY_CHILD_GUARDIANSHIP } from '../../lib/queries/getNationalChildGuardianship'
 
 const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalId }: { nationalId: string | undefined } = useParams()
@@ -18,6 +19,16 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const isChild = nationalId === userInfo.profile.nationalId
 
+  const { data: guardianshipData } = useQuery<Query>(
+    NATIONAL_REGISTRY_CHILD_GUARDIANSHIP,
+    {
+      variables: { input: { childNationalId: nationalId } },
+    },
+  )
+
+  const { nationalRegistryUserV2ChildGuardianship: guardianship } =
+    guardianshipData || {}
+
   return (
     <ChildView
       nationalId={nationalId}
@@ -25,6 +36,7 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
       loading={loading}
       person={person}
       isChild={isChild}
+      guardianship={guardianship}
       hasDetails
     />
   )

@@ -10,6 +10,7 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { NationalRegistryChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -57,6 +58,24 @@ export class NationalRegistryXRoadService {
       country: heimili.landakodi,
       dateOfChange: heimili.breytt,
     }))
+  }
+
+  async getNationalRegistryChildGuardianship(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryChildGuardianship | undefined> {
+    const residenceParent = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetBusetuForeldri({ barn: nationalId })
+      .catch(this.handle400)
+    const domicileParent = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetLogheimilisForeldri({ barn: nationalId })
+      .catch(this.handle400)
+
+    return {
+      nationalId,
+      legalDomicileParent: domicileParent,
+      residenceParent: residenceParent,
+    }
   }
 
   async getNationalRegistryPerson(
