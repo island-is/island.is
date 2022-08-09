@@ -31,7 +31,11 @@ import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const path = window.location.origin
-const baseUrlForm = isLocalhost ? 'http://localhost:4242/umsoknir' : path
+// Have to check if localhost because the application system is hosted in different port.
+// Otherwise continue with existing router path.
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : `${path}/umsoknir`
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
