@@ -1,53 +1,56 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import addMonths from 'date-fns/addMonths'
+import differenceInYears from 'date-fns/differenceInYears'
+import format from 'date-fns/format'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isWithinInterval from 'date-fns/isWithinInterval'
+import isEqual from 'lodash/isEqual'
+import orderBy from 'lodash/orderBy'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+
+import { gql, useQuery } from '@apollo/client'
+import { Document, Query } from '@island.is/api/schema'
 import {
-  Text,
+  Accordion,
+  AccordionItem,
   Box,
-  Stack,
-  Columns,
-  Column,
   Button,
-  Pagination,
-  DatePicker,
-  GridRow,
-  GridColumn,
-  LoadingDots,
-  Hidden,
   Checkbox,
+  DatePicker,
   Filter,
   FilterInput,
   FilterMultiChoice,
-  AccordionItem,
-  Accordion,
+  GridColumn,
+  GridRow,
+  Hidden,
+  LoadingDots,
+  Pagination,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
-import {
-  useScrollToRefOnUpdate,
-  AccessDeniedLegal,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
-import { Document, Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import { m } from '@island.is/service-portal/core'
-import { messages } from '../../utils/messages'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
-import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
-import isEqual from 'lodash/isEqual'
-import isWithinInterval from 'date-fns/isWithinInterval'
-import addMonths from 'date-fns/addMonths'
-import format from 'date-fns/format'
+import {
+  AccessDeniedLegal,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+  useScrollToRefOnUpdate,
+} from '@island.is/service-portal/core'
+import {
+  GET_ORGANIZATIONS_QUERY,
+  useListDocuments,
+} from '@island.is/service-portal/graphql'
 import { dateFormat } from '@island.is/shared/constants'
-import orderBy from 'lodash/orderBy'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import * as Sentry from '@sentry/react'
-import * as styles from './Overview.css'
+
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import FilterTag from '../../components/FilterTag/FilterTag'
-import differenceInYears from 'date-fns/differenceInYears'
+import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
+import { messages } from '../../utils/messages'
+import * as styles from './Overview.css'
 
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
@@ -326,16 +329,9 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
+      <IntroHeader title={messages.title} intro={messages.intro} />
       <Stack space={3}>
-        <Text variant="h3" as="h1">
-          {formatMessage(messages.title)}
-        </Text>
-        <Columns collapseBelow="sm">
-          <Column width="7/12">
-            <Text variant="default">{formatMessage(messages.intro)}</Text>
-          </Column>
-        </Columns>
-        <Box marginTop={[1, 1, 2, 2, 6]}>
+        <Box marginTop={[1, 1, 2, 2]}>
           <Filter
             resultCount={0}
             variant="popover"
