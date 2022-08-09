@@ -8,15 +8,15 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
-import { ReferenceTemplateService } from './reference-template.service'
+import { DrivingLearnersPermitService } from './driving-learners-permit.service'
 
-export class ReferenceTemplateModule {
+export class DrivingLearnersPermitModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: ReferenceTemplateModule,
+      module: DrivingLearnersPermitModule,
       imports: [SharedTemplateAPIModule.register(config)],
-      providers: [ReferenceTemplateService],
-      exports: [ReferenceTemplateService],
+      providers: [DrivingLearnersPermitService],
+      exports: [DrivingLearnersPermitService],
     }
   }
 }
