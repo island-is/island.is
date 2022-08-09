@@ -71,10 +71,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const emptyData = data === null
   return (
     <>
-      <IntroHeader
-        title={userInfo.profile.name}
-        intro={mCompany.subtitle}
-      />
+      <IntroHeader title={userInfo.profile.name} intro={mCompany.subtitle} />
       {emptyData && <EmptyState />}
       {!emptyData && (
         <Stack space={2}>

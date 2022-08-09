@@ -44,10 +44,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryFamily } = famData || {}
   return (
     <>
-      <IntroHeader
-        title={userInfo.profile.name}
-        intro={spmm.userInfoDesc}
-      />
+      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
