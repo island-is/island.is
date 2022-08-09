@@ -14,6 +14,7 @@ import { ApiActions, FakeDataFeature } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
+import { truthyFeatureFromClient } from '../shared/utils'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -57,19 +58,15 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async ({
-                featureFlagClient,
-              }: {
-                featureFlagClient: FeatureFlagClient
-              }) => {
+              formLoader: async ({ featureFlagClient }) => {
                 const getForm = await import('../forms/Prerequisites').then(
                   (val) => val.getForm,
                 )
 
-                const allowFakeData = !!(await featureFlagClient.getValue(
+                const allowFakeData = await truthyFeatureFromClient(
+                  featureFlagClient as FeatureFlagClient,
                   FakeDataFeature.allowFake,
-                  false,
-                ))
+                )
 
                 return getForm({
                   allowFakeData,
