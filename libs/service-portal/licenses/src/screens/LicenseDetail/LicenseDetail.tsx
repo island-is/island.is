@@ -184,7 +184,7 @@ const DataFields = ({
   )
 }
 
-const LicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
+const LicenseDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()

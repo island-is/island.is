@@ -63,17 +63,17 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '5. Ríkisfang: ',
+      label: '5. Ríkisfang',
       value: parsedResponse.rikisfang ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '7. Útgefandi. ',
-      value: 'Vinnueftirliti ríkisins',
+      label: '7. Útgefandi',
+      value: 'Vinnueftirlitið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '8. Gildir til/Valid to',
+      label: '8. Gildir til',
       value: parsedResponse.gildirTil ?? '',
     },
   ]
