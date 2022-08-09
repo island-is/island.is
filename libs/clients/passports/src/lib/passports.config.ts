@@ -21,7 +21,7 @@ export const PassportsClientConfig = defineConfig<z.infer<typeof schema>>({
       ),
       fetch: {
         timeout: 10000,
-        scope: [NationalRegistryScope.individuals],
+        scope: [NationalRegistryScope.passport],
       },
     }
   },

@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 ### Generate the client:
 
 ```sh
-yarn nx run clients-driving-license:schemas/external-openapi-generator
+yarn nx run clients-passports:schemas/external-openapi-generator
 ```
 
 ### Usage
@@ -15,6 +15,8 @@ yarn nx run clients-driving-license:schemas/external-openapi-generator
 - Import the `PassportsClientModule` within the service of choice.
 
 ```
+import { PassportsClientModule } from '@island.is/clients/passports'
+
 @Module({
     ...,
         imports: [PassportsClientModule],
@@ -33,6 +35,8 @@ constructor(
 - Use with auth middleware
 
 ```
+import { IdentityDocumentApi } from '@island.is/clients/passports'
+
   private getPassportsWithAuth(auth: Auth) {
     return this.passportsApi.withMiddleware(new AuthMiddleware(auth))
   }
