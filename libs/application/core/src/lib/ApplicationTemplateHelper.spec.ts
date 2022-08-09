@@ -58,6 +58,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
     }),
     externalReviewAccepted: z.boolean(),
     wantsInsurance: z.boolean(),
+    wantsCake: z.boolean(),
   }),
   stateMachineConfig: {
     initial: 'draft',
@@ -134,6 +135,27 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
           ],
         },
       },
+      closed: {
+        meta: {
+          name: 'Closed',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              write: {
+                answers: ['person'],
+                externalData: ['salary'],
+              },
+            },
+            {
+              id: 'reviewer',
+              write: {
+                answers: ['wantsCake'],
+              },
+            },
+          ],
+        },
+      },
     },
   },
 })
@@ -201,6 +223,7 @@ describe('ApplicationTemplate', () => {
       },
       externalReviewAccepted: false,
       wantsInsurance: true,
+      wantsCake: false,
     }
     const externalData: ExternalData = {
       salary: { data: 1000000, date: new Date(), status: 'success' },
@@ -238,6 +261,22 @@ describe('ApplicationTemplate', () => {
           date: externalData.salary.date,
           status: 'success',
         },
+      })
+    })
+
+    it('should return true', () => {
+      const applicationWithAnswersAndExternalData = createMockApplication({
+        state: 'closed',
+        answers,
+        externalData,
+      })
+      const helper = new ApplicationTemplateHelper(
+        applicationWithAnswersAndExternalData,
+        testApplicationTemplate,
+      )
+      expect(helper.getWritableAnswersAndExternalData('applicant')).toEqual({
+        answers: ['person'],
+        externalData: ['salary'],
       })
     })
 
@@ -308,7 +347,7 @@ describe('ApplicationTemplate', () => {
       application,
       testApplicationTemplate,
     )
-    it('should return the corrent progress for each state', () => {
+    it('should return the correct progress for each state', () => {
       expect(templateHelper.getApplicationProgress('draft')).toBe(0.33)
       expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
       expect(templateHelper.getApplicationProgress('approved')).toBe(1)
