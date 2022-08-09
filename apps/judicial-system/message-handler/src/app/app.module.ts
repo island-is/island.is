@@ -4,7 +4,8 @@ import { ConfigModule } from '@island.is/nest/config'
 import { QueueModule } from '@island.is/message-queue'
 
 import { HealthController } from './health.controller'
-import { AppService } from './app.service'
+import { MessageService } from './message.service'
+import { CaseFilesUploadService } from './caseFilesUpload.service'
 import { appModuleConfig } from './app.config'
 
 const config = appModuleConfig()
@@ -26,6 +27,6 @@ const config = appModuleConfig()
     }),
   ],
   controllers: [HealthController],
-  providers: [AppService],
+  providers: [CaseFilesUploadService, MessageService],
 })
 export class AppModule {}
