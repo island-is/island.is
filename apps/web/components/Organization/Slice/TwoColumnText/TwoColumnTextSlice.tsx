@@ -23,7 +23,7 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }
     : {}
   return (
-    <section key={slice.id} aria-labelledby={labelId}>
+    <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
       <GridContainer>
         <Box {...boxProps}>
           <GridRow>

@@ -24,7 +24,11 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     : {}
 
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box {...boxProps}>
           <Text

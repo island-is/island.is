@@ -1147,6 +1147,29 @@
       },
       "tags": []
     },
+    "api-domains-mailchimp": {
+      "root": "libs/api/domains/mailchimp",
+      "sourceRoot": "libs/api/domains/mailchimp/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/mailchimp/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/mailchimp"],
+          "options": {
+            "jestConfig": "libs/api/domains/mailchimp/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "api-domains-mortgage-certificate": {
       "root": "libs/api/domains/mortgage-certificate",
       "sourceRoot": "libs/api/domains/mortgage-certificate/src",
@@ -1597,6 +1620,11 @@
                 "glob": "*",
                 "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
                 "output": "./driving-license-assets"
+              },
+              {
+                "glob": "*",
+                "input": "libs/application/template-api-modules/src/lib/modules/templates/passport/emailGenerators/assets",
+                "output": "./passport-assets"
               }
             ],
             "webpackConfig": "apps/application-system/api/webpack.config.js",
@@ -2625,6 +2653,27 @@
         }
       },
       "tags": []
+    },
+    "application-templates-operating-license": {
+      "root": "libs/application/templates/operating-license",
+      "sourceRoot": "libs/application/templates/operating-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/operating-license/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/operating-license/src/lib/messages.ts"
+          }
+        }
+      }
     },
     "application-templates-p-sign": {
       "root": "libs/application/templates/p-sign",
@@ -6966,7 +7015,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens,utils,widgets}/**/*.{js,ts,tsx}'"
           }
         }
       },
