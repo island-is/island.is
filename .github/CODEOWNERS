@@ -69,6 +69,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/passport                           @island-is/juni
 /libs/application/templates/passport/                                                               @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
+/libs/application/templates/operating-license/                                                      @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
