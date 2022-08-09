@@ -26,6 +26,7 @@ import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registrations'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -262,6 +263,7 @@ const autoSchemaFile = environment.production
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
+        ElectronicRegistrationsClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
         MunicipalitiesFinancialAidConfig,
