@@ -125,6 +125,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+  - [API Domains Electronic Registrations](libs/api/domains/electronic-registrations/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -161,6 +162,7 @@
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
   - [Driving License](libs/clients/driving-license-book/README.md)
+  - [Clients Electronic Registrations](libs/clients/electronic-registrations/README.md)
   - [Finance](libs/clients/finance/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
