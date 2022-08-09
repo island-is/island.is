@@ -42,4 +42,5 @@ export const institutionMapper = {
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]:
     InstitutionTypes.RIKISENDURSKODUN,
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.OPERATING_LCENSE]: InstitutionTypes.SYSLUMENN,
 }
