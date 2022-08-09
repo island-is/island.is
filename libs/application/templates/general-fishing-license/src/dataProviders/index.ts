@@ -1,7 +1,5 @@
-import {
-  ApplicationTemplateAPIAction,
-  SharedDataProviders,
-} from '@island.is/application/core'
+import { SharedDataProviders } from '@island.is/application/core'
+import { ApplicationTemplateAPIAction } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 
 export { SharedDataProviders } from '@island.is/application/core'

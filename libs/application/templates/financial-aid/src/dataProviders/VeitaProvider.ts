@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { CurrentApplication, DataProviderTypes } from '../lib/types'
 
 export class VeitaProvider extends BasicDataProvider {

@@ -10,12 +10,14 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  SharedDataProviders,
+} from '@island.is/application/core'
+import {
   DefaultEvents,
   Form,
   FormModes,
   FormValue,
-  SharedDataProviders,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,

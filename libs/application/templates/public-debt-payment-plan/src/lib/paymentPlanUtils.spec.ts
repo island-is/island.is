@@ -1,10 +1,10 @@
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
   ExternalData,
   FormValue,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { prerequisitesFailed } from './paymentPlanUtils'
 
 function buildApplication(data?: {
@@ -21,6 +21,7 @@ function buildApplication(data?: {
     typeId: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
     created: new Date(),
     modified: new Date(),
+    applicantActors: [],
     attachments: {},
     answers,
     state,

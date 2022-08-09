@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
-import { UserProfile, UserProfileApi } from '@island.is/clients/user-profile'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { logger } from '@island.is/logging'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
@@ -15,7 +13,6 @@ export const MAX_OUT_OF_DATE_MONTHS = 6
 @Injectable()
 export class UserProfileService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly userProfileApi: UserProfileApi,
     private readonly islyklarApi: IslyklarApi,
   ) {}

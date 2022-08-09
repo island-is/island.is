@@ -109,7 +109,7 @@ export const UserDropdown = ({
                 <Icon icon="business" type="filled" color="blue400" />
               </Box>
             ) : (
-              <UserAvatar username={isDelegation ? actorName : userName} />
+              <UserAvatar username={userName} />
             )}
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">

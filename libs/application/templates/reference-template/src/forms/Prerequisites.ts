@@ -1,20 +1,16 @@
 import get from 'lodash/get'
 import {
-  Application,
   buildForm,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
-  SharedDataProviders,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { ReferenceApplicationDataProviders } from '../shared'
-
+import { ReferenceApplicationDataProviders } from '../dataProviders'
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Skilyrði',
@@ -30,13 +26,14 @@ export const Prerequisites: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'approveDataProvider',
-              provider: SharedDataProviders.userProfileProvider,
+              provider: ReferenceApplicationDataProviders.userProfileProvider,
               title: 'getAnotherReferenceData',
               subTitle: 'Another Refernence Data',
             }),
             buildDataProviderItem({
               id: 'approveDataProvider1',
-              provider: SharedDataProviders.familyRelationsProvider,
+              provider:
+                ReferenceApplicationDataProviders.familyRelationsProvider,
               title: 'Upplýsingar um fjölskyldumeðlimi',
               subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),
@@ -48,7 +45,8 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'approveDataProvider3',
-              provider: SharedDataProviders.nationalRegistryProvider,
+              provider:
+                ReferenceApplicationDataProviders.nationalRegistryProvider,
               title: 'Þjóðskrá',
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),

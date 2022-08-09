@@ -24,7 +24,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'sp.applications:search.placeholder',
-    defaultMessage: 'Leita af umsókn',
+    defaultMessage: 'Leita að umsókn',
     description: 'Placeholder for application search box',
   },
   searchInstitutiontLabel: {

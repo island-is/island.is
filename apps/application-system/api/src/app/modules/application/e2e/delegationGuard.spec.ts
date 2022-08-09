@@ -4,7 +4,7 @@ import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
-import { ApplicationTypes } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/application/types'
 import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 

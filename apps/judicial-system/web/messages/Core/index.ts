@@ -157,17 +157,6 @@ export const core = defineMessages({
       '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
     description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
-  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
-  pastCustody: {
-    id: 'judicial.system.core:past_custody',
-    defaultMessage: 'Fyrri gæsla',
-    description: 'Notað fyrir orðið Fyrri gæsla í öllum flæðum.',
-  },
-  pastTravelBan: {
-    id: 'judicial.system.core:past_travel_ban',
-    defaultMessage: 'Fyrra farbann',
-    description: 'Notað fyrir orðið Fyrra farbann í öllum flæðum.',
-  },
   arrestDate: {
     id: 'judicial.system.core:arrest_date',
     defaultMessage: 'Tími handtöku',
@@ -220,5 +209,10 @@ export const core = defineMessages({
     id: 'judicial.system.core:defender',
     defaultMessage: 'lögmaður',
     description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
+  },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
   },
 })

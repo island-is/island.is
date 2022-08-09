@@ -1,27 +1,31 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+  SharedDataProviders,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  SharedDataProviders,
   PerformActionResult,
   NationalRegistryUser,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
 
 import { ProblemType } from '@island.is/shared/problem'
-import { ApiActions, ReferenceApplicationDataProviders } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
+import { ApiActions } from '../shared'
+import { ReferenceApplicationDataProviders } from '../dataProviders'
+
 const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -118,45 +122,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                {
-                  ...SharedDataProviders.userProfileProvider,
-                  useMockData: true,
-                },
-                {
-                  ...SharedDataProviders.familyRelationsProvider,
-                },
-                {
-                  ...SharedDataProviders.nationalRegistryProvider,
-                  useMockData: (application: Application) => {
-                    return false
-                  },
-                  errorReasonHandler: (data: PerformActionResult) => {
-                    if (data.success) {
-                      const s = data.response as NationalRegistryUser
-
-                      if (s.age < 18) {
-                        return {
-                          reason: {
-                            summary:
-                              'Þú hefur ekki náð 18 ára aldri. Vinsamlegast hinkrið í nokkur ár.',
-                            title: 'Þessi umsókn er ekki við hæfi ungra barna',
-                          },
-                          problemType: ProblemType.VALIDATION_FAILED,
-                          statusCode: 400,
-                        }
-                      }
-                    }
-                  },
-                  order: 3,
-                },
-                {
-                  ...ReferenceApplicationDataProviders.referenceProvider,
-                  order: 1,
-                },
-                {
-                  ...ReferenceApplicationDataProviders.anotherReferenceProvider,
-                  useMockData: true,
-                },
+                ReferenceApplicationDataProviders.anotherReferenceProvider,
+                ReferenceApplicationDataProviders.familyRelationProvider,
+                ReferenceApplicationDataProviders.nationalRegistryProvider,
+                ReferenceApplicationDataProviders.userProfileProvider,
+                ReferenceApplicationDataProviders.referenceProvider,
               ],
               delete: true,
             },

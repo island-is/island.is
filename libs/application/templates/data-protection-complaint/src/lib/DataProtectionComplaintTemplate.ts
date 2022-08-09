@@ -6,12 +6,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  SharedDataProviders,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
 import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
 import { States } from '../constants'
+import { SharedDataProviders } from '@island.is/application/core'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 

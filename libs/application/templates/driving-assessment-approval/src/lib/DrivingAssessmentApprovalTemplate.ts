@@ -1,11 +1,11 @@
 import {
   ApplicationTemplate,
+  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { ApiActions } from '../shared'

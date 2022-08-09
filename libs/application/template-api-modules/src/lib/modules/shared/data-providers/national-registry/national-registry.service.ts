@@ -9,7 +9,7 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
-import { NationalRegistryUser } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/application/types'
 
 export enum FamilyRelation {
   CHILD = 'child',

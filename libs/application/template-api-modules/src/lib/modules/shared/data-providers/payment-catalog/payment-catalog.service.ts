@@ -1,4 +1,4 @@
-import { PaymentCatalogItem } from '@island.is/application/core'
+import { PaymentCatalogItem } from '@island.is/application/types'
 
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { PaymentAPI } from '@island.is/clients/payment'

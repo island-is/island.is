@@ -1,9 +1,5 @@
-import {
-  buildForm,
-  buildCustomField,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm, buildCustomField } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const done: Form = buildForm({

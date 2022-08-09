@@ -8,7 +8,6 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import { coreErrorMessages } from '../lib/messages'
 
 export type CustomTemplateFindQuery = (where: {
   [key: string]: string
@@ -81,9 +80,14 @@ export abstract class BasicDataProvider implements DataProvider {
 
   // extend this method to transform a rejected response from the provide function to the proper type
   onProvideError(_: unknown): FailedDataProviderResult {
+    const errorDataProvider = {
+      id: 'application.system:core.error.dataProvider',
+      defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin þín',
+      description: 'Oops! Something went wrong when fetching your data',
+    }
     return {
       date: new Date(),
-      reason: coreErrorMessages.errorDataProvider,
+      reason: errorDataProvider,
       status: 'failure',
     }
   }

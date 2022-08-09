@@ -7,7 +7,7 @@ import {
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { SharedTemplateApiService } from '../../shared'
 import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission.service'
 import {

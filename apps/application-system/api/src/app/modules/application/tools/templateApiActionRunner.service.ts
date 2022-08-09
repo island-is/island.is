@@ -7,7 +7,7 @@ import {
   ApplicationWithAttachments,
   ExternalData,
   PerformActionResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
@@ -40,7 +40,6 @@ export class TemplateApiActionRunner {
     actions: ApplicationTemplateAPIAction[],
     auth: User,
   ): Promise<ApplicationWithAttachments> {
-    console.log({ actions })
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
@@ -126,9 +125,6 @@ export class TemplateApiActionRunner {
       typeof action.useMockData === 'function'
         ? action.useMockData(this.application)
         : action.useMockData === true
-    console.log(
-      `apiModuleAction: ${apiModuleAction}, params ${JSON.stringify(params)}`,
-    )
     if (useMocks) {
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData

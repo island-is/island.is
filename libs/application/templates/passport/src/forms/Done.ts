@@ -1,13 +1,11 @@
 import {
-  Application,
   buildDescriptionField,
   buildDividerField,
   buildForm,
   buildKeyValueField,
   buildMultiField,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { SubmitResponse } from '../lib/constants'
 import { m } from '../lib/messages'
 
