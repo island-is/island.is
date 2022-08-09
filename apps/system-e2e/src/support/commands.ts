@@ -41,7 +41,6 @@ const idsLogin = (phoneNumber: string, urlPath: string) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
-  cy.url().should('contain', `${Cypress.config().baseUrl}${urlPath}`)
 }
 
 Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
@@ -65,18 +64,24 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
 })
 
 Cypress.Commands.add('idsLogin', ({ phoneNumber, url = '/' }) => {
-  if (testEnvironment !== 'local') {
-    cy.session('idsLogin', () => {
-      cy.session('cognitoLogin', () =>
-        cognitoLogin({ cognitoUsername, cognitoPassword }),
-      )
+  cy.session(
+    'idsLogin',
+    () => {
+      if (testEnvironment !== 'local') {
+        cy.session('cognitoLogin', () =>
+          cognitoLogin({ cognitoUsername, cognitoPassword }),
+        )
+      }
       idsLogin(phoneNumber, url)
-    })
-  } else {
-    cy.session('idsLogin', () => {
-      idsLogin(phoneNumber, url)
-    })
-  }
+      cy.url().should('not.contain', authUrl)
+    },
+    {
+      validate() {
+        cy.visit(url)
+        cy.url().should('not.contain', authUrl)
+      },
+    },
+  )
 })
 
 Cypress.Commands.add('cognitoLogin', () => {
