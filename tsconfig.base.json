@@ -80,6 +80,9 @@
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
       ],
+      "@island.is/api/domains/electronic-registrations": [
+        "libs/api/domains/electronic-registrations/src/index.ts"
+      ],
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
@@ -355,6 +358,9 @@
       ],
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
+      ],
+      "@island.is/clients/electronic-registrations": [
+        "libs/clients/electronic-registrations/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
