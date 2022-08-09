@@ -13,7 +13,7 @@ import {
   ISLBorninMin,
   ISLEinstaklingur,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient, SoapClient2 } from './soapClient'
 
 export interface NationalRegistryConfig {
   baseSoapUrl: string
@@ -24,12 +24,14 @@ export interface NationalRegistryConfig {
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
+  private readonly client2: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
 
   static async instantiateClass(config: NationalRegistryConfig) {
     return new NationalRegistryApi(
       await SoapClient.generateClient(config.baseSoapUrl, config.host),
+      await SoapClient2.generateClient(config.baseSoapUrl, config.host),
       config.password,
       config.user,
     )
@@ -37,6 +39,7 @@ export class NationalRegistryApi {
 
   constructor(
     private soapClient: Soap.Client | null,
+    private soapClient2: Soap.Client | null,
     clientPassword: string,
     clientUser: string,
   ) {
@@ -51,6 +54,7 @@ export class NationalRegistryApi {
     }
 
     this.client = soapClient
+    this.client2 = soapClient2
     this.clientUser = clientUser
     this.clientPassword = clientPassword
   }
@@ -99,6 +103,8 @@ export class NationalRegistryApi {
       },
     )
 
+    console.log('borninMinResponse', borninMinResponse)
+
     if (isObject(borninMinResponse) && isEmpty(borninMinResponse)) {
       /**
        * User with no children will recieve an empty object
@@ -116,6 +122,80 @@ export class NationalRegistryApi {
     const documentData =
       borninMinResponse?.table?.diffgram?.DocumentElement?.ISLBorninMin
     return Array.isArray(documentData) ? documentData : [documentData]
+  }
+
+  public async postUserCorrection(ValuesIS1: any): Promise<any> {
+    const response = await this.signal2('CreateAndUpdateMS_Leidretting', {
+      // TODO: Not entirely sure if these values are in the correct place! Make sure it is!
+      S5RequestID: '',
+      Skraningaradili: 'Parent 1',
+      Kennitala: '0000000000',
+      Barn: '0000000000',
+      Nafn: 'Child 1',
+      Simanumer: '0000000',
+      Netfang: 'test@island.is',
+      Athugasemd: 'TEST: Þetta er prufu athugasemd frá þróunarvef island.is.',
+    })
+
+    if (!response) {
+      throw new NotFoundException(`THERE SEEMS TO BE AN ERROR HERE!!`)
+    }
+    console.log('USER CORRECTION DATA:::::', response)
+    return response
+  }
+
+  private async signal2(
+    functionName: string,
+    args: Record<string, string>,
+  ): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.client2) {
+        throw new InternalServerErrorException('Client not initialized')
+      }
+
+      this.client2[functionName](
+        // {
+        //   ...Object.keys(args).reduce(
+        //     (acc: Record<string, string>, key: string) => ({
+        //       ...acc,
+        //       [`:${key}`]: args[key],
+        //     }),
+        //     {},
+        //   ),
+        // },
+        {
+          ValuesIS1: {
+            ...Object.keys(args).reduce(
+              (acc: Record<string, string>, key: string) => ({
+                ...acc,
+                [`:${key}`]: args[key],
+              }),
+              {},
+            ),
+          },
+        },
+        (
+          // eslint-disable-next-line
+          error: any,
+          response: any,
+        ) => {
+          console.log('SIGNAL 2 RESPONSE', response)
+          const result = response[`${functionName}Result`]
+          if (result != null) {
+            if (!result.success) {
+              logger.error(result.message)
+              reject(result)
+            }
+            if (error) {
+              logger.error(error)
+              reject(error)
+            }
+            resolve(result.table.diffgram ? result : null)
+          }
+          resolve(null)
+        },
+      )
+    })
   }
 
   private async signal(
@@ -146,6 +226,7 @@ export class NationalRegistryApi {
           error: any,
           response: any,
         ) => {
+          console.log('SIGNAL RESPONSE', response)
           const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {

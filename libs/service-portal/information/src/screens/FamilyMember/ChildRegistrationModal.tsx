@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Box,
   Bullet,
@@ -8,6 +8,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { gql, useLazyQuery } from '@apollo/client'
 import { Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
@@ -21,23 +22,56 @@ type RegistrationData = {
   childNationalId: string
 }
 
+type FormDataType = {
+  email: string
+  tel: string
+  text: string
+}
+
 interface Props {
-  onClose: () => void
-  toggleClose: boolean
   data: RegistrationData
 }
-export const ChildRegistrationModal: FC<Props> = ({
-  children,
-  onClose,
-  toggleClose,
-  data,
-}) => {
-  useNamespaces('sp.family')
-  const { handleSubmit, control, errors, reset } = useForm()
-  const { formatMessage } = useLocale()
 
+export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
+  query NationalRegistryChildCorrectionQuery {
+    nationalRegistryChildCorrection
+  }
+`
+
+export const ChildRegistrationModal: FC<Props> = ({ data }) => {
+  useNamespaces('sp.family')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { handleSubmit, control, errors } = useForm()
+  const { formatMessage } = useLocale()
+  const [
+    postChildrenCorrection,
+    { data: correctionData, error, loading },
+  ] = useLazyQuery(NATIONAL_REGISTRY_CHILDREN_CORRECTION)
+
+  const handleSubmitForm = async (data: FormDataType) => {
+    await postChildrenCorrection()
+    console.log('SUBMIT DATA', data)
+  }
+
+  console.log('correctionDatacorrectionDatacorrectionData', correctionData)
   return (
-    <Modal id="" onCloseModal={onClose} toggleClose={toggleClose}>
+    <Modal
+      id="child-registration-modal"
+      isVisible={isModalOpen}
+      toggleClose={false}
+      initialVisibility={false}
+      disclosure={
+        <Box paddingBottom={1}>
+          <Button
+            size="small"
+            variant="text"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Breyta skráningu
+          </Button>
+        </Box>
+      }
+    >
       <Box marginTop={[3, 0]}>
         <Box paddingBottom={4}>
           <Text variant="h4" paddingBottom={3}>
@@ -48,44 +82,41 @@ export const ChildRegistrationModal: FC<Props> = ({
           </Text>
           <BulletList>
             <Bullet>
-              {formatMessage({
+              {`${formatMessage({
                 id: 'sp.family:child-registration-parent-name',
                 defaultMessage: 'Nafn þess sem tilkynnir ranga skráningu: ',
-              })}
-              {data.parentName}
+              })} ${data.parentName}`}
             </Bullet>
             <Bullet>
-              {formatMessage({
+              {`${formatMessage({
                 id: 'sp.family:child-registration-parent-id',
                 defaultMessage:
                   'Kennitala þess sem tilkynnir ranga skráningu: ',
-              })}
-              {data.parentNationalId}
+              })} ${data.parentNationalId}`}
             </Bullet>
             <Bullet>
-              {formatMessage({
+              {`${formatMessage({
                 id: 'sp.family:child-registration-name',
                 defaultMessage: 'Nafn barns sem tilkynning á við: ',
-              })}
-              {data.childName}
+              })} ${data.childName}`}
             </Bullet>
             <Bullet>
-              {formatMessage({
+              {`${formatMessage({
                 id: 'sp.family:child-registration-ssn',
                 defaultMessage: 'Kennitala barns sem tilkynning á við: ',
-              })}
-              {data.childNationalId}
+              })} ${data.childNationalId}`}
             </Bullet>
           </BulletList>
         </Box>
-        <form onSubmit={() => console.log('submitted')}>
+        <form onSubmit={handleSubmit(handleSubmitForm)}>
           <Box>
             <GridRow marginBottom={3}>
               <GridColumn span={['12/12', '6/12']}>
                 <InputController
                   control={control}
                   id="email"
-                  name="telemail"
+                  name="email"
+                  defaultValue="test@island.is"
                   required={true}
                   type="email"
                   rules={{
@@ -98,6 +129,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                     },
                   }}
                   label={formatMessage(sharedMessages.email)}
+                  error={errors.email?.message}
                   size="xs"
                 />
               </GridColumn>
@@ -109,6 +141,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                   required={true}
                   type="tel"
                   format={'### ####'}
+                  defaultValue="661 2850"
                   rules={{
                     required: {
                       value: true,
@@ -132,6 +165,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                   name="text"
                   required={true}
                   type="text"
+                  defaultValue="Þetta er prufu texti"
                   textarea
                   rules={{
                     required: {
@@ -146,7 +180,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                     id: 'sp.family:text-required-msg-label',
                     defaultMessage: 'Athugasemd',
                   })}
-                  error={errors.tel?.message}
+                  error={errors.text?.message}
                   size="xs"
                 />
               </GridColumn>

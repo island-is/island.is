@@ -22,6 +22,7 @@ import {
 } from '@island.is/service-portal/core'
 
 import { Parents } from '../../components/Parents/Parents'
+import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -82,6 +83,14 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
+      <ChildRegistrationModal
+        data={{
+          parentName: 'Parent name',
+          parentNationalId: '123456-1234',
+          childName: person?.fullName || '',
+          childNationalId: nationalId,
+        }}
+      />
 
       <Stack space={2}>
         <UserInfoLine

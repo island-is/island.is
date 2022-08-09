@@ -181,6 +181,19 @@ export class NationalRegistryService {
     return members
   }
 
+  async postUserCorrection(): Promise<any> {
+    console.log('BEFORE POST USER CORRECTION.')
+    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
+      undefined,
+    )
+
+    console.log('POST USER CORRECTION::: ', userCorrectionResponse)
+
+    return {
+      data: userCorrectionResponse,
+    }
+  }
+
   private formatGender(genderIndex: string): Gender {
     switch (genderIndex) {
       case '1':
