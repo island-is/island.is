@@ -35,6 +35,17 @@ const editLink = defineMessage({
   defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
+export function getLivesWithParent(
+  livingArrangementParents: Array<string> | undefined,
+  parent: string | undefined,
+) {
+  if (!parent || !livingArrangementParents) {
+    return
+  }
+
+  return livingArrangementParents.includes(parent) ? 'Já' : 'Nei'
+}
+
 interface Props {
   nationalId?: string
   error?: ApolloError
@@ -263,26 +274,50 @@ const ChildView: FC<Props> = ({
               loading={loading}
             />
             <Divider />
-            <TwoColumnUserInfoLine
-              label={formatMessage({
-                id: 'sp.family:legal-residence-parent',
-                defaultMessage: 'Lögheimilsforeldri',
-              })}
-              firstValue={'TODO'}
-              secondValue={'TODO'}
-              loading={loading}
-            />
-            <Divider />
-            <TwoColumnUserInfoLine
-              label={formatMessage({
-                id: 'sp.family:place-of-residence-parent',
-                defaultMessage: 'Búsetuforeldri',
-              })}
-              firstValue={'TODO'}
-              secondValue={'TODO'}
-              loading={loading}
-            />
-            <Divider />
+            {(guardianship || loading) && (
+              <>
+                {guardianship?.legalDomicileParent && (
+                  <>
+                    <TwoColumnUserInfoLine
+                      label={formatMessage({
+                        id: 'sp.family:legal-domicile-parent',
+                        defaultMessage: 'Lögheimilsforeldri',
+                      })}
+                      firstValue={getLivesWithParent(
+                        guardianship?.legalDomicileParent ?? [],
+                        person?.parent1 ?? '',
+                      )}
+                      secondValue={getLivesWithParent(
+                        guardianship?.legalDomicileParent ?? [],
+                        person?.parent2 ?? '',
+                      )}
+                      loading={loading}
+                    />
+                    <Divider />
+                  </>
+                )}
+                {guardianship?.residenceParent && (
+                  <>
+                    <TwoColumnUserInfoLine
+                      label={formatMessage({
+                        id: 'sp.family:residence-parent',
+                        defaultMessage: 'Búsetuforeldri',
+                      })}
+                      firstValue={getLivesWithParent(
+                        guardianship?.residenceParent ?? [],
+                        person?.parent1 ?? '',
+                      )}
+                      secondValue={getLivesWithParent(
+                        guardianship?.residenceParent ?? [],
+                        person?.parent2 ?? '',
+                      )}
+                      loading={loading}
+                    />
+                    <Divider />
+                  </>
+                )}
+              </>
+            )}
           </>
         ) : null}
       </Stack>
