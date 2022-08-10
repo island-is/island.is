@@ -105,14 +105,15 @@ export const DialogPrompt = ({
               />
             </Box>
             <GridRow align="flexStart" alignItems="flexStart">
-              <GridColumn span={['7/8', '5/8']}>
+              <GridColumn span={img ? ['8/8', '5/8'] : '1/1'}>
                 <Text variant="h2" as="h2" marginBottom={1}>
                   {title}
                 </Text>
                 {description && <Text paddingTop={2}>{description}</Text>}
               </GridColumn>
+
               {img && (
-                <GridColumn span={['1/8', '3/8']}>
+                <GridColumn span={['0', '3/8']}>
                   <Hidden below="sm">
                     <img
                       src={`assets/images/${img}.svg`}
