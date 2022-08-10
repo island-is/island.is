@@ -6,6 +6,8 @@ import {
   buildDividerField,
   buildTextField,
   buildSubSection,
+  buildRadioField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -15,7 +17,8 @@ import {
 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { B_TEMP } from '../../shared/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { hasYes, isApplicationForCondition } from '../../lib/utils'
+import { NO, YES } from '../../lib/constants'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
@@ -99,6 +102,46 @@ export const subSectionTempInfo = buildSubSection({
               label: name,
             }))
           },
+        }),
+        buildDividerField({
+          title: '',
+          color: 'dark400',
+        }),
+        buildRadioField({
+          id: 'drivingLicenseInOtherCountry',
+          backgroundColor: 'white',
+          title: m.drivingLicenseInOtherCountry,
+          description: '',
+          space: 0,
+          largeButtons: true,
+          options: [
+            {
+              label: m.no,
+              subLabel: '',
+              value: NO,
+            },
+            {
+              label: m.yes,
+              subLabel: '',
+              value: YES,
+            },
+          ],
+        }),
+        buildCheckboxField({
+          id: 'drivingLicenseDeprivedOrRestrictedInOtherCountry',
+          backgroundColor: 'white',
+          title: '',
+          condition: (answers) =>
+            hasYes(answers?.drivingLicenseInOtherCountry || []),
+          options: [
+            {
+              value: NO,
+              label: m.noDeprivedDrivingLicenseInOtherCountryTitle,
+              subLabel:
+                m.noDeprivedDrivingLicenseInOtherCountryDescription
+                  .defaultMessage,
+            },
+          ],
         }),
       ],
     }),

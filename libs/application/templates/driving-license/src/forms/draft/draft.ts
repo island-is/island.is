@@ -3,7 +3,6 @@ import { Form, FormModes } from '@island.is/application/types'
 import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
 import { subSectionTempInfo } from './subSectionTempInfo'
-import { subSectionOtherCountry } from './subSectionOtherCountry'
 import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
 import { subSectionQualityPhoto } from './subSectionQualityPhoto'
 import { subSectionDelivery } from './subSectionDelivery'
@@ -28,7 +27,6 @@ export const draft: Form = buildForm({
       title: m.informationTitle,
       children: [
         subSectionTempInfo,
-        subSectionOtherCountry,
         subSectionOtherCountryDirections,
         subSectionQualityPhoto,
         subSectionDelivery,
