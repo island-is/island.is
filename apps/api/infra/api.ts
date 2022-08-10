@@ -8,6 +8,7 @@ import {
   HealthInsurance,
   Labor,
   NationalRegistry,
+  Passports,
   Payment,
   Properties,
   PaymentSchedule,
@@ -204,6 +205,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       Vehicles,
+      Passports,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
