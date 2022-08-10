@@ -3,16 +3,16 @@ import { getLivesWithParent } from './ChildView'
 
 describe('getLivesWithParents', () => {
   it('should return Nei, unmatching parents', () => {
-    const parents = ['0101704359']
-    const parent = '123'
+    const parents = ['1111111111']
+    const parent = '0000000000'
 
     const result = getLivesWithParent(parents, parent)
 
     expect(result).toEqual('Nei')
   })
   it('should return Já, matching parents', () => {
-    const parents = ['0101704359']
-    const parent = '0101704359'
+    const parents = ['1111111111']
+    const parent = '1111111111'
 
     const result = getLivesWithParent(parents, parent)
 
@@ -20,14 +20,14 @@ describe('getLivesWithParents', () => {
   })
   it('should return undefined, undefined parents', () => {
     const parents = undefined
-    const parent = '0101704359'
+    const parent = '1111111111'
 
     const result = getLivesWithParent(parents, parent)
 
     expect(result).toEqual(undefined)
   })
   it('should return undefined, undefined candidate parent', () => {
-    const parents = ['0101704359']
+    const parents = ['111111111']
     const parent = undefined
 
     const result = getLivesWithParent(parents, parent)
