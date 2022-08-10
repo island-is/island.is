@@ -14,6 +14,7 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
+import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 
 @Injectable()
 export class NationalRegistryService {
@@ -181,10 +182,10 @@ export class NationalRegistryService {
     return members
   }
 
-  async postUserCorrection(): Promise<any> {
-    console.log('BEFORE POST USER CORRECTION.')
+  async postUserCorrection(input: FamilyCorrectionInput): Promise<any> {
+    console.log('BEFORE POST USER CORRECTION.', input)
     const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
-      undefined,
+      input,
     )
 
     console.log('POST USER CORRECTION::: ', userCorrectionResponse)

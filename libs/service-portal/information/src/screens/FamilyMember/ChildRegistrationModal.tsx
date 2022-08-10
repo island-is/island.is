@@ -6,9 +6,11 @@ import {
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
@@ -33,8 +35,10 @@ interface Props {
 }
 
 export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
-  query NationalRegistryChildCorrectionQuery {
-    nationalRegistryChildCorrection
+  mutation NationalRegistryChildCorrectionMutation(
+    $input: FamilyCorrectionInput!
+  ) {
+    nationalRegistryChildCorrection(input: $input)
   }
 `
 
@@ -43,17 +47,34 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
-  const [
-    postChildrenCorrection,
-    { data: correctionData, error, loading },
-  ] = useLazyQuery(NATIONAL_REGISTRY_CHILDREN_CORRECTION)
 
-  const handleSubmitForm = async (data: FormDataType) => {
-    await postChildrenCorrection()
-    console.log('SUBMIT DATA', data)
+  const [postChildrenCorrection, { error, loading }] = useMutation(
+    NATIONAL_REGISTRY_CHILDREN_CORRECTION,
+  )
+
+  const handleSubmitForm = async (submitData: FormDataType) => {
+    await postChildrenCorrection({
+      variables: {
+        input: {
+          ssn: data.parentNationalId,
+          ssnChild: data.childNationalId,
+          name: data.parentName, // ?
+          phonenumber: submitData.tel,
+          email: submitData.email,
+          comment: submitData.text,
+        },
+      },
+    }).then(() => {
+      toast.success(
+        formatMessage({
+          id: 'sp.family:child-registration-generic-success',
+          defaultMessage: 'Athugasemd send til þjóðskrár',
+        }),
+      )
+      setIsModalOpen(false)
+    })
   }
 
-  console.log('correctionDatacorrectionDatacorrectionData', correctionData)
   return (
     <Modal
       id="child-registration-modal"
@@ -63,11 +84,19 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
       disclosure={
         <Box paddingBottom={1}>
           <Button
-            size="small"
-            variant="text"
+            colorScheme="default"
+            icon="receipt"
+            iconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
             onClick={() => setIsModalOpen(true)}
+            loading={loading}
           >
-            Breyta skráningu
+            {formatMessage({
+              id: 'sp.family:child-registration-modal-button',
+              defaultMessage: 'Gera athugasemd við skráningu',
+            })}
           </Button>
         </Box>
       }
@@ -116,7 +145,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                   control={control}
                   id="email"
                   name="email"
-                  defaultValue="test@island.is"
+                  defaultValue=""
                   required={true}
                   type="email"
                   rules={{
@@ -141,7 +170,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                   required={true}
                   type="tel"
                   format={'### ####'}
-                  defaultValue="661 2850"
+                  defaultValue=""
                   rules={{
                     required: {
                       value: true,
@@ -165,7 +194,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                   name="text"
                   required={true}
                   type="text"
-                  defaultValue="Þetta er prufu texti"
+                  defaultValue=""
                   textarea
                   rules={{
                     required: {
@@ -186,6 +215,18 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
               </GridColumn>
             </GridRow>
           </Box>
+          {error && (
+            <Box>
+              <InputError
+                id="child-registration-error"
+                errorMessage={formatMessage({
+                  id: 'sp.family:child-registration-generic-error',
+                  defaultMessage:
+                    'Villa við innsendingu á formi. Vinsamlegast reynið aftur síðar.',
+                })}
+              />
+            </Box>
+          )}
           <Box
             display="flex"
             justifyContent="flexEnd"

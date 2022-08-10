@@ -10,7 +10,6 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -36,6 +35,8 @@ const editLink = defineMessage({
 
 interface Props {
   nationalId?: string
+  userNationalId?: string
+  userName?: string
   error?: ApolloError
   person?: NationalRegistryChild | null
   loading?: boolean
@@ -50,6 +51,8 @@ const ChildView: FC<Props> = ({
   person,
   isChild,
   hasDetails,
+  userNationalId,
+  userName,
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -83,14 +86,16 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
-      <ChildRegistrationModal
-        data={{
-          parentName: 'Parent name',
-          parentNationalId: '123456-1234',
-          childName: person?.fullName || '',
-          childNationalId: nationalId,
-        }}
-      />
+      {!loading && (
+        <ChildRegistrationModal
+          data={{
+            parentName: userName || '',
+            parentNationalId: userNationalId || '',
+            childName: person?.fullName || '',
+            childNationalId: nationalId,
+          }}
+        />
+      )}
 
       <Stack space={2}>
         <UserInfoLine

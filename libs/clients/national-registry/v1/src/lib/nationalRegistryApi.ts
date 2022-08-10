@@ -1,4 +1,8 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import {
+  InternalServerErrorException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common'
 import Soap from 'soap'
 
 import isEmpty from 'lodash/isEmpty'
@@ -12,8 +16,9 @@ import {
   ISLFjolskyldan,
   ISLBorninMin,
   ISLEinstaklingur,
+  FamilyCorrection,
 } from './dto'
-import { SoapClient, SoapClient2 } from './soapClient'
+import { SoapClient } from './soapClient'
 
 export interface NationalRegistryConfig {
   baseSoapUrl: string
@@ -24,14 +29,12 @@ export interface NationalRegistryConfig {
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
-  private readonly client2: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
 
   static async instantiateClass(config: NationalRegistryConfig) {
     return new NationalRegistryApi(
       await SoapClient.generateClient(config.baseSoapUrl, config.host),
-      await SoapClient2.generateClient(config.baseSoapUrl, config.host),
       config.password,
       config.user,
     )
@@ -39,7 +42,6 @@ export class NationalRegistryApi {
 
   constructor(
     private soapClient: Soap.Client | null,
-    private soapClient2: Soap.Client | null,
     clientPassword: string,
     clientUser: string,
   ) {
@@ -53,8 +55,7 @@ export class NationalRegistryApi {
       logger.error('NationalRegistry password not provided')
     }
 
-    this.client = soapClient
-    this.client2 = soapClient2
+    this.client = this.soapClient
     this.clientUser = clientUser
     this.clientPassword = clientPassword
   }
@@ -122,27 +123,22 @@ export class NationalRegistryApi {
     return Array.isArray(documentData) ? documentData : [documentData]
   }
 
-  public async postUserCorrection(ValuesIS1: any): Promise<any> {
+  public async postUserCorrection(values: FamilyCorrection): Promise<any> {
     const response = await this.signal2('CreateAndUpdateMS_Leidretting', {
-      // TODO: Not entirely sure if these values are in the correct place! Make sure it is!
       S5RequestID: '',
-      // Skraningaradili: 'Parent 1',
-      Kennitala: '0000000000',
-      Barn: '0000000000',
-      Nafn: 'Child 1',
-      Simanumer: '0000000',
-      Netfang: 'test@island.is',
-      Athugasemd: 'TEST: Þetta er prufu athugasemd frá þróunarvef island.is.',
-      // Stada: '',
-      // Myndad: '',
+      Kennitala: values.ssn,
+      Barn: values.ssnChild,
+      Nafn: values.name,
+      Simanumer: values.phonenumber,
+      Netfang: values.email,
+      Athugasemd: values.comment,
     })
 
-    console.log('lastmessage', this.client2?.lastMessage)
+    console.log('lastmessage', this.client?.lastMessage)
 
     if (!response) {
-      throw new NotFoundException(`THERE SEEMS TO BE AN ERROR HERE!!`)
+      throw new ForbiddenException(`User correction not sent. Unknown error`)
     }
-    console.log('USER CORRECTION DATA:::::', response)
     return response
   }
 
@@ -151,22 +147,11 @@ export class NationalRegistryApi {
     args: Record<string, string>,
   ): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (!this.client2) {
+      if (!this.client) {
         throw new InternalServerErrorException('Client not initialized')
       }
 
-      this.client2[functionName](
-        // {
-        //   ...Object.keys(args).reduce(
-        //     (acc: Record<string, string>, key: string) => ({
-        //       ...acc,
-        //       [`:${key}`]: args[key],
-        //     }),
-        //     {},
-        //   ),
-        // },
-        //TODO: gera manually
-        //fá dæmi um XML skeyti sem framkvæmir aðgerðina?
+      this.client[functionName](
         {
           ':S5Username': this.clientUser,
           ':S5Password': this.clientPassword,
@@ -185,8 +170,6 @@ export class NationalRegistryApi {
           error: any,
           response: any,
         ) => {
-          console.log('SIGNAL 2 RESPONSE', response)
-          console.log('lastmessage err', this.client2?.lastMessage)
           const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {
