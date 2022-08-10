@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -61,25 +61,28 @@ export const StepOne: React.FC = () => {
     }
   }
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
+  const updateDefendantState = useCallback(
+    (defendantId: string, update: UpdateDefendant) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
 
-      const newDefendants = [...workingCase.defendants]
+        const newDefendants = [...theCase.defendants]
 
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
-      }
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
 
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
-    }
-  }
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [setWorkingCase],
+  )
 
   return (
     <PageLayout
