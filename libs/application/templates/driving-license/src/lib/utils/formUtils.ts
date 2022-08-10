@@ -140,3 +140,7 @@ export const getApplicationInfo = (
       }
   }
 }
+
+export const isExpiring =(exp?: string): boolean => {
+  return exp ? new Date(exp).getFullYear() <= new Date().getFullYear() : false
+}

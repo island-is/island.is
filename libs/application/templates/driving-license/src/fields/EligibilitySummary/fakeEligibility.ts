@@ -4,6 +4,7 @@ import {
   B_FULL,
   B_RENEW,
 } from '../../shared/constants'
+import { isExpiring } from '../../lib/utils'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
@@ -33,9 +34,7 @@ export const fakeEligibility = (
         ? [
             {
               key: RequirementKey.LicenseNotRenewable,
-              requirementMet: expired
-                ? new Date(expired).getFullYear() <= new Date().getFullYear()
-                : true,
+              requirementMet: isExpiring(expired)
             },
           ]
         : []),
