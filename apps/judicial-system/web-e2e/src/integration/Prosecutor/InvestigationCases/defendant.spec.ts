@@ -8,7 +8,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.visit(NEW_IC_ROUTE)
   })
 
-  it('should require valid data', () => {
+  it.only('should require valid data', () => {
     // Police case number
     cy.getByTestid('policeCaseNumber').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
@@ -16,6 +16,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('policeCaseNumber').clear().type('00000000000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
 
     // National id
     cy.getByTestid('nationalId').type('0').blur()
@@ -25,6 +26,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('nationalId').clear().type('0000000000')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
 
     // Birthday
     cy.get('[type="checkbox"]').check()
@@ -32,18 +34,26 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
     cy.getByTestid('nationalId').clear().type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
 
     // Address
     cy.getByTestid('accusedAddress').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedAddress').clear().type('Sidwellssongata 300')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-
+    cy.getByTestid('continueButton').should('be.disabled')
+    //
     // Name
     cy.getByTestid('accusedName').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedName').clear().type('Sidwell Sidwellsson')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
+
+    // Case type
+    cy.getByTestid('select-type').click()
+    cy.get('[id="react-select-type-option-1"]').click()
+    cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
   it('should have a disabled gender and citizenship if the defendant has a business national id', () => {

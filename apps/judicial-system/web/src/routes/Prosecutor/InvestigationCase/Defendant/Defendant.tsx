@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -51,6 +51,18 @@ const Defendant = () => {
   } = useContext(FormContext)
   const { createCase, isCreatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
+  // This state is needed because type is initially set to OHTER on the
+  // workingCase and we need to validate that the user selects an option
+  // from the case type list to allow the user to continue.
+  const [caseType, setCaseType] = React.useState<CaseType | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    if (workingCase.created) {
+      setCaseType(workingCase.type)
+    }
+  }, [workingCase.created, workingCase.type])
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -242,15 +254,18 @@ const Defendant = () => {
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+                    const type = (selectedOption as ReactSelectOption).value
+
+                    setCaseType(type as CaseType)
                     setAndSendToServer(
                       'type',
-                      (selectedOption as ReactSelectOption).value as string,
+                      type as string,
                       workingCase,
                       setWorkingCase,
                       updateCase,
                     )
-                  }
+                  }}
                   value={
                     workingCase?.id
                       ? {
@@ -379,7 +394,7 @@ const Defendant = () => {
         <FormFooter
           previousUrl={`${constants.CASE_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIC(workingCase)}
+          nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
           nextIsLoading={isCreatingCase}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
