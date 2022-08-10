@@ -21,6 +21,7 @@ import { MortgageCertificateSubmissionModule } from './mortgage-certificate-subm
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
+import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -46,6 +47,7 @@ export const modules = [
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
   PassportModule,
+  OperatingLicenseModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -71,3 +73,4 @@ export { MortgageCertificateSubmissionService } from './mortgage-certificate-sub
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 export { PassportService } from './passport/passport.service'
+export { OperatingLicenseService } from './operating-license/operatingLicense.service'

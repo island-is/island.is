@@ -11,7 +11,11 @@ import { ToastContainer } from '@island.is/island-ui/core'
 
 import { client } from '../graphql'
 import FormProvider from '../src/components/FormProvider/FormProvider'
-import { UserProvider, FeatureProvider } from '../src/components'
+import {
+  UserProvider,
+  FeatureProvider,
+  ServiceInterruptionBanner,
+} from '../src/components'
 import HeaderContainer from '../src/components/Header/Header'
 
 const getTranslationStrings = ({
@@ -79,6 +83,7 @@ class JudicialSystemApplication extends App<Props> {
             <UserProvider>
               <LocaleProvider locale="is" messages={translations || {}}>
                 <>
+                  <ServiceInterruptionBanner />
                   <HeaderContainer />
                   <FormProvider>
                     <Component {...pageProps} />

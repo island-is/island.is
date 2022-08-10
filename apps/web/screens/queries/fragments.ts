@@ -51,6 +51,8 @@ export const slices = gql`
     yesLabel
     noLabel
     disclaimerLabel
+    categoryLabel
+    categories
     buttonText
     signupUrl
   }
