@@ -36,11 +36,6 @@ const editLink = defineMessage({
   defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
-const printButton = defineMessage({
-  id: 'sp.family:print-button',
-  defaultMessage: 'Prenta',
-})
-
 export function getLivesWithParent(
   livingArrangementParents: Array<string> | undefined,
   parent: string | undefined,
