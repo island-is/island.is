@@ -7,6 +7,7 @@ import {
 } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
@@ -33,6 +34,11 @@ const dataNotFoundMessage = defineMessage({
 const editLink = defineMessage({
   id: 'sp.family:edit-link',
   defaultMessage: 'Breyta hjá Þjóðskrá',
+})
+
+const printButton = defineMessage({
+  id: 'sp.family:print-button',
+  defaultMessage: 'Prenta',
 })
 
 export function getLivesWithParent(
@@ -97,6 +103,33 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
+
+      <Box>
+        <GridRow>
+          <GridColumn paddingBottom={4} span="12/12">
+            <Box
+              display="flex"
+              justifyContent="flexStart"
+              flexDirection={['column', 'row']}
+            >
+              <Box>
+                <Button
+                  variant="utility"
+                  size="small"
+                  onClick={() => window.print()}
+                  icon="print"
+                  iconType="outline"
+                >
+                  {formatMessage({
+                    id: 'sp.family:print-button',
+                    defaultMessage: 'Prenta',
+                  })}
+                </Button>
+              </Box>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </Box>
 
       <Stack space={2}>
         <UserInfoLine

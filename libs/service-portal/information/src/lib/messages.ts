@@ -96,6 +96,10 @@ export const spmm = defineMessages({
     id: 'sp.family:marital-status-widowed',
     defaultMessage: 'Ekkill, ekkja',
   },
+  printButton: {
+    id: 'sp.family:print-button',
+    defaultMessage: 'Prenta',
+  },
   userInfoDesc: {
     id: 'sp.family:user-info-description',
     defaultMessage:
