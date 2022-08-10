@@ -211,7 +211,7 @@ const ChildView: FC<Props> = ({
           <>
             <TwoColumnUserInfoLine
               title={formatMessage({
-                id: 'sp.family:TwoColumnUserInfoLine',
+                id: 'sp.family:parents',
                 defaultMessage: 'Foreldrar',
               })}
               label={formatMessage({
@@ -241,7 +241,7 @@ const ChildView: FC<Props> = ({
           <>
             <TwoColumnUserInfoLine
               title={formatMessage({
-                id: 'sp.family:custody-TwoColumnUserInfoLine',
+                id: 'sp.family:custody-parents',
                 defaultMessage: 'Forsjáraðilar',
               })}
               label={formatMessage({

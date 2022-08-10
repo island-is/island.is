@@ -33,6 +33,14 @@ export const spmm = defineMessages({
     id: 'sp.family:parent',
     defaultMessage: 'Foreldri',
   },
+  parents: {
+    id: 'sp.family:parents',
+    defaultMessage: 'Foreldrar',
+  },
+  custodyParents: {
+    id: 'sp.family:custody-parents',
+    defaultMessage: 'Forsjáraðilar',
+  },
   legalDomicileParent: {
     id: 'sp.family:legal-domicile-parent',
     defaultMessage: 'Lögheimilisforeldri',
