@@ -120,10 +120,7 @@ const ChildView: FC<Props> = ({
                   icon="print"
                   iconType="outline"
                 >
-                  {formatMessage({
-                    id: 'sp.family:print-button',
-                    defaultMessage: 'Prenta',
-                  })}
+                  {formatMessage(m.print)}
                 </Button>
               </Box>
             </Box>
@@ -247,10 +244,7 @@ const ChildView: FC<Props> = ({
                 id: 'sp.family:parents',
                 defaultMessage: 'Foreldrar',
               })}
-              label={formatMessage({
-                id: 'sp.family:name',
-                defaultMessage: 'Nafn',
-              })}
+              label={formatMessage(m.name)}
               firstValue={person?.nameParent1}
               secondValue={person?.nameParent2}
               loading={loading}
