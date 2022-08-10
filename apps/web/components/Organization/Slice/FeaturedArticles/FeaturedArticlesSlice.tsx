@@ -44,7 +44,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
       : slice.resolvedArticles
 
   return (
-    !!slice.articles.length && (
+    (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box
           borderTopWidth="standard"
