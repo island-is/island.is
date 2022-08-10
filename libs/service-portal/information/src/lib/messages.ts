@@ -33,22 +33,6 @@ export const spmm = defineMessages({
     id: 'sp.family:parent',
     defaultMessage: 'Foreldri',
   },
-  parents: {
-    id: 'sp.family:parents',
-    defaultMessage: 'Foreldrar',
-  },
-  custodyParents: {
-    id: 'sp.family:custody-parents',
-    defaultMessage: 'Forsjáraðilar',
-  },
-  legalDomicileParent: {
-    id: 'sp.family:legal-domicile-parent',
-    defaultMessage: 'Lögheimilisforeldri',
-  },
-  residenceParent: {
-    id: 'sp.family:residence-parent',
-    defaultMessage: 'Búsetuforeldri',
-  },
   spouse: {
     id: 'sp.family:spouse',
     defaultMessage: 'Maki',
@@ -95,10 +79,6 @@ export const spmm = defineMessages({
   maritalStatusWidowed: {
     id: 'sp.family:marital-status-widowed',
     defaultMessage: 'Ekkill, ekkja',
-  },
-  printButton: {
-    id: 'sp.family:print-button',
-    defaultMessage: 'Prenta',
   },
   userInfoDesc: {
     id: 'sp.family:user-info-description',
