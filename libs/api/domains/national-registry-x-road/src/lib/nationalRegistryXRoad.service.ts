@@ -150,6 +150,7 @@ export class NationalRegistryXRoadService {
     const spouse = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetHjuskapur({ id: nationalId })
       .catch(this.handle400)
+      .catch(this.handle404)
 
     return (
       spouse && {
