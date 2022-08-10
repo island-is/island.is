@@ -103,8 +103,6 @@ export class NationalRegistryApi {
       },
     )
 
-    console.log('borninMinResponse', borninMinResponse)
-
     if (isObject(borninMinResponse) && isEmpty(borninMinResponse)) {
       /**
        * User with no children will recieve an empty object
@@ -128,14 +126,18 @@ export class NationalRegistryApi {
     const response = await this.signal2('CreateAndUpdateMS_Leidretting', {
       // TODO: Not entirely sure if these values are in the correct place! Make sure it is!
       S5RequestID: '',
-      Skraningaradili: 'Parent 1',
+      // Skraningaradili: 'Parent 1',
       Kennitala: '0000000000',
       Barn: '0000000000',
       Nafn: 'Child 1',
       Simanumer: '0000000',
       Netfang: 'test@island.is',
       Athugasemd: 'TEST: Þetta er prufu athugasemd frá þróunarvef island.is.',
+      // Stada: '',
+      // Myndad: '',
     })
+
+    console.log('lastmessage', this.client2?.lastMessage)
 
     if (!response) {
       throw new NotFoundException(`THERE SEEMS TO BE AN ERROR HERE!!`)
@@ -163,8 +165,12 @@ export class NationalRegistryApi {
         //     {},
         //   ),
         // },
+        //TODO: gera manually
+        //fá dæmi um XML skeyti sem framkvæmir aðgerðina?
         {
-          ValuesIS1: {
+          ':S5Username': this.clientUser,
+          ':S5Password': this.clientPassword,
+          ':values': {
             ...Object.keys(args).reduce(
               (acc: Record<string, string>, key: string) => ({
                 ...acc,
@@ -180,6 +186,7 @@ export class NationalRegistryApi {
           response: any,
         ) => {
           console.log('SIGNAL 2 RESPONSE', response)
+          console.log('lastmessage err', this.client2?.lastMessage)
           const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {
@@ -190,7 +197,8 @@ export class NationalRegistryApi {
               logger.error(error)
               reject(error)
             }
-            resolve(result.table.diffgram ? result : null)
+            console.log('RESULT!!!!!!!', result)
+            resolve(result ? result : null)
           }
           resolve(null)
         },
@@ -226,7 +234,6 @@ export class NationalRegistryApi {
           error: any,
           response: any,
         ) => {
-          console.log('SIGNAL RESPONSE', response)
           const result = response[`${functionName}Result`]
           if (result != null) {
             if (!result.success) {
