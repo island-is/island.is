@@ -139,7 +139,7 @@ export const ApplicationConfigurations = {
     translation: 'fsn.application',
   },
   [ApplicationTypes.OPERATING_LCENSE]: {
-    slug: 'rekstarleyfi',
+    slug: 'rekstrarleyfi',
     translation: 'ol.application',
   },
 }
