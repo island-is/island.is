@@ -59,10 +59,10 @@ const Defendant = () => {
   )
 
   useEffect(() => {
-    if (workingCase.created) {
+    if (workingCase.id) {
       setCaseType(workingCase.type)
     }
-  }, [workingCase.created, workingCase.type])
+  }, [workingCase.id, workingCase.type])
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -267,7 +267,7 @@ const Defendant = () => {
                     )
                   }}
                   value={
-                    workingCase?.id
+                    workingCase.id
                       ? {
                           value: CaseType[workingCase.type],
                           label: capitalize(caseTypes[workingCase.type]),
