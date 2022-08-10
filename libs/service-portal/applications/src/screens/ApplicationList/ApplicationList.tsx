@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { ValueType } from 'react-select'
-
 import { useQuery } from '@apollo/client'
 import { institutionMapper } from '@island.is/application/core'
 import { Application, ApplicationStatus } from '@island.is/application/types'
@@ -28,12 +27,15 @@ import {
 } from '@island.is/service-portal/graphql'
 import { Organization } from '@island.is/shared/types'
 import * as Sentry from '@sentry/react'
-
 import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
-const isDev = window.location.origin.includes('beta.dev01.devland.is')
-const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+const path = window.location.origin
+// Have to check if localhost because the application system is hosted in different port locally.
+// Otherwise continue with existing router path.
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : `${path}/umsoknir`
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -47,14 +49,6 @@ const defaultFilterValues: FilterValues = {
   searchQuery: '',
 }
 
-const baseUrlForm = isLocalhost
-  ? 'http://localhost:4242/umsoknir'
-  : isDev
-  ? 'https://beta.dev01.devland.is/umsoknir'
-  : isStaging
-  ? 'https://beta.staging01.devland.is/umsoknir'
-  : 'https://island.is/umsoknir'
-
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
@@ -63,7 +57,6 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
-
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations: Organization[] = orgData?.getOrganizations?.items || []
 

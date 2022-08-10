@@ -19,7 +19,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { dateFormat } from '@island.is/shared/constants'
 
-import { spmm } from '../../lib/messages'
+import { mCompany } from '../../lib/messages'
 
 const COMPANY_REGISTRY_INFORMATION = gql`
   query companyRegistryCompanyQuery($input: RskCompanyInfoInput!) {
@@ -71,16 +71,13 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const emptyData = data === null
   return (
     <>
-      <IntroHeader
-        title={userInfo.profile.name}
-        intro={spmm.company.subtitle}
-      />
+      <IntroHeader title={userInfo.profile.name} intro={mCompany.subtitle} />
       {emptyData && <EmptyState />}
       {!emptyData && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(m.info)}
-            label={formatMessage(spmm.company.name)}
+            label={formatMessage(mCompany.name)}
             content={
               error ? formatMessage(dataNotFoundMessage) : data?.name || ''
             }
@@ -88,7 +85,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.registration)}
+            label={formatMessage(mCompany.registration)}
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
@@ -121,7 +118,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.taxNr)}
+            label={formatMessage(mCompany.taxNr)}
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
@@ -131,7 +128,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.operationForm)}
+            label={formatMessage(mCompany.operationForm)}
             content={
               error ? formatMessage(dataNotFoundMessage) : companyOperation
             }
@@ -139,7 +136,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.industryClass)}
+            label={formatMessage(mCompany.industryClass)}
             content={
               error ? formatMessage(dataNotFoundMessage) : vatClassification
             }
