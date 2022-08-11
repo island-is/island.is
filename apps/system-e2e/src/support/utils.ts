@@ -44,7 +44,7 @@ export const getFamily = (user: FakeUser) => {
         .filter(([k]) => k !== 'children')
         .map(([k, v]) => ({ [k]: v })),
     ),
-    ...user.children,
+    ...(user.children || []),
   ]
 }
 
