@@ -41,6 +41,7 @@ interface SigningModalProps {
   workingCase: Case
   requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
   onClose: () => void
+  navigateOnSuccess: boolean
 }
 
 export const useRequestRulingSignature = (
@@ -110,6 +111,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   requestRulingSignatureResponse,
   onClose,
+  navigateOnSuccess = true,
 }) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -173,7 +175,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
         router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
       }}
       handleSecondaryButtonClick={async () => {
-        if (data?.rulingSignatureConfirmation?.documentSigned) {
+        if (
+          navigateOnSuccess &&
+          data?.rulingSignatureConfirmation?.documentSigned
+        ) {
           router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
         } else {
           onClose()
