@@ -212,6 +212,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              shouldBeListedForRole: false,
             },
           ],
         },
