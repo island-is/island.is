@@ -1,15 +1,9 @@
-import React, { useEffect, useCallback } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { ApolloError, useMutation, useQuery } from '@apollo/client'
 import { IntlShape, useIntl } from 'react-intl'
 
-import {
-  CaseDecision,
-  CaseState,
-  CaseTransition,
-  CaseType,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
+import { CaseType, isInvestigationCase } from '@island.is/judicial-system/types'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   icConfirmation,
@@ -20,7 +14,6 @@ import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
-import { useCase } from '../../utils/hooks'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutationMutation,
@@ -46,7 +39,6 @@ const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
 
 interface SigningModalProps {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
   onClose: () => void
 }
@@ -116,14 +108,11 @@ export const getSuccessText = (
 
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
-  setWorkingCase,
   requestRulingSignatureResponse,
   onClose,
 }) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-
-  const { transitionCase } = useCase()
 
   const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
     RulingSignatureConfirmationQuery,
@@ -137,35 +126,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
       fetchPolicy: 'no-cache',
     },
   )
-
-  const commitDecision = useCallback(
-    async (decision: CaseDecision | undefined) => {
-      await transitionCase(
-        workingCase,
-        decision === CaseDecision.REJECTING
-          ? CaseTransition.REJECT
-          : decision === CaseDecision.DISMISSING
-          ? CaseTransition.DISMISS
-          : CaseTransition.ACCEPT,
-        setWorkingCase,
-      )
-    },
-    [transitionCase, workingCase, setWorkingCase],
-  )
-
-  useEffect(() => {
-    if (
-      data?.rulingSignatureConfirmation?.documentSigned &&
-      workingCase.state === CaseState.RECEIVED
-    ) {
-      commitDecision(workingCase.decision)
-    }
-  }, [
-    data?.rulingSignatureConfirmation?.documentSigned,
-    workingCase.state,
-    workingCase.decision,
-    commitDecision,
-  ])
 
   const signingProgress = getSigningProgress(
     data?.rulingSignatureConfirmation,

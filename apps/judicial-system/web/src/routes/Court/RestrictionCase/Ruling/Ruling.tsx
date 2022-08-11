@@ -894,7 +894,6 @@ export const Ruling: React.FC = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

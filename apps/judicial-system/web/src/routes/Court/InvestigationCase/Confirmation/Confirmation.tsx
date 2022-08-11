@@ -20,6 +20,7 @@ import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
@@ -30,6 +31,8 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
+  CaseState,
+  CaseTransition,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -44,6 +47,7 @@ const Confirmation = () => {
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
+  const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -51,6 +55,30 @@ const Confirmation = () => {
   } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
 
   const { user } = useContext(UserContext)
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    if (workingCase.state === CaseState.RECEIVED) {
+      const transitioned = await transitionCase(
+        workingCase,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      )
+
+      if (transitioned) {
+        requestRulingSignature()
+      } else {
+        // TODO: handle error
+      }
+    }
+  }
 
   return (
     <PageLayout
@@ -139,7 +167,7 @@ const Confirmation = () => {
                   ? 'default'
                   : 'destructive'
               }
-              onNextButtonClick={requestRulingSignature}
+              onNextButtonClick={handleNextButtonClick}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id
@@ -151,7 +179,6 @@ const Confirmation = () => {
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               requestRulingSignatureResponse={requestRulingSignatureResponse}
               onClose={() => setModalVisible(false)}
             />

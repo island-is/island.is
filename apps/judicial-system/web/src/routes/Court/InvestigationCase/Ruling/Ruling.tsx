@@ -506,7 +506,6 @@ const Ruling = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

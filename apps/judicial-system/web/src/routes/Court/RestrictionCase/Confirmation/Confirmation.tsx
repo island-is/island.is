@@ -19,12 +19,15 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   CaseDecision,
+  CaseState,
+  CaseTransition,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -46,11 +49,36 @@ export const Confirmation: React.FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
+  const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
     isRequestingRulingSignature,
   } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    if (workingCase.state === CaseState.RECEIVED) {
+      const transitioned = await transitionCase(
+        workingCase,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      )
+
+      if (transitioned) {
+        requestRulingSignature()
+      } else {
+        // TODO: handle error
+      }
+    }
+  }
 
   return (
     <PageLayout
@@ -142,7 +170,7 @@ export const Confirmation: React.FC = () => {
               ? 'default'
               : 'destructive'
           }
-          onNextButtonClick={requestRulingSignature}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isRequestingRulingSignature}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={
@@ -155,7 +183,6 @@ export const Confirmation: React.FC = () => {
       {modalVisible && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible(false)}
         />
