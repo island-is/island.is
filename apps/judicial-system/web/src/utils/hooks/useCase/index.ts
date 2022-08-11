@@ -378,7 +378,7 @@ const useCase = () => {
         throw new Error()
       }
 
-      setWorkingCase(newWorkingCase)
+      setWorkingCase({ ...workingCase, ...newWorkingCase })
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
     }
