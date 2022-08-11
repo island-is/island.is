@@ -1,0 +1,33 @@
+{
+  "root": "libs/contentful-extensions/mideind-translation",
+  "sourceRoot": "libs/contentful-extensions/mideind-translation/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/contentful-extensions/mideind-translation/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/contentful-mideind-extension"]
+    },
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "dist/contentful-mideind-extension",
+        "command": "contentful-extension-scripts build --input libs/contentful-extensions/mideind-translation --output dist/contentful-mideind-extension"
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "contentful-extension-scripts start --input libs/contentful-extensions/mideind-translation --output dist/contentful-mideind-extension --id mideind-translation --name mideind-translation --space-id 8k0h54kbe6bj --field-types Object"
+      }
+    }
+  },
+  "tags": []
+}

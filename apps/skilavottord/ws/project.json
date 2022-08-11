@@ -1,0 +1,112 @@
+{
+  "root": "apps/skilavottord/ws",
+  "sourceRoot": "apps/skilavottord/ws/src",
+  "projectType": "application",
+  "prefix": "skilavottord-ws",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@anatine/esbuildnx:build",
+      "options": {
+        "outputPath": "dist/apps/skilavottord/ws",
+        "showCircularDependencies": false,
+        "main": "apps/skilavottord/ws/src/main.ts",
+        "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
+        "assets": [
+          "apps/skilavottord/ws/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/skilavottord/ws/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "apps/skilavottord/ws/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/skilavottord/ws",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/skilavottord/ws",
+            "output": "./"
+          }
+        ],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "skilavottord-ws:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/skilavottord/ws/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/skilavottord/ws"]
+    },
+    "schemas/build-graphql-schema": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/skilavottord/codegen.yml"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/skilavottord/ws"
+      }
+    },
+    "migrate/undo": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate:undo",
+        "cwd": "apps/skilavottord/ws"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/skilavottord/ws"
+      }
+    },
+    "seed": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:seed:all",
+        "cwd": "apps/skilavottord/ws"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

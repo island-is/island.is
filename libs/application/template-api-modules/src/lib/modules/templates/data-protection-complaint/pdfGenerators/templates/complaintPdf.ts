@@ -72,7 +72,7 @@ function dpcApplicationPdf(
     const operatesWithinEuropeAnswer =
       c.operatesWithinEurope === 'yes' ? c.countryOfOperation : 'Ekki vitað/nei'
     addformFieldAndValue(
-      'Starfsemi innan Evrópu?',
+      'Veistu hvort viðkomandi aðili er með starfsemi í öðru landi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
       PdfConstants.SMALL_LINE_GAP,
@@ -143,9 +143,6 @@ function renderExternalDataMessages(
   addValue(externalData.userProfileTitle, doc, PdfConstants.BOLD_FONT)
   addValue(externalData.userProfileDescription, doc, PdfConstants.NORMAL_FONT)
   doc.moveDown()
-  addValue(externalData.checkboxText, doc, PdfConstants.BOLD_FONT)
-  addValue('Já', doc, PdfConstants.NORMAL_FONT)
-  doc.moveDown()
 }
 
 function renderInformationMessages(
@@ -205,33 +202,6 @@ function renderContactsAndComplainees(
       ? 'Kvartandi'
       : 'Kvartendur'
 
-  if (complaint.onBehalf === OnBehalf.OTHERS) {
-    addSubheader('Tengiliður', doc)
-  }
-
-  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
-  if (
-    complaint.contactInfo.contactName.length > 0 ||
-    complaint.contactInfo.contactEmail.length > 0
-  ) {
-    addSubheader('Tengiliður', doc)
-    complaint.contactInfo.contactName.length > 0 &&
-      addformFieldAndValue(
-        'Nafn',
-        complaint.contactInfo.contactName,
-        doc,
-        PdfConstants.SMALL_LINE_GAP,
-      )
-    complaint.contactInfo.contactEmail.length > 0 &&
-      addformFieldAndValue(
-        'Netfang',
-        complaint.contactInfo.contactEmail,
-        doc,
-        PdfConstants.SMALL_LINE_GAP,
-      )
-    doc.moveDown()
-  }
-
   if (
     complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
     complaint.onBehalf !== OnBehalf.OTHERS
@@ -282,6 +252,33 @@ function renderContactsAndComplainees(
   }
 
   renderAgencyComplainees(complaint, doc)
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader('Tengiliður', doc)
+  }
+
+  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
+  if (
+    complaint.contactInfo.contactName.length > 0 ||
+    complaint.contactInfo.contactEmail.length > 0
+  ) {
+    addSubheader('Tengiliður', doc)
+    complaint.contactInfo.contactName.length > 0 &&
+      addformFieldAndValue(
+        'Nafn',
+        complaint.contactInfo.contactName,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    complaint.contactInfo.contactEmail.length > 0 &&
+      addformFieldAndValue(
+        'Netfang',
+        complaint.contactInfo.contactEmail,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    doc.moveDown()
+  }
 }
 
 function renderAgencyComplainees(
