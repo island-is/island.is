@@ -63,7 +63,7 @@ type FakeUser = {
   name: string
   phoneNumber: string
   nationalId: string
-  children: FakeChild[] = []
+  children: FakeChild[]
 }
 
 type EnvConfig = {
