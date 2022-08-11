@@ -23,7 +23,7 @@ export const StepThree: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
@@ -35,11 +35,10 @@ export const StepThree: React.FC = () => {
       ) > -1 &&
       workingCase.defendants
     ) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'requestedOtherRestrictions',
-            value: formatMessage(
+            requestedOtherRestrictions: formatMessage(
               rcDemands.sections.custodyRestrictions
                 .requestedOtherRestrictionsAutofill,
               { gender: workingCase.defendants[0].gender },
@@ -50,7 +49,7 @@ export const StepThree: React.FC = () => {
         setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <PageLayout

@@ -1,0 +1,25 @@
+{
+  "root": "libs/service-portal/education-career",
+  "sourceRoot": "libs/service-portal/education-career/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/education-career/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/service-portal/education-career/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/service-portal/education-career"]
+    }
+  },
+  "tags": []
+}
