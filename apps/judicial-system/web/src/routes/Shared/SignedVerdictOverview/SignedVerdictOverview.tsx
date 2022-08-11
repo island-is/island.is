@@ -9,6 +9,7 @@ import formatISO from 'date-fns/formatISO'
 import {
   Case,
   CaseDecision,
+  CaseState,
   CaseType,
   InstitutionType,
   isInvestigationCase,
@@ -81,9 +82,14 @@ interface ModalControls {
   text: ReactNode
 }
 
-function showCustodyNotice(type: CaseType, decision?: CaseDecision) {
+function showCustodyNotice(
+  type: CaseType,
+  state: CaseState,
+  decision?: CaseDecision,
+) {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
+    state === CaseState.ACCEPTED &&
     isAcceptingCaseDecision(decision)
   )
 }
@@ -96,7 +102,7 @@ export const titleForCase = (
     theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
     theCase.type === CaseType.TRAVEL_BAN
 
-  if (theCase.decision === CaseDecision.REJECTING) {
+  if (theCase.state === CaseState.REJECTED) {
     if (isInvestigationCase(theCase.type)) {
       return 'Kröfu um rannsóknarheimild hafnað'
     } else {
@@ -104,7 +110,7 @@ export const titleForCase = (
     }
   }
 
-  if (theCase.decision === CaseDecision.DISMISSING) {
+  if (theCase.state === CaseState.DISMISSED) {
     return formatMessage(m.dismissedTitle)
   }
 
@@ -136,8 +142,8 @@ export const rulingDateLabel = (
 export const shouldHideNextButton = (workingCase: Case, user?: User) =>
   user?.role !== UserRole.PROSECUTOR ||
   workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-  workingCase.decision === CaseDecision.REJECTING ||
-  workingCase.decision === CaseDecision.DISMISSING ||
+  workingCase.state === CaseState.REJECTED ||
+  workingCase.state === CaseState.DISMISSED ||
   workingCase.isValidToDateInThePast ||
   Boolean(workingCase.childCase)
 
@@ -159,9 +165,9 @@ export const getExtensionInfoText = (
     | 'hasChildCase'
     | 'none' = 'none'
 
-  if (workingCase.decision === CaseDecision.REJECTING) {
+  if (workingCase.state === CaseState.REJECTED) {
     rejectReason = 'rejected'
-  } else if (workingCase.decision === CaseDecision.DISMISSING) {
+  } else if (workingCase.state === CaseState.DISMISSED) {
     rejectReason = 'dismissed'
   } else if (
     workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -500,10 +506,7 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
           </Box>
           {isRestrictionCase(workingCase.type) &&
-            (workingCase.decision === CaseDecision.ACCEPTING ||
-              workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
+            workingCase.state === CaseState.ACCEPTED && (
               <CaseDates
                 workingCase={workingCase}
                 button={
@@ -675,7 +678,11 @@ export const SignedVerdictOverview: React.FC = () => {
                   pdfType={'request'}
                 />
               )}
-              {showCustodyNotice(workingCase.type, workingCase.decision) && (
+              {showCustodyNotice(
+                workingCase.type,
+                workingCase.state,
+                workingCase.decision,
+              ) && (
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
