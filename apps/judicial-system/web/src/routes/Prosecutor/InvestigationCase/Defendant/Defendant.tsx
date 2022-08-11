@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -97,36 +97,39 @@ const Defendant = () => {
     }
   }
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
+  const updateDefendantState = useCallback(
+    (defendantId: string, update: UpdateDefendant) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
 
-      const newDefendants = [...workingCase.defendants]
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
 
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
+        const newDefendants = [...theCase.defendants]
+
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [setWorkingCase],
+  )
+
+  const handleUpdateDefendant = useCallback(
+    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant)
+
+      if (workingCase.id) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
-
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
-    }
-  }
-
-  const handleUpdateDefendant = async (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => {
-    updateDefendantState(defendantId, updatedDefendant)
-
-    if (workingCase.id) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
-    }
-  }
+    },
+    [updateDefendantState, workingCase.id, updateDefendant],
+  )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
     if (workingCase.defendants && workingCase.defendants.length > 1) {
