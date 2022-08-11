@@ -1,0 +1,25 @@
+{
+  "root": "libs/application/data-providers",
+  "sourceRoot": "libs/application/data-providers/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/data-providers/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/data-providers/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/application/data-providers"]
+    }
+  },
+  "tags": []
+}
