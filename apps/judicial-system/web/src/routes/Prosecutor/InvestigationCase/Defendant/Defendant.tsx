@@ -30,7 +30,6 @@ import {
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
@@ -49,7 +48,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
@@ -259,11 +258,15 @@ const Defendant = () => {
 
                     setCaseType(type as CaseType)
                     setAndSendToServer(
-                      'type',
-                      type as string,
+                      [
+                        {
+                          type: (selectedOption as ReactSelectOption)
+                            .value as CaseType,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }}
                   value={
@@ -306,11 +309,14 @@ const Defendant = () => {
                 }}
                 onBlur={(evt) =>
                   setAndSendToServer(
-                    'description',
-                    evt.target.value,
+                    [
+                      {
+                        description: evt.target.value,
+                        force: true,
+                      },
+                    ],
                     workingCase,
                     setWorkingCase,
-                    updateCase,
                   )
                 }
               />

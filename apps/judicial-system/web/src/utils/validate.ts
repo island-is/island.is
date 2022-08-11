@@ -168,10 +168,8 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
-    (workingCase.prosecutor ||
-      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
-    (workingCase.court ||
-      ((workingCase as unknown) as { courtId: string }).courtId) &&
+    workingCase.prosecutor &&
+    workingCase.court &&
     validate([
       [workingCase.requestedCourtDate, ['empty', 'date-format']],
       workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
@@ -183,10 +181,8 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
 
 export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    (workingCase.prosecutor ||
-      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
-    (workingCase.court ||
-      ((workingCase as unknown) as { courtId: string }).courtId) &&
+    workingCase.prosecutor &&
+    workingCase.court &&
     validate([[workingCase.requestedCourtDate, ['empty', 'date-format']]])
       .isValid
   )

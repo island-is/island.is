@@ -1,0 +1,86 @@
+{
+  "root": "apps/judicial-system/web",
+  "sourceRoot": "apps/judicial-system/web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/web",
+        "commands": [
+          "yarn nx build-next judicial-system-web",
+          "yarn nx build-server judicial-system-web"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "args": "--prod"
+        }
+      }
+    },
+    "build-next": {
+      "executor": "@nrwl/next:build",
+      "options": {
+        "root": "apps/judicial-system/web",
+        "outputPath": "dist/apps/judicial-system/web"
+      },
+      "configurations": {
+        "production": {}
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-server": {
+      "executor": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/web",
+        "main": "apps/judicial-system/web/server.ts",
+        "tsConfig": "apps/judicial-system/web/tsconfig.json",
+        "maxWorkers": 2,
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "judicial-system-web:build-server"
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "judicial-system-web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/judicial-system/web/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/judicial-system/web"]
+    },
+    "docker-next": {},
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/messages/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}
