@@ -41,7 +41,7 @@ interface SigningModalProps {
   workingCase: Case
   requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
   onClose: () => void
-  navigateOnSuccess: boolean
+  navigateOnSuccess?: boolean
 }
 
 export const useRequestRulingSignature = (
