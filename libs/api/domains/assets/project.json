@@ -1,0 +1,22 @@
+{
+  "root": "libs/api/domains/assets",
+  "sourceRoot": "libs/api/domains/assets/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/assets/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/assets"],
+      "options": {
+        "jestConfig": "libs/api/domains/assets/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
