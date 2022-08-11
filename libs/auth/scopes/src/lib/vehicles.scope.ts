@@ -1,3 +1,3 @@
 export enum VehiclesScope {
-  vehicle = '@samgongustofa.is/vehicle-scope',
+  vehicle = '@samgongustofa.is/vehicle-search',
 }
