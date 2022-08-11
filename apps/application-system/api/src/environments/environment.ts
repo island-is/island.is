@@ -21,10 +21,13 @@ const devConfig = {
     allowClientNationalId: true,
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4242/umsoknir',
+    clientLocationOrigin: 'http://localhost:4200/umsoknir',
     emailOptions: {
-      useTestAccount: true,
+      useTestAccount: false,
       useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+      options: {
+        region: 'eu-west-1',
+      },
     },
     email: {
       sender: 'Devland.is',

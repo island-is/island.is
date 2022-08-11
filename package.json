@@ -285,6 +285,7 @@
   "devDependencies": {
     "@anatine/esbuild-decorators": "^0.2.4",
     "@anatine/esbuildnx": "0.2.0",
+    "@aws-sdk/client-ses": "3.145.0",
     "@aws-sdk/client-ssm": "3.49.0",
     "@babel/core": "7.18.2",
     "@babel/helper-skip-transparent-expression-wrappers": "7.16.0",

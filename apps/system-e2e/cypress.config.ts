@@ -1,9 +1,12 @@
 import { defineConfig } from 'cypress'
 import { getCognitoCredentials, testEnvironment } from './src/support/utils'
 import { makeEmailAccount } from './src/support/email-account'
-// import { sample } from './webpack.config'
-
-// const webpackPreprocessor = require('@cypress/webpack-preprocessor')
+import {
+  GetIdentityVerificationAttributesCommand,
+  SESClient,
+  VerifyEmailAddressCommand,
+} from '@aws-sdk/client-ses'
+import axios from 'axios'
 
 export default defineConfig({
   fileServerFolder: '.',
@@ -34,13 +37,42 @@ export default defineConfig({
       // }
       // on('file:preprocessor', webpackPreprocessor(options))
       const emailAccount = await makeEmailAccount()
+      const client = new SESClient({ region: 'eu-west-1' })
+      await client.send(
+        new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
+      )
+      const verifyMsg = await emailAccount.getLastEmail(4)
+      console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
+      const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
+      if (verifyUrl.length != 1) {
+        throw new Error(
+          `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
+            verifyUrl,
+          )}`,
+        )
+      }
+
+      await axios.get(verifyUrl[0])
+      const emailVerifiedStatus = await client.send(
+        new GetIdentityVerificationAttributesCommand({
+          Identities: [emailAccount.email],
+        }),
+      )
+      if (
+        emailVerifiedStatus.VerificationAttributes[emailAccount.email][
+          'VerificationStatus'
+        ] !== 'Success'
+      ) {
+        throw new Error(`Email identity still not validated in AWS SES`)
+      }
+
       on('task', {
         getUserEmail: () => {
           return emailAccount.email
         },
 
-        getLastEmail: () => {
-          return emailAccount.getLastEmail()
+        getLastEmail: (retries: number) => {
+          return emailAccount.getLastEmail(retries)
         },
       })
       config.env.testEnvironment = testEnvironment

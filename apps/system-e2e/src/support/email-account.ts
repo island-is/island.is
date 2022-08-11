@@ -31,7 +31,13 @@ export const makeEmailAccount = async () => {
      * Utility method for getting the last email
      * for the Ethereal email account created above.
      */
-    async getLastEmail() {
+    async getLastEmail(
+      retries: number,
+    ): Promise<null | {
+      subject: string | undefined
+      text: string | undefined
+      html: string | false
+    }> {
       // makes debugging very simple
       console.log('getting the last email')
       console.log(emailConfig)
@@ -41,9 +47,10 @@ export const makeEmailAccount = async () => {
 
         // grab up to 50 emails from the inbox
         await connection.openBox('INBOX')
-        const searchCriteria = ['1:50']
+        const searchCriteria = ['UNSEEN']
         const fetchOptions = {
           bodies: [''],
+          markSeen: true,
         }
         const messages = await connection.search(searchCriteria, fetchOptions)
         // and close the connection to avoid it hanging
@@ -51,7 +58,12 @@ export const makeEmailAccount = async () => {
 
         if (!messages.length) {
           console.log('cannot find any emails')
-          return null
+          if (retries <= 0) {
+            return null
+          } else {
+            await new Promise((r) => setTimeout(r, 5000))
+            return userEmail.getLastEmail(retries - 1)
+          }
         } else {
           console.log('there are %d messages', messages.length)
           // grab the last email

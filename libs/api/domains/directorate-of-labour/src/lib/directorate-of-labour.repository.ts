@@ -11,16 +11,16 @@ import {
   ParentalLeave,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
+import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import differenceInDays from 'date-fns/differenceInDays'
-
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
-import {addMonths, formatISO} from "date-fns";
 
 const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
 const df = 'yyyy-MM-dd'
@@ -45,14 +45,9 @@ export class DirectorateOfLabourRepository {
   async getUnions(): Promise<Union[]> {
     if (isRunningInDevelopment) {
       return [
-        {
-          id: 'id-vr',
-          name: 'VR',
-        },
-        {
-          id: 'id-efling',
-          name: 'Efling',
-        },
+        { id: 'F511', name: 'VR' },
+        { id: 'F512', name: 'Verslunarmannafélag Hafnarfjarðar' },
+        { id: 'F999', name: 'Bandalag háskólamanna (BHM)' },
       ]
     }
 
@@ -76,20 +71,14 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
-    if (isRunningInDevelopment) {
-      return [
-        {
-          id: 'id-frjalsi',
-          name: 'Frjalsi',
-        },
-        {
-          id: 'id-fluga',
-          name: 'Fluga',
-        },
-      ]
-    }
-
-    const pensionFunds = await this.getAllPensionFunds()
+    const pensionFunds = isRunningInDevelopment
+      ? [
+          { id: 'L030', name: 'Starfsmenn Akureyrarbæjar' },
+          { id: 'L050', name: 'Starfsmenn Hafnafjarðarbæjar' },
+          { id: 'L860', name: 'VR' },
+          { id: 'X135', name: 'Frjálsi' },
+        ]
+      : await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>
       pensionFund.id.startsWith(PensionFundType.required),
@@ -97,20 +86,14 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPrivatePensionFunds(): Promise<PensionFund[]> {
-    if (isRunningInDevelopment) {
-      return [
-        {
-          id: 'id-frjalsi',
-          name: 'Frjalsi',
-        },
-        {
-          id: 'id-draumur',
-          name: 'Draumur',
-        },
-      ]
-    }
-
-    const pensionFunds = await this.getAllPensionFunds()
+    const pensionFunds = isRunningInDevelopment
+      ? [
+          { id: 'L030', name: 'Starfsmenn Akureyrarbæjar' },
+          { id: 'L050', name: 'Starfsmenn Hafnafjarðarbæjar' },
+          { id: 'L860', name: 'VR' },
+          { id: 'X135', name: 'Frjálsi' },
+        ]
+      : await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>
       pensionFund.id.startsWith(PensionFundType.private),
@@ -285,7 +268,9 @@ export class DirectorateOfLabourRepository {
     if (isRunningInDevelopment) {
       return {
         hasActivePregnancy: true,
-        expectedDateOfBirth: formatISO(addMonths(new Date(), 6), {representation: 'date'}),
+        expectedDateOfBirth: formatISO(addMonths(new Date(), 6), {
+          representation: 'date',
+        }),
       }
     }
 

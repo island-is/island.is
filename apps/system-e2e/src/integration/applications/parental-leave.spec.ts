@@ -1,5 +1,9 @@
 import { MessageDescriptor, createIntl, createIntlCache } from '@formatjs/intl'
-import { parentalLeaveFormMessages } from '@island.is/application/templates/parental-leave/messages'
+import {
+  employerFormMessages,
+  parentalLeaveFormMessages,
+} from '@island.is/application/templates/parental-leave/messages'
+import { coreMessages } from '@island.is/application/core'
 
 //
 // // Create the `intl` object
@@ -19,7 +23,7 @@ describe('Parental leave', () => {
   const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
   const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
   const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
-  let employerEmail: string = 'not ready'
+  let employerEmail = 'not ready'
 
   before(() => {
     cy.task('getUserEmail').then((email) => {
@@ -34,7 +38,7 @@ describe('Parental leave', () => {
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
       phoneNumber: (
-        fakeUsers.find((user) => user.name.endsWith('Ameríku')) || {
+        fakeUsers.find((user) => user.name.endsWith('Afríka')) || {
           phoneNumber: '',
         }
       ).phoneNumber,
@@ -42,22 +46,21 @@ describe('Parental leave', () => {
     })
   })
 
-  it('should create an application', () => {
-    cy.intercept(
-      'POST',
-      'http://localhost:4444/api/graphql?op=GetTranslations',
-      {
-        data: { getTranslations: {} },
-      },
-    )
-    cy.visit('/umsoknir/faedingarorlof')
-
-    cy.get('body').then((body) => {
-      const newAppButton = body.find("[data-testid='create-new-application']")
-      if (newAppButton.length > 0) {
-        newAppButton.click()
-      }
+  const phaseEmployerApproval = () => {
+    cy.findByRole('region', {
+      name: label(employerFormMessages.employerNationalRegistryIdSection),
+      // eslint-disable-next-line local-rules/disallow-kennitalas
     })
+      .findByRole('textbox')
+      .type('5402696029')
+    cy.get('[data-testid="proceed"]').click()
+
+    cy.findByRole('button', {
+      name: label(coreMessages.buttonApprove),
+    }).click()
+  }
+
+  const primaryParentApplication = () => {
     cy.findByRole('heading', {
       name: label(parentalLeaveFormMessages.shared.mockDataUse),
     })
@@ -79,10 +82,10 @@ describe('Parental leave', () => {
     cy.get("[data-testid='other-parent']").click()
     cy.get('[data-testid="other-parent-name"]')
       .click()
-      .type('{selectall}Gervimaður Afríka')
+      .type('{selectall}Gervimaður Ameríku')
     cy.get('[data-testid="other-parent-kennitala"]')
       .click()
-      .type('{selectall}0101303019')
+      .type('{selectall}0101302989')
     cy.get('[data-testid="proceed"]').click()
 
     cy.get('[data-testid="yes-option"]').click()
@@ -197,5 +200,39 @@ describe('Parental leave', () => {
     cy.findByRole('button', {
       name: label(parentalLeaveFormMessages.confirmation.title),
     }).click()
+  }
+
+  it('should create an application', () => {
+    cy.intercept(
+      'POST',
+      'http://localhost:4444/api/graphql?op=GetTranslations',
+      {
+        data: { getTranslations: {} },
+      },
+    )
+    cy.visit('/umsoknir/faedingarorlof')
+
+    cy.get('body').then((body) => {
+      const newAppButton = body.find("[data-testid='create-new-application']")
+      if (newAppButton.length > 0) {
+        newAppButton.click()
+      }
+    })
+
+    // phaseEmployerApproval()
+    primaryParentApplication()
+
+    // part 1 complete
+    cy.task('getLastEmail', 6).then((email) => {
+      // expect(email.text).to.be.a('string')
+      expect(email.html).to.be.a('string')
+      const employerUrl = email.html.match(/>(https?:.*)<\/p>/)[1]
+      if (!employerUrl)
+        throw new Error(
+          `Could not find url for employer in email: ${email.html}`,
+        )
+      cy.visit(employerUrl)
+      phaseEmployerApproval()
+    })
   })
 })

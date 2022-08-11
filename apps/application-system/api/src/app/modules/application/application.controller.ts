@@ -190,6 +190,7 @@ export class ApplicationController {
       throw new UnauthorizedException()
     }
 
+    this.logger.debug(`Getting applications with status ${status}`)
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
@@ -352,6 +353,7 @@ export class ApplicationController {
     )
 
     this.logger.info('Application assign started.')
+    this.logger.debug(`Decoded token ${JSON.stringify(decodedToken)}`)
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
     }
@@ -772,7 +774,6 @@ export class ApplicationController {
       updatedApplication = withUpdatedExternalData
 
       if (hasError) {
-        console.log(`Error 1`)
         return {
           hasChanged: false,
           application: updatedApplication,
@@ -823,7 +824,6 @@ export class ApplicationController {
       updatedApplication = withUpdatedExternalData
 
       if (hasError) {
-        console.log(`Error 2`)
         return {
           hasError: true,
           hasChanged: false,
@@ -845,7 +845,6 @@ export class ApplicationController {
 
       updatedApplication = update.updatedApplication as BaseApplication
     } catch (e) {
-      console.log(`Error 3`)
       return {
         hasChanged: false,
         hasError: true,
