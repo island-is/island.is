@@ -1,17 +1,56 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import ChildView from '../../components/ChildView/ChildView'
 
-import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
-import { NATIONAL_REGISTRY_CHILD_GUARDIANSHIP } from '../../lib/queries/getNationalChildGuardianship'
+const ChildGuardianshipQuery = gql`
+  query NationalRegistryChildrenGuardianshipQuery(
+    $input: GetChildGuardianshipInput!
+  ) {
+    nationalRegistryUserV2ChildGuardianship(input: $input) {
+      nationalId
+      legalDomicileParent
+      residenceParent
+    }
+  }
+`
+
+const ChildrenQuery = gql`
+  query NationalRegistryChildrenQuery {
+    nationalRegistryChildren {
+      nationalId
+      fullName
+      displayName
+      genderDisplay
+      birthplace
+      custody1
+      custodyText1
+      nameCustody1
+      custody2
+      custodyText2
+      nameCustody2
+      parent1
+      nameParent1
+      parent2
+      nameParent2
+      homeAddress
+      religion
+      nationality
+      fate
+      religion
+      homeAddress
+      nationality
+      legalResidence
+    }
+  }
+`
 
 const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
+  const { data, loading, error } = useQuery<Query>(ChildrenQuery)
   const { nationalRegistryChildren } = data || {}
 
   const person =
@@ -19,12 +58,9 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const isChild = nationalId === userInfo.profile.nationalId
 
-  const { data: guardianshipData } = useQuery<Query>(
-    NATIONAL_REGISTRY_CHILD_GUARDIANSHIP,
-    {
-      variables: { input: { childNationalId: nationalId } },
-    },
-  )
+  const { data: guardianshipData } = useQuery<Query>(ChildGuardianshipQuery, {
+    variables: { input: { childNationalId: nationalId } },
+  })
 
   const { nationalRegistryUserV2ChildGuardianship: guardianship } =
     guardianshipData || {}
