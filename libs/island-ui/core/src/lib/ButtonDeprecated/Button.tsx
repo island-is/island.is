@@ -66,7 +66,6 @@ export const Button = forwardRef<
       white,
       tabIndex,
       rounded = false,
-      dataTestId,
       ...rest
     },
     ref,
@@ -117,24 +116,11 @@ export const Button = forwardRef<
     }
 
     return href ? (
-      <a
-        data-testid={dataTestId}
-        ref={ref}
-        href={href}
-        role="button"
-        {...anchorProps}
-        {...sharedProps}
-      >
+      <a ref={ref} href={href} role="button" {...anchorProps} {...sharedProps}>
         <ButtonContent {...buttonContent} />
       </a>
     ) : (
-      <button
-        data-testid={dataTestId}
-        ref={ref}
-        type={htmlType}
-        disabled={disabled}
-        {...sharedProps}
-      >
+      <button ref={ref} type={htmlType} disabled={disabled} {...sharedProps}>
         <ButtonContent {...buttonContent} />
       </button>
     )
