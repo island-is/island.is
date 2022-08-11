@@ -33,6 +33,7 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -61,8 +62,9 @@ const Confirmation = () => {
       return
     }
 
-    if (workingCase.state === CaseState.RECEIVED) {
-      const transitioned = await transitionCase(
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
         workingCase,
         workingCase.decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
@@ -70,13 +72,12 @@ const Confirmation = () => {
           ? CaseTransition.DISMISS
           : CaseTransition.ACCEPT,
         setWorkingCase,
-      )
+      ))
 
-      if (transitioned) {
-        requestRulingSignature()
-      } else {
-        // TODO: handle error
-      }
+    // TODO: handle transition failure
+
+    if (shouldSign) {
+      requestRulingSignature()
     }
   }
 

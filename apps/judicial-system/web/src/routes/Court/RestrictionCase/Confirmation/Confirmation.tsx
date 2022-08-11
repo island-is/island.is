@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -61,8 +62,9 @@ export const Confirmation: React.FC = () => {
       return
     }
 
-    if (workingCase.state === CaseState.RECEIVED) {
-      const transitioned = await transitionCase(
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
         workingCase,
         workingCase.decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
@@ -70,13 +72,12 @@ export const Confirmation: React.FC = () => {
           ? CaseTransition.DISMISS
           : CaseTransition.ACCEPT,
         setWorkingCase,
-      )
+      ))
 
-      if (transitioned) {
-        requestRulingSignature()
-      } else {
-        // TODO: handle error
-      }
+    // TODO: handle transition failure
+
+    if (shouldSign) {
+      requestRulingSignature()
     }
   }
 
