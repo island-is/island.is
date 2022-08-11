@@ -183,12 +183,9 @@ export class NationalRegistryService {
   }
 
   async postUserCorrection(input: FamilyCorrectionInput): Promise<any> {
-    console.log('BEFORE POST USER CORRECTION.', input)
     const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
       input,
     )
-
-    console.log('POST USER CORRECTION::: ', userCorrectionResponse)
 
     return {
       data: userCorrectionResponse,

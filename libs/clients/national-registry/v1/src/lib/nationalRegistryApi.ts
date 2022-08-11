@@ -124,17 +124,19 @@ export class NationalRegistryApi {
   }
 
   public async postUserCorrection(values: FamilyCorrection): Promise<any> {
-    const response = await this.signal2('CreateAndUpdateMS_Leidretting', {
-      S5RequestID: '',
-      Kennitala: values.ssn,
-      Barn: values.ssnChild,
-      Nafn: values.name,
-      Simanumer: values.phonenumber,
-      Netfang: values.email,
-      Athugasemd: values.comment,
-    })
-
-    console.log('lastmessage', this.client?.lastMessage)
+    const response = await this.signal(
+      'CreateAndUpdateMS_Leidretting',
+      {
+        S5RequestID: '',
+        Kennitala: values.ssn,
+        Barn: values.ssnChild,
+        Nafn: values.name,
+        Simanumer: values.phonenumber,
+        Netfang: values.email,
+        Athugasemd: values.comment,
+      },
+      true,
+    )
 
     if (!response) {
       throw new ForbiddenException(`User correction not sent. Unknown error`)
@@ -142,76 +144,40 @@ export class NationalRegistryApi {
     return response
   }
 
-  private async signal2(
-    functionName: string,
-    args: Record<string, string>,
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (!this.client) {
-        throw new InternalServerErrorException('Client not initialized')
-      }
-
-      this.client[functionName](
-        {
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ':values': {
-            ...Object.keys(args).reduce(
-              (acc: Record<string, string>, key: string) => ({
-                ...acc,
-                [`:${key}`]: args[key],
-              }),
-              {},
-            ),
-          },
-        },
-        (
-          // eslint-disable-next-line
-          error: any,
-          response: any,
-        ) => {
-          const result = response[`${functionName}Result`]
-          if (result != null) {
-            if (!result.success) {
-              logger.error(result.message)
-              reject(result)
-            }
-            if (error) {
-              logger.error(error)
-              reject(error)
-            }
-            console.log('RESULT!!!!!!!', result)
-            resolve(result ? result : null)
-          }
-          resolve(null)
-        },
-      )
-    })
-  }
-
   private async signal(
     functionName: string,
     args: Record<string, string>,
+    post?: boolean,
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.client) {
         throw new InternalServerErrorException('Client not initialized')
       }
 
+      const formatData = Object.keys(args).reduce(
+        (acc: Record<string, string>, key: string) => ({
+          ...acc,
+          [`:${key}`]: args[key],
+        }),
+        {},
+      )
+
+      const formattedData = post
+        ? {
+            ':S5Username': this.clientUser,
+            ':S5Password': this.clientPassword,
+            ':values': formatData,
+          }
+        : {
+            ':SortColumn': 1,
+            ':SortAscending': true,
+            ':S5Username': this.clientUser,
+            ':S5Password': this.clientPassword,
+            ...formatData,
+          }
+
       this.client[functionName](
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ...Object.keys(args).reduce(
-            (acc: Record<string, string>, key: string) => ({
-              ...acc,
-              [`:${key}`]: args[key],
-            }),
-            {},
-          ),
-        },
+        formattedData,
         (
           // eslint-disable-next-line
           error: any,
@@ -227,7 +193,11 @@ export class NationalRegistryApi {
               logger.error(error)
               reject(error)
             }
-            resolve(result.table.diffgram ? result : null)
+            if (post) {
+              resolve(result ? result : null)
+            } else {
+              resolve(result.table.diffgram ? result : null)
+            }
           }
           resolve(null)
         },
