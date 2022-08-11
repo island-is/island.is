@@ -2,21 +2,21 @@ import React from 'react'
 import { getLivesWithParent } from './ChildView'
 
 describe('getLivesWithParents', () => {
-  it('should return Nei, unmatching parents', () => {
+  it('should return true, unmatching parents', () => {
     const parents = ['1111111111']
     const parent = '0000000000'
 
     const result = getLivesWithParent(parents, parent)
 
-    expect(result).toEqual('Nei')
+    expect(result).toEqual(false)
   })
-  it('should return Já, matching parents', () => {
+  it('should return true, matching parents', () => {
     const parents = ['1111111111']
     const parent = '1111111111'
 
     const result = getLivesWithParent(parents, parent)
 
-    expect(result).toEqual('Já')
+    expect(result).toEqual(true)
   })
   it('should return undefined, undefined parents', () => {
     const parents = undefined
