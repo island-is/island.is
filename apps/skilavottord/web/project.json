@@ -1,0 +1,87 @@
+{
+  "root": "apps/skilavottord/web",
+  "sourceRoot": "apps/skilavottord/web",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "dist/apps/skilavottord/web",
+        "commands": [
+          "yarn nx build-next skilavottord-web",
+          "yarn nx build-server skilavottord-web"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "args": "--prod"
+        }
+      }
+    },
+    "build-next": {
+      "executor": "@nrwl/next:build",
+      "options": {
+        "root": "apps/skilavottord/web",
+        "outputPath": "dist/apps/skilavottord/web"
+      },
+      "configurations": {
+        "production": {}
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-server": {
+      "executor": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/skilavottord/web",
+        "main": "apps/skilavottord/web/server.ts",
+        "tsConfig": "apps/skilavottord/web/tsconfig.json",
+        "maxWorkers": 2,
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "skilavottord-web:build-server"
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "skilavottord-web:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/skilavottord/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/skilavottord/web/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/skilavottord/web"]
+    },
+    "translations": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "quicktype is.json -o translation.d.ts --top-level Translation",
+        "cwd": "apps/skilavottord/web/i18n/locales"
+      }
+    },
+    "docker-next": {}
+  },
+  "tags": []
+}
