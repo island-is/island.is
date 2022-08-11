@@ -9,6 +9,7 @@ import {
   BasicVehicleInformationTechnicalAxle,
   PersidnoLookup,
   VehicleSearch,
+  PdfApi,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -26,7 +27,9 @@ export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(VehicleSearchApi)
+    @Inject(PdfApi)
     private vehiclesApi: VehicleSearchApi,
+    private vehiclesPDFApi: PdfApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {

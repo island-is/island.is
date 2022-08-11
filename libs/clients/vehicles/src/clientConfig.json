@@ -24,6 +24,43 @@
     }
   ],
   "paths": {
+    "/VehicleHistoryPdf": {
+      "get": {
+        "tags": ["Pdf"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
     "/SearchesRemaining": {
       "get": {
         "tags": ["VehicleSearch"],
@@ -1979,6 +2016,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "IActionResult": {
+        "type": "object",
         "additionalProperties": false
       },
       "OutstandingFees": {

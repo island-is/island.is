@@ -1,4 +1,3 @@
-import { Configuration, VehicleSearchApi } from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
@@ -8,16 +7,17 @@ import {
 } from '@island.is/nest/config'
 import { VehiclesClientConfig } from './vehiclesClient.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { Configuration, PdfApi } from '../../gen/fetch'
 
-export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
-  provide: VehicleSearchApi,
+export const VehiclesApiProvider: Provider<PdfApi> = {
+  provide: PdfApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof VehiclesClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
-    new VehicleSearchApi(
+    new PdfApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-vehicles',
