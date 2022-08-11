@@ -34,7 +34,7 @@ export const fakeEligibility = (
         ? [
             {
               key: RequirementKey.LicenseNotRenewable,
-              requirementMet: isExpiring(expired)
+              requirementMet: isExpiring(expired),
             },
           ]
         : []),

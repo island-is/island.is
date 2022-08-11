@@ -9,6 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
+import { Company } from '../../assets'
 
 export interface Props extends FieldBaseProps {
   field: CustomField
@@ -111,9 +112,8 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
     <>
       {error && { error }}
       <Box height="full">
-        <Text variant="h3">{msg(m.paymentPendingDescription)}</Text>
-        <Box marginTop={4}>
-          <img src="/assets/images/company.svg" alt={msg(m.paymentImage)} />
+        <Box display="flex" justifyContent="center" width="full">
+          <Company />
         </Box>
       </Box>
     </>

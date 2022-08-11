@@ -13,7 +13,12 @@ import { DefaultEvents } from '@island.is/application/types'
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import { m } from '../../lib/messages'
 import { isApplicationForCondition, isExpiring } from '../../lib/utils'
-import { B_FULL, B_RENEW, B_TEMP, DrivingLicenseApplicationFor } from '../../shared'
+import {
+  B_FULL,
+  B_RENEW,
+  B_TEMP,
+  DrivingLicenseApplicationFor,
+} from '../../shared'
 
 export const sectionApplicationFor = buildSubSection({
   id: 'applicationFor',
@@ -29,7 +34,10 @@ export const sectionApplicationFor = buildSubSection({
               externalData,
               'currentLicense.data',
             )
-            return isApplicationForCondition(B_RENEW) && !isExpiring(currentLicense?.expires)
+            return (
+              isApplicationForCondition(B_RENEW) &&
+              !isExpiring(currentLicense?.expires)
+            )
           },
 
           title: 'SubmitAndDecline',

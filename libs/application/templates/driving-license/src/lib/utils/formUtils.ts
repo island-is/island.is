@@ -35,10 +35,26 @@ export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) => {
 
 export const isApplicationForCondition = (
   result: DrivingLicenseApplicationFor | DrivingLicenseApplicationFor[],
-) => (answers: FormValue) => {
-  const applicationFor =
-    getValueViaPath<DrivingLicenseApplicationFor>(answers, 'applicationFor') ??
-    B_FULL
+) => (answers: FormValue, externalData?: ExternalData) => {
+  let applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
+    answers,
+    'applicationFor',
+  )
+
+  if (!applicationFor && externalData) {
+    const currentLicense = getValueViaPath<CurrentLicenseProviderResult>(
+      externalData,
+      'currentLicense.data',
+    )
+    applicationFor = !currentLicense?.currentLicense
+      ? B_TEMP
+      : currentLicense?.currentLicense === 'B'
+      ? B_FULL
+      : B_RENEW
+  } else if (!applicationFor) {
+    applicationFor = B_FULL
+  }
+
   return applicationFor === result || result.includes(applicationFor)
 }
 
@@ -118,7 +134,6 @@ export const getApplicationInfo = (
     : currentLicense?.currentLicense === 'B'
     ? B_FULL
     : B_RENEW
-
   switch (applicationFor) {
     case B_TEMP:
       return {
@@ -141,6 +156,6 @@ export const getApplicationInfo = (
   }
 }
 
-export const isExpiring =(exp?: string): boolean => {
+export const isExpiring = (exp?: string): boolean => {
   return exp ? new Date(exp).getFullYear() <= new Date().getFullYear() : false
 }

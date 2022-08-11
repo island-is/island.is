@@ -163,7 +163,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

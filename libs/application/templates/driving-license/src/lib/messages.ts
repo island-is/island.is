@@ -439,6 +439,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn hafnað',
     description: 'Application denied',
   },
+  applicationBlocked: {
+    id: 'dl.application:applicationBlocked',
+    defaultMessage: 'Þú herfur ekkert til að sækja um',
+    description: 'Application blocked',
+  },
   overviewPaymentCharge: {
     id: 'dl.application:overview.paymentcharge',
     defaultMessage: 'Greiðsla',
@@ -772,6 +777,11 @@ export const m = defineMessages({
     id: 'dl.application:declinedOtherNonEESCountryDescription',
     defaultMessage:
       'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
+    description: 'Driving license from other country description',
+  },
+  blockedDescription: {
+    id: 'dl.application:blockedDescription',
+    defaultMessage: 'Umsækjandi uppfyllir ekki skilyrði til endurnýjunar.',
     description: 'Driving license from other country description',
   },
   nationalCommissionerOfPolice: {
