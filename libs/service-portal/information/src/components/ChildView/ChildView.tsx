@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { defineMessage } from 'react-intl'
+import { defineMessage, FormattedMessage } from 'react-intl'
 
 import {
   NationalRegistryChild,
@@ -44,7 +44,7 @@ export function getLivesWithParent(
     return
   }
 
-  return livingArrangementParents.includes(parent) ? 'Já' : 'Nei'
+  return livingArrangementParents.includes(parent)
 }
 
 interface Props {
@@ -69,6 +69,15 @@ const ChildView: FC<Props> = ({
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
+  const livingArrangment = (
+    livingArrangementParents: Array<string> | undefined,
+    parent: string | undefined,
+  ) => {
+    return getLivesWithParent(livingArrangementParents, parent)
+      ? formatMessage(m.yes)
+      : formatMessage(m.no)
+  }
+
   if (!nationalId || error || (!loading && !person))
     return (
       <NotFound
@@ -78,6 +87,7 @@ const ChildView: FC<Props> = ({
         })}
       />
     )
+
   return (
     <>
       {loading ? (
@@ -305,11 +315,11 @@ const ChildView: FC<Props> = ({
                         id: 'sp.family:legal-domicile-parent',
                         defaultMessage: 'Lögheimilsforeldri',
                       })}
-                      firstValue={getLivesWithParent(
+                      firstValue={livingArrangment(
                         guardianship?.legalDomicileParent ?? [],
                         person?.parent1 ?? '',
                       )}
-                      secondValue={getLivesWithParent(
+                      secondValue={livingArrangment(
                         guardianship?.legalDomicileParent ?? [],
                         person?.parent2 ?? '',
                       )}
@@ -325,11 +335,11 @@ const ChildView: FC<Props> = ({
                         id: 'sp.family:residence-parent',
                         defaultMessage: 'Búsetuforeldri',
                       })}
-                      firstValue={getLivesWithParent(
+                      firstValue={livingArrangment(
                         guardianship?.residenceParent ?? [],
                         person?.parent1 ?? '',
                       )}
-                      secondValue={getLivesWithParent(
+                      secondValue={livingArrangment(
                         guardianship?.residenceParent ?? [],
                         person?.parent2 ?? '',
                       )}
