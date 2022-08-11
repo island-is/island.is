@@ -41,7 +41,6 @@ export interface ButtonProps {
   tabIndex?: number
   rounded?: boolean
   id?: string
-  dataTestId?: string
 }
 
 export const Button = forwardRef<
