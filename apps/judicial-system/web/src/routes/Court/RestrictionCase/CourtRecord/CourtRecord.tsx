@@ -21,14 +21,9 @@ import {
   FormContentContainer,
   DateTime,
   HideableText,
-  TimeInputField,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -43,8 +38,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -80,10 +73,6 @@ export const CourtRecord: React.FC = () => {
   const [
     sessionBookingsErrorMessage,
     setSessionBookingsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
   ] = useState<string>('')
 
   const router = useRouter()
@@ -937,14 +926,18 @@ export const CourtRecord: React.FC = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtStartDate}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'courtEndTime',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    if (date && valid) {
+                      setAndSendToServer(
+                        [
+                          {
+                            courtEndTime: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
                   }}
                   blueBox={false}
                   required

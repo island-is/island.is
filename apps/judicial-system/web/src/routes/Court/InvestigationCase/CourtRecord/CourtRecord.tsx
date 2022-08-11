@@ -11,7 +11,6 @@ import {
   HideableText,
   PageLayout,
   PdfButton,
-  TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -46,14 +45,9 @@ import {
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  formatRequestCaseType,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -111,7 +105,6 @@ const CourtRecord = () => {
     sessionBookingsErrorMessage,
     setSessionBookingsMessage,
   ] = useState<string>('')
-  const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
 
   useDeb(workingCase, 'courtAttendees')
   useDeb(workingCase, 'sessionBookings')
@@ -830,14 +823,18 @@ const CourtRecord = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtStartDate}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'courtEndTime',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    if (date && valid) {
+                      setAndSendToServer(
+                        [
+                          {
+                            courtEndTime: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
                   }}
                   blueBox={false}
                   required
