@@ -16,7 +16,7 @@ export class RulingNotificationService {
   ) {}
 
   async sendRulingNotification(caseId: string): Promise<void> {
-    logger.debug(`Sending ruling notifications for case ${caseId}`)
+    logger.debug(`Sending ruling notification for case ${caseId}`)
 
     return fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/notification`,
@@ -34,7 +34,7 @@ export class RulingNotificationService {
 
         if (res.ok) {
           logger.debug(
-            `Ruling notifications${
+            `Ruling notification${
               response.notificationSent ? '' : ' not'
             } sent for case ${caseId}`,
           )
@@ -42,12 +42,12 @@ export class RulingNotificationService {
           return
         }
 
-        logger.error(`Failed to send ruling notifications for case ${caseId}`, {
+        logger.error(`Failed to send ruling notification for case ${caseId}`, {
           response,
         })
       })
       .catch((reason) => {
-        logger.error(`Failed to send ruling notifications for case ${caseId}`, {
+        logger.error(`Failed to send ruling notification for case ${caseId}`, {
           reason,
         })
       })
