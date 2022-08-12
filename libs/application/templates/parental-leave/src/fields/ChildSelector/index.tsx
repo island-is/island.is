@@ -97,8 +97,9 @@ const ChildSelector: FC<FieldBaseProps> = ({
                   value: `${index}`,
                   dataTestId: `child-${index}`,
                   label: formatMessage(
-                  parentalLeaveFormMessages.selectChild.baby,
-                  { dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth) ,
+                    parentalLeaveFormMessages.selectChild.baby,
+                    {
+                      dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth),
                     },
                   ),
                   subLabel,

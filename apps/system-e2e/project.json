@@ -29,9 +29,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "system-test": {
