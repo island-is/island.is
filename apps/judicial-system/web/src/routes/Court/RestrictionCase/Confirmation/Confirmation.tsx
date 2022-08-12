@@ -184,6 +184,7 @@ export const Confirmation: React.FC = () => {
       {modalVisible && (
         <SigningModal
           workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible(false)}
         />

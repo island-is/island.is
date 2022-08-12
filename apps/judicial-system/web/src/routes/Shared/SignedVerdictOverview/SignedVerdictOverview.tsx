@@ -78,7 +78,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import { use } from 'passport'
 
 interface ModalControls {
   open: boolean
@@ -293,8 +292,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
       },
-      onError: (reason) => {
-        console.log(reason)
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
       },
     },
@@ -944,12 +942,13 @@ export const SignedVerdictOverview: React.FC = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => {
             refreshCase()
             setModalVisible('NoModal')
           }}
-          navigateOnSuccess={false}
+          navigateOnClose={false}
         />
       )}
     </PageLayout>

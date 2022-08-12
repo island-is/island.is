@@ -1,6 +1,13 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { ApolloError, useMutation, useQuery } from '@apollo/client'
+import {
+  ApolloError,
+  FetchResult,
+  MutationFunctionOptions,
+  OperationVariables,
+  useMutation,
+  useQuery,
+} from '@apollo/client'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { CaseType, isInvestigationCase } from '@island.is/judicial-system/types'
@@ -16,10 +23,10 @@ import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
+  RequestRulingSignatureMutationDocument,
   RequestRulingSignatureMutationMutation,
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
-import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
   return (
@@ -39,9 +46,17 @@ const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
 
 interface SigningModalProps {
   workingCase: Case
+  requestRulingSignature: (
+    options?:
+      | MutationFunctionOptions<
+          RequestRulingSignatureMutationMutation,
+          OperationVariables
+        >
+      | undefined,
+  ) => Promise<FetchResult<RequestRulingSignatureMutationMutation>>
   requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
   onClose: () => void
-  navigateOnSuccess?: boolean
+  navigateOnClose?: boolean
 }
 
 export const useRequestRulingSignature = (
@@ -54,7 +69,7 @@ export const useRequestRulingSignature = (
     requestRulingSignature,
     { loading: isRequestingRulingSignature, data, error },
   ] = useMutation<RequestRulingSignatureMutationMutation>(
-    RequestRulingSignatureMutation,
+    RequestRulingSignatureMutationDocument,
     {
       variables: { input: { caseId } },
       onError: () => {
@@ -109,9 +124,10 @@ export const getSuccessText = (
 
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
+  requestRulingSignature,
   requestRulingSignatureResponse,
   onClose,
-  navigateOnSuccess = true,
+  navigateOnClose = true,
 }) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -126,6 +142,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         },
       },
       fetchPolicy: 'no-cache',
+      skip: !requestRulingSignatureResponse,
     },
   )
 
@@ -158,31 +175,40 @@ const SigningModal: React.FC<SigningModalProps> = ({
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )
       }
+      primaryButtonText={
+        signingProgress === 'inProgress'
+          ? ''
+          : signingProgress === 'success'
+          ? 'Senda ábendingu'
+          : 'Undirrita seinna'
+      }
       secondaryButtonText={
         signingProgress === 'inProgress'
           ? undefined
           : signingProgress === 'success'
           ? 'Loka glugga'
-          : 'Loka og reyna aftur'
-      }
-      primaryButtonText={
-        data?.rulingSignatureConfirmation?.documentSigned
-          ? 'Senda ábendingu'
-          : ''
+          : 'Reyna aftur'
       }
       handlePrimaryButtonClick={() => {
-        window.open(constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+        if (signingProgress === 'success') {
+          window.open(constants.FEEDBACK_FORM_URL, '_blank')
+        }
+        if (navigateOnClose) {
+          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+        }
+        onClose()
       }}
       handleSecondaryButtonClick={async () => {
-        if (
-          navigateOnSuccess &&
-          data?.rulingSignatureConfirmation?.documentSigned
-        ) {
-          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+        if (signingProgress === 'success') {
+          if (navigateOnClose) {
+            router.push(
+              `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`,
+            )
+          }
         } else {
-          onClose()
+          requestRulingSignature()
         }
+        onClose()
       }}
     />
   )
