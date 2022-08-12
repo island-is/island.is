@@ -48,7 +48,7 @@ export class GenericFirearmLicenseApi
     const license = await this.fetchLicense(user)
 
     if (!license) {
-      this.logger.warn('Missing ADR license, null from api', {
+      this.logger.warn('Missing Firearm license, null from api', {
         category: LOG_CATEGORY,
       })
       return null
