@@ -19,7 +19,7 @@ interface Props {
 const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
 
   return (
     <>
@@ -87,14 +87,8 @@ const ConclusionDraft: React.FC<Props> = (props) => {
             },
           )}
           onChange={(decision) => {
-            autofill(
-              [
-                {
-                  key: 'decision',
-                  value: decision,
-                  force: true,
-                },
-              ],
+            setAndSendToServer(
+              [{ decision, force: true }],
               workingCase,
               setWorkingCase,
             )

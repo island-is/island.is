@@ -1,0 +1,24 @@
+{
+  "root": "libs/api/domains/financial-statements-inao",
+  "sourceRoot": "libs/api/domains/financial-statements-inao/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/financial-statements-inao/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+      "options": {
+        "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

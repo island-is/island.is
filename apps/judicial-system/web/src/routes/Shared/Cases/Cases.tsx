@@ -33,6 +33,23 @@ import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import * as styles from './Cases.css'
 
+const SectionTitle: React.FC = ({ children }) => {
+  return (
+    <>
+      <Box marginBottom={3} display={['block', 'block', 'none']}>
+        <Text variant="h2" as="h2">
+          {children}
+        </Text>
+      </Box>
+      <Box marginBottom={3} display={['none', 'none', 'block']}>
+        <Text variant="h3" as="h3">
+          {children}
+        </Text>
+      </Box>
+    </>
+  )
+}
+
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Cases: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
@@ -165,8 +182,12 @@ export const Cases: React.FC = () => {
   }
 
   return (
-    <Box paddingX={[0, 0, 4]}>
-      <Box className={styles.casesContainer}>
+    <Box paddingX={[2, 2, 4]}>
+      <Box
+        className={styles.casesContainer}
+        marginX={'auto'}
+        marginY={[4, 4, 12]}
+      >
         <PageHeader title={formatMessage(titles.shared.cases)} />
         {loading ? (
           <TableSkeleton />
@@ -175,25 +196,27 @@ export const Cases: React.FC = () => {
             <div className={styles.logoContainer}>
               <Logo />
               {isProsecutor && (
-                <DropdownMenu
-                  menuLabel="Tegund kröfu"
-                  icon="add"
-                  items={[
-                    {
-                      href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                      title: 'Gæsluvarðhald',
-                    },
-                    {
-                      href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                      title: 'Farbann',
-                    },
-                    {
-                      href: constants.NEW_IC_ROUTE,
-                      title: 'Rannsóknarheimild',
-                    },
-                  ]}
-                  title="Stofna nýja kröfu"
-                />
+                <Box display={['none', 'none', 'block']}>
+                  <DropdownMenu
+                    menuLabel="Tegund kröfu"
+                    icon="add"
+                    items={[
+                      {
+                        href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                        title: 'Gæsluvarðhald',
+                      },
+                      {
+                        href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                        title: 'Farbann',
+                      },
+                      {
+                        href: constants.NEW_IC_ROUTE,
+                        title: 'Rannsóknarheimild',
+                      },
+                    ]}
+                    title="Stofna nýja kröfu"
+                  />
+                </Box>
               )}
             </div>
           )
@@ -202,24 +225,22 @@ export const Cases: React.FC = () => {
           <>
             {!isHighCourtUser && (
               <>
-                <Box marginBottom={3}>
-                  {/**
-                   * This should be a <caption> tag inside the table but
-                   * Safari has a bug that doesn't allow that. See more
-                   * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                   */}
-                  <Text variant="h3" id="activeCasesTableCaption">
-                    {formatMessage(
-                      isPrisonUser
-                        ? m.sections.activeRequests.prisonStaffUsers.title
-                        : isPrisonAdminUser
-                        ? m.sections.activeRequests.prisonStaffUsers
-                            .prisonAdminTitle
-                        : m.sections.activeRequests.title,
-                    )}
-                  </Text>
-                </Box>
-                <Box marginBottom={15}>
+                {/**
+                 * This should be a <caption> tag inside the table but
+                 * Safari has a bug that doesn't allow that. See more
+                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+                 */}
+                <SectionTitle>
+                  {formatMessage(
+                    isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      : isPrisonAdminUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .prisonAdminTitle
+                      : m.sections.activeRequests.title,
+                  )}
+                </SectionTitle>
+                <Box marginBottom={[5, 5, 12]}>
                   {activeCases && activeCases.length > 0 ? (
                     isPrisonUser || isPrisonAdminUser ? (
                       <PastCases
@@ -260,24 +281,22 @@ export const Cases: React.FC = () => {
                 </Box>
               </>
             )}
-            <Box marginBottom={3}>
-              {/**
-               * This should be a <caption> tag inside the table but
-               * Safari has a bug that doesn't allow that. See more
-               * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-               */}
-              <Text variant="h3" id="activeCasesTableCaption">
-                {formatMessage(
-                  isHighCourtUser
-                    ? m.sections.pastRequests.highCourtUsers.title
-                    : isPrisonUser
-                    ? m.sections.pastRequests.prisonStaffUsers.title
-                    : isPrisonAdminUser
-                    ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                    : m.sections.pastRequests.title,
-                )}
-              </Text>
-            </Box>
+            {/**
+             * This should be a <caption> tag inside the table but
+             * Safari has a bug that doesn't allow that. See more
+             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+             */}
+            <SectionTitle>
+              {formatMessage(
+                isHighCourtUser
+                  ? m.sections.pastRequests.highCourtUsers.title
+                  : isPrisonUser
+                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  : isPrisonAdminUser
+                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.sections.pastRequests.title,
+              )}
+            </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
               <PastCases
                 cases={pastCases}

@@ -1,0 +1,25 @@
+{
+  "root": "libs/content-search-index-manager",
+  "sourceRoot": "libs/content-search-index-manager/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/content-search-index-manager/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/content-search-index-manager/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/content-search-index-manager"]
+    }
+  },
+  "tags": []
+}

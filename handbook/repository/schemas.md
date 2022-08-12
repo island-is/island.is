@@ -47,7 +47,7 @@ libs/**/*.controller.ts
 
 ## Adding a new script for your project
 
-We have 4 different types of scripts that can be added inside `workspace.json` to generate schemas and types.
+We have 4 different types of scripts that can be added inside `project.json` to generate schemas and types.
 
 - `schemas/build-openapi`
 - `schemas/openapi-generator`
@@ -88,11 +88,11 @@ buildOpenApi({
 })
 ```
 
-Finally, we add the script into `workspace.json` for the project.
+Finally, we add the script into the `project.json` for the project.
 
 ```json
 "schemas/build-openapi": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "PATH/openapi.yaml",
     "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildOpenApi.ts"
@@ -100,7 +100,7 @@ Finally, we add the script into `workspace.json` for the project.
 }
 ```
 
-If your service is running a service like redis, you will need to ignore it for running the build-open-api script like follow in the `workspace.json`
+If your service is running a service like redis, you will need to ignore it for running the build-open-api script like follow in the `project.json`
 
 ```json
 "command": "cross-env INIT_SCHEMA=true yarn ts-node ..."
@@ -129,11 +129,11 @@ We will now use the `openapi.yaml` file generated from the previous script to ru
 If the `.yaml` file comes from an outside source, don't name it openapi.yaml, otherwise it will be git ignored.
 {% endhint %}
 
-Add the following script to the `workspace.json`'s project.
+Add the following script to the project's `project.json`.
 
 ```json
 "schemas/openapi-generator": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "PATH/gen/fetch",
     "command": "yarn openapi-generator -o PATH/gen/fetch -i PATH/openapi.yaml"
@@ -146,12 +146,12 @@ Add the following script to the `workspace.json`'s project.
 ### Graphql (schemas/build-graphql-schema)
 
 If you are creating an API, you'll need to hook up the `build-graphql-schema` script
-in `workspace.json` so the CI can create the GraphQL schema in the pipeline without
+in `project.json` so the CI can create the GraphQL schema in the pipeline without
 starting running the server:
 
 ```json
 "schemas/build-graphql-schema": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "command": "yarn ts-node -P PATH/tsconfig.json PATH_TO_ROOT_MODULE"
   }
@@ -178,11 +178,11 @@ hooks:
     - prettier --write
 ```
 
-Finally, you need to add it inside your `workspace.json`
+Finally, you need to add it inside your `project.json`
 
 ```json
 "schemas/codegen": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "command": "graphql-codegen --config PATH/codegen.yml"
   }
