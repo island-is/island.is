@@ -14,6 +14,7 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { parseFirearmLicensePayload } from './firearmLicenseMapper'
+import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -25,6 +26,25 @@ export class GenericFirearmLicenseApi
     private firearmApi: FirearmApplicationApi,
   ) {}
 
+  private handleError(error: Partial<FetchError>): unknown {
+    // Not throwing error if service returns 403 or 404. Log information instead.
+    if (error.status === 403 || error.status === 404) {
+      this.logger.info(`Firearm license returned ${error.status}`, {
+        exception: error,
+        message: (error as Error)?.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+    this.logger.info('ADR license fetch failed', {
+      exception: error,
+      message: (error as Error)?.message,
+      category: LOG_CATEGORY,
+    })
+
+    return null
+  }
+
   async fetchLicense(user: User) {
     let license: unknown
 
@@ -33,12 +53,7 @@ export class GenericFirearmLicenseApi
         ssn: user.nationalId,
       })
     } catch (e) {
-      this.logger.error('Firearm license fetch failed', {
-        exception: e,
-        message: (e as Error)?.message,
-        category: LOG_CATEGORY,
-      })
-      return null
+      this.handleError(e)
     }
 
     return license as LicenseInfo
