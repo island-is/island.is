@@ -1,0 +1,23 @@
+{
+  "root": "libs/dokobit-signing",
+  "sourceRoot": "libs/dokobit-signing/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/dokobit-signing/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/dokobit-signing/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/dokobit-signing"]
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,41 @@
+{
+  "root": "libs/clients/syslumenn",
+  "sourceRoot": "libs/clients/syslumenn/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/syslumenn/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/syslumenn"],
+      "options": {
+        "jestConfig": "libs/clients/syslumenn/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.paths[][].tags = [\"Syslumenn\"]' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/syslumenn"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/syslumenn/gen/fetch -i libs/clients/syslumenn/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

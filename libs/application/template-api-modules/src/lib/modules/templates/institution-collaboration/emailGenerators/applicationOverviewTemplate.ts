@@ -8,7 +8,7 @@ export const applicationOverviewTemplate = (
 ): string => {
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
 
   const contactName = getValueViaPath(application.answers, 'contact.name')

@@ -27,11 +27,11 @@ bootstrap({
 })
 ```
 
-2. Open `workspace.json`, find your project definition and replace the "build" and "serve" architect keys with the following content. Be sure to replace the `{{variables}}` with correct values, and edit `build` configurations as needed.
+2. Open the `project.json` file in your project folder and replace the "build" and "serve" target keys with the following content. Be sure to replace the `{{variables}}` with correct values, and edit `build` configurations as needed.
 
 ```json
 "build": {
-  "builder": "@nrwl/workspace:run-commands",
+  "executor": "@nrwl/workspace:run-commands",
   "options": {
     "outputPath": "dist/apps/{{pathToAppDir}}",
     "commands": [
@@ -41,7 +41,7 @@ bootstrap({
   }
 },
 "build-next": {
-  "builder": "@nrwl/next:build",
+  "executor": "@nrwl/next:build",
   "options": {
     "root": "apps/{{pathToAppDir}}",
     "outputPath": "dist/apps/{{pathToAppDir}}"
@@ -58,7 +58,7 @@ bootstrap({
   }
 },
 "build-server": {
-  "builder": "@nrwl/node:build",
+  "executor": "@nrwl/node:build",
   "options": {
     "outputPath": "dist/apps/{{pathToAppDir}}",
     "main": "apps/{{pathToAppDir}}/server.ts",
@@ -74,18 +74,18 @@ bootstrap({
   }
 },
 "serve": {
-  "builder": "@nrwl/node:execute",
+  "executor": "@nrwl/node:execute",
   "options": {
     "buildTarget": "{{projectName}}:build-server"
   }
 },
 ```
 
-3. Also, in `workspace.json`, find your "{{projectName}}-e2e" definition and add a `baseUrl` to the `e2e` target so Cypress can find your server:
+3. Also, in the `project.json` of your e2e project add a `baseUrl` to the `e2e` target so Cypress can find your server:
 
 ```json
 "e2e": {
-  "builder": "@nrwl/cypress:cypress",
+  "executor": "@nrwl/cypress:cypress",
   "options": {
     "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.config.ts",
     "tsConfig": "apps/{{pathToAppDir}}-e2e/tsconfig.e2e.json",

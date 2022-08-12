@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -30,7 +30,6 @@ import {
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
@@ -49,7 +48,7 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const handleNextButtonClick = async (theCase: Case) => {
@@ -98,36 +97,39 @@ const Defendant = () => {
     }
   }
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
+  const updateDefendantState = useCallback(
+    (defendantId: string, update: UpdateDefendant) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
 
-      const newDefendants = [...workingCase.defendants]
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
 
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
+        const newDefendants = [...theCase.defendants]
+
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [setWorkingCase],
+  )
+
+  const handleUpdateDefendant = useCallback(
+    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant)
+
+      if (workingCase.id) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
-
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
-    }
-  }
-
-  const handleUpdateDefendant = async (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => {
-    updateDefendantState(defendantId, updatedDefendant)
-
-    if (workingCase.id) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
-    }
-  }
+    },
+    [updateDefendantState, workingCase.id, updateDefendant],
+  )
 
   const handleDeleteDefendant = async (defendant: TDefendant) => {
     if (workingCase.defendants && workingCase.defendants.length > 1) {
@@ -241,11 +243,15 @@ const Defendant = () => {
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                     setAndSendToServer(
-                      'type',
-                      (selectedOption as ReactSelectOption).value as string,
+                      [
+                        {
+                          type: (selectedOption as ReactSelectOption)
+                            .value as CaseType,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }
                   value={
@@ -288,11 +294,14 @@ const Defendant = () => {
                 }}
                 onBlur={(evt) =>
                   setAndSendToServer(
-                    'description',
-                    evt.target.value,
+                    [
+                      {
+                        description: evt.target.value,
+                        force: true,
+                      },
+                    ],
                     workingCase,
                     setWorkingCase,
-                    updateCase,
                   )
                 }
               />

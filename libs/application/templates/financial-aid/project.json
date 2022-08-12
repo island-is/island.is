@@ -1,0 +1,30 @@
+{
+  "root": "libs/application/templates/financial-aid",
+  "sourceRoot": "libs/application/templates/financial-aid/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/financial-aid/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/templates/financial-aid"],
+      "options": {
+        "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}
