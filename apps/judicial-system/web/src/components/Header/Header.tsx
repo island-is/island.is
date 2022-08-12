@@ -49,7 +49,7 @@ const HeaderContainer: React.FC = () => {
     useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
 
   return (
-    <Box paddingX={[0, 0, 4]}>
+    <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.container}>
         <GridRow>
           <GridColumn span="12/12">
