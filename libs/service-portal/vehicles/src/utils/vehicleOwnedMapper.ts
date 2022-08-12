@@ -16,15 +16,15 @@ export const exportVehicleOwnedDocument = async (
     (x: VehiclesVehicle) => x.role?.toLowerCase() === 'eigandi',
   )
 
-  const operatorVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
-  )
-
   const coOwnerVehicles = data.filter(
     (x: VehiclesVehicle) => x.role?.toLowerCase() === 'meðeigandi',
   )
 
-  const ownersData = operatorVehicles.map((item: VehiclesVehicle) => {
+  const operatorVehicles = data.filter(
+    (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
+  )
+
+  const ownersData = ownersVehicles.map((item: VehiclesVehicle) => {
     return [
       item.permno,
       item.regno,
@@ -46,7 +46,7 @@ export const exportVehicleOwnedDocument = async (
     ]
   })
 
-  const coOwnersData = operatorVehicles.map((item: VehiclesVehicle) => {
+  const coOwnersData = coOwnerVehicles.map((item: VehiclesVehicle) => {
     return [
       item.permno,
       item.regno,
