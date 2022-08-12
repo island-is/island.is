@@ -9,13 +9,31 @@
       "email": "samgongustofa@samgongustofa.is"
     },
     "version": "v1",
-    "x-category": ["personal", "official"],
-    "x-pricing": ["free", "paid"],
+    "x-category": [
+      "personal",
+      "official"
+    ],
+    "x-pricing": [
+      "free",
+      "paid"
+    ],
     "x-links": [
-      ["documentation", "https://www.samgongustofa.is/"],
-      ["responsibleParty", "mailto:samgongustofa@samgongustofa.is"],
-      ["bugReport", "https://www.samgongustofa.is/"],
-      ["featureRequest", "https://www.samgongustofa.is/"]
+      [
+        "documentation",
+        "https://www.samgongustofa.is/"
+      ],
+      [
+        "responsibleParty",
+        "mailto:samgongustofa@samgongustofa.is"
+      ],
+      [
+        "bugReport",
+        "https://www.samgongustofa.is/"
+      ],
+      [
+        "featureRequest",
+        "https://www.samgongustofa.is/"
+      ]
     ]
   },
   "servers": [
@@ -26,7 +44,9 @@
   "paths": {
     "/SearchesRemaining": {
       "get": {
-        "tags": ["VehicleSearch"],
+        "tags": [
+          "VehicleSearch"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -48,14 +68,18 @@
         },
         "security": [
           {
-            "OAuth2": ["OAuth2"]
+            "OAuth2": [
+              "OAuth2"
+            ]
           }
         ]
       }
     },
     "/VehicleSearch": {
       "get": {
-        "tags": ["VehicleSearch"],
+        "tags": [
+          "VehicleSearch"
+        ],
         "parameters": [
           {
             "name": "search",
@@ -111,14 +135,18 @@
         },
         "security": [
           {
-            "OAuth2": ["OAuth2"]
+            "OAuth2": [
+              "OAuth2"
+            ]
           }
         ]
       }
     },
     "/BasicVehicleInformation": {
       "get": {
-        "tags": ["VehicleSearch"],
+        "tags": [
+          "VehicleSearch"
+        ],
         "parameters": [
           {
             "name": "clientPersidno",
@@ -179,14 +207,18 @@
         },
         "security": [
           {
-            "OAuth2": ["OAuth2"]
+            "OAuth2": [
+              "OAuth2"
+            ]
           }
         ]
       }
     },
     "/VehicleHistory": {
       "get": {
-        "tags": ["VehicleSearch"],
+        "tags": [
+          "VehicleSearch"
+        ],
         "parameters": [
           {
             "name": "requestedPersidno",
@@ -266,14 +298,18 @@
         },
         "security": [
           {
-            "OAuth2": ["OAuth2"]
+            "OAuth2": [
+              "OAuth2"
+            ]
           }
         ]
       }
     },
     "/AdditionalVehicleInformation": {
       "get": {
-        "tags": ["VehicleSearch"],
+        "tags": [
+          "VehicleSearch"
+        ],
         "parameters": [
           {
             "name": "clientPersidno",
@@ -334,7 +370,9 @@
         },
         "security": [
           {
-            "OAuth2": ["OAuth2"]
+            "OAuth2": [
+              "OAuth2"
+            ]
           }
         ]
       }
@@ -2341,5 +2379,7 @@
       }
     }
   },
-  "security": [{}]
+  "security": [
+    {}
+  ]
 }
