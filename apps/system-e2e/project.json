@@ -5,10 +5,33 @@
   "prefix": "system-e2e",
   "generators": {},
   "targets": {
+    "e2e": {
+      "builder": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "devServerTarget": "",
+        "baseUrl": "http://localhost:4200"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": ""
+        }
+      }
+    },
+    "e2e-ci": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "command": "yarn e2e-ci -n judicial-system-web-e2e -c -d dist/apps/judicial-system/web"
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/system-e2e/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "system-test": {
