@@ -36,7 +36,7 @@ export class GenericFirearmLicenseApi
       })
       return null
     }
-    this.logger.info('Firearm license fetch failed', {
+    this.logger.warn('Firearm license fetch failed', {
       exception: error,
       message: (error as Error)?.message,
       category: LOG_CATEGORY,
