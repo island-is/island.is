@@ -22,7 +22,7 @@
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json",
-          "jq '.components.schemas.ProblemDetails.additionalProperties = false' libs/clients/vehicles/src/clientConfig.json > _.tmp && mv _.tmp libs/clients/vehicles/src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' libs/clients/vehicles/src/clientConfig.json) > libs/clients/vehicles/src/clientConfig.json",
           "prettier --write libs/clients/vehicles/src/clientConfig.json"
         ]
       }
