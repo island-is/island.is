@@ -1,6 +1,7 @@
 import compareAsc from 'date-fns/compareAsc'
 import fetch, { Response } from 'node-fetch'
 
+import { Locale } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
@@ -302,7 +303,10 @@ export class GenericDrivingLicenseApi
    * @param nationalId NationalId to fetch drivers licence for.
    * @return {Promise<GenericLicenseUserdataExternal | null>} Latest driving license or null if an error occured.
    */
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const licenses = await this.requestFromXroadApi(user.nationalId)
 
     if (!licenses) {
@@ -312,7 +316,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const payload = parseDrivingLicensePayload(licenses)
+    const payload = parseDrivingLicensePayload(licenses, locale)
 
     let pkpassStatus: GenericUserLicensePkPassStatus =
       GenericUserLicensePkPassStatus.Unknown
@@ -332,8 +336,9 @@ export class GenericDrivingLicenseApi
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
 
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

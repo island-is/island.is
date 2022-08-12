@@ -14,7 +14,7 @@ import {
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
-import { ApolloError } from 'apollo-server-express'
+import { Locale } from '@island.is/shared/types'
 import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
@@ -59,7 +59,10 @@ export class GenericMachineLicenseApi
     return license as VinnuvelaDto
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const license = await this.fetchLicense(user)
 
     if (!license) {
@@ -69,7 +72,7 @@ export class GenericMachineLicenseApi
       return null
     }
 
-    const payload = parseMachineLicensePayload(license)
+    const payload = parseMachineLicensePayload(license, locale)
 
     return {
       status: GenericUserLicenseStatus.HasLicense,
@@ -80,8 +83,9 @@ export class GenericMachineLicenseApi
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {

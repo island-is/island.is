@@ -1,10 +1,22 @@
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
+}
+
+/**
+ * Get organization slug from the CMS.
+ * https://app.contentful.com/spaces/8k0h54kbe6bj/entries?id=kc7049zAeHdJezwG&contentTypeId=organization
+ * */
+export enum GenericLicenseOrganizationSlug {
+  DriversLicense = 'rikislogreglustjori',
+  HuntingLicense = 'umhverfisstofnun',
+  AdrLicense = 'vinnueftirlitid',
+  MachineLicense = 'vinnueftirlitid',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -58,11 +70,16 @@ export type GenericLicenseMetadata = {
   pkpass: boolean
   pkpassVerify: boolean
   timeout: number
+  orgSlug?: GenericLicenseOrganizationSlug
+}
+
+export type GenericLicenseOrgdata = {
+  title?: string
+  logo?: string
 
   // TODO(osk) should these be here? or be resolved by client via contentful?
   // Commented out until talked about, to limit scope of v1
   /*
-  title: string
   ordering: number
   backgroundImage?: string
   applicationUrl?: string
@@ -109,7 +126,9 @@ export type GenericLicenseCached = {
 
 export type GenericUserLicense = {
   nationalId: string
-  license: GenericLicenseMetadata & GenericLicenseUserdata
+  license: GenericLicenseMetadata &
+    GenericLicenseUserdata &
+    GenericLicenseOrgdata
   fetch: GenericLicenseFetch
   payload?: GenericUserLicensePayload
 }
@@ -150,11 +169,15 @@ export type PkPassVerification = {
  */
 export interface GenericLicenseClient<LicenseType> {
   // This might be cached
-  getLicense: (user: User) => Promise<GenericLicenseUserdataExternal | null>
+  getLicense: (
+    user: User,
+    locale: Locale,
+  ) => Promise<GenericLicenseUserdataExternal | null>
 
   // This will never be cached
   getLicenseDetail: (
     user: User,
+    locale: Locale,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
   getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>

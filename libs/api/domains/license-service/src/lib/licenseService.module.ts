@@ -12,6 +12,7 @@ import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
   GenericLicenseMetadata,
+  GenericLicenseOrganizationSlug,
   GenericLicenseProviderId,
   GenericLicenseType,
   GENERIC_LICENSE_FACTORY,
@@ -21,6 +22,7 @@ import {
   VinnuvelaApi,
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
+import { CmsModule } from '@island.is/cms'
 import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
@@ -49,6 +51,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
     type: GenericLicenseType.AdrLicense,
@@ -58,6 +61,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: false,
     pkpassVerify: false,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
     type: GenericLicenseType.MachineLicense,
@@ -67,6 +71,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: false,
     pkpassVerify: false,
     timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
 ]
 
@@ -75,7 +80,11 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register(), AdrAndMachineLicenseClientModule],
+      imports: [
+        CacheModule.register(),
+        AdrAndMachineLicenseClientModule,
+        CmsModule,
+      ],
       providers: [
         MainResolver,
         LicenseServiceService,

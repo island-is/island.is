@@ -12,7 +12,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 import { FetchError } from '@island.is/clients/middlewares'
-import { ApolloError } from 'apollo-server-express'
+import { Locale } from '@island.is/shared/types'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -56,7 +56,10 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
     return license as AdrDto
   }
 
-  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(
+    user: User,
+    locale: Locale,
+  ): Promise<GenericLicenseUserdataExternal | null> {
     const license = await this.fetchLicense(user)
 
     if (!license) {
@@ -65,7 +68,7 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
       })
       return null
     }
-    const payload = parseAdrLicensePayload(license)
+    const payload = parseAdrLicensePayload(license, locale)
 
     return {
       status: GenericUserLicenseStatus.HasLicense,
@@ -76,8 +79,9 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
   async getLicenseDetail(
     user: User,
+    locale: Locale,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(user)
+    return this.getLicense(user, locale)
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {

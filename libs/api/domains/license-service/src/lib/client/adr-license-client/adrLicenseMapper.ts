@@ -8,9 +8,12 @@ import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from './genericAdrLicense.type'
+import { Locale } from '@island.is/shared/types'
+import { i18n } from '../../utils/translations'
 
 export const parseAdrLicensePayload = (
   license: AdrDto,
+  locale: Locale = 'is',
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
@@ -47,32 +50,32 @@ export const parseAdrLicensePayload = (
   const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '1. Númer skírteinis',
+      label: `1. ${i18n.licenseNumberFull[locale]}`,
       value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '3. 2. Fullt nafn',
+      label: `3. 2. ${i18n.fullName[locale]}`,
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4. Fæðingardagur',
+      label: `4. ${i18n.birthday[locale]}`,
       value: parsedResponse.faedingarDagur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '5. Ríkisfang: ',
+      label: `5. ${i18n.nationality[locale]}`,
       value: parsedResponse.rikisfang ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '7. Útgefandi. ',
+      label: `7. ${i18n.publisher[locale]}`,
       value: 'Vinnueftirliti ríkisins',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '8. Gildir til/Valid to',
+      label: `8. ${i18n.validTo[locale]}`,
       value: parsedResponse.gildirTil ?? '',
     },
   ]
@@ -81,14 +84,14 @@ export const parseAdrLicensePayload = (
     (field) => field.grunn,
   )
   const tankar = parseRights(
-    '9. Tankar',
+    `9. ${i18n.tanks[locale]}`,
     adrRights.filter((field) => field.tankar),
   )
 
   if (tankar) data.push(tankar)
 
   const notTankar = parseRights(
-    '10. Annað en í tanki ',
+    `10. ${i18n.otherThanInTank[locale]}`,
     adrRights.filter((field) => !field.tankar),
   )
   if (notTankar) data.push(notTankar)
