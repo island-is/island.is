@@ -372,6 +372,12 @@ const useCase = () => {
         return
       }
 
+      // The case has not been created
+      if (!workingCase.id) {
+        setWorkingCase({ ...workingCase, ...updatesToCase })
+        return
+      }
+
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {
