@@ -44,10 +44,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryFamily } = famData || {}
   return (
     <>
-      <IntroHeader
-        title={userInfo.profile.name}
-        intro={spmm.family.userInfoDesc}
-      />
+      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
@@ -201,7 +198,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <Box marginY={3} />
         <UserInfoLine
-          title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
+          title={formatMessage(spmm.userFamilyMembersOnNumber)}
           label={userInfo.profile.name}
           content={formatNationalId(userInfo.profile.nationalId)}
           loading={loading || familyLoading}

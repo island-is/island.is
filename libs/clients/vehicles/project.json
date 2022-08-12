@@ -1,0 +1,32 @@
+{
+  "root": "libs/clients/vehicles",
+  "sourceRoot": "libs/clients/vehicles/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/vehicles/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/vehicles"],
+      "options": {
+        "jestConfig": "libs/clients/vehicles/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' libs/clients/vehicles/src/clientConfig.json) > libs/clients/vehicles/src/clientConfig.json",
+          "prettier --write libs/clients/vehicles/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

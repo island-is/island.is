@@ -31,7 +31,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
 
   const { formatMessage } = useIntl()
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
@@ -47,11 +47,10 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       !workingCase.prosecutorOnlySessionRequest &&
       workingCase.requestProsecutorOnlySession
     ) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'prosecutorOnlySessionRequest',
-            value: formatMessage(
+            prosecutorOnlySessionRequest: formatMessage(
               icReportForm.prosecutorOnly.input.defaultValue,
             ),
           },
@@ -60,7 +59,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>

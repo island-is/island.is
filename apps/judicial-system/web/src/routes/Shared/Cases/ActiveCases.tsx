@@ -11,6 +11,7 @@ import {
   useAnimation,
 } from 'framer-motion'
 
+import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
   CaseState,
@@ -30,9 +31,11 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
+import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
+import MobileCase from './MobileCase'
 
 interface Props {
   cases: Case[]
@@ -127,7 +130,39 @@ const ActiveCases: React.FC<Props> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  return (
+  const { width } = useViewport()
+
+  return width < theme.breakpoints.md ? (
+    <>
+      {cases.map((theCase: Case) => (
+        <Box marginTop={2}>
+          <MobileCase
+            key={theCase.id}
+            onClick={() => onRowClick(theCase.id)}
+            theCase={theCase}
+            isCourtRole={isCourtRole}
+          >
+            {theCase.courtDate ? (
+              <Text fontWeight={'medium'} variant="small">
+                {`${formatMessage(
+                  requests.sections.activeRequests.table.headers.hearing,
+                )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
+                  parseISO(theCase.courtDate),
+                  'kk:mm',
+                )}`}
+              </Text>
+            ) : (
+              <Text variant="small" fontWeight={'medium'}>
+                {`${formatMessage(
+                  requests.sections.activeRequests.table.headers.created,
+                )} ${format(parseISO(theCase.created), 'd.M.y')}`}
+              </Text>
+            )}
+          </MobileCase>
+        </Box>
+      ))}
+    </>
+  ) : (
     <table className={styles.table} data-testid="activeCasesTable">
       <thead className={styles.thead}>
         <tr>

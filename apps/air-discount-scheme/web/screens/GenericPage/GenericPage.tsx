@@ -15,6 +15,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/air-discount-scheme-web/components'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 interface PropTypes {
   page?: GenericPageSchema
@@ -68,7 +69,17 @@ const GetGenericPageQuery = gql`
   }
 `
 
-GenericPage.getInitialProps = async ({ apolloClient, locale, route }) => {
+interface InitialProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+  route: string
+}
+
+GenericPage.getInitialProps = async ({
+  apolloClient,
+  locale,
+  route,
+}: InitialProps) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
