@@ -36,7 +36,7 @@ export class GenericFirearmLicenseApi
       })
       return null
     }
-    this.logger.info('ADR license fetch failed', {
+    this.logger.info('Firearm license fetch failed', {
       exception: error,
       message: (error as Error)?.message,
       category: LOG_CATEGORY,
@@ -63,9 +63,6 @@ export class GenericFirearmLicenseApi
     const license = await this.fetchLicense(user)
 
     if (!license) {
-      this.logger.warn('Missing Firearm license, null from api', {
-        category: LOG_CATEGORY,
-      })
       return null
     }
 
