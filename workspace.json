@@ -108,6 +108,7 @@
     "clients-driving-license": "libs/clients/driving-license",
     "clients-driving-license-book": "libs/clients/driving-license-book",
     "clients-finance": "libs/clients/finance",
+    "clients-firearm-license": "libs/clients/firearm-license",
     "clients-fishing-license": "libs/clients/fishing-license",
     "clients-health-insurance-v2": "libs/clients/health-insurance-v2",
     "clients-islykill": "libs/clients/islykill",
