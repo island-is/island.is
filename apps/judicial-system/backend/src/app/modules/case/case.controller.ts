@@ -221,8 +221,6 @@ export class CaseController {
     )
 
     if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-      this.logger.info(`Writing completed case ${caseId} to queue`)
-
       this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
     }
 

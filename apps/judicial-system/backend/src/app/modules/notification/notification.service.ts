@@ -728,7 +728,6 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrison(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
@@ -742,6 +741,10 @@ export class NotificationService {
       theCase.rulingDate,
     )
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
+    )
+    const courtRecordPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
     )
@@ -797,11 +800,6 @@ export class NotificationService {
       }
     }
 
-    const courtRecordPdf = await getCourtRecordPdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-
     const recipients = [
       await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
     ]
@@ -812,9 +810,7 @@ export class NotificationService {
       (theCase.decision === CaseDecision.ACCEPTING ||
         theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
-      recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(theCase, courtRecordPdf),
-      )
+      recipients.concat(await this.sendRulingEmailNotificationToPrison(theCase))
     }
 
     return this.recordNotification(
