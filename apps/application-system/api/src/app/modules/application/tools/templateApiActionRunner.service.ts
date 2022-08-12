@@ -142,7 +142,9 @@ export class TemplateApiActionRunner {
     }
 
     if (!actionResult)
-      throw new Error(`No Action is defined for ${apiModuleAction}`)
+      throw new Error(
+        `No Action is defined for ${useMocks ? 'mock' : ''} ${apiModuleAction}`,
+      )
 
     await this.updateExternalData(
       action,

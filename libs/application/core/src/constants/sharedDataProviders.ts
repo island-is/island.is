@@ -30,7 +30,7 @@ export const SharedDataProviders = {
   },
   paymentCatalogProvider: {
     apiModuleAction: 'paymentCatalog',
-    namespace: 'paymentCatalog',
+    namespace: 'userProfile',
     dataProviderType: 'paymentCatalogProvider',
   },
 } as AvailableSharedDataProviders

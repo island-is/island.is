@@ -11,6 +11,7 @@ import {
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { ReferenceApplicationDataProviders } from '../dataProviders'
+
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Skilyrði',
@@ -27,13 +28,13 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               id: 'approveDataProvider',
               provider: ReferenceApplicationDataProviders.userProfileProvider,
-              title: 'getAnotherReferenceData',
-              subTitle: 'Another Refernence Data',
+              title: 'User profile',
+              subTitle: 'User profile',
             }),
             buildDataProviderItem({
               id: 'approveDataProvider1',
               provider:
-                ReferenceApplicationDataProviders.familyRelationsProvider,
+                ReferenceApplicationDataProviders.familyRelationProvider,
               title: 'Upplýsingar um fjölskyldumeðlimi',
               subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),

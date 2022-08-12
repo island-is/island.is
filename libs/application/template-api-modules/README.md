@@ -185,3 +185,253 @@ enum TEMPLATE_API_ACTIONS {
     },
   },
 ```
+
+# Add a dataprovider to your application
+
+This describes how you can add a shared and custom dataproviders to your application Template
+
+## 1. Add your action to your template api
+
+See documentation on how to add a new template api [here](#getting-started)
+
+## 2. Set up your dataprovider definitions
+
+Make your definitions available to your Template
+
+```typescript
+import {
+  ApplicationTemplateAPIAction,
+  SharedDataProviders,
+} from '@island.is/application/core'
+
+export { SharedDataProviders } from '@island.is/application/core'
+
+export const MyApplicationDataProviders = {
+  myApplicationProvider: {
+    dataProviderType: 'myDataProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyData',
+    externalDataId: 'myData',
+  },
+} as MyApplicationDataProviders
+
+export interface MyApplicationDataProviders {
+  myDataProvider: ApplicationTemplateAPIAction
+}
+```
+
+### Add your provider to the appropriate role in a state.
+
+```diff
+  [States.DRAFT]: {
+    meta: {
+        name: States.DRAFT,
+        ...
+        roles: [
+        ...
+        {
+            id: Roles.APPLICANT,
+            formLoader: () =>
+            import('../forms/Draft').then((val) =>
+                Promise.resolve(val.Draft),
+            ),
+            read: 'all',
+            write: 'all',
++           api: [
++             MyApplicationDataProviders.myDataProvider
++           ]
+        },
+        ...
+    ...
+    },
+```
+
+### Add the dataprovider to your external data form
+
+Include your provider in buildDataProviderItem object.
+
+```typescript
+ buildExternalDataProvider({
+      title: externalData.dataProvider.pageTitle,
+      id: 'approveExternalData',
+      subTitle: externalData.dataProvider.subTitle,
+      description: externalData.extraInformation.description,
+      checkboxLabel: externalData.dataProvider.checkboxLabel,
+      dataProviders: [
+        buildDataProviderItem({
+          id: 'myDataProvider',
+          provider: MyApplicationDataProviders.myDataProvider,
+          title: externalData.MyApplicationDataProviders.title,
+          subTitle: externalData.MyApplicationDataProviders.description,
+        }),
+      ],
+    }),
+```
+
+## 3. Additional dataprovider settings
+
+## Custom order
+
+Forces the dataproviders to run sequentially in order. Responses are populated in external data and can be accessed by other providers during execution.
+Each action with the same order number is run in parallel and actions.
+Actions default to 0 and are run first in parallel.
+
+```typescript
+  myApplicationProvider: {
+    dataProviderType: 'myDataProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyData',
+    externalDataId: 'myData',
+    order: 1, //Runs first
+  },
+  myApplicationProvider2: {
+    dataProviderType: 'myDataOtherProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyOtherData',
+    externalDataId: 'myOtherData',
+    order: 2, //Waits till getMyData resolves
+  }
+```
+
+## Custom error messages
+
+You can add an error reason based on a problem type thrown by your apiModuleAction
+
+```typescript
+  myApplicationProvider: {
+    dataProviderType: 'myDataProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyData',
+    externalDataId: 'myData',
+    //Error messages to be displayed to the user. Maps to the ProblemType enum thrown by the Service
+    errorReasons: [
+      {
+        problemType: ProblemType.HTTP_NOT_FOUND,
+        reason: {
+          title: 'Something was missing',
+          summary: 'A more detailed summary of why',
+        },
+        statusCode: 404,
+      },
+    ],
+```
+
+Or you could add an error handler that catches a valid response
+
+```typescript
+  myApplicationProvider: {
+    dataProviderType: 'myDataProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyData',
+    externalDataId: 'myData',
+    //Conditonally return an error reason from a valid response from the provider
+    errorReasonHandler: (data: PerformActionResult) => {
+      if (data.success) {
+        const s = data.response as NationalRegistryUser
+
+        if (s.age < 18) {
+          return {
+            reason: {
+              title: 'You have not reached 18 years of age',
+              summary: 'Summary of just why ',
+            },
+            problemType: ProblemType.VALIDATION_FAILED,
+            statusCode: 400,
+          }
+        }
+      }
+    },
+```
+
+## Parameters
+
+You can add a custom parameter that can be passed into the apiModuleAction
+
+```typescript
+  myApplicationProvider: {
+    dataProviderType: 'myDataProvider',
+    //Has to match the apiModule action in your template api added earlier
+    apiModuleAction: 'getMyData',
+    externalDataId: 'myData',
+    // Custom Parameters for the service
+    params: {
+      parameterName: 'value',
+    },
+```
+
+The `params` object will be passed into the template api function
+
+```typescript
+@Injectable()
+export class SomeService {
+  constructor(private someApi: API) {}
+
+  async getMyData({ params }: TemplateApiModuleActionProps): Promise<SomeData> {
+    const value = params?.parameterName as string
+
+    const data = await this.someApi.get(value)
+
+    return data
+  }
+}
+```
+
+## Set up a shared DataProvider
+
+### 1. Create a shared provider definition
+
+Add your definition to `libs/application/core/src/constants/sharedDataProviders.ts`
+
+```typescript
+export const SharedDataProviders = {
+  ...
+  mySharedProvider: {
+    apiModuleAction: 'mySharedProviderAction',
+    namespace: 'MySharedProvider',
+    dataProviderType: 'mySharedProvider',
+  },
+} as AvailableSharedDataProviders
+
+export interface AvailableSharedDataProviders {
+  mySharedProvider: ApplicationTemplateAPIAction
+}
+```
+
+### 2. Create a module and a service
+
+[See step 2](#2-Create-the-module-and-a-service) from above. Shared data provider modules should be located `/lib/modules/shared/data-providers`
+
+### 3. Register and include your module
+
+Import your module in `/lib/modules/data-providers/data-providers.module.ts`
+
+And include your service in `/lib/modules/data-providers/data-providers.service.ts` :
+
+```typescript
+
+ export type SharedServiceType =
+  ...
+  | MySharedService
+
+@Injectable()
+export class SharedDataProviderService {
+
+
+  constructor(
+    ...
+    private readonly myService: MySharedService,
+  ) {}
+
+  getProvider(namespace: string): SharedServiceType {
+    switch (namespace) {
+      ...
+      case SharedDataProviders.mySharedProvider.namespace:
+        return this.myService
+
+      default:
+        throw new Error(`Service with the namespace : ${namespace} not found`)
+    }
+  }
+}
+
+```

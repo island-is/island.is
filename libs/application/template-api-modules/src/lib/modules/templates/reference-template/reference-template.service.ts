@@ -24,12 +24,12 @@ export class ReferenceTemplateService {
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
-
+    /*
     throw new ProblemError({
       type: ProblemType.HTTP_NOT_FOUND,
       title: 'Bad Request',
     })
-
+*/
     return {
       referenceData: {
         name,

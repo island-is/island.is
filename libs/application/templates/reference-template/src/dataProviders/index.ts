@@ -43,13 +43,13 @@ export const ReferenceApplicationDataProviders = {
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
     //shouldPersistToExternalData: false,
-    useMockData: true,
+    //useMockData: true,
     order: 1,
-    mockData: {
+    /*mockData: {
       error: 'error',
       problemType: ProblemType.HTTP_NOT_FOUND,
       success: false,
-    },
+    },*/
     errorReasons: [
       {
         problemType: ProblemType.HTTP_NOT_FOUND,

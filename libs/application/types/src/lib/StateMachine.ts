@@ -67,10 +67,9 @@ export class ApplicationTemplateAPIAction {
   // Should the state transition be blocked if this action errors out
   // defaults to true
   throwOnError?: boolean
-
   // Order of execution of actions, defaults to 0
   order?: number
-
+  // Use mocks? defaults to false
   useMockData?: boolean | ((application: Application) => boolean)
   mockData?:
     | PerformActionResult
