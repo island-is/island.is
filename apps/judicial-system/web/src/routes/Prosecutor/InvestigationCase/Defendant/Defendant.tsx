@@ -254,14 +254,14 @@ const Defendant = () => {
                     m.sections.investigationType.type.placeholder,
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-                    const type = (selectedOption as ReactSelectOption).value
+                    const type = (selectedOption as ReactSelectOption)
+                      .value as CaseType
 
                     setCaseType(type as CaseType)
                     setAndSendToServer(
                       [
                         {
-                          type: (selectedOption as ReactSelectOption)
-                            .value as CaseType,
+                          type: type,
                           force: true,
                         },
                       ],

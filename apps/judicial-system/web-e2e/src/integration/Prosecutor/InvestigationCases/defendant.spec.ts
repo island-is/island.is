@@ -89,6 +89,9 @@ describe(NEW_IC_ROUTE, () => {
 
   it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
+    cy.getByTestid('select-type').click()
+    cy.get('[id="react-select-type-option-5-6"]').click()
+
     cy.getByTestid('nationalId').type('0000000000')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('nationalId').blur()
