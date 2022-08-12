@@ -3,8 +3,6 @@ import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { PaymentCatalogService } from './payment-catalog.service'
 import { PaymentAPI } from '@island.is/clients/payment'
 
-// Imports of custom template API modules
-
 export class PaymentCatalogModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {

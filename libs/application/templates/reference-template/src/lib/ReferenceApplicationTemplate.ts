@@ -1,7 +1,6 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  SharedDataProviders,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -12,15 +11,12 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  PerformActionResult,
-  NationalRegistryUser,
 } from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
 
-import { ProblemType } from '@island.is/shared/problem'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'

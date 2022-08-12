@@ -15,7 +15,7 @@ export class PaymentCatalogService {
 
     const data = await (organizationId
       ? this.paymentClientApi.getCatalogByPerformingOrg(organizationId)
-      : await this.paymentClientApi.getCatalog())
+      : this.paymentClientApi.getCatalog())
 
     return data.item
   }

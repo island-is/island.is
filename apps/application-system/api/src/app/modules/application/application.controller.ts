@@ -722,9 +722,7 @@ export class ApplicationController {
       externalDataId,
       throwOnError,
     } = action
-    console.log('performActionOnApplication', action)
 
-    //TODO provide a way to call multiple at once without concurrency issues
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
       type: apiModuleAction,

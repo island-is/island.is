@@ -28,7 +28,7 @@ export class TemplateApiActionRunner {
    * Actions can be run sequentially or in parallel.
    * Each action with the same order number is run in parallel.
    * Else the actions are run sequentially ascending by order.
-   * Actions with no order are run last in parallel.
+   * Actions with no order are run first in parallel.
    * Application is then updated with new external data from each action with persistToExternalData set to true
    * @param application
    * @param actions

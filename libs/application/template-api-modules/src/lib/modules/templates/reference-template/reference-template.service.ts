@@ -29,7 +29,7 @@ export class ReferenceTemplateService {
       type: ProblemType.HTTP_NOT_FOUND,
       title: 'Bad Request',
     })
-*/
+    */
     return {
       referenceData: {
         name,
