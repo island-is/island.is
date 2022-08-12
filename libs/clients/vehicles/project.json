@@ -26,7 +26,7 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/adr-and-machine-license"
+        "cwd": "libs/clients/vehicles"
       }
     },
     "schemas/external-openapi-generator": {
