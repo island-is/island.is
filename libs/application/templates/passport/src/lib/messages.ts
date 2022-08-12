@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* Intro section */
   introTitle: {
     id: 'pa.application:intro.title',
     defaultMessage: 'Inngangur',
@@ -13,10 +14,16 @@ export const m = defineMessages({
   },
   introSectionDescription: {
     id: 'pa.application:intro.introSection.description#markdown',
-    defaultMessage:
-      'Í þessari umsókn getur þú sótt um vegabréf fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best. Umsókn um nýtt vegabréf kostar 13.000 kr. fyrir 18 ára og eldri og 5.600 kr. fyrir börn, aldraða og öryrkja og greiðist í lok þessa ferlis. Athugið að endurtaka þarf þetta ferli fyrir hvern einstakling sem þarf á nýju vegabréfi að halda. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
+    defaultMessage: `Í þessari umsókn getur þú sótt um vegabréf fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best.\\n\\n Umsókn um nýtt vegabréf kostar 13.000 kr. fyrir 18 ára og eldri og 5.600 kr. fyrir börn, aldraða og öryrkja og greiðist í lok þessa ferlis. Athugið að endurtaka þarf þetta ferli fyrir hvern einstakling sem þarf á nýju vegabréfi að halda.\\n\\n Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.`,
     description: 'Some description',
   },
+  introSectionInfoMessage: {
+    id: 'pa.application:introSection.message#markdown',
+    defaultMessage: `Ef vegabréfi hefur verið glatað þarftu fyrst að tilkynna það áður en sótt er um nýtt.\\n\\n [Smelltu hér til að tilkynna glatað vegabréf.](https://island.is/stolidtynt-vegabref).`,
+    description: 'Some description',
+  },
+
+  /* Data collection section */
   dataCollectionTitle: {
     id: 'pa.application:dataCollection.title',
     defaultMessage: 'Gagnaöflun',
@@ -29,7 +36,7 @@ export const m = defineMessages({
   },
   dataCollectionCheckboxLabel: {
     id: 'pa.application:dataCollection.checkboxLabel',
-    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    defaultMessage: 'Ég skil að ofangreind gögn verði sótt rafrænt',
     description: 'Some description',
   },
   dataCollectionDistrictCommissionersTitle: {
@@ -45,24 +52,24 @@ export const m = defineMessages({
   },
   dataCollectionNationalRegistryTitle: {
     id: 'pa.application:dataCollection.nationalRegistryTitle',
-    defaultMessage: 'Upplýsingar úr skilríkjaskrá Þjóðskrár',
+    defaultMessage: 'Persónuupplýsingar',
     description: 'Some description',
   },
   dataCollectionNationalRegistrySubtitle: {
     id: 'pa.application:dataCollection.nationalRegistrySubtitle',
     defaultMessage:
-      'Til þess að auðvelda þér umsóknarferlið sækjum við núverandi skráningu þína í skílríkjaskrá Þjóðskrár.',
+      'Upplýsingar frá Þjóðskrá um fæðingardag, heimilisfang, fjölskylduhagi og hjúskaparstöðu.',
     description: 'Some description',
   },
   dataCollectionUserProfileTitle: {
     id: 'cr.application:dataCollection.userProfileTitle',
-    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    defaultMessage: 'Netfang og símanúmer',
     description: 'Some description',
   },
   dataCollectionUserProfileSubtitle: {
     id: 'pa.application:dataCollection.userProfileSubtitle',
     defaultMessage:
-      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum.',
+      'Upplýsingar frá Mínum síðum á Ísland.is um netfang og símanúmer.',
     description: 'Some description',
   },
   dataCollectionIdentityDocumentTitle: {
@@ -72,9 +79,55 @@ export const m = defineMessages({
   },
   dataCollectionIdentityDocumentSubtitle: {
     id: 'pa.application:dataCollection.identityDocumentSubtitle',
-    defaultMessage: 'Upplýsingar frá skilríkjaskrá hjá Þjóðskrá.',
+    defaultMessage:
+      'Uppfletting í skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
     description: 'Identity document provider subtitle',
   },
+
+  /* Select passport section */
+  selectPassportSectionTitle: {
+    id: 'pa.application:selectPassport.title',
+    defaultMessage: 'Vegabréfin þín',
+    description: 'Some description',
+  },
+  selectPassportSectionDescription: {
+    id: 'pa.application:selectPassport.description',
+    defaultMessage:
+      'Þú getur sótt um nýtt vegabréf fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
+    description: 'Some description',
+  },
+  passportNumber: {
+    id: 'pa.application:selectPassport.passportNumber',
+    defaultMessage: 'Vegabréfsnúmer: ',
+    description: 'Some description',
+  },
+  validTag: {
+    id: 'pa.application:selectPassport.validTag',
+    defaultMessage: 'Í gildi til ',
+    description: 'Some description',
+  },
+  noPassport: {
+    id: 'pa.application:selectPassport.noPassport',
+    defaultMessage: 'Vegabréf ekki til',
+    description: 'Some description',
+  },
+  expiredTag: {
+    id: 'pa.application:selectPassport.expiredTag',
+    defaultMessage: 'Útrunnið',
+    description: 'Some description',
+  },
+  orderedTag: {
+    id: 'pa.application:selectPassport.orderedTag',
+    defaultMessage: 'Í pöntun',
+    description: 'Some description',
+  },
+  children: {
+    id: 'pa.application:selectPassport.childrenHeader',
+    defaultMessage: 'Börn',
+    description: 'Some description',
+  },
+
+  /* Information Section */
   formName: {
     id: 'pa.application:form.name',
     defaultMessage: 'Umsókn um vegabréf',
@@ -117,18 +170,20 @@ export const m = defineMessages({
       'Ég vil láta fletta mér upp í öryrkjaskrá hjá Tryggingastofnun fyrir lægra gjald á vegabréfi',
     description: 'Some description',
   },
+
+  /* Service and delivery section */
   serviceTitle: {
     id: 'pa.application:service.title',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Gjaldskrá',
     description: 'Some description',
   },
   serviceTypeTitle: {
-    id: 'pa.application:service.typeTitle',
-    defaultMessage: 'Afgreiðslumáti',
+    id: 'pa.application:service.type.title',
+    defaultMessage: 'Afhendingarmáti',
     description: 'Some description',
   },
-  serviceType: {
-    id: 'pa.application:service.type',
+  serviceTypeDescription: {
+    id: 'pa.application:service.type.description',
     defaultMessage: 'Veldu þann afgreiðslumáta sem hentar þér best.',
     description: 'Some description',
   },
@@ -139,12 +194,17 @@ export const m = defineMessages({
   },
   serviceTypeRegularSublabel: {
     id: 'pa.application:service.regular.sublabel',
-    defaultMessage: 'Innan 10 virkra daga frá myndaöku.',
+    defaultMessage: 'Innan 10 virkra daga frá myndatöku',
     description: 'Some description',
   },
   serviceTypeRegularPrice: {
     id: 'pa.application:service.type.regular.price',
     defaultMessage: '13.000 kr.',
+    description: 'Some description',
+  },
+  serviceTypeRegularPriceWithDiscount: {
+    id: 'pa.application:service.type.regular.price.withDiscount',
+    defaultMessage: '5.600kr',
     description: 'Some description',
   },
   serviceTypeExpress: {
@@ -160,6 +220,11 @@ export const m = defineMessages({
   serviceTypeExpressPrice: {
     id: 'pa.application:service.type.express.price',
     defaultMessage: '26.000 kr.',
+    description: 'Some description',
+  },
+  serviceTypeExpressPriceWithDiscount: {
+    id: 'pa.application:service.type.express.price.withDiscount',
+    defaultMessage: '11.000 kr.',
     description: 'Some description',
   },
   dropLocation: {
@@ -178,26 +243,16 @@ export const m = defineMessages({
     defaultMessage: 'Veldu afhendingarstað',
     description: 'Some description',
   },
-  dropLocationAuthentication: {
-    id: 'pa.application:service.dropLocation.authentication',
-    defaultMessage: 'Auðkenning við afhendingu',
-    description: 'Some description',
-  },
-  dropLocationAuthenticationDescription: {
-    id: 'pa.application:service.dropLocation.authentication.description',
-    defaultMessage:
-      'Veldu þau skilríki sem munu auðkenna þig við afhendingu á vegabréfi. Ef eldra vegabréf er glatað skaltu framvísa persónuskílríki með mynd - ökuskírteini eða nafnskírteini.',
-    description: 'Some description',
-  },
-  noAuthenticationWarning: {
-    id: 'pa.application:service.dropLocation.authentication.warning',
-    defaultMessage:
-      'Ef þú átt ekki löggild skilríki þarftu að mæta með tvo sjálfráða sannvotta með löggild skilríki til þess að auðkenna þig.',
-    description: 'Some description',
-  },
+
+  /* Overview Section */
   overview: {
     id: 'pa.application:overview.title',
     defaultMessage: 'Yfirlit',
+    description: 'Some description',
+  },
+  overviewSectionTitle: {
+    id: 'pa.application:overviewSection.title',
+    defaultMessage: 'Yfirlit yfir umsókn',
     description: 'Some description',
   },
   overviewDescription: {
@@ -209,6 +264,11 @@ export const m = defineMessages({
   currentPassportStatus: {
     id: 'pa.application:overview.currentPassport',
     defaultMessage: 'Staða núverandi vegabréfs',
+    description: 'Some description',
+  },
+  currentPassportExpiration: {
+    id: 'pa.application:overview.currentPassport.expiration',
+    defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
   authenticationType: {
@@ -226,6 +286,8 @@ export const m = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Some description',
   },
+
+  /* Payment Section */
   paymentSection: {
     id: 'pa.application:payment.section',
     defaultMessage: 'Staðfesting og greiðsla',
@@ -251,6 +313,34 @@ export const m = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
   },
+
+  /* Waiting For Confirmation Section */
+  waitingForConfirmationTitle: {
+    id: 'pa.application:waitingForConfirmation.title',
+    defaultMessage: 'Umsókn staðfest',
+    description: 'Some description',
+  },
+  waitingForConfirmationDescription: {
+    id: 'pa.application:waitingForConfirmation.description#markdown',
+    defaultMessage:
+      'Umsókn þín um vegabréf fyrir **{childsName}** hefur verið send til **{guardian2Name}** til samþykktar.',
+    description: 'Some description',
+  },
+
+  /* ParentB Intro Section */
+  parentBIntroText: {
+    id: 'pa.application:parentBIntroText',
+    defaultMessage:
+      'Í þessu ferli samþykkir þú sem forsjáraðili umsókn **{guardianName}** um vegabréf fyrir **{childsName}**. Þegar þessi umsókn hefur verið samþykkt þarf viðkomandi að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið verður hægt að sækja það hjá því sýslumannsembætti sem tilgreint var í umsóknarferlinu. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
+    description: 'Some description',
+  },
+
+  /* Done Section */
+  actionCardDoneTag: {
+    id: 'pa.application:actionCard.done',
+    defaultMessage: 'Móttekin',
+    description: 'Some description',
+  },
   applicationCompleteTitle: {
     id: 'pa.application:complete.title',
     defaultMessage: 'Til greiðslu',
@@ -271,9 +361,10 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn staðfest',
     description: 'Some description',
   },
-  applicationCompleteDescription: {
-    id: 'pa.application:complete.description',
-    defaultMessage: 'Umsókn þín um vegabréf hefur verið móttekin.',
+  applicationCompleteDescriptionText: {
+    id: 'pa.application:complete.descriptionText',
+    defaultMessage:
+      'Umsókn þín um vegabréf fyrir **{name}** hefur verið móttekin.',
     description: 'Some description',
   },
   applicationCompleteNumber: {
@@ -288,8 +379,18 @@ export const m = defineMessages({
   },
   applicationCompleteNextStepsDescription: {
     id: 'pa.application:complete.nextSteps.description#markdown',
-    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n
-    * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
+    description: 'Some description',
+  },
+  applicationCompleteNextStepsDescriptionParentA: {
+    id: 'pa.application:complete.nextSteps.descriptionParentA#markdown',
+    defaultMessage: `* Þegar forsjáraðili hefur samþykkt umsóknina mun berast staðfesting í pósthólf ykkar á Ísland.is.\\n\\n * Forsjáraðili skal mæta með einstaklingi í myndatöku á næsta afgreiðslustað sýslumanns og hafa meðferðis núgildandi vegabréf eða löggild skilríki með mynd sé vegabréfið glatað.\\n\\n * Tilkynning mun berast á Mínar síður á Ísland.is þegar vegabréfið er tilbúið auk upplýsinga um hvenær hægt verður að sækja það á þann afhendingarstað sem tilgreindur var í umsóknarferlinu.`,
+    description: 'Some description',
+  },
+  applicationCompleteNextStepsDescriptionPersonalApplication: {
+    id:
+      'pa.application:complete.nextSteps.descriptionPersonalApplication#markdown',
+    defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
   },
 })

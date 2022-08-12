@@ -1,8 +1,9 @@
-import { gql, useLazyQuery } from '@apollo/client'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
+import sortBy from 'lodash/sortBy'
 import React, { FC, useEffect, useState } from 'react'
 
+import { gql, useLazyQuery } from '@apollo/client'
 import {
   Accordion,
   AccordionItem,
@@ -25,14 +26,17 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   formSubmit,
+  IntroHeader,
   m,
   tableStyles,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
+import * as styles from '../../screens/Finance.css'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
-import * as styles from '../../screens/Finance.css'
+import DropdownExport from '../DropdownExport/DropdownExport'
+import { exportGeneralDocuments } from '../../utils/filesGeneral'
 
 const ITEMS_ON_PAGE = 20
 
@@ -117,35 +121,38 @@ const DocumentScreen: FC<Props> = ({
 
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader title={title} intro={intro} />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {title}
-        </Text>
-        <GridRow marginBottom={4}>
-          <GridColumn span={['12/12', '8/12']}>
-            <Text variant="default">{intro}</Text>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <Box display="flex" printHidden>
+              <Box paddingRight={2}>
+                <Button
+                  colorScheme="default"
+                  icon="print"
+                  iconType="filled"
+                  onClick={() => window.print()}
+                  preTextIconType="filled"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Box>
+              <DropdownExport
+                onGetCSV={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'csv')
+                }
+                onGetExcel={() =>
+                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                }
+              />
+            </Box>
           </GridColumn>
         </GridRow>
-        <GridRow>
-          <Box display="flex" printHidden padding={0}>
-            <GridColumn>
-              <Button
-                colorScheme="default"
-                icon="print"
-                iconType="filled"
-                onClick={() => window.print()}
-                preTextIconType="filled"
-                size="default"
-                type="button"
-                variant="utility"
-              >
-                {formatMessage(m.print)}
-              </Button>
-            </GridColumn>
-          </Box>
-        </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 4]}>
+          <Box marginTop={[1, 1, 2, 2, 5]}>
             <Filter
               resultCount={0}
               variant="popover"
@@ -272,7 +279,10 @@ const DocumentScreen: FC<Props> = ({
                 </T.Row>
               </T.Head>
               <T.Body>
-                {billsDataArray
+                {sortBy(billsDataArray, (item) => {
+                  return item.date
+                })
+                  .reverse()
                   .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
                   .map((listItem) => (
                     <T.Row key={listItem.id}>

@@ -48,7 +48,7 @@ export const CheckboxFormField: FC<Props> = ({
   return (
     <div>
       {showFieldName && (
-        <Text variant="h5">
+        <Text variant="h4">
           {formatText(title, application, formatMessage)}
         </Text>
       )}

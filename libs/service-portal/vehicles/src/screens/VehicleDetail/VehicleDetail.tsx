@@ -1,42 +1,45 @@
+import isNumber from 'lodash/isNumber'
 import React from 'react'
+import { useParams } from 'react-router-dom'
 
+import { useQuery } from '@apollo/client'
 import {
+  Query,
+  VehiclesCurrentOwnerInfo,
+  VehiclesOperator,
+} from '@island.is/api/schema'
+import {
+  AlertMessage,
   Box,
   Divider,
   GridColumn,
   GridRow,
-  Table as T,
+  LoadingDots,
   Stack,
   Text,
-  LoadingDots,
-  AlertMessage,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  amountFormat,
   NotFound,
   ServicePortalModuleComponent,
+  TableGrid,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import isNumber from 'lodash/isNumber'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { amountFormat } from '@island.is/service-portal/core'
-import { useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+
+import OwnersTable from '../../components/DetailTable/OwnersTable'
+import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
 import {
-  VehiclesCurrentOwnerInfo,
-  Query,
-  VehiclesOperator,
-} from '@island.is/api/schema'
-import { messages } from '../../lib/messages'
-import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
-import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
-import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
-import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
-import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
-import OwnersTable from '../../components/DetailTable/OwnersTable'
-import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
-import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
-import FeeInfoItem from '../../components/DetailTable/FeeInfoItem'
+  basicInfoArray,
+  coOwnerInfoArray,
+  feeInfoArray,
+  inspectionInfoArray,
+  operatorInfoArray,
+  ownerInfoArray,
+  registrationInfoArray,
+  technicalInfoArray,
+} from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
@@ -73,6 +76,17 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   if ((error || noInfo) && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
+
+  const basicArr = basicInfo && basicInfoArray(basicInfo, formatMessage)
+  const feeArr = inspectionInfo && feeInfoArray(inspectionInfo, formatMessage)
+  const inspectionArr =
+    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage)
+  const currentOwnerArr =
+    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage)
+  const registrationArr =
+    registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
+  const technicalArr =
+    technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
   return (
     <>
@@ -203,28 +217,78 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         )}
       </Stack>
       <Box marginBottom={5} />
-      {basicInfo && <BaseInfoItem data={basicInfo} />}
-      {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
-      {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
+
+      {basicArr && (
+        <TableGrid dataArray={basicArr.rows} title={basicArr.header.title} mt />
+      )}
+      {registrationArr && (
+        <TableGrid
+          dataArray={registrationArr.rows}
+          title={registrationArr.header.title}
+          mt
+        />
+      )}
+
+      {currentOwnerArr && (
+        <TableGrid
+          dataArray={currentOwnerArr.rows}
+          title={currentOwnerArr.header.title}
+          mt
+        />
+      )}
+
       {coOwners &&
         coOwners.length > 0 &&
-        coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
-          <CoOwnerInfoItem key={index} data={owner} />
-        ))}
-      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
-      {inspectionInfo && <FeeInfoItem data={inspectionInfo} />}
-      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
+        coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => {
+          const coOwnerArr = coOwnerInfoArray(owner, formatMessage)
+          return (
+            <TableGrid
+              key={`vehicle-coOwner-${index}`}
+              dataArray={coOwnerArr.rows}
+              title={coOwnerArr.header.title}
+              mt
+            />
+          )
+        })}
+      {inspectionArr && (
+        <TableGrid
+          dataArray={inspectionArr.rows}
+          title={inspectionArr.header.title}
+          mt
+        />
+      )}
+      {feeArr && (
+        <TableGrid dataArray={feeArr.rows} title={feeArr.header.title} mt />
+      )}
+
+      {technicalArr && (
+        <TableGrid
+          dataArray={technicalArr.rows}
+          title={technicalArr.header.title}
+          mt
+        />
+      )}
+
       {operators &&
         operators.length > 0 &&
-        operators.map((operator: VehiclesOperator, index) => (
-          <OperatorInfoItem key={index} data={operator} />
-        ))}
+        operators.map((operator: VehiclesOperator, index) => {
+          const operatorArr = operatorInfoArray(operator, formatMessage)
+          return (
+            <TableGrid
+              key={`vehicle-operator-${index}`}
+              dataArray={operatorArr.rows}
+              title={operatorArr.header.title}
+              mt
+            />
+          )
+        })}
       {ownersInfo && (
         <OwnersTable
           data={ownersInfo}
           title={formatMessage(messages.ownersTitle)}
         />
       )}
+
       <Box paddingTop={4}>
         <Text variant="small">{formatMessage(messages.infoNote)}</Text>
       </Box>

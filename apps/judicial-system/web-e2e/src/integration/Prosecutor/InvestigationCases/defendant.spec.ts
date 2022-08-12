@@ -8,7 +8,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.visit(NEW_IC_ROUTE)
   })
 
-  it.only('should require a valid police case number', () => {
+  it('should require valid data', () => {
     // Police case number
     cy.getByTestid('policeCaseNumber').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')

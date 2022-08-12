@@ -137,7 +137,7 @@ export class StaffService {
     input: CreateStaffDto,
     municipality?: CreateStaffMunicipality,
     t?: Transaction,
-    isFirstStaffForMunicipality: boolean = false,
+    isFirstStaffForMunicipality = false,
   ): Promise<StaffModel> {
     const staff = await this.staffModel
       .create(

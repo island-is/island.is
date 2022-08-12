@@ -1,0 +1,89 @@
+{
+  "root": "apps/financial-aid/web-veita",
+  "sourceRoot": "apps/financial-aid/web-veita",
+  "projectType": "application",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "dist/apps/financial-aid/web-veita",
+        "commands": [
+          "yarn nx build-next financial-aid-web-veita",
+          "yarn nx build-server financial-aid-web-veita"
+        ]
+      },
+      "configurations": {
+        "production": {
+          "args": "--prod"
+        }
+      }
+    },
+    "build-next": {
+      "executor": "@nrwl/next:build",
+      "options": {
+        "root": "apps/financial-aid/web-veita",
+        "outputPath": "dist/apps/financial-aid/web-veita"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/financial-aid/web-veita/src/environments/environment.ts",
+              "with": "apps/financial-aid/web-veita/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-server": {
+      "executor": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/financial-aid/web-veita",
+        "main": "apps/financial-aid/web-veita/server.ts",
+        "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
+        "maxWorkers": 2,
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build-server"
+      }
+    },
+    "export": {
+      "executor": "@nrwl/next:export",
+      "options": {
+        "buildTarget": "financial-aid-web-veita:build:production"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/financial-aid/web-veita/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/financial-aid/web-veita/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/financial-aid/web-veita"]
+    },
+    "docker-next": {}
+  },
+  "tags": []
+}

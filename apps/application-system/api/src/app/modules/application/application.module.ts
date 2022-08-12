@@ -26,6 +26,7 @@ import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
+import { ApplicationChargeModule } from './charge/application-charge.module'
 
 let BullModule: DynamicModule
 
@@ -67,6 +68,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     CmsTranslationsModule,
     FeatureFlagModule,
     LoggingModule,
+    ApplicationChargeModule,
   ],
   controllers: [ApplicationController],
   providers: [

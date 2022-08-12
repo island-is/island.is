@@ -28,6 +28,7 @@ import {
   FinancialAidService,
   DrivingSchoolConfirmationService,
   PassportService,
+  OperatingLicenseService,
 } from './templates'
 import { SharedDataProviderService, SharedServiceType } from './shared'
 import { ProblemError } from '@island.is/nest/problem'
@@ -70,6 +71,7 @@ export class TemplateAPIService {
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
     private readonly passportService: PassportService,
+    private readonly operatingLicenseService: OperatingLicenseService,
   ) {
     this.logger = logger.child({ context: 'TemplateAPIService' })
   }
@@ -100,7 +102,8 @@ export class TemplateAPIService {
       | FinancialAidService
       | DrivingSchoolConfirmationService
       | MortgageCertificateSubmissionService
-      | PassportService,
+      | PassportService
+      | OperatingLicenseService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -251,6 +254,11 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PASSPORT:
         return this.tryRunningActionOnService(this.passportService, action)
+      case ApplicationTypes.OPERATING_LCENSE:
+        return this.tryRunningActionOnService(
+          this.operatingLicenseService,
+          action,
+        )
     }
 
     return {

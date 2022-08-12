@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'release/**'
+      - 'pre-release/**'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -36,11 +37,13 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
+      PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
+      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -70,8 +73,22 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          echo "::set-output name=PRE_RELEASE::false"
+
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
+                  echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
+                  exit 0
+                fi
+            done
 
             for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
             do
@@ -101,6 +118,17 @@ jobs:
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
           fi
+          for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"  
+                  echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
+                  exit 0
+                fi
+            done
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
@@ -158,8 +186,19 @@ jobs:
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
+      - name: Checking out relevant branches for a pre-release
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        run: |
+          echo "Feature Name: $FEATURE_NAME"
+
+          git checkout main
+          git checkout $GITHUB_SHA
+
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
       - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
@@ -220,7 +259,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
       - run: |
-            echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -256,8 +295,14 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - run: |
-          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' ]]; then
+      - name: Preparing BASE tags
+        id: git_nx_base
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+        run: |
+          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
             export PR_REF=$GITHUB_SHA
@@ -272,12 +317,6 @@ jobs:
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-        id: git_nx_base
-        name: Preparing BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
@@ -357,6 +396,17 @@ jobs:
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
           fi
 
+      - name: Gather unaffected docker images
+        id: unaffected
+        run: |
+          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
+          echo "::set-output name=UNAFFECTED::$UNAFFECTED"
+
+      - name: check pre-release
+        if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
+
       - name: Prepare deployment targets
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
@@ -367,12 +417,6 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
           fi
-
-      - name: Gather unaffected docker images
-        id: unaffected
-        run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
-          echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
     needs:
@@ -424,7 +468,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
 
       - uses: ./.github/actions/unit-test
         with:
@@ -594,7 +637,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
-        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -602,7 +645,6 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
-
 
   retag-unaffected:
     runs-on: ec2-runners

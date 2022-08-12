@@ -148,7 +148,7 @@ export const courtRecord = {
   smallPrint: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.small_print',
     defaultMessage:
-      '{actorName}{actorInstitution, select, NONE {} other { ({actorInstitution})}} sótti þetta skjal í Réttarvörslugátt {date}.',
+      '{actorName} ({actorInstitution, select, NONE {lögmaður} other {{actorInstitution}}}) sótti þetta skjal í Réttarvörslugátt {date}.',
     description: 'Notaður til að tilgreina hver sótti þingbók.',
   }),
 }

@@ -42,6 +42,9 @@ import {
   ApplicationTemplateAPIAction,
   PdfTypes,
   ApplicationStatus,
+  ApplicationTemplate,
+  ApplicationContext,
+  ApplicationStateSchema,
 } from '@island.is/application/types'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
@@ -94,9 +97,12 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { EventObject } from 'xstate'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
+import { PaymentService } from '../payment/payment.service'
+import { ApplicationChargeService } from './charge/application-charge.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -119,6 +125,8 @@ export class ApplicationController {
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
+    private paymentService: PaymentService,
+    private applicationChargeService: ApplicationChargeService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -189,12 +197,32 @@ export class ApplicationController {
       typeId,
       status,
     )
+
+    // keep all templates that have been fetched in order to avoid fetching them again
+    const templates: Partial<
+      Record<
+        ApplicationTypes,
+        ApplicationTemplate<
+          ApplicationContext,
+          ApplicationStateSchema<EventObject>,
+          EventObject
+        >
+      >
+    > = {}
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
-
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
-      if (templateTypeToIsReady[application.typeId]) {
+      // now we just need to check if it should be displayed for the user
+      if (
+        templateTypeToIsReady[application.typeId] &&
+        templates[application.typeId] !== undefined &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          templates[application.typeId],
+        ))
+      ) {
         filteredApplications.push(application)
         continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
@@ -207,8 +235,19 @@ export class ApplicationController {
         application.typeId,
       )
 
+      // Add template to avoid fetching it again for the same types
+      templates[application.typeId] = applicationTemplate
+
       if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
+        (await this.validationService.isTemplateReady(
+          user,
+          applicationTemplate,
+        )) &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          applicationTemplate,
+        ))
       ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
@@ -1152,6 +1191,13 @@ export class ApplicationController {
         'Users role does not have permission to delete this application in this state',
       )
     }
+
+    // delete charge in FJS
+    await this.applicationChargeService.deleteCharge(existingApplication)
+
+    // delete the entry in Payment table to prevent FK error
+    await this.paymentService.delete(existingApplication.id, user)
+
     await this.applicationService.delete(existingApplication.id)
   }
 }

@@ -159,6 +159,10 @@ export const Chart: FC<{
       {periods.map((p, index) => {
         const periodStartDate = parseISO(p.startDate)
         const periodEndDate = parseISO(p.endDate)
+        const colStart =
+          (closestIndexTo(toDate(periodStartDate), totalDays) ?? 0) + 1
+        const colEnd =
+          (closestIndexTo(toDate(periodEndDate), totalDays) ?? 0) + 1
 
         return (
           <Box
@@ -176,9 +180,7 @@ export const Chart: FC<{
                 className={styles.period}
                 style={{
                   backgroundColor: p.color || theme.color.blue200,
-                  gridColumn: `${
-                    closestIndexTo(toDate(periodStartDate), totalDays) + 1
-                  }/${closestIndexTo(toDate(periodEndDate), totalDays) + 1}`,
+                  gridColumn: `${colStart}/${colEnd}`,
                 }}
               />
             </Box>

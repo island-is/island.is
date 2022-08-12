@@ -31,7 +31,7 @@ export class ProblemError extends Error {
 
     return new ProblemError({
       status: status,
-      type: `https://httpstatuses.com/${status}`,
+      type: `https://httpstatuses.org/${status}`,
       title,
       detail,
     } as HttpProblem)

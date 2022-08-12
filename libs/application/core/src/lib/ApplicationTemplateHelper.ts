@@ -16,10 +16,10 @@ import {
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
-  ApplicationTemplateAPIAction,
 } from '@island.is/application/types'
 
 enum FinalStates {
@@ -187,10 +187,7 @@ export class ApplicationTemplateHelper<
     }
     const { read, write } = roleInState
 
-    if (read === 'all') {
-      return { answers, externalData }
-    }
-    if (write === 'all') {
+    if (read === 'all' || write === 'all') {
       return { answers, externalData }
     }
 
