@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual'
 import React, { useCallback, useState } from 'react'
 
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
@@ -24,6 +24,14 @@ import {
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
+
+const GET_VEHICLES_OWNED_PDF = gql`
+  query GetVehiclesOwnedPDF($input: GetVehicleReportPdfInput!) {
+    vehiclesGetVehicleReportPdf(input: $input)
+  }
+`
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -49,7 +57,9 @@ const getFilteredVehicles = (
   return vehicles
 }
 
-export const VehiclesOverview: ServicePortalModuleComponent = () => {
+export const VehiclesOverview: ServicePortalModuleComponent = ({
+  userInfo,
+}) => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
@@ -62,6 +72,15 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
   const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
+
+  // TODO: Fix - this is throwing error from service
+  // const { data: vehiclePdf } = useQuery<Query>(GET_VEHICLES_OWNED_PDF, {
+  //   variables: {
+  //     input: {
+  //       permno: 'BY391',
+  //     },
+  //   },
+  // })
 
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
@@ -83,6 +102,9 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
+  const exportPDF = async () => {
+    console.log('PDF')
+  }
   return (
     <>
       <IntroHeader title={messages.title} intro={messages.intro} />
@@ -98,22 +120,37 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
         </Box>
       )}
 
-      {!loading && !error && vehicles.length > 0 && (
-        <Box marginBottom={3}>
-          <a
-            href="/app/skilavottord/my-cars"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-              variant="utility"
-              size="small"
-              icon="reader"
-              iconType="outline"
+      {!loading && !error && filteredVehicles.length > 0 && (
+        <Box marginBottom={3} display="flex" flexDirection="row">
+          <Box marginRight={2}>
+            <DropdownExport
+              onGetPDF={() => exportPDF()}
+              onGetExcel={() =>
+                exportVehicleOwnedDocument(
+                  filteredVehicles,
+                  formatMessage(messages.myCarsFiles),
+                  data?.vehiclesList?.name ?? userInfo.profile.name,
+                  data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
+                )
+              }
+            />
+          </Box>
+          <Box>
+            <a
+              href="/app/skilavottord/my-cars"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              {formatMessage(messages.recycleCar)}
-            </Button>
-          </a>
+              <Button
+                variant="utility"
+                size="small"
+                icon="reader"
+                iconType="outline"
+              >
+                {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
         </Box>
       )}
       <Stack space={2}>

@@ -15,6 +15,8 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+import { GetVehicleReportPdfInput } from '../dto/getVehicleReportPdfInput'
+import graphqlTypeJson from 'graphql-type-json'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -68,5 +70,17 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'vehiclesGetVehicleReportPdf',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleReportPdf(
+    @Args('input') input: GetVehicleReportPdfInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehicleReportPdf(user, input)
   }
 }

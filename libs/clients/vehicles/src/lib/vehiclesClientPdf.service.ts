@@ -9,7 +9,7 @@ import { VehiclesClientConfig } from './vehiclesClient.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { Configuration, PdfApi } from '../../gen/fetch'
 
-export const VehiclesApiProvider: Provider<PdfApi> = {
+export const VehiclesApiPDFProvider: Provider<PdfApi> = {
   provide: PdfApi,
   scope: LazyDuringDevScope,
   useFactory: (

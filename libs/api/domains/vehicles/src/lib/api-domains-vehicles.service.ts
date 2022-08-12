@@ -10,6 +10,7 @@ import {
   PersidnoLookup,
   VehicleSearch,
   PdfApi,
+  VehicleReportPdfGetRequest,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -51,6 +52,9 @@ export class VehiclesService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private getPdfWithAuth(auth: Auth) {
+    return this.vehiclesPDFApi.withMiddleware(new AuthMiddleware(auth))
+  }
   async getVehiclesForUser(
     auth: User,
     showDeregistered: boolean,
@@ -306,6 +310,21 @@ export class VehiclesService {
       return response
     } catch (e) {
       return this.handle4xx(e, 'Failed to get vehicle details')
+    }
+  }
+
+  async getVehicleReportPdf(
+    auth: User,
+    input: VehicleReportPdfGetRequest,
+  ): Promise<object | null | ApolloError> {
+    try {
+      const res = await this.getPdfWithAuth(auth).vehicleReportPdfGet({
+        permno: input.permno,
+      })
+      if (!res) return null
+      return res
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle history PDF')
     }
   }
 }

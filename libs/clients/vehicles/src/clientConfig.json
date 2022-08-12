@@ -24,7 +24,7 @@
     }
   ],
   "paths": {
-    "/VehicleHistoryPdf": {
+    "/VehicleReportPdf": {
       "get": {
         "tags": ["Pdf"],
         "parameters": [
