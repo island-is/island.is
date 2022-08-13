@@ -82,7 +82,7 @@ export const CheckIdpSession = () => {
 
       if (!isActive() && retryCount > MAX_RETRIES && hasBeenActive) {
         window.location.reload()
-      } else if (!hasMessage) {
+      } else if (!hasMessage && retryCount < MAX_RETRIES) {
         userSession.current.retryCount += 1
         reloadIframe()
       }
