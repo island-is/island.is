@@ -31,6 +31,7 @@ import {
   IEventSlice,
   IForm,
   IStepper,
+  IGraphCard,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -87,6 +88,7 @@ import {
 import { EventSlice, mapEventSlice } from '../models/eventSlice.model'
 import { Form, mapForm } from '../models/form.model'
 import { mapStepper, Stepper } from '../models/stepper.model'
+import { GraphCard, mapGraphCard } from '../models/graphCard.model'
 
 type SliceTypes =
   | ITimeline
@@ -117,6 +119,7 @@ type SliceTypes =
   | IEventSlice
   | IForm
   | IStepper
+  | IGraphCard
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -152,6 +155,7 @@ export const SliceUnion = createUnionType({
     EventSlice,
     Form,
     Stepper,
+    GraphCard,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -215,6 +219,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapForm(slice as IForm)
     case 'stepper':
       return mapStepper(slice as IStepper)
+    case 'graphCard':
+      return mapGraphCard(slice as IGraphCard)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
