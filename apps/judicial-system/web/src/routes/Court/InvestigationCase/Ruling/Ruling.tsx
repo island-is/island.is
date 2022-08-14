@@ -61,7 +61,7 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { autofill, updateCase } = useCase()
+  const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -92,39 +92,23 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value: isAcceptingCaseDecision(workingCase.decision)
+            conclusion: isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.demands
               : undefined,
           },
@@ -137,7 +121,7 @@ const Ruling = () => {
     }
   }, [
     isCaseUpToDate,
-    autofill,
+    setAndSendToServer,
     workingCase,
     formatMessage,
     setWorkingCase,
@@ -407,18 +391,16 @@ const Ruling = () => {
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
               disabled={isModifyingRuling}
               onChange={(decision) => {
-                autofill(
+                setAndSendToServer(
                   [
                     {
-                      key: 'conclusion',
-                      value:
+                      conclusion:
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
                           : workingCase.conclusion,
                     },
                     {
-                      key: 'decision',
-                      value: decision,
+                      decision,
                       force: true,
                     },
                   ],

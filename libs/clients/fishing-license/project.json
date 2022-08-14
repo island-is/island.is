@@ -1,0 +1,42 @@
+{
+  "root": "libs/clients/fishing-license",
+  "sourceRoot": "libs/clients/fishing-license/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/fishing-license/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/fishing-license"],
+      "options": {
+        "jestConfig": "libs/clients/fishing-license/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" https://veidileyfitest.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/fishing-license"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/fishing-license/src/lib/gen/fetch -i libs/clients/fishing-license/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": []
+}

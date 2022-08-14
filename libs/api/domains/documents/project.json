@@ -1,0 +1,23 @@
+{
+  "root": "libs/api/domains/documents",
+  "sourceRoot": "libs/api/domains/documents/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/documents/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/documents/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/api/domains/documents"]
+    }
+  },
+  "tags": []
+}

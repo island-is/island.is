@@ -29,6 +29,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
@@ -47,7 +48,11 @@ export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -64,25 +69,18 @@ export const HearingArrangements: React.FC = () => {
         setInitialAutoFillDone(true)
       }
 
-      autofill(
+      setAndSendToServer(
         [
           // validToDate, isolationToDate and isCustodyIsolation are autofilled here
           // so they are ready for conclusion autofill later
           {
-            key: 'validToDate',
-            value: workingCase.requestedValidToDate,
-          },
-          {
-            key: 'isolationToDate',
-            value:
+            validToDate: workingCase.requestedValidToDate,
+            isolationToDate:
               workingCase.type === CaseType.CUSTODY ||
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedValidToDate
                 : undefined,
-          },
-          {
-            key: 'isCustodyIsolation',
-            value:
+            isCustodyIsolation:
               workingCase.type === CaseType.CUSTODY ||
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedCustodyRestrictions &&
@@ -99,7 +97,7 @@ export const HearingArrangements: React.FC = () => {
       )
     }
   }, [
-    autofill,
+    setAndSendToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -112,8 +110,15 @@ export const HearingArrangements: React.FC = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+    setAndSendToServer(
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
       workingCase,
       setWorkingCase,
     )
@@ -123,7 +128,13 @@ export const HearingArrangements: React.FC = () => {
     } else {
       setModalVisible(true)
     }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout
