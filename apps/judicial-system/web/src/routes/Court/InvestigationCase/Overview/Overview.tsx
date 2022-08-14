@@ -58,18 +58,17 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
@@ -82,7 +81,13 @@ const Overview = () => {
         setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    setAndSendToServer,
+    formatMessage,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout

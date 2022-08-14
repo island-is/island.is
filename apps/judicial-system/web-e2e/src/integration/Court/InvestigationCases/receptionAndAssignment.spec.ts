@@ -4,7 +4,14 @@ import {
   IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCourt, makeRestrictionCase, intercept } from '../../../utils'
+import {
+  makeCourt,
+  makeRestrictionCase,
+  intercept,
+  hasOperationName,
+  Operation,
+  makeJudge,
+} from '../../../utils'
 
 describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -23,6 +30,22 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   })
 
   it('should enable continue button when required fields are valid', () => {
+    cy.intercept('POST', '**/api/graphql', (req) => {
+      console.log('intercepting')
+      if (hasOperationName(req, Operation.UpdateCaseMutation)) {
+        const { body } = req
+        console.log('intercepting updatecase', body)
+        req.reply({
+          data: {
+            updateCase: {
+              ...body.variables?.input,
+              judge: makeJudge(),
+              __typename: 'Case',
+            },
+          },
+        })
+      }
+    })
     // case number validation
     cy.getByTestid('courtCaseNumber').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
@@ -35,15 +58,8 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('select-judge').click()
     cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('continueButton').should('be.enabled')
-  })
 
-  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtCaseNumber').type('R-1/2021')
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
+    cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
     cy.url().should('include', IC_OVERVIEW_ROUTE)
   })
