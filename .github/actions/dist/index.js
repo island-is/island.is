@@ -85304,7 +85304,7 @@ class LocalRunner {
     getLastGoodBranchBuildRun(branch, workflowId, candidateCommits) {
         var e_1, _a, e_2, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const branchName = branch.replace('origin/', '').replace("'", '');
+            const branchName = branch.replace('origin/', '').replace(/'/g, '');
             app(`Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
@@ -85395,7 +85395,7 @@ class LocalRunner {
     getLastGoodPRRun(branch, workflowId, commits) {
         var e_3, _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const branchName = branch.replace('origin/', '').replace("'", '');
+            const branchName = branch.replace('origin/', '').replace(/'/g, '');
             app(`Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
