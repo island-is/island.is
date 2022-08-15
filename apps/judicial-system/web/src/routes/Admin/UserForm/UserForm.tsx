@@ -145,6 +145,7 @@ export const UserForm: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={2}>
           <InputMask
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             mask="999999-9999"
             maskPlaceholder={null}
             value={user.nationalId || ''}
