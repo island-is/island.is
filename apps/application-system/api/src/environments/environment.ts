@@ -21,12 +21,14 @@ const devConfig = {
     allowClientNationalId: true,
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4200/umsoknir',
+    clientLocationOrigin: `http://localhost:${
+      process.env.WEB_FRONTEND_PORT ?? '4242'
+    }/umsoknir`,
     emailOptions: {
-      useTestAccount: false,
+      useTestAccount: !(process.env.USE_SES === 'true'),
       useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
       options: {
-        region: 'eu-west-1',
+        region: process.env.EMAIL_REGION ?? 'eu-west-1',
       },
     },
     email: {
