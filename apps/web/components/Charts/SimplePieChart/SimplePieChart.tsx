@@ -40,14 +40,12 @@ const CustomTooltip = (props: CustomTooltipProps) => {
 }
 
 const getOuterRadius = (width: number) => {
-  if (width < theme.breakpoints.xs) {
+  if (width < theme.breakpoints.sm) {
     return 60
-  } else if (width < theme.breakpoints.sm) {
-    return 80
-  } else if (width < theme.breakpoints.md) {
+  } else if (width < theme.breakpoints.lg) {
     return 100
   }
-  return 136
+  return 120
 }
 
 interface GraphDataProps {
