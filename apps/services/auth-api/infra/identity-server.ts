@@ -71,6 +71,7 @@ export const serviceSetup = (services: {
       Application__MinCompletionPortThreads: '10',
     })
     .secrets({
+      IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
       AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId',
       AudkenniSettings__ClientSecret:
         '/k8s/identity-server/AudkenniClientSecret',

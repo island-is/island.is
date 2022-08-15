@@ -1,0 +1,24 @@
+{
+  "root": "libs/api/domains/license-service",
+  "sourceRoot": "libs/api/domains/license-service/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/license-service/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/license-service"],
+      "options": {
+        "jestConfig": "libs/api/domains/license-service/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

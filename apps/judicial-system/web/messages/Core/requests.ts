@@ -33,6 +33,20 @@ export const requests = {
             description:
               'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
           }),
+          created: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.created',
+            defaultMessage: 'Stofnað',
+            description:
+              'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
+          }),
+          hearing: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.hearing',
+            defaultMessage: 'Fyrirtaka',
+            description:
+              'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
+          }),
         },
       },
       title: defineMessage({

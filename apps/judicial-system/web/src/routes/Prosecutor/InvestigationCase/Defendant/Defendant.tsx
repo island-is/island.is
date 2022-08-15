@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -30,7 +30,6 @@ import {
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
@@ -49,8 +48,20 @@ const Defendant = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { createCase, isCreatingCase, updateCase } = useCase()
+  const { createCase, isCreatingCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
+  // This state is needed because type is initially set to OHTER on the
+  // workingCase and we need to validate that the user selects an option
+  // from the case type list to allow the user to continue.
+  const [caseType, setCaseType] = React.useState<CaseType | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    if (workingCase.id) {
+      setCaseType(workingCase.type)
+    }
+  }, [workingCase.id, workingCase.type])
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -242,17 +253,24 @@ const Defendant = () => {
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+                    const type = (selectedOption as ReactSelectOption)
+                      .value as CaseType
+
+                    setCaseType(type as CaseType)
                     setAndSendToServer(
-                      'type',
-                      (selectedOption as ReactSelectOption).value as string,
+                      [
+                        {
+                          type: type,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
-                  }
+                  }}
                   value={
-                    workingCase?.id
+                    workingCase.id
                       ? {
                           value: CaseType[workingCase.type],
                           label: capitalize(caseTypes[workingCase.type]),
@@ -291,11 +309,14 @@ const Defendant = () => {
                 }}
                 onBlur={(evt) =>
                   setAndSendToServer(
-                    'description',
-                    evt.target.value,
+                    [
+                      {
+                        description: evt.target.value,
+                        force: true,
+                      },
+                    ],
                     workingCase,
                     setWorkingCase,
-                    updateCase,
                   )
                 }
               />
@@ -379,7 +400,7 @@ const Defendant = () => {
         <FormFooter
           previousUrl={`${constants.CASE_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIC(workingCase)}
+          nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
           nextIsLoading={isCreatingCase}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

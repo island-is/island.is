@@ -38,6 +38,7 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
@@ -50,7 +51,11 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const {
     courtDate,
     setCourtDate,
@@ -69,11 +74,10 @@ const HearingArrangements = () => {
         setInitialAutoFillDone(true)
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'sessionArrangements',
-            value: workingCase.defenderName
+            sessionArrangements: workingCase.defenderName
               ? SessionArrangements.ALL_PRESENT
               : undefined,
           },
@@ -85,7 +89,7 @@ const HearingArrangements = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -98,8 +102,15 @@ const HearingArrangements = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+    setAndSendToServer(
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
       workingCase,
       setWorkingCase,
     )
@@ -109,7 +120,13 @@ const HearingArrangements = () => {
     } else {
       setModalVisible(true)
     }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout
@@ -181,11 +198,11 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT,
                             force: true,
                           },
                         ],
@@ -210,11 +227,11 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
                             force: true,
                           },
                         ],
@@ -237,11 +254,11 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
-                          key: 'sessionArrangements',
-                          value: SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements:
+                            SessionArrangements.PROSECUTOR_PRESENT,
                           force: true,
                         },
                       ],
