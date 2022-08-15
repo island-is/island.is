@@ -27,10 +27,18 @@ export const SharedDataProviders = {
     apiModuleAction: 'getUserProfile',
     namespace: 'userProfile',
     dataProviderType: 'userProfileProvider',
+    useMockData: false,
+    mockData: {
+      success: true,
+      response: {
+        email: 'mockEmai2@island.is',
+        mobilePhoneNumber: '9999999',
+      },
+    },
   },
   paymentCatalogProvider: {
     apiModuleAction: 'paymentCatalog',
-    namespace: 'userProfile',
+    namespace: 'paymentCatalog',
     dataProviderType: 'paymentCatalogProvider',
   },
 } as AvailableSharedDataProviders
