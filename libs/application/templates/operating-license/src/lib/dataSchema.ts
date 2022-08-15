@@ -160,8 +160,7 @@ export const dataSchema = z.object({
         )
       },
       {
-        //TODO: set path
-        message: error.invalidValue.defaultMessage,
+        message: error.openingHours.defaultMessage,
         path: ['willServe'],
       },
     ),
