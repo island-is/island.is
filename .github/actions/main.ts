@@ -14,17 +14,17 @@ import { WorkflowID } from './git-action-status'
           diffWeight,
           git,
           runner,
-          process.env.HEAD_REF!,
-          process.env.BASE_REF!,
-          process.env.PR_REF!,
+          `'${process.env.HEAD_REF!}'`,
+          `'${process.env.BASE_REF!}'`,
+          `'${process.env.PR_REF!}'`,
           process.env.WORKFLOW_ID! as WorkflowID,
         )
       : await findBestGoodRefBranch(
           diffWeight,
           git,
           runner,
-          process.env.HEAD_REF!,
-          process.env.BASE_REF!,
+          `'${process.env.HEAD_REF!}'`,
+          `'${process.env.BASE_REF!}'`,
           process.env.WORKFLOW_ID! as WorkflowID,
         )
 
