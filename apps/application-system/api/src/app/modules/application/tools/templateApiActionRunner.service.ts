@@ -1,7 +1,4 @@
-import {
-  Application,
-  ApplicationService,
-} from '@island.is/application/api/core'
+import { ApplicationService } from '@island.is/application/api/core'
 import {
   ApplicationTemplateAPIAction,
   ApplicationWithAttachments,
