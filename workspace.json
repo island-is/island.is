@@ -40,6 +40,7 @@
     "api-domains-municipalities-financial-aid": "libs/api/domains/municipalities-financial-aid",
     "api-domains-national-registry": "libs/api/domains/national-registry",
     "api-domains-national-registry-x-road": "libs/api/domains/national-registry-x-road",
+    "api-domains-passport": "libs/api/domains/passport",
     "api-domains-payment": "libs/api/domains/payment",
     "api-domains-payment-schedule": "libs/api/domains/payment-schedule",
     "api-domains-regulations": "libs/api/domains/regulations",
