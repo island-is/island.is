@@ -60,7 +60,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: { target: States.DONE },
         },
       },
       [States.PAYMENT]: {

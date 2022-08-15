@@ -1,4 +1,7 @@
-import { AttachmentPath } from "./types/attachments";
+export type AttachmentPath = {
+  path: string
+  prefix: string
+}
 
 export const AttachmentPaths: AttachmentPath[] = [
   {
@@ -18,3 +21,17 @@ export const AttachmentPaths: AttachmentPath[] = [
     prefix: 'teikning_utisvaedi',
   },
 ]
+
+export type ApplicationAttachments = {
+  [key: string]: string
+}
+
+export type File = {
+  key: string
+  name: string
+}
+
+export type AttachmentData = {
+    name: string,
+    content: string
+}

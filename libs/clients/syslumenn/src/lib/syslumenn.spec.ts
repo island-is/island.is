@@ -43,10 +43,10 @@ const PERSON = [
     type: PersonType.Plaintiff,
   },
 ]
-const ATTACHMENT = {
+const ATTACHMENT = [{
   name: 'attachment',
   content: 'content',
-}
+}]
 
 const VALID_ESTATE_APPLICANT = '0101302399'
 const INVALID_ESTATE_APPLICANT = '0101303019'

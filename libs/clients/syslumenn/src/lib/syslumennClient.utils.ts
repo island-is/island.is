@@ -154,7 +154,7 @@ export const mapPaginatedOperatingLicenses = (
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
-  attachment: Attachment | undefined,
+  attachments: Attachment[] | undefined,
   extraData: { [key: string]: string },
   uploadDataName: string,
   uploadDataId?: string,
@@ -179,14 +179,11 @@ export function constructUploadDataObject(
             tegund: mapPersonEnum(p.type),
           }
         }),
-        attachments: attachment
-          ? [
-              {
-                nafnSkraar: attachment.name,
-                innihaldSkraar: attachment.content,
-              },
-            ]
-          : undefined,
+        attachments: attachments?.map((attachment)=> ({
+          nafnSkraar: attachment.name,
+          innihaldSkraar: attachment.content,
+        })),
+        
         gagnaMengi: extraData ?? {},
       },
     },
