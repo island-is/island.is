@@ -102,7 +102,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [demandsEM, setDemandsEM] = useState<string>('')
@@ -155,8 +155,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             })
           : undefined
 
-        autofill(
-          [{ key: 'demands', value: courtClaimText }],
+        setAndSendToServer(
+          [{ demands: courtClaimText }],
           workingCase,
           setWorkingCase,
         )
@@ -165,7 +165,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,

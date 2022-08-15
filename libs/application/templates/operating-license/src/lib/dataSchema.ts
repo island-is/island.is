@@ -23,6 +23,7 @@ const TimeRefine = z.object({
     params: error.invalidValue,
   }),
 })
+
 const OpeningHoursRefine = z.object({
   weekdays: TimeRefine,
   weekends: TimeRefine,

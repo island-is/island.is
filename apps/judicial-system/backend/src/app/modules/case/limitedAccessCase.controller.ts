@@ -25,6 +25,7 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import { User } from '../user'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseScheduledGuard } from './guards/caseScheduled.guard'
@@ -84,7 +85,7 @@ export class LimitedAccessCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
     CaseScheduledGuard,
     CaseDefenderGuard,
   )
@@ -112,7 +113,7 @@ export class LimitedAccessCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
     CaseCompletedGuard,
     CaseDefenderGuard,
   )
@@ -141,7 +142,7 @@ export class LimitedAccessCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    LimitedAccessCaseExistsGuard,
+    CaseExistsGuard,
     CaseCompletedGuard,
     CaseDefenderGuard,
   )

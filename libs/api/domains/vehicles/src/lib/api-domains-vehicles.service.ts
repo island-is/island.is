@@ -210,7 +210,7 @@ export class VehiclesService {
           newRegistrationDate: data.newregdate ?? data.firstregdate,
           vehicleGroup: data.techincal?.vehgroup,
           color: data.color,
-          reggroup: data.plates?.[0].reggroup ?? null,
+          reggroup: data.plates?.[0]?.reggroup ?? null,
           reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,

@@ -94,7 +94,7 @@ export const m = defineMessages({
   },
   formName: {
     id: 'ol.application:applicationInfo.name',
-    defaultMessage: 'Umsókn um rekstarleyfi',
+    defaultMessage: 'Umsókn um rekstrarleyfi',
     description: 'Some description',
   },
   operationTitle: {
