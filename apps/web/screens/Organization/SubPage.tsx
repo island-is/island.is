@@ -14,6 +14,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
+  PowerBiSlice as PowerBiSliceSchema,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -35,6 +36,7 @@ import {
   SliceDropdown,
   Form,
   OneColumnTextSlice,
+  PowerBiSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -108,7 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
       })),
     }),
   )
-
+  console.log(subpage.description)
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
@@ -177,6 +179,11 @@ const SubPage: Screen<SubPageProps> = ({
                         ),
                         OneColumnText: (slice) => (
                           <OneColumnTextSlice slice={slice} />
+                        ),
+                        PowerBiSlice: (slice: PowerBiSliceSchema) => (
+                          <PowerBiSlice
+                            embedPropsString={slice.powerBiEmbedProps}
+                          />
                         ),
                       },
                     })}
