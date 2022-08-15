@@ -2068,6 +2068,9 @@ export interface IOrganizationPageFields {
     | 'sjukratryggingar'
     | 'syslumenn'
     | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
 
   /** Slices */
   slices?:
@@ -2092,7 +2095,13 @@ export interface IOrganizationPageFields {
 
   /** Bottom slices */
   bottomSlices?:
-    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
     | undefined
 
   /** News tag */
@@ -2177,6 +2186,7 @@ export interface IOrganizationSubpageFields {
         | IDistricts
         | IMailingListSignup
         | IEventSlice
+        | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2320,7 +2330,7 @@ export interface IProcessEntryFields {
   processTitle: string
 
   /** Process link */
-  processLink: string
+  processLink?: string | undefined
 
   /** Process asset */
   processAsset?: Asset | undefined
@@ -2709,12 +2719,6 @@ export interface IStepFields {
   /** Subtitle */
   subtitle?: Document | undefined
 
-  /** Text */
-  text?: Document | undefined
-
-  /** Is Answer */
-  isAnswer?: boolean | undefined
-
   /** Options */
   options?: Record<string, any> | undefined
 
@@ -2866,9 +2870,6 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
-
-  /** Stepper */
-  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */

@@ -14,7 +14,7 @@ import {
   ApplicationTemplateAPIAction,
 } from '@island.is/application/types'
 import { buildForm } from './formBuilders'
-import { DefaultStateLifeCycle } from './constants'
+import { DEPRECATED_DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {
@@ -67,7 +67,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -95,7 +95,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -119,14 +119,14 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -138,7 +138,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
       closed: {
         meta: {
           name: 'Closed',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
