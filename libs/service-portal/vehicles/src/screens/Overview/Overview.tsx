@@ -74,13 +74,14 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
   // TODO: Fix - this is throwing error from service
-  // const { data: vehiclePdf } = useQuery<Query>(GET_VEHICLES_OWNED_PDF, {
-  //   variables: {
-  //     input: {
-  //       permno: 'BY391',
-  //     },
-  //   },
-  // })
+  const { data: vehiclePdf } = useQuery<Query>(GET_VEHICLES_OWNED_PDF, {
+    variables: {
+      input: {
+        permno: 'BY391',
+      },
+    },
+  })
+  console.log(vehiclePdf)
 
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
