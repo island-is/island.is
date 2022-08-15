@@ -13,6 +13,7 @@ import { DocumentOauthConnection } from './document.connection'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { lastValueFrom } from 'rxjs'
+import { GetDocumentListInput } from './models/DocumentInput'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -84,33 +85,42 @@ export class DocumentClient {
   }
 
   async getDocumentList(
-    nationalId?: string,
-    input?: {
-      senderKennitala?: string | null
-      dateFrom?: string | null
-      dateTo?: string | null
-      categoryId?: string | null
-      typeId?: string | null
-      archived?: boolean | null
-      sortBy?: 'Subject' | 'Sender' | 'Category' | 'Date' | 'Type' | null
-      order?: 'Ascending' | 'Descending' | null
-      subjectContains?: string | null
-      opened?: boolean | null
-      page?: number | null
-      pageSize?: number | null
-    },
+    nationalId: string,
+    input: GetDocumentListInput,
   ): Promise<ListDocumentsResponse | null> {
-    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?senderKennitala=${
-      input?.senderKennitala ?? ''
-    }&dateFrom=${input?.dateFrom ?? ''}&dateTo=${
-      input?.dateTo ?? ''
-    }&categoryId=${input?.categoryId ?? ''}&typeId=${
-      input?.typeId ?? ''
-    }&sortBy=${input?.sortBy ?? 'Date'}&order=${
-      input?.order ?? 'Descending'
-    }&subjectContains=${input?.subjectContains ?? ''}&opened=${
-      input?.opened ?? ''
-    }&page=${input?.page ?? 1}&pageSize=${input?.pageSize ?? 15}`
+    const {
+      senderKennitala,
+      dateFrom,
+      dateTo,
+      categoryId,
+      typeId,
+      sortBy,
+      order,
+      subjectContains,
+      opened,
+      page,
+      pageSize,
+    } = input
+
+    type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
+    const inputs = [
+      sortBy ? `sortBy=${sortBy}` : 'sortBy=Date', // first in array to skip &
+      order ? `orderBy=${order}` : 'order=Descending',
+      page ? `page=${page}` : 'page=1',
+      pageSize ? `pageSize=${pageSize}` : 'pageSize=15',
+      senderKennitala && `senderKennitala=${senderKennitala}`,
+      dateFrom && `dateFrom=${dateFrom}`,
+      dateTo && `dateTo=${dateTo}`,
+      categoryId && `categoryId=${categoryId}`,
+      typeId && `typeId=${typeId}`,
+      subjectContains && `subjectContains=${subjectContains}`,
+      opened && `opened=${opened}`,
+    ].filter((Boolean as unknown) as ExcludesFalse)
+
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
+      '&',
+    )}`
 
     return await this.getRequest<ListDocumentsResponse>(encodeURI(requestRoute))
   }
