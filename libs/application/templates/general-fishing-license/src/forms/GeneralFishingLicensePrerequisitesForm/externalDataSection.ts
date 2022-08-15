@@ -22,7 +22,7 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           id: 'nationalRegistry',
-          type: DataProviderTypes.NationalRegistry,
+          type: DataProviderTypes.CompanyRegistry,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
