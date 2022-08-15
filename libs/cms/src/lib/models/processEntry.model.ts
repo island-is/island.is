@@ -26,8 +26,8 @@ export const mapProcessEntry = ({
 }: IProcessEntry): SystemMetadata<ProcessEntry> => {
   let processLink = ''
 
-  if (fields.processLink?.length > 0) {
-    processLink = fields.processLink
+  if ((fields.processLink ?? []).length > 0) {
+    processLink = fields.processLink as string
   } else if (fields.processAsset?.fields?.file?.url) {
     let prefix = ''
     if (fields.processAsset.fields.file.url.startsWith('//')) {
