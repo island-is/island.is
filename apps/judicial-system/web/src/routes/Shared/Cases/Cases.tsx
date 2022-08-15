@@ -155,7 +155,7 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
+      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
@@ -202,15 +202,18 @@ export const Cases: React.FC = () => {
                     icon="add"
                     items={[
                       {
-                        href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                        href: constants.,
+                      }
+                      {
+                        href: constants.CREATE_RESTRICTION_CASE_ROUTE,
                         title: 'Gæsluvarðhald',
                       },
                       {
-                        href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                        href: constants.CREATE_TRAVEL_BAN_ROUTE,
                         title: 'Farbann',
                       },
                       {
-                        href: constants.NEW_IC_ROUTE,
+                        href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
                         title: 'Rannsóknarheimild',
                       },
                     ]}

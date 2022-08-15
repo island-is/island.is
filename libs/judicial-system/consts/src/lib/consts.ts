@@ -2,9 +2,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 export const EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
-
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
-
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 
 export const ICaseTypes = [
@@ -79,24 +77,25 @@ export const ICaseTypes = [
 export const TIME_FORMAT = 'HH:mm'
 
 // Routes
-export const CASE_LIST_ROUTE = '/krofur'
-export const USER_LIST_ROUTE = '/notendur'
-export const USER_NEW_ROUTE = '/notendur/nyr'
-export const USER_CHANGE_ROUTE = '/notendur/breyta'
-export const SIGNED_VERDICT_OVERVIEW = '/krafa/yfirlit'
+// Prosecutor routes
+export const CASES_ROUTE = '/krofur'
+export const USERS_ROUTE = '/notendur'
+export const CREATE_USER_ROUTE = '/notendur/nyr'
+export const CHANGE_USER_ROUTE = '/notendur/breyta'
+export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 
-// Prosecutor
-export const STEP_ONE_CUSTODY_REQUEST_ROUTE = '/krafa/ny/gaesluvardhald'
-export const STEP_ONE_NEW_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
-export const STEP_ONE_ROUTE = '/krafa/sakborningur'
-export const STEP_TWO_ROUTE = '/krafa/fyrirtaka'
-export const STEP_THREE_ROUTE = '/krafa/domkrofur-og-lagaakvaedi'
-export const STEP_FOUR_ROUTE = '/krafa/greinargerd'
-export const STEP_FIVE_ROUTE = '/krafa/rannsoknargogn'
-export const STEP_SIX_ROUTE = '/krafa/stadfesta'
+export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
+export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
+export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 
-// Investigation cases - prosecutor
-export const NEW_IC_ROUTE = '/krafa/ny/rannsoknarheimild'
+export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
+export const RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE = '/krafa/fyrirtaka'
+export const RESTRICTION_CASE_POLICE_DEMANDS_ROUTE = '/krafa/domkrofur-og-lagaakvaedi'
+export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
+export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
+export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
+
+// Investigation cases
 export const IC_DEFENDANT_ROUTE = '/krafa/rannsoknarheimild/varnaradili'
 export const IC_HEARING_ARRANGEMENTS_ROUTE =
   '/krafa/rannsoknarheimild/fyrirtaka'
@@ -106,7 +105,8 @@ export const IC_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
 export const IC_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 export const IC_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
 
-// Court
+
+// Court routes
 export const RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const OVERVIEW_ROUTE = '/domur/krafa'
 export const HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
@@ -115,7 +115,7 @@ export const RULING_ROUTE = '/domur/urskurdur'
 export const CONFIRMATION_ROUTE = '/domur/stadfesta'
 export const MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
-// Investigation cases - court
+// Investigation cases
 export const IC_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/rannsoknarheimild/mottaka'
 export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'

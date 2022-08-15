@@ -54,10 +54,10 @@ export const StepOne: React.FC = () => {
           citizenship: theCase.defendants[0].citizenship,
         })
 
-        router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+        router.push(`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`)
       }
     } else {
-      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
+      router.push(`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
     }
   }
 

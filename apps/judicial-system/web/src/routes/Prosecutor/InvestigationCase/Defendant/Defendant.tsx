@@ -398,7 +398,7 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASE_LIST_ROUTE}`}
+          previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
           nextIsLoading={isCreatingCase}

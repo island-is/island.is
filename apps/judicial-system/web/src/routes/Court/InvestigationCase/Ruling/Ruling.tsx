@@ -459,7 +459,7 @@ const Ruling = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
               : `${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={

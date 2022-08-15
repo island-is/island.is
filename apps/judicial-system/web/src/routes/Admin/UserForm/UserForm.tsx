@@ -343,7 +343,7 @@ export const UserForm: React.FC<Props> = (props) => {
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}
           nextButtonText="Vista"
-          previousUrl={constants.USER_LIST_ROUTE}
+          previousUrl={constants.USERS_ROUTE}
         />
       </FormContentContainer>
     </div>

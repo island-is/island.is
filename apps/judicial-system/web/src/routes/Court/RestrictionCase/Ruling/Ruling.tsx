@@ -828,7 +828,7 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
               : `${constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={

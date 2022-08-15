@@ -365,7 +365,7 @@ const HearingArrangements = () => {
               handlePrimaryButtonClick={async () => {
                 if (substituteProsecutor) {
                   await setProsecutor(substituteProsecutor)
-                  router.push(constants.CASE_LIST_ROUTE)
+                  router.push(constants.CASES_ROUTE)
                 }
               }}
               handleSecondaryButtonClick={() => {
