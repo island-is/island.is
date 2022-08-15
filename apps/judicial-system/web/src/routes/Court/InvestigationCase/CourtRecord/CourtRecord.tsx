@@ -821,20 +821,21 @@ const CourtRecord = () => {
                       : undefined
                   }
                   maxDate={new Date()}
-                  selectedDate={workingCase.courtStartDate}
+                  selectedDate={workingCase.courtEndTime}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    if (date && valid) {
-                      setAndSendToServer(
-                        [
-                          {
-                            courtEndTime: formatDateForServer(date),
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
+                    setAndSendToServer(
+                      [
+                        {
+                          courtEndTime:
+                            date && valid
+                              ? formatDateForServer(date)
+                              : undefined,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
                   }}
                   blueBox={false}
                   required
