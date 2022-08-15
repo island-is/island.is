@@ -19,6 +19,11 @@ const intl = createIntl(
 )
 
 const label = (l: MessageDescriptor) => intl.formatMessage(l)
+
+function proceed() {
+  cy.get('[data-testid="proceed"]').click()
+}
+
 describe('Parental leave', () => {
   const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
   const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
@@ -49,11 +54,11 @@ describe('Parental leave', () => {
   const phaseEmployerApproval = () => {
     cy.findByRole('region', {
       name: label(employerFormMessages.employerNationalRegistryIdSection),
-      // eslint-disable-next-line local-rules/disallow-kennitalas
     })
       .findByRole('textbox')
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       .type('5402696029')
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('button', {
       name: label(coreMessages.buttonApprove),
@@ -68,33 +73,70 @@ describe('Parental leave', () => {
       name: label(parentalLeaveFormMessages.shared.noOptionLabel),
     }).click()
 
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.get("[data-testid='agree-to-data-providers']").click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.get("[data-testid='child-0']").click()
-    cy.get('[data-testid="select-child"]').click()
-    cy.get("[data-testid='email']").click().type('{selectall}noreply@island.is')
-    cy.get('[data-testid="phone"]').click().type('{selectall}5555555')
-    cy.get('[data-testid="proceed"]').click()
+    cy.findByRole('button', {
+      name: label(parentalLeaveFormMessages.selectChild.choose),
+    }).click()
 
-    cy.get("[data-testid='other-parent']").click()
-    cy.get('[data-testid="other-parent-name"]')
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.applicant.email),
+    })
+      .click()
+      .type('{selectall}noreply@island.is')
+
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.applicant.phoneNumber),
+    })
+      .click()
+      .type('{selectall}5555555')
+
+    proceed()
+
+    cy.findByRole('radio', {
+      name: label(parentalLeaveFormMessages.shared.otherParentOption),
+    }).click()
+
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.shared.otherParentName),
+    })
       .click()
       .type('{selectall}Gervimaður Ameríku')
-    cy.get('[data-testid="other-parent-kennitala"]')
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.shared.otherParentID),
+    })
       .click()
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       .type('{selectall}0101302989')
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
-    cy.get('[data-testid="yes-option"]').click()
-    cy.get('[data-testid="proceed"]').click()
+    cy.findByRole('radio', {
+      name: label(parentalLeaveFormMessages.rightOfAccess.yesOption),
+    }).click()
+    proceed()
 
-    cy.get("[data-testid='bank-account-number']").type(
-      '{selectall}051226054678',
-    )
-    cy.get("[data-testid='pension-fund']").focus().type('{downArrow}')
+    cy.findByRole('region', {
+      name: label(parentalLeaveFormMessages.shared.paymentInformationName),
+    })
+
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.shared.paymentInformationBank),
+    })
+      .click()
+      .type('{selectall}051226054678')
+
+    cy.findByRole('combobox', {
+      name: `${label(parentalLeaveFormMessages.shared.pensionFund)} ${label(
+        parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
+      )}`,
+    })
+      .focus()
+      .type('{downArrow}')
+
     cy.get('#react-select-payments\\.pensionFund-option-0').click()
     cy.get("[data-testid='use-union']").click()
     cy.get("[data-testid='payments-union']").focus().type('{downArrow}')
@@ -108,13 +150,13 @@ describe('Parental leave', () => {
     cy.get(
       '#react-select-payments\\.privatePensionFundPercentage-option-0',
     ).click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.get("[data-testid='use-personal-finance']").click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.get("[data-testid='use-as-much-as-possible']").click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.personalAllowance.useFromSpouse),
@@ -123,7 +165,7 @@ describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
       .click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.selfEmployed.title),
@@ -132,7 +174,7 @@ describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
       .click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.employer.title),
@@ -141,12 +183,12 @@ describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.employer.email),
       })
       .type(employerEmail)
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('heading', {
       name: label(parentalLeaveFormMessages.shared.theseAreYourRights),
     })
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.shared.transferRightsTitle),
@@ -155,12 +197,12 @@ describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.transferRightsNone),
       })
       .click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.shared.periodsImageTitle),
     })
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.firstPeriodStart.title),
@@ -171,7 +213,7 @@ describe('Parental leave', () => {
         ),
       })
       .click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('heading', {
       name: label(parentalLeaveFormMessages.duration.title),
@@ -179,7 +221,7 @@ describe('Parental leave', () => {
     cy.findByRole('radio', {
       name: label(parentalLeaveFormMessages.duration.monthsOption),
     }).click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.duration.title),
@@ -187,15 +229,15 @@ describe('Parental leave', () => {
     cy.findByRole('button', {
       name: '6 months',
     }).click()
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByTestId('select-percentage-use').focus().type('50%{enter}')
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('button', {
       name: label(parentalLeaveFormMessages.leavePlan.addAnother),
     })
-    cy.get('[data-testid="proceed"]').click()
+    proceed()
 
     cy.findByRole('button', {
       name: label(parentalLeaveFormMessages.confirmation.title),
