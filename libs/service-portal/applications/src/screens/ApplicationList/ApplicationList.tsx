@@ -177,7 +177,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       {error && <EmptyState description={m.error} />}
 
-      {!error && !loading && !applications && (
+      {!error && !loading && applications.length === 0 && (
         <EmptyState
           description={defineMessage({
             id: 'sp.applications:no-applications-available',
@@ -187,7 +187,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         />
       )}
 
-      {applications && orgData && !loading && !error && (
+      {applications.length > 0 && orgData && !loading && !error && (
         <>
           <Box paddingBottom={[3, 5]}>
             <GridRow alignItems="flexEnd">
