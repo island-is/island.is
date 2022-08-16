@@ -215,4 +215,16 @@ export const core = defineMessages({
     defaultMessage: 'Hlekkur afritaður',
     description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
   },
+  serviceInterruptionTitle: {
+    id: 'judicial.system.core:service_interruption_title',
+    defaultMessage: 'Mikilvæg skilaboð',
+    description:
+      'Notaður sem titil á skilboðum í borða sem er sýndur við þjónusturof',
+  },
+  serviceInterruptionText: {
+    id: 'judicial.system.core:service_interruption_text',
+    defaultMessage: 'NONE',
+    description:
+      'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
 })

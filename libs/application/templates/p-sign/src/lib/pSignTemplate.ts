@@ -1,4 +1,4 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -70,7 +70,7 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
 
           roles: [
             {

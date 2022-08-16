@@ -20296,10 +20296,10 @@ jwt-decode@^3.1.2:
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
-"kennitala@npm:@island.is/kennitala@2.0.0-beta.4":
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@island.is/kennitala/-/kennitala-2.0.0-beta.4.tgz#81320aecf95a6511e604febec4762bb1a4e8161c"
-  integrity sha512-d555X33wHADGmfKvmX1gslmEZ3665Sni5JW+Ugm5JLv50PvKuM7CHVHhILpfAsm9Qr//4y4bMo6YxICP+HkbbQ==
+kennitala@2.0.0-beta.2:
+  version "2.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-2.0.0-beta.2.tgz#e00e2582bd17e4a3da9b610dc828cd621258bec4"
+  integrity sha512-sE7G5WvCqOrzMDUe3ihHpWIOQi98Esbi67UyD6PxiVwFuSzLC6fnXJQC4hCu7dvS2hEbVYWfjGAHjopkYBsLbQ==
 
 keyv@^3.0.0:
   version "3.1.0"
@@ -27078,9 +27078,9 @@ shell-escape@^0.2.0:
   integrity sha1-aP0CXrBJC09WegJ/C/IkgLX4QTM=
 
 shell-quote@^1.6.1:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
-  integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.3.tgz#aa40edac170445b9a431e17bb62c0b881b9c4123"
+  integrity sha512-Vpfqwm4EnqGdlsBFNmHhxhElJYrdfcxPThu+ryKS5J8L/fhAwLazFZtq+S+TWZ9ANj2piSQLGj6NQg+lKPmxrw==
 
 shellwords@^0.1.1:
   version "0.1.1"

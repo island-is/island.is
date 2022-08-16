@@ -1,0 +1,30 @@
+{
+  "root": "libs/clients/document-provider",
+  "sourceRoot": "libs/clients/document-provider/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/document-provider/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/document-provider"],
+      "options": {
+        "jestConfig": "libs/clients/document-provider/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i libs/clients/document-provider/src/clientConfig.yaml"
+      }
+    }
+  },
+  "tags": []
+}
