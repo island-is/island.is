@@ -85,7 +85,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Ameríka',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 600,
+    postalcode: 460,
     city: 'Akureyri',
   },
   {
@@ -107,7 +107,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Ameríkuson',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 100,
+    postalcode: 460,
     city: 'Vestmannaeyjar',
   },
   {
@@ -118,7 +118,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Ameríkudóttir',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 100,
+    postalcode: 460,
     city: 'Vestmannaeyjar',
   },
 
@@ -218,8 +218,18 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Gervimannsdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
-    postalcode: 210,
+    postalcode: 460,
     city: 'Garðabær',
+  },
+  {
+    nationalId: '4444444449',
+    firstName: 'Bingó',
+    middleName: 'Baldur',
+    address: 'Bongobraut 12',
+    city: 'Garðabær',
+    gender: 'hvk',
+    lastName: 'Bebbisbur',
+    postalcode: 460,
   },
 ]
 
@@ -288,6 +298,10 @@ export class NationalRegistryService {
     auth: AuthUser,
     childNationalId: string,
   ): Promise<Array<NationalRegistryUser | null>> {
+    console.log('WE CALLING GETCUSTODIANS WITH')
+    console.log('ID OF AUTH', auth.nationalId)
+    console.log('ID OF CHILD', childNationalId)
+
     const response = await this.personApiWithAuth(auth)
       .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
         id: auth.nationalId,
@@ -318,6 +332,7 @@ export class NationalRegistryService {
       if (testUser) {
         return testUser
       }
+      console.log('NO TEST USER FOUND!!!!!!!!!!!!!!!')
     }
 
     const response = await this.personApiWithAuth(auth)

@@ -35,15 +35,22 @@ export class PrivateUserController {
         '[/relations] Request parameters do not correspond with user authentication.',
       )
     }
+    console.log('AM INSIDE RELATIONS CALL')
+    console.log('PARAMS', params)
+    console.log('AUTHUSER', authUser)
     const relations = [
       authUser.nationalId,
       ...(await this.userService.getRelations(authUser)),
     ]
 
+    console.log('RELATIONS BABY', relations)
+
     const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
       authUser,
     )
+
+    console.log('USER AND RELATIVES BOYYYYY', userAndRelatives)
 
     return userAndRelatives
   }

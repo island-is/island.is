@@ -22,7 +22,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
-const MAX_AGE_LIMIT = 18
+const MAX_AGE_LIMIT = 1800
 
 @Injectable()
 export class UserService {
@@ -88,12 +88,21 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
+    console.log(`${user.nationalId} has`, {
+      used,
+      unused,
+      total,
+    })
     let meetsADSRequirements = false
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
       meetsADSRequirements = true
-    } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
+    } else if (
+      info(user.nationalId).age < MAX_AGE_LIMIT &&
+      !user.nationalId.startsWith('010130')
+    ) {
       // NationalId is a minor and doesn't live in ADS postal codes.
+      console.log('WE CHECK FOR CHILD? YES!')
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)
       let custodians = undefined
@@ -103,6 +112,7 @@ export class UserService {
         custodians = cacheValue.custodians
       } else if (auth) {
         // We have access to auth if a user is logged in
+        console.log('WE HAVE ACCESS TO AUTH, YES YES', auth)
         custodians = [
           ...(await this.nationalRegistryService.getCustodians(
             auth,
@@ -111,6 +121,8 @@ export class UserService {
         ]
         await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
       }
+
+      console.log('WHO IS CUSTODIANS?', custodians)
 
       // Check child custodians if they have valid ADS postal code.
       if (custodians) {
@@ -141,6 +153,8 @@ export class UserService {
     if (!user) {
       return null
     }
+    console.log('WHAT IS AUTH AT THIS POINT?', auth)
+    console.log('WHO IS USER?')
     const fund = await this.getFund(user, auth)
     return new model(user, fund)
   }
