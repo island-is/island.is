@@ -7,7 +7,13 @@ import { getValueViaPath } from '@island.is/application/core'
 
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
-import { SyslumennService } from '@island.is/clients/syslumenn'
+import {
+  SyslumennService,
+  Person,
+  Attachment,
+  PersonType,
+  DataUploadResponse,
+} from '@island.is/clients/syslumenn'
 import {
   File,
   ApplicationAttachments,
@@ -15,6 +21,8 @@ import {
   AttachmentPaths,
 } from './types/attachments'
 import { ApplicationWithAttachments } from '@island.is/application/types'
+import { Info } from './types/application';
+import { getExtraData } from './utils'
 
 @Injectable()
 export class OperatingLicenseService {
@@ -57,26 +65,53 @@ export class OperatingLicenseService {
     orderId?: string
   }> {
     const { answers } = application
-    console.log(answers.attachments)
-    // const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-    //   auth.authorization,
-    //   application.id,
-    // )
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
 
-    // if (!isPayment?.fulfilled) {
-    //   this.logger.error(
-    //     'Trying to submit OperatingLicenseapplication that has not been paid.',
-    //   )
-    //   throw new Error(
-    //     'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
-    //   )
-    // }
+    if (!isPayment?.fulfilled) {
+      this.logger.error(
+        'Trying to submit OperatingLicenseapplication that has not been paid.',
+      )
+      throw new Error(
+        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      )
+    }
 
-    let result
     try {
       // TODO: Submit to syslumenn
-      this.getAttachments(application)
-      result = { success: false, errorMessage: null }
+      const uploadDataName = 'rekstrarleyfi1.0'
+      const uploadDataId = 'rekstrarleyfi1.0'
+      const info = getValueViaPath(
+        application.answers,
+        'info',
+      ) as Info
+      const persons: Person[] = [{
+        name: '',
+        ssn: auth.nationalId,
+        phoneNumber: info?.phoneNumber,
+        email: info?.email,
+        homeAddress: '',
+        postalCode: '',
+        city: '',
+        signed: true,
+        type: PersonType.Plaintiff,
+      }]
+      const attachments = await this.getAttachments(application)
+      const extraData = getExtraData(application)
+      const result: DataUploadResponse = await this.syslumennService
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
+      .catch((e) => {
+        return {
+          success: false,
+          errorMessage: e.message,
+        }
+      })
+      return {
+        success: result.success,
+        orderId: '',
+      }
     } catch (e) {
       this.log('error', 'Submitting operating license failed', {
         e,
@@ -85,14 +120,7 @@ export class OperatingLicenseService {
       throw e
     }
 
-    if (!result.success) {
-      throw new Error(`Application submission failed (${result.errorMessage})`)
-    }
 
-    return {
-      success: true,
-      orderId: 'PÖNTUN12345',
-    }
   }
 
   private log(lvl: 'error' | 'info', message: string, meta: unknown) {
@@ -100,8 +128,8 @@ export class OperatingLicenseService {
   }
 
   private async getAttachments(
-    application: ApplicationWithAttachments): Promise<string> {
-    const attachments: AttachmentData[] = []
+    application: ApplicationWithAttachments): Promise<Attachment[]> {
+    const attachments: Attachment[] = []
       console.log("HAHAHHAHDFASDFKAS D")
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
@@ -113,20 +141,17 @@ export class OperatingLicenseService {
         console.log(attachmentAnswer)
       if (attachmentAnswer) {
         const fileType = attachmentAnswer.name?.split('.').pop()
-        const name: string = `${prefix}_${new Date().toString()}.${fileType}`
+        const name: string = `${prefix}_${new Date(Date.now()).toISOString().substring(0, 10)}.${fileType}`
         console.log("KEY",  attachmentAnswer?.key)
         const fileName = (application.attachments as ApplicationAttachments)[
           attachmentAnswer?.key
         ]
         console.log(fileName)
         const content = await this.getFileContentBase64(fileName)
-        attachments.push({ name, content } as AttachmentData)
+        attachments.push({ name, content } as Attachment)
       }
     }
-
-    console.log(attachments)
-
-    return ''
+    return attachments
   }
 
   private async getFileContentBase64(fileName: string): Promise<string> {

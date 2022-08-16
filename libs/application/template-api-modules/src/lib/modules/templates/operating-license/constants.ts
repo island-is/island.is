@@ -18,3 +18,7 @@ export const AttachmentPaths: AttachmentPath[] = [
     prefix: 'teikning_utisvaedi',
   },
 ]
+
+
+export const YES = 'yes'
+export const NO = 'no'
