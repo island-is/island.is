@@ -23,12 +23,10 @@ export const withGDPR = (WrappedComponent: NextComponentType) => () => {
 
   if (loading || !isAuthenticated) {
     return (
-      <PageLayout>
-        <Stack space={6}>
-          <SkeletonLoader repeat={1} />
-          <SkeletonLoader space={3} repeat={2} height="100px" />
-        </Stack>
-      </PageLayout>
+      <Stack space={6}>
+        <SkeletonLoader repeat={1} />
+        <SkeletonLoader space={3} repeat={2} height="100px" />
+      </Stack>
     )
   } else if (data?.skilavottordGdpr?.gdprStatus === 'true') {
     return <WrappedComponent />
