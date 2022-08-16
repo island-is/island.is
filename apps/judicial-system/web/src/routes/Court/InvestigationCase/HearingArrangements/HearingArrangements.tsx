@@ -116,7 +116,7 @@ const HearingArrangements = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`)
+      router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
