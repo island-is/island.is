@@ -1,8 +1,5 @@
 # API Design Guide
 
-_Draft 1 - Published 2020-08-31_ - Initial  
-_Draft 2 - Published 2021-10-19_ - Changing pagination description
-
 This is the home of the API Design Guide published by Stafrænt Ísland as a best practice guide for API development. It should help synchronize the work between developers and make working together easier. The guide covers the relevant design principles and patterns to use so the consumer experience is enjoyable and consistent throughout APIs.
 
 This guide is under constant review and updates will be made over time as new design patterns and styles are adopted.
@@ -66,3 +63,21 @@ All feedback is welcomed and encouraged to help make the guide better so please 
   - [Sandbox](environments.md#sandbox-environment-for-consumers-of-an-api)
   - [Production](environments.md#production-environment)
 - [Example Service](example.md)
+
+## Changelog
+
+_Draft 3 - Published 2022-08-16_
+
+- Improving [Documentation](documentation.md).
+- Adding description of Content Types in [Http Status Codes](http-status-codes.md).
+- Making `hasPreviousPage` and `startCursor` optional in [Pagination](pagination.md).
+- Adding OWASP and IAS reference in [Security](security.md).
+- Other small fixes.
+
+_Draft 2 - Published 2021-10-19_
+
+- Changing pagination description
+
+_Draft 1 - Published 2020-08-31_
+
+- Initial relase

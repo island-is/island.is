@@ -10,7 +10,7 @@ When an error occurs, a REST API should respond with an 4xx or 5xx [HTTP status 
 
 ### Problem Details Object
 
-For REST APIs the Problem Details object is modelled as a JSON object. The format is identified with the "application/problem+json" content-type.
+For REST APIs the Problem Details object is modelled as a JSON object. The format is identified with the `application/problem+json` content type in the HTTP `Content-Type` header.
 
 The `type` string is the primary problem identifier and is, as such, required. Every other field is optional but it is **HIGHLY RECOMMENDED** to at least have `title` and `status` strings present in the error response.
 

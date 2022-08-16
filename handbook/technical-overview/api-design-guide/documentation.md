@@ -1,14 +1,24 @@
 # Documentation
 
-API documentation should be targeted towards the developer that will consume the API. A good documentation is one of the single most important qualities of an API. It makes it much easier for other developers to use services and significantly reduces implementation time for API consumers. The API developer is responsible for keeping the documentation up to date.
+API documentation should be targeted towards the developer that will consume the API.
+A good documentation is one of the single most important qualities of an API.
+It makes it much easier for other developers to use services and significantly
+reduces implementation time for API consumers. The API developer is responsible for
+keeping the documentation up to date.
 
-To help with keeping documentation up to date consider using automatic generation tools that during build time can, for example, gather comments in predefined syntax and generate the [Open API Specification](https://swagger.io/specification/) (OAS), this means that the OAS lives bundled with the code and should be easier for developers to maintain.
+To help with keeping documentation up to date consider using automatic generation
+tools that during build time can, for example, gather comments in predefined syntax
+and generate the [Open API Specification](https://swagger.io/specification/) (OAS),
+this means that the OAS lives bundled with the code and should be easier for developers to maintain.
 
-**Note** - To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
+A good Open API Specification document describes the following fields:
+
+- [`servers`](https://spec.openapis.org/oas/v3.1.0#server-object): Describing the endpoints for the API service
+- **Note** - To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
 
 The following fields, not marked as (_Optional_), are required for services to be automatically imported to the _API Catalogue_:
 
-- info
+- [`info`](https://spec.openapis.org/oas/v3.1.0#info-object)
   - description — short but proper description of the API.
   - version — to distinguish API versions following [semantic versioning](https://semver.org/) specification.
   - title — descriptive name of the API.
@@ -27,6 +37,17 @@ The following fields, not marked as (_Optional_), are required for services to b
     - documentation — (_Optional_) a fully qualified url to the API documentation page. This is linked to in the service view.
     - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service. This is linked to in the service view.
     - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service. This is linked to in the service view.
+
+A good Open API Specification document also contains the following:
+
+- Uses the [`Servers`](https://spec.openapis.org/oas/v3.1.0#server-object) object in the root to describe the endpoints for the API service.
+- Uses the [`Example Object`](https://spec.openapis.org/oas/v3.1.0#example-object) to show example responses for each operation.
+- Documents all expected HTTP statuses in the [`Response Object`](https://spec.openapis.org/oas/v3.1.0#responses-object), both success and errors.
+- Describes all the content types with a [`Media Type Object`](https://spec.openapis.org/oas/v3.1.0#media-type-object) for operations, both requests and responses.
+- Orders the [`Parameter Objects`](https://spec.openapis.org/oas/v3.1.0#parameter-object) to list all required parameters before optional.
+- Describes the operation's authentication using the [`Security Requirement Object`](https://spec.openapis.org/oas/v3.1.0#securityRequirementObject)
+  or the [`Security Scheme Object`](https://spec.openapis.org/oas/v3.1.0#security-scheme-object) to set the API top-level security.
+- Contains the `description` field for all operations, parameters, and schema fields to provide human readable documentation of the corresponding field.
 
 Example can be found [here](documentation.md#example).
 
