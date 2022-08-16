@@ -520,6 +520,24 @@ export const slices = gql`
     config
   }
 
+  fragment GraphCardFields on GraphCard {
+    graphTitle
+    graphDescription
+    organization
+    data
+    datakeys
+    type
+    displayAsCard
+    organizationLogo {
+      id
+      url
+      title
+      contentType
+      width
+      height
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -551,6 +569,7 @@ export const slices = gql`
     ...EventSliceFields
     ...FormFields
     ...StepperFields
+    ...GraphCardFields
   }
 
   fragment AllSlices on Slice {

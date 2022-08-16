@@ -20,6 +20,10 @@ First, make sure you have docker, then run:
 yarn dev-services judicial-system-backend
 ```
 
+```bash
+yarn dev-services judicial-system-message-handler
+```
+
 Then run the migrations and seed the database:
 
 ```bash
