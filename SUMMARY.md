@@ -125,7 +125,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-  - [API Domains Heilbrigdisstofnun Nordurlands](libs/api/domains/heilbrigdisstofnun-nordurlands/README.md)
+    - [API Domains Heilbrigdisstofnun Nordurlands](libs/api/domains/heilbrigdisstofnun-nordurlands/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
