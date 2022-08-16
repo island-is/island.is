@@ -227,4 +227,24 @@ export const core = defineMessages({
     description:
       'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
   },
+  restrictionCase:{ 
+    id: 'judicial.system.core:restriction_case',
+    defaultMessage: 'gæsluvarðhald',
+    description: 'Notaður fyrir orðið Gæsluvarðhald.',
+  },
+  travelBan:{ 
+    id: 'judicial.system.core:travel_ban',
+    defaultMessage: 'farbann',
+    description: 'Notaður fyrir orðið Farbann.',
+  },
+  investigationCase:{ 
+    id: 'judicial.system.core:investigation_case',
+    defaultMessage: 'rannsóknarheimild',
+    description: 'Notaður fyrir orðið Rannsóknarheimild.',
+  },
+  indictment:{ 
+    id: 'judicial.system.core:indictment',
+    defaultMessage: 'ákæra',
+    description: 'Notaður fyrir orðið Ákæra.',
+  }
 })

@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
 
+
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -21,10 +22,11 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m, titles } from '@island.is/judicial-system-web/messages'
+import { core, requests as m, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -203,19 +205,19 @@ export const Cases: React.FC = () => {
                     items={[
                       {
                         href: constants.CREATE_INDICTMENT_ROUTE,
-                        title: 'Ákæra'
+                        title: capitalize(formatMessage(core.indictment)),
                       },
                       {
                         href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-                        title: 'Gæsluvarðhald',
+                        title: capitalize(formatMessage(core.restrictionCase)),
                       },
                       {
                         href: constants.CREATE_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
+                        title: capitalize(formatMessage(core.travelBan)),
                       },
                       {
                         href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-                        title: 'Rannsóknarheimild',
+                        title: capitalize(formatMessage(core.investigationCase)),
                       },
                     ]}
                     title="Stofna nýja kröfu"
