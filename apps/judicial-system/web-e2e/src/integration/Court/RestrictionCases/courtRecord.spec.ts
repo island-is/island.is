@@ -1,5 +1,8 @@
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import { RESTRICTION_CASE_COURT_RECORD_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  RESTRICTION_CASE_CONFIRMATION_ROUTE,
+  RESTRICTION_CASE_COURT_RECORD_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
@@ -72,7 +75,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
           cy.getByTestid('continueButton').click()
           cy.url().should(
             'include',
-            `${RESTRICTION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`,
+            `${RESTRICTION_CASE_CONFIRMATION_ROUTE}/test_id_stadfest`,
           )
         })
 
