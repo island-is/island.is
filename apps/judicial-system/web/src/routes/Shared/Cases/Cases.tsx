@@ -202,8 +202,9 @@ export const Cases: React.FC = () => {
                     icon="add"
                     items={[
                       {
-                        href: constants.,
-                      }
+                        href: constants.CREATE_INDICTMENT_ROUTE,
+                        title: 'Ákæra'
+                      },
                       {
                         href: constants.CREATE_RESTRICTION_CASE_ROUTE,
                         title: 'Gæsluvarðhald',

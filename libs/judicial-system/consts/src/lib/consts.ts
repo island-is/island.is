@@ -86,6 +86,7 @@ export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
+export const CREATE_INDICTMENT_ROUTE = '/krafa/ny/akaera'
 
 export const DEFENDER_ROUTE = '/verjandi'
 
@@ -105,6 +106,8 @@ export const INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE =
 export const INVESTIGATION_CASE_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
 export const INVESTIGATION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
+
+export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
