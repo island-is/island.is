@@ -314,7 +314,7 @@ export const SignedVerdictOverview: React.FC = () => {
           router.push(`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`)
         } else {
           router.push(
-            `${constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
@@ -323,7 +323,7 @@ export const SignedVerdictOverview: React.FC = () => {
             if (isRestrictionCase(extendedCase.type)) {
               router.push(`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`)
             } else {
-              router.push(`${constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+              router.push(`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`)
             }
           }
         })
@@ -736,8 +736,8 @@ export const SignedVerdictOverview: React.FC = () => {
                         event.stopPropagation()
                         router.push(
                           isRestrictionCase(workingCase.type)
-                            ? `${constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
                         )
                       }}
                     >

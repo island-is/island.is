@@ -116,7 +116,7 @@ const HearingArrangements = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -300,7 +300,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
@@ -328,7 +328,7 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                  router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
                 }
               }}
               handleSecondaryButtonClick={() => {
@@ -338,7 +338,7 @@ const HearingArrangements = () => {
                   true,
                 )
 
-                router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

@@ -98,14 +98,14 @@ const Defendant = () => {
           }
         })
         router.push(
-          `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+          `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
         )
       } else {
         // TODO handle error
         return
       }
     } else {
-      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
+      router.push(`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
     }
   }
 

@@ -117,7 +117,7 @@ const Confirmation = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
               nextUrl={constants.CASES_ROUTE}
               nextIsLoading={isRequestingRulingSignature}
               nextButtonText={formatMessage(
