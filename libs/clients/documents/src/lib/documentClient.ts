@@ -115,7 +115,7 @@ export class DocumentClient {
       categoryId && `categoryId=${categoryId}`,
       typeId && `typeId=${typeId}`,
       subjectContains && `subjectContains=${subjectContains}`,
-      opened && `opened=${opened}`,
+      `opened=${opened}`,
     ].filter((Boolean as unknown) as ExcludesFalse)
 
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages?${inputs.join(
