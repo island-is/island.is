@@ -13,9 +13,7 @@
   "paths": {
     "/api/v1/Appointments": {
       "get": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Get all appointments for a specific person",
         "parameters": [
           {
@@ -54,9 +52,7 @@
         }
       },
       "post": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Create an appointment",
         "requestBody": {
           "content": {
@@ -103,9 +99,7 @@
     },
     "/api/v1/Appointments/{appointmentId}": {
       "put": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Reschedule an appointment at a different date and time",
         "parameters": [
           {
@@ -162,9 +156,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Cancel an appointment",
         "parameters": [
           {
@@ -204,10 +196,7 @@
     },
     "/api/v1/Auth/Login": {
       "post": {
-        "tags": [
-          "AppointmentAPI",
-          "Auth"
-        ],
+        "tags": ["AppointmentAPI", "Auth"],
         "description": "",
         "requestBody": {
           "content": {
@@ -254,9 +243,7 @@
     },
     "/api/v1/Auth/IsTokenValid": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -292,9 +279,7 @@
     },
     "/api/v1/Auth/IsMyTokenValid": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "Success",
@@ -311,9 +296,7 @@
     },
     "/api/v1/Auth/WhoAmI": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "Success",
@@ -330,9 +313,7 @@
     },
     "/api/v1/Kiosk/GetAllActiveKiosks": {
       "get": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "responses": {
           "200": {
             "description": "Success",
@@ -352,9 +333,7 @@
     },
     "/api/v1/Kiosk/GetKioskInfo": {
       "get": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "responses": {
           "200": {
             "description": "Success",
@@ -374,9 +353,7 @@
     },
     "/api/v1/Kiosk/Barcode": {
       "post": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -412,9 +389,7 @@
     },
     "/api/v1/Kiosk/SSN": {
       "post": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -450,9 +425,7 @@
     },
     "/api/v1/Kiosk/ConfirmArrival": {
       "post": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -488,9 +461,7 @@
     },
     "/api/v1/Kiosk/ConfirmPayment": {
       "post": {
-        "tags": [
-          "Kiosk"
-        ],
+        "tags": ["Kiosk"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -526,9 +497,7 @@
     },
     "/api/v1/Leviosa/CreateSheetSimpleNoteEb1": {
       "post": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -564,9 +533,7 @@
     },
     "/api/v1/Leviosa/CreateSheetOperationEb11": {
       "post": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -602,9 +569,7 @@
     },
     "/api/v1/Leviosa/CreateSheetEmergencyNote418": {
       "post": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -640,9 +605,7 @@
     },
     "/api/v1/Leviosa/UpdateSheetSimpleNoteEb1": {
       "put": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -671,9 +634,7 @@
     },
     "/api/v1/Leviosa/UpdateSheetOperationEb11": {
       "put": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -702,9 +663,7 @@
     },
     "/api/v1/Leviosa/UpdateSheetEmergencyNote418": {
       "put": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -733,9 +692,7 @@
     },
     "/api/v1/Leviosa/FetchSheetSimpleNoteEb1": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "SheetInt",
@@ -762,9 +719,7 @@
     },
     "/api/v1/Leviosa/FetchSheetOperationEb11": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "SheetInt",
@@ -791,9 +746,7 @@
     },
     "/api/v1/Leviosa/FetchSheetEmergencyNoteEb418": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "SheetInt",
@@ -820,9 +773,7 @@
     },
     "/api/v1/Leviosa/FetchEncounterTemplates": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "UserId",
@@ -857,9 +808,7 @@
     },
     "/api/v1/Leviosa/FetchSheetTypesForGroup": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "GroupId",
@@ -886,9 +835,7 @@
     },
     "/api/v1/Leviosa/GetSheetsWithHierarchy": {
       "get": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "parameters": [
           {
             "name": "FromDate",
@@ -930,9 +877,7 @@
     },
     "/api/v1/Leviosa/ConfirmSheet": {
       "post": {
-        "tags": [
-          "Leviosa"
-        ],
+        "tags": ["Leviosa"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -961,9 +906,7 @@
     },
     "/api/v1/Resources": {
       "get": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Get all bookable resources",
         "parameters": [
           {
@@ -1004,9 +947,7 @@
     },
     "/api/v1/Resources/{resourceId}": {
       "get": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Get a bookable resource based on Id",
         "parameters": [
           {
@@ -1053,9 +994,7 @@
     },
     "/api/v1/Resources/Timeslots": {
       "get": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Get next available timeslots",
         "parameters": [
           {
@@ -1127,9 +1066,7 @@
     },
     "/api/v1/Resources/{resourceId}/Timeslots": {
       "get": {
-        "tags": [
-          "AppointmentAPI"
-        ],
+        "tags": ["AppointmentAPI"],
         "description": "Get available time slots for a specific resource and date range",
         "parameters": [
           {
@@ -1424,11 +1361,7 @@
         "additionalProperties": false
       },
       "BillType": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
+        "enum": [0, 1, 2],
         "type": "integer",
         "format": "int32"
       },
@@ -1742,10 +1675,7 @@
         "additionalProperties": false
       },
       "EncounterTemplateTypeEnum": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       },
@@ -2266,12 +2196,7 @@
         "additionalProperties": false
       },
       "NextAction": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
@@ -2545,9 +2470,7 @@
         "additionalProperties": false
       },
       "RescheduleAppointmentRequest": {
-        "required": [
-          "dateAndTime"
-        ],
+        "required": ["dateAndTime"],
         "type": "object",
         "properties": {
           "dateAndTime": {
@@ -2615,13 +2538,7 @@
         "additionalProperties": false
       },
       "ResourceType": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
-        ],
+        "enum": [0, 1, 2, 3, 4],
         "type": "integer",
         "format": "int32"
       },
@@ -2640,12 +2557,7 @@
         "additionalProperties": false
       },
       "ScheduleWebBookable": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
@@ -3346,7 +3258,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }
