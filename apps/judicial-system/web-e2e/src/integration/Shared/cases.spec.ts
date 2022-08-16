@@ -1,9 +1,9 @@
-import { CASE_LIST_ROUTE } from '@island.is/judicial-system/consts'
+import { CASES_ROUTE } from '@island.is/judicial-system/consts'
 
-describe(CASE_LIST_ROUTE, () => {
+describe(CASES_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(CASE_LIST_ROUTE)
+    cy.visit(CASES_ROUTE)
   })
 
   it.skip('should have a table with one row that is a button', () => {

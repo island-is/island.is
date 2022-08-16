@@ -2,13 +2,13 @@ import * as faker from 'faker'
 
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
-  HEARING_ARRANGEMENTS_ROUTE,
-  RULING_ROUTE,
+  RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  RESTRICTION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, makeCourt, intercept } from '../../../utils'
 
-describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const caseData = makeRestrictionCase()
   const comment = faker.lorem.sentence(1)
 
@@ -24,7 +24,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -60,6 +60,9 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       .should('have.any.key', 'courtDate')
 
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', `${RULING_ROUTE}/${caseData.id}`)
+    cy.url().should(
+      'include',
+      `${RESTRICTION_CASE_RULING_ROUTE}/${caseData.id}`,
+    )
   })
 })

@@ -1,9 +1,9 @@
-import { STEP_ONE_CUSTODY_REQUEST_ROUTE } from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_DEFENDANT_ROUTE } from '@island.is/judicial-system/consts'
 
-describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
+describe(RESTRICTION_CASE_DEFENDANT_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(STEP_ONE_CUSTODY_REQUEST_ROUTE)
+    cy.visit(RESTRICTION_CASE_DEFENDANT_ROUTE)
   })
 
   it('should require a valid police case number', () => {

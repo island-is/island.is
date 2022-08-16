@@ -2,13 +2,13 @@ import faker from 'faker'
 
 import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
-  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  IC_RULING_ROUTE,
+  INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
 
-describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const comment = faker.lorem.sentence(1)
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -81,6 +81,6 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_RULING_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_RULING_ROUTE)
   })
 })
