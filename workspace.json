@@ -32,6 +32,7 @@
     "api-domains-financial-statements-inao": "libs/api/domains/financial-statements-inao",
     "api-domains-fishing-license": "libs/api/domains/fishing-license",
     "api-domains-health-insurance": "libs/api/domains/health-insurance",
+    "api-domains-heilbrigdisstofnun-nordurlands": "libs/api/domains/heilbrigdisstofnun-nordurlands",
     "api-domains-icelandic-names-registry": "libs/api/domains/icelandic-names-registry",
     "api-domains-identity": "libs/api/domains/identity",
     "api-domains-license-service": "libs/api/domains/license-service",

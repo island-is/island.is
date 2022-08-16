@@ -1,0 +1,25 @@
+{
+  "root": "libs/api/domains/heilbrigdisstofnun-nordurlands",
+  "sourceRoot": "libs/api/domains/heilbrigdisstofnun-nordurlands/src",
+  "projectType": "library",
+  "architect": {
+    "lint": {
+      "builder": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/heilbrigdisstofnun-nordurlands/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "builder": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/heilbrigdisstofnun-nordurlands"],
+      "options": {
+        "jestConfig": "libs/api/domains/heilbrigdisstofnun-nordurlands/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
