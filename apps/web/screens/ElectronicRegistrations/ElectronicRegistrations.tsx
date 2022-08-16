@@ -5,7 +5,6 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY } from '../queries/ElectronicRegistrations'
-import { setMonth } from 'date-fns'
 import { Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
 
