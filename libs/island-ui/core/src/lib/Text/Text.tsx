@@ -30,6 +30,7 @@ type TextElements =
   | 'div'
   | 'label'
   | 'caption'
+  | 'pre'
 
 export interface TextProps {
   id?: string
