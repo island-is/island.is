@@ -14,7 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
-  CourtDocuments,
+  MultipleValueList,
   PageLayout,
   CaseInfo,
   BlueBox,
@@ -399,7 +399,7 @@ export const CourtRecord: React.FC = () => {
               {formatMessage(m.sections.courtDocuments.title)}
             </Text>
           </Box>
-          <CourtDocuments
+          <MultipleValueList
             title={formatMessage(
               m.sections.courtDocuments.firstDocument.title,
               {

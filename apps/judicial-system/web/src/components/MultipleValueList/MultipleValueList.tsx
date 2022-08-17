@@ -27,9 +27,9 @@ import { theme } from '@island.is/island-ui/theme'
 
 import BlueBox from '../BlueBox/BlueBox'
 import { ReactSelectOption } from '../../types'
-import * as styles from './CourtDocuments.css'
+import * as styles from './MultipleValueList.css'
 
-interface CourtDocumentsProps {
+interface MultipleValueListProps {
   title: string
   text: string
   tagText: string
@@ -44,7 +44,7 @@ interface CourtDocumentsProps {
   workingCase: Case
 }
 
-const CourtDocuments: React.FC<CourtDocumentsProps> = ({
+const MultipleValueList: React.FC<MultipleValueListProps> = ({
   title,
   text,
   tagText,
@@ -54,7 +54,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   onUpdateCase,
   setWorkingCase,
   workingCase,
-}: CourtDocumentsProps) => {
+}: MultipleValueListProps) => {
   const { formatMessage } = useIntl()
   const [courtDocuments, setCourtDocuments] = useState<Array<CourtDocument>>(
     selectedCourtDocuments,
@@ -270,4 +270,4 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   )
 }
 
-export default CourtDocuments
+export default MultipleValueList

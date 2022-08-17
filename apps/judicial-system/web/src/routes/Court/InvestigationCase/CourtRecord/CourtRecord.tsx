@@ -4,7 +4,7 @@ import { IntlShape, useIntl } from 'react-intl'
 import {
   BlueBox,
   CaseInfo,
-  CourtDocuments,
+  MultipleValueList,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -342,7 +342,7 @@ const CourtRecord = () => {
               {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
-          <CourtDocuments
+          <MultipleValueList
             title={formatMessage(core.requestCaseType, {
               caseType: formatRequestCaseType(workingCase.type),
             })}
