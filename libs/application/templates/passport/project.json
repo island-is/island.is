@@ -1,0 +1,31 @@
+{
+  "root": "libs/application/templates/passport",
+  "sourceRoot": "libs/application/templates/passport/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/passport/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/passport/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/application/templates/passport"]
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}

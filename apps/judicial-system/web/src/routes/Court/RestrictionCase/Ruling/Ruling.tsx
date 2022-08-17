@@ -166,13 +166,13 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
 
   const isModifyingRuling = router.pathname.includes(
-    constants.MODIFY_RULING_ROUTE,
+    constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
   )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'prosecutorDemands')
@@ -190,39 +190,23 @@ export const Ruling: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value:
+            conclusion:
               workingCase.decision &&
               workingCase.defendants &&
               workingCase.defendants.length > 0
@@ -245,7 +229,7 @@ export const Ruling: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -563,15 +547,8 @@ export const Ruling: React.FC = () => {
                   )
                 }
 
-                autofill(
-                  [
-                    { key: 'conclusion', value: conclusion, force: true },
-                    {
-                      key: 'decision',
-                      value: decision,
-                      force: true,
-                    },
-                  ],
+                setAndSendToServer(
+                  [{ conclusion, decision, force: true }],
                   workingCase,
                   setWorkingCase,
                 )
@@ -651,21 +628,12 @@ export const Ruling: React.FC = () => {
                     )
                   }
 
-                  autofill(
+                  setAndSendToServer(
                     [
                       {
-                        key: 'validToDate',
-                        value: validToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'isolationToDate',
-                        value: isolationToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'conclusion',
-                        value: conclusion,
+                        validToDate,
+                        isolationToDate,
+                        conclusion,
                         force: true,
                       },
                     ],
@@ -727,16 +695,11 @@ export const Ruling: React.FC = () => {
                         )
                       }
 
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'isCustodyIsolation',
-                            value: !workingCase.isCustodyIsolation,
-                            force: true,
-                          },
-                          {
-                            key: 'conclusion',
-                            value: conclusion,
+                            isCustodyIsolation: !workingCase.isCustodyIsolation,
+                            conclusion,
                             force: true,
                           },
                         ],
@@ -796,16 +759,11 @@ export const Ruling: React.FC = () => {
                       )
                     }
 
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
-                          key: 'isolationToDate',
-                          value: isolationToDate,
-                          force: true,
-                        },
-                        {
-                          key: 'conclusion',
-                          value: conclusion,
+                          isolationToDate,
+                          conclusion,
                           force: true,
                         },
                       ],
@@ -870,8 +828,8 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
+              : `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
@@ -880,7 +838,9 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}

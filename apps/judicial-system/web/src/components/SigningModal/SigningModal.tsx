@@ -194,7 +194,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
           window.open(constants.FEEDBACK_FORM_URL, '_blank')
         }
         if (navigateOnClose) {
-          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+          router.push(
+            `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          )
         }
         onClose()
       }}
@@ -202,7 +204,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         if (signingProgress === 'success') {
           if (navigateOnClose) {
             router.push(
-              `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`,
+              `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
             )
           }
         } else {

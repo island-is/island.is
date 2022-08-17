@@ -63,7 +63,7 @@ export const NewUser: React.FC = () => {
       })
     }
 
-    router.push(constants.USER_LIST_ROUTE)
+    router.push(constants.USERS_ROUTE)
   }
 
   return (

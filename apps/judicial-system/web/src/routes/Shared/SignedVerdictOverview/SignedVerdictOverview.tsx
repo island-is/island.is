@@ -325,19 +325,25 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
-          router.push(`${constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+          router.push(
+            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+          )
         } else {
           router.push(
-            `${constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
         await extendCase(workingCase.id).then((extendedCase) => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             } else {
-              router.push(`${constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             }
           }
         })
@@ -497,7 +503,7 @@ export const SignedVerdictOverview: React.FC = () => {
             <Button
               variant="text"
               preTextIcon="arrowBack"
-              onClick={() => router.push(constants.CASE_LIST_ROUTE)}
+              onClick={() => router.push(constants.CASES_ROUTE)}
             >
               Til baka
             </Button>
@@ -765,8 +771,8 @@ export const SignedVerdictOverview: React.FC = () => {
                         event.stopPropagation()
                         router.push(
                           isRestrictionCase(workingCase.type)
-                            ? `${constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
                         )
                       }}
                     >
@@ -858,7 +864,7 @@ export const SignedVerdictOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASES_ROUTE}
           hideNextButton={shouldHideNextButton(workingCase, user)}
           nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
             caseType: workingCase.type,

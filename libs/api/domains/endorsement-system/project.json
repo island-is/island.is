@@ -1,0 +1,53 @@
+{
+  "root": "libs/api/domains/endorsement-system",
+  "sourceRoot": "libs/api/domains/endorsement-system/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/endorsement-system/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/endorsement-system/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/api/domains/endorsement-system"]
+    },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-endorsements-api:dev/init $NX_OPTIONS",
+          "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
+          "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-endorsements-api:dev $NX_OPTIONS &",
+          "yarn start api $NX_OPTIONS &"
+        ],
+        "parallel": true
+      }
+    },
+    "schemas/openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "libs/api/domains/endorsement-system/gen/fetch",
+        "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      }
+    }
+  },
+  "tags": []
+}
