@@ -24,7 +24,6 @@ export class PassportResolver {
   @Audit()
   async getIdentityDocument(@CurrentUser() user: User) {
     const res = await this.passportService.getIdentityDocument(user)
-    console.log({ res })
     return res
   }
 }

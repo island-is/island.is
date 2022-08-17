@@ -19,7 +19,7 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
-import { toDate } from '../../utils/dateUtils'
+import { formatDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
 import { usePassport } from '@island.is/service-portal/graphql'
 import * as styles from './PassportDetail.css'
@@ -149,9 +149,7 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           <Divider />
           <UserInfoLine
             label={m.issueDate}
-            content={
-              data.issuingDate ? toDate(data.issuingDate.toString()) : ''
-            }
+            content={data.issuingDate ? formatDate(data.issuingDate) : ''}
             loading={loading}
             paddingBottom={1}
             labelColumnSpan={['1/1', '6/12']}
@@ -163,9 +161,7 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             renderContent={() => (
               <Box display="flex" alignItems="center">
                 <Text>
-                  {data.expirationDate
-                    ? toDate(data.expirationDate.toString())
-                    : ''}
+                  {data.expirationDate ? formatDate(data.expirationDate) : ''}
                 </Text>
                 <Box
                   marginLeft={3}

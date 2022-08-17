@@ -24,7 +24,7 @@ export const PassportsClientConfig = defineConfig<z.infer<typeof schema>>({
         scope: [
           NationalRegistryScope.individuals,
 
-          // TODO: Add back in.
+          // TODO: Add back in when ready.
           // NationalRegistryScope.passport,
         ],
       },

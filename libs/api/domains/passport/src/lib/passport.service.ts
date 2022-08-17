@@ -51,6 +51,10 @@ export class PassportService {
         auth,
       ).identityDocumentGetIdentityDocument({
         personId: '1234567890',
+        /**
+         * TODO: Add nationalId in when service is ready for real SSN's
+         */
+        // personId: auth.nationalId,
       })
 
       const resArray = passportResponse.map((item) => {
