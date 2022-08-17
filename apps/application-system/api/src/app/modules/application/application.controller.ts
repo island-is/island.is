@@ -1177,6 +1177,8 @@ export class ApplicationController {
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
 
+    await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
     await this.applicationService.delete(existingApplication.id)
   }
 }

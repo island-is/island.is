@@ -4,17 +4,10 @@ import {
   Application,
 } from '@island.is/application/api/core'
 import { AwsService } from '@island.is/nest/aws'
-import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
-
-export interface AttachmentMetaData {
-  s3key: string
-  key: string
-  bucket: string
-  value: string
-}
+import { FileService } from '../files'
 
 export interface ApplicationPruning {
   pruned: boolean
@@ -34,7 +27,7 @@ export class ApplicationLifeCycleService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationService: ApplicationService,
-    private awsService: AwsService,
+    private fileService: FileService,
     private applicationChargeService: ApplicationChargeService,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
@@ -72,7 +65,9 @@ export class ApplicationLifeCycleService {
     })
   }
 
-  private async pruneAttachments() {
+  /*
+  
+   private async pruneAttachments() {
     for (const prune of this.processingApplications) {
       const applicationAttachments = prune.application.attachments as {
         key: string
@@ -102,6 +97,22 @@ export class ApplicationLifeCycleService {
               error,
             )
           }
+        }
+      }
+    }
+  }
+  */
+
+  private async pruneAttachments() {
+    for (const prune of this.processingApplications) {
+      const result = await this.fileService.deleteAttachmentsForApplication(
+        prune.application,
+      )
+      if (!result.success) {
+        prune.pruned = false
+        prune.failedAttachments = {
+          ...prune.failedAttachments,
+          ...result.failed,
         }
       }
     }
@@ -168,17 +179,5 @@ export class ApplicationLifeCycleService {
     )
 
     this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
-  }
-
-  private attachmentsToMetaDataArray(
-    attachments: object,
-  ): AttachmentMetaData[] {
-    const keys: AttachmentMetaData[] = []
-    for (const [key, value] of Object.entries(attachments)) {
-      const { key: sourceKey, bucket } = AmazonS3URI(value)
-      keys.push({ key, s3key: sourceKey, bucket, value })
-    }
-
-    return keys
   }
 }

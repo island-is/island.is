@@ -21,10 +21,27 @@ import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
 import AmazonS3URI from 'amazon-s3-uri'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+export interface AttachmentMetaData {
+  s3key: string
+  key: string
+  bucket: string
+  value: string
+}
+
+export interface AttachmentDeleteResult {
+  failed: { [key: string]: string }
+  success: boolean
+  deleted: number
+}
 
 @Injectable()
 export class FileService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     @Inject(APPLICATION_CONFIG)
     private readonly config: ApplicationConfig,
     private readonly signingService: SigningService,
@@ -207,5 +224,64 @@ export class FileService {
     const { bucket, key } = AmazonS3URI(fileName)
     const url = await this.awsService.getPresignedUrl(bucket, key)
     return { url }
+  }
+
+  async deleteAttachmentsForApplication(
+    application: Pick<Application, 'id' | 'attachments'>,
+  ): Promise<AttachmentDeleteResult> {
+    let result: AttachmentDeleteResult = {
+      failed: {},
+      success: true,
+      deleted: 0,
+    }
+
+    const applicationAttachments = application.attachments as {
+      key: string
+      name: string
+    }
+
+    const attachments = this.attachmentsToMetaDataArray(applicationAttachments)
+
+    if (attachments) {
+      for (const attachment of attachments) {
+        const { key, s3key, bucket, value } = attachment
+
+        try {
+          this.logger.info(`Deleting attachment ${s3key} from bucket ${bucket}`)
+          await this.awsService.deleteObject(bucket, s3key)
+          result = {
+            ...result,
+            deleted: result.deleted++,
+          }
+        } catch (error) {
+          this.logger.error(
+            `S3 object delete failed for application Id: ${application.id} and attachment key: ${key}`,
+            error,
+          )
+
+          result = {
+            ...result,
+            failed: {
+              ...result.failed,
+              [key]: value,
+            },
+            success: false,
+          }
+        }
+      }
+    }
+    return result
+  }
+
+  private attachmentsToMetaDataArray(
+    attachments: object,
+  ): AttachmentMetaData[] {
+    const keys: AttachmentMetaData[] = []
+    for (const [key, value] of Object.entries(attachments)) {
+      const { key: sourceKey, bucket } = AmazonS3URI(value)
+      keys.push({ key, s3key: sourceKey, bucket, value })
+    }
+
+    return keys
   }
 }
