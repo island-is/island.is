@@ -116,7 +116,9 @@ const HearingArrangements = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
@@ -289,14 +291,14 @@ const HearingArrangements = () => {
             {(workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT ||
               workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-                <Box component="section" marginBottom={8}>
-                  <DefenderInfo
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                  />
-                </Box>
-              )}
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+              <Box component="section" marginBottom={8}>
+                <DefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
+              </Box>
+            )}
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
@@ -317,8 +319,8 @@ const HearingArrangements = () => {
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                    ? m.modal.allPresentSpokespersonText
-                    : m.modal.prosecutorPresentText,
+                  ? m.modal.allPresentSpokespersonText
+                  : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
               handlePrimaryButtonClick={async () => {
@@ -328,7 +330,9 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
+                  router.push(
+                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                  )
                 }
               }}
               handleSecondaryButtonClick={() => {
@@ -338,7 +342,9 @@ const HearingArrangements = () => {
                   true,
                 )
 
-                router.push(`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`)
+                router.push(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                )
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

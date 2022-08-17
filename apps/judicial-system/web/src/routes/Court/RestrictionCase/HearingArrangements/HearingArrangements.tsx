@@ -77,12 +77,12 @@ export const HearingArrangements: React.FC = () => {
             validToDate: workingCase.requestedValidToDate,
             isolationToDate:
               workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedValidToDate
                 : undefined,
             isCustodyIsolation:
               workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedCustodyRestrictions &&
                   workingCase.requestedCustodyRestrictions.includes(
                     CaseCustodyRestrictions.ISOLATION,
@@ -124,7 +124,9 @@ export const HearingArrangements: React.FC = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
@@ -220,7 +222,9 @@ export const HearingArrangements: React.FC = () => {
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`)
+            router.push(
+              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+            )
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -229,7 +233,9 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

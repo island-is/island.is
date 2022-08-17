@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
 
-
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -23,7 +22,11 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { core, requests as m, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  requests as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
@@ -206,36 +209,48 @@ export const Cases: React.FC = () => {
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
-                      features.includes(Feature.INDICTMENTS) ?
-                        [
-                          {
-                            href: constants.CREATE_INDICTMENT_ROUTE,
-                            title: capitalize(formatMessage(core.indictment)),
-                          },
-                          {
-                            href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-                            title: capitalize(formatMessage(core.restrictionCase)),
-                          },
-                          {
-                            href: constants.CREATE_TRAVEL_BAN_ROUTE,
-                            title: capitalize(formatMessage(core.travelBan)),
-                          },
-                          {
-                            href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-                            title: capitalize(formatMessage(core.investigationCase)),
-                          },
-                        ] : [{
-                          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-                          title: capitalize(formatMessage(core.restrictionCase)),
-                        },
-                        {
-                          href: constants.CREATE_TRAVEL_BAN_ROUTE,
-                          title: capitalize(formatMessage(core.travelBan)),
-                        },
-                        {
-                          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-                          title: capitalize(formatMessage(core.investigationCase)),
-                        },]}
+                      features.includes(Feature.INDICTMENTS)
+                        ? [
+                            {
+                              href: constants.CREATE_INDICTMENT_ROUTE,
+                              title: capitalize(formatMessage(core.indictment)),
+                            },
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                        : [
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                    }
                     title="Stofna nýja kröfu"
                   />
                 </Box>
@@ -257,9 +272,9 @@ export const Cases: React.FC = () => {
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
                       : isPrisonAdminUser
-                        ? m.sections.activeRequests.prisonStaffUsers
+                      ? m.sections.activeRequests.prisonStaffUsers
                           .prisonAdminTitle
-                        : m.sections.activeRequests.title,
+                      : m.sections.activeRequests.title,
                   )}
                 </SectionTitle>
                 <Box marginBottom={[5, 5, 12]}>
@@ -287,13 +302,13 @@ export const Cases: React.FC = () => {
                         title={formatMessage(
                           isPrisonUser || isPrisonAdminUser
                             ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerTitle
+                                .infoContainerTitle
                             : m.sections.activeRequests.infoContainerTitle,
                         )}
                         message={formatMessage(
                           isPrisonUser || isPrisonAdminUser
                             ? m.sections.activeRequests.prisonStaffUsers
-                              .infoContainerText
+                                .infoContainerText
                             : m.sections.activeRequests.infoContainerText,
                         )}
                         type="info"
@@ -313,10 +328,10 @@ export const Cases: React.FC = () => {
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title
                   : isPrisonUser
-                    ? m.sections.pastRequests.prisonStaffUsers.title
-                    : isPrisonAdminUser
-                      ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                      : m.sections.pastRequests.title,
+                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  : isPrisonAdminUser
+                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.sections.pastRequests.title,
               )}
             </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
@@ -331,13 +346,13 @@ export const Cases: React.FC = () => {
                   title={formatMessage(
                     isPrisonAdminUser || isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerTitle
+                          .infoContainerTitle
                       : m.sections.pastRequests.infoContainerTitle,
                   )}
                   message={formatMessage(
                     isPrisonAdminUser || isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers
-                        .infoContainerText
+                          .infoContainerText
                       : m.sections.pastRequests.infoContainerText,
                   )}
                   type="info"

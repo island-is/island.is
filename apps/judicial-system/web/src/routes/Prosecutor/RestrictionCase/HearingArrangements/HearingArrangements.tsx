@@ -89,7 +89,7 @@ export const HearingArrangements: React.FC = () => {
       aUser.role === UserRole.PROSECUTOR &&
       (!workingCase?.creatingProsecutor ||
         aUser.institution?.id ===
-        workingCase?.creatingProsecutor?.institution?.id),
+          workingCase?.creatingProsecutor?.institution?.id),
   )
 
   const handleNextButtonClick = async () => {
@@ -111,7 +111,9 @@ export const HearingArrangements: React.FC = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
       } else {
         setModalVisible(true)
       }
@@ -340,7 +342,9 @@ export const HearingArrangements: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                router.push(`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+                router.push(
+                  `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                )
               }
               errorMessage={
                 sendNotificationError
@@ -354,7 +358,9 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+                  router.push(
+                    `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  )
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

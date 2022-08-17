@@ -94,7 +94,7 @@ const HearingArrangements = () => {
             aUser.role === UserRole.PROSECUTOR &&
             (!workingCase.creatingProsecutor ||
               aUser.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id),
+                workingCase.creatingProsecutor?.institution?.id),
         ),
       )
     }
@@ -119,7 +119,9 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
       } else {
         setIsNotificationModalVisible(true)
       }

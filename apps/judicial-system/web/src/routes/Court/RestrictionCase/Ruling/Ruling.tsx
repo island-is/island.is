@@ -83,17 +83,17 @@ export function getConclusionAutofill(
 
   return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
-      genderedAccused: formatMessage(core.accused, {
-        suffix: accusedSuffix,
-      }),
-      accusedName: defendant.name,
-      isExtended:
-        workingCase.parentCase &&
-        isAcceptingCaseDecision(workingCase.parentCase.decision),
-      caseType: workingCase.type,
-    })
+        genderedAccused: formatMessage(core.accused, {
+          suffix: accusedSuffix,
+        }),
+        accusedName: defendant.name,
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision),
+        caseType: workingCase.type,
+      })
     : decision === CaseDecision.REJECTING
-      ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
+    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
@@ -106,7 +106,7 @@ export function getConclusionAutofill(
           isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-      : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
+    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
         genderedAccused: capitalize(
           formatMessage(core.accused, {
             suffix: accusedSuffix,
@@ -201,24 +201,24 @@ export const Ruling: React.FC = () => {
             courtLegalArguments: workingCase.legalArguments,
             ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
+                  judgeName: workingCase.judge?.name,
+                })}`
               : isAcceptingCaseDecision(workingCase.decision)
-                ? workingCase.parentCase.ruling
-                : undefined,
+              ? workingCase.parentCase.ruling
+              : undefined,
             conclusion:
               workingCase.decision &&
-                workingCase.defendants &&
-                workingCase.defendants.length > 0
+              workingCase.defendants &&
+              workingCase.defendants.length > 0
                 ? getConclusionAutofill(
-                  formatMessage,
-                  workingCase,
-                  workingCase.decision,
-                  workingCase.defendants[0],
-                  workingCase.validToDate,
-                  workingCase.isCustodyIsolation,
-                  workingCase.isolationToDate,
-                )
+                    formatMessage,
+                    workingCase,
+                    workingCase.decision,
+                    workingCase.defendants[0],
+                    workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
+                  )
                 : undefined,
           },
         ],
@@ -571,7 +571,7 @@ export const Ruling: React.FC = () => {
                     formatMessage(m.sections.decision.caseType, {
                       caseType:
                         workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                           ? CaseType.TRAVEL_BAN
                           : workingCase.type,
                     }),
@@ -587,7 +587,7 @@ export const Ruling: React.FC = () => {
                       formatMessage(m.sections.decision.caseType, {
                         caseType:
                           workingCase.decision ===
-                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                             ? CaseType.TRAVEL_BAN
                             : workingCase.type,
                       }),
@@ -601,8 +601,8 @@ export const Ruling: React.FC = () => {
                     date && valid ? formatISO(date) : undefined
                   const isolationToDate =
                     validToDate &&
-                      workingCase.isolationToDate &&
-                      validToDate < workingCase.isolationToDate
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
                       ? validToDate
                       : workingCase.isolationToDate
                   let conclusion = undefined
@@ -615,7 +615,7 @@ export const Ruling: React.FC = () => {
                     valid &&
                     (isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===
-                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                   ) {
                     conclusion = getConclusionAutofill(
                       formatMessage,
@@ -664,8 +664,8 @@ export const Ruling: React.FC = () => {
                         genderedAccused: formatMessage(core.accused, {
                           suffix:
                             workingCase.defendants &&
-                              workingCase.defendants.length > 0 &&
-                              workingCase.defendants[0].gender === Gender.MALE
+                            workingCase.defendants.length > 0 &&
+                            workingCase.defendants[0].gender === Gender.MALE
                               ? 'i'
                               : 'a',
                         }),
@@ -682,7 +682,7 @@ export const Ruling: React.FC = () => {
                         workingCase.defendants.length > 0 &&
                         (isAcceptingCaseDecision(workingCase.decision) ||
                           workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                       ) {
                         conclusion = getConclusionAutofill(
                           formatMessage,
@@ -746,7 +746,7 @@ export const Ruling: React.FC = () => {
                       valid &&
                       (isAcceptingCaseDecision(workingCase.decision) ||
                         workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                     ) {
                       conclusion = getConclusionAutofill(
                         formatMessage,
@@ -838,7 +838,9 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}
