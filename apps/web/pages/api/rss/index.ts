@@ -10,8 +10,16 @@ import { isLocale } from '@island.is/web/i18n/I18n'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { linkResolver } from '@island.is/web/hooks'
 
+const extractTagsFromQuery = (query: Record<string, string | string[]>) => {
+  return query?.tags?.length
+    ? (query.tags as string[])
+    : query.tags
+    ? [query.tags as string]
+    : [FRONTPAGE_NEWS_TAG_ID]
+}
+
 export default async function handler(req, res) {
-  const tag = (req.query?.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
+  const tags = extractTagsFromQuery(req.query)
   const locale = isLocale(req.query?.lang) ? req.query.lang : defaultLanguage
   const organization = req.query?.organization
 
@@ -23,7 +31,7 @@ export default async function handler(req, res) {
       input: {
         lang: locale as ContentLanguage,
         size: 25,
-        tag,
+        tags,
       },
     },
   })
