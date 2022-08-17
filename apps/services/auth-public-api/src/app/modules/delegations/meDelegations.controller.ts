@@ -142,6 +142,13 @@ export class MeDelegationsController {
   })
   @Audit<DelegationDTO>({
     resources: (delegation) => delegation?.id ?? '',
+    meta: (delegation) => ({
+      scopes: delegation.scopes?.map((s) => ({
+        scopeName: s.scopeName,
+        validFrom: s.validFrom,
+        validTo: s.validTo,
+      })),
+    }),
   })
   async create(
     @CurrentUser() user: User,
@@ -167,7 +174,7 @@ export class MeDelegationsController {
         namespace,
         action: 'update',
         resources: (delegation) => delegation?.id ?? '',
-        meta: { fields: Object.keys(delegation) },
+        meta: { scopes: delegation.scopes },
       },
       this.delegationsService.update(user, delegation, delegationId),
     )
