@@ -1,0 +1,44 @@
+{
+  "root": "libs/clients/driving-license-book",
+  "sourceRoot": "libs/clients/driving-license-book/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/driving-license-book/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/driving-license-book"],
+      "options": {
+        "jestConfig": "libs/clients/driving-license-book/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okunamsbok-V1 > src/clientConfig.json",
+          "cat <<< $(jq '.paths[][].tags = [\"DrivingLicenseBook\"]' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/driving-license-book"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/driving-license-book/gen/fetch -i libs/clients/driving-license-book/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

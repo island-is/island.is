@@ -20,6 +20,7 @@ export enum Features {
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
+  operatingLicense = 'isApplicationOperatingLicenseEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
