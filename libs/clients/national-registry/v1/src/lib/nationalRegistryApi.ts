@@ -123,7 +123,9 @@ export class NationalRegistryApi {
     return Array.isArray(documentData) ? documentData : [documentData]
   }
 
-  public async postUserCorrection(values: FamilyCorrection): Promise<any> {
+  public async postUserCorrection(
+    values: FamilyCorrection,
+  ): Promise<{ success: boolean; message?: string }> {
     const response = await this.signal(
       'CreateAndUpdateMS_Leidretting',
       {
@@ -134,6 +136,7 @@ export class NationalRegistryApi {
         Simanumer: values.phonenumber,
         Netfang: values.email,
         Athugasemd: values.comment,
+        Stada: 'Skráð',
       },
       true,
     )
@@ -141,7 +144,10 @@ export class NationalRegistryApi {
     if (!response) {
       throw new ForbiddenException(`User correction not sent. Unknown error`)
     }
-    return response
+    return {
+      success: response?.success,
+      message: response?.message,
+    }
   }
 
   private async signal(

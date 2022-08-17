@@ -11,11 +11,12 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { gql, useMutation } from '@apollo/client'
-import { Modal } from '@island.is/service-portal/core'
+import { formatNationalId, Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
+import { spmm } from '../../lib/messages'
 
 type RegistrationData = {
   parentName: string
@@ -38,7 +39,10 @@ export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
   mutation NationalRegistryChildCorrectionMutation(
     $input: FamilyCorrectionInput!
   ) {
-    nationalRegistryChildCorrection(input: $input)
+    nationalRegistryChildCorrection(input: $input) {
+      success
+      message
+    }
   }
 `
 
@@ -58,20 +62,22 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
         input: {
           ssn: data.parentNationalId,
           ssnChild: data.childNationalId,
-          name: data.parentName, // ?
+          name: data.parentName,
           phonenumber: submitData.tel,
           email: submitData.email,
           comment: submitData.text,
         },
       },
-    }).then(() => {
-      toast.success(
-        formatMessage({
-          id: 'sp.family:child-registration-generic-success',
-          defaultMessage: 'Athugasemd send til þjóðskrár',
-        }),
-      )
-      setIsModalOpen(false)
+    }).then((res) => {
+      if (res.data?.nationalRegistryChildCorrection?.success) {
+        toast.success(formatMessage(spmm.childRegisterSuccess))
+        setIsModalOpen(false)
+      } else {
+        toast.error(formatMessage(spmm.childRegisterError))
+        setIsModalOpen(false)
+
+        throw new Error('Error submitting registration data')
+      }
     })
   }
 
@@ -82,7 +88,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
       toggleClose={false}
       initialVisibility={false}
       disclosure={
-        <Box paddingBottom={1}>
+        <Box display="inlineBlock" paddingBottom={1}>
           <Button
             colorScheme="default"
             icon="receipt"
@@ -93,10 +99,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
             onClick={() => setIsModalOpen(true)}
             loading={loading}
           >
-            {formatMessage({
-              id: 'sp.family:child-registration-modal-button',
-              defaultMessage: 'Gera athugasemd við skráningu',
-            })}
+            {formatMessage(spmm.childRegisterModalButton)}
           </Button>
         </Box>
       }
@@ -104,36 +107,26 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
       <Box marginTop={[3, 0]}>
         <Box paddingBottom={4}>
           <Text variant="h4" paddingBottom={3}>
-            {formatMessage({
-              id: 'sp.family:child-registration-text',
-              defaultMessage: 'Athugasemdir vegna skráningar barns',
-            })}
+            {formatMessage(spmm.childRegisterRegistrationText)}
           </Text>
           <BulletList>
             <Bullet>
-              {`${formatMessage({
-                id: 'sp.family:child-registration-parent-name',
-                defaultMessage: 'Nafn þess sem tilkynnir ranga skráningu: ',
-              })} ${data.parentName}`}
+              {`${formatMessage(spmm.childRegisterParentName)} ${
+                data.parentName
+              }`}
             </Bullet>
             <Bullet>
-              {`${formatMessage({
-                id: 'sp.family:child-registration-parent-id',
-                defaultMessage:
-                  'Kennitala þess sem tilkynnir ranga skráningu: ',
-              })} ${data.parentNationalId}`}
+              {`${formatMessage(
+                spmm.childRegisterParentSSN,
+              )} ${formatNationalId(data.parentNationalId)}`}
             </Bullet>
             <Bullet>
-              {`${formatMessage({
-                id: 'sp.family:child-registration-name',
-                defaultMessage: 'Nafn barns sem tilkynning á við: ',
-              })} ${data.childName}`}
+              {`${formatMessage(spmm.childRegisterName)} ${data.childName}`}
             </Bullet>
             <Bullet>
-              {`${formatMessage({
-                id: 'sp.family:child-registration-ssn',
-                defaultMessage: 'Kennitala barns sem tilkynning á við: ',
-              })} ${data.childNationalId}`}
+              {`${formatMessage(spmm.childRegisterSSN)} ${formatNationalId(
+                data.childNationalId,
+              )}`}
             </Bullet>
           </BulletList>
         </Box>
@@ -219,11 +212,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
             <Box>
               <InputError
                 id="child-registration-error"
-                errorMessage={formatMessage({
-                  id: 'sp.family:child-registration-generic-error',
-                  defaultMessage:
-                    'Villa við innsendingu á formi. Vinsamlegast reynið aftur síðar.',
-                })}
+                errorMessage={formatMessage(spmm.childRegisterError)}
               />
             </Box>
           )}
@@ -241,10 +230,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
               icon="arrowForward"
               disabled={false}
             >
-              {formatMessage({
-                id: 'sp.family:child-registration-send',
-                defaultMessage: 'Senda tilkynningu',
-              })}
+              {formatMessage(spmm.childRegisterSend)}
             </Button>
           </Box>
         </form>
