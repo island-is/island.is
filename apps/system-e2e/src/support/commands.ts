@@ -1,4 +1,4 @@
-import '@testing-library/cypress/add-commands'
+//import '@testing-library/cypress/add-commands'
 import { getBaseUrl } from './utils'
 
 const testEnvironment = Cypress.env('testEnvironment') as TestEnvironment

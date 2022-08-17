@@ -1,20 +1,20 @@
 describe('Silavottorð', () => {
   const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
+  const path = '/app/skilavottord/my-cars'
 
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
-      url: '/app/skilavottord/my-cars',
+      phoneNumber: fakeUsers[2].phoneNumber,
+      urlPath: path,
     })
   })
 
-  it(`should have user ${fakeUsers[0].name} logged in`, () => {
-    cy.visit('/minarsidur/')
-    cy.contains(fakeUsers[0].name)
-  })
-
-  it('should have Pósthólf', () => {
-    cy.visit('/minarsidur/')
-    cy.contains('Pósthólf')
+  it('should render list', () => {
+    cy.visit(path)
+    cy.contains('Úrvinnsla ökutækis')
+    cy.contains('Þín ökutæki')
+    cy.get('p:contains(Óendurvinnanlegt)').should('have.length.gt', 1)
+    cy.contains('Förguð ökutæki')
+    cy.get('button:contains(Endurunnin)').should('have.length.gt', 1)
   })
 })
