@@ -12,15 +12,14 @@ export class CompanyRegistryProvider extends BasicDataProvider {
 
   async provide(_application: Application): Promise<RskCompany> {
     const query = `
-      query CompanyRegistryQuery($input: RskCompanyInfoInput!) {
-        companyRegistryCompany(input: $input) {
-          nationalId
+      query CompanyRegistryQuery {
+        companyRegistryCurrentCompany{
+          nationalId,
+          name
         }
       }
     `
-    return this.useGraphqlGateway(query, {
-      input: { nationalId: '5407141260' },
-    }).then(async (res: Response) => {
+    return this.useGraphqlGateway(query).then(async (res: Response) => {
       const response = await res.json()
       if (response.errors) {
         console.error(
@@ -28,8 +27,7 @@ export class CompanyRegistryProvider extends BasicDataProvider {
         )
         return Promise.reject({})
       }
-
-      return Promise.resolve(response.data.RskCompany)
+      return Promise.resolve(response.data.companyRegistryCurrentCompany)
     })
   }
 

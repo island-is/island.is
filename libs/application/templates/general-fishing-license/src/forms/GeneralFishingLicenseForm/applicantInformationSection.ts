@@ -2,6 +2,7 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { GeneralFishingLicense } from '../../lib/dataSchema'
 
@@ -22,8 +23,15 @@ export const applicantInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           required: true,
-          defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+          defaultValue: (application: GeneralFishingLicense) => {
+            const type =
+              application.externalData.companyNationalRegistry.data.type
+            if (type === 'company') {
+              return application.externalData.companyNationalRegistry.data.name
+            }
+            return application.externalData?.companyNationalRegistry?.data
+              ?.fullName
+          },
         }),
         buildTextField({
           id: 'applicant.nationalId',
@@ -34,7 +42,7 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.companyNationalRegistry?.data?.nationalId,
         }),
         buildTextField({
           id: 'applicant.address',
@@ -43,9 +51,16 @@ export const applicantInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           required: true,
-          defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.nationalRegistry?.data?.address
-              ?.streetAddress,
+          defaultValue: (application: GeneralFishingLicense) => {
+            const type =
+              application.externalData.companyNationalRegistry.data.type
+            if (type === 'company') {
+              return application.externalData.companyNationalRegistry.data
+                .companyInfo?.address
+            }
+            return application.externalData?.companyNationalRegistry?.data
+              ?.address?.streetAddress
+          },
         }),
         buildTextField({
           id: 'applicant.postalCode',
@@ -56,10 +71,18 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            return (
-              application.externalData?.nationalRegistry?.data?.address
-                ?.postalCode || '105'
-            )
+            {
+              const type =
+                application.externalData.companyNationalRegistry.data.type
+              if (type === 'company') {
+                return application.externalData.companyNationalRegistry.data
+                  .companyInfo?.address?.postalCode
+              }
+              return (
+                application.externalData?.companyNationalRegistry?.data?.address
+                  ?.postalCode || '105'
+              )
+            }
           },
         }),
         buildTextField({
@@ -69,8 +92,16 @@ export const applicantInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           required: true,
-          defaultValue: (application: GeneralFishingLicense) =>
-            application.externalData?.nationalRegistry?.data?.address?.city,
+          defaultValue: (application: GeneralFishingLicense) => {
+            const type =
+              application.externalData.companyNationalRegistry.data.type
+            if (type === 'company') {
+              return application.externalData.companyNationalRegistry.data
+                .companyInfo?.address?.locality
+            }
+            return application.externalData?.companyNationalRegistry?.data
+              ?.address?.city
+          },
         }),
         buildTextField({
           id: 'applicant.email',

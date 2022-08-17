@@ -5,9 +5,11 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTextField,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import { DataProviderTypes } from '../../types'
+import { Application } from '@island.is/application/types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -21,8 +23,8 @@ export const externalDataSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: DataProviderTypes.CompanyRegistry,
+          id: 'companyNationalRegistry',
+          type: DataProviderTypes.CompanyNationalRegistry,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
@@ -45,6 +47,14 @@ export const externalDataSection = buildSection({
       title: externalData.dataProvider.getDataSuccess,
       description: externalData.dataProvider.getDataSuccessDescription,
       children: [
+        buildTextField({
+          id: 'applicant.name',
+          title: 'prufa',
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          disabled: true,
+        }),
         buildDescriptionField({
           id: 'getDataSuccess.directoryOfFisheries',
           title: externalData.directoryOfFisheries.title,

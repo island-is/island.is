@@ -27,6 +27,7 @@ if (userMocked) {
       'openid',
       'profile',
       'api_resource.scope',
+      '@island.is/company',
       ApplicationScope.read,
       ApplicationScope.write,
       AuthScope.actorDelegations,
