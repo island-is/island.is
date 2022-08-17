@@ -92,12 +92,12 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     type="warning"
                     title={
                       licenseExpired || licenseLost
-                        ? formatMessage(m.passportExpired)
+                        ? formatMessage(m.passportInvalid)
                         : formatMessage(m.passportExpiring)
                     }
                     message={
                       licenseExpired || licenseLost
-                        ? formatMessage(m.passportExpiredText)
+                        ? formatMessage(m.passportInvalidText)
                         : formatMessage(m.passportExpiringText)
                     }
                   />

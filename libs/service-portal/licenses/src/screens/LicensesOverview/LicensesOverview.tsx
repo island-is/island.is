@@ -24,7 +24,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   } = usePassport()
 
   const isLoading = loading || passportLoading
-  const hasError = error || passportError
+  const hasError = error && passportError
   const hasData = !!(data || passportData)
 
   return (

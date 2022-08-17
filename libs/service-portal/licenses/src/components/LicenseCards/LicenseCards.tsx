@@ -30,6 +30,7 @@ const LicenseCards: FC<Props> = ({ drivingLicenseData, passportData }) => {
                 key={item.number}
                 id={item.number}
                 expireDate={item.expirationDate}
+                isInvalid={item.status === 'INVALID'}
                 name={item.verboseType}
               />
             ))}

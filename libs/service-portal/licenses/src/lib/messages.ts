@@ -116,6 +116,10 @@ export const m = defineMessages({
     id: 'sp.license:is-lost',
     defaultMessage: 'Glatað',
   },
+  invalid: {
+    id: 'sp.license:is-invalid',
+    defaultMessage: 'Ógilt',
+  },
   altText: {
     id: 'sp.license:license-alt-text',
     defaultMessage: 'Skrautmynd fyrir',
@@ -159,6 +163,14 @@ export const m = defineMessages({
   passportExpiredText: {
     id: 'sp.license:passport-expired-text',
     defaultMessage: 'Athugið að vegabréf er útrunnið og þarf að sækja um nýtt',
+  },
+  passportInvalid: {
+    id: 'sp.license:passport-invalid',
+    defaultMessage: 'Vegabréf ógilt',
+  },
+  passportInvalidText: {
+    id: 'sp.license:passport-invalid-text',
+    defaultMessage: 'Athugið að vegabréf er ógilt og þarf að sækja um nýtt',
   },
   passportExpiring: {
     id: 'sp.license:passport-expired',
