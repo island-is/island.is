@@ -1,4 +1,4 @@
-import { ConsoleLogger, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
 import isBefore from 'date-fns/isBefore'
@@ -95,8 +95,6 @@ export class PassportService {
           expiresWithinNoticeTime: expiresWithinNoticeTime,
         }
       }) as IdentityDocumentModel[]
-
-      console.log('resArrayresArrayresArrayresArray', { resArray })
 
       return resArray
     } catch (e) {

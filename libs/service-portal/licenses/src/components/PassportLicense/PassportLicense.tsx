@@ -73,7 +73,7 @@ export const PassportLicense = ({
       cta={{
         variant: 'text',
         onClick: handleClick,
-        label: formatMessage(m.see),
+        label: formatMessage(m.seeDetails),
       }}
     />
   )
