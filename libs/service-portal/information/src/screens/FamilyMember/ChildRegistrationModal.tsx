@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Box,
   Bullet,
@@ -6,13 +6,17 @@ import {
   Button,
   GridColumn,
   GridRow,
+  InputError,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { Modal } from '@island.is/service-portal/core'
+import { gql, useMutation } from '@apollo/client'
+import { formatNationalId, Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
+import { spmm } from '../../lib/messages'
 
 type RegistrationData = {
   parentName: string
@@ -21,71 +25,120 @@ type RegistrationData = {
   childNationalId: string
 }
 
+type FormDataType = {
+  email: string
+  tel: string
+  text: string
+}
+
 interface Props {
-  onClose: () => void
-  toggleClose: boolean
   data: RegistrationData
 }
-export const ChildRegistrationModal: FC<Props> = ({
-  children,
-  onClose,
-  toggleClose,
-  data,
-}) => {
+
+export const NATIONAL_REGISTRY_CHILDREN_CORRECTION = gql`
+  mutation NationalRegistryChildCorrectionMutation(
+    $input: FamilyCorrectionInput!
+  ) {
+    nationalRegistryChildCorrection(input: $input) {
+      success
+      message
+    }
+  }
+`
+
+export const ChildRegistrationModal: FC<Props> = ({ data }) => {
   useNamespaces('sp.family')
-  const { handleSubmit, control, errors, reset } = useForm()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
 
+  const [postChildrenCorrection, { error, loading }] = useMutation(
+    NATIONAL_REGISTRY_CHILDREN_CORRECTION,
+  )
+
+  const handleSubmitForm = async (submitData: FormDataType) => {
+    await postChildrenCorrection({
+      variables: {
+        input: {
+          ssn: data.parentNationalId,
+          ssnChild: data.childNationalId,
+          name: data.parentName,
+          phonenumber: submitData.tel,
+          email: submitData.email,
+          comment: submitData.text,
+        },
+      },
+    }).then((res) => {
+      if (res.data?.nationalRegistryChildCorrection?.success) {
+        toast.success(formatMessage(spmm.childRegisterSuccess))
+        setIsModalOpen(false)
+      } else {
+        toast.error(formatMessage(spmm.childRegisterError))
+        setIsModalOpen(false)
+
+        throw new Error('Error submitting registration data')
+      }
+    })
+  }
+
   return (
-    <Modal id="" onCloseModal={onClose} toggleClose={toggleClose}>
+    <Modal
+      id="child-registration-modal"
+      isVisible={isModalOpen}
+      toggleClose={false}
+      initialVisibility={false}
+      disclosure={
+        <Box display="inlineBlock" paddingBottom={1}>
+          <Button
+            colorScheme="default"
+            icon="receipt"
+            iconType="filled"
+            size="default"
+            type="button"
+            variant="utility"
+            onClick={() => setIsModalOpen(true)}
+            loading={loading}
+          >
+            {formatMessage(spmm.childRegisterModalButton)}
+          </Button>
+        </Box>
+      }
+    >
       <Box marginTop={[3, 0]}>
         <Box paddingBottom={4}>
           <Text variant="h4" paddingBottom={3}>
-            {formatMessage({
-              id: 'sp.family:child-registration-text',
-              defaultMessage: 'Athugasemdir vegna skráningar barns',
-            })}
+            {formatMessage(spmm.childRegisterRegistrationText)}
           </Text>
           <BulletList>
             <Bullet>
-              {formatMessage({
-                id: 'sp.family:child-registration-parent-name',
-                defaultMessage: 'Nafn þess sem tilkynnir ranga skráningu: ',
-              })}
-              {data.parentName}
+              {`${formatMessage(spmm.childRegisterParentName)} ${
+                data.parentName
+              }`}
             </Bullet>
             <Bullet>
-              {formatMessage({
-                id: 'sp.family:child-registration-parent-id',
-                defaultMessage:
-                  'Kennitala þess sem tilkynnir ranga skráningu: ',
-              })}
-              {data.parentNationalId}
+              {`${formatMessage(
+                spmm.childRegisterParentSSN,
+              )} ${formatNationalId(data.parentNationalId)}`}
             </Bullet>
             <Bullet>
-              {formatMessage({
-                id: 'sp.family:child-registration-name',
-                defaultMessage: 'Nafn barns sem tilkynning á við: ',
-              })}
-              {data.childName}
+              {`${formatMessage(spmm.childRegisterName)} ${data.childName}`}
             </Bullet>
             <Bullet>
-              {formatMessage({
-                id: 'sp.family:child-registration-ssn',
-                defaultMessage: 'Kennitala barns sem tilkynning á við: ',
-              })}
-              {data.childNationalId}
+              {`${formatMessage(spmm.childRegisterSSN)} ${formatNationalId(
+                data.childNationalId,
+              )}`}
             </Bullet>
           </BulletList>
         </Box>
-        <form onSubmit={() => console.log('submitted')}>
+        <form onSubmit={handleSubmit(handleSubmitForm)}>
           <Box>
             <GridRow marginBottom={3}>
               <GridColumn span={['12/12', '6/12']}>
                 <InputController
                   control={control}
                   id="email"
-                  name="telemail"
+                  name="email"
+                  defaultValue=""
                   required={true}
                   type="email"
                   rules={{
@@ -98,6 +151,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                     },
                   }}
                   label={formatMessage(sharedMessages.email)}
+                  error={errors.email?.message}
                   size="xs"
                 />
               </GridColumn>
@@ -109,6 +163,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                   required={true}
                   type="tel"
                   format={'### ####'}
+                  defaultValue=""
                   rules={{
                     required: {
                       value: true,
@@ -132,6 +187,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                   name="text"
                   required={true}
                   type="text"
+                  defaultValue=""
                   textarea
                   rules={{
                     required: {
@@ -146,12 +202,20 @@ export const ChildRegistrationModal: FC<Props> = ({
                     id: 'sp.family:text-required-msg-label',
                     defaultMessage: 'Athugasemd',
                   })}
-                  error={errors.tel?.message}
+                  error={errors.text?.message}
                   size="xs"
                 />
               </GridColumn>
             </GridRow>
           </Box>
+          {error && (
+            <Box>
+              <InputError
+                id="child-registration-error"
+                errorMessage={formatMessage(spmm.childRegisterError)}
+              />
+            </Box>
+          )}
           <Box
             display="flex"
             justifyContent="flexEnd"
@@ -166,10 +230,7 @@ export const ChildRegistrationModal: FC<Props> = ({
               icon="arrowForward"
               disabled={false}
             >
-              {formatMessage({
-                id: 'sp.family:child-registration-send',
-                defaultMessage: 'Senda tilkynningu',
-              })}
+              {formatMessage(spmm.childRegisterSend)}
             </Button>
           </Box>
         </form>
