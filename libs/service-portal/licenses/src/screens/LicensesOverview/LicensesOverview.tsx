@@ -50,7 +50,6 @@ const GenericLicensesQuery = gql`
         type
         provider {
           id
-          name
         }
         pkpass
         pkpassVerify
@@ -137,17 +136,19 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                     variant: 'text',
                   }}
                   tag={
-                    license.payload?.expired
+                    license.payload?.expired === true
                       ? {
                           label: formatMessage(m.isExpired),
                           variant: 'red',
                           outlined: false,
                         }
-                      : {
+                      : license.payload?.expired === false
+                      ? {
                           label: formatMessage(m.isValid),
                           variant: 'blue',
                           outlined: false,
                         }
+                      : undefined
                   }
                 />
               </Box>

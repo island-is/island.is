@@ -100,7 +100,7 @@ export const parseAdrLicensePayload = (
     licenseNumber: license.skirteinisNumer?.toString() ?? '',
     expired: license.gildirTil
       ? !isAfter(new Date(license.gildirTil), new Date())
-      : false,
+      : null,
   }
 }
 

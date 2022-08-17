@@ -65,7 +65,6 @@ const GenericLicenseQuery = gql`
         type
         provider {
           id
-          name
         }
         pkpass
         timeout
@@ -90,9 +89,11 @@ const GenericLicenseQuery = gql`
 const DataFields = ({
   fields,
   licenseType,
+  pkPass,
 }: {
   fields: GenericLicenseDataField[]
-  licenseType?: string
+  licenseType?: GenericLicenseType
+  pkPass?: boolean
 }) => {
   if (!fields || fields.length === 0) {
     return null
@@ -113,9 +114,9 @@ const DataFields = ({
                 alignItems={['flexStart', 'center']}
                 marginBottom={2}
               >
-                {licenseType === GenericLicenseType.DriversLicense && (
+                {pkPass && licenseType && (
                   <>
-                    <PkPass />
+                    <PkPass licenseType={licenseType} />
                     <Box marginX={[0, 1]} marginY={[1, 0]} />
                   </>
                 )}
@@ -165,7 +166,7 @@ const DataFields = ({
                   variant="eyebrow"
                   color="purple400"
                   paddingBottom={2}
-                  paddingTop={4}
+                  paddingTop={7}
                 >
                   {field.label}
                 </Text>
@@ -189,7 +190,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
   const { type }: { type: string | undefined } = useParams()
-  const licenseType = type ? getTypeFromPath(type) : ''
+  const licenseType = type ? getTypeFromPath(type) : undefined
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
     {
@@ -238,6 +239,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
         <DataFields
           fields={genericLicense?.payload?.data ?? []}
           licenseType={licenseType}
+          pkPass={genericLicense?.license.pkpass}
         />
       )}
     </>

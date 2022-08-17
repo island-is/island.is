@@ -49,8 +49,8 @@ export class Payload {
   @Field(() => String)
   licenseNumber?: string
 
-  @Field(() => Boolean)
-  expired?: boolean
+  @Field(() => Boolean, { nullable: true })
+  expired?: boolean | null
 
   @Field(() => String)
   title?: string

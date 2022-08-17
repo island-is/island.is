@@ -46,7 +46,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.DriversLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
-      name: 'Ökuréttindi',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -56,7 +55,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.AdrLicense,
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
-      name: 'ADR réttindi',
     },
     pkpass: false,
     pkpassVerify: false,
@@ -64,9 +62,9 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
   {
     type: GenericLicenseType.MachineLicense,
+
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
-      name: 'Vinnuvélaréttindi',
     },
     pkpass: false,
     pkpassVerify: false,

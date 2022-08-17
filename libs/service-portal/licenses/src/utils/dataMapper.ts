@@ -485,44 +485,44 @@ export const getTitleAndLogo = (type: GenericLicenseType) => {
 }
 
 enum LicenseTypePath {
-  DriversLicense = 'okurettindi',
-  HuntingLicense = 'skotvopnaleyfi',
-  AdrLicense = 'adr-rettindi',
-  MachineLicense = 'vinnuvelarettindi',
+  okurettindi = 'okurettindi',
+  skotvopnaleyfi = 'skotvopnaleyfi',
+  adrrettindi = 'adrrettindi',
+  vinnuvelarettindi = 'vinnuvelarettindi',
 }
 
 export const getPathFromType = (type: GenericLicenseType) => {
   switch (type) {
     case GenericLicenseType.AdrLicense:
-      return LicenseTypePath.AdrLicense
+      return LicenseTypePath.adrrettindi
       break
     case GenericLicenseType.DriversLicense:
-      return LicenseTypePath.DriversLicense
+      return LicenseTypePath.okurettindi
       break
     case GenericLicenseType.HuntingLicense:
-      return LicenseTypePath.HuntingLicense
+      return LicenseTypePath.skotvopnaleyfi
       break
     case GenericLicenseType.MachineLicense:
-      return LicenseTypePath.MachineLicense
+      return LicenseTypePath.vinnuvelarettindi
       break
     default:
-      return LicenseTypePath.DriversLicense
+      return LicenseTypePath.okurettindi
       break
   }
 }
 
 export const getTypeFromPath = (path: string) => {
   switch (path) {
-    case LicenseTypePath.AdrLicense:
+    case LicenseTypePath.adrrettindi:
       return GenericLicenseType.AdrLicense
       break
-    case LicenseTypePath.DriversLicense:
+    case LicenseTypePath.okurettindi:
       return GenericLicenseType.DriversLicense
       break
-    case LicenseTypePath.HuntingLicense:
+    case LicenseTypePath.skotvopnaleyfi:
       return GenericLicenseType.HuntingLicense
       break
-    case LicenseTypePath.MachineLicense:
+    case LicenseTypePath.vinnuvelarettindi:
       return GenericLicenseType.MachineLicense
       break
     default:
