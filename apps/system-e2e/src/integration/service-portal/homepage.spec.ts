@@ -9,7 +9,7 @@ describe('Home page', () => {
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
-      url: '/minarsidur/',
+      urlPath: '/minarsidur/',
     })
   })
 
