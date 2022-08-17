@@ -17,6 +17,7 @@ import {
   NotificationType,
   isRestrictionCase,
   UserRole,
+  Feature,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -27,6 +28,7 @@ import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSecti
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -56,8 +58,9 @@ const SectionTitle: React.FC = ({ children }) => {
 export const Cases: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
-
+  
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
     getRestrictionCaseCourtSections,
@@ -202,7 +205,9 @@ export const Cases: React.FC = () => {
                   <DropdownMenu
                     menuLabel="Tegund kröfu"
                     icon="add"
-                    items={[
+                    items={
+                      features.includes(Feature.INDICTMENTS) ?
+                      [
                       {
                         href: constants.CREATE_INDICTMENT_ROUTE,
                         title: capitalize(formatMessage(core.indictment)),
@@ -219,7 +224,18 @@ export const Cases: React.FC = () => {
                         href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
                         title: capitalize(formatMessage(core.investigationCase)),
                       },
-                    ]}
+                    ] : [{
+                      href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                      title: capitalize(formatMessage(core.restrictionCase)),
+                    },
+                    {
+                      href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                      title: capitalize(formatMessage(core.travelBan)),
+                    },
+                    {
+                      href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                      title: capitalize(formatMessage(core.investigationCase)),
+                    },]}
                     title="Stofna nýja kröfu"
                   />
                 </Box>
