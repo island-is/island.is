@@ -477,7 +477,7 @@ export class CaseController {
     description:
       'Confirms a previously requested ruling signature for an existing case',
   })
-  getRulingSignatureConfirmation(
+  async getRulingSignatureConfirmation(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -491,11 +491,17 @@ export class CaseController {
       )
     }
 
-    return this.caseService.getRulingSignatureConfirmation(
+    const response = await this.caseService.getRulingSignatureConfirmation(
       theCase,
       user,
       documentToken,
     )
+
+    if (response.documentSigned) {
+      this.queue.add({ type: MessageType.RULING_SIGNED, caseId })
+    }
+
+    return response
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)

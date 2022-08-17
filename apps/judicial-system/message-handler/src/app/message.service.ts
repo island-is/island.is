@@ -4,10 +4,7 @@ import { logger } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 
 import { MessageType } from '@island.is/judicial-system/message'
-import type {
-  Message,
-  CaseCompletedMessage,
-} from '@island.is/judicial-system/message'
+import type { Message } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from './app.config'
 import { RulingNotificationService } from './rulingNotification.service'
@@ -21,13 +18,12 @@ export class MessageService {
     private readonly caseFilesUploadService: CaseFilesUploadService,
   ) {}
 
-  private async handleCaseCompletedMessage(
-    message: CaseCompletedMessage,
-  ): Promise<void> {
-    await Promise.all([
-      this.rulingNotificationService.sendRulingNotification(message.caseId),
-      this.caseFilesUploadService.uploadCaseFilesToCourt(message.caseId),
-    ])
+  private handleCaseCompletedMessage(caseId: string): Promise<void> {
+    return this.caseFilesUploadService.uploadCaseFilesToCourt(caseId)
+  }
+
+  private handleRulingSignedMessage(caseId: string): Promise<void> {
+    return this.rulingNotificationService.sendRulingNotification(caseId)
   }
 
   async run(): Promise<void> {
@@ -39,9 +35,9 @@ export class MessageService {
 
         switch (message.type) {
           case MessageType.CASE_COMPLETED:
-            return this.handleCaseCompletedMessage(
-              message as CaseCompletedMessage,
-            )
+            return this.handleCaseCompletedMessage(message.caseId)
+          case MessageType.RULING_SIGNED:
+            return this.handleRulingSignedMessage(message.caseId)
           default:
             logger.error('Unknown message type', message)
         }

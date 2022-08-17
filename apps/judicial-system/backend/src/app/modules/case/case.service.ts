@@ -26,8 +26,6 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseOrigin,
   CaseState,
-  isRestrictionCase,
-  SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -383,31 +381,6 @@ export class CaseService {
     }
   }
 
-  private sendEmailToProsecutor(
-    theCase: Case,
-    rulingUploadedToS3: boolean,
-    rulingAttachment: { filename: string; content: string; encoding: string },
-  ) {
-    return this.sendEmail(
-      {
-        name: theCase.prosecutor?.name ?? '',
-        address: theCase.prosecutor?.email ?? '',
-      },
-      this.formatMessage(m.signedRuling.subjectV2, {
-        courtCaseNumber: theCase.courtCaseNumber,
-        isModifyingRuling: Boolean(theCase.rulingDate),
-      }),
-      this.formatMessage(m.signedRuling.prosecutorBodyS3V2, {
-        courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-        linkEnd: '</a>',
-        isModifyingRuling: Boolean(theCase.rulingDate),
-      }),
-      rulingUploadedToS3 ? undefined : [rulingAttachment],
-    )
-  }
-
   private sendEmailToCourt(
     theCase: Case,
     rulingUploadedToS3: boolean,
@@ -438,28 +411,6 @@ export class CaseService {
         linkEnd: '</a>',
       }),
       rulingUploadedToS3 ? undefined : [rulingAttachment],
-    )
-  }
-
-  private sendEmailToDefender(theCase: Case, rulingUploadedToS3: boolean) {
-    return this.sendEmail(
-      {
-        name: theCase.defenderName ?? '',
-        address: theCase.defenderEmail ?? '',
-      },
-      this.formatMessage(m.signedRuling.subjectV2, {
-        courtCaseNumber: theCase.courtCaseNumber,
-        isModifyingRuling: Boolean(theCase.rulingDate),
-      }),
-      this.formatMessage(m.signedRuling.defenderBodyV2, {
-        isModifyingRuling: Boolean(theCase.rulingDate),
-        courtCaseNumber: theCase.courtCaseNumber,
-        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-        linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
-        linkEnd: '</a>',
-        signedVerdictAvailableInS3: rulingUploadedToS3,
-      }),
     )
   }
 
@@ -526,23 +477,11 @@ export class CaseService {
 
     // No need to wait for email sending to complete
 
-    this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment)
-
     if (
       !rulingUploadedToCourt ||
       (!isModifyingRuling && !courtRecordUploadedToCourt)
     ) {
       this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment)
-    }
-
-    if (
-      theCase.defenderEmail &&
-      (isRestrictionCase(theCase.type) ||
-        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
-    ) {
-      this.sendEmailToDefender(theCase, rulingUploadedToS3)
     }
   }
 
