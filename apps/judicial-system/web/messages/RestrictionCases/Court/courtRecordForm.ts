@@ -1,7 +1,26 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
   sections: {
+    title: defineMessage({
+      id: 'judicial.system.restriction_cases:court_record.title',
+      defaultMessage: 'Þingbók',
+      description: 'Notaður sem titill á síðu þingbókar',
+    }),
+    courtStartDate: defineMessages({
+      dateLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_start_date.date_label',
+        defaultMessage: 'Dagsetning þinghalds',
+        description: 'Notaður sem skýritexti fyrir dagsetning þinghalds',
+      },
+      timeLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_start_date.time_label',
+        defaultMessage: 'Þinghald hófst (kk:mm)',
+        description: 'Notaður sem skýritexti fyrir Þinghalds hófst (kk:mm)',
+      },
+    }),
     courtDocuments: {
       title: {
         id:
@@ -291,6 +310,27 @@ export const rcCourtRecord = {
         defaultMessage: 'Hér er hægt að skrá aðrar bókanir',
         description:
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
+    endOfSessionTitle: defineMessage({
+      id: 'judicial.system.restriction_cases:court_record.end_of_session_title',
+      defaultMessage: 'Lok þinghalds eftir uppkvaðningu úrskurðar',
+      description:
+        'Notaður sem titill fyrir lok þinghalds eftir uppkvaðningu úrskurðar.',
+    }),
+    courtEndTime: defineMessages({
+      dateLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_end_time.date_label',
+        defaultMessage: 'Dagsetning þingfestingar',
+        description: 'Notaður sem skýritexti fyrir dagsetningu þingfestingar.',
+      },
+      timeLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_end_time.time_label',
+        defaultMessage: 'Þinghaldi lauk (kk:mm)',
+        description:
+          'Notaður sem skýritexti fyrir á tímasetningu þingfestingar.',
       },
     }),
     nextButtonInfo: defineMessages({
