@@ -23,7 +23,7 @@ export const dot = style({
 export const listWrapper = style({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-start',
   flexWrap: 'wrap',
 })
 
