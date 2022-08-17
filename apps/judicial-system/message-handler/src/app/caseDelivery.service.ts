@@ -32,6 +32,18 @@ export class CaseDeliveryService {
         if (res.ok) {
           logger.debug(`Delivered case ${caseId}`)
 
+          if (response.signedRulingDeliveredToCourt) {
+            logger.error(
+              `Failed to deliver the signed ruling for case ${caseId} to court`,
+            )
+          }
+
+          if (response.courtRecordDeliveredToCourt) {
+            logger.error(
+              `Failed to deliver the court record for case ${caseId} to court`,
+            )
+          }
+
           if (response.caseFilesDeliveredToCourt) {
             logger.error(
               `Failed to deliver some case files for case ${caseId} to court`,

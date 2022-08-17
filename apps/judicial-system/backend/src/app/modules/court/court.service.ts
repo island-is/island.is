@@ -110,7 +110,6 @@ export class CourtService {
   }
 
   async createCourtRecord(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -136,8 +135,8 @@ export class CourtService {
           'Failed to create a court record',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: 'RVG',
+            institution: 'RVG',
             courtId,
             courtCaseNumber,
             fileName,
@@ -150,12 +149,12 @@ export class CourtService {
   }
 
   async createRuling(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
     fileName: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(
       courtId,
@@ -177,8 +176,8 @@ export class CourtService {
           'Failed to create a court ruling',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             fileName,
