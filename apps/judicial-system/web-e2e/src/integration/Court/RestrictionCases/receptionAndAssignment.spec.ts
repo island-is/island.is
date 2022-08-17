@@ -1,6 +1,6 @@
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
+  RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
@@ -30,7 +30,6 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
   it('should require a valid form', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      console.log('intercepting')
       if (hasOperationName(req, Operation.UpdateCaseMutation)) {
         const { body } = req
         console.log('intercepting updatecase', body)
@@ -61,6 +60,6 @@ describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', RESTRICTION_CASE_OVERVIEW_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_COURT_OVERVIEW_ROUTE)
   })
 })
