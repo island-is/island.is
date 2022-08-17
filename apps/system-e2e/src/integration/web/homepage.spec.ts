@@ -1,5 +1,3 @@
-import { rmSync } from 'fs'
-
 describe('Front page', () => {
   beforeEach(() => {
     cy.cognitoLogin()
