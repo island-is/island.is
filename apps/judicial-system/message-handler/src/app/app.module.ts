@@ -6,7 +6,7 @@ import { QueueModule } from '@island.is/message-queue'
 import { HealthController } from './health.controller'
 import { MessageService } from './message.service'
 import { RulingNotificationService } from './rulingNotification.service'
-import { CaseFilesUploadService } from './caseFilesUpload.service'
+import { CaseDeliveryService } from './caseDelivery.service'
 import { appModuleConfig } from './app.config'
 
 const config = appModuleConfig()
@@ -28,10 +28,6 @@ const config = appModuleConfig()
     }),
   ],
   controllers: [HealthController],
-  providers: [
-    RulingNotificationService,
-    CaseFilesUploadService,
-    MessageService,
-  ],
+  providers: [RulingNotificationService, CaseDeliveryService, MessageService],
 })
 export class AppModule {}

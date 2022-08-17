@@ -8,22 +8,19 @@ import type { Message } from '@island.is/judicial-system/message'
 
 import { appModuleConfig } from './app.config'
 import { RulingNotificationService } from './rulingNotification.service'
-import { CaseFilesUploadService } from './caseFilesUpload.service'
+import { CaseDeliveryService } from './caseDelivery.service'
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectWorker(appModuleConfig().sqsQueueName) private worker: WorkerService,
     private readonly rulingNotificationService: RulingNotificationService,
-    private readonly caseFilesUploadService: CaseFilesUploadService,
+    private readonly caseDeliveryService: CaseDeliveryService,
   ) {}
 
-  private handleCaseCompletedMessage(caseId: string): Promise<void> {
-    return this.caseFilesUploadService.uploadCaseFilesToCourt(caseId)
-  }
-
-  private handleRulingSignedMessage(caseId: string): Promise<void> {
-    return this.rulingNotificationService.sendRulingNotification(caseId)
+  private async handleRulingSignedMessage(caseId: string): Promise<void> {
+    await this.rulingNotificationService.sendRulingNotification(caseId)
+    await this.caseDeliveryService.deliverCase(caseId)
   }
 
   async run(): Promise<void> {
@@ -34,8 +31,6 @@ export class MessageService {
         logger.debug('Handling message', message)
 
         switch (message.type) {
-          case MessageType.CASE_COMPLETED:
-            return this.handleCaseCompletedMessage(message.caseId)
           case MessageType.RULING_SIGNED:
             return this.handleRulingSignedMessage(message.caseId)
           default:

@@ -9,7 +9,7 @@ import { RulingNotificationService } from '../rulingNotification.service'
 jest.mock('@island.is/logging')
 jest.mock('node-fetch')
 
-describe('RulingNotificationService - send ruling notification', () => {
+describe('RulingNotificationService - Send ruling notification', () => {
   const config = appModuleConfig()
   const caseId = uuid()
 

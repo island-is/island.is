@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards, Inject } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Inject,
+  Param,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -6,9 +13,13 @@ import type { Logger } from '@island.is/logging'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { CaseEvent, EventService } from '../event'
+import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseCompletedGuard } from './guards/caseCompleted.guard'
+import { CurrentCase } from './guards/case.decorator'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { Case } from './models/case.model'
 import { ArchiveResponse } from './models/archive.response'
+import { DeliverResponse } from './models/deliver.response'
 import { CaseService } from './case.service'
 
 @Controller('api/internal')
@@ -42,5 +53,20 @@ export class InternalCaseController {
     this.logger.debug('Archiving a case')
 
     return this.caseService.archive()
+  }
+
+  @UseGuards(CaseExistsGuard, CaseCompletedGuard)
+  @Post('case/:caseId/deliver')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a completed case to court',
+  })
+  deliver(
+    @Param('caseId') _caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeliverResponse> {
+    this.logger.debug('Delivering a case')
+
+    return this.caseService.deliver(theCase)
   }
 }

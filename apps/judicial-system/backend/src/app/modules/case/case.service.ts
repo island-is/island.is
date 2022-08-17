@@ -24,6 +24,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import {
+  CaseFileState,
   CaseOrigin,
   CaseState,
   UserRole,
@@ -60,6 +61,7 @@ import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { ArchiveResponse } from './models/archive.response'
+import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
 const caseEncryptionProperties: (keyof Case)[] = [
@@ -1066,5 +1068,54 @@ export class CaseService {
     this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
 
     return { caseArchived: true }
+  }
+
+  private async deliverCaseFilesToCourt(theCase: Case): Promise<boolean> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then(async (caseFiles) => {
+        let success = true
+
+        for (const caseFile of caseFiles.filter(
+          (caseFile) => caseFile.state === CaseFileState.STORED_IN_RVG,
+        )) {
+          const uploaded = await this.fileService
+            .uploadCaseFileToCourt(
+              caseFile,
+              theCase.id,
+              theCase.courtId,
+              theCase.courtCaseNumber,
+            )
+            .then((response) => response.success)
+            .catch((reason) => {
+              this.logger.error(
+                `Failed to upload file ${caseFile.id} of case ${theCase.id} to court`,
+                { reason },
+              )
+
+              return false
+            })
+
+          success = success && uploaded
+        }
+
+        return success
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload case files of case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  async deliver(theCase: Case): Promise<DeliverResponse> {
+    const caseFilesDeliveredToCourt = await this.deliverCaseFilesToCourt(
+      theCase,
+    )
+
+    return { caseFilesDeliveredToCourt }
   }
 }

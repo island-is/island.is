@@ -27,12 +27,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { MessageType } from '@island.is/judicial-system/message'
-import {
-  CaseState,
-  CaseType,
-  completedCaseStates,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -219,10 +214,6 @@ export class CaseController {
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )
-
-    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-      this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
-    }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,

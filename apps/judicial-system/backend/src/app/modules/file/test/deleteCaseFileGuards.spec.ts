@@ -1,18 +1,21 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseReadGuard } from '../../../case'
-import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
-import { ViewCaseFileGuard } from '../../guards/viewCaseFile.guard'
-import { FileController } from '../../file.controller'
+import {
+  CaseExistsGuard,
+  CaseNotCompletedGuard,
+  CaseWriteGuard,
+} from '../../case'
+import { CaseFileExistsGuard } from '../guards/caseFileExists.guard'
+import { FileController } from '../file.controller'
 
-describe('FileController - Get case file signed url guards', () => {
+describe('FileController - Delete case file guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      FileController.prototype.getCaseFileSignedUrl,
+      FileController.prototype.deleteCaseFile,
     )
   })
 
@@ -32,27 +35,27 @@ describe('FileController - Get case file signed url guards', () => {
     })
   })
 
-  describe('CaseReadGuard', () => {
+  describe('CaseWriteGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have CaseReadGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(CaseReadGuard)
+    it('should have CaseWriteGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })
 
-  describe('ViewCaseFileGuard', () => {
+  describe('CaseNotCompletedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have ViewCaseFileGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(ViewCaseFileGuard)
+    it('should have CaseNotCompletedGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })
 
