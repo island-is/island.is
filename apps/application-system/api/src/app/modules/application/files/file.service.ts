@@ -6,7 +6,7 @@ import {
   RequestTimeoutException,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { PdfTypes } from '@island.is/application/core'
+import { PdfTypes } from '@island.is/application/types'
 import { Application } from '@island.is/application/api/core'
 import { SigningService } from '@island.is/dokobit-signing'
 import {
@@ -59,7 +59,7 @@ export class FileService {
     const bucket = this.getBucketName()
 
     await this.signingService
-      .getSignedDocument(DokobitFileName[pdfType], documentToken)
+      .waitForSignature(DokobitFileName[pdfType], documentToken)
       .then(async (file) => {
         const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
         await this.awsService.uploadFile(

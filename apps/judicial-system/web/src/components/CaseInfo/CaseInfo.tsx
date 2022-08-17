@@ -49,7 +49,7 @@ const CaseInfo: React.FC<Props> = ({
         courtRoles.includes(userRole) ? (
           <>
             <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
-              workingCase.prosecutor?.institution?.name
+              workingCase.creatingProsecutor?.institution?.name
             }`}</Text>
             {renderDefendants()}
           </>

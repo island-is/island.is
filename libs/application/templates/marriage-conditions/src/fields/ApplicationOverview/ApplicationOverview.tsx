@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Box, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Individual } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 

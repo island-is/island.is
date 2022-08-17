@@ -23,7 +23,7 @@ export const incomeForm = {
   examplesOfIncome: defineMessages({
     leftSidedList: {
       id:
-        'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markup',
+        'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markdown',
       defaultMessage:
         '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun',
       description:
@@ -31,7 +31,7 @@ export const incomeForm = {
     },
     rightSidedList: {
       id:
-        'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markup',
+        'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markdown',
       defaultMessage:
         '* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
       description:
@@ -51,6 +51,18 @@ export const incomeForm = {
         'Ég hef ekki fengið tekjur í þessum eða síðustu tvo mánuði',
       description:
         'Answer showed in summary when applicant answers no he has no income',
+    },
+  }),
+  options: defineMessages({
+    yes: {
+      id: 'fa.application:section.incomeForm.options.yes',
+      defaultMessage: 'Já, ég hef fengið tekjur',
+      description: 'Yes option for income question',
+    },
+    no: {
+      id: 'fa.application:section.incomeForm.options.no',
+      defaultMessage: 'Nei, engar tekjur',
+      description: 'No option for income question',
     },
   }),
 }

@@ -1,5 +1,5 @@
+const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
-const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
   API_URL = 'http://localhost:3339',
@@ -9,8 +9,8 @@ const {
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
 
-module.exports = withVanillaExtract(
-  withHealthcheckConfig({
+module.exports = withNx(
+  withVanillaExtract({
     webpack: (config, options) => {
       // if (!options.isServer) {
       //   config.resolve.alias['@sentry/node'] = '@sentry/browser'

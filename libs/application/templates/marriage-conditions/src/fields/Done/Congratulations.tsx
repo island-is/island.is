@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, BulletList, Bullet } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { CustomField, FieldBaseProps } from '@island.is/application/core'
+import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'

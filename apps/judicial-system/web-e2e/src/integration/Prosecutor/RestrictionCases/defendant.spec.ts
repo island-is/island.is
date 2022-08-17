@@ -55,7 +55,14 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
+  it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
+  })
+
+  it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     cy.wait('@getPersonByNationalId')
@@ -66,7 +73,13 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('leadInvestigator').type('John Doe')
     cy.getByTestid('continueButton').should('not.be.disabled')
+
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderEmail').clear()
+    cy.getByTestid('defenderPhoneNumber').type('000')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
+    cy.getByTestid('continueButton').should('not.be.disabled')
   })
 })

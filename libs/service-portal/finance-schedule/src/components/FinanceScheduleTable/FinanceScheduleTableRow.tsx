@@ -17,17 +17,9 @@ const GET_FINANCE_PAYMENT_SCHEDULE_BY_ID = gql`
         myDetailedSchedule {
           paidDate
           paidAmount
-          paidAmountAccumulated
           paymentNumber
-          payments {
-            payAmount
-            payAmountAccumulated
-            payDate
-            payExplanation
-          }
-          plannedAmount
-          plannedAmountAccumulated
-          plannedDate
+          unpaidAmount
+          payExplanation
         }
       }
     }
@@ -77,6 +69,9 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
 
   return (
     <ExpandRow
+      backgroundColor="white"
+      showLine={false}
+      extraChildrenPadding
       key={paymentSchedule.scheduleNumber}
       onExpandCallback={() =>
         getPaymentScheduleById({
@@ -88,21 +83,28 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
       data={[
         { value: paymentSchedule.approvalDate },
         { value: paymentSchedule.scheduleName },
-        { value: amountFormat(paymentSchedule.totalAmount) },
-        { value: amountFormat(paymentSchedule.unpaidAmount) },
         {
-          value: `${paymentSchedule.unpaidCount} af ${paymentSchedule.paymentCount}`,
+          value: amountFormat(paymentSchedule.totalAmount),
+          align: 'right',
         },
+        {
+          value: amountFormat(paymentSchedule.unpaidAmount),
+          align: 'right',
+        },
+        {
+          value: amountFormat(paymentSchedule.unpaidWithInterest),
+          align: 'right',
+        },
+
         { value: getType(paymentSchedule.scheduleStatus) },
         {
-          value: (
+          value: paymentSchedule.documentID ? (
             <Box display="flex" flexDirection="row" alignItems="center">
               <Button
                 size="small"
                 variant="text"
                 icon="document"
                 iconType="outline"
-                disabled={paymentSchedule.documentID ? false : true}
                 onClick={() =>
                   formSubmit(`${paymentSchedule.downloadServiceURL}`)
                 }
@@ -110,8 +112,9 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
                 PDF
               </Button>
             </Box>
+          ) : (
+            ''
           ),
-          align: 'right',
         },
       ]}
       loading={loading}

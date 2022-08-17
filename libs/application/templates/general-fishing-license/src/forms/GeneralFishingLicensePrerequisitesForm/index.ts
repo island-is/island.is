@@ -1,11 +1,5 @@
-import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import {
   applicantInformation,
   conclusion,

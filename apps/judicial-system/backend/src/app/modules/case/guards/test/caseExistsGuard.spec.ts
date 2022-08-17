@@ -95,8 +95,8 @@ describe('Case Exists Guard', () => {
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
           id: caseId,
-          isArchived: false,
           state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
         },
       })
     })

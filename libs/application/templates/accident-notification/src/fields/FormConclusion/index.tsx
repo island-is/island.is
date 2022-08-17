@@ -1,4 +1,5 @@
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   AccordionCard,
   AlertMessage,
@@ -14,7 +15,7 @@ import { FamilyIllustration } from '../../assets'
 import { conclusion, betaTest } from '../../lib/messages'
 import * as styles from '../DescriptionWithLink/descriptionWithLink.css'
 
-export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {
+export const FormConclusion: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

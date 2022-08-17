@@ -1,44 +1,29 @@
 import { ReactNode, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { PrimitiveType, FormatXMLElementFn } from 'intl-messageformat'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { LocaleContext } from './LocaleContext'
-
-type FormatMessageValues = Record<
-  string,
-  PrimitiveType | FormatXMLElementFn<string, string>
->
-type FormatMessageValuesWReact = Record<
-  string,
-  PrimitiveType | ReactNode | FormatXMLElementFn<ReactNode, ReactNode>
->
+import {
+  FormatMessage,
+  FormatMessageValues,
+  FormatMessageValuesWReact,
+} from './types'
 
 export function useLocale() {
   const intl = useIntl()
   const { lang, changeLanguage } = useContext(LocaleContext)
 
-  function formatMessage(descriptor: undefined): undefined
-  function formatMessage(
-    descriptor: MessageDescriptor | string,
-    values?: FormatMessageValues,
-  ): string
-  function formatMessage(
-    descriptor: MessageDescriptor | string,
-    values?: FormatMessageValuesWReact,
-  ): ReactNode
-
-  function formatMessage(
+  const formatMessage = ((
     descriptor: MessageDescriptor | string | undefined,
     values?: FormatMessageValues | FormatMessageValuesWReact,
-  ): string | ReactNode | undefined {
+  ): string | ReactNode | undefined => {
     if (!descriptor || typeof descriptor === 'string') {
       return descriptor
     }
     return intl.formatMessage(descriptor, values)
-  }
+  }) as FormatMessage
 
   function formatDateFns(date: string | number | Date, str = 'dd MMM yyyy') {
     const locale = lang === 'en' ? en : is

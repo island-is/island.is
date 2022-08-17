@@ -173,6 +173,13 @@ export const titles = {
       }),
     },
   },
+  defender: {
+    caseOverview: defineMessage({
+      id: 'judicial.system.core:titles.defender.case_overview',
+      defaultMessage: 'Yfirlit - Verjandi - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir Yfirlit máls skjá hjá verjanda',
+    }),
+  },
   shared: {
     login: defineMessage({
       id: 'judicial.system.core:titles.shared.login',

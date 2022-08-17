@@ -45,3 +45,7 @@ export interface UpdateUser {
 }
 
 export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
+
+export function isCourtRole(role: UserRole): boolean {
+  return courtRoles.includes(role)
+}

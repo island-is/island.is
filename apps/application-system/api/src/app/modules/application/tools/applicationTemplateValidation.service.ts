@@ -1,12 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import {
-  Application,
   ApplicationTemplateHelper,
-  FormatMessage,
-  FormValue,
   validateAnswers,
 } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
@@ -20,6 +18,7 @@ import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
+import type { FormatMessage } from '@island.is/cms-translations'
 
 const isRunningOnProductionEnvironment = () => {
   return (

@@ -14,7 +14,7 @@ describe('Channel', () => {
       channel.sns.createTopic = mock
 
       const result = await channel.declareExchange({
-        name: 'gjafakort-application-updates',
+        name: 'test-application-updates',
       })
 
       expect(result).toBe(topicArn)

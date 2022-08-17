@@ -1,11 +1,16 @@
-import { Application, FieldBaseProps } from '@island.is/application/core'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { Application, FieldBaseProps } from '@island.is/application/types'
+import {
+  DirectTaxPayment,
+  Municipality,
+  PersonalTaxReturn,
+} from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   Veita = 'VeitaProvider',
+  TaxDataFetch = 'TaxDataFetchProvider',
 }
 
 export enum ApproveOptions {
@@ -24,10 +29,22 @@ export interface ExternalData {
       municipality: Municipality
     }
     date: string
+    status: StatusProvider
   }
   veita: {
     data: CurrentApplication
     date: string
+    status: StatusProvider
+  }
+  taxDataFetch: {
+    data: TaxData
+    date: string
+    status: StatusProvider
+  }
+  taxDataFetchSpouse?: {
+    data: TaxData
+    date: string
+    status: StatusProvider
   }
 }
 
@@ -42,11 +59,15 @@ export interface OverrideAnswerSchema extends answersSchema {
   taxReturnFiles: UploadFile[]
   spouseIncomeFiles: UploadFile[]
   spouseTaxReturnFiles: UploadFile[]
+  spouseEmailSuccess: boolean
 }
 
 export type FAApplication = Override<
   Application,
-  { answers: OverrideAnswerSchema; externalData: ExternalData }
+  {
+    answers: OverrideAnswerSchema
+    externalData: ExternalData
+  }
 >
 
 export type FAFieldBaseProps = Override<
@@ -61,8 +82,18 @@ export interface Applicant {
   spouse?: Spouse
 }
 
+export interface TaxData {
+  municipalitiesPersonalTaxReturn: {
+    personalTaxReturn: PersonalTaxReturn | null
+  }
+  municipalitiesDirectTaxPayments: {
+    directTaxPayments: DirectTaxPayment[]
+    success: boolean
+  }
+}
+
 export interface CurrentApplication {
-  currentApplicationId?: string
+  currentApplicationId: string
 }
 
 export interface Address {
@@ -82,6 +113,8 @@ export interface InputTypes {
   id: string
   error?: string
 }
+
+export type StatusProvider = 'failure' | 'success'
 
 export type UploadFileType =
   | 'otherFiles'

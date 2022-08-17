@@ -24,6 +24,8 @@ import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.mo
 import { ApiResponse } from '@elastic/elasticsearch'
 import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
+import { SupportQNA } from './models/supportQNA.model'
+import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -68,6 +70,14 @@ export class CmsElasticsearchService {
 
     if (input.category) {
       query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.group) {
+      query.tags.push({ type: 'group', key: input.group })
+    }
+
+    if (input.subgroup) {
+      query.tags.push({ type: 'subgroup', key: input.subgroup })
     }
 
     if (input.organization) {
@@ -319,6 +329,28 @@ export class CmsElasticsearchService {
         JSON.parse(item._source.response ?? '{}'),
       ),
     }
+  }
+
+  async getFeaturedSupportQNAs(
+    index: string,
+    input: GetFeaturedSupportQNAsInput,
+  ): Promise<SupportQNA[]> {
+    const query = {
+      types: ['webQNA'],
+      tags: [
+        { type: 'organization', key: input.organization },
+      ] as elasticTagField[],
+      sort: [{ popularityScore: { order: SortDirection.DESC } }] as sortRule[],
+      size: input.size,
+    }
+
+    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+    return articlesResponse.hits.hits.map<SupportQNA>((response) =>
+      JSON.parse(response._source.response ?? '[]'),
+    )
   }
 }
 

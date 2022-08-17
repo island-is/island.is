@@ -3,14 +3,17 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const casesContainer = style({
   maxWidth: '1440px',
-  margin: `${theme.spacing[12]}px auto`,
-  padding: `0 ${theme.spacing[6]}px`,
 })
 
 export const logoContainer = style({
   display: 'flex',
   justifyContent: 'space-between',
   marginBottom: theme.spacing[9],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginBottom: theme.spacing[5],
+    },
+  },
 })
 
 export const table = style({

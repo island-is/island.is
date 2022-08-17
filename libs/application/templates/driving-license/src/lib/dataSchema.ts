@@ -40,4 +40,5 @@ export const dataSchema = z.object({
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),
   ]),
+  hasHealthRemarks: z.enum([YES, NO]),
 })

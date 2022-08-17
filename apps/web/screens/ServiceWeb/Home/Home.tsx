@@ -5,6 +5,7 @@ import {
   ContentLanguage,
   Organization,
   Query,
+  QueryGetFeaturedSupportQnAsArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
@@ -13,6 +14,7 @@ import {
   SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
+  GET_FEATURED_SUPPORT_QNAS,
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
   GET_SUPPORT_CATEGORIES,
@@ -24,7 +26,9 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -48,6 +52,7 @@ interface HomeProps {
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
+  featuredQNAs: Query['getFeaturedSupportQNAs']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -55,6 +60,7 @@ const Home: Screen<HomeProps> = ({
   supportCategories,
   namespace,
   organizationNamespace,
+  featuredQNAs,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -110,6 +116,7 @@ const Home: Screen<HomeProps> = ({
       )}
       searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -157,6 +164,45 @@ const Home: Screen<HomeProps> = ({
                   )}
                 </SimpleStackedSlider>
               </Box>
+              {featuredQNAs.length > 0 && (
+                <Box marginY={[4, 4, 8]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box
+                          borderRadius="large"
+                          border="standard"
+                          borderColor="blue200"
+                          paddingX={[4, 4, 14]}
+                          paddingY={[4, 4, 8]}
+                        >
+                          <Text variant="h3" as="h3" marginBottom={[4, 4, 8]}>
+                            {n('popularQuestions', 'Algengar spurningar')}
+                          </Text>
+                          <Stack space={2}>
+                            {featuredQNAs.map(
+                              ({ title, slug, category }, index) => {
+                                return (
+                                  <Box key={index}>
+                                    <TopicCard
+                                      href={`/adstod/${organization.slug}/${category.slug}/${slug}`}
+                                    >
+                                      {title}
+                                    </TopicCard>
+                                  </Box>
+                                )
+                              },
+                            )}
+                          </Stack>
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
               {!institutionSlugBelongsToMannaudstorg && (
                 <Box marginY={[7, 10, 10]}>
                   <GridContainer>
@@ -165,7 +211,7 @@ const Home: Screen<HomeProps> = ({
                         offset={[null, null, null, '1/12']}
                         span={['12/12', '12/12', '12/12', '10/12']}
                       >
-                        <Box marginY={[10, 10, 20]}>
+                        <Box marginY={[2, 2, 4]}>
                           <ContactBanner slug={institutionSlug} />
                         </Box>
                       </GridColumn>
@@ -230,6 +276,21 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         }),
   ])
 
+  const popularQuestionCount =
+    organization?.data?.getOrganization?.serviceWebPopularQuestionCount
+  const featuredQNAs = popularQuestionCount
+    ? await apolloClient.query<Query, QueryGetFeaturedSupportQnAsArgs>({
+        query: GET_FEATURED_SUPPORT_QNAS,
+        variables: {
+          input: {
+            organization: slug,
+            lang: locale as ContentLanguage,
+            size: popularQuestionCount ?? 10,
+          },
+        },
+      })
+    : undefined
+
   let processedCategories = slug
     ? supportCategories?.data?.getSupportCategoriesInOrganization
     : supportCategories?.data?.getSupportCategories
@@ -258,6 +319,9 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     organizationNamespace,
     supportCategories: processedCategories,
+    featuredQNAs: featuredQNAs
+      ? featuredQNAs?.data?.getFeaturedSupportQNAs
+      : [],
   }
 }
 
@@ -270,5 +334,5 @@ const sortSupportCategories = (items: SupportCategory[]) =>
 
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

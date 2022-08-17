@@ -1,4 +1,3 @@
-import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Inject,
@@ -6,27 +5,26 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { isUuid, uuid } from 'uuidv4'
 
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AuthDelegationType, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
+import { DelegationConfig } from '../config/DelegationConfig'
 import { UpdateDelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
 import {
   CreateDelegationDTO,
@@ -36,8 +34,8 @@ import {
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { ApiScope } from '../entities/models/api-scope.model'
-import { Client } from '../entities/models/client.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
+import { Client } from '../entities/models/client.model'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
 import { PersonalRepresentativeService } from '../personal-representative'
@@ -71,6 +69,8 @@ export class DelegationsService {
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     private rskProcuringClient: RskProcuringClient,
     private personApi: EinstaklingarApi,
     private delegationScopeService: DelegationScopeService,
@@ -205,6 +205,10 @@ export class DelegationsService {
    * @returns
    */
   async findById(user: User, id: string): Promise<DelegationDTO | null> {
+    if (!isUuid(id)) {
+      throw new BadRequestException('delegationId must be a valid uuid')
+    }
+
     this.logger.debug(`Finding a delegation with id ${id}`)
     const delegation = await this.delegationModel.findOne({
       where: {
@@ -237,7 +241,7 @@ export class DelegationsService {
 
     if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
-        this.checkIfScopeAllowed(s, user.scope),
+        this.checkIfScopeAllowed(s, user),
       )
     }
 
@@ -301,14 +305,12 @@ export class DelegationsService {
     return delegations
       .filter((d) =>
         // The user must have access to at least one scope in the delegation
-        d.delegationScopes?.some((s) =>
-          this.checkIfScopeAllowed(s, user.scope),
-        ),
+        d.delegationScopes?.some((s) => this.checkIfScopeAllowed(s, user)),
       )
       .map((d) => {
         // Filter out scopes the user does not have access to
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, user.scope),
+          this.checkIfScopeAllowed(s, user),
         )
         return d.toDTO()
       })
@@ -323,21 +325,43 @@ export class DelegationsService {
    * @param user
    * @returns
    */
-  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
+  async findAllIncoming(
+    user: User,
+    delegationTypes?: DelegationType[],
+  ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
     const delegationPromises = []
 
-    if (!client || client.supportsLegalGuardians) {
+    const hasDelegationTypeFilter =
+      delegationTypes && delegationTypes.length > 0
+
+    if (
+      (!client || client.supportsLegalGuardians) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.LegalGuardian))
+    ) {
       delegationPromises.push(this.findAllWardsIncoming(user))
     }
-    if (!client || client.supportsProcuringHolders) {
+    if (
+      (!client || client.supportsProcuringHolders) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.ProcurationHolder))
+    ) {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
-    if (!client || client.supportsDelegation) {
+    if (
+      (!client || client.supportsDelegation) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.Custom))
+    ) {
       delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
-    if (!client || client.supportsPersonalRepresentatives) {
+    if (
+      (!client || client.supportsPersonalRepresentatives) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.PersonalRepresentative))
+    ) {
       delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
     const delegationSets = await Promise.all(delegationPromises)
@@ -379,7 +403,7 @@ export class DelegationsService {
 
     if (delegation) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
-        this.checkIfScopeAllowed(s, user.scope),
+        this.checkIfScopeAllowed(s, user),
       )
     }
 
@@ -572,13 +596,14 @@ export class DelegationsService {
 
     return delegations
       .filter((d) =>
+        // The requesting client must have access to at least one scope for the delegation to be relevant.
         d.delegationScopes?.some((s) =>
-          this.checkIfScopeAllowed(s, allowedScopes),
+          this.checkIfScopeAllowed(s, user, allowedScopes),
         ),
       )
       .map((d) => {
         d.delegationScopes = d.delegationScopes?.filter((s) =>
-          this.checkIfScopeAllowed(s, user.scope),
+          this.checkIfScopeAllowed(s, user),
         )
         return d.toDTO()
       })
@@ -625,13 +650,34 @@ export class DelegationsService {
 
   private checkIfScopeAllowed(
     scope: DelegationScope,
-    allowedScopes: string[],
+    user: User,
+    allowedScopes?: string[],
   ): boolean {
+    allowedScopes = (allowedScopes ?? user.scope).filter((scope) =>
+      this.filterCustomScopeRule(scope, user),
+    )
+
+    const hasScope = Boolean(
+      scope.scopeName && allowedScopes.includes(scope.scopeName),
+    )
+    const hasIdentityResource = Boolean(
+      scope.identityResourceName &&
+        allowedScopes.includes(scope.identityResourceName),
+    )
+
+    return hasScope || hasIdentityResource
+  }
+
+  private filterCustomScopeRule(scope: string, user: User): boolean {
+    const customRule = this.delegationConfig.customScopeRules.find(
+      (rule) => rule.scopeName === scope,
+    )
+
     return (
-      (scope.scopeName && allowedScopes.includes(scope.scopeName)) ||
-      (scope.identityResourceName &&
-        allowedScopes.includes(scope.identityResourceName)) ||
-      false
+      !customRule ||
+      customRule.onlyForDelegationType.some((type) =>
+        user.delegationType?.includes(type as AuthDelegationType),
+      )
     )
   }
 

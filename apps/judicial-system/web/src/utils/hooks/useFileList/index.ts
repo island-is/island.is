@@ -1,56 +1,71 @@
-import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useContext, useEffect, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
 import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  GetSignedUrlQueryQuery,
+  GetSignedUrlQueryQueryVariables,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Parameters {
-  caseId?: string
+  caseId: string
 }
 
 const useFileList = ({ caseId }: Parameters) => {
-  const [openFileId, setOpenFileId] = useState<string>()
+  const { setWorkingCase } = useContext(FormContext)
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
-  const { data: fileSignedUrl, error } = useQuery(GetSignedUrlQuery, {
-    variables: {
-      input: {
-        id: openFileId,
-        caseId: caseId,
-      },
+  const [getSignedUrl, { error, variables }] = useLazyQuery<
+    GetSignedUrlQueryQuery,
+    GetSignedUrlQueryQueryVariables
+  >(GetSignedUrlQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted(data) {
+      if (data?.getSignedUrl?.url) {
+        window.open(data.getSignedUrl.url, '_blank')
+      }
     },
-    skip: !caseId || !openFileId,
   })
 
   useEffect(() => {
-    const handleError = () => {
+    if (error && variables) {
       const code = error?.graphQLErrors[0].extensions?.code
 
       // If the file no longer exists or access in no longer permitted
       if (
-        code === 'https://httpstatuses.com/404' ||
-        code === 'https://httpstatuses.com/403'
+        code === 'https://httpstatuses.org/404' ||
+        code === 'https://httpstatuses.org/403'
       ) {
         setFileNotFound(true)
+        setWorkingCase((theCase) => ({
+          ...theCase,
+          caseFiles: theCase.caseFiles?.map((file) =>
+            file.id === variables.input.id
+              ? {
+                  ...file,
+                  key: undefined,
+                  status:
+                    file.state === CaseFileState.STORED_IN_COURT
+                      ? 'done-broken'
+                      : 'broken',
+                }
+              : file,
+          ),
+        }))
       }
     }
+  }, [error, setWorkingCase, variables])
 
-    if (fileSignedUrl) {
-      window.open(fileSignedUrl.getSignedUrl.url, '_blank')
-    } else if (error) {
-      handleError()
-    }
-
-    setOpenFileId(undefined)
-  }, [fileSignedUrl, error])
-
-  const handleOpenFile = (fileId: string) => {
-    setOpenFileId(fileId)
+  const onOpen = (fileId: string) => {
+    getSignedUrl({ variables: { input: { id: fileId, caseId } } })
   }
 
   const dismissFileNotFound = () => {
     setFileNotFound(false)
   }
 
-  return { handleOpenFile, fileNotFound, dismissFileNotFound }
+  return { fileNotFound, dismissFileNotFound, onOpen }
 }
 
 export default useFileList

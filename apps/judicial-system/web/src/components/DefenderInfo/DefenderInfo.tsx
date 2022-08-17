@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -18,23 +19,24 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseType,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { accused } from '@island.is/judicial-system-web/messages'
-import { defendant } from '@island.is/judicial-system-web/messages'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  accused,
+  defendant,
+  rcHearingArrangements,
+  icHearingArrangements,
+  defenderInfo,
+} from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
-import { useCase, useLawyers } from '../../utils/hooks'
+import { useCase, useGetLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -46,7 +48,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [
@@ -59,7 +61,9 @@ const DefenderInfo: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>('')
 
-  const lawyers = useLawyers()
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
+
+  const lawyers = useGetLawyers()
 
   const handleDefenderChange = useCallback(
     async (selectedOption: ValueType<ReactSelectOption>) => {
@@ -71,7 +75,14 @@ const DefenderInfo: React.FC<Props> = (props) => {
       }
 
       if (selectedOption) {
-        const { label, value } = selectedOption as ReactSelectOption
+        const {
+          label,
+          value,
+          __isNew__: defenderNotFound,
+        } = selectedOption as ReactSelectOption
+
+        setDefenderNotFound(defenderNotFound || false)
+
         const lawyer = lawyers.find(
           (l: Lawyer) => l.email === (value as string),
         )
@@ -218,6 +229,15 @@ const DefenderInfo: React.FC<Props> = (props) => {
           {renderTooltip()}
         </Text>
       </Box>
+      {defenderNotFound && (
+        <Box marginBottom={3} data-testid="defenderNotFound">
+          <AlertMessage
+            type="warning"
+            title={formatMessage(defenderInfo.defenderNotFound.title)}
+            message={formatMessage(defenderInfo.defenderNotFound.message)}
+          />
+        </Box>
+      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Select
@@ -365,11 +385,9 @@ const DefenderInfo: React.FC<Props> = (props) => {
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
               setAndSendToServer(
-                'sendRequestToDefender',
-                event.target.checked,
+                [{ sendRequestToDefender: event.target.checked, force: true }],
                 workingCase,
                 setWorkingCase,
-                updateCase,
               )
             }}
             large

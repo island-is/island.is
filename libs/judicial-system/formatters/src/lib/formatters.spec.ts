@@ -8,6 +8,8 @@ import {
   formatGender,
   formatAppeal,
   formatNationalId,
+  formatDOB,
+  formatPhoneNumber,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -45,6 +47,30 @@ describe('formatDate', () => {
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
+  })
+})
+
+describe('formatPhoneNumber', () => {
+  test('should format a phonenumber that does not have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '1234567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
+  })
+
+  test('should format a phonenumber that does have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '123-4567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
   })
 })
 
@@ -181,5 +207,43 @@ describe('formatNationalId', () => {
 
     // Assert
     expect(res).toBe('ekki skráð')
+  })
+})
+
+describe('formatDOB', () => {
+  it('should format a national id string for a valid national id', () => {
+    // Arrange
+    const nationalId = '1234567890'
+    const noNationalId = false
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('kt. 123456-7890')
+  })
+
+  it('should format a date of birth string when "does not have a national id" parameter is set', () => {
+    // Arrange
+    const nationalId = '12.12.2000'
+    const noNationalId = true
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('fd. 12.12.2000')
+  })
+
+  it('should return a "-" character when nationalId is not set', () => {
+    // Arrange
+    const nationalId = undefined
+    const noNationalId = true
+
+    // Act
+    const res = formatDOB(nationalId, noNationalId)
+
+    // Assert
+    expect(res).toBe('-')
   })
 })

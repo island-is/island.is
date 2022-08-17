@@ -1,12 +1,14 @@
 import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
-  DefaultStateLifeCycle,
   DefaultEvents,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -58,6 +60,7 @@ const template: ApplicationTemplate<
                 })
               },
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -87,6 +90,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              delete: true,
             },
           ],
         },

@@ -11,11 +11,11 @@ import {
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
+  Button,
   Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Input,
   Select,
   Text,
@@ -107,7 +107,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [personData])
+  }, [defendant.id, onChange, personData, personError])
 
   useEffect(() => {
     if (businessError || (businessData && businessData.items?.length === 0)) {
@@ -128,18 +128,21 @@ const DefendantInfo: React.FC<Props> = (props) => {
         citizenship: undefined,
       })
     }
-  }, [businessData])
+  }, [businessData, businessError, defendant.id, onChange])
 
   return (
     <BlueBox>
       <Box marginBottom={2} display="flex" justifyContent="flexEnd">
         {onDelete && (
-          <button
+          <Button
             onClick={() => onDelete(defendant)}
-            aria-label="Remove defendant"
+            colorScheme="destructive"
+            variant="text"
+            size="small"
+            data-testid="deleteDefendantButton"
           >
-            <Icon icon="close" color="blue400" />
-          </button>
+            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+          </Button>
         )}
       </Box>
       <Box marginBottom={2}>
@@ -170,6 +173,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <InputMask
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           mask={defendant.noNationalId ? '99.99.9999' : '999999-9999'}
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
@@ -302,9 +306,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
               placeholder={formatMessage(core.selectGender)}
               options={genderOptions}
               label={formatMessage(core.gender)}
-              value={genderOptions.find(
-                (option) => option.value === defendant.gender,
-              )}
+              value={
+                genderOptions.find(
+                  (option) => option.value === defendant.gender,
+                ) ?? null
+              }
               onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                 onChange(defendant.id, {
                   gender: (selectedOption as ReactSelectOption).value as Gender,

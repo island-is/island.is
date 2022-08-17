@@ -1,3 +1,5 @@
-export * from './BoostChatPanel'
-export * from './LiveChatIncChatPanel'
-export * from './WatsonChatPanel'
+export { BoostChatPanel } from './BoostChatPanel'
+export { boostChatPanelEndpoints } from './BoostChatPanel/config'
+export { LiveChatIncChatPanel } from './LiveChatIncChatPanel'
+export { WatsonChatPanel } from './WatsonChatPanel'
+export * from './types'

@@ -1,4 +1,4 @@
-import { ApplicationTypes } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/application/types'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EXAMPLE]: () =>
@@ -37,6 +37,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/general-fishing-license'),
   [ApplicationTypes.P_SIGN]: () =>
     import('@island.is/application/templates/p-sign'),
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: () =>
+    import('@island.is/application/templates/announcement-of-death'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
   [ApplicationTypes.FINANCIAL_AID]: () =>
@@ -49,6 +51,12 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
     import('@island.is/application/templates/mortgage-certificate'),
+  [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
+    import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
+    import('@island.is/application/templates/financial-statements-inao'),
+  [ApplicationTypes.OPERATING_LCENSE]: () =>
+    import('@island.is/application/templates/operating-license'),
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
     import('@island.is/application/templates/marriage-conditions'),
 }

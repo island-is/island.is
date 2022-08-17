@@ -1,4 +1,4 @@
-import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
@@ -37,9 +37,7 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const isValid = !validations.some(
-    (validation) => validate(value, validation).isValid === false,
-  )
+  const isValid = validate([[value, validations]]).isValid
 
   if (errorMessage !== '' && errorMessageSetter && isValid) {
     errorMessageSetter('')
@@ -51,12 +49,10 @@ export const validateAndSetErrorMessage = (
   value: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const error = validations
-    .map((v) => validate(value, v))
-    .find((v) => v.isValid === false)
+  const validation = validate([[value, validations]])
 
-  if (error && errorMessageSetter) {
-    errorMessageSetter(error.errorMessage)
+  if (!validation.isValid && errorMessageSetter) {
+    errorMessageSetter(validation.errorMessage)
     return
   }
 }
@@ -96,11 +92,7 @@ export const validateAndSetTime = (
     }
 
     const paddedTime = padTimeWithZero(time)
-
-    const isValid = !validations.some(
-      (validation) => validate(paddedTime, validation).isValid === false,
-    )
-
+    const isValid = validate([[paddedTime, validations]]).isValid
     const arrestDateMinutes = parseTime(currentValue, paddedTime)
 
     if (errorMessage !== '' && setErrorMessage && isValid) {
@@ -110,38 +102,6 @@ export const validateAndSetTime = (
     setCase({
       ...theCase,
       [field]: arrestDateMinutes,
-    })
-  }
-}
-
-export const setAndSendDateToServer = (
-  field: keyof UpdateCase,
-  date: Date | undefined,
-  isValid: boolean,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  if (!isValid) {
-    return
-  }
-
-  let formattedDate = null
-
-  if (date !== undefined) {
-    formattedDate = formatISO(date, {
-      representation: 'complete',
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
     })
   }
 }
@@ -173,12 +133,10 @@ export const validateAndSendTimeToServer = (
   if (currentValue) {
     const paddedTime = padTimeWithZero(time)
 
-    const error = validations
-      .map((v) => validate(paddedTime, v))
-      .find((v) => v.isValid === false)
+    const validation = validate([[paddedTime, validations]])
 
-    if (error && setErrorMessage) {
-      setErrorMessage(error.errorMessage)
+    if (!validation.isValid && setErrorMessage) {
+      setErrorMessage(validation.errorMessage)
       return
     }
 
@@ -190,24 +148,15 @@ export const validateAndSendTimeToServer = (
   }
 }
 
-export const setAndSendToServer = (
-  field: keyof UpdateCase,
-  value: string | boolean | undefined,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  setCase({
-    ...theCase,
-    [field]: value,
-  })
-  if (theCase.id !== '') {
-    if (typeof value === 'string' || typeof value === 'boolean') {
-      return updateCase(theCase.id, { [field]: value })
-    } else {
-      return updateCase(theCase.id, { [field]: null })
-    }
-  }
+/**If entry is included in values then it is removed
+ * otherwise it is appended
+ */
+export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+  if (!values) return [entry]
+
+  return values.includes(entry)
+    ? values.filter((x) => x !== entry)
+    : [...values, entry]
 }
 
 export const setCheckboxAndSendToServer = (
@@ -239,4 +188,16 @@ export const setCheckboxAndSendToServer = (
 
 export const getTimeFromDate = (date: string | undefined) => {
   return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+}
+
+export const hasDateChanged = (
+  currentDate: string | null | undefined,
+  newDate: Date | undefined,
+) => {
+  if (!currentDate && newDate) return true
+
+  if (currentDate && newDate) {
+    return compareAsc(newDate, new Date(currentDate)) !== 0
+  }
+  return false
 }

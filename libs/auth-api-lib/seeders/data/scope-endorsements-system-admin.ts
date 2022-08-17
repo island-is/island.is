@@ -13,5 +13,5 @@ export const up = createScope({
   },
   accessControlled: true,
   addToResource: '@island.is',
-  addToClients: ['island-is-1'],
+  addToClients: ['@island.is/web'],
 })

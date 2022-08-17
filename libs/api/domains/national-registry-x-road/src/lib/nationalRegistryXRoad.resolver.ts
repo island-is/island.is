@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+  Context,
+  Args,
+} from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -15,6 +22,7 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -34,7 +42,6 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
-      user,
       user.nationalId,
     )
   }

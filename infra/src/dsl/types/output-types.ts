@@ -23,8 +23,22 @@ export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 
 export interface ServiceHelm {
-  replicaCount?: ReplicaCount
+  replicaCount?: {
+    min: number
+    max: number
+    default: number
+  }
+  hpa?: {
+    scaling: {
+      replicas: {
+        min: number
+        max: number
+      }
+      metric: { nginxRequestsIrate?: number; cpuAverageUtilization: number }
+    }
+  }
   healthCheck: {
+    port?: number
     liveness: {
       path: string
       initialDelaySeconds: number

@@ -1,34 +1,39 @@
-import React from 'react'
-import flatten from 'lodash/flatten'
-import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
-import { Query } from '@island.is/api/schema'
+import flatten from 'lodash/flatten'
+import React from 'react'
 import { defineMessage } from 'react-intl'
+
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 import {
-  Box,
-  Text,
-  Stack,
-  Button,
-  SkeletonLoader,
   AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  amountFormat,
+  ExpandHeader,
+  ExpandRow,
+  formSubmit,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import {
-  ExpandHeader,
-  ExpandRow,
-  amountFormat,
-  formSubmit,
-} from '@island.is/service-portal/core'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { Link } from 'react-router-dom'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -36,16 +41,39 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetDebtStatusQuery = gql`
+  query FinanceStatusGetDebtStatus {
+    getDebtStatus {
+      myDebtStatus {
+        approvedSchedule
+        possibleToSchedule
+      }
+    }
+  }
+`
+
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = userInfo && checkDelegation(userInfo)
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
   )
+
+  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
+    GetDebtStatusQuery,
+  )
+
+  const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
+  let scheduleButtonVisible = false
+  if (debtStatus && debtStatus.length > 0 && !debtStatusLoading) {
+    scheduleButtonVisible =
+      debtStatus[0]?.approvedSchedule > 0 ||
+      debtStatus[0]?.possibleToSchedule > 0
+  }
+
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
@@ -59,6 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       allChargeTypes.length > 0
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
+
     return amountFormat(chargeTypeTotal)
   }
 
@@ -71,45 +100,37 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const previousYear = subYears(new Date(), 1).getFullYear().toString()
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
+
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader
+        title={{
+          id: 'sp.finance-status:title',
+          defaultMessage: 'Staða við ríkissjóð og stofnanir',
+        }}
+        intro={{
+          id: 'sp.finance-status:intro',
+          defaultMessage:
+            'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+        }}
+      />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.finance-status:title',
-            defaultMessage: 'Staða við ríkissjóð og stofnanir',
-          })}
-        </Text>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.finance-status:intro',
-                defaultMessage:
-                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-              })}
-            </Text>
-          </GridColumn>
-          {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box
-                display="flex"
-                justifyContent="flexEnd"
-                marginTop={1}
-                printHidden
-              >
-                {!isDelegation && (
+            {financeStatusData.organizations?.length > 0 ||
+            financeStatusZero ? (
+              <Box display="flex" justifyContent="flexStart" printHidden>
+                {!isDelegation && scheduleButtonVisible && (
                   <Box paddingRight={2}>
                     <a
-                      href="https://island.is/umsoknir/greidsluaaetlun/"
+                      href="/umsoknir/greidsluaaetlun/"
                       target="_blank"
                       rel="noreferrer"
                     >
                       <Button
                         colorScheme="default"
                         icon="receipt"
-                        iconType="outline"
-                        preTextIconType="outline"
+                        iconType="filled"
                         size="default"
                         type="button"
                         variant="utility"
@@ -122,6 +143,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     </a>
                   </Box>
                 )}
+
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
@@ -145,6 +167,13 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   }
                   dropdownItems={[
                     {
+                      title: formatMessage({
+                        id: 'sp.finance-status:get-debt-certificate',
+                        defaultMessage: 'Skuldleysisvottorð',
+                      }),
+                      href: '/umsoknir/skuldleysisvottord/',
+                    },
+                    {
                       title: formatMessage(endOfYearMessage, {
                         year: previousYear,
                       }),
@@ -167,10 +196,10 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                   ]}
                 />
               </Box>
-            </GridColumn>
-          ) : null}
+            ) : null}
+          </GridColumn>
         </GridRow>
-        <Box marginTop={[3, 4, 4, 4, 5]}>
+        <Box marginTop={2}>
           {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
@@ -211,7 +240,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           chargeType={chargeType}
                           organization={org}
                           downloadURL={financeStatusData.downloadServiceURL}
-                          userInfo={userInfo}
                           key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                         />
                       )),

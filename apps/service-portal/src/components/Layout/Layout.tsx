@@ -48,7 +48,6 @@ const Layout: FC = ({ children }) => {
         </Hidden>
       </Hidden>
       <Box
-        overflow="hidden"
         className={cn(
           styles.layoutWrapper,
           sidebarState === 'closed' && styles.layoutWrapperWide,
@@ -56,7 +55,7 @@ const Layout: FC = ({ children }) => {
         paddingBottom={7}
       >
         <Box as="main" component="main">
-          <GridContainer>
+          <GridContainer className={styles.layoutContainer}>
             <GridRow>
               <GridColumn span={'12/12'} className={styles.layoutGrid}>
                 <Hidden print>

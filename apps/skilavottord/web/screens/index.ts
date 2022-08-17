@@ -12,6 +12,7 @@ export {
   Select as DeregisterSelect,
   Confirm as DeregisterConfirm,
 } from './DeregisterVehicle'
+export * from './AccessControlCompany'
 
 /* Fund screens */
 export { Overview as RecyclingFundOverview } from './RecyclingFund'

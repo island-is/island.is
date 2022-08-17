@@ -1,17 +1,18 @@
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationRole,
-  DefaultStateLifeCycle,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
+import { AuthDelegationType } from '../types/schema'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -22,6 +23,7 @@ const PSignTemplate: ApplicationTemplate<
   name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
+  allowedDelegations: [AuthDelegationType.LegalGuardian],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

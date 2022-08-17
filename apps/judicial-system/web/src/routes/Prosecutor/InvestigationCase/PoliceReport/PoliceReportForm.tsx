@@ -18,7 +18,7 @@ import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/ut
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -31,7 +31,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
 
   const { formatMessage } = useIntl()
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
@@ -47,15 +47,19 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       !workingCase.prosecutorOnlySessionRequest &&
       workingCase.requestProsecutorOnlySession
     ) {
-      autofill(
-        'prosecutorOnlySessionRequest',
-        formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+      setAndSendToServer(
+        [
+          {
+            prosecutorOnlySessionRequest: formatMessage(
+              icReportForm.prosecutorOnly.input.defaultValue,
+            ),
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
-
-      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>
@@ -272,8 +276,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

@@ -4,28 +4,40 @@ import { ValueType } from 'react-select'
 
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { Case } from '@island.is/judicial-system/types'
-import { Option } from '@island.is/island-ui/core'
-import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
+import { Case, User } from '@island.is/judicial-system/types'
+import { selectProsecutor as m } from '@island.is/judicial-system-web/messages'
+
+type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
 interface Props {
   workingCase: Case
-  prosecutors: ReactSelectOption[]
-  onChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  prosecutors: User[]
+  onChange: (prosecutor: User) => boolean
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
   const { workingCase, prosecutors, onChange } = props
+
   const { formatMessage } = useIntl()
+
   const [selectedProsecutor, setSelectedProsecutor] = useState<
-    ValueType<Option>
+    ValueType<ProsecutorSelectOption>
   >(
     workingCase.prosecutor
       ? {
           label: workingCase.prosecutor.name,
           value: workingCase.prosecutor.id,
+          prosecutor: workingCase.prosecutor,
         }
       : null,
+  )
+
+  const selectProsecutors: ProsecutorSelectOption[] = prosecutors.map(
+    (prosecutor) => ({
+      label: prosecutor.name,
+      value: prosecutor.id,
+      prosecutor,
+    }),
   )
 
   return (
@@ -43,9 +55,10 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         label={formatMessage(m.label)}
         placeholder={formatMessage(m.placeholder)}
         value={selectedProsecutor}
-        options={prosecutors}
-        onChange={(selectedOption) => {
-          onChange(selectedOption) && setSelectedProsecutor(selectedOption)
+        options={selectProsecutors}
+        onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+          onChange((selectedOption as ProsecutorSelectOption).prosecutor) &&
+            setSelectedProsecutor(selectedOption as ProsecutorSelectOption)
         }}
         required
       />

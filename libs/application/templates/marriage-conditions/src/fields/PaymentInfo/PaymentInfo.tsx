@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
 export type Individual = {
   name: string

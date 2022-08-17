@@ -41,7 +41,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text: string): string => {
+export const capitalize = (text?: string): string => {
   if (!text) {
     return ''
   }
@@ -64,6 +64,21 @@ export const formatNationalId = (nationalId: string): string => {
   } else {
     return nationalId
   }
+}
+
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
 }
 
 export const laws = {
@@ -92,6 +107,7 @@ export const caseTypes: CaseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
@@ -201,7 +217,18 @@ export function formatAppeal(
 export function formatRequestCaseType(type: CaseType): string {
   return isRestrictionCase(type) ||
     type === CaseType.RESTRAINING_ORDER ||
+    type === CaseType.EXPULSION_FROM_HOME ||
     type === CaseType.PSYCHIATRIC_EXAMINATION
     ? caseTypes[type]
     : 'rannsóknarheimild'
+}
+
+export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
+  if (!nationalId) {
+    return '-'
+  }
+
+  return noNationalId
+    ? `fd. ${nationalId}`
+    : `kt. ${formatNationalId(nationalId)}`
 }

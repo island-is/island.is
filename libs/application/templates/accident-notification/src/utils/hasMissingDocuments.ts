@@ -1,11 +1,8 @@
-import {
-  FormValue,
-  getValueViaPath,
-  MessageFormatter,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import { FormatMessage } from '@island.is/localization'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { YES } from '../constants'
-import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
 import {
   AccidentNotificationAttachmentStatus,
@@ -105,7 +102,7 @@ export const hasReceivedAllDocuments = (answers: FormValue) => {
 
 export const getErrorMessageForMissingDocuments = (
   answers: FormValue,
-  formatMessage: MessageFormatter,
+  formatMessage: FormatMessage,
   isAssigneeAndUnique: boolean,
 ) => {
   const whoIsTheNotificationFor = getValueViaPath(

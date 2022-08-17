@@ -2,18 +2,12 @@ import { useLocale } from '@island.is/localization'
 import {
   formatText,
   getSubSectionsInSection,
-  Section,
-  SubSection,
 } from '@island.is/application/core'
-import { MessageDescriptor } from 'react-intl'
+import { Section, SubSection } from '@island.is/application/types'
+import { FormatMessage } from '@island.is/localization'
 
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import { useDocumentTitle } from './useDocumentTitle'
-
-type FormatMessage = (
-  descriptor: MessageDescriptor | string,
-  values?: any,
-) => string
 
 export const getApplicationTitle = (
   state: ApplicationUIState,

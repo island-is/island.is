@@ -34,10 +34,12 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   })
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, partnerId }) => {
+    ({ nationalId, name, role, partnerId, email, phone }) => {
       return onSubmit({
         nationalId,
         name,
+        phone,
+        email,
         role: role.value,
         partnerId: partnerId?.value,
       })
@@ -55,7 +57,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
       roles={roles}
       control={control}
       errors={errors}
-      partnerIdRequired={watch('role')?.value === Role.recyclingCompany}
+      partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}
     />
   )
 }

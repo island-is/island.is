@@ -1,9 +1,9 @@
 import {
-  Application,
   AnswerValidator,
   getValueViaPath,
   buildValidationError,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { Status, FormerInsurance, Applicant } from '../types'
 import { NO, YES, StatusTypes } from '../shared'
 import {
@@ -16,7 +16,7 @@ const FORMER_INSURANCE = 'formerInsurance'
 
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
-  [STATUS]: (newAnswer: unknown, application: Application) => {
+  [STATUS]: (newAnswer: unknown, _application: Application) => {
     const status = newAnswer as Status
 
     if (!Object.values(StatusTypes).includes(status.type)) {

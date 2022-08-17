@@ -1,13 +1,10 @@
-import '../styles/App.scss'
+import { Provider } from 'next-auth/client'
 import App from 'next/app'
 import React from 'react'
-import getConfig from 'next/config'
-import { Provider } from 'next-auth/client'
-import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
 
-interface Props {}
+import '../styles/App.scss'
 
-class AuthAdminWebApp extends App<Props> {
+class AuthAdminWebApp extends App {
   render() {
     const { Component, pageProps } = this.props
     return (
@@ -21,10 +18,4 @@ class AuthAdminWebApp extends App<Props> {
   }
 }
 
-const endpointDependencies = process.env.BASE_URL ? [process.env.BASE_URL] : []
-const {
-  serverRuntimeConfig: { backendUrl },
-} = getConfig()
-const externalEndpointDependencies = [backendUrl]
-
-export default withHealthchecks(endpointDependencies)(AuthAdminWebApp)
+export default AuthAdminWebApp

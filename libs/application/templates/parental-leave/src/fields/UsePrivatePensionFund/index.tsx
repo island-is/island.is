@@ -2,13 +2,12 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { getErrorViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -52,10 +51,11 @@ export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
           onSelect: (s: string) => {
             if (s === NO) {
               setValue('payments.privatePensionFund', NO_PRIVATE_PENSION_FUND)
-              setValue('payments.privatePensionFundPercentage', '')
+              setValue('payments.privatePensionFundPercentage', '0')
             }
             if (s === YES) {
               setValue('payments.privatePensionFund', '')
+              setValue('payments.privatePensionFundPercentage', '')
             }
           },
         }}

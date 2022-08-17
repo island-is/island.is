@@ -1,22 +1,22 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  Application,
   buildCustomField,
   buildDividerField,
   buildTextField,
   buildSubmitField,
-  DefaultEvents,
-  buildDescriptionField,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  Application,
+  DefaultEvents,
+} from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '../types/schema'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
 
@@ -106,8 +106,7 @@ export const getApplication = (): Form => {
                 width: 'half',
                 backgroundColor: 'blue',
                 defaultValue: (application: Application) => {
-                  const data = application.externalData.userProfile
-                    .data as UserProfile
+                  const data = application.externalData.userProfile.data as any
                   return data.mobilePhoneNumber ?? ''
                 },
               }),
@@ -118,8 +117,7 @@ export const getApplication = (): Form => {
                 width: 'half',
                 backgroundColor: 'blue',
                 defaultValue: (application: Application) => {
-                  const data = application.externalData.userProfile
-                    .data as UserProfile
+                  const data = application.externalData.userProfile.data as any
                   return data.email ?? ''
                 },
               }),

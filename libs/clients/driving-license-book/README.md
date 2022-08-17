@@ -25,6 +25,52 @@ yarn nx run clients-driving-license-book:schemas/external-openapi-generator
 
 ### Import into other NestJS modules
 
+#### app.module.ts
+
+```typescript
+import { ConfigModule } from '@island.is/nest/config'
+import { DrivingLicenseBookClientModule, DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+
+@Module({
+  imports: [
+      DrivingLicenseBookClientModule,
+      ConfigModule.forRoot({
+        isGlobal:true,
+        load:[DrivingLicenseBookClientConfig,XRoadConfig]
+      })
+    ],
+})
+```
+
+#### module-name.module.ts
+
+```typescript
+import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book'
+
+  imports: [
+    DrivingLicenseBookClientModule
+  ],
+```
+
+#### module-name.service.ts
+
+```typescript
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
+
+
+@Injectable()
+export class SomeService {
+  constructor(
+    @Inject(DrivingLicenseBookClientApiFactory)
+    private readonly drivingLicenseBookClientApiFactory: DrivingLicenseBookClientApiFactory,
+  ) {}
+
+  async someMethod()
+      const api = await this.drivingLicenseBookClientApiFactory.create()
+      return api.apiStudentGetLicenseBookListSsnGet({ssn:nationalId})
+
+```
+
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-og-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

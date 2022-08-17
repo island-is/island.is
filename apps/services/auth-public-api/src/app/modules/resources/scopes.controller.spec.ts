@@ -29,7 +29,12 @@ import {
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, Scopes[0].name, Scopes[3].name],
+  scope: [
+    AuthScope.readDelegations,
+    Scopes[0].name,
+    Scopes[3].name,
+    Scopes[6].name,
+  ],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -168,9 +173,9 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
+        delegationType: ['ProcurationHolder'],
         actor: {
           nationalId: user.nationalId,
-          delegationType: 'ProcurationHolder',
           scope: [],
         },
       },
@@ -193,14 +198,76 @@ describe('ScopesController', () => {
     expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
   })
 
+  it('should return some scope only for procuring holder and legal guardian delegations', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['ProcurationHolder', 'LegalGuardian'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name, Scopes[6].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(3)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should not return legal guardian delegation', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationType: ['ProcurationHolder', 'Custom'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
   it('should not return some scope for custom delegations', async () => {
     // Arrange
     const app = await setupWithAuth({
       user: {
         ...user,
+        delegationType: ['Custom'],
         actor: {
           nationalId: user.nationalId,
-          delegationType: 'Custom',
           scope: [],
         },
       },
@@ -241,7 +308,7 @@ describe('ScopesController', () => {
         expect(res.status).toEqual(401)
         expect(res.body).toMatchObject({
           status: 401,
-          type: 'https://httpstatuses.com/401',
+          type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
 
@@ -267,7 +334,7 @@ describe('ScopesController', () => {
         expect(res.status).toEqual(403)
         expect(res.body).toMatchObject({
           status: 403,
-          type: 'https://httpstatuses.com/403',
+          type: 'https://httpstatuses.org/403',
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })

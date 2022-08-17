@@ -9,6 +9,7 @@ export const serviceSetup = (services: {
     .readiness('/liveness')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN',
@@ -17,6 +18,8 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_LOGOUT_REDIRECT_URL:
         '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL',
       NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL',
+      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
@@ -26,6 +29,20 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         paths: ['/app/skilavottord/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
     .grantNamespaces('nginx-ingress-external')

@@ -75,6 +75,22 @@ export const shipSelection = {
       defaultMessage: 'Svipting/ar',
       description: 'Deprivation label',
     },
+    unfulfilledLicensesButton: {
+      id: 'gfl.application:shipSelection.labels.unfulfilledLicensesButton',
+      defaultMessage: 'Upplýsingar um ógild veiðileyfi',
+      description: 'Button text for unfulfilled licenses',
+    },
+    unfulfilledLicensesModalTitle: {
+      id: 'gfl.application:shipSelection.labels.unfulfilledLicensesModalTitle',
+      defaultMessage: 'Ekki er hægt að sækja um tiltekin veiðileyfi',
+      description: 'Modal title for unfulfilled licenses',
+    },
+    unfulfilledLicensesModalExpandButton: {
+      id:
+        'gfl.application:shipSelection.labels.unfulfilledLicensesModalExpandButton',
+      defaultMessage: 'Nánar',
+      description: 'Expand button text for unfulfilled licenses',
+    },
   }),
   tags: defineMessages({
     noFishingLicensesFound: {

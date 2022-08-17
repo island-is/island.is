@@ -1,9 +1,5 @@
-import {
-  buildForm,
-  buildCustomField,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildForm, buildCustomField } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 
 export const done: Form = buildForm({
   id: 'spouse_done',

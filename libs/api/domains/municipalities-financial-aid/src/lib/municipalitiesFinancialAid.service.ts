@@ -6,9 +6,18 @@ import {
   ApplicationApi,
   MunicipalityApi,
   FilesApi,
+  PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
-import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import {
+  ApplicationFilesInput,
+  CreateSignedUrlInput,
+  GetSignedUrlInput,
+  MunicipalityInput,
+  SpouseEmailInput,
+} from './dto'
+import { ApplicationInput } from './dto/application.input'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -16,6 +25,7 @@ export class MunicipalitiesFinancialAidService {
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
     private filesApi: FilesApi,
+    private personalTaxReturnApi: PersonalTaxReturnApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -28,6 +38,10 @@ export class MunicipalitiesFinancialAidService {
 
   fileApiWithAuth(auth: Auth) {
     return this.filesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  personalTaxReturnApiWithAuth(auth: Auth) {
+    return this.personalTaxReturnApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private handle404(error: FetchError) {
@@ -52,6 +66,20 @@ export class MunicipalitiesFinancialAidService {
       .catch(this.handle404)
   }
 
+  async personalTaxReturnForFinancialAId(auth: Auth, id: string) {
+    return await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
+      id: id,
+    })
+  }
+
+  async directTaxPaymentsForFinancialAId(auth: Auth) {
+    return await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
+  }
+
   async municipalitiesFinancialAidCreateSignedUrl(
     auth: Auth,
     getSignedUrl: CreateSignedUrlInput,
@@ -59,5 +87,53 @@ export class MunicipalitiesFinancialAidService {
     return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrl({
       getSignedUrlDto: getSignedUrl,
     })
+  }
+
+  async municipalitiesFinancialAidApplication(
+    auth: Auth,
+    applicationId: ApplicationInput,
+  ) {
+    return await this.applicationApiWithAuth(auth)
+      .applicationControllerGetById(applicationId)
+      .catch(this.handle404)
+  }
+
+  async municipalitiesFinancialAidCreateFiles(
+    auth: Auth,
+    files: ApplicationFilesInput,
+  ) {
+    return await this.fileApiWithAuth(auth).fileControllerCreateFiles({
+      createFilesDto: files as any,
+    })
+  }
+
+  async municipalitiesFinancialAidUpdateApplication(
+    auth: Auth,
+    updates: UpdateApplicationInput,
+  ) {
+    return await this.applicationApiWithAuth(auth)
+      .applicationControllerUpdate({
+        id: updates.id,
+        updateApplicationDto: updates as any,
+      })
+      .catch(this.handle404)
+  }
+
+  async municipalitiesFinancialAidGetSignedUrl(
+    auth: Auth,
+    id: GetSignedUrlInput,
+  ) {
+    return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrlForId(
+      id,
+    )
+  }
+
+  async municipalitiesFinancialAidSpouseEmail(
+    auth: Auth,
+    data: SpouseEmailInput,
+  ) {
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerSendSpouseEmail({ spouseEmailDto: data })
   }
 }

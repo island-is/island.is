@@ -1,9 +1,9 @@
 const path = require('path')
+const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
-const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
+const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 const graphqlPath = '/api/graphql'
@@ -11,8 +11,6 @@ const {
   API_URL = 'http://localhost:4444',
   SENTRY_DSN,
   DISABLE_API_CATALOGUE,
-  DISABLE_SYSLUMENN_PAGE,
-  DISABLE_ORGANIZATION_CHATBOT,
   DD_RUM_APPLICATION_ID,
   DD_RUM_CLIENT_TOKEN,
   APP_VERSION,
@@ -20,13 +18,17 @@ const {
   CONFIGCAT_SDK_KEY,
 } = process.env
 
-module.exports = withVanillaExtract(
-  withHealthcheckConfig({
+module.exports = withNx(
+  withVanillaExtract({
     async rewrites() {
       return [
         {
           source: '/umsoknir/:slug',
           destination: 'https://island.is/umsoknir/:slug',
+        },
+        {
+          source: '/rss.xml',
+          destination: '/api/rss',
         },
       ]
     },
@@ -96,8 +98,6 @@ module.exports = withVanillaExtract(
       graphqlEndpoint: graphqlPath,
       SENTRY_DSN,
       disableApiCatalog: DISABLE_API_CATALOGUE,
-      disableSyslumennPage: DISABLE_SYSLUMENN_PAGE,
-      disableOrganizationChatbot: DISABLE_ORGANIZATION_CHATBOT,
       ddRumApplicationId: DD_RUM_APPLICATION_ID,
       ddRumClientToken: DD_RUM_CLIENT_TOKEN,
       appVersion: APP_VERSION,

@@ -42,13 +42,13 @@ export const externalData = {
   directoryOfFisheries: defineMessages({
     title: {
       id: 'gfl.application:section.externalData.directoryOfFisheries.title',
-      defaultMessage: 'Þjóðskrá Íslands/Fyrirtækjaskrá',
+      defaultMessage: 'Samgöngustofa',
       description: 'Approval of directory of labor',
     },
     description: {
       id:
         'gfl.application:section.externalData.directoryOfFisheries.description',
-      defaultMessage: 'Nafn, kennitala og heimilisfang.',
+      defaultMessage: 'Skipaskrá. Upplýsingar um lögskráningu. Haffærni skips.',
       description:
         'Approval of gathering information from directory of fisheries',
     },
@@ -56,12 +56,12 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'gfl.application:section.externalData.nationalRegistry.title',
-      defaultMessage: 'Samgöngustofa',
+      defaultMessage: 'Þjóðskrá Íslands/Fyrirtækjaskrá',
       description: 'Title: National Registry',
     },
     description: {
       id: 'gfl.application:section.externalData.nationalRegistry.description',
-      defaultMessage: 'Skipaskrá. Upplýsingar um lögskráningu. Haffærni skips.',
+      defaultMessage: 'Nafn, kennitala og heimilisfang',
       description: 'Description: National Registry',
     },
   }),

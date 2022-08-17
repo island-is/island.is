@@ -11,7 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]),
   })
   .optional()
 
@@ -46,7 +46,7 @@ export const dataSchema = z.object({
     ),
     pensionFund: z.string(),
     privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
+    privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
     union: z.string().optional(),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
@@ -57,6 +57,17 @@ export const dataSchema = z.object({
     .refine((n) => n && kennitala.isValid(n), {
       params: errorMessages.employerNationalRegistryId,
     }),
+  employerPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        if (phoneNumber) return phoneNumber.isValid()
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
@@ -78,6 +89,18 @@ export const dataSchema = z.object({
     TransferRightsOption.GIVE,
     TransferRightsOption.NONE,
   ]),
+  otherParentObj: z
+    .object({
+      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL]),
+      otherParentName: z.string().optional(),
+      otherParentId: z
+        .string()
+        .optional()
+        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
+          params: errorMessages.otherParentId,
+        }),
+    })
+    .optional(),
   otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z
@@ -88,6 +111,17 @@ export const dataSchema = z.object({
     }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   otherParentEmail: z.string().email(),
+  otherParentPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        if (phoneNumber) return phoneNumber.isValid()
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })

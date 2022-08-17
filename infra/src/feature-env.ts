@@ -15,13 +15,16 @@ import {
   FeatureDeploymentServices,
   ExcludedFeatureDeploymentServices,
 } from './uber-charts/islandis'
+import { Services as IDSServices } from './uber-charts/identity-server'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
+import { Deployments } from './uber-charts/all-charts'
 
-type ChartName = 'islandis'
+type ChartName = 'islandis' | 'identity-server'
 
 const charts: { [name in ChartName]: EnvironmentServices } = {
   islandis: Services,
+  'identity-server': IDSServices,
 }
 
 interface Arguments {
@@ -65,7 +68,10 @@ const parseArguments = (argv: Arguments) => {
   const env = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new UberChart({ ...Envs[env], feature: feature })
+  const ch = new UberChart({
+    ...Envs[Deployments[chart][env]],
+    feature: feature,
+  })
 
   const habitat = charts[chart][env]
 
@@ -158,7 +164,7 @@ yargs(hideBin(process.argv))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis'],
+      choices: ['islandis', 'identity-server'],
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },

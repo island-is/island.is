@@ -14,11 +14,14 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './NameSignupForm.css'
 import {
+  MailchimpSubscribeMutation,
+  MailchimpSubscribeMutationVariables,
   MailingListSignupSlice,
   Namespace,
 } from '@island.is/web/graphql/schema'
-import jsonp from 'jsonp'
 import { useNamespace } from '@island.is/web/hooks'
+import { useMutation } from '@apollo/client/react'
+import { MAILING_LIST_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 
 interface FormProps {
   email?: string
@@ -56,6 +59,11 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
     return errors
   }
 
+  const [subscribeToMailchimp] = useMutation<
+    MailchimpSubscribeMutation,
+    MailchimpSubscribeMutationVariables
+  >(MAILING_LIST_SIGNUP_MUTATION)
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -64,26 +72,20 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
     },
     validateOnChange: false,
     validate,
-    onSubmit: (values) => {
+    onSubmit: () => {
       setLoading(true)
-      jsonp(
-        slice.signupUrl
-          .replace('{{EMAIL}}', formik.values.email)
-          .replace('{{NAME}}', formik.values.name)
-          .replace('{{TOGGLE}}', formik.values.toggle),
-        {
-          param: 'c',
+      subscribeToMailchimp({
+        variables: {
+          input: {
+            signupID: slice.id,
+            email: formik.values.email,
+            name: formik.values.name,
+            toggle: formik.values.toggle === 'Yes',
+          },
         },
-        (err: Error, data: any) => {
-          if (data?.msg.includes('already subscribed')) {
-            setMessage({
-              type: 'error',
-              text: n(
-                'formEmailAlreadyRegistered',
-                'Þetta netfang er þegar á skrá.',
-              ),
-            })
-          } else if (data) {
+      })
+        .then((result) => {
+          if (result?.data?.mailchimpSubscribe?.subscribed) {
             setMessage({
               type: 'success',
               text: n('formSuccessTitle', 'Skráning tókst, takk fyrir!'),
@@ -97,8 +99,16 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
               ),
             })
           }
-        },
-      )
+        })
+        .catch(() => {
+          setMessage({
+            type: 'error',
+            text: n(
+              'formEmailUnknownError',
+              'Óþekkt villa kom upp, reynið aftur síðar.',
+            ),
+          })
+        })
     },
   })
 

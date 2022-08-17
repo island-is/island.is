@@ -1,16 +1,20 @@
 import {
   buildForm,
   buildSection,
-  Form,
-  FormModes,
   buildCustomField,
   buildMultiField,
   buildTextField,
-  buildSelectField,
   buildSubmitField,
-  DefaultEvents,
   buildCheckboxField,
+  buildCompanySearchField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
 import {
   section,
   application,
@@ -19,8 +23,9 @@ import {
   technicalAnnouncements,
   overview,
   submitted,
+  selectCompany,
 } from '../lib/messages'
-import { TYPE_OF_OPERATION, YES } from '../shared/constants'
+import { YES } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -58,7 +63,31 @@ export const LoginServiceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicant',
+      id: 'selectCompany',
+      title: section.selectCompany,
+      children: [
+        buildMultiField({
+          id: 'selectCompanyMultiField',
+          title: selectCompany.general.pageTitle,
+          description: selectCompany.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'selectCompany.nameFieldTitle',
+              title: selectCompany.labels.nameDescription,
+              doesNotRequireAnswer: true,
+              component: 'FieldTitle',
+            }),
+            buildCompanySearchField({
+              id: 'selectCompany.searchField',
+              title: selectCompany.labels.nameAndNationalId,
+              shouldIncludeIsatNumber: true,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'applicantSection',
       title: section.applicant,
       children: [
         buildMultiField({
@@ -78,23 +107,61 @@ export const LoginServiceForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.label',
+                  '',
+                )
+              },
             }),
             buildTextField({
               id: 'applicant.nationalId',
               title: applicant.labels.nationalId,
-              format: '######-####',
               backgroundColor: 'blue',
               width: 'half',
+              format: '######-####',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.nationalId',
+                  '',
+                )
+              },
             }),
-            buildSelectField({
+            buildTextField({
               id: 'applicant.typeOfOperation',
               title: applicant.labels.typeOfOperation,
               backgroundColor: 'blue',
-              options: TYPE_OF_OPERATION.map((value) => ({
-                label: value,
-                value: value,
-              })),
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                return getValueViaPath(
+                  application.answers,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+              },
+            }),
+            buildCustomField({
+              id: 'applicant.invalidIsat',
+              title: applicant.labels.invalidIsat,
+              doesNotRequireAnswer: true,
+              component: 'IsatInvalid',
+              condition: (formValue) => {
+                const isatNr = getValueViaPath(
+                  formValue,
+                  'selectCompany.searchField.isat',
+                  '',
+                )
+                if (isatNr !== undefined) {
+                  return isatNr.slice(0, 2) !== '84'
+                }
+                return false
+              },
             }),
             buildCustomField(
               {

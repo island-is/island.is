@@ -1,6 +1,7 @@
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
   PersonalRepresentativeService,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
@@ -11,6 +12,7 @@ import { PersonalRepresentativesController } from './personalRepresentatives.con
 @Module({
   imports: [
     SequelizeModule.forFeature([
+      PersonalRepresentativeRightType,
       PersonalRepresentativeRight,
       PersonalRepresentativeType,
       PersonalRepresentative,

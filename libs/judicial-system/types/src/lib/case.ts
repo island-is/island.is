@@ -26,19 +26,11 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
-
-export const caseTypesWithMultipleDefendants = [
-  CaseType.SEARCH_WARRANT,
-  CaseType.BANKING_SECRECY_WAIVER,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.PHONE_TAPPING,
-  CaseType.TRACKING_EQUIPMENT,
-  CaseType.VIDEO_RECORDING_EQUIPMENT,
-]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -184,85 +176,93 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
-export interface CreateCase {
-  type: CaseType
-  description?: string
-  policeCaseNumber: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  courtId?: string
-  leadInvestigator?: string
-}
+export type CreateCase = Pick<
+  Case,
+  | 'type'
+  | 'description'
+  | 'policeCaseNumber'
+  | 'defenderName'
+  | 'defenderNationalId'
+  | 'defenderEmail'
+  | 'defenderPhoneNumber'
+  | 'sendRequestToDefender'
+  | 'leadInvestigator'
+>
 
-export interface UpdateCase {
-  type?: string
-  description?: string
+export interface UpdateCase
+  extends Pick<
+    Case,
+    | 'description'
+    | 'defenderName'
+    | 'defenderNationalId'
+    | 'defenderEmail'
+    | 'defenderPhoneNumber'
+    | 'sendRequestToDefender'
+    | 'defenderIsSpokesperson'
+    | 'isHeightenedSecurityLevel'
+    | 'leadInvestigator'
+    | 'arrestDate'
+    | 'requestedCourtDate'
+    | 'translator'
+    | 'requestedValidToDate'
+    | 'demands'
+    | 'lawsBroken'
+    | 'legalBasis'
+    | 'legalProvisions'
+    | 'requestedCustodyRestrictions'
+    | 'requestedOtherRestrictions'
+    | 'caseFacts'
+    | 'legalArguments'
+    | 'requestProsecutorOnlySession'
+    | 'prosecutorOnlySessionRequest'
+    | 'comments'
+    | 'caseFilesComments'
+    | 'courtCaseNumber'
+    | 'sessionArrangements'
+    | 'courtDate'
+    | 'courtLocation'
+    | 'courtRoom'
+    | 'courtStartDate'
+    | 'courtEndTime'
+    | 'isClosedCourtHidden'
+    | 'courtAttendees'
+    | 'prosecutorDemands'
+    | 'courtDocuments'
+    | 'sessionBookings'
+    | 'courtCaseFacts'
+    | 'introduction'
+    | 'courtLegalArguments'
+    | 'ruling'
+    | 'decision'
+    | 'validToDate'
+    | 'isCustodyIsolation'
+    | 'isolationToDate'
+    | 'conclusion'
+    | 'endOfSessionBookings'
+    | 'accusedAppealDecision'
+    | 'accusedAppealAnnouncement'
+    | 'prosecutorAppealDecision'
+    | 'prosecutorAppealAnnouncement'
+    | 'accusedPostponedAppealDate'
+    | 'prosecutorPostponedAppealDate'
+    | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
+    | 'caseResentExplanation'
+    | 'seenByDefender'
+  > {
+  type?: CaseType
+  state?: CaseState
   policeCaseNumber?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
-  isHeightenedSecurityLevel?: boolean
   courtId?: string
-  leadInvestigator?: string
-  arrestDate?: string
-  requestedCourtDate?: string
-  translator?: string
-  requestedValidToDate?: string
-  demands?: string
-  lawsBroken?: string
-  legalBasis?: string
-  legalProvisions?: CaseLegalProvisions[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  requestedOtherRestrictions?: string
-  caseFacts?: string
-  legalArguments?: string
-  requestProsecutorOnlySession?: boolean
-  prosecutorOnlySessionRequest?: string
-  comments?: string
-  caseFilesComments?: string
   prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string
-  courtCaseNumber?: string
-  sessionArrangements?: SessionArrangements
-  courtDate?: string
-  courtLocation?: string
-  courtRoom?: string
-  courtStartDate?: string
-  courtEndTime?: string
-  isClosedCourtHidden?: boolean
-  courtAttendees?: string
-  prosecutorDemands?: string
-  courtDocuments?: CourtDocument[]
-  sessionBookings?: string
-  courtCaseFacts?: string
-  introduction?: string
-  courtLegalArguments?: string
-  ruling?: string
-  decision?: CaseDecision
-  validToDate?: string
-  isCustodyIsolation?: boolean
-  isolationToDate?: string
-  conclusion?: string
-  endOfSessionBookings?: string
-  accusedAppealDecision?: CaseAppealDecision
-  accusedAppealAnnouncement?: string
-  prosecutorAppealDecision?: CaseAppealDecision
-  prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
-  prosecutorPostponedAppealDate?: string
-  registrarId?: string
+  sharedWithProsecutorsOfficeId?: string | null
+  registrarId?: string | null
   judgeId?: string
-  caseModifiedExplanation?: string
-  caseResentExplanation?: string
 }
 
 export interface TransitionCase {
@@ -299,6 +299,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.EXPULSION_FROM_HOME,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
@@ -314,10 +315,6 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
-  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

@@ -11,14 +11,30 @@ import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
 
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
+import { userMonitoring } from '@island.is/user-monitoring'
 
 const {
-  publicRuntimeConfig: { SENTRY_DSN },
+  publicRuntimeConfig: {
+    SENTRY_DSN,
+    ddRumApplicationId,
+    ddRumClientToken,
+    appVersion,
+    environment,
+  },
 } = getConfig()
+
+if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
+  userMonitoring.initDdRum({
+    service: 'skilavottord',
+    applicationId: ddRumApplicationId,
+    clientToken: ddRumClientToken,
+    env: environment,
+    version: appVersion,
+  })
+}
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -87,9 +103,4 @@ class Skilavottord extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint } = serverRuntimeConfig
-
-export default appWithTranslation(
-  withHealthchecks([graphqlEndpoint])(Skilavottord),
-)
+export default appWithTranslation(Skilavottord)

@@ -1,20 +1,22 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { FC, Suspense, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
+
 import { Box, Text } from '@island.is/island-ui/core'
-import { useStore } from '../../store/stateProvider'
-import {
-  ServicePortalWidget,
-  ServicePortalModule,
-  PlausiblePageviewDetail,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
-import WidgetLoading from './WidgetLoading/WidgetLoading'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import Greeting from '../../components/Greeting/Greeting'
-import { User } from 'oidc-client'
 import { useLocale } from '@island.is/localization'
+import {
+  PlausiblePageviewDetail,
+  ServicePortalModule,
+  ServicePortalPath,
+  ServicePortalWidget,
+} from '@island.is/service-portal/core'
+import { User } from '@island.is/shared/types'
+
+import Greeting from '../../components/Greeting/Greeting'
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
+import WidgetLoading from './WidgetLoading/WidgetLoading'
 
 const Widget: FC<{
   widget: ServicePortalWidget

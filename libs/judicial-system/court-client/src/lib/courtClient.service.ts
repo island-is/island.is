@@ -4,6 +4,7 @@ import {
   BadGatewayException,
   Inject,
   Injectable,
+  NotFoundException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common'
 
@@ -57,7 +58,7 @@ type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
 
 type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
 
-interface CourtClientServiceOptions {
+interface CourtsCredentials {
   [key: string]: AuthenticateRequest
 }
 
@@ -71,8 +72,7 @@ export class CourtClientService {
   private readonly createThingbokApi: CreateThingbokApi
   private readonly createEmailApi: CreateEmailApi
   private readonly uploadStreamApi: UploadStreamApi
-
-  private readonly options: CourtClientServiceOptions
+  private readonly options: CourtsCredentials
   private readonly authenticationToken: { [key: string]: string } = {}
 
   constructor(
@@ -170,6 +170,10 @@ export class CourtClientService {
     // Check for known errors
     if (reason === 'FileNotSupported') {
       return new UnsupportedMediaTypeException(reason)
+    }
+
+    if (typeof reason === 'string' && reason.startsWith('Case Not Found')) {
+      return new NotFoundException(reason)
     }
 
     // One step closer to forced relogin.

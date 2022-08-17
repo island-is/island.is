@@ -95,14 +95,6 @@ export const rcCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      autofillPresentations: {
-        id:
-          'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations#markdown',
-        defaultMessage:
-          'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
-        description:
-          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
-      },
       autofillPresentationsV2: {
         id:
           'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations_v2#markdown',
@@ -269,14 +261,6 @@ export const rcCourtRecord = {
       },
     }),
     custodyRestrictions: defineMessages({
-      disclaimer: {
-        id:
-          'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer',
-        defaultMessage:
-          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       disclaimerV2: {
         id:
           'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer_v2',
@@ -309,12 +293,15 @@ export const rcCourtRecord = {
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-  },
-  nextButtonInfo: {
-    id: 'judicial.system.restriction_cases:court_record.next_button_info',
-    defaultMessage:
-      'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
-    description:
-      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
+    nextButtonInfo: defineMessages({
+      text: {
+        id:
+          'judicial.system.restriction_cases:court_record.next_button_info_v2.text',
+        defaultMessage:
+          'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+        description:
+          'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
+      },
+    }),
   },
 }

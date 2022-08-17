@@ -1,10 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { AccidentNotificationStatus } from '@island.is/api/schema'
-import {
-  FieldBaseProps,
-  FormValue,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import {
   AlertMessage,
@@ -17,7 +14,6 @@ import { useLocale } from '@island.is/localization'
 import React, { FC, useCallback, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { AccidentNotificationAnswers } from '../..'
-import { States } from '../../constants'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
 import { inReview } from '../../lib/messages'
 import { ReviewApprovalEnum, SubmittedApplicationData } from '../../types'

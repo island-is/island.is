@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
-import { FocusableBox, Text } from '@island.is/island-ui/core'
-import { config, endpoints } from './config'
-import { useWindowSize } from 'react-use'
-import * as styles from './BoostChatPanel.css'
+import { config, boostChatPanelEndpoints } from './config'
+import { ChatBubble } from '../ChatBubble'
+import { BoostChatPanelProps } from '../types'
 
 declare global {
   interface Window {
@@ -14,16 +12,10 @@ declare global {
   }
 }
 
-interface BoostChatPanelProps {
-  endpoint: keyof typeof endpoints
-  pushUp?: boolean
-}
-
 export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
   endpoint,
   pushUp = false,
 }) => {
-  const { width } = useWindowSize()
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {
@@ -41,19 +33,22 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
                 ...config.chatPanel.styling.settings,
                 conversationId:
                   window.sessionStorage.getItem(
-                    endpoints[endpoint].conversationKey,
+                    boostChatPanelEndpoints[endpoint].conversationKey,
                   ) ?? null,
               },
             },
           },
         }
 
-        window.boost = window.boostInit(endpoints[endpoint].id, settings)
+        window.boost = window.boostInit(
+          boostChatPanelEndpoints[endpoint].id,
+          settings,
+        )
         window.boostEndpoint = endpoint
 
         const onConversationIdChanged = (e) => {
           window.sessionStorage.setItem(
-            endpoints[endpoint].conversationKey,
+            boostChatPanelEndpoints[endpoint].conversationKey,
             e.detail.conversationId,
           )
         }
@@ -66,29 +61,18 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
         setShowButton(true)
       })
 
-      el.src = endpoints[endpoint].url
+      el.src = boostChatPanelEndpoints[endpoint].url
       el.id = 'boost-script'
       document.body.appendChild(el)
     }
   }, [])
 
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !showButton })}>
-      <FocusableBox
-        component="button"
-        tabIndex={0}
-        className={cn(styles.message, pushUp && styles.messagePushUp)}
-        onClick={() => {
-          window.boost.chatPanel.show()
-        }}
-      >
-        <Text variant="h5" color="white">
-          Hæ, get ég aðstoðað?
-        </Text>
-        <div className={styles.messageArrow} />
-        <div className={styles.messageArrowBorder} />
-      </FocusableBox>
-    </div>
+    <ChatBubble
+      text={'Hæ, get ég aðstoðað?'}
+      onClick={() => window.boost.chatPanel.show()}
+      isVisible={showButton}
+    />
   )
 }
 

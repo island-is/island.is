@@ -14,6 +14,7 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
+import { MailchimpModule } from '@island.is/api/domains/mailchimp'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -30,6 +31,7 @@ import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -57,7 +59,12 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
+import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
+import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
+import { PassportsClientConfig } from '@island.is/clients/passports'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -90,26 +97,8 @@ const autoSchemaFile = environment.production
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
-    DrivingLicenseModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        secret: environment.drivingLicense.secret!,
-        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
-        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
-      },
-    }),
-    // DrivingLicenseBook has drivingIstructorGuard that uses drivingLicenseService
-    // DrivingLicenseBookModule needs to register DrivingLicenseModule and uses the same config to do so
-    DrivingLicenseBookModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        secret: environment.drivingLicense.secret!,
-        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
-        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
-      },
-    }),
+    DrivingLicenseModule,
+    DrivingLicenseBookModule,
     EducationModule.register({
       xroad: {
         baseUrl: environment.xroad.baseUrl!,
@@ -195,6 +184,7 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
+    MailchimpModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
@@ -210,6 +200,8 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
+    FinancialStatementsInaoModule,
+    VehiclesModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -259,7 +251,9 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        AdrAndMachineLicenseClientConfig,
         AssetsClientConfig,
+        VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
@@ -273,6 +267,8 @@ const autoSchemaFile = environment.production
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         DrivingLicenseBookClientConfig,
+        DrivingLicenseApiConfig,
+        PassportsClientConfig,
       ],
     }),
   ],

@@ -13,7 +13,7 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.company)
 @Resolver(() => RskCompany)
 @Audit({ namespace: '@island.is/api/company-registry' })
 export class CompanyRegistryResolver {
@@ -65,8 +65,8 @@ export class CompanyRegistryResolver {
     if (rskCompanyItem.companyInfo) return rskCompanyItem.companyInfo
 
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      rskCompanyItem.nationalId ?? '',
+      rskCompanyItem.nationalId,
     )
-    return company.companyInfo
+    return company ? company.companyInfo : undefined
   }
 }

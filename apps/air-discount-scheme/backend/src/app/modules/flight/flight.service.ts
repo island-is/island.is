@@ -232,6 +232,7 @@ export class FlightService {
           : {}),
         ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
         ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
+        ...(body.nationalId ? { '$flight.national_id$': body.nationalId } : {}),
         // We want to show rows that are awaiting credit based on their
         // financial_state_updated instead of booking_date because if they
         // were booked long ago and have recently been cancelled they need

@@ -43,8 +43,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
-  setAndSendDateToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -54,13 +52,14 @@ import {
   courtDocuments,
   closedCourt,
   core,
+  titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import * as Constants from '@island.is/judicial-system/consts'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
@@ -89,7 +88,7 @@ export const CourtRecord: React.FC = () => {
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -102,153 +101,173 @@ export const CourtRecord: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.courtDate) {
-        autofill('courtStartDate', workingCase.courtDate, workingCase)
-      }
-
-      if (workingCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            workingCase.court.name.indexOf('dómur') > -1
-              ? workingCase.court.name.replace('dómur', 'dómi')
-              : workingCase.court.name
-          }`,
-          workingCase,
-        )
-      }
+      const autofillAttendees = []
+      const autofillSessionBookings = []
+      const endOfSessionBookings = []
 
       if (workingCase.courtAttendees !== '') {
-        let autofillAttendees = ''
-
         if (workingCase.prosecutor) {
-          autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
+          autofillAttendees.push(
+            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+          )
         }
 
         if (workingCase.defenderName) {
-          autofillAttendees += `\n${
-            workingCase.defenderName
-          } skipaður verjandi ${formatMessage(core.accused, {
-            suffix:
-              workingCase.defendants &&
-              workingCase.defendants.length > 0 &&
-              workingCase.defendants[0].gender === Gender.FEMALE
-                ? 'u'
-                : 'a',
-          })}`
+          autofillAttendees.push(
+            `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
+              core.accused,
+              {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              },
+            )}`,
+          )
         }
 
         if (workingCase.translator) {
-          autofillAttendees += `\n${workingCase.translator} túlkur`
+          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
         }
 
         if (workingCase.defendants && workingCase.defendants.length > 0) {
-          autofillAttendees += `\n${
-            workingCase.defendants[0].name
-          } ${formatMessage(core.accused, {
-            suffix:
-              workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-          })}`
+          autofillAttendees.push(
+            `\n${workingCase.defendants[0].name} ${formatMessage(core.accused, {
+              suffix:
+                workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            })}`,
+          )
         }
-
-        autofill('courtAttendees', autofillAttendees, workingCase)
       }
 
-      let autofillSessionBookings = ''
-
       if (workingCase.defenderName) {
-        autofillSessionBookings += `${formatMessage(
-          m.sections.sessionBookings.autofillDefender,
-          {
+        autofillSessionBookings.push(
+          `${formatMessage(m.sections.sessionBookings.autofillDefender, {
             defender: workingCase.defenderName,
-          },
-        )}\n\n`
+          })}\n\n`,
+        )
       }
 
       if (workingCase.translator) {
-        autofillSessionBookings += `${formatMessage(
-          m.sections.sessionBookings.autofillTranslator,
-          {
+        autofillSessionBookings.push(
+          `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
             translator: workingCase.translator,
-          },
-        )}\n\n`
+          })}\n\n`,
+        )
       }
 
-      autofillSessionBookings += `${formatMessage(
-        m.sections.sessionBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.sessionBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
+      autofillSessionBookings.push(
+        `${formatMessage(
+          m.sections.sessionBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.sessionBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`,
+      )
 
       if (
         workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.ADMISSION_TO_FACILITY
       ) {
-        autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsV2,
-          {
-            caseType: workingCase.type,
-            accused: formatMessage(core.accused, {
-              suffix:
-                workingCase.defendants &&
-                workingCase.defendants.length > 0 &&
-                workingCase.defendants[0].gender === Gender.FEMALE
-                  ? 'u'
-                  : 'a',
-            }),
-          },
-        )}`
+        autofillSessionBookings.push(
+          `\n\n${formatMessage(
+            m.sections.sessionBookings.autofillPresentationsV2,
+            {
+              caseType: workingCase.type,
+              accused: formatMessage(core.accused, {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              }),
+            },
+          )}`,
+        )
 
         if (
           isAcceptingCaseDecision(workingCase.decision) ||
           workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
         ) {
-          autofill(
-            'endOfSessionBookings',
-            `${
-              isAcceptingCaseDecision(workingCase.decision)
-                ? `${formatCustodyRestrictions(
-                    formatMessage,
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                  )}\n\n`
-                : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+          if (isAcceptingCaseDecision(workingCase.decision)) {
+            const formattedRestrictions = formatCustodyRestrictions(
+              formatMessage,
+              workingCase.type,
+              workingCase.requestedCustodyRestrictions,
+            )
+
+            if (formattedRestrictions) {
+              endOfSessionBookings.push(formattedRestrictions, '\n\n')
+            }
+          }
+
+          endOfSessionBookings.push(
+            formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? CaseType.TRAVEL_BAN
                   : workingCase.type,
-            })}`,
-            workingCase,
+            }),
           )
         }
       } else if (workingCase.type === CaseType.TRAVEL_BAN) {
-        autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsTravelBan,
-        )}`
+        autofillSessionBookings.push(
+          `\n\n${formatMessage(
+            m.sections.sessionBookings.autofillPresentationsTravelBan,
+          )}`,
+        )
 
-        if (isAcceptingCaseDecision(workingCase.decision)) {
-          autofill(
-            'endOfSessionBookings',
+        if (
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.requestedOtherRestrictions
+        ) {
+          endOfSessionBookings.push(
             `${
               workingCase.requestedOtherRestrictions &&
               `${workingCase.requestedOtherRestrictions}\n\n`
             }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType: workingCase.type,
             })}`,
-            workingCase,
           )
         }
       }
 
-      autofill('sessionBookings', autofillSessionBookings, workingCase)
+      setAndSendToServer(
+        [
+          {
+            courtStartDate: workingCase.courtDate,
+            courtLocation:
+              workingCase.court &&
+              `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`,
+            courtAttendees:
+              autofillAttendees.length > 0
+                ? autofillAttendees.join('')
+                : undefined,
+            sessionBookings:
+              autofillSessionBookings.length > 0
+                ? autofillSessionBookings.join('')
+                : undefined,
+            endOfSessionBookings:
+              endOfSessionBookings.length > 0
+                ? endOfSessionBookings.join('')
+                : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -288,14 +307,18 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'courtStartDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtStartDate: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 blueBox={false}
                 required
@@ -343,11 +366,14 @@ export const CourtRecord: React.FC = () => {
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                  [
+                    {
+                      isClosedCourtHidden: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
@@ -928,7 +954,7 @@ export const CourtRecord: React.FC = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndErrorMessage}
                     hasError={courtDocumentEndErrorMessage !== ''}
@@ -949,13 +975,19 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
-          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          hideNextButton={
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+          }
           infoBoxText={
-            !workingCase.decision || !workingCase.conclusion
-              ? formatMessage(m.nextButtonInfo)
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+              ? formatMessage(m.sections.nextButtonInfo.text)
               : ''
           }
         />

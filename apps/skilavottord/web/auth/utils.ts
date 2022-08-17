@@ -7,6 +7,8 @@ type Page =
   | 'recycledVehicles'
   | 'recyclingCompanies'
   | 'accessControl'
+  | 'accessControlCompany'
+  | 'companyInfo'
 
 export const isDeveloper = (role: Role) => role === Role.developer
 
@@ -17,6 +19,11 @@ export const hasPermission = (page: Page, role: Role) => {
 
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
+    recyclingCompanyAdmin: [
+      'deregisterVehicle',
+      'companyInfo',
+      'accessControlCompany',
+    ],
     citizen: ['myCars', 'recycleVehicle'],
     recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
   }

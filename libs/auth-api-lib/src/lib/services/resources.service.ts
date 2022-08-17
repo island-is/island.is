@@ -5,7 +5,8 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
-import { Op, Sequelize, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../config/DelegationConfig'
 import { IdentityResource } from '../entities/models/identity-resource.model'
@@ -423,12 +424,15 @@ export class ResourcesService {
   }
 
   private filterScopeForCustomDelegation(scope: string[], user: User) {
-    const delegationType = user.actor?.delegationType ?? 'Self'
+    const delegationTypes = user.delegationType ?? []
+
     return scope.filter((scopeName) => {
       for (const rule of this.delegationConfig.customScopeRules) {
         if (
           rule.scopeName === scopeName &&
-          rule.onlyForDelegationType.includes(delegationType) === false
+          rule.onlyForDelegationType.some((delType: any) =>
+            delegationTypes.includes(delType),
+          ) === false
         ) {
           return false
         }
@@ -859,7 +863,10 @@ export class ResourcesService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]]> {
-    return this.apiScopeGroup.update({ ...group }, { where: { id: id } })
+    return this.apiScopeGroup.update(
+      { ...group },
+      { where: { id: id }, returning: true },
+    )
   }
 
   /** Delete ApiScopeGroup */
@@ -957,7 +964,10 @@ export class ResourcesService {
     domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
-    return this.domainModel.update({ ...domain }, { where: { name: name } })
+    return this.domainModel.update(
+      { ...domain },
+      { where: { name: name }, returning: true },
+    )
   }
 
   /** Delete Domain */

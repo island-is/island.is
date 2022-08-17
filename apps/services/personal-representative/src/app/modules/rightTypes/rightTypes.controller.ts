@@ -69,7 +69,7 @@ export class RightTypesController {
   @Get(':code')
   @Documentation({
     summary: 'Get a single right type by code',
-    response: { status: 200, type: PersonalRepresentativeRightType },
+    response: { status: 200, type: PersonalRepresentativeRightTypeDTO },
     request: {
       params: {
         code: {
@@ -80,12 +80,12 @@ export class RightTypesController {
       },
     },
   })
-  @Audit<PersonalRepresentativeRightType>({
+  @Audit<PersonalRepresentativeRightTypeDTO>({
     resources: (type) => type.code,
   })
   async getAsync(
     @Param('code') code: string,
-  ): Promise<PersonalRepresentativeRightType> {
+  ): Promise<PersonalRepresentativeRightTypeDTO> {
     if (!code) {
       throw new BadRequestException('Code needs to be provided')
     }
@@ -98,12 +98,13 @@ export class RightTypesController {
       throw new NotFoundException("This particular right type doesn't exist")
     }
 
-    return rightType
+    return rightType.toDTO()
   }
   /** Removes a right type by it's code, by making it invalid */
   @Delete(':code')
   @Documentation({
-    summary: 'Delete a single right type by code',
+    summary:
+      'Mark a single right type invalid by code. Note that the type is not deleted but marked as invalid.',
     response: { status: 204 },
     request: {
       params: {
@@ -138,12 +139,12 @@ export class RightTypesController {
   @Post()
   @Documentation({
     summary: 'Create a right type',
-    response: { status: 201, type: PersonalRepresentativeRightType },
+    response: { status: 201, type: PersonalRepresentativeRightTypeDTO },
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeRightType> {
+  ): Promise<PersonalRepresentativeRightTypeDTO> {
     // Create a new right type
     return this.auditService.auditPromise(
       {
@@ -161,7 +162,7 @@ export class RightTypesController {
   @Put(':code')
   @Documentation({
     summary: 'Update a right type by code',
-    response: { status: 200, type: PersonalRepresentativeRightType },
+    response: { status: 200, type: PersonalRepresentativeRightTypeDTO },
     request: {
       params: {
         code: {
@@ -176,7 +177,7 @@ export class RightTypesController {
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeRightType | null> {
+  ): Promise<PersonalRepresentativeRightTypeDTO | null> {
     // Update right type
     return this.auditService.auditPromise(
       {

@@ -32,7 +32,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
     return {
       ...x,
       approvalDate:
-        x.approvalDate.length > 0
+        x.approvalDate && x.approvalDate.length > 0
           ? format(dateParse(x.approvalDate), dateFormat.is)
           : '',
     }
@@ -47,7 +47,9 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
-            { value: '' },
+            {
+              value: '',
+            },
             {
               value: formatMessage({
                 id: 'sp.finance-schedule:created-date',
@@ -62,13 +64,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
             },
             {
               value: formatMessage({
-                id: 'sp.finance-schedule:total-amount',
-                defaultMessage: 'Heildarupphæð',
+                id: 'sp.finance-schedule:total-schedule-amount',
+                defaultMessage: 'Upphæð áætlunar',
               }),
+              align: 'right',
             },
             {
               value: (
-                <Box display="flex">
+                <Box display="flex" justifyContent="flexEnd">
                   {formatMessage({
                     id: 'sp.finance-schedule:amount-left-without-interest',
                     defaultMessage: 'Eftirstöðvar án vaxta',
@@ -84,13 +87,16 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                   />
                 </Box>
               ),
+              align: 'right',
               element: true,
             },
             {
               value: formatMessage({
-                id: 'sp.finance-schedule:payment-remaining',
-                defaultMessage: 'Greiðslur eftir',
+                id: 'sp.finance-schedule:amount-left-with-interest',
+                defaultMessage: 'Eftirstöðvar með vöxtum',
               }),
+              align: 'right',
+              element: true,
             },
             {
               value: formatMessage({
@@ -98,7 +104,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 defaultMessage: 'Staða',
               }),
             },
-            { value: '', align: 'right' },
+            { value: '' },
           ]}
         />
         <T.Body>

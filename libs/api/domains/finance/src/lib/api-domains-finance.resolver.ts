@@ -29,6 +29,7 @@ import {
   PaymentScheduleDetailModel,
   PaymentScheduleModel,
 } from './models/paymentSchedule.model'
+import { DebtLessCertificateModel } from './models/debtLessCertificate.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
@@ -167,6 +168,7 @@ export class FinanceResolver {
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
   }
@@ -197,7 +199,7 @@ export class FinanceResolver {
     return null
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => DebtStatusModel)
   @Audit()
   @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getDebtStatus(@CurrentUser() user: User) {
@@ -214,6 +216,20 @@ export class FinanceResolver {
     return this.financeService.getPaymentScheduleById(
       user.nationalId,
       input.scheduleNumber,
+      user,
+    )
+  }
+
+  @Query(() => DebtLessCertificateModel)
+  @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.internal)
+  async getDebtLessCertificate(
+    @CurrentUser() user: User,
+    @Args('input') language: string,
+  ) {
+    return this.financeService.getDebtLessCertificate(
+      user.nationalId,
+      language,
       user,
     )
   }

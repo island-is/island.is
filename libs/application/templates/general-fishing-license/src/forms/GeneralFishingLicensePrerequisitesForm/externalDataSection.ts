@@ -21,16 +21,16 @@ export const externalDataSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'directoryOfFisheries',
-          type: 'GeneralFishingLicenseProvider',
-          title: externalData.directoryOfFisheries.title,
-          subTitle: externalData.directoryOfFisheries.description,
-        }),
-        buildDataProviderItem({
           id: 'nationalRegistry',
           type: DataProviderTypes.NationalRegistry,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
+        }),
+        buildDataProviderItem({
+          id: 'directoryOfFisheries',
+          type: 'GeneralFishingLicenseProvider',
+          title: externalData.directoryOfFisheries.title,
+          subTitle: externalData.directoryOfFisheries.description,
         }),
         buildDataProviderItem({
           id: 'feeInfoProvider',

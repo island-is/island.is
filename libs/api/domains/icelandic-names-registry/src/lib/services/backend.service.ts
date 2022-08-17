@@ -20,24 +20,24 @@ class BackendAPI extends RESTDataSource {
     this.baseURL = `${this.options.backendUrl}/api/icelandic-names-registry`
   }
 
-  willSendRequest(request: RequestOptions) {
+  willSendRequest(_request: RequestOptions) {
     this.memoizedResults.clear()
   }
 
   getAll(): Promise<IcelandicName[]> {
-    return this.get(`/all`)
+    return this.get(`/names`)
   }
 
   getById(id: number): Promise<IcelandicName> {
-    return this.get(`/${id}`, undefined, { cacheOptions: { ttl: 0 } })
+    return this.get(`/names/${id}`, undefined, { cacheOptions: { ttl: 0 } })
   }
 
   getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
-    return this.get(`/initial-letter/${initialLetter}`)
+    return this.get(`/names/initial-letter/${initialLetter}`)
   }
 
   getBySearch(q: string): Promise<IcelandicName[]> {
-    return this.get(`/search/${q}`)
+    return this.get(`/names/search/${q}`)
   }
 
   updateById(
@@ -45,18 +45,20 @@ class BackendAPI extends RESTDataSource {
     body: CreateIcelandicNameInput,
     authorization: string,
   ): Promise<IcelandicName> {
-    return this.patch(`/${id}`, body, { headers: { authorization } })
+    return this.patch(`/names/${id}`, body, { headers: { authorization } })
   }
 
   create(
     body: CreateIcelandicNameInput,
     authorization: string,
   ): Promise<IcelandicName> {
-    return this.post(`/`, body, { headers: { authorization } })
+    return this.post(`/names/`, body, { headers: { authorization } })
   }
 
   deleteById(id: number, authorization: string): Promise<number> {
-    return this.delete(`/${id}`, undefined, { headers: { authorization } })
+    return this.delete(`/names/${id}`, undefined, {
+      headers: { authorization },
+    })
   }
 }
 

@@ -1,15 +1,12 @@
 import {
   buildForm,
-  Form,
-  FormModes,
   buildCheckboxField,
   buildSection,
   buildMultiField,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
 import { YES, NO } from '../lib/constants'
-import { m } from '../lib/messages'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 
 export const witnessTwoConfirmation: Form = buildForm({
   id: 'witness2Confirmation',

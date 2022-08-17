@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsArray, ArrayNotEmpty } from 'class-validator'
+import { IsNotEmpty, IsString, IsArray } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentativeDTO } from './personal-representative.dto'
 

@@ -63,6 +63,11 @@ export interface AutoAuthOptions {
    * Additional configuration for token exchange.
    */
   tokenExchange?: AutoAuthTokenExchangeOptions
+
+  /**
+   * Optional configuration for token request URL. Used when the token endpoint doesn't follow the '{issuer}/connect/token' pattern.
+   */
+  tokenEndpoint?: string
 }
 
 export interface AuthMiddlewareOptions {
@@ -111,7 +116,8 @@ export const withAutoAuth = ({
     useCache = false,
   } = options.tokenExchange || {}
   const tokenCacheManager = caching({ store: 'memory', ttl: 0 })
-  const tokenEndpoint = `${options.issuer}/connect/token`
+  const tokenEndpoint =
+    options.tokenEndpoint ?? `${options.issuer}/connect/token`
   if (useCache && !cache) {
     logger.warn(
       `Fetch (${name}): AutoAuth configured to use cache but no cache manager configured.`,

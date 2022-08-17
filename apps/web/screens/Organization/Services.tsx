@@ -37,11 +37,8 @@ import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -65,11 +62,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   sort,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -245,7 +237,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 <LinkCard
                   isFocused={isFocused}
                   tag={
-                    !!article.processEntry && n('applicationProcess', 'Umsókn')
+                    (!!article.processEntry ||
+                      article.processEntryButtonText) &&
+                    n(article.processEntryButtonText || 'application', 'Umsókn')
                   }
                 >
                   {article.title}
@@ -339,7 +333,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

@@ -9,8 +9,11 @@ export class RskCompanyInfo {
   @Field(() => [RskCompanyFormOfOperation])
   formOfOperation: RskCompanyFormOfOperation[] = []
 
-  @Field(() => [RskCompanyAddress])
-  address: RskCompanyAddress[] = []
+  @Field(() => RskCompanyAddress, { nullable: true })
+  legalDomicile?: RskCompanyAddress
+
+  @Field(() => RskCompanyAddress, { nullable: true })
+  address?: RskCompanyAddress
 
   @Field(() => [RskCompanyRelatedParty])
   relatedParty: RskCompanyRelatedParty[] = []

@@ -34,4 +34,9 @@ export const error = defineMessages({
       'Villa kom upp við að sækja verðskrá hjá Fjársýslunni fyrir Fiskistofu',
     description: 'Error came up',
   },
+  noShipsFoundError: {
+    id: 'gfl.application:error.noShipsFoundError',
+    defaultMessage: 'Engin skip fundust, ekki er hægt að hefja umsókn',
+    description: 'Error message when no ships are found',
+  },
 })

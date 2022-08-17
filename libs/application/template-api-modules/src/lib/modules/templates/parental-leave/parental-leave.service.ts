@@ -8,29 +8,43 @@ import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
+  Application,
+} from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getAvailableRightsInDays,
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  BaseTemplateAPIModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  assignLinkEmployerSMS,
+  linkOtherParentSMS,
 } from './emailGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { SmsService } from '@island.is/nova-sms'
+import { ConfigService } from '@nestjs/config'
+import { getConfigValue } from '../../shared/shared.utils'
+import { generateEmployerRejected } from './emailGenerators/employerRejectedEmail'
 
 interface VMSTError {
   type: string
@@ -54,6 +68,8 @@ export class ParentalLeaveService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly smsService: SmsService,
+    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {}
 
   private parseErrors(e: Error | VMSTError) {
@@ -67,27 +83,105 @@ export class ParentalLeaveService {
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
+    const { otherParentPhoneNumber } = getApplicationAnswers(
+      application.answers,
+    )
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
+
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
       application,
     )
+
+    if (otherParentPhoneNumber) {
+      await this.smsService.sendSms(
+        otherParentPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${linkOtherParentSMS}`,
+      )
+    }
   }
 
   async notifyApplicantOfRejectionFromOtherParent({
     application,
   }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.sendEmail(
       generateOtherParentRejected,
       application,
     )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
+        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
+  }
+
+  async notifyApplicantOfRejectionFromEmployer({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateEmployerRejected,
+      application,
+    )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
+        Your employer has denied your request. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
+    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
+
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
+
+    // send confirmation sms to employer
+    if (employerPhoneNumber) {
+      await this.smsService.sendSms(
+        employerPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${assignLinkEmployerSMS}`,
+      )
+    }
   }
 
   async getSelfEmployedPdf(application: Application) {
@@ -194,7 +288,7 @@ export class ParentalLeaveService {
       }
 
       const isUsingTransferredRights =
-        numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
+        numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
 

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -14,9 +14,9 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { StepOneForm } from './StepOneForm'
 
@@ -54,32 +54,35 @@ export const StepOne: React.FC = () => {
           citizenship: theCase.defendants[0].citizenship,
         })
 
-        router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+        router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
       }
     } else {
-      router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
+      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }
   }
 
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
-      )
+  const updateDefendantState = useCallback(
+    (defendantId: string, update: UpdateDefendant) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
 
-      const newDefendants = [...workingCase.defendants]
+        const newDefendants = [...theCase.defendants]
 
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
-      }
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
 
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
-    }
-  }
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [setWorkingCase],
+  )
 
   return (
     <PageLayout

@@ -466,6 +466,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
@@ -498,7 +499,7 @@ describe('isCaseBlockedFromUser', () => {
     )
   })
 
-  it('it should block an accepted travel ban case from prison staff', () => {
+  it('should block an accepted travel ban case from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -518,7 +519,7 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(true)
   })
 
-  it('it should not read block an accepted travel ban case from prison admin staff', () => {
+  it('should not read block an accepted travel ban case from prison admin staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -659,7 +660,7 @@ describe('isCaseBlockedFromUser', () => {
     const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(true)
+    expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
 
@@ -679,7 +680,7 @@ describe('isCaseBlockedFromUser', () => {
     const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(true)
+    expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
 })

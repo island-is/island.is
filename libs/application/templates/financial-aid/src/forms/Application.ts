@@ -5,10 +5,8 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
-  DefaultEvents,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
@@ -43,14 +41,14 @@ export const Application: Form = buildForm({
           title: m.unknownRelationship.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'UnknownRelationship',
+              id: Routes.UNKNOWNRELATIONSHIP,
               title: m.unknownRelationship.general.pageTitle,
               component: 'UnknownRelationshipForm',
             }),
           ],
         }),
         buildSubSection({
-          id: 'homeCircumstancesForm',
+          id: Routes.HOMECIRCUMSTANCES,
           title: m.homeCircumstancesForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -61,7 +59,7 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'studentForm',
+          id: Routes.STUDENT,
           title: m.studentForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -72,7 +70,7 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'employmentForm',
+          id: Routes.EMPLOYMENT,
           title: m.employmentForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -101,7 +99,7 @@ export const Application: Form = buildForm({
         }),
         buildSubSection({
           condition: (answers) => answers.income === ApproveOptions.Yes,
-          id: 'incomeFiles',
+          id: Routes.INCOMEFILES,
           title: m.incomeFilesForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -112,7 +110,12 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'taxReturnFilesForm',
+          condition: (_, externalData) =>
+            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+              .municipalitiesDirectTaxPayments.success === false ||
+            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+              ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
+          id: Routes.TAXRETURNFILES,
           title: m.taxReturnForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -123,7 +126,7 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'personalTaxCreditForm',
+          id: Routes.PERSONALTAXCREDIT,
           title: m.personalTaxCreditForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -134,7 +137,7 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'bankInfoForm',
+          id: Routes.BANKINFO,
           title: m.bankInfoForm.general.sectionTitle,
           children: [
             buildCustomField({
@@ -147,7 +150,7 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contactInfoForm',
+      id: Routes.CONTACTINFO,
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
@@ -158,15 +161,15 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'summaryForm',
+      id: Routes.SUMMARY,
       title: m.summaryForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'summaryForm',
+          id: Routes.SUMMARY,
           title: m.summaryForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'summaryForm',
+              id: Routes.SUMMARY,
               title: m.summaryForm.general.pageTitle,
               component: 'SummaryForm',
             }),
@@ -186,11 +189,11 @@ export const Application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
+      id: Routes.CONFIRMATION,
       title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'applicantConfirmation',
+          id: Routes.CONFIRMATION,
           title: m.confirmation.general.pageTitle,
           component: 'ApplicantConfirmation',
         }),

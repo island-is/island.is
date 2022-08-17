@@ -7,10 +7,12 @@ import { FormContentContainer } from '@island.is/judicial-system-web/src/compone
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages/RestrictionCases/Court/receptionAndAssignment'
+import { rcReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages'
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+
+type JudgeSelectOption = ReactSelectOption & { judge: User }
+type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
 interface Props {
   workingCase: Case
@@ -39,7 +41,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
     users,
   } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { setAndSendToServer } = useCase()
 
   const judges = (users ?? [])
     .filter(
@@ -48,7 +50,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
         user.institution?.id === workingCase?.court?.id,
     )
     .map((judge: User) => {
-      return { label: judge.name, value: judge.id }
+      return { label: judge.name, value: judge.id, judge }
     })
 
   const registrars = (users ?? [])
@@ -58,7 +60,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
         user.institution?.id === workingCase?.court?.id,
     )
     .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id }
+      return { label: registrar.name, value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
@@ -69,29 +71,23 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
 
-  const setJudge = (id: string) => {
+  const setJudge = (judge: User) => {
     if (workingCase) {
-      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
-
-      const judge = users?.find((j) => j.id === id)
-
-      setWorkingCase({ ...workingCase, judge: judge })
+      setAndSendToServer(
+        [{ judgeId: judge.id, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
     }
   }
 
-  const setRegistrar = (id?: string) => {
+  const setRegistrar = (registrar?: User) => {
     if (workingCase) {
       setAndSendToServer(
-        'registrarId',
-        id,
+        [{ registrarId: registrar?.id ?? null, force: true }],
         workingCase,
         setWorkingCase,
-        updateCase,
       )
-
-      const registrar = users?.find((r) => r.id === id)
-
-      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -129,7 +125,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
           value={defaultJudge}
           options={judges}
           onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-            setJudge((selectedOption as ReactSelectOption).value.toString())
+            setJudge((selectedOption as JudgeSelectOption).judge)
           }
           required
         />
@@ -149,9 +145,7 @@ const ReceptionAndAssignementForm: React.FC<Props> = (props) => {
           options={registrars}
           onChange={(selectedOption: ValueType<ReactSelectOption>) => {
             if (selectedOption) {
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+              setRegistrar((selectedOption as RegistrarSelectOption).registrar)
             } else {
               setRegistrar(undefined)
             }

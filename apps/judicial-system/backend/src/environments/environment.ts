@@ -15,18 +15,14 @@ const devConfig = {
   },
   email: {
     fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Guðjón Guðjónsson',
+    fromName: 'Réttarvörslugátt',
     replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Guðjón Guðjónsson',
+    replyToName: 'Réttarvörslugátt',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD ?? '',
-  },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
@@ -36,7 +32,7 @@ const devConfig = {
   },
   admin: {
     users:
-      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla"}]',
+      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin","title":"notendaumsjón"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla","title":"notendaumsjón"}]',
   },
   files: {
     region: 'eu-west-1',
@@ -65,6 +61,7 @@ const devConfig = {
       'http://localhost:4200/krafa/stadfesta/',
     prosecutorInvestigationCaseOverviewUrl:
       'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
+    defenderCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -104,12 +101,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.NOVA_PASSWORD) {
     throw new Error('Missing NOVA_PASSWORD environment.')
-  }
-  if (!process.env.DOKOBIT_URL) {
-    throw new Error('Missing DOKOBIT_URL environment.')
-  }
-  if (!process.env.DOKOBIT_ACCESS_TOKEN) {
-    throw new Error('Missing DOKOBIT_ACCESS_TOKEN environment.')
   }
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
@@ -191,10 +182,6 @@ const prodConfig = {
     username: process.env.NOVA_USERNAME ?? '',
     password: process.env.NOVA_PASSWORD ?? '',
   },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL ?? '',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
-  },
   emailOptions: {
     useTestAccount: false,
     options: {
@@ -231,6 +218,7 @@ const prodConfig = {
       process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
     prosecutorInvestigationCaseOverviewUrl:
       process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
+    defenderCaseOverviewUrl: process.env.DEFENDER_CASE_OVERVIEW_URL,
   },
 }
 

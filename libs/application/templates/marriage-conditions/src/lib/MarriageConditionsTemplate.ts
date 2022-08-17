@@ -1,17 +1,17 @@
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { Events, States, Roles } from './constants'
+import { dataSchema } from './dataSchema'
+import { m } from '../lib/messages'
+import { ApiActions } from './constants'
 import {
   ApplicationTemplate,
   ApplicationContext,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationRole,
-  DefaultStateLifeCycle,
   Application,
   DefaultEvents,
-} from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
-import { dataSchema } from './dataSchema'
-import { m } from '../lib/messages'
-import { ApiActions } from './constants'
+} from '@island.is/application/types'
 
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -135,78 +135,11 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
-            {
-              id: Roles.WITNESS_ONE,
-              formLoader: () =>
-                import('../forms/witnessOneConfirmation').then(
-                  (val) => val.witnessOneConfirmation,
-                ),
-              read: 'all',
-              write: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
-                  type: 'primary',
-                },
-              ],
-            },
           ],
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.WITNESS_ONE_CONFIRMED },
         },
-      },
-      [States.WITNESS_ONE_CONFIRMED]: {
-        meta: {
-          name: 'witness_one_confirmed',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.WITNESS_ONE,
-              formLoader: () => import('../forms/done').then((val) => val.done),
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.WITNESS_TWO,
-              formLoader: () =>
-                import('../forms/witnessTwoConfirmation').then(
-                  (val) => val.witnessTwoConfirmation,
-                ),
-              read: 'all',
-              write: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
-                  type: 'primary',
-                },
-              ],
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.WITNESS_TWO_CONFIRMED },
-        },
-      },
-      [States.WITNESS_TWO_CONFIRMED]: {
-        meta: {
-          name: 'witness_two_confirmed',
-          progress: 1,
-          lifecycle: DefaultStateLifeCycle,
-
-          roles: [
-            {
-              id: Roles.WITNESS_TWO,
-              formLoader: () => import('../forms/done').then((val) => val.done),
-              read: 'all',
-              write: 'all',
-            },
-          ],
-        },
-        type: 'final' as const,
       },
     },
   },
@@ -216,12 +149,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (application.state === States.APPLICANT_DONE) {
       return Roles.ASSIGNED_SPOUSE
-    } else if (application.state === States.SPOUSE_CONFIRMED) {
-      return Roles.WITNESS_ONE
-    } else if (application.state === States.WITNESS_ONE_CONFIRMED) {
-      return Roles.WITNESS_TWO
-    } else if (application.state === States.WITNESS_TWO_CONFIRMED) {
-      return Roles.WITNESS_TWO
     } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }

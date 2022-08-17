@@ -31,6 +31,7 @@ export class NationalRegistryService {
       gender: this.formatGender(user.Kyn),
       maritalStatus: this.formatMaritalStatus(user.hju),
       religion: user.Trufelag, // TODO: format from user.Tru
+      familyNr: user.Fjolsknr,
       banMarking: {
         banMarked:
           user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
@@ -126,7 +127,7 @@ export class NationalRegistryService {
         nationality: familyMember.RikisfangLand,
         homeAddress: familyMember.Logheimili,
         municipality: familyMember.LogheimiliSveitarfelag,
-        postal: familyMember.Postnr,
+        postal: `${familyMember.Postnr} ${familyMember.LogheimiliSveitarfelag}`, // Same structure as familyChild.Postaritun
         fate: familyMember.Afdrif1 || familyMember.Afdrif2,
       }
     } else {

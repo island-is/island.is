@@ -6,18 +6,18 @@ import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 
 @ObjectType()
 export class Discount {
-  @Field((_1) => ID)
+  @Field(() => ID)
   nationalId: string
 
   @Field()
   discountCode: string
 
-  @Field((type) => [GQLConnectionDiscountCode])
+  @Field(() => [GQLConnectionDiscountCode])
   connectionDiscountCodes: ConnectionDiscountCode[]
 
   @Field()
   expiresIn: number
 
-  @Field((_1) => User)
+  @Field(() => User)
   user: User
 }

@@ -6,9 +6,8 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 
 export const MissingInfoForm: Form = buildForm({

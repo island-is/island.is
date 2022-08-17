@@ -1,11 +1,13 @@
 import {
+  capitalize,
+  caseTypes,
+  enumerate,
   formatDate,
   formatNationalId,
-  laws,
-  caseTypes,
   getSupportedCaseCustodyRestrictions,
-  enumerate,
+  laws,
 } from '@island.is/judicial-system/formatters'
+
 import type { FormatMessage } from '@island.is/cms-translations'
 import {
   CaseCustodyRestrictions,
@@ -16,7 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
-import { notifications, custodyNotice } from '../messages'
+import { notifications, custodyNotice, courtUpload } from '../messages'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -137,6 +139,29 @@ export function formatCourtResubmittedToCourtSmsNotification(
   })
 }
 
+export function formatDefenderResubmittedToCourtEmailNotification(
+  formatMessage: FormatMessage,
+  policeCaseNumber: string,
+  overviewUrl: string,
+  courtName?: string,
+) {
+  const subject = formatMessage(
+    notifications.defenderResubmittedToCourt.subject,
+    {
+      policeCaseNumber,
+    },
+  )
+
+  const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
+    policeCaseNumber,
+    court: courtName?.replace('dómur', 'dómi') || '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
+}
+
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   caseType?: CaseType,
@@ -150,7 +175,7 @@ export function formatProsecutorReadyForCourtEmailNotification(
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
     caseType,
-    courtName: courtName,
+    courtName: courtName?.replace('dómur', 'dóm'),
     policeCaseNumber,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
@@ -284,19 +309,19 @@ export function formatPrisonCourtDateEmailNotification(
   )
 
   const isolationText = formatMessage(
-    notifications.prisonCourtDateEmail.isolationText,
-    { isolation: isolation ? 'TRUE' : 'FALSE' },
+    notifications.prisonCourtDateEmail.isolationTextV2,
+    { isolation: isolation },
   )
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.body, {
+  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension,
     courtDateText,
     requestText,
     isolationText,
@@ -360,7 +385,29 @@ export function formatDefenderCourtDateEmailNotification(
   })
 }
 
-// This function is only intended for case type CUSTODY and ADMISSION_TO_FACILITY
+export function formatDefenderCourtDateLinkEmailNotification(
+  formatMessage: FormatMessage,
+  overviewUrl?: string,
+  court?: string,
+  courtCaseNumber?: string,
+): string {
+  const cf = notifications.defenderCourtDateEmail
+  const body = formatMessage(cf.linkBody, {
+    courtCaseNumber,
+  })
+
+  const link = formatMessage(cf.link, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: court?.replace('dómur', 'dómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return `${body}${link}`
+}
+
+// This function is only intended for case type CUSTODY and
+// ADMISSION_TO_FACILITY
 export function formatPrisonRulingEmailNotification(
   formatMessage: FormatMessage,
   type: CaseType,
@@ -370,6 +417,25 @@ export function formatPrisonRulingEmailNotification(
     courtEndTime: courtEndTime ? formatDate(courtEndTime, 'PPP') : 'NONE',
     caseType: type,
   })
+}
+
+export function formatPrisonAdministrationRulingNotification(
+  formatMessage: FormatMessage,
+  courtCaseNumber: string | undefined,
+  courtName: string | undefined,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.signedRuling.subject, {
+    courtCaseNumber,
+  })
+  const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
+    courtCaseNumber: courtCaseNumber ?? '',
+    courtName: courtName?.replace('dómur', 'dómi') ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: `</a>`,
+  })
+
+  return { subject, body }
 }
 
 export function formatCourtRevokedSmsNotification(
@@ -432,10 +498,10 @@ export function formatPrisonRevokedEmailNotification(
   const defenderText = formatMessage(cf.defender, {
     defenderName: defenderName || 'NONE',
   })
-  const revokedCaseText = formatMessage(cf.revokedCase, {
+  const revokedCaseText = formatMessage(cf.revokedCaseV2, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
-    isExtension: isExtension ? 'yes' : 'no',
+    isExtension,
     courtText,
     courtDateText,
   })
@@ -531,5 +597,27 @@ export function formatCustodyRestrictions(
   return formatMessage(custodyNotice.withFurtherRestrictions, {
     restrictions: formatedRestrictions,
     caseType: caseType,
+  })
+}
+
+export function formatRulingModifiedHistory(
+  rulingModifiedHistory: string | undefined,
+  newRulingDate: Date,
+  judgeName?: string,
+  judgeTitle?: string,
+): string {
+  const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
+  const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
+  return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
+}
+
+export function formatCourtUploadRulingTitle(
+  formatMessage: FormatMessage,
+  courtCaseNumber: string | undefined,
+  isModifyingRuling: boolean,
+) {
+  return formatMessage(courtUpload.rulingV2, {
+    courtCaseNumber: courtCaseNumber ?? '',
+    isModifyingRuling,
   })
 }

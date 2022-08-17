@@ -173,6 +173,96 @@ describe('ActorDelegationsController', () => {
         expectMatchingObject(res.body[0], expectedModel)
       })
 
+      it('should return custom delegations when the delegationTypes filter has custom type', async () => {
+        // Arrange
+        const expectedModel = (
+          await delegationModel.create(
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[5].name],
+              today,
+            }),
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
+        // The expected model should not contain the scope from the other org
+        expectedModel.scopes = expectedModel.scopes?.filter(
+          (s) => s.scopeName === Scopes[0].name,
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
+      })
+
+      it('should return delegations when the delegationTypes filter is empty', async () => {
+        // Arrange
+        const expectedModel = (
+          await delegationModel.create(
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[5].name],
+              today,
+            }),
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
+        // The expected model should not contain the scope from the other org
+        expectedModel.scopes = expectedModel.scopes?.filter(
+          (s) => s.scopeName === Scopes[0].name,
+        )
+
+        // Act
+        const res = await server.get(`${path}${query}&delegationTypes=`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
+      })
+
+      it('should not return custom delegations when the delegationTypes filter does not include custom type', async () => {
+        // Arrange
+        const expectedModel = (
+          await delegationModel.create(
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[5].name],
+              today,
+            }),
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
+        // The expected model should not contain the scope from the other org
+        expectedModel.scopes = expectedModel.scopes?.filter(
+          (s) => s.scopeName === Scopes[0].name,
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.ProcurationHolder}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+      })
+
       it('should return no delegation when the client does not have access to any scope', async () => {
         // Arrange
         await delegationModel.create(
@@ -203,7 +293,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(400)
         expect(res.body).toMatchObject({
           status: 400,
-          type: 'https://httpstatuses.com/400',
+          type: 'https://httpstatuses.org/400',
           title: 'Bad Request',
           detail:
             "'direction' can only be set to incoming for the /actor alias",
@@ -213,13 +303,13 @@ describe('ActorDelegationsController', () => {
       describe('when scope is no longer allowed for delegation', () => {
         beforeAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: false } as ApiScope,
+            { allowExplicitDelegationGrant: false },
             { where: { name: Scopes[1].name } },
           )
         })
         afterAll(() => {
           return apiScopeModel.update(
-            { allowExplicitDelegationGrant: true } as ApiScope,
+            { allowExplicitDelegationGrant: true },
             { where: { name: Scopes[1].name } },
           )
         })
@@ -356,6 +446,29 @@ describe('ActorDelegationsController', () => {
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(0)
         })
+
+        it('should return a legal guardian delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].type).toEqual(DelegationType.LegalGuardian)
+        })
+
+        it('should not return a legal guardian delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
       })
 
       describe('with procuring delegations', () => {
@@ -394,7 +507,7 @@ describe('ActorDelegationsController', () => {
           expect(res.body[0]).toEqual(expectedDelegation)
         })
 
-        it('should not return delegations when client does not support legal guardian delegations', async () => {
+        it('should not return delegations when client does not support procuring holder delegations', async () => {
           // Arrange
           await clientModel.update(
             { supportsProcuringHolders: false },
@@ -403,6 +516,29 @@ describe('ActorDelegationsController', () => {
 
           // Act
           const res = await server.get(`${path}${query}`)
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
+
+        it('should return a procuring holder delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].type).toEqual(DelegationType.ProcurationHolder)
+        })
+
+        it('should not return a procuring holder delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
 
           // Assert
           expect(res.status).toEqual(200)
@@ -516,6 +652,31 @@ describe('ActorDelegationsController', () => {
           expect(res.body).toHaveLength(0)
         })
 
+        it('should return a personal representative delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+          expect(res.body[0].type).toEqual(
+            DelegationType.PersonalRepresentative,
+          )
+        })
+
+        it('should not return a personal representative delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.ProcurationHolder}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
+
         afterAll(async () => {
           await prRightsModel.destroy({
             where: {},
@@ -564,7 +725,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(401)
         expect(res.body).toMatchObject({
           status: 401,
-          type: 'https://httpstatuses.com/401',
+          type: 'https://httpstatuses.org/401',
           title: 'Unauthorized',
         })
 
@@ -590,7 +751,7 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(403)
         expect(res.body).toMatchObject({
           status: 403,
-          type: 'https://httpstatuses.com/403',
+          type: 'https://httpstatuses.org/403',
           title: 'Forbidden',
           detail: 'Forbidden resource',
         })

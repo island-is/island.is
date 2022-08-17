@@ -1,10 +1,8 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import {
-  ApplicationContext,
-  getValueViaPath,
-} from '@island.is/application/core'
-import { UploadFile } from '@island.is/island-ui/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
+
 import {
   FamilyStatus,
   MartialStatusType,
@@ -19,6 +17,8 @@ import {
   OverrideAnswerSchema,
   UploadFileType,
 } from '..'
+import { UploadFile } from '@island.is/island-ui/core'
+import { ApplicationStates } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -59,7 +59,7 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
     externalData,
     `nationalRegistry.data.municipality.`,
   ) as Municipality | null
-  return municipality == null
+  return municipality == null || !municipality.active
 }
 
 export const encodeFilenames = (filename: string) =>
@@ -74,6 +74,8 @@ export function findFamilyStatus(
       externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
     ) === MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
+    case externalData.nationalRegistry?.data?.applicant?.spouse != null:
+      return FamilyStatus.COHABITATION
     case answers?.relationshipStatus?.unregisteredCohabitation ===
       ApproveOptions.Yes:
       return FamilyStatus.UNREGISTERED_COBAHITATION
@@ -88,7 +90,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'veita.data',
   ) as CurrentApplication
-  return !dataProvider.currentApplicationId
+  return dataProvider.currentApplicationId != null
 }
 
 export const hasFiles = (
@@ -97,4 +99,11 @@ export const hasFiles = (
 ) => {
   const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
   return files && files.length > 0
+}
+
+export const waitingForSpouse = (state: string) => {
+  return (
+    state === ApplicationStates.SPOUSE ||
+    state === ApplicationStates.PREREQUISITESSPOUSE
+  )
 }

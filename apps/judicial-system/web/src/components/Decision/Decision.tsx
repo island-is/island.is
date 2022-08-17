@@ -3,31 +3,27 @@ import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React from 'react'
 import { BlueBox } from '..'
-import { setAndSendToServer } from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
-
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string
   dismissLabelText: string
   acceptingAlternativeTravelBanLabelText?: string
+  onChange: (decision: CaseDecision) => void
+  disabled?: boolean
 }
 
-const Decision: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    acceptedLabelText,
-    acceptingAlternativeTravelBanLabelText,
-    rejectedLabelText,
-    partiallyAcceptedLabelText,
-    dismissLabelText,
-  } = props
-  const { updateCase } = useCase()
-
+const Decision: React.FC<Props> = ({
+  workingCase,
+  acceptedLabelText,
+  acceptingAlternativeTravelBanLabelText,
+  rejectedLabelText,
+  partiallyAcceptedLabelText,
+  dismissLabelText,
+  onChange,
+  disabled = false,
+}) => {
   return (
     <BlueBox>
       <Box marginBottom={2}>
@@ -37,16 +33,11 @@ const Decision: React.FC<Props> = (props) => {
           label={acceptedLabelText}
           checked={workingCase.decision === CaseDecision.ACCEPTING}
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.ACCEPTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            onChange(CaseDecision.ACCEPTING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
       {workingCase.type !== CaseType.TRAVEL_BAN && (
@@ -57,16 +48,11 @@ const Decision: React.FC<Props> = (props) => {
             label={partiallyAcceptedLabelText}
             checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
             onChange={() => {
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_PARTIALLY,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
+              onChange(CaseDecision.ACCEPTING_PARTIALLY)
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -77,16 +63,11 @@ const Decision: React.FC<Props> = (props) => {
           label={rejectedLabelText}
           checked={workingCase.decision === CaseDecision.REJECTING}
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.REJECTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            onChange(CaseDecision.REJECTING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
       {(workingCase.type === CaseType.CUSTODY ||
@@ -101,16 +82,11 @@ const Decision: React.FC<Props> = (props) => {
               CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             }
             onChange={() => {
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
+              onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -121,16 +97,11 @@ const Decision: React.FC<Props> = (props) => {
           label={dismissLabelText}
           checked={workingCase.decision === CaseDecision.DISMISSING}
           onChange={() => {
-            setAndSendToServer(
-              'decision',
-              CaseDecision.DISMISSING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
+            onChange(CaseDecision.DISMISSING)
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
     </BlueBox>

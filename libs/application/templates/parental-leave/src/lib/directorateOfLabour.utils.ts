@@ -166,7 +166,7 @@ export const calculatePeriodLength = (
   let currentDate = start
   let cost = 0
 
-  while (currentDate < end) {
+  while (currentDate <= end) {
     const daysInMonth = getDaysInMonth(currentDate)
     const dayOfMonth = currentDate.getDate()
     const daysTillEndOfMonth = daysInMonth - dayOfMonth
@@ -177,16 +177,7 @@ export const calculatePeriodLength = (
     let costOfMonth = 0
 
     if (dateAtEndOfIteration.getDate() === daysInMonth) {
-      /* Scenarios:
-          13.feb - 28 feb
-          13.mar - 31.mar
-          13.mar - 02.apr
-      */
-      if (dayOfMonth !== 1 && end.getMonth() - 1 === start.getMonth()) {
-        costOfMonth = daysInMonth - dayOfMonth + 1
-      } else {
-        costOfMonth = 30 - dayOfMonth + 1
-      }
+      costOfMonth = 30 - dayOfMonth + 1
     } else {
       costOfMonth = end.getDate() - dayOfMonth + 1
     }

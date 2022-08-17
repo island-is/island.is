@@ -9,9 +9,8 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import { rcDemands, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import StepThreeForm from './StepThreeForm'
@@ -24,7 +23,7 @@ export const StepThree: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
@@ -36,19 +35,21 @@ export const StepThree: React.FC = () => {
       ) > -1 &&
       workingCase.defendants
     ) {
-      autofill(
-        'requestedOtherRestrictions',
-        formatMessage(
-          rcDemands.sections.custodyRestrictions
-            .requestedOtherRestrictionsAutofill,
-          { gender: workingCase.defendants[0].gender },
-        ),
+      setAndSendToServer(
+        [
+          {
+            requestedOtherRestrictions: formatMessage(
+              rcDemands.sections.custodyRestrictions
+                .requestedOtherRestrictionsAutofill,
+              { gender: workingCase.defendants[0].gender },
+            ),
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
-
-      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <PageLayout

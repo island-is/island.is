@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildCustomField,
-  Form,
-  FormModes,
   buildDescriptionField,
   buildCheckboxField,
   buildSection,
@@ -10,10 +8,10 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
 import { NO, YES } from '../lib/constants'
 import { m } from '../lib/messages'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 
 export const spouseConfirmation: Form = buildForm({
   id: 'spouseConfirmation',

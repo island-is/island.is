@@ -1,10 +1,10 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationStateSchema,
-  ApplicationTemplateHelper,
   DefaultEvents,
   ExternalData,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
 import { createApplication } from '@island.is/testing/fixtures'
 
@@ -16,7 +16,7 @@ describe('General petition application template', () => {
         GeneralPetitionApplicationTemplate,
       )
 
-      const [hasChanged, newState, newApplication] = helper.changeState({
+      const [hasChanged, newState, _] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
 

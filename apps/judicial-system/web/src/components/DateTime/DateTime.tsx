@@ -77,14 +77,12 @@ const DateTime: React.FC<Props> = (props) => {
   ) => {
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeError = validations.find(
-      (v) => validate(time ?? '', v).isValid === false,
-    )
+    const timeIsValid = validate([[time, validations]]).isValid
 
     return (
-      (required && date !== undefined && timeError === undefined) ||
+      (required && date !== undefined && timeIsValid) ||
       (required === false && date === undefined) ||
-      (date !== undefined && timeError === undefined)
+      (date !== undefined && timeIsValid)
     )
   }
 
@@ -113,11 +111,9 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
+    const timeValidation = validate([[time, validations]])
 
-    if (error === undefined) {
+    if (timeValidation.isValid) {
       setTimeErrorMessage(undefined)
     }
 
@@ -129,12 +125,10 @@ const DateTime: React.FC<Props> = (props) => {
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const error = validations
-      .map((v) => validate(time, v))
-      .find((v) => v.isValid === false)
+    const timeValidation = validate([[time, validations]])
 
-    if (error) {
-      setTimeErrorMessage(error.errorMessage)
+    if (!timeValidation.isValid) {
+      setTimeErrorMessage(timeValidation.errorMessage)
     }
   }
 
@@ -142,7 +136,7 @@ const DateTime: React.FC<Props> = (props) => {
     const isValid = isValidDateTime(date, time, required)
 
     if (isValid && date && time) {
-      const dateToSend = new Date(date.getTime())
+      let dateToSend = new Date(date.getTime())
 
       const timeParts = time.split(':')
 
@@ -150,6 +144,12 @@ const DateTime: React.FC<Props> = (props) => {
       const minutes = parseInt(timeParts[1])
 
       dateToSend.setHours(hours, minutes)
+
+      // Make sure the time component does not make the date larger than the max date.
+      if (maxDate && dateToSend > maxDate) {
+        dateToSend = maxDate
+        setCurrentTime(getTimeFromDate(maxDate))
+      }
 
       onChange(dateToSend, isValid)
     } else {

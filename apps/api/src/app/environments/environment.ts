@@ -1,4 +1,7 @@
-import { ServerSideFeatureClient } from '@island.is/feature-flags'
+import {
+  ServerSideFeature,
+  ServerSideFeatureClient,
+} from '@island.is/feature-flags'
 
 const prodConfig = () => ({
   production: true,
@@ -15,9 +18,7 @@ const prodConfig = () => ({
       xroadPath: process.env.XROAD_DRIVING_LICENSE_PATH,
     },
     v2: {
-      xroadPath: ServerSideFeatureClient.isOn(
-        'driving-license-use-v1-endpoint-for-v2-comms',
-      )
+      xroadPath: ServerSideFeatureClient.isOn(ServerSideFeature.drivingLicense)
         ? process.env.XROAD_DRIVING_LICENSE_PATH
         : process.env.XROAD_DRIVING_LICENSE_V2_PATH,
     },
@@ -253,7 +254,7 @@ const devConfig = () => ({
     baseApiUrl: 'http://localhost:4246',
   },
   paymentDomain: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
       process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,

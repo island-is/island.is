@@ -65,7 +65,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents, stepper } = fields
+            const { title, url, content, showTableOfContents } = fields
             return {
               sys,
               fields: {
@@ -73,7 +73,6 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 slug: url,
                 content,
                 showTableOfContents,
-                stepper,
               },
             }
           })
@@ -92,12 +91,26 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
               : undefined) as IArticleFields['subArticles'],
           },
         }
+
         // An entry hyperlink does not need the extra content present in
         // the entry hyperlink associated fields
         // We remove them from the reference itself on nodeType `entry-hyperlink`
         if (processedEntry.fields?.content) {
           removeEntryHyperlinkFields(processedEntry.fields.content)
         }
+        // Remove all unnecessary entry hyperlink fields for the subArticles
+        if (processedEntry.fields?.subArticles?.length) {
+          for (const subArticle of processedEntry.fields.subArticles) {
+            removeEntryHyperlinkFields(subArticle.fields.content)
+          }
+        }
+        // Also remove all unnecessary entry hyperlink fields for the relatedArticles
+        if (processedEntry.fields?.relatedArticles?.length) {
+          for (const relatedArticle of processedEntry.fields.relatedArticles) {
+            removeEntryHyperlinkFields(relatedArticle.fields.content)
+          }
+        }
+
         if (!isCircular(processedEntry)) {
           processedEntries.push(processedEntry)
         } else {
@@ -159,6 +172,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'group',
               },
               {
+                key: entry.fields?.subgroup?.fields?.slug ?? '',
+                value: entry.fields?.subgroup?.fields?.title,
+                type: 'subgroup',
+              },
+              {
                 key: entry.fields?.category?.fields?.slug ?? '',
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
@@ -191,7 +209,10 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import article', { error: error.message })
+          logger.warn('Failed to import article', {
+            error: error.message,
+            id: entry.sys.id,
+          })
           return false
         }
       })

@@ -53,7 +53,10 @@ export const Header: FC<HeaderProps> = ({
             <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
               <Columns alignY="center" space={2}>
                 <Column width="content">
-                  <FocusableBox href={english ? '/en' : '/'}>
+                  <FocusableBox
+                    href={english ? '/en' : '/'}
+                    data-testid="link-back-home"
+                  >
                     <Hidden above="md">
                       <Logo
                         id="header-logo-icon"
@@ -89,6 +92,7 @@ export const Header: FC<HeaderProps> = ({
                         />
                       </Box>
                     )}
+
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
                         <Link {...linkResolver('login')} skipTab>
@@ -103,6 +107,20 @@ export const Header: FC<HeaderProps> = ({
                         </Link>
                       </Box>
                     </Hidden>
+
+                    <Hidden above="md">
+                      <Box marginLeft={marginLeft}>
+                        <Link {...linkResolver('login')} skipTab>
+                          <Button
+                            colorScheme={buttonColorScheme}
+                            variant="utility"
+                            icon="person"
+                            as="span"
+                          />
+                        </Link>
+                      </Box>
+                    </Hidden>
+
                     <Box
                       marginLeft={marginLeft}
                       display={['none', 'none', 'none', 'block']}

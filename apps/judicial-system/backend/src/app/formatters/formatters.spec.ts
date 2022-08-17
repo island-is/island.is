@@ -27,6 +27,11 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
+  formatRulingModifiedHistory,
+  formatCourtUploadRulingTitle,
+  formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -47,6 +52,7 @@ export const makeProsecutor = (): User => {
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
+      active: true,
     },
   }
 }
@@ -475,7 +481,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdóm Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 
@@ -497,7 +503,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um farbann á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 
@@ -519,7 +525,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 })
@@ -1137,6 +1143,37 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     )
   })
 
+  test('should format defender court date notification with referral to court', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = '101'
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+
   test('should format spokesperson court date notification', () => {
     // Arrange
     const court = 'Héraðsdómur Norðurlands'
@@ -1226,6 +1263,34 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+})
+
+describe('formatDefenderCourtDateLinkEmailNotification', () => {
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
+  })
+
+  test('should format defender court date link notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const overviewUrl = 'https://example.com/overview'
+
+    // Act
+    const res = formatDefenderCourtDateLinkEmailNotification(
+      formatMessage,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
   })
 })
@@ -1447,7 +1512,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
     const courtDate = new Date('2021-01-24T08:15')
     const accusedName = 'Gaui Glæpon'
     const defenderName = 'Dóri'
-    const isExtension = false
+    const isExtension = true
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
@@ -1463,7 +1528,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um áframhaldandi vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 })
@@ -1741,5 +1806,127 @@ describe('formatCustodyRestrictions', () => {
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
     )
+  })
+})
+
+describe('formatRulingModifiedHistory', () => {
+  const fn = formatRulingModifiedHistory
+
+  test('should format ruling modified history', () => {
+    const rulingModifiedHistory = undefined
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Miðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
+    )
+  })
+
+  test('should append to existing history', () => {
+    const rulingModifiedHistory = 'Some history'
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
+    )
+  })
+})
+
+describe('formatCourtUploadRulingTitle', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  const fn = (
+    courtCaseNumber: string | undefined,
+    isModifyingRuling: boolean,
+  ) =>
+    formatCourtUploadRulingTitle(
+      formatMessage,
+      courtCaseNumber,
+      isModifyingRuling,
+    )
+
+  test('should format court upload ruling', () => {
+    const courtCaseNumber = '12345'
+    const isModifyingRuling = false
+
+    const r = fn(courtCaseNumber, isModifyingRuling)
+
+    expect(r).toEqual('Úrskurður 12345')
+  })
+
+  test('should format court upload ruling when modifying ruling', () => {
+    const courtCaseNumber = '12345'
+    const isModifyingRuling = true
+
+    const r = fn(courtCaseNumber, isModifyingRuling)
+
+    expect(r).toEqual('Úrskurður 12345 leiðrétt')
+  })
+})
+
+describe('formatPrisonAdministrationRulingNotification', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+  const fn = (
+    courtCaseNumber: string | undefined,
+    courtName: string | undefined,
+    overviewUrl: string,
+  ) =>
+    formatPrisonAdministrationRulingNotification(
+      formatMessage,
+      courtCaseNumber,
+      courtName,
+      overviewUrl,
+    )
+
+  it('should format prison adminstration ruling notification', () => {
+    const courtCaseNumber = '007-2022-06546'
+    const courtName = 'Héraðsdómur'
+    const overviewUrl = 'some url'
+
+    const result = fn(courtCaseNumber, courtName, overviewUrl)
+
+    expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
+    expect(result.body).toBe(
+      'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðgengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+    )
+  })
+})
+
+describe('formatDefenderResubmittedToCourtEmailNotification', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  const fn = (
+    policeCaseNumber: string,
+    overviewUrl: string,
+    courtName?: string,
+  ) =>
+    formatDefenderResubmittedToCourtEmailNotification(
+      formatMessage,
+      policeCaseNumber,
+      overviewUrl,
+      courtName,
+    )
+
+  it('should format email', () => {
+    const policeCaseNumber = 'R-123/2022'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    const result = fn(policeCaseNumber, overviewUrl, courtName)
+
+    expect(result.body).toEqual(
+      'Sækjandi í máli R-123/2022 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+    )
+    expect(result.subject).toEqual('Krafa í máli R-123/2022 send aftur')
   })
 })

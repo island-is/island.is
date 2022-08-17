@@ -3,6 +3,7 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
@@ -11,6 +12,7 @@ interface Props {
   firstStepText?: MessageDescriptor
   missingIncomeFiles: boolean
   hasSpouse?: boolean
+  spouseEmailSuccess?: boolean
   municipalityHomepage?: string
 }
 
@@ -18,9 +20,11 @@ const Confirmation = ({
   firstStepText,
   missingIncomeFiles,
   hasSpouse,
+  spouseEmailSuccess,
   municipalityHomepage,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   return (
     <>
@@ -51,7 +55,10 @@ const Confirmation = ({
                 confirmation.alertMessagesInRelationship.dataNeeded,
               )}
               message={formatMessage(
-                confirmation.alertMessagesInRelationship.dataNeededText,
+                spouseEmailSuccess
+                  ? confirmation.alertMessagesInRelationship.dataNeededText
+                  : confirmation.alertMessagesInRelationship
+                      .dataNeededAlternativeText,
               )}
             />
           </Box>
@@ -66,7 +73,7 @@ const Confirmation = ({
         <Box marginTop={2}>
           <DescriptionText
             text={confirmation.nextSteps.content}
-            format={{ nextMonth: getNextPeriod.month }}
+            format={{ nextMonth: getNextPeriod(lang).month }}
           />
         </Box>
       </Box>
@@ -99,7 +106,6 @@ const Confirmation = ({
           }}
         />
       </Box>
-
       <Box marginTop={[4, 4, 6]}>
         <ConfirmationSectionImage />
       </Box>

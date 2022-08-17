@@ -182,4 +182,9 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly hasFetchedDirectTaxPayment: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly spouseHasFetchedDirectTaxPayment: boolean
 }

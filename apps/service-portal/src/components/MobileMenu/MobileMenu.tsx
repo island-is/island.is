@@ -1,22 +1,24 @@
 import React, { ReactElement, useRef } from 'react'
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { m } from '@island.is/service-portal/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
 import * as styles from './MobileMenu.css'
 import { useListDocuments } from '@island.is/service-portal/graphql'
+import { useAuth } from '@island.is/auth/react'
+import NavItem from '../Sidebar/NavItem/NavItem'
+import { sharedMessages } from '@island.is/shared/translations'
+import { useLocale } from '@island.is/localization'
 
 const MobileMenu = (): ReactElement | null => {
   const ref = useRef(null)
   const [{ mobileMenuState }, dispatch] = useStore()
-  const { formatMessage } = useLocale()
+  const { signOut } = useAuth()
   const navigation = useNavigation()
   const { unreadCounter } = useListDocuments('')
+  const { formatMessage } = useLocale()
 
   const handleLinkClick = () =>
     dispatch({
@@ -35,6 +37,9 @@ const MobileMenu = (): ReactElement | null => {
       background="white"
       className={styles.wrapper}
       ref={ref}
+      display="flex"
+      flexDirection="column"
+      justifyContent="spaceBetween"
     >
       {navigation.map((rootItem, rootIndex) => (
         <Box key={rootIndex} paddingX={0} marginTop={3}>
@@ -56,6 +61,15 @@ const MobileMenu = (): ReactElement | null => {
           </Stack>
         </Box>
       ))}
+      <Box marginTop={2} marginBottom={2}>
+        <NavItem
+          onClick={() => signOut()}
+          active={false}
+          icon={{ icon: 'logOut', type: 'outline' }}
+        >
+          {formatMessage(sharedMessages.logout)}
+        </NavItem>
+      </Box>
     </Box>
   )
 }

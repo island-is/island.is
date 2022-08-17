@@ -7,11 +7,11 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
-  Application as BaseApplication,
-  ApplicationTemplateHelper,
   ApplicationTypes,
-} from '@island.is/application/core'
+  Application as BaseApplication,
+} from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
@@ -66,10 +66,13 @@ export class ApplicationSerializer
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
 
     const roleInState = helper.getRoleInState(userRole)
+    const actors =
+      application.applicant === nationalId ? application.applicantActors : []
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
+      applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
           ? intl.formatMessage(actionCardMeta.title)

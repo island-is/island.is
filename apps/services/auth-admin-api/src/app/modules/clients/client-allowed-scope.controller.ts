@@ -45,7 +45,7 @@ export class ClientAllowedScopeController {
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
   async findAvailabeScopes(): Promise<ApiScope[]> {
-    return this.clientsService.FindAvailabeScopes()
+    return this.clientsService.findAvailabeScopes()
   }
 
   /** Adds new scope to client */

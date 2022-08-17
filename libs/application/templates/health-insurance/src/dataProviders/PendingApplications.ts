@@ -3,14 +3,14 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 export class PendingApplications extends BasicDataProvider {
   type = 'PendingApplications'
 
-  provide(application: Application): Promise<string[]> {
+  provide(_application: Application): Promise<string[]> {
     const query = `query HealthInsuranceGetPendingApplication {
-      healthInsuranceGetPendingApplication 
+      healthInsuranceGetPendingApplication
     }`
 
     return this.useGraphqlGateway(query)

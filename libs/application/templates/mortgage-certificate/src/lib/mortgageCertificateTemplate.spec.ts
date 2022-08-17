@@ -1,10 +1,10 @@
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTemplateHelper,
   ApplicationTypes,
   DefaultEvents,
   ApplicationStatus,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { States } from './constants'
 import MortgageCertificateTemplate from './mortgageCertificateTemplate'
 
@@ -22,6 +22,7 @@ function buildApplication(
     assignees: [],
     applicant: MOCK_APPLICANT_NATIONAL_ID,
     typeId: ApplicationTypes.MORTGAGE_CERTIFICATE,
+    applicantActors: [],
     created: new Date(),
     modified: new Date(),
     answers: {},

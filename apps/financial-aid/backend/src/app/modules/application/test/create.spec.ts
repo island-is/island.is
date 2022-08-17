@@ -116,6 +116,7 @@ describe('ApplicationController - Create', () => {
       hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     beforeEach(async () => {
@@ -195,6 +196,7 @@ describe('ApplicationController - Create', () => {
       hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     const municipality: Municipality = {
@@ -206,6 +208,7 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     const appModel = {
@@ -230,6 +233,7 @@ describe('ApplicationController - Create', () => {
       expect(mockApplicationEventService.create).toHaveBeenCalledWith({
         applicationId: id,
         eventType: 'New',
+        emailSent: true,
       })
     })
 
@@ -311,8 +315,9 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       hasFetchedDirectTaxPayment: false,
-      applicationSystemId: '',
+      applicationSystemId: null,
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     const municipality: Municipality = {
@@ -324,6 +329,7 @@ describe('ApplicationController - Create', () => {
       municipalityId: '',
       individualAid: undefined,
       cohabitationAid: undefined,
+      usingNav: false,
     }
 
     const appModel = {
@@ -424,6 +430,7 @@ describe('ApplicationController - Create', () => {
       hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     const appModel = {
@@ -518,6 +525,7 @@ describe('ApplicationController - Create', () => {
       ],
       applicationSystemId: '',
       nationalId: '',
+      spouseHasFetchedDirectTaxPayment: false,
     }
     const user: User = {
       nationalId: '0000000000',
@@ -608,6 +616,7 @@ describe('ApplicationController - Create', () => {
       hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     const appModel = {
@@ -671,6 +680,7 @@ describe('ApplicationController - Create', () => {
       hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
+      spouseHasFetchedDirectTaxPayment: false,
     }
 
     beforeEach(async () => {

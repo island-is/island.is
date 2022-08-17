@@ -44,6 +44,7 @@ const Estimation = ({
         if (familyStatus) {
           return !showSpouseData[familyStatus]
         }
+        break
       case myApplication?.spouseNationalId != undefined:
         return false
       case !nationalRegistryData?.spouse:
@@ -72,7 +73,7 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {getNextPeriod.month})
+          (til útgreiðslu í byrjun {getNextPeriod().month})
         </Text>
       </Box>
 
