@@ -1,43 +1,48 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
+type Gender = 'F' | 'M' | 'X'
+
 @ObjectType()
 export class IdentityDocumentModel {
-  @Field()
-  productionRequestID!: string
-
-  @Field()
+  @Field(() => String)
   number!: string
 
-  @Field()
-  type?: string
+  @Field(() => String)
+  type!: string
 
-  @Field()
-  verboseType?: string
+  @Field(() => String)
+  verboseType!: string
 
-  @Field()
-  subType?: string
+  @Field(() => String)
+  subType!: string
 
-  @Field()
-  status?: string
+  @Field(() => String)
+  status!: string
 
-  @Field()
-  issuingDate?: string
+  @Field(() => Date)
+  issuingDate!: Date
 
-  @Field()
-  expirationDate?: string
+  @Field(() => Date)
+  expirationDate!: Date
 
-  @Field()
+  @Field(() => String)
   displayFirstName?: string
 
-  @Field()
+  @Field(() => String)
   displayLastName?: string
 
-  @Field()
+  @Field(() => String)
   mrzFirstName?: string
 
-  @Field()
+  @Field(() => String)
   mrzLastName?: string
 
   @Field()
-  sex?: string
+  sex?: Gender
+
+  @Field(() => String, { nullable: true })
+  expiryStatus?: string
+
+  @Field(() => Boolean, { nullable: true })
+  expiresWithinNoticeTime?: boolean
 }

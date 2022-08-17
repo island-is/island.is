@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Query } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -15,13 +15,16 @@ import { IdentityDocumentModel } from './models/identityDocumentModel.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
+@Resolver()
 @Audit({ namespace: '@island.is/api/passport' })
 export class PassportResolver {
   constructor(private passportService: PassportService) {}
 
-  @Query(() => IdentityDocumentModel, { nullable: true })
+  @Query(() => [IdentityDocumentModel], { nullable: true })
   @Audit()
   async getIdentityDocument(@CurrentUser() user: User) {
-    return this.passportService.getIdentityDocument(user)
+    const res = await this.passportService.getIdentityDocument(user)
+    console.log({ res })
+    return res
   }
 }

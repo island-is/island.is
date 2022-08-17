@@ -31,5 +31,12 @@ export const licensesModule: ServicePortalModule = {
           import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),
         ),
     },
+    {
+      name: m.passport,
+      path: ServicePortalPath.LicensesPassportDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      render: () =>
+        lazy(() => import('./screens/PassportDetail/PassportDetail')),
+    },
   ],
 }

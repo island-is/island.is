@@ -274,19 +274,25 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           flexDirection="row"
         >
           {hasSecondaryCTA && (
-            <Box paddingRight={4} paddingLeft={2}>
-              <Button
-                variant="text"
-                size={secondaryCta?.size}
-                onClick={secondaryCta?.onClick}
-                icon={secondaryCta?.icon}
-                disabled={secondaryCta?.disabled}
-              >
-                {secondaryCta?.label}
-              </Button>
-            </Box>
+            <>
+              <Box>
+                <Button
+                  variant="text"
+                  size={secondaryCta?.size}
+                  onClick={secondaryCta?.onClick}
+                  icon={secondaryCta?.icon}
+                  disabled={secondaryCta?.disabled}
+                >
+                  {secondaryCta?.label}
+                </Button>
+              </Box>
+
+              <Hidden below="sm">
+                <Box className={styles.line} marginLeft={2} />
+              </Hidden>
+            </>
           )}
-          <Box marginLeft={[0, 3]}>
+          <Box marginLeft={[0, hasSecondaryCTA ? 2 : 3]}>
             <Button
               variant={cta.variant}
               size="small"
