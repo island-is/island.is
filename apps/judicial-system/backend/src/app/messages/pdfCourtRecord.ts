@@ -135,7 +135,7 @@ export const courtRecord = {
       'Notaður sem staðfesting á því að dómritari hafi verið vitni að þinghaldi þar sem {registrarNameAndTitle} er nafn og titill dómritara og er sjálfkrafa bætt við í kóða.',
   }),
   signOff: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.sign_off',
+    id: 'judicial.system.backend:pdf.court_record.sign_off_v2',
     defaultMessage:
       'Þinghaldi lýkur {endDate, select, NONE {} other {{endDate} }}kl. {endTime}.',
     description:

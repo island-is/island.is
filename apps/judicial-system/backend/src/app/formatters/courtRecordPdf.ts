@@ -516,11 +516,11 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
