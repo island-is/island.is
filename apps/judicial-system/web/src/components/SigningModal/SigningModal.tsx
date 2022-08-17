@@ -109,10 +109,10 @@ export const getSuccessText = (
   return isInvestigationCase(caseType)
     ? formatMessage(icConfirmation.modal.text)
     : formatMessage(rcConfirmation.modal.rulingNotification.textV2, {
-        summarySentToPrison:
-          caseType === CaseType.CUSTODY ||
-          caseType === CaseType.ADMISSION_TO_FACILITY,
-      })
+      summarySentToPrison:
+        caseType === CaseType.CUSTODY ||
+        caseType === CaseType.ADMISSION_TO_FACILITY,
+    })
 }
 
 const SigningModal: React.FC<SigningModalProps> = ({
@@ -146,8 +146,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
         decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
           : decision === CaseDecision.DISMISSING
-          ? CaseTransition.DISMISS
-          : CaseTransition.ACCEPT,
+            ? CaseTransition.DISMISS
+            : CaseTransition.ACCEPT,
         setWorkingCase,
       )
 
@@ -185,10 +185,10 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signingProgress === 'inProgress'
           ? 'Rafræn undirritun'
           : signingProgress === 'success'
-          ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : signingProgress === 'canceled'
-          ? 'Notandi hætti við undirritun'
-          : 'Undirritun tókst ekki'
+            ? 'Úrskurður hefur verið staðfestur og undirritaður'
+            : signingProgress === 'canceled'
+              ? 'Notandi hætti við undirritun'
+              : 'Undirritun tókst ekki'
       }
       text={
         signingProgress === 'inProgress' ? (
@@ -207,8 +207,8 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signingProgress === 'inProgress'
           ? undefined
           : signingProgress === 'success'
-          ? 'Loka glugga'
-          : 'Loka og reyna aftur'
+            ? 'Loka glugga'
+            : 'Loka og reyna aftur'
       }
       primaryButtonText={
         data?.rulingSignatureConfirmation?.documentSigned
@@ -217,11 +217,15 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       handlePrimaryButtonClick={() => {
         window.open(constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+        )
       }}
       handleSecondaryButtonClick={async () => {
         if (data?.rulingSignatureConfirmation?.documentSigned) {
-          router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+          router.push(
+            `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          )
         } else {
           onClose()
         }

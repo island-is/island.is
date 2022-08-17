@@ -77,12 +77,12 @@ export const HearingArrangements: React.FC = () => {
             validToDate: workingCase.requestedValidToDate,
             isolationToDate:
               workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedValidToDate
                 : undefined,
             isCustodyIsolation:
               workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                workingCase.type === CaseType.ADMISSION_TO_FACILITY
                 ? workingCase.requestedCustodyRestrictions &&
                   workingCase.requestedCustodyRestrictions.includes(
                     CaseCustodyRestrictions.ISOLATION,

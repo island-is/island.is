@@ -93,19 +93,24 @@ export const DEFENDER_ROUTE = '/verjandi'
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
 export const RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE = '/krafa/fyrirtaka'
-export const RESTRICTION_CASE_POLICE_DEMANDS_ROUTE = '/krafa/domkrofur-og-lagaakvaedi'
+export const RESTRICTION_CASE_POLICE_DEMANDS_ROUTE =
+  '/krafa/domkrofur-og-lagaakvaedi'
 export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
 export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
 export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
 
-export const INVESTIGATION_CASE_DEFENDANT_ROUTE = '/krafa/rannsoknarheimild/varnaradili'
+export const INVESTIGATION_CASE_DEFENDANT_ROUTE =
+  '/krafa/rannsoknarheimild/varnaradili'
 export const INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE =
   '/krafa/rannsoknarheimild/fyrirtaka'
 export const INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE =
   '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi'
-export const INVESTIGATION_CASE_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
-export const INVESTIGATION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
-export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
+export const INVESTIGATION_CASE_POLICE_REPORT_ROUTE =
+  '/krafa/rannsoknarheimild/greinargerd'
+export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
+  '/krafa/rannsoknarheimild/rannsoknargogn'
+export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
+  '/krafa/rannsoknarheimild/stadfesta'
 
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
 /* PROSECUTOR ROUTES END */
@@ -113,7 +118,8 @@ export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
 /* COURT ROUTES START */
 export const RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const RESTRICTION_CASE_COURT_OVERVIEW_ROUTE = '/domur/krafa'
-export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
+export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/fyrirtokutimi'
 export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
@@ -121,18 +127,21 @@ export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
 export const INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/rannsoknarheimild/mottaka'
-export const INVESTIGATION_CASE_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
+export const INVESTIGATION_CASE_OVERVIEW_ROUTE =
+  '/domur/rannsoknarheimild/yfirlit'
 export const INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'
-export const INVESTIGATION_CASE_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
-export const INVESTIGATION_CASE_RULING_ROUTE = '/domur/rannsoknarheimild/urskurdur'
+export const INVESTIGATION_CASE_COURT_RECORD_ROUTE =
+  '/domur/rannsoknarheimild/thingbok'
+export const INVESTIGATION_CASE_RULING_ROUTE =
+  '/domur/rannsoknarheimild/urskurdur'
 export const INVESTIGATION_CASE_MODIFY_RULING_ROUTE =
   '/domur/rannsoknarheimild/urskurdur/leidretta'
-export const INVESTIGATION_CASE_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
+export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
+  '/domur/rannsoknarheimild/stadfesta'
 /* COURT ROUTES END */
 
 // Feedback
 export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
-

@@ -25,7 +25,9 @@ describe(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
+    cy.visit(
+      `${INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`,
+    )
   })
 
   it('should display case comments', () => {

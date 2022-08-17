@@ -272,9 +272,9 @@ const Defendant = () => {
                   value={
                     workingCase.id
                       ? {
-                          value: CaseType[workingCase.type],
-                          label: capitalize(caseTypes[workingCase.type]),
-                        }
+                        value: CaseType[workingCase.type],
+                        label: capitalize(caseTypes[workingCase.type]),
+                      }
                       : undefined
                   }
                   formatGroupLabel={() => (
@@ -346,7 +346,7 @@ const Defendant = () => {
                         defendant={defendant}
                         onDelete={
                           workingCase.defendants &&
-                          workingCase.defendants.length > 1
+                            workingCase.defendants.length > 1
                             ? handleDeleteDefendant
                             : undefined
                         }
@@ -382,17 +382,17 @@ const Defendant = () => {
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.OTHER,
             ].includes(workingCase.type) && (
-              <motion.section
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-              >
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </motion.section>
-            )}
+                <motion.section
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                >
+                  <DefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                </motion.section>
+              )}
           </AnimatePresence>
         </Box>
       </FormContentContainer>

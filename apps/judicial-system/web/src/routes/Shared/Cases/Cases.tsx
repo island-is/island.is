@@ -58,7 +58,7 @@ const SectionTitle: React.FC = ({ children }) => {
 export const Cases: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
-  
+
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
   const {
@@ -207,35 +207,35 @@ export const Cases: React.FC = () => {
                     icon="add"
                     items={
                       features.includes(Feature.INDICTMENTS) ?
-                      [
-                      {
-                        href: constants.CREATE_INDICTMENT_ROUTE,
-                        title: capitalize(formatMessage(core.indictment)),
-                      },
-                      {
-                        href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-                        title: capitalize(formatMessage(core.restrictionCase)),
-                      },
-                      {
-                        href: constants.CREATE_TRAVEL_BAN_ROUTE,
-                        title: capitalize(formatMessage(core.travelBan)),
-                      },
-                      {
-                        href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-                        title: capitalize(formatMessage(core.investigationCase)),
-                      },
-                    ] : [{
-                      href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-                      title: capitalize(formatMessage(core.restrictionCase)),
-                    },
-                    {
-                      href: constants.CREATE_TRAVEL_BAN_ROUTE,
-                      title: capitalize(formatMessage(core.travelBan)),
-                    },
-                    {
-                      href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-                      title: capitalize(formatMessage(core.investigationCase)),
-                    },]}
+                        [
+                          {
+                            href: constants.CREATE_INDICTMENT_ROUTE,
+                            title: capitalize(formatMessage(core.indictment)),
+                          },
+                          {
+                            href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                            title: capitalize(formatMessage(core.restrictionCase)),
+                          },
+                          {
+                            href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                            title: capitalize(formatMessage(core.travelBan)),
+                          },
+                          {
+                            href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                            title: capitalize(formatMessage(core.investigationCase)),
+                          },
+                        ] : [{
+                          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                          title: capitalize(formatMessage(core.restrictionCase)),
+                        },
+                        {
+                          href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                          title: capitalize(formatMessage(core.travelBan)),
+                        },
+                        {
+                          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                          title: capitalize(formatMessage(core.investigationCase)),
+                        },]}
                     title="Stofna nýja kröfu"
                   />
                 </Box>
@@ -257,9 +257,9 @@ export const Cases: React.FC = () => {
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
                       : isPrisonAdminUser
-                      ? m.sections.activeRequests.prisonStaffUsers
+                        ? m.sections.activeRequests.prisonStaffUsers
                           .prisonAdminTitle
-                      : m.sections.activeRequests.title,
+                        : m.sections.activeRequests.title,
                   )}
                 </SectionTitle>
                 <Box marginBottom={[5, 5, 12]}>
@@ -287,13 +287,13 @@ export const Cases: React.FC = () => {
                         title={formatMessage(
                           isPrisonUser || isPrisonAdminUser
                             ? m.sections.activeRequests.prisonStaffUsers
-                                .infoContainerTitle
+                              .infoContainerTitle
                             : m.sections.activeRequests.infoContainerTitle,
                         )}
                         message={formatMessage(
                           isPrisonUser || isPrisonAdminUser
                             ? m.sections.activeRequests.prisonStaffUsers
-                                .infoContainerText
+                              .infoContainerText
                             : m.sections.activeRequests.infoContainerText,
                         )}
                         type="info"
@@ -313,10 +313,10 @@ export const Cases: React.FC = () => {
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title
                   : isPrisonUser
-                  ? m.sections.pastRequests.prisonStaffUsers.title
-                  : isPrisonAdminUser
-                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.sections.pastRequests.title,
+                    ? m.sections.pastRequests.prisonStaffUsers.title
+                    : isPrisonAdminUser
+                      ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                      : m.sections.pastRequests.title,
               )}
             </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
@@ -331,13 +331,13 @@ export const Cases: React.FC = () => {
                   title={formatMessage(
                     isPrisonAdminUser || isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerTitle
+                        .infoContainerTitle
                       : m.sections.pastRequests.infoContainerTitle,
                   )}
                   message={formatMessage(
                     isPrisonAdminUser || isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerText
+                        .infoContainerText
                       : m.sections.pastRequests.infoContainerText,
                   )}
                   type="info"

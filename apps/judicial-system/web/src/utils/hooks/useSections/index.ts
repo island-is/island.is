@@ -238,7 +238,9 @@ const useSections = () => {
     activeSubSection?: number,
   ): Section => {
     const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(RESTRICTION_CASE_MODIFY_RULING_ROUTE)
+    const isModifyingRuling = router.pathname.includes(
+      RESTRICTION_CASE_MODIFY_RULING_ROUTE,
+    )
 
     return {
       name: formatMessage(sections.courtSection.title),
@@ -320,7 +322,9 @@ const useSections = () => {
     activeSubSection?: number,
   ): Section => {
     const { id } = workingCase
-    const isModifyingRuling = router.pathname.includes(INVESTIGATION_CASE_MODIFY_RULING_ROUTE)
+    const isModifyingRuling = router.pathname.includes(
+      INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+    )
 
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),

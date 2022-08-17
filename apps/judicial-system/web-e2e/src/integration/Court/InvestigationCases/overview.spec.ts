@@ -114,6 +114,9 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should(
+      'include',
+      INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+    )
   })
 })

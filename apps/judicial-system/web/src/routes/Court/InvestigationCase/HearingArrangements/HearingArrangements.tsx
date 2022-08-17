@@ -289,14 +289,14 @@ const HearingArrangements = () => {
             {(workingCase.sessionArrangements ===
               SessionArrangements.ALL_PRESENT ||
               workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-              <Box component="section" marginBottom={8}>
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </Box>
-            )}
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+                <Box component="section" marginBottom={8}>
+                  <DefenderInfo
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                  />
+                </Box>
+              )}
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
@@ -317,8 +317,8 @@ const HearingArrangements = () => {
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                  ? m.modal.allPresentSpokespersonText
-                  : m.modal.prosecutorPresentText,
+                    ? m.modal.allPresentSpokespersonText
+                    : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
               handlePrimaryButtonClick={async () => {

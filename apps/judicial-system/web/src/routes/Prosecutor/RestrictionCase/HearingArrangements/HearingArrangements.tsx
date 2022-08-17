@@ -89,7 +89,7 @@ export const HearingArrangements: React.FC = () => {
       aUser.role === UserRole.PROSECUTOR &&
       (!workingCase?.creatingProsecutor ||
         aUser.institution?.id ===
-          workingCase?.creatingProsecutor?.institution?.id),
+        workingCase?.creatingProsecutor?.institution?.id),
   )
 
   const handleNextButtonClick = async () => {

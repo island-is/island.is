@@ -123,8 +123,8 @@ export const titleForCase = (
   return isInvestigationCase(theCase.type)
     ? formatMessage(m.investigationAccepted)
     : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-      })
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
 }
 
 export const rulingDateLabel = (
@@ -186,10 +186,10 @@ export const getExtensionInfoText = (
   return rejectReason === 'none'
     ? undefined
     : formatMessage(m.sections.caseExtension.extensionInfoV2, {
-        hasChildCase: Boolean(workingCase.childCase),
-        caseType: workingCase.type,
-        rejectReason,
-      })
+      hasChildCase: Boolean(workingCase.childCase),
+      caseType: workingCase.type,
+      rejectReason,
+    })
 }
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -512,10 +512,10 @@ export const SignedVerdictOverview: React.FC = () => {
                 button={
                   canModifyCaseDates()
                     ? {
-                        label: formatMessage(core.update),
-                        onClick: () => setIsModifyingDates((value) => !value),
-                        icon: 'pencil',
-                      }
+                      label: formatMessage(core.update),
+                      onClick: () => setIsModifyingDates((value) => !value),
+                      icon: 'pencil',
+                    }
                     : undefined
                 }
               />
@@ -581,19 +581,19 @@ export const SignedVerdictOverview: React.FC = () => {
               // Conditionally add this field based on case type
               ...(isInvestigationCase(workingCase.type)
                 ? [
-                    {
-                      title: formatMessage(core.caseType),
-                      value: capitalize(caseTypes[workingCase.type]),
-                    },
-                  ]
+                  {
+                    title: formatMessage(core.caseType),
+                    value: capitalize(caseTypes[workingCase.type]),
+                  },
+                ]
                 : []),
               ...(workingCase.registrar
                 ? [
-                    {
-                      title: formatMessage(core.registrar),
-                      value: workingCase.registrar?.name,
-                    },
-                  ]
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
+                  },
+                ]
                 : []),
             ]}
             defendants={workingCase.defendants ?? []}
@@ -609,7 +609,7 @@ export const SignedVerdictOverview: React.FC = () => {
         {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
           workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
           workingCase.prosecutorAppealDecision ===
-            CaseAppealDecision.POSTPONE ||
+          CaseAppealDecision.POSTPONE ||
           workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
           (user?.role === UserRole.JUDGE ||
             user?.role === UserRole.REGISTRAR) &&
@@ -641,8 +641,8 @@ export const SignedVerdictOverview: React.FC = () => {
                 {(workingCase.comments ||
                   workingCase.caseFilesComments ||
                   workingCase.caseResentExplanation) && (
-                  <CommentsAccordionItem workingCase={workingCase} />
-                )}
+                    <CommentsAccordionItem workingCase={workingCase} />
+                  )}
               </Accordion>
             </Box>
             <Box marginBottom={6}>
@@ -683,13 +683,13 @@ export const SignedVerdictOverview: React.FC = () => {
                 workingCase.state,
                 workingCase.decision,
               ) && (
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonCustodyNotice)}
-                  pdfType="custodyNotice"
-                />
-              )}
+                  <PdfButton
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonCustodyNotice)}
+                    pdfType="custodyNotice"
+                  />
+                )}
               <PdfButton
                 renderAs="row"
                 caseId={workingCase.id}
@@ -752,7 +752,7 @@ export const SignedVerdictOverview: React.FC = () => {
         </Box>
         {user?.role === UserRole.PROSECUTOR &&
           user.institution?.id ===
-            workingCase.creatingProsecutor?.institution?.id &&
+          workingCase.creatingProsecutor?.institution?.id &&
           isRestrictionCase(workingCase.type) && (
             <Box marginBottom={9}>
               <Box marginBottom={3}>
@@ -785,18 +785,18 @@ export const SignedVerdictOverview: React.FC = () => {
                       value={
                         workingCase.sharedWithProsecutorsOffice
                           ? {
-                              label:
-                                workingCase.sharedWithProsecutorsOffice.name,
-                              value: workingCase.sharedWithProsecutorsOffice.id,
-                            }
+                            label:
+                              workingCase.sharedWithProsecutorsOffice.name,
+                            value: workingCase.sharedWithProsecutorsOffice.id,
+                          }
                           : selectedSharingInstitutionId
-                          ? {
+                            ? {
                               label: (selectedSharingInstitutionId as ReactSelectOption)
                                 .label,
                               value: (selectedSharingInstitutionId as ReactSelectOption)
                                 .value as string,
                             }
-                          : null
+                            : null
                       }
                       onChange={(so: ValueType<ReactSelectOption>) =>
                         setSelectedSharingInstitutionId(so)
@@ -866,12 +866,12 @@ export const SignedVerdictOverview: React.FC = () => {
             !courtRecordSignatureConfirmationResponse
               ? formatMessage(m.sections.courtRecordSignatureModal.titleSigning)
               : courtRecordSignatureConfirmationResponse.documentSigned
-              ? formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
-              : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
-              ? formatMessage(
-                  m.sections.courtRecordSignatureModal.titleCanceled,
-                )
-              : formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
+                ? formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
+                : courtRecordSignatureConfirmationResponse.code === 7023 // User cancelled
+                  ? formatMessage(
+                    m.sections.courtRecordSignatureModal.titleCanceled,
+                  )
+                  : formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
           }
           text={
             !courtRecordSignatureConfirmationResponse ? (

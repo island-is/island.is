@@ -94,7 +94,7 @@ const HearingArrangements = () => {
             aUser.role === UserRole.PROSECUTOR &&
             (!workingCase.creatingProsecutor ||
               aUser.institution?.id ===
-                workingCase.creatingProsecutor?.institution?.id),
+              workingCase.creatingProsecutor?.institution?.id),
         ),
       )
     }
