@@ -35,10 +35,23 @@ export const m = defineMessages({
     id: 'sp.license:your-adr-license',
     defaultMessage: 'ADR réttindin þín',
   },
+
   adrLicenseDescription: {
     id: 'sp.license:adr-license-description',
     defaultMessage:
       'Hér birtast upplýsingar um ADR skírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  huntingLicense: {
+    id: 'sp.license:hunting-license',
+    defaultMessage: 'Skotvopnaleyfi',
+  },
+  yourHuntingLicense: {
+    id: 'sp.license:your-hunting-license',
+    defaultMessage: 'Skotvoplaleyfið þitt',
+  },
+  huntingLicenseDescription: {
+    id: 'sp.license:hunting-license-description',
+    defaultMessage: 'Hér birtast upplýsingar um skoptvopnaleyfið þitt.',
   },
   machineLicense: {
     id: 'sp.license:machine-license',
@@ -112,7 +125,7 @@ export const m = defineMessages({
   },
   errorFetchingDrivingLicense: {
     id: 'sp.license:error-fetch-driving-license',
-    defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
+    defaultMessage: 'Ekki tókst að sækja gögn um skírteini',
   },
   errorFetch: {
     id: 'sp.license:error-fetch',

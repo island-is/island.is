@@ -12,13 +12,14 @@ import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseType,
+  GenericUserLicenseFetchStatus,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { getTitleAndLogo } from '../../utils/dataMapper'
+import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -94,6 +95,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   })
   const { genericLicenses = [] } = data ?? {}
 
+  const isError = genericLicenses?.every(
+    (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
+  )
+
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -126,7 +131,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                       history.push(
                         ServicePortalPath.LicensesDetail.replace(
                           ':type',
-                          license.license.type,
+                          getPathFromType(license.license.type),
                         ),
                       ),
                     variant: 'text',
@@ -149,7 +154,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             )
           })}
 
-      {error && (
+      {(error || isError) && !loading && (
         <Box>
           <EmptyState description={m.errorFetch} />
         </Box>

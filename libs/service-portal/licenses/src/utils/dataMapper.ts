@@ -474,7 +474,59 @@ export const getTitleAndLogo = (type: GenericLicenseType) => {
         title: m.machineLicense,
         logo: './assets/images/adr_machine.svg',
       }
+    case GenericLicenseType.HuntingLicense:
+      return {
+        title: m.huntingLicense,
+        logo: './assets/images/island.svg',
+      }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
+  }
+}
+
+enum LicenseTypePath {
+  DriversLicense = 'okurettindi',
+  HuntingLicense = 'skotvopnaleyfi',
+  AdrLicense = 'adr-rettindi',
+  MachineLicense = 'vinnuvelarettindi',
+}
+
+export const getPathFromType = (type: GenericLicenseType) => {
+  switch (type) {
+    case GenericLicenseType.AdrLicense:
+      return LicenseTypePath.AdrLicense
+      break
+    case GenericLicenseType.DriversLicense:
+      return LicenseTypePath.DriversLicense
+      break
+    case GenericLicenseType.HuntingLicense:
+      return LicenseTypePath.HuntingLicense
+      break
+    case GenericLicenseType.MachineLicense:
+      return LicenseTypePath.MachineLicense
+      break
+    default:
+      return LicenseTypePath.DriversLicense
+      break
+  }
+}
+
+export const getTypeFromPath = (path: string) => {
+  switch (path) {
+    case LicenseTypePath.AdrLicense:
+      return GenericLicenseType.AdrLicense
+      break
+    case LicenseTypePath.DriversLicense:
+      return GenericLicenseType.DriversLicense
+      break
+    case LicenseTypePath.HuntingLicense:
+      return GenericLicenseType.HuntingLicense
+      break
+    case LicenseTypePath.MachineLicense:
+      return GenericLicenseType.MachineLicense
+      break
+    default:
+      return GenericLicenseType.DriversLicense
+      break
   }
 }

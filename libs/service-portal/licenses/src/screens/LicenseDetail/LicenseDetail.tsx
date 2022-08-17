@@ -29,7 +29,10 @@ import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField } from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
-import { getLicenseDetailHeading } from '../../utils/dataMapper'
+import {
+  getLicenseDetailHeading,
+  getTypeFromPath,
+} from '../../utils/dataMapper'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -103,7 +106,7 @@ const DataFields = ({
       {fields.map((field, i) => {
         return (
           <React.Fragment key={i}>
-            {field.type === 'Link' && (
+            {field.type === 'Link' && field.value && (
               <Box
                 display="flex"
                 flexDirection={['column', 'row']}
@@ -116,11 +119,7 @@ const DataFields = ({
                     <Box marginX={[0, 1]} marginY={[1, 0]} />
                   </>
                 )}
-                <a
-                  href={field.value ?? undefined}
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={field.value} target="_blank" rel="noreferrer">
                   <Button
                     variant="utility"
                     size="small"
@@ -190,13 +189,14 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
   const { type }: { type: string | undefined } = useParams()
+  const licenseType = type ? getTypeFromPath(type) : ''
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
     {
       variables: {
         locale,
         input: {
-          licenseType: type,
+          licenseType: licenseType,
         },
       },
     },
@@ -204,7 +204,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
 
   const { genericLicense = null } = data ?? {}
 
-  const heading = getLicenseDetailHeading(type as GenericLicenseType)
+  const heading = getLicenseDetailHeading(licenseType as GenericLicenseType)
 
   if (error && !queryLoading) {
     return (
@@ -237,7 +237,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
       {!error && !queryLoading && (
         <DataFields
           fields={genericLicense?.payload?.data ?? []}
-          licenseType={type}
+          licenseType={licenseType}
         />
       )}
     </>
