@@ -3,6 +3,7 @@ import {
   CompanyList,
   CompanyListConnected,
   GeneralPetitionLists,
+  MonthlyStatistics as ElectronicRegistrationsMonthlyStatistics,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -34,6 +35,8 @@ const renderConnectedComponent = (slice) => {
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
+    case 'ElectronicRegistrations/MonthlyStatistics':
+      return <ElectronicRegistrationsMonthlyStatistics />
     default:
       break
   }

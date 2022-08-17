@@ -2635,6 +2635,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
     | 'LatestNewsCard'
+    | 'ElectronicRegistrations/MonthlyStatistics'
     | undefined
 
   /** JSON */
