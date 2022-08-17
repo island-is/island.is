@@ -138,7 +138,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.WITNESS_ONE_CONFIRMED },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
     },

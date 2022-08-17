@@ -161,64 +161,7 @@ export const getApplication = (): Form => {
         ],
       }),
       buildSection({
-        id: 'marriageWitnesses',
-        title: m.informationWitnessTitle,
-        children: [
-          buildMultiField({
-            id: 'witnesses',
-            title: m.informationWitnessTitle,
-            description: m.informationMaritalSidesDescription,
-            children: [
-              buildDividerField({
-                title: m.informationWitness1,
-                color: 'dark400',
-              }),
-              buildCustomField({
-                id: 'witness1.person',
-                title: '',
-                component: 'NationalIdWithName',
-              }),
-              buildTextField({
-                id: 'witness1.phone',
-                title: m.phone,
-                width: 'half',
-                backgroundColor: 'blue',
-              }),
-              buildTextField({
-                id: 'witness1.email',
-                title: m.email,
-                variant: 'email',
-                width: 'half',
-                backgroundColor: 'blue',
-              }),
-              buildDividerField({
-                title: m.informationWitness2,
-                color: 'dark400',
-              }),
-              buildCustomField({
-                id: 'witness2.person',
-                title: '',
-                component: 'NationalIdWithName',
-              }),
-              buildTextField({
-                id: 'witness2.phone',
-                title: m.phone,
-                width: 'half',
-                backgroundColor: 'blue',
-              }),
-              buildTextField({
-                id: 'witness2.email',
-                title: m.email,
-                variant: 'email',
-                width: 'half',
-                backgroundColor: 'blue',
-              }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
-        id: 'marriageWitnesses',
+        id: 'marriageOverview',
         title: '',
         children: [
           buildMultiField({

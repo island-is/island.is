@@ -22,13 +22,10 @@ export class MarriageConditionsSubmissionService {
       'AY110',
     )
 
-    console.log('RESPONSE', response)
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
-
-    console.log('payment', answers)
 
     return response
   }
