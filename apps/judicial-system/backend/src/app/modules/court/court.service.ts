@@ -3,7 +3,11 @@ import formatISO from 'date-fns/formatISO'
 import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import type { CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
@@ -12,6 +16,7 @@ type SubTypes = { [c in CaseType]: string | [string, string] }
 //
 // Maps case types to sub types in the court system
 export const subTypes: SubTypes = {
+  INDICTMENT: 'Ákæra',
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -21,7 +26,6 @@ export const subTypes: SubTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  // TODO: replace with appropriate type when it has been created in the court system
   ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
@@ -241,6 +245,11 @@ export class CourtService {
     let subType = subTypes[type]
     if (Array.isArray(subType)) {
       subType = subType[isExtension ? 1 : 0]
+    }
+
+    if (isIndictmentCase(type)) {
+      // TODO: add support to create indictment cases in court system
+      return Promise.resolve('S-1/2022')
     }
 
     return this.courtClientService

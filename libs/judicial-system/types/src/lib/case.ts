@@ -12,6 +12,7 @@ export enum CaseOrigin {
 }
 
 export enum CaseType {
+  INDICTMENT = 'INDICTMENT',
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
   ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
@@ -281,6 +282,8 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
+export const indictmentCases = [CaseType.INDICTMENT]
+
 export const restrictionCases = [
   CaseType.CUSTODY,
   CaseType.TRAVEL_BAN,
@@ -304,6 +307,10 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
+
+export function isIndictmentCase(type?: CaseType): boolean {
+  return Boolean(type && indictmentCases.includes(type))
+}
 
 export function isRestrictionCase(type?: CaseType): boolean {
   return Boolean(type && restrictionCases.includes(type))

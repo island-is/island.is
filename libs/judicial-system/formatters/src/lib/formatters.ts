@@ -93,6 +93,7 @@ export const laws = {
 
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
+  INDICTMENT: 'ákæra',
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
   ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
