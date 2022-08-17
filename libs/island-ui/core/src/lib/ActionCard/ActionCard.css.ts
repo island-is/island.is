@@ -41,9 +41,3 @@ export const logo = style({
   backgroundSize: 'contain',
   backgroundRepeat: 'no-repeat',
 })
-
-export const line = style({
-  width: 1,
-  height: theme.spacing[3],
-  background: theme.color.dark200,
-})

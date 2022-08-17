@@ -75,13 +75,6 @@ export const PassportLicense = ({
         onClick: handleClick,
         label: formatMessage(m.see),
       }}
-      // secondaryCta={{
-      //   onClick: () => console.log('ONCLICK 2'),
-      //   label: 'number 2',
-      //   visible: true,
-      //   size: 'small',
-      //   icon: 'QRCode',
-      // }}
     />
   )
 }
