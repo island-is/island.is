@@ -136,9 +136,10 @@ export const courtRecord = {
   }),
   signOff: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.sign_off',
-    defaultMessage: 'Þinghaldi lýkur kl. {endTime}.',
+    defaultMessage:
+      'Þinghaldi lýkur {endDate, select, NONE {} other {{endDate} }}kl. {endTime}.',
     description:
-      'Notaður sem lokaorð þar sem {endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
+      'Notaður sem lokaorð þar sem {endDate/endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
   }),
   inSession: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.in_session',
