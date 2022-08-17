@@ -65,44 +65,6 @@ export class ApplicationLifeCycleService {
     })
   }
 
-  /*
-  
-   private async pruneAttachments() {
-    for (const prune of this.processingApplications) {
-      const applicationAttachments = prune.application.attachments as {
-        key: string
-        name: string
-      }
-
-      const attachments = this.attachmentsToMetaDataArray(
-        applicationAttachments,
-      )
-
-      if (attachments) {
-        for (const attachment of attachments) {
-          const { key, s3key, bucket, value } = attachment
-          try {
-            this.logger.info(
-              `Deleting attachment ${s3key} from bucket ${bucket}`,
-            )
-            await this.awsService.deleteObject(bucket, s3key)
-          } catch (error) {
-            prune.pruned = false
-            prune.failedAttachments = {
-              ...prune.failedAttachments,
-              [key]: value,
-            }
-            this.logger.error(
-              `S3 object delete failed for application Id: ${prune.application.id} and attachment key: ${key}`,
-              error,
-            )
-          }
-        }
-      }
-    }
-  }
-  */
-
   private async pruneAttachments() {
     for (const prune of this.processingApplications) {
       const result = await this.fileService.deleteAttachmentsForApplication(
