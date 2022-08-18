@@ -31,7 +31,7 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     tegund2: isHotel ? 'Gististaðir' : 'Veitingaleyfi',
     ...type,
     flokkur: category,
-    leyfiTilUtiveitinga: answers.openingHours.willServe.includes(YES) ? 'Já' : 'Nei',
+    leyfiTilUtiveitinga: answers.openingHours?.willServe?.includes(YES) ? 'Já' : 'Nei',
     afgrAfgengisVirkirdagarFra: formatOpeningHours(
       answers.openingHours.alcohol?.weekdays?.from,
     ),
