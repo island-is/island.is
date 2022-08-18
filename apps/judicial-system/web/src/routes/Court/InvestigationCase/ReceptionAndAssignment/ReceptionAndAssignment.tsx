@@ -118,8 +118,8 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASE_LIST_ROUTE}
-          nextUrl={`${constants.IC_OVERVIEW_ROUTE}/${id}`}
+          previousUrl={constants.CASES_ROUTE}
+          nextUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`}
           nextIsDisabled={!isReceptionAndAssignmentStepValidIC(workingCase)}
         />
       </FormContentContainer>

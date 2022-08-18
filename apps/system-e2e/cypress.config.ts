@@ -1,5 +1,16 @@
 import { defineConfig } from 'cypress'
-import { getCognitoCredentials, testEnvironment } from './src/support/utils'
+import { getCognitoCredentials } from './src/support/utils'
+import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
+
+const getEnvironmentUrls = (env: TestEnvironment) => {
+  return env === 'dev'
+    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    : env === 'prod'
+    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    : env === 'staging'
+    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
+    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
+}
 
 export default defineConfig({
   fileServerFolder: '.',
@@ -10,7 +21,6 @@ export default defineConfig({
   responseTimeout: 2000,
   videosFolder: '../../dist/cypress/apps/web-e2e/videos',
   screenshotsFolder: '../../dist/cypress/apps/web-e2e/screenshots',
-  chromeWebSecurity: false,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -19,20 +29,21 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
+    chromeWebSecurity: false,
     specPattern: './src/integration/**/*.ts',
     experimentalSessionAndOrigin: true,
     supportFile: './src/support/index.ts',
     setupNodeEvents(on, config) {
-      config.env.testEnvironment = testEnvironment
-      config.env.apiUrl = config.env[testEnvironment].apiUrl
+      const testEnvironment: TestEnvironment =
+        process.env.TEST_ENVIRONMENT || 'local'
       if (testEnvironment !== 'local') {
-        const { cognitoUsername, cognitoPassword } = getCognitoCredentials()
-        config.env.cognitoUsername = cognitoUsername
-        config.env.cognitoPassword = cognitoPassword
+        config.env.cognito = getCognitoCredentials()
       }
-      config.baseUrl = config.env[testEnvironment].baseUrl
+      const { baseUrl, authUrl } = getEnvironmentUrls(testEnvironment)
+      config.env.testEnvironment = testEnvironment
+      config.env.authUrl = authUrl
+      config.baseUrl = baseUrl
       return config
     },
   },
 })
-// ci-cache-bust-01

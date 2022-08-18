@@ -1,0 +1,25 @@
+{
+  "root": "libs/api/domains/file-upload",
+  "sourceRoot": "libs/api/domains/file-upload/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/file-upload/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/api/domains/file-upload/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/api/domains/file-upload"]
+    }
+  },
+  "tags": []
+}

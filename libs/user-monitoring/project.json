@@ -1,0 +1,22 @@
+{
+  "root": "libs/user-monitoring",
+  "sourceRoot": "libs/user-monitoring/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/user-monitoring"],
+      "options": {
+        "jestConfig": "libs/user-monitoring/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

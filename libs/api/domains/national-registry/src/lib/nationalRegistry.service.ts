@@ -14,6 +14,8 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
+import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
+import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
 @Injectable()
 export class NationalRegistryService {
@@ -179,6 +181,16 @@ export class NationalRegistryService {
       })
 
     return members
+  }
+
+  async postUserCorrection(
+    input: FamilyCorrectionInput,
+  ): Promise<FamilyCorrectionResponse> {
+    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
+      input,
+    )
+
+    return userCorrectionResponse
   }
 
   private formatGender(genderIndex: string): Gender {

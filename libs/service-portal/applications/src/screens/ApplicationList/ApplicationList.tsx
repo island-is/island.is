@@ -1,38 +1,41 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
+import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
+import { institutionMapper } from '@island.is/application/core'
+import { Application, ApplicationStatus } from '@island.is/application/types'
+import { ApplicationList as List } from '@island.is/application/ui-components'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Input,
+  Option,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
-  ServicePortalModuleComponent,
   EmptyState,
+  IntroHeader,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-  Input,
-  Select,
-  Option,
-} from '@island.is/island-ui/core'
-import { ApplicationList as List } from '@island.is/application/ui-components'
 import {
   GET_ORGANIZATIONS_QUERY,
   useApplications,
 } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
-
-import { m } from '../../lib/messages'
-import { ValueType } from 'react-select'
-import { Application, ApplicationStatus } from '@island.is/application/types'
-import { institutionMapper } from '@island.is/application/core'
-import { useQuery } from '@apollo/client'
 import { Organization } from '@island.is/shared/types'
+import * as Sentry from '@sentry/react'
+import { m } from '../../lib/messages'
 
 const isLocalhost = window.location.origin.includes('localhost')
-const isDev = window.location.origin.includes('beta.dev01.devland.is')
-const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+const path = window.location.origin
+// Have to check if localhost because the application system is hosted in different port locally.
+// Otherwise continue with existing router path.
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : `${path}/umsoknir`
 
 const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
@@ -46,14 +49,6 @@ const defaultFilterValues: FilterValues = {
   searchQuery: '',
 }
 
-const baseUrlForm = isLocalhost
-  ? 'http://localhost:4242/umsoknir'
-  : isDev
-  ? 'https://beta.dev01.devland.is/umsoknir'
-  : isStaging
-  ? 'https://beta.staging01.devland.is/umsoknir'
-  : 'https://island.is/umsoknir'
-
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
@@ -62,7 +57,6 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
-
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations: Organization[] = orgData?.getOrganizations?.items || []
 
@@ -97,7 +91,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const mapper = institutionMapper
     const apps: Application[] = applications
     let institutions: Option[] = []
-    apps.map((elem, idx) => {
+    apps.forEach((elem) => {
       const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
       institutions.push({
         value: inst,
@@ -141,7 +135,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const inProgress: Application[] = []
     const finished: Application[] = []
 
-    apps.map((application) => {
+    apps.forEach((application) => {
       if (
         application.state === 'draft' ||
         application.state === 'prerequisites'
@@ -177,27 +171,13 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(m.heading)}
-              </Text>
-
-              <Text as="p" variant="default">
-                {formatMessage(m.introCopy)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={m.heading} intro={m.introCopy} />
 
       {loading && !orgData && <ActionCardLoader repeat={3} />}
 
       {error && <EmptyState description={m.error} />}
 
-      {!error && !loading && !applications && (
+      {!error && !loading && applications.length === 0 && (
         <EmptyState
           description={defineMessage({
             id: 'sp.applications:no-applications-available',
@@ -207,7 +187,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         />
       )}
 
-      {applications && orgData && !loading && !error && (
+      {applications.length > 0 && orgData && !loading && !error && (
         <>
           <Box paddingBottom={[3, 5]}>
             <GridRow alignItems="flexEnd">

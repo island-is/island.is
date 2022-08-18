@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 import { IGraphCard } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
@@ -29,8 +30,11 @@ export class GraphCard {
   organizationLogo?: Image | null
 }
 
-export const mapGraphCard = ({ fields }: IGraphCard): GraphCard => {
+export const mapGraphCard = ({
+  fields,
+}: IGraphCard): SystemMetadata<GraphCard> => {
   return {
+    typename: 'GraphCard',
     graphTitle: fields?.graphTitle ?? '',
     graphDescription: fields?.graphDescription ?? '',
     organization: fields?.organization ?? '',

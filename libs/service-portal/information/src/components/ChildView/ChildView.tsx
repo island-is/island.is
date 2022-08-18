@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
-import { defineMessage } from 'react-intl'
-import { NationalRegistryChild } from '@island.is/api/schema'
 import { ApolloError } from 'apollo-client'
+import React, { FC, useEffect, useState } from 'react'
+import { defineMessage } from 'react-intl'
+
+import { NationalRegistryChild } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -9,16 +10,21 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
+  IntroHeader,
+  m,
   NotFound,
   UserInfoLine,
-  m,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+
 import { Parents } from '../../components/Parents/Parents'
+import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -32,6 +38,8 @@ const editLink = defineMessage({
 
 interface Props {
   nationalId?: string
+  userNationalId?: string
+  userName?: string
   error?: ApolloError
   person?: NationalRegistryChild | null
   loading?: boolean
@@ -46,9 +54,28 @@ const ChildView: FC<Props> = ({
   person,
   isChild,
   hasDetails,
+  userNationalId,
+  userName,
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+
+  /**
+   * The ChildRegistration module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `servicePortalChildrenFamilyNotification`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -61,28 +88,35 @@ const ChildView: FC<Props> = ({
     )
   return (
     <>
-      <Box marginBottom={6}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            {loading ? (
+      {loading ? (
+        <Box marginBottom={6}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <LoadingDots />
-            ) : (
-              <Stack space={2}>
-                <Text variant="h3" as="h1">
-                  {person?.fullName || ''}
-                </Text>
-                <Text>
-                  {formatMessage({
-                    id: 'sp.family:data-info-child',
-                    defaultMessage:
-                      'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
-                  })}
-                </Text>
-              </Stack>
-            )}
-          </GridColumn>
-        </GridRow>
-      </Box>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      ) : (
+        <IntroHeader
+          title={person?.fullName ?? ''}
+          intro={{
+            id: 'sp.family:data-info-child',
+            defaultMessage:
+              'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+          }}
+        />
+      )}
+      {!loading && !isChild && modalFlagEnabled && (
+        <ChildRegistrationModal
+          data={{
+            parentName: userName || '',
+            parentNationalId: userNationalId || '',
+            childName: person?.fullName || '',
+            childNationalId: nationalId,
+          }}
+        />
+      )}
+
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}

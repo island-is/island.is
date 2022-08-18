@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { Case, CaseState, Defendant } from '@island.is/judicial-system/types'
-import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeRestrictionCase,
@@ -11,7 +11,7 @@ import {
   Operation,
 } from '../../../utils'
 
-describe(`${STEP_SIX_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = makeRestrictionCase()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -41,7 +41,7 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
   const interceptByState = (state: CaseState, forceFail?: Operation) => {
     cy.stubAPIResponses()
     intercept({ ...caseDataAddition, state }, forceFail)
-    cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
+    cy.visit(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/test_id_stadfesta`)
   }
 
   describe('Happy path', () => {
