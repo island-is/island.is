@@ -32,7 +32,7 @@ export const serializeService: SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
 ) => {
-  let allErrors: string[] = []
+  const allErrors: string[] = []
   const checkCollisions = (
     target: { [name: string]: string },
     source: { [name: string]: string },
@@ -459,7 +459,7 @@ function serializeContainerRuns(
   }[],
 ): ContainerRunHelm[] {
   return containers.map((c) => {
-    let result: ContainerRunHelm = {
+    const result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
       resources: {

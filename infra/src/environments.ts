@@ -63,7 +63,7 @@ const staging01: EnvironmentConfig = {
   },
 }
 
-export let Envs: EnvironmentConfigs = {
+export const Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
     global: {

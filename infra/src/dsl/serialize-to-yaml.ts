@@ -80,7 +80,7 @@ export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 const findDependencies = (
   uberChart: UberChart,
   svc: Service,
-  level: number = 0,
+  level = 0,
 ): Service[] => {
   const deps = uberChart.deps[svc.serviceDef.name]
   if (level > MAX_LEVEL_DEPENDENCIES)
