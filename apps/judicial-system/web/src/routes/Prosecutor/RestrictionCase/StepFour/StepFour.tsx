@@ -270,8 +270,8 @@ export const StepFour: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_THREE_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidRC(workingCase)}
         />
       </FormContentContainer>

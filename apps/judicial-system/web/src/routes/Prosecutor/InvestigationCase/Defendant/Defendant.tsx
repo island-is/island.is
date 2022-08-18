@@ -98,14 +98,16 @@ const Defendant = () => {
           }
         })
         router.push(
-          `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+          `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
         )
       } else {
         // TODO handle error
         return
       }
     } else {
-      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
+      router.push(
+        `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
+      )
     }
   }
 
@@ -398,7 +400,7 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASE_LIST_ROUTE}`}
+          previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
           nextIsLoading={isCreatingCase}

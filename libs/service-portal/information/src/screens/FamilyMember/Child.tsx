@@ -25,6 +25,8 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
       loading={loading}
       person={person}
       isChild={isChild}
+      userName={userInfo.profile.name}
+      userNationalId={userInfo.profile.nationalId}
       hasDetails
     />
   )

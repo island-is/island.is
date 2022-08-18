@@ -135,9 +135,8 @@ const ActiveCases: React.FC<Props> = (props) => {
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: Case) => (
-        <Box marginTop={2}>
+        <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            key={theCase.id}
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
             isCourtRole={isCourtRole}
