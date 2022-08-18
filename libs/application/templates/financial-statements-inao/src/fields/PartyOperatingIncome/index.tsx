@@ -11,11 +11,10 @@ import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { PartyIncome } from './partyIncome'
 import { PartyExpenses } from './partyExpenses'
-import { FieldBaseProps } from '@island.is/application/core'
 import { PARTYOPERATIONIDS } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
-export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
+export const PartyOperatingIncome = () => {
   const { getValues, errors, setError } = useFormContext()
 
   const [getTotalIncome, totalIncome] = useTotals(
@@ -26,7 +25,6 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   )
 
   const { formatMessage } = useLocale()
-  const applicationType = application?.externalData?.currentUserType?.data?.code
 
   const checkIfEmpty = (fieldId: string) => {
     const values = getValues()
@@ -48,7 +46,6 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
             {formatMessage(m.income)}
           </Text>
           <PartyIncome
-            applicationType={applicationType}
             getSum={getTotalIncome}
             checkIfEmpty={checkIfEmpty}
             errors={errors}
@@ -64,7 +61,6 @@ export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
             {formatMessage(m.expenses)}
           </Text>
           <PartyExpenses
-            applicationType={applicationType}
             getSum={getTotalExpense}
             checkIfEmpty={checkIfEmpty}
             errors={errors}

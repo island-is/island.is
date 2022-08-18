@@ -34,6 +34,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (answers, externalData) => {
             console.log({ externalData, answers })
+            /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === CEMETRY
           },
@@ -45,6 +46,7 @@ export const overviewSection = buildSection({
           title: '',
           condition: (_answers, externalData) => {
             console.log(externalData)
+            /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === PARTY
           },

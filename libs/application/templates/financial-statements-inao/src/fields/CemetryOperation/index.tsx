@@ -37,7 +37,7 @@ export const CemetryOperation = () => {
             errors={errors}
           />
           <Total
-            name="income.total"
+            name={CEMETRYOPERATIONIDS.totalIncome}
             total={totalIncome}
             label={formatMessage(m.totalIncome)}
           />
@@ -51,7 +51,7 @@ export const CemetryOperation = () => {
             errors={errors}
           />
           <Total
-            name="expense.total"
+            name={CEMETRYOPERATIONIDS.totalExpense}
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
           />
@@ -60,7 +60,7 @@ export const CemetryOperation = () => {
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
-            name="operatingCost.total"
+            name={CEMETRYOPERATIONIDS.totalOperation}
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

@@ -8,7 +8,6 @@ import {
   CEMETRY,
   EQUITIESANDLIABILITIESIDS,
   LESS,
-  OPERATIONIDS,
   PARTYOPERATIONIDS,
   PARTY,
 } from '../../../lib/constants'
@@ -18,6 +17,7 @@ export const partyKeyNumbersSection = buildSection({
   id: 'keyNumbers',
   title: m.keyNumbers,
   condition: (_answers, externalData) => {
+    /* @ts-ignore */
     const userType = externalData?.currentUserType?.data?.code
     return userType === PARTY
   },
@@ -30,6 +30,7 @@ export const partyKeyNumbersSection = buildSection({
           id: 'partyIncome',
           title: m.keyNumbersIncomeAndExpenses,
           condition: (_answers, externalData) => {
+            /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === PARTY
           },

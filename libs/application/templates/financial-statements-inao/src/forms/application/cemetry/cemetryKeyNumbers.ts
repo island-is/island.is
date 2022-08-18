@@ -14,6 +14,7 @@ export const cemetryKeyNumbersSection = buildSection({
   id: 'cemetryKeyNumbers',
   title: m.keyNumbers,
   condition: (_answers, externalData) => {
+    /* @ts-ignore */
     const userType = externalData?.currentUserType?.data?.code
     return userType === CEMETRY
   },

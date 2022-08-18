@@ -21,6 +21,7 @@ export const individualKeyNumbersSection = buildSection({
   title: m.keyNumbers,
   condition: (answers, externalData) => {
     const greaterThanLimit = getValueViaPath(answers, 'election.incomeLimit') === GREATER
+    /* @ts-ignore */
     const userType = externalData?.currentUserType?.data?.code
     return greaterThanLimit && userType === INDIVIDUAL
   },

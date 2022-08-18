@@ -7,15 +7,14 @@ import { m } from '../../lib/messages'
 import { PARTYOPERATIONIDS } from '../../lib/constants'
 
 interface PropTypes {
-  applicationType: string
   checkIfEmpty: (fieldId: string) => void,
   getSum: () => void,
   errors: any
 }
 
-export const PartyIncome = ({ applicationType, errors, checkIfEmpty, getSum }: PropTypes): JSX.Element => {
+export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { register, clearErrors } = useFormContext()
+  const { clearErrors } = useFormContext()
 
   const onInputBlur = (fieldId: string) => {
     getSum()
@@ -97,13 +96,6 @@ export const PartyIncome = ({ applicationType, errors, checkIfEmpty, getSum }: P
           error={errors?.income?.otherIncome?.message}
         />
       </Box>
-      <input
-        type="hidden"
-        name={PARTYOPERATIONIDS.applicationType}
-        id={PARTYOPERATIONIDS.applicationType}
-        ref={register({ required: true })}
-        value={applicationType}
-      ></input>
     </Fragment>
   )
 }

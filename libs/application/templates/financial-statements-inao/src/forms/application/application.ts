@@ -16,6 +16,7 @@ import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
+import { cemetryCaretaker } from './cemetry/cemetryCareTaker'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -67,11 +68,13 @@ export const getApplication = (): Form => {
       electionInfoSection,
       individualKeyNumbersSection,
       cemetryKeyNumbersSection,
+      cemetryCaretaker,
       partyKeyNumbersSection,
       buildSection({
         id: 'documents',
         title: m.financialStatement,
         condition: (answers, externalData) => {
+          /* @ts-ignore */
           const userType = externalData?.currentUserType?.data?.code
           const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
           return incomeLimit === GREATER || userType !== INDIVIDUAL

@@ -16,6 +16,7 @@ export enum ApiActions {
 
 export const GREATER = 'greater'
 export const LESS = 'less'
+export const CARETAKERLIMIT = 300000
 
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
@@ -47,7 +48,6 @@ export const PARTYOPERATIONIDS = {
   electionOffice: 'partyExpense.electionOffice',
   otherCost: 'partyExpense.otherCost',
   capitalCost: 'partyExpense.capitalCost',
-
 }
 
 export const CEMETRYOPERATIONIDS = {
@@ -59,6 +59,9 @@ export const CEMETRYOPERATIONIDS = {
   cemetryFundDonations: 'cemetryIncome.cemetryFundDonations',
   capitalIncome: 'cemetryIncome.capitalIncome',
   otherIncome: 'cemetryIncome.otherIncome',
+  totalIncome: 'cemetryIncome.total',
+  totalOperation: 'cemetryIncome.totalOperation',
+  totalExpense: 'cemetryExpense.total',
   payroll: 'cemetryExpense.payroll',
   funeralCost: 'cemetryExpense.funeralCost',
   chapelExpense: 'cemetryExpense.chapelExpense',
@@ -66,6 +69,13 @@ export const CEMETRYOPERATIONIDS = {
   donationsToOther: 'cemetryExpense.donationsToOther',
   otherOperationCost: 'cemetryExpense.otherOperationCost',
   writtenOffExpense: 'cemetryExpense.writtenOffExpense',
+}
+
+export const CEMETRYCARETAKER = {
+  caretaking: 'cemetryCaretaker.caretaking',
+  nationalId: 'cemetryCaretaker.nationalId',
+  name: 'cemetryCaretaker.name',
+  role: 'cemetryCaretaker.role',
 }
 
 export const ABOUTIDS = {
@@ -99,7 +109,7 @@ export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   reevaluatePrice: 'cemetryEquity.reevaluatePrice',
   reevaluateOther: 'cemetryEquity.reevaluateOther',
   operationResult: 'cemetryEquity.operationResult',
-  equityTotal: 'cemetryEquity.equityTotal',
+  equityTotal: 'cemetryEquity.total',
 }
 
 export const INDIVIDUAL = 'individual'

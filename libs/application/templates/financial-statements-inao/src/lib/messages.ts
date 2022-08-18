@@ -16,7 +16,7 @@ export const m = defineMessages({
     defaultMessage: 'Þjónustuaðili',
     description: 'service provider',
   },
-  institutionName: { 
+  institutionName: {
     id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
     description: `Institution's name`,
@@ -339,6 +339,37 @@ export const m = defineMessages({
     defaultMessage: 'Styrkur frá kirkjugarðasjóði',
     description: 'Income from cemetry fund',
   },
+  cemeteryCaretakers: {
+    id: 'fsn.application:cemeteryCaretakers',
+    defaultMessage: 'Umsjónaraðilar',
+    description: 'Cemetry caretakers',
+  },
+  cemeteryBoardmembers: {
+    id: 'fsn.application:cemeteryBoardmembers',
+    defaultMessage: 'Stjórnar- og skoðunarmenn',
+    description: 'Cemetries board and caretakers',
+  },
+  cemeteryRegisterCaretakers: {
+    id: 'fsn.application:cemeteryRegisterCaretakers',
+    defaultMessage:
+      'Vinsamlegast skráið inn stjórnar- og skoðunarmenn kirkjugarðsins',
+    description: 'Cemetries board and caretakers',
+  },
+  add: {
+    id: 'fsn.application:add',
+    defaultMessage: 'Bæta við línu',
+    description: 'Cemetries board and caretakers',
+  },
+  role: {
+    id: 'fsn.application:role',
+    defaultMessage: 'Hlutverk',
+    description: 'Role in board fx.',
+  },
+  selectRole: {
+    id: 'fsn.application:selectRole',
+    defaultMessage: 'Veldu hlutverk',
+    description: 'role select',
+  },
   payroll: {
     id: 'fsn.application:income.payroll',
     defaultMessage: 'Laun og launatengd gjöld',
@@ -516,6 +547,11 @@ export const m = defineMessages({
     id: 'fsn.application:applicationAccept',
     defaultMessage: 'Umsókn móttekin',
     description: 'applicaiton accept',
+  },
+  required: {
+    id: 'fsn.application:error.required',
+    defaultMessage: 'Reitur má ekki vera tómur',
+    description: 'Error message when a required field has not been filled out',
   },
 })
 

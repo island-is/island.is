@@ -3,7 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { CEMETRY, INDIVIDUAL, PARTY } from '../lib/constants'
 export class CurrentUserTypeProvider extends BasicDataProvider {
@@ -51,7 +51,7 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
     result: Record<string, unknown>,
   ): SuccessfulDataProviderResult {
     const fakeResults = {
-      code: INDIVIDUAL,
+      code: CEMETRY,
     }
     return { date: new Date(), status: 'success', data: fakeResults }
   }

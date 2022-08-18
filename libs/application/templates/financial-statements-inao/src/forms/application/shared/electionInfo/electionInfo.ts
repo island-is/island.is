@@ -12,6 +12,7 @@ export const electionInfoSection = buildSection({
   id: 'electionInfo',
   title: m.election,
   condition: (_answers, externalData) =>
+    /* @ts-ignore */
     externalData?.currentUserType?.data?.code === INDIVIDUAL,
   children: [
     buildMultiField({

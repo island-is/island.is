@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 
 export const ElectionStatement = ({ application }: FieldBaseProps) => {

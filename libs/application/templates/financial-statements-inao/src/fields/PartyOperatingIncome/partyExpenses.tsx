@@ -4,11 +4,8 @@ import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { PARTYOPERATIONIDS, PARTY } from '../../lib/constants'
-import { HiddenFields } from '../HiddenFields'
-
+import { PARTYOPERATIONIDS } from '../../lib/constants'
 interface PropTypes {
-  applicationType: string
   getSum: () => void
   checkIfEmpty: (fieldId: string) => void
   errors: any
@@ -18,7 +15,6 @@ export const PartyExpenses = ({
   errors,
   checkIfEmpty,
   getSum,
-  applicationType
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
@@ -65,7 +61,6 @@ export const PartyExpenses = ({
           currency
         />
       </Box>
-      <HiddenFields name="expense.applicationType" appType={PARTY} />
     </Fragment>
   )
 }

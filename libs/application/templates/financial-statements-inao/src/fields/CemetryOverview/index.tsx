@@ -1,5 +1,5 @@
-import React from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import React, { Fragment } from 'react'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Divider,
@@ -13,6 +13,7 @@ import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ValueLine } from '../Shared'
+import { CARETAKERLIMIT } from '../../lib/constants'
 
 export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -244,6 +245,51 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
+      {parseInt(answers.cemetryIncome?.total, 10) < CARETAKERLIMIT &&
+      answers.cemetryCaretaker?.length > 0
+        ? 
+        <Fragment>
+          <Box paddingTop={4} paddingBottom={2}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.cemeteryBoardmembers)}
+        </Text>
+      </Box> 
+        {answers.cemetryCaretaker.map((careTaker) => {
+            return (
+              <Fragment>
+                <Box paddingY={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '6/12']}>
+                      <ValueLine
+                        label={m.fullName}
+                        value={careTaker.name}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['12/12', '6/12']}>
+                      <ValueLine
+                        label={m.nationalId}
+                        value={careTaker.nationalId}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box paddingY={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '6/12']}>
+                      <ValueLine
+                        label={m.role}
+                        value={careTaker.role}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Divider />
+              </Fragment>
+            )
+          })}
+          </Fragment>
+        : null}
+        
     </Box>
   )
 }

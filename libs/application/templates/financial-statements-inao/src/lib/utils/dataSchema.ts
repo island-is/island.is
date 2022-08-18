@@ -6,8 +6,7 @@ import {
   Override,
   NestedType,
 } from '@island.is/application/templates/family-matters-core/types'
-import { CEMETRY, PARTY } from '../constants'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
 const error = {
   id: 'fsn.application:income',
@@ -57,6 +56,7 @@ const asset = z.object({
 const cemetryAsset = z.object({
   tangible: z.string(),
   current: z.string(),
+  total: z.string()
 })
 
 const equity = z.object({
@@ -68,16 +68,19 @@ const cemetryEquity = z.object({
   operationResult: z.string(),
   reevaluatePrice: z.string(),
   reevaluateOther: z.string(),
+  total: z.string(),
 })
 
 const liability = z.object({
   longTerm: z.string(),
   shortTerm: z.string(),
+  total: z.string(),
 })
 
 const cemetryLiability = z.object({
   longTerm: z.string(),
   shortTerm: z.string(),
+  total: z.string(),
 })
 
 const cemetryIncome = z.object({
@@ -86,6 +89,8 @@ const cemetryIncome = z.object({
   graveIncome: z.string(),
   cemetryFundDonations: z.string(),
   otherIncome: z.string(),
+  totalOperation: z.string(),
+  total: z.string(),
 })
 
 const cemetryExpense = z.object({
@@ -96,6 +101,7 @@ const cemetryExpense = z.object({
   cemeteryFundExpense: z.string(),
   otherOperationCost: z.string(),
   writtenOffExpense: z.string(),
+  total: z.string()
 })
 
 const partyIncome = z.object({
@@ -129,6 +135,14 @@ const individualExpense = z.object({
   otherCost: z.string(),
 })
 
+const cemetryCaretaker = z.array(
+  z.object({
+    name: z.string().refine((x) => !!x, { params: m.required }),
+    nationalId: z.string().refine((x) => !!x, { params: m.required }),
+    role: z.string().refine((x) => !!x, { params: m.required }),
+  }),
+)
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   conditionalAbout,
@@ -143,6 +157,7 @@ export const dataSchema = z.object({
   cemetryAsset,
   cemetryEquity,
   cemetryLiability,
+  cemetryCaretaker,
   asset,
   equity,
   liability,
