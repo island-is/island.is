@@ -59,7 +59,11 @@ export const GeneralFishingLicenseSchema = z.object({
   }),
   applicant: z.object({
     name: z.string().refine((x) => x.trim().length > 0),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
+    nationalId: z
+      .string()
+      .refine((x) =>
+        x ? kennitala.isPerson(x) || kennitala.isCompany(x) : false,
+      ),
     address: z.string().refine((x) => x.trim().length > 0),
     postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
       params: error.invalidValue,

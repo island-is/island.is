@@ -24,9 +24,9 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            const type =
-              application.externalData.companyNationalRegistry.data.type
-            if (type === 'company') {
+            const company =
+              application.externalData.companyNationalRegistry.data.name
+            if (company) {
               return application.externalData.companyNationalRegistry.data.name
             }
             return application.externalData?.companyNationalRegistry?.data
@@ -52,11 +52,11 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            const type =
-              application.externalData.companyNationalRegistry.data.type
-            if (type === 'company') {
+            const company =
+              application.externalData.companyNationalRegistry.data.name
+            if (company) {
               return application.externalData.companyNationalRegistry.data
-                .companyInfo?.address
+                .companyInfo?.address?.streetAddress
             }
             return application.externalData?.companyNationalRegistry?.data
               ?.address?.streetAddress
@@ -93,9 +93,9 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            const type =
-              application.externalData.companyNationalRegistry.data.type
-            if (type === 'company') {
+            const company =
+              application.externalData.companyNationalRegistry.data.name
+            if (company) {
               return application.externalData.companyNationalRegistry.data
                 .companyInfo?.address?.locality
             }
