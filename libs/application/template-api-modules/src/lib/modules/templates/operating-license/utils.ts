@@ -45,22 +45,18 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     afgrAfgengisAdfaranottFridagaTil: formatOpeningHours(
       answers.openingHours.alcohol.weekends.to,
     ),
-    afgrAfgengisVirkirdagarUtiveitingarFra:
-      outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekdays.from)
-        : '',
-    afgrAfgengisVirkirdagarUtiveitingarTil:
-      outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekdays.to)
-        : '',
-    afgrAfgengisAdfaranottFridagaUtiveitingarFra:
-      outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekends.from)
-        : '',
-    afgrAfgengisAdfaranottFridagaUtiveitingarTil:
-      outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekends.to)
-        : '',
+    afgrAfgengisVirkirdagarUtiveitingarFra: formatOpeningHours(
+      answers.openingHours.outside?.weekdays.from,
+    ),
+    afgrAfgengisVirkirdagarUtiveitingarTil: formatOpeningHours(
+      answers.openingHours.outside?.weekdays.to,
+    ),
+    afgrAfgengisAdfaranottFridagaUtiveitingarFra: formatOpeningHours(
+      answers.openingHours.outside?.weekends.from,
+    ),
+    afgrAfgengisAdfaranottFridagaUtiveitingarTil: formatOpeningHours(
+      answers.openingHours.outside?.weekends.to,
+    ),
     rymi: JSON.stringify(
       answers.properties.map((property) => ({
         stadur: property.address,
@@ -96,7 +92,10 @@ const getHoursMinutes = (value: string) => {
   }
 }
 
-const formatOpeningHours = (value: string) => {
+const formatOpeningHours = (value?: string) => {
+  if (!value) {
+    return ''
+  }
   const { hours, minutes } = getHoursMinutes(value)
 
   return `${hours}:${minutes}`
