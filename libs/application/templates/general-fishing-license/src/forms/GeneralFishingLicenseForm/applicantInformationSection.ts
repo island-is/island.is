@@ -2,7 +2,6 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { GeneralFishingLicense } from '../../lib/dataSchema'
 
@@ -71,18 +70,16 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            {
-              const type =
-                application.externalData.companyNationalRegistry.data.type
-              if (type === 'company') {
-                return application.externalData.companyNationalRegistry.data
-                  .companyInfo?.address?.postalCode
-              }
-              return (
-                application.externalData?.companyNationalRegistry?.data?.address
-                  ?.postalCode || '105'
-              )
+            const type =
+              application.externalData.companyNationalRegistry.data.type
+            if (type === 'company') {
+              return application.externalData.companyNationalRegistry.data
+                .companyInfo?.address?.postalCode
             }
+            return (
+              application.externalData?.companyNationalRegistry?.data?.address
+                ?.postalCode || '105'
+            )
           },
         }),
         buildTextField({

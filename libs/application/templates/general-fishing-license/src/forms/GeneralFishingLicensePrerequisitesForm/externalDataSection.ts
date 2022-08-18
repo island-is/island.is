@@ -5,11 +5,9 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import { DataProviderTypes } from '../../types'
-import { Application } from '@island.is/application/types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
