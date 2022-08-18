@@ -58,7 +58,7 @@ export const Users: React.FC = () => {
   })
 
   const handleClick = (user: User): void => {
-    router.push(`${constants.USER_CHANGE_ROUTE}/${user.id}`)
+    router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
   const userRoleToString = (userRole: UserRole) => {
@@ -81,7 +81,7 @@ export const Users: React.FC = () => {
         <Button
           icon="add"
           onClick={() => {
-            router.push(constants.USER_NEW_ROUTE)
+            router.push(constants.CREATE_USER_ROUTE)
           }}
         >
           Nýr notandi

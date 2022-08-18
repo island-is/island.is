@@ -37,11 +37,11 @@ interface Props {
 
 export function getDurationDate(
   state: Case['state'],
-  validToDate: Case['validToDate'],
+  validToDate?: Case['validToDate'],
   initialRulingDate?: Case['initialRulingDate'],
   rulingDate?: Case['rulingDate'],
   courtEndTime?: Case['courtEndTime'],
-) {
+): string | null {
   if (
     [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
     !validToDate
@@ -62,9 +62,25 @@ export function getDurationDate(
       parseISO(validToDate),
       'd.M.y',
     )}`
-  } else {
-    return formatDate(parseISO(validToDate), 'd.M.y')
+  } else if (validToDate) {
+    return formatDate(parseISO(validToDate), 'd.M.y') || null
   }
+  return null
+}
+
+const DurationDate = ({ date }: { date: string | null }) => {
+  const { formatMessage } = useIntl()
+  if (!date) {
+    return null
+  }
+
+  return (
+    <Text fontWeight={'medium'} variant="small">
+      {`${formatMessage(
+        requests.sections.pastRequests.table.headers.duration,
+      )} ${date}`}
+    </Text>
+  )
 }
 
 const PastCases: React.FC<Props> = (props) => {
@@ -280,24 +296,22 @@ const PastCases: React.FC<Props> = (props) => {
   return width < theme.breakpoints.md ? (
     <>
       {pastCasesData.map((theCase) => (
-        <Box marginTop={2}>
+        <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            key={theCase.id}
             theCase={theCase}
             onClick={() => onRowClick(theCase.id)}
             isCourtRole={false}
           >
-            <Text fontWeight={'medium'} variant="small">
-              {`${formatMessage(
-                requests.sections.pastRequests.table.headers.duration,
-              )} ${getDurationDate(
+            <DurationDate
+              key={`${theCase.id}-duration-date`}
+              date={getDurationDate(
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
                 theCase.rulingDate,
                 theCase.courtEndTime,
-              )}`}
-            </Text>
+              )}
+            />
           </MobileCase>
         </Box>
       ))}
