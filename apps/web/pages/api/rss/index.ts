@@ -11,11 +11,9 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { linkResolver } from '@island.is/web/hooks'
 
 const extractTagsFromQuery = (query: Record<string, string | string[]>) => {
-  return query?.tags?.length
-    ? (query.tags as string[])
-    : query.tags
-    ? [query.tags as string]
-    : [FRONTPAGE_NEWS_TAG_ID]
+  if (typeof query.tags === 'string') return [query.tags]
+  if (query.tags?.length > 0) return query.tags
+  return [FRONTPAGE_NEWS_TAG_ID]
 }
 
 export default async function handler(req, res) {
