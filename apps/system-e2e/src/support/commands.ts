@@ -1,4 +1,3 @@
-import '@testing-library/cypress/add-commands'
 import { IDSLogin, CognitoCreds } from '../lib/types'
 const testEnvironment = Cypress.env('testEnvironment')
 const authUrl = Cypress.env('authUrl')
@@ -22,7 +21,11 @@ const cognitoLogin = ({ username, password }: CognitoCreds) => {
   cy.url().should('contain', baseUrl)
 }
 
-const idsLogin = ({ phoneNumber, baseUrl, urlPath }: IDSLogin) => {
+const idsLogin = ({
+  phoneNumber,
+  baseUrl = Cypress.config('baseUrl'),
+  urlPath = '/',
+}: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,

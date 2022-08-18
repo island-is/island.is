@@ -1,11 +1,16 @@
+import { AuthUser } from '../../lib/types'
+import { getFakeUser } from '../../support/utils'
+import fakeUsers from '../../fixtures/skilavottord/users.json'
+
 describe('Silavottorð', () => {
-  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
   const path = '/app/skilavottord/my-cars'
+  const fakeUser = getFakeUser(fakeUsers as AuthUser[], 'Gervimaður Útlönd')
 
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUsers[2].phoneNumber,
-      urlPath: path,
+      phoneNumber: fakeUser.mobile,
+      baseUrl: Cypress.env('baseUrl'),
+      urlPath: '/app/skilavottord/my-cars',
     })
   })
 
