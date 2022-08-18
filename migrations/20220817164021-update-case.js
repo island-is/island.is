@@ -9,7 +9,26 @@ module.exports = {
       tableName: 'case',
       columnName: 'type',
       newValues: [
-        'INDICTMENT', // new value
+        'CHILD_PROTECTION_LAWS', // new values begin
+        'PROPERTY_DAMAGE',
+        'NARCOTICS_OFFENSE',
+        'EMBEZZLEMENT',
+        'FRAUD',
+        'DOMESTIC_VIOLENCE',
+        'ASSAULT_LEADING_TO_DEATH',
+        'MURDER',
+        'MAJOR_ASSULT',
+        'MINOR_ASSULT',
+        'RAPE',
+        'UTILITY_THEFT',
+        'AGGRAVETED_ASSULT',
+        'TAX_VIOLATION',
+        'ATTEMPTED_MURDER',
+        'TRAFFIC_VIOLATION',
+        'THEFT',
+        'OTHER_CRIMINAL_OFFENSES',
+        'SEXUAL_OFFENSES_OTHER_THAN_RAPE',
+        'OTHER_OFFENSES', // new values end
         'CUSTODY',
         'TRAVEL_BAN',
         'ADMISSION_TO_FACILITY',
