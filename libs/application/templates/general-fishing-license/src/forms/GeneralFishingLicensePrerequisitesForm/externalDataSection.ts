@@ -47,14 +47,6 @@ export const externalDataSection = buildSection({
       title: externalData.dataProvider.getDataSuccess,
       description: externalData.dataProvider.getDataSuccessDescription,
       children: [
-        buildTextField({
-          id: 'applicant.name',
-          title: 'prufa',
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          disabled: true,
-        }),
         buildDescriptionField({
           id: 'getDataSuccess.directoryOfFisheries',
           title: externalData.directoryOfFisheries.title,
