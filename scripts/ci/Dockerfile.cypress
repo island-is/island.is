@@ -170,7 +170,7 @@ USER runner
 
 WORKDIR /app
 
-RUN npm install typescript cypress@10
+RUN npm install typescript cypress@10 @testing-library/cypress
 
 ARG APP_HOME
 
