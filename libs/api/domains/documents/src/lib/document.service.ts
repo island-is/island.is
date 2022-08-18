@@ -41,7 +41,24 @@ export class DocumentService {
     }
   }
 
-  async listDocuments(
+  async listDocuments(nationalId: string): Promise<Document[]> {
+    try {
+      const body = await this.documentClient.getDocumentList(nationalId)
+
+      return (body?.messages || []).reduce(
+        (result: Document[], documentMessage: DocumentInfoDTO) => {
+          if (documentMessage)
+            result.push(this.documentBuilder.buildDocument(documentMessage))
+          return result
+        },
+        [],
+      )
+    } catch (exception) {
+      logger.error(exception)
+      return []
+    }
+  }
+  async listDocumentsV2(
     nationalId: string,
     input: GetDocumentListInput,
   ): Promise<DocumentListResponse> {

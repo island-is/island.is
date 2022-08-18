@@ -86,7 +86,7 @@ export class DocumentClient {
 
   async getDocumentList(
     nationalId: string,
-    input: GetDocumentListInput,
+    input?: GetDocumentListInput,
   ): Promise<ListDocumentsResponse | null> {
     const {
       senderKennitala,
@@ -100,7 +100,7 @@ export class DocumentClient {
       opened,
       page,
       pageSize,
-    } = input
+    } = input ?? {}
 
     type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 

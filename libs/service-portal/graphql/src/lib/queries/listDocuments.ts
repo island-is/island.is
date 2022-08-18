@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const LIST_DOCUMENTS = gql`
-  query listDocuments($input: GetDocumentListInput!) {
-    listDocuments(input: $input) {
+  query listDocumentsV2($input: GetDocumentListInput!) {
+    listDocumentsV2(input: $input) {
       data {
         id
         subject

@@ -45,8 +45,8 @@ export const useListDocuments = (
       },
     },
   })
-  const documents = data?.listDocuments?.data || []
-  const totalCount = data?.listDocuments?.totalCount || 0
+  const documents = data?.listDocumentsV2?.data || []
+  const totalCount = data?.listDocumentsV2?.totalCount || 0
 
   return {
     data: { documents },

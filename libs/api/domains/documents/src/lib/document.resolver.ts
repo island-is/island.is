@@ -12,7 +12,7 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 
 import { DocumentService } from './document.service'
-import { DocumentListResponse } from './models/document.model'
+import { Document, DocumentListResponse } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
@@ -47,12 +47,18 @@ export class DocumentResolver {
   }
 
   @Scopes(DocumentsScope.main)
+  @Query(() => [Document], { nullable: true })
+  listDocuments(@CurrentUser() user: User): Promise<Array<Document>> {
+    return this.documentService.listDocuments(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
   @Query(() => DocumentListResponse, { nullable: true })
-  listDocuments(
+  listDocumentsV2(
     @Args('input') input: GetDocumentListInput,
     @CurrentUser() user: User,
   ): Promise<DocumentListResponse> {
-    return this.documentService.listDocuments(user.nationalId, input)
+    return this.documentService.listDocumentsV2(user.nationalId, input)
   }
 
   @Scopes(DocumentsScope.main)
