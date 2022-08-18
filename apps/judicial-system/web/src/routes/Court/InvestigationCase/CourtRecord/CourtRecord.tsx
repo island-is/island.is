@@ -854,9 +854,9 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

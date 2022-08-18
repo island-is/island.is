@@ -1,7 +1,7 @@
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
-  OVERVIEW_ROUTE,
-  RECEPTION_AND_ASSIGNMENT_ROUTE,
+  RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
@@ -13,7 +13,7 @@ import {
   makeJudge,
 } from '../../../utils'
 
-describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   const caseData = makeRestrictionCase()
   const caseDataAddition = {
     ...caseData,
@@ -25,12 +25,11 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
+    cy.visit(`${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
   })
 
   it('should require a valid form', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      console.log('intercepting')
       if (hasOperationName(req, Operation.UpdateCaseMutation)) {
         const { body } = req
         console.log('intercepting updatecase', body)
@@ -61,6 +60,6 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', OVERVIEW_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_COURT_OVERVIEW_ROUTE)
   })
 })
