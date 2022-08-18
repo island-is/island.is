@@ -15,7 +15,7 @@ import { FishingLicenseService } from '../lib/fishing-license.service'
 import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.meDetails, ApiScope.company)
 @Resolver()
 export class FishingLicenseResolver {
   constructor(private fishingLicenseService: FishingLicenseService) {}
