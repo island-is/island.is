@@ -68,8 +68,9 @@ Cypress.Commands.add(
   },
 )
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber, baseUrl, urlPath = '/' }) => {
+Cypress.Commands.add('idsLogin', ({ phoneNumber, baseUrl, password, urlPath = '/' }) => {
   if (testEnvironment !== 'local') {
+    cy.login('My password', password)
     const { username, password } = Cypress.env('cognito')
 
     cy.session('idsLogin', () => {
