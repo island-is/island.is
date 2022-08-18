@@ -43,5 +43,39 @@ module.exports = (config) => {
   }
   console.log(config)
 
+  console.log(config.entry)
+  config.module = {
+    ...config.module,
+    rules: [
+      {
+        test: /cypress.env.json/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name]',
+        },
+      },
+      ...config.module.rules,
+    ],
+  }
+  console.log(config.module.rules)
+
+  config.output = {
+    ...config.output,
+    // filename: (name) => {
+    //   console.log(name)
+    //   return name.runtime === 'cypress.env.json' ? '[name].json' : '[name].js'
+    // },
+
+    filename: '[name].js',
+    clean: true,
+    assetModuleFilename: '[name]',
+    // assetModuleFilename: (name) => {
+    //   return name === 'cypress.env.json' ? '[name].js' : 'cypress.env.json'
+    // },
+  }
   return config
 }
+
+// filename: (name) => {
+//   return name === 'cypress.env.json' ? '[name].js' : 'cypress.env.json'
+// },
