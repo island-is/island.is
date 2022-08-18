@@ -3,13 +3,13 @@ import { getCognitoCredentials } from './src/support/utils'
 import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
-  return env === 'local' || env === 'dev'
+  return env === 'dev'
     ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
     : env === 'prod'
     ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
     : env === 'staging'
     ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
-    : { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
 
 export default defineConfig({
