@@ -49,9 +49,7 @@ interface IDSLogin {
   urlPath: string
 }
 
-export {
-  AuthUrl,
-  BaseUrl,
+export type {
   CognitoCreds,
   IDSLogin,
   FakeUser,
@@ -62,3 +60,5 @@ export {
   AuthUser,
   Discount,
 }
+
+export { AuthUrl, BaseUrl }

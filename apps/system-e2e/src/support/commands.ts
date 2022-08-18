@@ -1,4 +1,6 @@
 import { IDSLogin, CognitoCreds } from '../lib/types'
+import '@testing-library/cypress/add-commands'
+
 const testEnvironment = Cypress.env('testEnvironment')
 const authUrl = Cypress.env('authUrl')
 
