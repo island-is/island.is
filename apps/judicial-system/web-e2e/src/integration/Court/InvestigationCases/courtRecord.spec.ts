@@ -7,8 +7,8 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  IC_CONFIRMATION_ROUTE,
-  IC_COURT_RECORD_ROUTE,
+  INVESTIGATION_CASE_CONFIRMATION_ROUTE,
+  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
@@ -17,7 +17,7 @@ import {
   intercept,
 } from '../../../utils'
 
-describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
   })
@@ -33,7 +33,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
     intercept(caseDataAddition)
 
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('courtAttendees').should('not.match', ':empty')
   })
@@ -50,7 +50,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
     intercept(caseDataAddition)
 
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -67,7 +67,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
     intercept(caseDataAddition)
 
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -84,7 +84,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
     intercept(caseDataAddition)
 
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -102,7 +102,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -120,7 +120,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -138,7 +138,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
@@ -157,7 +157,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -179,7 +179,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -199,7 +199,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     }
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('formFooter')
       .children()
@@ -222,7 +222,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
 
     intercept(caseDataAddition)
-    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.get('#prosecutor-appeal').check()
@@ -233,6 +233,6 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('courtEndTime-time').type('11:00')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_CONFIRMATION_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_CONFIRMATION_ROUTE)
   })
 })

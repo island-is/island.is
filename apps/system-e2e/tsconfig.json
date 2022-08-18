@@ -18,7 +18,7 @@
     "sourceMap": false,
     "outDir": "dist/out-tsc",
     "allowJs": true,
-    "types": ["cypress", "node"],
+    "types": ["cypress", "@testing-library/cypress", "node"],
     "module": "es2015"
   },
   "exclude": ["node_modules", "tmp"],
