@@ -30,7 +30,7 @@ export type Operation = {
 export enum CATEGORIES {
   RESTURANT_TWO = 'Flokkur II',
   RESTURANT_THREE = 'Flokkur III',
-  HOTEL = 'gististaðar án veitinga',
-  HOTEL_ALCOHOL = 'gististaðar með áfengisveitingum',
-  HOTEL_FOOD = 'gististaðar með veitingum, en án áfengisveitinga',
+  HOTEL = 'Flokkur II',
+  HOTEL_FOOD = 'Flokkur III',
+  HOTEL_ALCOHOL = 'Flokkur IV',
 }
