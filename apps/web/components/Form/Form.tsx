@@ -69,7 +69,7 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           onChange={(e) => onChange(slug, e.target.value)}
         />
       )
-    case 'dropdown':
+    case 'dropdown': {
       const options = field.options.map((option) => ({
         label: option,
         value: option,
@@ -90,6 +90,7 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           errorMessage={error}
         />
       )
+    }
     case 'radio':
       return (
         <Box>
