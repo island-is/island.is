@@ -1,4 +1,4 @@
-# Application API files
+# Application API Files
 
 This library was generated with [Nx](https://nx.dev).
 
