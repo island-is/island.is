@@ -20,6 +20,7 @@ export class CaseDeliveryService {
     return fetch(
       `${this.config.backendUrl}/api/internal/case/${caseId}/deliver`,
       {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.backendAccessToken}`,
@@ -32,19 +33,19 @@ export class CaseDeliveryService {
         if (res.ok) {
           logger.debug(`Delivered case ${caseId}`)
 
-          if (response.signedRulingDeliveredToCourt) {
+          if (!response.signedRulingDeliveredToCourt) {
             logger.error(
               `Failed to deliver the signed ruling for case ${caseId} to court`,
             )
           }
 
-          if (response.courtRecordDeliveredToCourt) {
+          if (!response.courtRecordDeliveredToCourt) {
             logger.error(
               `Failed to deliver the court record for case ${caseId} to court`,
             )
           }
 
-          if (response.caseFilesDeliveredToCourt) {
+          if (!response.caseFilesDeliveredToCourt) {
             logger.error(
               `Failed to deliver some case files for case ${caseId} to court`,
             )
