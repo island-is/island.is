@@ -2,19 +2,18 @@ import { ApplicationWithAttachments } from '@island.is/application/types'
 import { OperatingLicenseAnswers } from '@island.is/application/templates/operating-license/types'
 import {
   APPLICATION_TYPES,
-  ExtraData,
-  Operation,
   OPERATION_CATEGORY,
   CATEGORIES,
-  OpeningHour,
 } from './types/application'
 import { YES } from './constants'
+import { getValueViaPath } from '@island.is/application/core'
 
-export const getExtraData = (
-  application: ApplicationWithAttachments,
-) => {
+export const getExtraData = (application: ApplicationWithAttachments) => {
   const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
-
+  const charge = getValueViaPath(
+    application.externalData,
+    'payment.data.priceAmount',
+  ) as string
   const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
   const outside = answers.openingHours.willServe.includes(YES)
   const category = isHotel
@@ -22,41 +21,59 @@ export const getExtraData = (
     : answers.applicationInfo.resturant?.category === OPERATION_CATEGORY.ONE
     ? 'Flokkur II'
     : 'Flokkur III'
-  const extraData: { [key: string]: string }  = {
+
+  const type: { [key: string]: string } = isHotel
+    ? { tegundGististadar: answers.applicationInfo.hotel?.type || '' }
+    : { tegundVeitingastadar: answers.applicationInfo.resturant?.type || '' }
+
+  const extraData: { [key: string]: string } = {
     kallast: answers.info.operationName,
-    netfang: answers.info.email,
-    simanumer: answers.info.phoneNumber,
     tegund: 'Rekstrarleyfi gist/veit',
     tegund2: isHotel ? 'Gististaðir' : 'Veitingaleyfi',
-    tegundReksturs:
-      (isHotel
-        ? answers.applicationInfo.hotel?.type
-        : answers.applicationInfo.resturant?.type) || '',
+    ...type,
     flokkur: category,
     leyfiTilUtiveitinga: outside ? 'Já' : 'Nei',
-    afgrAfgengisVirkirdagar: formatOpeningHours(
-      answers.openingHours.alcohol.weekdays,
+    afgrAfgengisVirkirdagarFra: formatOpeningHours(
+      answers.openingHours.alcohol.weekdays.from,
     ),
-    afgrAfgengisAdfaranottFridaga: formatOpeningHours(
-      answers.openingHours.alcohol.weekends,
+    afgrAfgengisVirkirdagarTo: formatOpeningHours(
+      answers.openingHours.alcohol.weekdays.to,
     ),
-    afgrAfgengisVirkirdagarUtiveitingar:
+    afgrAfgengisAdfaranottFridagaFra: formatOpeningHours(
+      answers.openingHours.alcohol.weekends.from,
+    ),
+    afgrAfgengisAdfaranottFridagaTil: formatOpeningHours(
+      answers.openingHours.alcohol.weekends.to,
+    ),
+    afgrAfgengisVirkirdagarUtiveitingarFra:
       outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekdays)
+        ? formatOpeningHours(answers.openingHours.outside?.weekdays.from)
         : '',
-    afgrAfgengisAdfaranottFridagaUtiveitingar:
+    afgrAfgengisVirkirdagarUtiveitingarTil:
       outside && answers.openingHours.outside?.weekends
-        ? formatOpeningHours(answers.openingHours.outside?.weekends)
+        ? formatOpeningHours(answers.openingHours.outside?.weekdays.to)
         : '',
-    rymi: JSON.stringify(answers.properties.map((property) => ({
-      stadur: property.address,
-      fasteignanumer: property.propertyNumber,
-      rymisnumer: property.spaceNumber,
-      hamarksfjoldiGesta: property.customerCount,
-    }))),
+    afgrAfgengisAdfaranottFridagaUtiveitingarFra:
+      outside && answers.openingHours.outside?.weekends
+        ? formatOpeningHours(answers.openingHours.outside?.weekends.from)
+        : '',
+    afgrAfgengisAdfaranottFridagaUtiveitingarTil:
+      outside && answers.openingHours.outside?.weekends
+        ? formatOpeningHours(answers.openingHours.outside?.weekends.to)
+        : '',
+    rymi: JSON.stringify(
+      answers.properties.map((property) => ({
+        stadur: property.address,
+        fasteignanumer: property.propertyNumber,
+        rymisnumer: property.spaceNumber,
+        hamarksfjoldiGesta: property.customerCount,
+      })),
+    ),
     bradabirgdarleyfi: answers.temporaryLicense.includes(YES) ? 'Já' : 'Nei',
     skuldastada: answers.debtClaim.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',
+    vskNr: answers.info.vskNr,
+    upphaed: charge,
   }
   return extraData
 }
@@ -79,9 +96,8 @@ const getHoursMinutes = (value: string) => {
   }
 }
 
-const formatOpeningHours = ({ to, from }: OpeningHour) => {
-  const { hours: toHours, minutes: toMinutes } = getHoursMinutes(to)
-  const { hours: fromHours, minutes: fromMinutes } = getHoursMinutes(from)
+const formatOpeningHours = (value: string) => {
+  const { hours, minutes } = getHoursMinutes(value)
 
-  return `${toHours}:${toMinutes} - ${fromHours}:${fromMinutes}`
+  return `${hours}:${minutes}`
 }

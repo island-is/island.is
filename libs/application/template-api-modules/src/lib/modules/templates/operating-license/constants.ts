@@ -1,4 +1,4 @@
-import { AttachmentPath } from "./types/attachments";
+import { AttachmentPath } from './types/attachments'
 
 export const AttachmentPaths: AttachmentPath[] = [
   {
@@ -18,7 +18,6 @@ export const AttachmentPaths: AttachmentPath[] = [
     prefix: 'teikning_utisvaedi',
   },
 ]
-
 
 export const YES = 'yes'
 export const NO = 'no'

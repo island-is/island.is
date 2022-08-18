@@ -31,43 +31,43 @@ export const YES = 'yes'
 export const NO = 'no'
 
 export const ResturantTypes: Option[] = [
-  { value: 'Veitingahús', label: 'Veitingahús' },
-  { value: 'Skemmtistaður', label: 'Skemmtistaður' },
+  { value: 'A Veitingahús', label: 'Veitingahús' },
+  { value: 'B Skemmtistaður', label: 'Skemmtistaður' },
   {
-    value: 'Veitingastofa og greiðasala',
+    value: 'C Veitingastofa og greiðasala',
     label: 'Veitingastofa og greiðasala',
   },
   {
-    value: 'Veisluþjónusta og veitingaverslun',
+    value: 'D Veisluþjónusta og veitingaverslun',
     label: 'Veisluþjónusta og veitingaverslun',
   },
-  { value: 'Kaffihús', label: 'Kaffihús' },
-  { value: 'Krá', label: 'Krá' },
-  { value: 'Samkomusalir', label: 'Samkomusalir' },
+  { value: 'E Kaffihús', label: 'Kaffihús' },
+  { value: 'F Krá', label: 'Krá' },
+  { value: 'G Samkomusalir', label: 'Samkomusalir' },
 ]
 
 export const HotelTypes: Option[] = [
-  { value: 'Hótel', label: 'Hótel' },
+  { value: 'A Hótel', label: 'Hótel' },
   {
-    value: 'Stærra gistiheimili',
+    value: 'B Stærra gistiheimili',
     label: 'Stærra gistiheimili',
   },
   {
-    value: 'Minna gistiheimili',
+    value: 'C Minna gistiheimili',
     label: 'Minna gistiheimili',
   },
-  { value: 'Gistiskáli', label: 'Gistiskáli' },
+  { value: 'D Gistiskáli', label: 'Gistiskáli' },
   {
-    value: 'Fjallaskáli',
+    value: 'E Fjallaskáli',
     label: 'Fjallaskáli',
   },
   {
-    value: 'Heimagisting',
+    value: 'F Heimagisting',
     label: 'Heimagisting',
   },
-  { value: 'Íbúðir', label: 'Íbúðir' },
+  { value: 'G Íbúðir', label: 'Íbúðir' },
   {
-    value: 'Frístundahús',
+    value: 'H Frístundahús',
     label: 'Frístundahús',
   },
 ]

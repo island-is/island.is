@@ -179,11 +179,11 @@ export function constructUploadDataObject(
             tegund: mapPersonEnum(p.type),
           }
         }),
-        attachments: attachments?.map((attachment)=> ({
+        attachments: attachments?.map((attachment) => ({
           nafnSkraar: attachment.name,
           innihaldSkraar: attachment.content,
         })),
-        
+
         gagnaMengi: extraData ?? {},
       },
     },

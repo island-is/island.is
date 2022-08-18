@@ -30,8 +30,3 @@ export type File = {
   key: string
   name: string
 }
-
-export type AttachmentData = {
-    name: string,
-    content: string
-}

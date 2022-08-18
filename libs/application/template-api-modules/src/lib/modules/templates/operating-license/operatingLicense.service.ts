@@ -17,11 +17,10 @@ import {
 import {
   File,
   ApplicationAttachments,
-  AttachmentData,
   AttachmentPaths,
 } from './types/attachments'
 import { ApplicationWithAttachments } from '@island.is/application/types'
-import { Info } from './types/application';
+import { Info } from './types/application'
 import { getExtraData } from './utils'
 
 @Injectable()
@@ -71,8 +70,10 @@ export class OperatingLicenseService {
     )
 
     if (!isPayment?.fulfilled) {
-      this.logger.error(
+      this.log(
+        'info',
         'Trying to submit OperatingLicenseapplication that has not been paid.',
+        {},
       )
       throw new Error(
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
@@ -83,31 +84,36 @@ export class OperatingLicenseService {
       // TODO: Submit to syslumenn
       const uploadDataName = 'rekstrarleyfi1.0'
       const uploadDataId = 'rekstrarleyfi1.0'
-      const info = getValueViaPath(
-        application.answers,
-        'info',
-      ) as Info
-      const persons: Person[] = [{
-        name: '',
-        ssn: auth.nationalId,
-        phoneNumber: info?.phoneNumber,
-        email: info?.email,
-        homeAddress: '',
-        postalCode: '',
-        city: '',
-        signed: true,
-        type: PersonType.Plaintiff,
-      }]
+      const info = getValueViaPath(application.answers, 'info') as Info
+      const persons: Person[] = [
+        {
+          name: '',
+          ssn: auth.nationalId,
+          phoneNumber: info?.phoneNumber,
+          email: info?.email,
+          homeAddress: '',
+          postalCode: '',
+          city: '',
+          signed: true,
+          type: PersonType.Plaintiff,
+        },
+      ]
       const attachments = await this.getAttachments(application)
       const extraData = getExtraData(application)
       const result: DataUploadResponse = await this.syslumennService
-      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessage: e.message,
-        }
-      })
+        .uploadData(
+          persons,
+          attachments,
+          extraData,
+          uploadDataName,
+          uploadDataId,
+        )
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
       return {
         success: result.success,
         orderId: '',
@@ -119,8 +125,6 @@ export class OperatingLicenseService {
 
       throw e
     }
-
-
   }
 
   private log(lvl: 'error' | 'info', message: string, meta: unknown) {
@@ -128,9 +132,10 @@ export class OperatingLicenseService {
   }
 
   private async getAttachments(
-    application: ApplicationWithAttachments): Promise<Attachment[]> {
+    application: ApplicationWithAttachments,
+  ): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-      console.log("HAHAHHAHDFASDFKAS D")
+
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
       const attachmentAnswerData = getValueViaPath(
@@ -138,15 +143,15 @@ export class OperatingLicenseService {
         path,
       ) as File[]
       const attachmentAnswer = attachmentAnswerData.pop()
-        console.log(attachmentAnswer)
+
       if (attachmentAnswer) {
         const fileType = attachmentAnswer.name?.split('.').pop()
-        const name: string = `${prefix}_${new Date(Date.now()).toISOString().substring(0, 10)}.${fileType}`
-        console.log("KEY",  attachmentAnswer?.key)
+        const name: string = `${prefix}_${new Date(Date.now())
+          .toISOString()
+          .substring(0, 10)}.${fileType}`
         const fileName = (application.attachments as ApplicationAttachments)[
           attachmentAnswer?.key
         ]
-        console.log(fileName)
         const content = await this.getFileContentBase64(fileName)
         attachments.push({ name, content } as Attachment)
       }
@@ -160,17 +165,18 @@ export class OperatingLicenseService {
     const uploadBucket = bucket
     try {
       const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (e) {
+      this.log('error', 'Fetching uploaded file failed', {
+        e,
       })
-      .promise()
-    const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64') || ''
-    } catch ( e) {
-      console.log("ERR", e)
       return 'err'
     }
-    
   }
 }
