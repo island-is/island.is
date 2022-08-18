@@ -1,11 +1,11 @@
 import faker from 'faker'
 
 import { Case, UserRole } from '@island.is/judicial-system/types'
-import { IC_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import { INVESTIGATION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { makeInvestigationCase, intercept } from '../../../utils'
 
-describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   const ruling = faker.lorem.sentence()
   const conclusion = faker.lorem.sentence()
 
@@ -20,7 +20,7 @@ describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_CONFIRMATION_ROUTE}/test_id_stadfesting`)
+    cy.visit(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)
 
     cy.contains(ruling)
   })
