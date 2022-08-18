@@ -1,7 +1,11 @@
-import { aliasQuery, getFakeUser, getDiscountData } from '../../support/utils'
-import { AuthUser, BaseUrl } from '../../lib/types'
+import {
+  aliasQuery,
+  getFakeUser,
+  getDiscountData,
+} from '../../../support/utils'
+import { AuthUser, BaseUrl } from '../../../lib/types'
 
-import fakeUsers from '../../fixtures/air-discount-scheme/users.json'
+import fakeUsers from '../../../fixtures/air-discount-scheme/users.json'
 
 describe('Home page', () => {
   const testEnvironment = Cypress.env('testEnvironment')
