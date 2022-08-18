@@ -89,6 +89,12 @@ export type ServicePortalRoute = {
   /**
    * The render value of this component
    */
+
+  /**
+   * The key for the route. Used to filter feature flagged pages.
+   */
+  key?: string
+
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }
 
