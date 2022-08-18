@@ -5,7 +5,7 @@ import {
   OPERATION_CATEGORY,
   CATEGORIES,
 } from './types/application'
-import { YES } from './constants';
+import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
@@ -31,7 +31,9 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     tegund2: isHotel ? 'Gististaðir' : 'Veitingaleyfi',
     ...type,
     flokkur: category,
-    leyfiTilUtiveitinga: answers.openingHours?.willServe?.includes(YES) ? 'Já' : 'Nei',
+    leyfiTilUtiveitinga: answers.openingHours?.willServe?.includes(YES)
+      ? 'Já'
+      : 'Nei',
     afgrAfgengisVirkirdagarFra: formatOpeningHours(
       answers.openingHours.alcohol?.weekdays?.from,
     ),
@@ -99,4 +101,3 @@ const formatOpeningHours = (value?: string) => {
 
   return `${hours}:${minutes}`
 }
-
