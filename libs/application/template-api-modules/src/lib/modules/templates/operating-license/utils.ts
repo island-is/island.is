@@ -15,7 +15,6 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     'payment.data.priceAmount',
   ) as string
   const isHotel = answers.applicationInfo.operation === APPLICATION_TYPES.HOTEL
-  const outside = answers.openingHours.willServe.includes(YES)
   const category = isHotel
     ? getHotelCategory(answers.applicationInfo.hotel?.category)
     : answers.applicationInfo.resturant?.category === OPERATION_CATEGORY.ONE
@@ -32,7 +31,7 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     tegund2: isHotel ? 'Gististaðir' : 'Veitingaleyfi',
     ...type,
     flokkur: category,
-    leyfiTilUtiveitinga: outside ? 'Já' : 'Nei',
+    leyfiTilUtiveitinga: getYesNo(answers.openingHours.willServe),
     afgrAfgengisVirkirdagarFra: formatOpeningHours(
       answers.openingHours.alcohol.weekdays.from,
     ),
@@ -65,8 +64,8 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
         hamarksfjoldiGesta: property.customerCount,
       })),
     ),
-    bradabirgdarleyfi: answers.temporaryLicense.includes(YES) ? 'Já' : 'Nei',
-    skuldastada: answers.debtClaim.includes(YES) ? 'Já' : 'Nei',
+    bradabirgdarleyfi: getYesNo(answers.temporaryLicense),
+    skuldastada: getYesNo(answers.debtClaim),
     annad: answers.otherInfoText || '',
     vskNr: answers.info.vskNr,
     upphaed: charge,
@@ -99,4 +98,8 @@ const formatOpeningHours = (value?: string) => {
   const { hours, minutes } = getHoursMinutes(value)
 
   return `${hours}:${minutes}`
+}
+
+const getYesNo = (arr: string[]) => {
+  return arr.includes(YES) ? 'Já' : 'Nei'
 }
