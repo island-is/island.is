@@ -87,8 +87,12 @@ export const CheckIdpSession = () => {
       const { retryCount } = userSession.current
 
       if (!isActive() && retryCount > MAX_RETRIES && hasBeenActive) {
-        // We are unable to retrieve a message from the IDP after max retries,
-        // so we reload the window to check if the user session is still valid.
+        // We were unable to retrieve a message from the IDP after max retries and have a reason
+        // to believe that the session is expired (an earlier UserSessionMessage has expired).
+        // So we reload the window just to be safe. This causes one of three things to happen:
+        // - If the iframe is broken and the user does have a valid IDP session, they'll generally reload where they were.
+        // - If the iframe is broken and the user does not have a valid IDP session, they're sent to the login page.
+        // - If the user has a network problem, then they'll see a browser error screen, but at least any sensitive information is not visible any more.
         window.location.reload()
       } else if (!isActive() && retryCount < MAX_RETRIES) {
         userSession.current.retryCount += 1
