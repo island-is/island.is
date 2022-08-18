@@ -9,7 +9,7 @@ interface Props {
 }
 
 const AdminTabNav: React.FC<Props> = ({
-  handleTabChange: handleTabChange,
+  handleTabChange,
   activeTab: activetab,
   children,
 }) => {

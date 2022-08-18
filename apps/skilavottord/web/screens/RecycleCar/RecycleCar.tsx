@@ -59,14 +59,12 @@ const RecycleCar = ({ apolloState }: PropTypes) => {
   }
 
   const checkboxLabel = (
-    <>
-      <Text fontWeight={!checkbox ? 'light' : 'medium'}>
+    <Text fontWeight={!checkbox ? 'light' : 'medium'}>
         {t.checkbox!.label}{' '}
         <a href="https://island.is/skilmalar-island-is">
           {t.checkbox!.linkLabel}
         </a>
       </Text>
-    </>
   )
 
   return (

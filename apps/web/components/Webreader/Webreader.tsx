@@ -106,8 +106,7 @@ export const Webreader: FC<WebReaderProps> = ({
       : 'Listen to this page using ReadSpeaker'
 
   return (
-    <>
-      <Box marginTop={marginTop} marginBottom={marginBottom}>
+    <Box marginTop={marginTop} marginBottom={marginBottom}>
         <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
           <a
             rel="nofollow"
@@ -125,6 +124,5 @@ export const Webreader: FC<WebReaderProps> = ({
           </a>
         </div>
       </Box>
-    </>
   )
 }
