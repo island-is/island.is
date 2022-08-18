@@ -245,13 +245,11 @@ export class CaseService {
 
   private async uploadCourtRecordPdfToCourt(theCase: Case): Promise<boolean> {
     try {
-      const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+      const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
 
       if (!this.config.production) {
         writeFile(`${theCase.id}-court-record.pdf`, pdf)
       }
-
-      const buffer = Buffer.from(pdf, 'binary')
 
       await this.courtService.createCourtRecord(
         theCase.id,
@@ -260,7 +258,7 @@ export class CaseService {
         this.formatMessage(courtUpload.courtRecord, {
           courtCaseNumber: theCase.courtCaseNumber,
         }),
-        buffer,
+        pdf,
       )
 
       return true
@@ -640,7 +638,7 @@ export class CaseService {
 
     await this.refreshFormatMessage()
 
-    return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
+    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
   async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
@@ -1045,6 +1043,8 @@ export class CaseService {
   }
 
   async deliver(theCase: Case): Promise<DeliverResponse> {
+    this.refreshFormatMessage()
+
     const signedRulingDeliveredToCourt = await this.deliverSignedRulingToCourt(
       theCase,
     )
