@@ -7,10 +7,10 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ValueLine } from '../Shared'
 

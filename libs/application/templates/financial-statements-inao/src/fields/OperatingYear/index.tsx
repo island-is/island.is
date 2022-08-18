@@ -21,22 +21,6 @@ export const OperatingYear = () => {
           { label: '2021', value: '2021' },
         ]}
       />
-      {/* <Controller
-        name={ABOUTIDS.operatingYear}
-        defaultValue=""
-        render={({ onChange, value }) => {
-          return (
-            <Select
-              id={ABOUTIDS.operatingYear}
-              name={ABOUTIDS.operatingYear}
-              label={formatMessage(m.operatingYear)}
-              placeholder={formatMessage(m.selectOperatingYear)}
-              value={value}
-              onChange={onChange}
-            />
-          )
-        }}
-      /> */}
     </Box>
   )
 }

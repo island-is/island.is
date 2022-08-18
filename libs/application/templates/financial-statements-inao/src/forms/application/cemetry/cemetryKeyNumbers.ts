@@ -1,12 +1,13 @@
 import {
   buildCustomField,
+  buildMultiField,
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
 import {
   CEMETRY,
   CEMETRYEQUITIESANDLIABILITIESIDS,
-  CEMETRYOPERATIONIDS
+  CEMETRYOPERATIONIDS,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 
@@ -23,12 +24,18 @@ export const cemetryKeyNumbersSection = buildSection({
       id: 'operatingCost',
       title: m.expensesIncome,
       children: [
-        buildCustomField({
-          id: 'cemetryIncome',
+        buildMultiField({
+          id: 'cemetryEquitiesAndLiabilities',
           title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
-          component: 'CemetryOperation',
-          childInputIds: Object.values(CEMETRYOPERATIONIDS),
+          children: [
+            buildCustomField({
+              id: 'cemetryIncome',
+              title: '',
+              component: 'CemetryOperation',
+              childInputIds: Object.values(CEMETRYOPERATIONIDS),
+            }),
+          ],
         }),
       ],
     }),
@@ -36,12 +43,19 @@ export const cemetryKeyNumbersSection = buildSection({
       id: 'keyNumbers.cemetryEquitiesAndLiabilities',
       title: m.keyNumbersProperty,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'cemetryEquitiesAndLiabilities',
           title: m.keyNumbersDebt,
           description: m.fillOutAppopriate,
-          component: 'CemetryEquities',
-          childInputIds: Object.values(CEMETRYEQUITIESANDLIABILITIESIDS),
+          children: [
+            buildCustomField({
+              id: 'cemetryEquitiesAndLiabilities',
+              title: m.keyNumbersDebt,
+              description: m.fillOutAppopriate,
+              component: 'CemetryEquities',
+              childInputIds: Object.values(CEMETRYEQUITIESANDLIABILITIESIDS),
+            }),
+          ],
         }),
       ],
     }),

@@ -1,5 +1,13 @@
-import { buildCustomField, buildSection } from '@island.is/application/core'
-import { CARETAKERLIMIT, CEMETRY, CEMETRYCARETAKER } from '../../../lib/constants'
+import {
+  buildCustomField,
+  buildSection,
+  buildMultiField,
+} from '@island.is/application/core'
+import {
+  CARETAKERLIMIT,
+  CEMETRY,
+  CEMETRYCARETAKER,
+} from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 
@@ -7,7 +15,6 @@ export const cemetryCaretaker = buildSection({
   id: 'cemetryCaretaker',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
-    console.log({ answers })
     /* @ts-ignore */
     const userType = externalData?.currentUserType?.data?.code
     const applicationAnswers = <FinancialStatementsInao>answers
@@ -15,12 +22,18 @@ export const cemetryCaretaker = buildSection({
     return userType === CEMETRY && parseInt(totalIncome, 10) < CARETAKERLIMIT
   },
   children: [
-    buildCustomField({
-      id: 'cemetryCaretaker',
+    buildMultiField({
+      id: 'caretakers',
       title: m.cemeteryBoardmembers,
       description: m.cemeteryRegisterCaretakers,
-      component: 'CemetryCaretaker',
-      childInputIds: Object.values(CEMETRYCARETAKER),
+      children: [
+        buildCustomField({
+          id: 'cemetryCaretaker',
+          title: m.cemeteryBoardmembers,
+          component: 'CemetryCaretaker',
+          childInputIds: Object.values(CEMETRYCARETAKER),
+        }),
+      ],
     }),
   ],
 })

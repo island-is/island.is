@@ -6,7 +6,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { CEMETRY, GREATER, LESS, PARTY } from '../../../lib/constants'
+import {
+  CEMETRY,
+  GREATER,
+  INDIVIDUAL,
+  LESS,
+  PARTY,
+} from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 
 export const overviewSection = buildSection({
@@ -16,24 +22,43 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overview',
       title: (application) => {
-        return getValueViaPath(application.answers, 'election.incomeLimit') ===
-          LESS
-          ? m.statement
-          : m.overviewTitle
+        if (
+          // @ts-ignore
+          application.externalData?.currentUserType?.data?.code === INDIVIDUAL
+        ) {
+          return getValueViaPath(
+            application.answers,
+            'election.incomeLimit',
+          ) === LESS
+            ? m.statement
+            : m.overviewTitle
+        } else {
+          return m.yearlyOverview
+        }
       },
-      description: (application) =>
-        getValueViaPath(application.answers, 'election.incomeLimit') === LESS
-          ? m.overviewDescription
-          : `${m.electionStatement.defaultMessage} ${getValueViaPath(
-              application.answers,
-              'election.selectElection',
-            )}`,
+      description: (application) => {
+        if (
+          // @ts-ignore
+          application.externalData?.currentUserType?.data?.code === INDIVIDUAL
+        ) {
+          return getValueViaPath(
+            application.answers,
+            'election.incomeLimit',
+          ) === LESS
+            ? m.overviewDescription
+            : `${m.electionStatement.defaultMessage} ${getValueViaPath(
+                application.answers,
+                'election.selectElection',
+              )}`
+        } else {
+          return m.review
+        }
+      },
       children: [
         buildCustomField({
           id: 'overviewCustomField',
           title: '',
           condition: (answers, externalData) => {
-            console.log({ externalData, answers })
             /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === CEMETRY
@@ -45,7 +70,6 @@ export const overviewSection = buildSection({
           id: 'overviewCustomField',
           title: '',
           condition: (_answers, externalData) => {
-            console.log(externalData)
             /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === PARTY

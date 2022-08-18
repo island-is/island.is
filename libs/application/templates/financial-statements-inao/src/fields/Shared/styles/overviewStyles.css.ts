@@ -1,0 +1,23 @@
+import { style } from '@vanilla-extract/css'
+
+export const columnStyle = style({
+  paddingTop: '0px',
+  paddingBottom: '0px',
+  '@media': {
+    'screen and (min-width: 576px)': {
+      paddingTop: '0.5rem',
+      paddingBottom: '0.5rem',
+    },
+  },
+})
+
+export const starterColumnStyle = style({
+  paddingTop: '1rem',
+  paddingBottom: '0px',
+  '@media': {
+    'screen and (min-width: 576px)': {
+      paddingTop: '1rem',
+      paddingBottom: '0.5rem',
+    },
+  },
+})

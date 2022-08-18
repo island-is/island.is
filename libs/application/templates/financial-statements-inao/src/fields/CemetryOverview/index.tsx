@@ -14,6 +14,10 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ValueLine } from '../Shared'
 import { CARETAKERLIMIT } from '../../lib/constants'
+import {
+  columnStyle,
+  starterColumnStyle,
+} from '../Shared/styles/overviewStyles.css'
 
 export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -23,21 +27,21 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
   return (
     <Box marginBottom={2}>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.operatingYear}
               value={
                 answers.conditionalAbout?.operatingYear
-                  ? formatNationalId(answers.conditionalAbout.operatingYear)
+                  ? answers.conditionalAbout.operatingYear
                   : '-'
               }
             />
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -54,7 +58,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -70,7 +74,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine label={m.email} value={answers.about.email} />
@@ -84,12 +88,12 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersIncomeAndExpenses)}
         </Text>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -105,7 +109,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -121,7 +125,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -138,7 +142,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
 
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -154,7 +158,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -170,7 +174,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -181,7 +185,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersDebt)}
         </Text>
@@ -202,7 +206,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -218,7 +222,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -234,7 +238,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -246,40 +250,33 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
       </Box>
       <Divider />
       {parseInt(answers.cemetryIncome?.total, 10) < CARETAKERLIMIT &&
-      answers.cemetryCaretaker?.length > 0
-        ? 
+      answers.cemetryCaretaker?.length > 0 ? (
         <Fragment>
-          <Box paddingTop={4} paddingBottom={2}>
-        <Text variant="h3" as="h3">
-          {formatMessage(m.cemeteryBoardmembers)}
-        </Text>
-      </Box> 
-        {answers.cemetryCaretaker.map((careTaker) => {
+          <Box className={starterColumnStyle}>
+            <Text variant="h3" as="h3">
+              {formatMessage(m.cemeteryBoardmembers)}
+            </Text>
+          </Box>
+          {answers.cemetryCaretaker.map((careTaker) => {
             return (
               <Fragment>
-                <Box paddingY={2}>
+                <Box className={columnStyle}>
                   <GridRow>
                     <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine
-                        label={m.fullName}
-                        value={careTaker.name}
-                      />
+                      <ValueLine label={m.fullName} value={careTaker.name} />
                     </GridColumn>
                     <GridColumn span={['12/12', '6/12']}>
                       <ValueLine
                         label={m.nationalId}
-                        value={careTaker.nationalId}
+                        value={formatNationalId(careTaker.nationalId)}
                       />
                     </GridColumn>
                   </GridRow>
                 </Box>
-                <Box paddingY={2}>
+                <Box className={columnStyle}>
                   <GridRow>
                     <GridColumn span={['12/12', '6/12']}>
-                      <ValueLine
-                        label={m.role}
-                        value={careTaker.role}
-                      />
+                      <ValueLine label={m.role} value={careTaker.role} />
                     </GridColumn>
                   </GridRow>
                 </Box>
@@ -287,9 +284,8 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
               </Fragment>
             )
           })}
-          </Fragment>
-        : null}
-        
+        </Fragment>
+      ) : null}
     </Box>
   )
 }

@@ -75,7 +75,8 @@ export const m = defineMessages({
   },
   reviewContact: {
     id: 'fsn.application:reviewContact',
-    defaultMessage: 'Vinsamlegast yfirfarið tengiliðaupplýsingar hér að neðan',
+    defaultMessage:
+      'Vinsamlegast yfirfarið upplýsingar um tengilið hér að neðan',
     description: 'Review contact info',
   },
   fullName: {
@@ -455,6 +456,12 @@ export const m = defineMessages({
     defaultMessage: 'Ársreikningur',
     description: 'financial statements',
   },
+  review: {
+    id: 'fsn.application:review',
+    defaultMessage:
+      'Endilega lestu yfir til að vera viss um að allar upplýsingar hafi verið gefnar',
+    description: 'financial statements',
+  },
   upload: {
     id: 'fsn.application:upload',
     defaultMessage: 'Hlaða upp ársreikningi',
@@ -504,6 +511,11 @@ export const m = defineMessages({
     id: 'fsn.application:overview.general.description',
     defaultMessage: 'Farðu vel yfir efnið áður en þú sendir inn umsóknina.',
     description: 'Overview description',
+  },
+  yearlyOverview: {
+    id: 'fsn.application:overview.general.yearly',
+    defaultMessage: 'Yfirlit ársreiknings',
+    description: 'Yearly overview',
   },
   success: {
     id: 'fsn.application:success',
