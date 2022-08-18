@@ -46,6 +46,11 @@ export const parseFirearmLicensePayload = (
       label: 'Réttindaflokkar',
       value: license.qualifications,
     },
+    license.licenseImgBase64 && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Mynd',
+      value: license.licenseImgBase64,
+    },
   ].filter((Boolean as unknown) as ExcludesFalse)
 
   return {
