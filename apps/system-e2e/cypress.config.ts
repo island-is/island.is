@@ -30,9 +30,9 @@ export default defineConfig({
   },
   e2e: {
     chromeWebSecurity: false,
-    specPattern: './src/integration/**/*.ts',
+    specPattern: '**/*.spec.{js,ts}',
     experimentalSessionAndOrigin: true,
-    supportFile: './src/support/index.ts',
+    supportFile: '**/support/index.{js,ts}',
     setupNodeEvents(on, config) {
       const testEnvironment: TestEnvironment =
         process.env.TEST_ENVIRONMENT || 'local'

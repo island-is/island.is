@@ -8,14 +8,21 @@ ENV_FILE="$PROJECT_DIR/.env.secret"
 source "$ENV_FILE"
 
 function run() {
-  local service
-  service="${1:-}"
-  [ -z "$*" ] && "${CYPRESS_BIN}" open -P apps/system-e2e/
-  "${CYPRESS_BIN}" run -P apps/system-e2e --spec apps/system-e2e/src/integration/"${service}".spec.ts --headed --no-exit
+  local integration test_type target
+  integration="${1:-}"
+  test_type="${2:-}"
+  target="${3:-}"
+
+  [ -z "$*" ] && "${CYPRESS_BIN}" open -P dist/apps/system-e2e
+  "${CYPRESS_BIN}" run -P dist/apps/system-e2e --spec dist/apps/system-e2e/integration/"${integration}/${test_type}/${target}".spec.ts --headed --no-exit
 }
 
 usage() {
   echo "Usage: $(basename "$0") <menu|service-name>" 2>&1
+  echo "menu          opens cypress spec menu" 2>&1
+  echo "test          service-portal smoketest homepage" 2>&1
+
+
   exit 1
 }
 
