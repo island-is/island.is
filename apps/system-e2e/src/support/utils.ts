@@ -3,7 +3,7 @@ export const cypressError = (msg: string) => {
   throw new Error(msg)
 }
 
-import type { AuthUser, AuthUserWithDiscount } from '../lib/types'
+import type { AuthUser, AuthUserWithDiscount, FakeUser } from '../lib/types'
 
 export const getCognitoCredentials = () => {
   return {
@@ -33,7 +33,7 @@ export const aliasQuery = (
   }
 }
 
-export const getFakeUser = (fakeUsers: AuthUser[], name: string) =>
+export const getFakeUser = (fakeUsers: (AuthUser | FakeUser)[], name: string) =>
   fakeUsers
     .filter((e) => e.name.toLowerCase().includes(name.toLowerCase()))
     .reduce((e) => e)
