@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "@nrwl/node:webpack",
       "options": {
         "outputPath": "dist/apps/application-system/api",
         "main": "apps/application-system/api/src/main.ts",
@@ -74,7 +74,8 @@
       "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "application-system-api:build"
-      }
+      },
+      "inspect": true
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",

@@ -3,9 +3,8 @@ import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import AmazonS3URI from 'amazon-s3-uri'
 import kebabCase from 'lodash/kebabCase'
-
-import type { FileStorageConfig } from './file-storage.configuration'
-import { FILE_STORAGE_CONFIG } from './file-storage.configuration'
+import { ConfigType } from '@nestjs/config'
+import { FileStorageConfig } from './file-storage.configuration'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
@@ -15,8 +14,8 @@ export class FileStorageService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
   constructor(
-    @Inject(FILE_STORAGE_CONFIG)
-    private readonly config: FileStorageConfig,
+    @Inject(FileStorageConfig.KEY)
+    private config: ConfigType<typeof FileStorageConfig>,
   ) {}
 
   generatePresignedPost(filename: string): Promise<AWS.S3.PresignedPost> {

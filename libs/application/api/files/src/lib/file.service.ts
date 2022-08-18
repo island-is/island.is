@@ -17,12 +17,12 @@ import {
 import { AwsService } from '@island.is/nest/aws'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import type { ApplicationConfig } from '../application.configuration'
-import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { ApplicationFilesConfig } from './files.config'
+import { ConfigType } from '@nestjs/config'
 
 export interface AttachmentMetaData {
   s3key: string
@@ -42,8 +42,8 @@ export class FileService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(APPLICATION_CONFIG)
-    private readonly config: ApplicationConfig,
+    @Inject(ApplicationFilesConfig.KEY)
+    private config: ConfigType<typeof ApplicationFilesConfig>,
     private readonly signingService: SigningService,
     private readonly awsService: AwsService,
   ) {}

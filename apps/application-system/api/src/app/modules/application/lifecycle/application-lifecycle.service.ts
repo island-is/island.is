@@ -3,11 +3,10 @@ import {
   ApplicationService,
   Application,
 } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
-import { FileService } from '../files'
+import { FileService } from '@island.is/application/api/files'
 
 export interface ApplicationPruning {
   pruned: boolean
