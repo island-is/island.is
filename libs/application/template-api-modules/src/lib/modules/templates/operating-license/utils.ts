@@ -46,16 +46,16 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
       answers.openingHours.alcohol.weekends.to,
     ),
     afgrAfgengisVirkirdagarUtiveitingarFra: formatOpeningHours(
-      answers.openingHours.outside?.weekdays.from,
+      answers.openingHours.outside?.weekdays?.from,
     ),
     afgrAfgengisVirkirdagarUtiveitingarTil: formatOpeningHours(
-      answers.openingHours.outside?.weekdays.to,
+      answers.openingHours.outside?.weekdays?.to,
     ),
     afgrAfgengisAdfaranottFridagaUtiveitingarFra: formatOpeningHours(
-      answers.openingHours.outside?.weekends.from,
+      answers.openingHours.outside?.weekends?.from,
     ),
     afgrAfgengisAdfaranottFridagaUtiveitingarTil: formatOpeningHours(
-      answers.openingHours.outside?.weekends.to,
+      answers.openingHours.outside?.weekends?.to,
     ),
     rymi: JSON.stringify(
       answers.properties.map((property) => ({
