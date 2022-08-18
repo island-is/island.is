@@ -81,7 +81,6 @@ export class OperatingLicenseService {
     }
 
     try {
-      // TODO: Submit to syslumenn
       const uploadDataName = 'rekstrarleyfi1.0'
       const uploadDataId = 'rekstrarleyfi1.0'
       const info = getValueViaPath(application.answers, 'info') as Info

@@ -5,7 +5,7 @@ import {
   OPERATION_CATEGORY,
   CATEGORIES,
 } from './types/application'
-import { YES } from './constants'
+import { YES } from './constants';
 import { getValueViaPath } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
@@ -31,18 +31,18 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     tegund2: isHotel ? 'Gististaðir' : 'Veitingaleyfi',
     ...type,
     flokkur: category,
-    leyfiTilUtiveitinga: getYesNo(answers.openingHours.willServe),
+    leyfiTilUtiveitinga: answers.openingHours.willServe.includes(YES) ? 'Já' : 'Nei',
     afgrAfgengisVirkirdagarFra: formatOpeningHours(
-      answers.openingHours.alcohol.weekdays.from,
+      answers.openingHours.alcohol?.weekdays?.from,
     ),
     afgrAfgengisVirkirdagarTo: formatOpeningHours(
-      answers.openingHours.alcohol.weekdays.to,
+      answers.openingHours.alcohol?.weekdays?.to,
     ),
     afgrAfgengisAdfaranottFridagaFra: formatOpeningHours(
-      answers.openingHours.alcohol.weekends.from,
+      answers.openingHours.alcohol?.weekends?.from,
     ),
     afgrAfgengisAdfaranottFridagaTil: formatOpeningHours(
-      answers.openingHours.alcohol.weekends.to,
+      answers.openingHours.alcohol?.weekends?.to,
     ),
     afgrAfgengisVirkirdagarUtiveitingarFra: formatOpeningHours(
       answers.openingHours.outside?.weekdays?.from,
@@ -64,8 +64,8 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
         hamarksfjoldiGesta: property.customerCount,
       })),
     ),
-    bradabirgdarleyfi: getYesNo(answers.temporaryLicense),
-    skuldastada: getYesNo(answers.debtClaim),
+    bradabirgdarleyfi: answers.temporaryLicense.includes(YES) ? 'Já' : 'Nei',
+    skuldastada: answers.debtClaim.includes(YES) ? 'Já' : 'Nei',
     annad: answers.otherInfoText || '',
     vskNr: answers.info.vskNr,
     upphaed: charge,
@@ -100,6 +100,3 @@ const formatOpeningHours = (value?: string) => {
   return `${hours}:${minutes}`
 }
 
-const getYesNo = (arr: string[]) => {
-  return arr.includes(YES) ? 'Já' : 'Nei'
-}
