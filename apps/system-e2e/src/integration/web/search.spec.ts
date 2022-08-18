@@ -1,9 +1,7 @@
 describe('Search feature', () => {
   beforeEach(() => {
-    cy.cognitoLogin({
-      cognitoUsername: Cypress.env('cognitoUsername'),
-      cognitoPassword: Cypress.env('cognitoPassword'),
-    })
+    const { username, password } = Cypress.env('cognito')
+    cy.cognitoLogin({ username, password })
   })
 
   beforeEach(() => {

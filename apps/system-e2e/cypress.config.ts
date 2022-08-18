@@ -1,5 +1,16 @@
 import { defineConfig } from 'cypress'
-import { getCognitoCredentials, testEnvironment } from './src/support/utils'
+import { getCognitoCredentials } from './src/support/utils'
+import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
+
+const getEnvironmentUrls = (env: TestEnvironment) => {
+  return env === 'local' || env === 'dev'
+    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    : env === 'prod'
+    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    : env === 'staging'
+    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
+    : { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+}
 
 export default defineConfig({
   fileServerFolder: '.',
@@ -23,15 +34,16 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     supportFile: './src/support/index.ts',
     setupNodeEvents(on, config) {
-      config.env.testEnvironment = testEnvironment
+      const testEnvironment: TestEnvironment =
+        process.env.TEST_ENVIRONMENT || 'local'
       if (testEnvironment !== 'local') {
-        const { cognitoUsername, cognitoPassword } = getCognitoCredentials()
-        config.env.cognitoUsername = cognitoUsername
-        config.env.cognitoPassword = cognitoPassword
+        config.env.cognito = getCognitoCredentials()
       }
-      config.baseUrl = config.env[testEnvironment].baseUrl
+      const { baseUrl, authUrl } = getEnvironmentUrls(testEnvironment)
+      config.env.testEnvironment = testEnvironment
+      config.env.authUrl = authUrl
+      config.baseUrl = baseUrl
       return config
     },
   },
 })
-// ci-cache-bust-01
