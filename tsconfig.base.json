@@ -248,6 +248,9 @@
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
       ],
+      "@island.is/application/templates/operating-license/types": [
+        "libs/application/templates/operating-license/src/types.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
