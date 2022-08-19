@@ -1,24 +1,30 @@
 import React, { useState, useRef } from 'react'
+import InputMask from 'react-input-mask'
 import { useKey } from 'react-use'
-import { useIntl } from 'react-intl'
 
 import { Button, Input } from '@island.is/island-ui/core'
-import { courtDocuments as m } from '@island.is/judicial-system-web/messages'
 
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
 
 interface MultipleValueListProps {
   onAddValue: (nextValue: string) => void
+  inputLabel: string
+  inputPlaceholder: string
+  inputMask?: string
+  buttonText: string
 }
 
 const MultipleValueList: React.FC<MultipleValueListProps> = ({
   children,
   onAddValue,
+  inputLabel,
+  inputPlaceholder,
+  inputMask,
+  buttonText,
 }) => {
-  const { formatMessage } = useIntl()
   const [nextValue, setNextValue] = useState<string>('')
-  const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
+  const valueRef = useRef<HTMLInputElement>(null)
 
   // Add document on enter press
   useKey(
@@ -32,24 +38,41 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   )
 
   const clearInput = () => {
-    if (additionalCourtDocumentRef.current) {
-      additionalCourtDocumentRef.current.value = ''
-      additionalCourtDocumentRef.current.focus()
+    if (valueRef.current) {
+      valueRef.current.value = ''
+      valueRef.current.focus()
     }
   }
 
   return (
     <BlueBox>
       <div className={styles.addCourtDocumentContainer}>
-        <Input
-          name="add-court-document"
-          label={formatMessage(m.add.label)}
-          placeholder={formatMessage(m.add.placeholder)}
-          size="sm"
-          autoComplete="off"
-          onChange={(evt) => setNextValue(evt.target.value)}
-          ref={additionalCourtDocumentRef}
-        />
+        {inputMask ? (
+          <InputMask
+            mask={inputMask}
+            maskPlaceholder={null}
+            onChange={(evt) => setNextValue(evt.target.value)}
+          >
+            <Input
+              name="value-input"
+              label={inputLabel}
+              placeholder={inputPlaceholder}
+              size="sm"
+              autoComplete="off"
+              ref={valueRef}
+            />
+          </InputMask>
+        ) : (
+          <Input
+            name="value-input"
+            label={inputLabel}
+            placeholder={inputPlaceholder}
+            size="sm"
+            autoComplete="off"
+            onChange={(evt) => setNextValue(evt.target.value)}
+            ref={valueRef}
+          />
+        )}
         <Button
           icon="add"
           size="small"
@@ -60,7 +83,7 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
           }}
           fluid
         >
-          {formatMessage(m.add.buttonText)}
+          {buttonText}
         </Button>
       </div>
       {children}

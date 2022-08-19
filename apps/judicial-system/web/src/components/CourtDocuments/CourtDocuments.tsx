@@ -16,11 +16,11 @@ import { Case, CourtDocument, UserRole } from '@island.is/judicial-system/types'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
+import { theme } from '@island.is/island-ui/theme'
 
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import { useCase } from '../../utils/hooks'
 import * as styles from './CourtDocuments.css'
-import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   workingCase: Case
@@ -154,7 +154,12 @@ const CourtDocuments: FC<Props> = (props) => {
           {formatMessage(courtDocuments.header)}
         </Text>
       </Box>
-      <MultipleValueList onAddValue={handleAddDocument}>
+      <MultipleValueList
+        onAddValue={handleAddDocument}
+        inputLabel={formatMessage(courtDocuments.add.label)}
+        inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
+        buttonText={formatMessage(courtDocuments.add.buttonText)}
+      >
         <>
           <Box marginBottom={1}>
             <Text variant="h4">

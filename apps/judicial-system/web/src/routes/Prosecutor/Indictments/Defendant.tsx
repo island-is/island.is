@@ -2,11 +2,15 @@ import React, { useContext } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PoliceCaseNumbers from '../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 
 const Defendant: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
 
   return (
     <PageLayout
@@ -14,7 +18,10 @@ const Defendant: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <h1>Defendant</h1>
+      <PoliceCaseNumbers
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+      />
     </PageLayout>
   )
 }

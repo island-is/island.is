@@ -34,7 +34,7 @@ import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
@@ -235,7 +235,7 @@ const Defendant = () => {
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
-            <LokeCaseNumber
+            <PoliceCaseNumbers
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
