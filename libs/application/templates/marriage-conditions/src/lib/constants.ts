@@ -7,8 +7,7 @@ export type Events =
 export enum States {
   DRAFT = 'draft',
   PAYMENT = 'payment',
-  APPLICANT_DONE = 'applicant_done',
-  SPOUSE_CONFIRMED = 'spouse_confirmed',
+  SPOUSE_CONFIRM = 'spouse_confirm',
   DONE = 'done',
 }
 export enum Roles {

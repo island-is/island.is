@@ -6,6 +6,25 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um könnun hjónavígsluskilyrða',
     description: 'Application for Marriage Conditions',
   },
+
+  /* Intro section */
+  introTitle: {
+    id: 'mc.application:intro.title',
+    defaultMessage: 'Inngangur',
+    description: 'Some description',
+  },
+  introSectionTitle: {
+    id: 'mc.application:introSection.title',
+    defaultMessage: 'Könnun hjónavígsluskilyrða',
+    description: 'Some description',
+  },
+  introSectionDescription: {
+    id: 'mc.application:intro.introSection.description#markdown',
+    defaultMessage: `Í þessu ferli verður kannað hvort að þú og þitt hjónaefni uppfyllið öll skilyrði til hjónavígslu. Eftir að þú hefur fyllt út þessa könnun verður hún send áfram á þitt hjónaefni og þá svaramenn sem þið tilgreinið í ferlinu. Ef þið uppfyllið öll skilyrði verður ykkur veitt heimild af sýslumanni til þess að ganga í hjónaband. Sú heimild gildir í 30 daga frá samþykkt og skal berast til vígsluaðila áður en athöfn fer fram.Þetta ferli vistast sjálfkrafa á meðan það er fyllt út og hægt er að opna það aftur undir umsóknum inni á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu mála eftir að öll gögn hafa verið send inn. 
+    Meðhöndlun umsóknar kostar 15.500 kr og greiðist áður en könnun er send áfram á þitt hjónaefni.`,
+    description: 'Some description',
+  },
+
   /* Data Collection Section */
   dataCollectionTitle: {
     id: 'mc.application:applicationDataCollectionTitle',
@@ -109,6 +128,27 @@ export const m = defineMessages({
     defaultMessage:
       'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
     description: 'marital sides',
+  },
+  informationWitnessTitle: {
+    id: 'mc.application:',
+    defaultMessage: 'Svaramenn',
+    description: 'screen title',
+  },
+  informationWitnessSubtitle: {
+    id: 'mc.application:informationWitnessSubtitle',
+    defaultMessage:
+      'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
+    description: 'screen subtitle',
+  },
+  informationWitness1: {
+    id: 'mc.application:informationWitness1',
+    defaultMessage: 'Svaramaður 1',
+    description: 'Information title witness 1',
+  },
+  informationWitness2: {
+    id: 'mc.application:informationWitness2',
+    defaultMessage: 'Svaramaður 2',
+    description: 'Information title witness 2',
   },
 
   /* Individuals info headers */

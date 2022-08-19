@@ -87,10 +87,10 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.APPLICANT_DONE },
+          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRM },
         },
       },
-      [States.APPLICANT_DONE]: {
+      [States.SPOUSE_CONFIRM]: {
         meta: {
           name: 'Done',
           progress: 1,
@@ -120,26 +120,23 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRMED },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
-      [States.SPOUSE_CONFIRMED]: {
+      [States.DONE]: {
         meta: {
-          name: 'spouse_confirmed',
+          name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: Roles.ASSIGNED_SPOUSE,
+              id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
-              write: 'all',
             },
           ],
         },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
+        type: 'final' as const,
       },
     },
   },
@@ -147,7 +144,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === States.APPLICANT_DONE) {
+    if (application.state === States.SPOUSE_CONFIRM) {
       return Roles.ASSIGNED_SPOUSE
     } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
