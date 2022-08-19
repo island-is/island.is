@@ -35,6 +35,7 @@ describe('CaseDeliveryService - Deliver case', () => {
     expect(fetch).toHaveBeenCalledWith(
       `${config.backendUrl}/api/internal/case/${caseId}/deliver`,
       {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           authorization: `Bearer ${config.backendAccessToken}`,
