@@ -23,10 +23,10 @@ import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
-  RequestRulingSignatureMutationDocument,
   RequestRulingSignatureMutationMutation,
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
+import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
   return (
@@ -69,7 +69,7 @@ export const useRequestRulingSignature = (
     requestRulingSignature,
     { loading: isRequestingRulingSignature, data, error },
   ] = useMutation<RequestRulingSignatureMutationMutation>(
-    RequestRulingSignatureMutationDocument,
+    RequestRulingSignatureMutation,
     {
       variables: { input: { caseId } },
       onError: () => {
