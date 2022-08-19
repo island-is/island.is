@@ -1,30 +1,25 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery } from '@apollo/client'
-import { spmm } from '../../lib/messages'
 
+import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-  Divider,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
+  IntroHeader,
+  m,
   ServicePortalModuleComponent,
   UserInfoLine,
-  m,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -49,20 +44,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryFamily } = famData || {}
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {userInfo.profile.name}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(spmm.family.userInfoDesc)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
@@ -216,7 +198,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <Box marginY={3} />
         <UserInfoLine
-          title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
+          title={formatMessage(spmm.userFamilyMembersOnNumber)}
           label={userInfo.profile.name}
           content={formatNationalId(userInfo.profile.nationalId)}
           loading={loading || familyLoading}

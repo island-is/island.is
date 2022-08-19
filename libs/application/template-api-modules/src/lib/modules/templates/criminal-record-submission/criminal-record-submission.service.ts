@@ -116,10 +116,12 @@ export class CriminalRecordSubmissionService {
     const persons: Person[] = [person]
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const attachment: Attachment = {
-      name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: document.contentBase64,
-    }
+    const attachments: Attachment[] = [
+      {
+        name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+        content: document.contentBase64,
+      },
+    ]
 
     const extraData: { [key: string]: string } = {}
 
@@ -127,7 +129,7 @@ export class CriminalRecordSubmissionService {
     const uploadDataId = 'Sakavottord2.0'
 
     await this.syslumennService
-      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,

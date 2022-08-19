@@ -1,29 +1,25 @@
+import format from 'date-fns/format'
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
+
 import { gql } from '@apollo/client'
+import { Divider, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  useCompanyRegistry,
-  CompanyInfoFragment,
-} from '@island.is/service-portal/graphql'
-import { spmm } from '../../lib/messages'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-  Divider,
-} from '@island.is/island-ui/core'
-import {
+  EmptyState,
   formatNationalId,
+  IntroHeader,
+  m,
   ServicePortalModuleComponent,
   UserInfoLine,
-  m,
-  EmptyState,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CompanyInfoFragment,
+  useCompanyRegistry,
+} from '@island.is/service-portal/graphql'
+import { dateFormat } from '@island.is/shared/constants'
+
+import { mCompany } from '../../lib/messages'
 
 const COMPANY_REGISTRY_INFORMATION = gql`
   query companyRegistryCompanyQuery($input: RskCompanyInfoInput!) {
@@ -75,26 +71,13 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const emptyData = data === null
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {userInfo.profile.name}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(spmm.company.subtitle)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={userInfo.profile.name} intro={mCompany.subtitle} />
       {emptyData && <EmptyState />}
       {!emptyData && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(m.info)}
-            label={formatMessage(spmm.company.name)}
+            label={formatMessage(mCompany.name)}
             content={
               error ? formatMessage(dataNotFoundMessage) : data?.name || ''
             }
@@ -102,7 +85,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.registration)}
+            label={formatMessage(mCompany.registration)}
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
@@ -135,7 +118,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.taxNr)}
+            label={formatMessage(mCompany.taxNr)}
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
@@ -145,7 +128,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.operationForm)}
+            label={formatMessage(mCompany.operationForm)}
             content={
               error ? formatMessage(dataNotFoundMessage) : companyOperation
             }
@@ -153,7 +136,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(spmm.company.industryClass)}
+            label={formatMessage(mCompany.industryClass)}
             content={
               error ? formatMessage(dataNotFoundMessage) : vatClassification
             }

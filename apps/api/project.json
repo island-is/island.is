@@ -1,0 +1,75 @@
+{
+  "root": "apps/api",
+  "sourceRoot": "apps/api/src",
+  "projectType": "application",
+  "prefix": "api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@anatine/esbuildnx:build",
+      "options": {
+        "outputPath": "dist/apps/api",
+        "main": "apps/api/src/main.ts",
+        "tsConfig": "apps/api/tsconfig.app.json",
+        "showCircularDependencies": false,
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/api/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/api"]
+    },
+    "schemas/build-graphql-schema": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config apps/api/codegen.yml"
+      }
+    },
+    "contentful-types": {
+      "executor": "@nrwl/workspace:run-commands",
+      "outputPath": "libs/cms/scripts/generateContentfulTypes.ts",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/generateContentfulTypes.ts"
+      }
+    },
+    "contentType": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/api/tsconfig.app.json ./libs/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

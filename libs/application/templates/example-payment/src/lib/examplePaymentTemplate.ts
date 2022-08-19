@@ -1,5 +1,5 @@
 import {
-  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
@@ -89,7 +89,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

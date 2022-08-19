@@ -124,6 +124,10 @@ const PassportTemplate: ApplicationTemplate<
                 import('../forms/WaitingForParentBConfirmation').then((val) =>
                   Promise.resolve(val.WaitingForParentBConfirmation),
                 ),
+              read: {
+                answers: ['childsPersonalInfo'],
+                externalData: ['submitPassportApplication'],
+              },
             },
             {
               id: Roles.ASSIGNEE,
@@ -164,7 +168,12 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               read: {
                 externalData: ['submitPassportApplication'],
-                answers: ['passport'],
+                answers: [
+                  'submitPassportApplication',
+                  'childsPersonalInfo',
+                  'personalInfo',
+                  'passport',
+                ],
               },
             },
             {
@@ -175,7 +184,7 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               read: {
                 externalData: ['submitPassportApplication'],
-                answers: ['passport'],
+                answers: ['passport', 'childsPersonalInfo'],
               },
             },
           ],

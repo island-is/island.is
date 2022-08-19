@@ -16,7 +16,7 @@ export type FlightLeg = {
 
 export type UserInfo = {
   age: number
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: 'kk' | 'kvk' | 'hvk' | 'óvíst'
   postalCode: number
 }
 
