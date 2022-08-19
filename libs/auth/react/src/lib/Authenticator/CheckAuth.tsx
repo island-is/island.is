@@ -13,9 +13,7 @@ interface Props {
 export const CheckAuth: FC<Props> = ({ autoLogin, checkLogin, children }) => {
   const { userInfo } = useAuth()
   const authSettings = getAuthSettings()
-  const monitorUserSession =
-    !authSettings.scope?.includes('offline_access') &&
-    window.location.hostname !== 'localhost'
+  const monitorUserSession = !authSettings.scope?.includes('offline_access')
 
   // Find existing authentication or start login flow.
   useEffect(() => {
