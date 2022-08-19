@@ -92,4 +92,21 @@ describe('getDurationDate', () => {
 
     expect(res).toBe('24.12.2022')
   })
+
+  test('should return null if all dates are undefined', () => {
+    const initialRulingDate = undefined
+    const rulingDate = undefined
+    const courtEndTime = undefined
+    const validToDate = undefined
+
+    const res = getDurationDate(
+      CaseState.ACCEPTED,
+      validToDate,
+      initialRulingDate,
+      rulingDate,
+      courtEndTime,
+    )
+
+    expect(res).toBeNull()
+  })
 })

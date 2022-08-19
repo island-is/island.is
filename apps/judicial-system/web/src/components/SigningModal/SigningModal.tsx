@@ -217,11 +217,15 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       handlePrimaryButtonClick={() => {
         window.open(constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+        router.push(
+          `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+        )
       }}
       handleSecondaryButtonClick={async () => {
         if (data?.rulingSignatureConfirmation?.documentSigned) {
-          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+          router.push(
+            `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          )
         } else {
           onClose()
         }
