@@ -399,7 +399,7 @@ export const CourtRecord: React.FC = () => {
               {formatMessage(m.sections.courtDocuments.title)}
             </Text>
           </Box>
-          <MultipleValueList
+          {/* <MultipleValueList
             title={formatMessage(
               m.sections.courtDocuments.firstDocument.title,
               {
@@ -414,7 +414,7 @@ export const CourtRecord: React.FC = () => {
             onUpdateCase={updateCase}
             setWorkingCase={setWorkingCase}
             workingCase={workingCase}
-          />
+          /> */}
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>

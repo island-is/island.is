@@ -1,5 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import cn from 'classnames'
 import { IntlShape, useIntl } from 'react-intl'
+import Select, {
+  components,
+  ControlProps,
+  IndicatorProps,
+  MenuProps,
+  OptionProps,
+  PlaceholderProps,
+  ValueContainerProps,
+} from 'react-select'
 
 import {
   BlueBox,
@@ -16,10 +26,13 @@ import {
   Case,
   CaseAppealDecision,
   CaseType,
+  CourtDocument,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -28,6 +41,7 @@ import {
   core,
   icCourtRecord as m,
   titles,
+  courtDocuments,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -41,6 +55,8 @@ import {
   Text,
   Input,
   Tooltip,
+  Icon,
+  Tag,
 } from '@island.is/island-ui/core'
 import {
   removeTabsValidateAndSet,
@@ -49,7 +65,10 @@ import {
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
+
+import * as styles from './CourtRecord.css'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -89,6 +108,9 @@ const getSessionBookingsAutofill = (
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
+  const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<boolean>(
+    false,
+  )
   const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -206,6 +228,118 @@ const CourtRecord = () => {
     setWorkingCase,
     workingCase,
   ])
+
+  const whoFiledOptions = [
+    {
+      value: UserRole.PROSECUTOR,
+      label: formatMessage(courtDocuments.whoFiled.prosecutor),
+    },
+    {
+      value: UserRole.DEFENDER,
+      label: formatMessage(courtDocuments.whoFiled.defendant),
+    },
+    {
+      value: UserRole.JUDGE,
+      label: formatMessage(courtDocuments.whoFiled.court),
+    },
+  ]
+
+  const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+    return (
+      <components.DropdownIndicator {...props}>
+        <Icon icon="chevronDown" size="small" color="blue400" />
+      </components.DropdownIndicator>
+    )
+  }
+
+  const Control = (props: ControlProps<ReactSelectOption>) => {
+    return (
+      <components.Control
+        className={cn(styles.control, {
+          [styles.submittedByMenuIsOpen]: submittedByMenuIsOpen,
+        })}
+        {...props}
+      >
+        {props.children}
+      </components.Control>
+    )
+  }
+
+  const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
+    return (
+      <components.Placeholder {...props}>
+        <Text color="dark300">{props.children}</Text>
+      </components.Placeholder>
+    )
+  }
+
+  const ValueContainer = (props: ValueContainerProps<ReactSelectOption>) => (
+    <components.ValueContainer {...props}>
+      <Text fontWeight="light">{props.children}</Text>
+    </components.ValueContainer>
+  )
+
+  const Menu = (props: MenuProps<ReactSelectOption>) => (
+    <components.Menu className={styles.menu} {...props} />
+  )
+
+  const Option = (props: OptionProps<ReactSelectOption>) => {
+    return (
+      <components.Option className={cn(styles.option)} {...props}>
+        <Text>{props.children}</Text>
+      </components.Option>
+    )
+  }
+
+  const ClearIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+    return (
+      <components.ClearIndicator {...props}>
+        <Icon icon="close" size="small" color="blue400" />
+      </components.ClearIndicator>
+    )
+  }
+
+  const handleRemoveDocument = (name: string) => {
+    const updatedCourtDocuments = workingCase.courtDocuments?.filter((doc) => {
+      return doc.name !== name
+    })
+
+    setAndSendToServer(
+      [{ courtDocuments: updatedCourtDocuments, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleAddDocument = (document: string) => {
+    const updatedCourtDocuments = [
+      ...(workingCase.courtDocuments || []),
+      { name: document } as CourtDocument,
+    ]
+
+    setAndSendToServer(
+      [{ courtDocuments: updatedCourtDocuments, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+  }
+
+  const handleSubmittedBy = (index: number, submittedBy: UserRole) => {
+    const updatedCourtDocuments = workingCase.courtDocuments?.map((doc, idx) =>
+      idx === index ? ({ name: doc.name, submittedBy } as CourtDocument) : doc,
+    )
+
+    setAndSendToServer(
+      [
+        {
+          courtDocuments: updatedCourtDocuments,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -342,19 +476,98 @@ const CourtRecord = () => {
               {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
-          <MultipleValueList
-            title={formatMessage(core.requestCaseType, {
-              caseType: formatRequestCaseType(workingCase.type),
-            })}
-            tagText={formatMessage(m.sections.courtDocuments.tag)}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.text)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
-            workingCase={workingCase}
-          />
+          <MultipleValueList onAddValue={handleAddDocument}>
+            <>
+              <Box marginBottom={1}>
+                <Text variant="h4">
+                  {formatMessage(core.requestCaseType, {
+                    caseType: formatRequestCaseType(workingCase.type),
+                  })}
+                </Text>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="flexEnd"
+                marginBottom={3}
+              >
+                <Text>{formatMessage(m.sections.courtDocuments.text)}</Text>
+                <Tag variant="darkerBlue" outlined disabled>
+                  {formatMessage(m.sections.courtDocuments.tag)}
+                </Tag>
+              </Box>
+              {workingCase.courtDocuments?.map((courtDocument, index) => {
+                return (
+                  <div key={index} className={styles.valueWrapper}>
+                    <Box display="flex" flexGrow={1}>
+                      <Text variant="h4">{courtDocument.name}</Text>
+                    </Box>
+                    <div
+                      className={styles.dropdownContainer}
+                      style={{
+                        width: courtDocument.submittedBy
+                          ? `${theme.spacing[31]}px`
+                          : `${theme.spacing[25]}px`,
+                      }}
+                    >
+                      <Select
+                        classNamePrefix="court-documents-select"
+                        options={whoFiledOptions}
+                        placeholder={formatMessage(
+                          courtDocuments.whoFiled.placeholder,
+                        )}
+                        components={{
+                          DropdownIndicator,
+                          IndicatorSeparator: null,
+                          Control,
+                          Placeholder,
+                          ValueContainer,
+                          Menu,
+                          Option,
+                          ClearIndicator,
+                        }}
+                        value={whoFiledOptions.find(
+                          (option) =>
+                            option.value === courtDocument.submittedBy,
+                        )}
+                        onChange={(option) => {
+                          handleSubmittedBy(
+                            index,
+                            (option as ReactSelectOption)?.value as UserRole,
+                          )
+                        }}
+                        onMenuOpen={() => {
+                          setSubmittedByMenuIsOpen(true)
+                        }}
+                        onMenuClose={() => {
+                          setSubmittedByMenuIsOpen(false)
+                        }}
+                        isSearchable={false}
+                        isClearable
+                      />
+                    </div>
+                    <Box display="flex" alignItems="center">
+                      <Box marginRight={2}>
+                        <Tag variant="darkerBlue" outlined disabled>
+                          {
+                            // +2 because index is zero based and "Krafa um ..." is number 1
+                            formatMessage(courtDocuments.tag, {
+                              index: index + 2,
+                            })
+                          }
+                        </Tag>
+                      </Box>
+                      <button
+                        onClick={() => handleRemoveDocument(courtDocument.name)}
+                      >
+                        <Icon icon="close" color="blue400" size="small" />
+                      </button>
+                    </Box>
+                  </div>
+                )
+              })}
+            </>
+          </MultipleValueList>
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
