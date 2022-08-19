@@ -95,6 +95,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.drivingLicense,
             path: ServicePortalPath.LicensesDrivingDetail,
           },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesPassportDetail,
+          },
         ],
       },
       // Starfsleyfi
