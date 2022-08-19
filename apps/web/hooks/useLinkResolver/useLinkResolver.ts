@@ -29,6 +29,10 @@ A locale can be ignored by setting it's value to an empty string
 Keys in routesTemplate should ideally match lowercased __typename of graphql api types to allow them to be passed directly to the link resolver
 */
 export const routesTemplate = {
+  organizationnewsoverview: {
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
@@ -80,10 +84,6 @@ export const routesTemplate = {
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/s/[organization]/frett',
-    en: '/en/o/[organization]/news',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
