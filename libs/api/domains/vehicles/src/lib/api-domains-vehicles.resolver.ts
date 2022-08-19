@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { VehiclesList } from '../models/usersVehicles.model'
@@ -15,15 +15,21 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
-import { GetVehicleReportPdfInput } from '../dto/getVehicleReportPdfInput'
-import graphqlTypeJson from 'graphql-type-json'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
+  ) {}
 
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
@@ -43,12 +49,15 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getVehicleDetail(user, {
+    const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/history/${input.permno}`
+    console.log('DOWNLOAD SERVICE', downloadServiceURL)
+    return { ...data, downloadServiceURL }
   }
 
   @Query(() => Number, {
@@ -70,17 +79,5 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
-  }
-
-  @Query(() => graphqlTypeJson, {
-    name: 'vehiclesGetVehicleReportPdf',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleReportPdf(
-    @Args('input') input: GetVehicleReportPdfInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getVehicleReportPdf(user, input)
   }
 }

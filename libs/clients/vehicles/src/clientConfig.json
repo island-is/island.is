@@ -30,8 +30,8 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/File" }
+              "application/pdf": {
+                "schema": { "type": "string", "format": "byte" }
               }
             }
           },
@@ -51,8 +51,8 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/File" }
+              "application/pdf": {
+                "schema": { "type": "string", "format": "byte" }
               }
             }
           },
@@ -1231,7 +1231,6 @@
         },
         "additionalProperties": false
       },
-      "File": { "type": "object", "additionalProperties": false },
       "OutstandingFees": {
         "type": "object",
         "properties": {

@@ -312,19 +312,4 @@ export class VehiclesService {
       return this.handle4xx(e, 'Failed to get vehicle details')
     }
   }
-
-  async getVehicleReportPdf(
-    auth: User,
-    input: VehicleReportPdfGetRequest,
-  ): Promise<object | null | ApolloError> {
-    try {
-      const res = await this.getPdfWithAuth(auth).vehicleReportPdfGet({
-        permno: input.permno,
-      })
-      if (!res) return null
-      return res
-    } catch (e) {
-      return this.handle4xx(e, 'Failed to get vehicle history PDF')
-    }
-  }
 }

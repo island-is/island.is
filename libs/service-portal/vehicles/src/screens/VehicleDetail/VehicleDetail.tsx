@@ -11,6 +11,7 @@ import {
 import {
   AlertMessage,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
@@ -21,6 +22,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  formSubmit,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
@@ -67,7 +69,10 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     ownersInfo,
     operators,
     coOwners,
+    downloadServiceURL,
   } = data?.vehiclesDetail || {}
+
+  console.log(downloadServiceURL)
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
@@ -116,6 +121,27 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
+        {!loading && downloadServiceURL && (
+          <GridRow marginTop={6}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box display="flex" justifyContent="flexStart" printHidden>
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                    onClick={() => formSubmit(`${downloadServiceURL}`, true)}
+                  >
+                    Ferilskýrsla
+                  </Button>
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        )}
       </Box>
       <Stack space={2}>
         <UserInfoLine

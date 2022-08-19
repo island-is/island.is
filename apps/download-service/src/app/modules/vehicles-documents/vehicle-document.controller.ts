@@ -9,9 +9,10 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { FinanceClientService } from '@island.is/clients/finance'
 import { ApiScope } from '@island.is/auth/scopes'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+
 import {
   CurrentUser,
   IdsUserGuard,
@@ -19,63 +20,59 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
-import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
+import { GetVehicleHistoryDocumentDto } from './dto/getVehicleHistoryDocument.dto'
+import { PdfApi } from '@island.is/clients/vehicles'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
-@Controller('finance')
-export class FinanceDocumentController {
+@Controller('vehicles')
+export class VehicleController {
   constructor(
-    private readonly financeService: FinanceClientService,
+    private readonly vehiclePDFService: PdfApi,
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/:pdfId')
+  @Post('/history/:permno')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Get a PDF document from the Finance service',
+    description: 'Get a history document from the Vehicle service',
   })
-  async getFinancePdf(
-    @Param('pdfId') pdfId: string,
+  async getVehicleHistoryPdf(
+    @Param('permno') permno: string,
     @CurrentUser() user: User,
-    @Body() resource: GetFinanceDocumentDto,
+    @Body() resource: GetVehicleHistoryDocumentDto,
     @Res() res: Response,
   ) {
     const authUser: User = {
       ...user,
       authorization: `Bearer ${resource.__accessToken}`,
     }
-    const documentResponse = resource.annualDoc
-      ? await this.financeService.getAnnualStatusDocument(
-          user.nationalId,
-          pdfId,
-          authUser,
-        )
-      : await this.financeService.getFinanceDocument(
-          user.nationalId,
-          pdfId,
-          authUser,
-        )
 
-    const documentBase64 = documentResponse?.docment?.document
+    const documentResponse = await this.vehiclePDFService
+      .withMiddleware(new AuthMiddleware(authUser))
+      .vehicleReportPdfGet({ permno: permno })
+
+    console.log('documentResponse', documentResponse)
+
+    const documentBase64 = escape(documentResponse)
     if (documentBase64) {
       this.auditService.audit({
-        action: 'getFinancePdf',
+        action: 'getVehicleHistoryPdf',
         auth: user,
-        resources: pdfId,
+        resources: permno,
       })
 
-      console.log('FINANCE DOCUMENT', documentBase64)
-
-      const buffer = Buffer.from(documentBase64, 'base64')
-
+      const buffer = Buffer.from(documentBase64).toString('base64')
       res.header('Content-length', buffer.length.toString())
-      res.header('Content-Disposition', `inline; filename=${pdfId}.pdf`)
+      res.header(
+        'Content-Disposition',
+        `inline; filename=${user.nationalId}-eignaferill-${permno}.pdf`,
+      )
+      res.header('Content-Type: application/pdf')
       res.header('Pragma: no-cache')
       res.header('Cache-Control: no-cache')
       res.header('Cache-Control: nmax-age=0')
-
       return res.status(200).end(buffer)
     }
     return res.end()

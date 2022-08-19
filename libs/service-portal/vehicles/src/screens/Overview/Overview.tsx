@@ -27,12 +27,6 @@ import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 
-const GET_VEHICLES_OWNED_PDF = gql`
-  query GetVehiclesOwnedPDF($input: GetVehicleReportPdfInput!) {
-    vehiclesGetVehicleReportPdf(input: $input)
-  }
-`
-
 const defaultFilterValues = {
   searchQuery: '',
 }
@@ -72,16 +66,6 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
   const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
-
-  // TODO: Fix - this is throwing error from service
-  const { data: vehiclePdf } = useQuery<Query>(GET_VEHICLES_OWNED_PDF, {
-    variables: {
-      input: {
-        permno: 'BY391',
-      },
-    },
-  })
-  console.log(vehiclePdf)
 
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
