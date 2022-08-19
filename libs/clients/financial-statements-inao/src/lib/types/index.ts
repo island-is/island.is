@@ -1,9 +1,3 @@
-// export type Client = {
-//   clientTypeId: string
-//   name: string
-//   code: string
-// }
-
 export type Client = {
   label: string
   value: string
