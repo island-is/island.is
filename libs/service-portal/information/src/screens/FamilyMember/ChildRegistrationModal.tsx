@@ -84,11 +84,6 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
     })
   }
 
-  console.log('userProfile', userProfile)
-  console.log(
-    'userProfile mobile',
-    parseNumber(userProfile?.mobilePhoneNumber || ''),
-  )
   return (
     <Modal
       id="child-registration-modal"
