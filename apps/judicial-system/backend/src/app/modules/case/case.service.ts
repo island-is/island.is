@@ -412,7 +412,16 @@ export class CaseService {
       .then((pdf) =>
         this.uploadSignedRulingPdfToCourt(theCase, pdf).catch(() => false),
       )
-      .catch(() => true) // The signed ruling should have been delivered by email
+      .catch(() => {
+        // The signed ruling should have been delivered to the court
+        // either directly to the court system or via email
+        this.logger.info(
+          `The ruling for case ${theCase.id} was not found in AWS S3`,
+          { caseId: theCase.id },
+        )
+
+        return true
+      })
   }
 
   private deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
