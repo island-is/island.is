@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import {
@@ -50,6 +49,7 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
@@ -98,7 +98,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
@@ -112,12 +112,11 @@ const StepThreeForm: React.FC<Props> = (props) => {
       requestedValidToDate: Date | string | undefined,
       requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
     ) => {
-      autofill(
+      setAndSendToServer(
         [
           entry,
           {
-            key: 'demands',
-            value:
+            demands:
               workingCase.defendants && workingCase.defendants.length
                 ? getDemandsAutofill(formatMessage, {
                     defentant: workingCase.defendants[0],
@@ -135,7 +134,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     },
-    [workingCase, formatMessage, setWorkingCase, autofill],
+    [workingCase, formatMessage, setWorkingCase, setAndSendToServer],
   )
 
   return (
@@ -190,10 +189,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   if (date && valid) {
                     onDemandsChange(
                       {
-                        key: 'requestedValidToDate',
-                        value: formatISO(date, {
-                          representation: 'complete',
-                        }),
+                        requestedValidToDate: formatDateForServer(date),
                         force: true,
                       },
                       workingCase.type,
@@ -222,8 +218,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     )
                     onDemandsChange(
                       {
-                        key: 'requestedCustodyRestrictions',
-                        value: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,
@@ -254,8 +249,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       : CaseType.CUSTODY
                     onDemandsChange(
                       {
-                        key: 'type',
-                        value: nextCaseType,
+                        type: nextCaseType,
                         force: true,
                       },
                       nextCaseType,
@@ -510,8 +504,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>

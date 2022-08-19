@@ -7,8 +7,8 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  IC_OVERVIEW_ROUTE,
+  INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
@@ -20,7 +20,7 @@ import {
   intercept,
 } from '../../../utils'
 
-describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -114,6 +114,9 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_COURT_HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should(
+      'include',
+      INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+    )
   })
 })

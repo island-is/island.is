@@ -1,24 +1,16 @@
-import React, {
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import addSeconds from 'date-fns/addSeconds'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
 
 import { getAuthSettings, getUserManager } from '../userManager'
 
-enum SessionInfoMessageType {
-  SessionInfoRequest = 'SessionInfoRequest',
-  SessionInfoResponse = 'SessionInfoResponse',
-}
+const SessionInfoMessageType = 'SessionInfo'
 
-export interface SessionInfoResponse {
+interface SessionInfoMessage {
   // Type to use to filter postMessage messages
-  type: SessionInfoMessageType.SessionInfoResponse
+  type: typeof SessionInfoMessageType
 
-  // Message detailing if the request was processed OK, no session detected or with failure.
-  message: string
+  // Status of the message received from IDP.
+  status: 'Ok' | 'No Session' | 'Failure'
 
   // The time when the authenticated session expires.
   expiresUtc?: string
@@ -30,88 +22,152 @@ export interface SessionInfoResponse {
   isExpired?: boolean
 }
 
-interface SessionInfoRequest {
-  type: SessionInfoMessageType.SessionInfoRequest
+interface UserSessionState {
+  /* The expected time when the user session is ending. */
+  sessionEnd: Date | null
+
+  /**
+   * An interval function that checks if the expected sessionEnd has passed.
+   * When set this indicates that the user has an active session.
+   */
+  intervalHandle: ReturnType<typeof setInterval> | null
+
+  /* The number of times we have tried to load the iframe to receive a new session info message. */
+  retryCount: number
 }
 
-const messageEventName = 'message'
+const MAX_RETRIES = 2
+const ACTIVE_SESSION_DELAY = 5 * 1000
+const CHECK_SESSION_INTERVAL = 2 * 1000
 
+const EMPTY_SESSION: UserSessionState = {
+  retryCount: 0,
+  sessionEnd: null,
+  intervalHandle: null,
+}
+
+/**
+ * This component monitors if the user session is active on the Identity Provider (IDP).
+ * When it detects that the user session is expired it redirects to the sign in page on the IDP.
+ *
+ * It loads a script from the IDP's 'connect/sessioninfo' endpoint into an iframe.
+ * The script uses the postMessage API to post SessionInfoMessage, which contains
+ * details if the session is expired or after how many seconds it will expire.
+ * We use these details to register a interval to monitor the session expiration.
+ */
 export const CheckIdpSession = () => {
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const iframeSrc = `${authSettings.authority}${authSettings.checkSessionPath}`
-  const [iframeChecksum, setIframeChecksum] = useState(0)
-  const sessionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [iframeId, reloadIframe] = useReducer((id) => id + 1, 0)
+  const userSession = useRef<UserSessionState>({ ...EMPTY_SESSION })
+
+  const isActive = useCallback(() => {
+    return !!userSession.current.intervalHandle
+  }, [])
+
+  const resetUserSession = useCallback(() => {
+    if (userSession.current.intervalHandle) {
+      clearInterval(userSession.current.intervalHandle)
+    }
+    userSession.current.intervalHandle = null
+    userSession.current.retryCount = 0
+    // Intentionally not resetting sessionEnd as it
+    // indicates that the user has had session before.
+  }, [])
 
   const signInRedirect = useCallback(async () => {
     await userManager.removeUser()
     return window.location.reload()
   }, [userManager])
 
-  const onLoadHandler = (event: SyntheticEvent<HTMLIFrameElement>) => {
-    if (authSettings.authority) {
-      event?.currentTarget?.contentWindow?.postMessage(
-        {
-          type: SessionInfoMessageType.SessionInfoRequest,
-        } as SessionInfoRequest,
-        authSettings.authority,
-      )
-    }
-  }
+  const checkActiveSession = useCallback(() => {
+    setTimeout(() => {
+      const hasBeenActive = !!userSession.current.sessionEnd
+      const { retryCount } = userSession.current
+
+      if (!isActive() && retryCount > MAX_RETRIES && hasBeenActive) {
+        // We were unable to retrieve a message from the IDP after max retries and have a reason
+        // to believe that the session is expired (an earlier UserSessionMessage has expired).
+        // So we reload the window just to be safe. This causes one of three things to happen:
+        // - If the iframe is broken and the user does have a valid IDP session, they'll generally reload where they were.
+        // - If the iframe is broken and the user does not have a valid IDP session, they're sent to the login page.
+        // - If the user has a network problem, then they'll see a browser error screen, but at least any sensitive information is not visible any more.
+        window.location.reload()
+      } else if (!isActive() && retryCount < MAX_RETRIES) {
+        userSession.current.retryCount += 1
+        // We are unable to retrieve a message from the IDP,
+        // so we reload the iframe to retry without reloading the window.
+        reloadIframe()
+      }
+    }, ACTIVE_SESSION_DELAY)
+  }, [isActive])
 
   const messageHandler = useCallback(
     async ({ data, origin }: MessageEvent): Promise<void> => {
-      const sessionInfo = data as SessionInfoResponse
+      const sessionInfo = data as SessionInfoMessage
 
+      // Check if the postMessage is meant for us
       if (
         origin !== authSettings.authority ||
-        sessionInfo.type !== SessionInfoMessageType.SessionInfoResponse
+        sessionInfo.type !== SessionInfoMessageType
       ) {
         return
       }
 
-      if (sessionInfo && sessionInfo.message === 'OK') {
+      if (sessionInfo && sessionInfo.status === 'Ok') {
         // SessionInfo was found, check if it is valid or expired
         if (sessionInfo.isExpired) {
           return signInRedirect()
-        } else if (sessionInfo.expiresIn !== undefined) {
-          if (!sessionTimeout.current) {
-            const newSessionTimeout = setTimeout(() => {
-              sessionTimeout.current = null
-              setIframeChecksum((i) => i + 1)
-            }, sessionInfo.expiresIn * 1000)
-            sessionTimeout.current = newSessionTimeout
-          }
+        } else if (!isActive() && sessionInfo.expiresIn !== undefined) {
+          userSession.current.sessionEnd = addSeconds(
+            new Date(),
+            sessionInfo.expiresIn,
+          )
+
+          userSession.current.intervalHandle = setInterval(() => {
+            const now = new Date()
+
+            if (
+              userSession.current.sessionEnd &&
+              now > userSession.current.sessionEnd
+            ) {
+              // The expected session end has passed but the user might have extended their session.
+              // So we reset the session state and reload the iframe to query new session info from the IDP.
+              resetUserSession()
+              reloadIframe()
+            }
+          }, CHECK_SESSION_INTERVAL)
         }
-      } else if (sessionInfo && sessionInfo.message === 'No user session') {
+      } else if (sessionInfo && sessionInfo.status === 'No Session') {
         return signInRedirect()
       }
 
       // Silent failure as we have failed to get sessionInfo but the user still might have valid session.
       // So we only trigger the signInRedirect flow when we get definite response about expired session.
     },
-    [authSettings.authority, signInRedirect],
+    [authSettings.authority, signInRedirect, isActive, resetUserSession],
   )
 
   useEffect(() => {
-    window.addEventListener(messageEventName, messageHandler)
+    window.addEventListener('message', messageHandler)
 
     return () => {
-      window.removeEventListener(messageEventName, messageHandler)
+      window.removeEventListener('message', messageHandler)
     }
   }, [messageHandler])
 
   return (
     <iframe
       // We use the key attribute to trigger new reload of the iframe
-      key={iframeChecksum}
+      key={iframeId}
       title="Check IDP session"
       id="check-idp-session"
       src={iframeSrc}
       width={0}
       height={0}
       style={{ display: 'none' }}
-      onLoad={onLoadHandler}
+      onLoad={checkActiveSession}
     />
   )
 }

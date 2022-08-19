@@ -475,8 +475,8 @@ export const StepFive: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.STEP_SIX_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>

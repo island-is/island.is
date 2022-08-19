@@ -40,7 +40,7 @@ To access elasticsearch instance from dev environment:
 
 Caveats:
 
-- **You need to have docker installed and running**
+- **You need to have docker/podman installed and running**
 - **You have to refresh your AWS env variables every 8 hours**
 
 ```bash
