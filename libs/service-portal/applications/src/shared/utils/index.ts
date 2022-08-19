@@ -86,6 +86,7 @@ export const getBaseUrlForm = () => {
 export const getFilteredApplicationsByStatus = (
   filterValue: FilterValues,
   applications: Application[] = [],
+  filteredOutApplication: string | undefined = undefined,
 ) => {
   const { searchQuery } = filterValue
   const activeInstitution = filterValue?.activeInstitution?.value
@@ -96,6 +97,7 @@ export const getFilteredApplicationsByStatus = (
         application.actionCard?.description
           ?.toLowerCase()
           .includes(searchQuery.toLowerCase())) &&
+      filteredOutApplication !== application.id &&
       // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
       // otherwise it filters it.
       (activeInstitution !== ''

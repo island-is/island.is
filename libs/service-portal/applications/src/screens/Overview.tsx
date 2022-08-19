@@ -79,9 +79,16 @@ const Overview: ServicePortalModuleComponent = () => {
     organizations,
   )
 
+  if (applications && location.hash) {
+    focusedApplication = applications.find(
+      (item: Application) => item.id === location.hash.slice(1),
+    )
+  }
+
   const applicationsSortedByStatus = getFilteredApplicationsByStatus(
     filterValue,
     applications,
+    focusedApplication?.id,
   )
 
   const GetIntroductionHeadingOrIntro = (
@@ -98,12 +105,6 @@ const Overview: ServicePortalModuleComponent = () => {
       default:
         return heading ? m.heading : m.introCopy
     }
-  }
-
-  if (applications && location.hash) {
-    focusedApplication = applications.find(
-      (item: Application) => item.id === location.hash.slice(1),
-    )
   }
 
   return (
