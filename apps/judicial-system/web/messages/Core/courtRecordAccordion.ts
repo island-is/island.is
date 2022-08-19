@@ -17,9 +17,9 @@ export const courtRecordAccordion = {
       },
       text: {
         id:
-          'judicial.system.core:court_record_accordion.time_and_location.text',
+          'judicial.system.core:court_record_accordion.time_and_location.text_v2',
         defaultMessage:
-          'Þinghald frá kl. {courtStartTime} til kl. {courtEndTime} {courtEndDate} {courtLocation}.',
+          'Þinghald frá {courtStartDate} kl. {courtStartTime} til {courtEndDate} kl. {courtEndTime} {courtLocation}.',
         description:
           'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum.',
       },

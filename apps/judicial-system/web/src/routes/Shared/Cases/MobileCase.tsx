@@ -66,7 +66,7 @@ const MobileCase: React.FC<Props> = ({
       heading={capitalize(caseTypes[theCase.type])}
       onClick={onClick}
       tags={[
-        <Tag variant={tag.color} outlined disabled>
+        <Tag variant={tag.color} outlined disabled key={tag.text}>
           {tag.text}
         </Tag>,
       ]}
