@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress'
 import { getCognitoCredentials } from './src/support/utils'
-import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
+import type { TestEnvironment } from './src/lib/types'
+import { BaseUrl, AuthUrl } from './src/lib/types'
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
