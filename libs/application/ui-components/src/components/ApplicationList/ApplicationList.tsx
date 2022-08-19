@@ -146,7 +146,7 @@ const ApplicationList = ({
 
             return (
               <ActionCard
-                logo={getLogo(application.typeId)}
+                image={{ type: 'logo', url: getLogo(application.typeId) }}
                 key={`${application.id}-${index}`}
                 date={format(new Date(application.modified), formattedDate)}
                 tag={{

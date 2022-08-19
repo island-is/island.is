@@ -82,8 +82,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   }, [filterValue])
 
   useEffect(() => {
-    setApplicationTypes()
-    setAllApplications(applications)
+    if (!loading && !error) {
+      setApplicationTypes()
+      setAllApplications(applications)
+    }
   }, [applications])
 
   // Set all types for institutions

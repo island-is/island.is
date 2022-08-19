@@ -21,7 +21,6 @@ type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
-  logo?: string
   backgroundColor?: 'white' | 'blue' | 'red'
   tag?: {
     label: string
@@ -54,8 +53,10 @@ type ActionCardProps = {
     label?: string
     message?: string
   }
-  avatar?: boolean
-  image?: string
+  image?: {
+    type: 'avatar' | 'image' | 'logo'
+    url?: string
+  }
   deleteButton?: {
     visible?: boolean
     onClick?: () => void
@@ -115,9 +116,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   unavailable: _unavailable,
   progressMeter: _progressMeter,
   deleteButton: _delete,
-  avatar,
   image,
-  logo,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -132,45 +131,52 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       : 'blue100'
 
   const renderImage = () => {
-    if (!image || avatar || logo) {
+    if (!image) {
       return null
     }
 
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-      >
-        <img className={styles.avatar} src={image} alt="action-card" />
-      </Box>
-    )
-  }
-
-  const renderAvatar = () => {
-    if (!avatar) {
-      return null
+    if (image.type === 'image') {
+      if (!image.url || image.url.length === 0) return null
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+        >
+          <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    } else if (image.type === 'avatar') {
+      return heading ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background="blue100"
+          className={styles.avatar}
+        >
+          <Text variant="h3" as="p" color="blue400">
+            {getTitleAbbreviation(heading)}
+          </Text>
+        </Box>
+      ) : null
+    } else if (image.type === 'logo') {
+      if (!image.url || image.url.length === 0) return null
+      return (
+        <Box
+          padding={2}
+          marginRight={2}
+          className={styles.logo}
+          style={{ backgroundImage: `url(${image.url})` }}
+        ></Box>
+      )
     }
-
-    return heading ? (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.avatar}
-      >
-        <Text variant="h3" as="p" color="blue400">
-          {getTitleAbbreviation(heading)}
-        </Text>
-      </Box>
-    ) : null
   }
 
   const renderDisabled = () => {
@@ -356,18 +362,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
-  const renderLogo = () => {
-    if (!logo || logo.length === 0) return null
-    return (
-      <Box
-        padding={2}
-        marginRight={2}
-        className={styles.logo}
-        style={{ backgroundImage: `url(${logo})` }}
-      ></Box>
-    )
-  }
-
   return (
     <Box
       display="flex"
@@ -393,8 +387,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
-        {renderImage()}
-        {renderAvatar()}
+        {/* Checking image type so the image is placed correctly */}
+        {image?.type !== 'logo' && renderImage()}
         <Box flexDirection="row" width="full">
           {heading && (
             <Box
@@ -404,7 +398,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
               <Box display="flex" flexDirection="row" alignItems="center">
-                {renderLogo()}
+                {/* Checking image type so the logo is placed correctly */}
+                {image?.type === 'logo' && renderImage()}
                 <Text
                   variant={headingVariant}
                   color={
