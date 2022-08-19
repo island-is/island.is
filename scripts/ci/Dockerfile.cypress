@@ -1,4 +1,4 @@
-FROM cypress/base:14.17.6
+FROM cypress/base:14.17.6 as cypress-base
 
 USER root
 
@@ -33,14 +33,11 @@ RUN wget --no-verbose -O /usr/src/google-chrome-stable_current_amd64.deb "http:/
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 
-ARG APP
 ARG APP_DIST_HOME
 
-ENV APP=${APP} \
-    APP_DIST_HOME=${APP_DIST_HOME}
-
 WORKDIR ${APP_DIST_HOME}
-ENV CI=1 \
+ENV APP_DIST_HOME=${APP_DIST_HOME} \
+  CI=1 \
 # disable shared memory X11 affecting Cypress v4 and Chrome
 # https://github.com/cypress-io/cypress-docker-images/issues/270
   DBUS_SESSION_BUS_ADDRESS=/dev/null \
@@ -91,6 +88,7 @@ ENV TERM xterm \
     # allow installing when the main user is root
     npm_config_unsafe_perm true
 
+FROM cypress-base as output-cypress
 ENV TEST_ENVIRONMENT=dev \
   CYPRESS_VIDEOS_FOLDER=/out/videos \
   CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
