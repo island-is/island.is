@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###########################################################################
+# Local dev script for testing cypress e2e tests in container with Podman #
+###########################################################################
+
 set -eoux pipefail
 
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"
@@ -13,10 +17,10 @@ APP_SPEC=$(jq ".targets[\"$spec\"].options.spec" -r < "$PROJECT_ROOT"/"$APP_HOME
 
 export DOCKER_TAG="${DOCKER_TAG}"
 
-  podman run \
-  --env-file "${PROJECT_ROOT}/.env.secret.docker" \
-  --privileged \
-  -it "localhost/system-e2e:23e77d0674" -P "/${APP_DIST_HOME}" -s "/${APP_DIST_HOME}/${APP_SPEC}" -C "/${APP_DIST_HOME}/cypress.config.js"
-
-  # -it "localhost/system-e2e:$DOCKER_TAG" -P apps/system-e2e --spec "apps/${APP}-e2e/src/integration/service-portal/smoketest/homepage.spec.ts"
+podman run \
+ -v ./.tmp:/out \
+ --security-opt label=disable  \
+--env-file "${PROJECT_ROOT}/.env.secret.docker" \
+--privileged \
+-it "localhost/system-e2e:${DOCKER_TAG}" -P "/${APP_DIST_HOME}" -s "/${APP_DIST_HOME}/${APP_SPEC}" -C "/${APP_DIST_HOME}/cypress.config.js"
 
