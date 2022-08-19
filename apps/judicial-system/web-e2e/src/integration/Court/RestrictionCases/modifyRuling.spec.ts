@@ -1,12 +1,12 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import {
-  MODIFY_RULING_ROUTE,
-  SIGNED_VERDICT_OVERVIEW,
+  RESTRICTION_CASE_MODIFY_RULING_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, intercept } from '../../../utils'
 
-describe(`${MODIFY_RULING_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_MODIFY_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
@@ -21,7 +21,7 @@ describe(`${MODIFY_RULING_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${MODIFY_RULING_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RESTRICTION_CASE_MODIFY_RULING_ROUTE}/test_id_stadfest`)
   })
 
   it('should have an alert message', () => {
@@ -44,6 +44,6 @@ describe(`${MODIFY_RULING_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modal').should('exist')
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', SIGNED_VERDICT_OVERVIEW)
+    cy.url().should('include', SIGNED_VERDICT_OVERVIEW_ROUTE)
   })
 })

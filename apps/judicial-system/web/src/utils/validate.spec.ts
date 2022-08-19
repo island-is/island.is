@@ -42,6 +42,7 @@ describe('Validate time format', () => {
 describe('Validate national id format', () => {
   test('should be valid if all digits filled in', () => {
     // Arrange
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     const nid = '999999-9999'
 
     // Act

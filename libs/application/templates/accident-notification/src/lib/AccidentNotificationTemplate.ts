@@ -1,4 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -54,10 +57,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.4,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -112,7 +112,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
-              shouldBeListedForRole: false,
             },
           ],
         },
@@ -165,7 +164,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
-              shouldBeListedForRole: false,
             },
           ],
         },

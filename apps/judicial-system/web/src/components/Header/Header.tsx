@@ -37,8 +37,8 @@ const HeaderContainer: React.FC = () => {
       : user.role === UserRole.DEFENDER
       ? `${constants.DEFENDER_ROUTE}/${router.query.id}`
       : user.role === UserRole.ADMIN
-      ? constants.USER_LIST_ROUTE
-      : constants.CASE_LIST_ROUTE
+      ? constants.USERS_ROUTE
+      : constants.CASES_ROUTE
 
   const handleLogout = async () => {
     await api.logout()
@@ -49,7 +49,7 @@ const HeaderContainer: React.FC = () => {
     useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
 
   return (
-    <Box paddingX={[0, 0, 4]}>
+    <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.container}>
         <GridRow>
           <GridColumn span="12/12">
