@@ -14,7 +14,7 @@ export const parseNumber = (tel: string) => {
 
 /**
  * @param tel string
- * @returns Phone number with country code
+ * @returns Phonenumber without spaces
  */
 export const parseFullNumber = (tel: string) => {
   const mobileNumber = tel.replace(/\s/g, '')
