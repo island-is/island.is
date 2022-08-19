@@ -751,7 +751,6 @@ export const SignedVerdictOverview: React.FC = () => {
                     />
                   ) : user?.id === workingCase.judge?.id ? (
                     <Button
-                      variant="ghost"
                       loading={isRequestingRulingSignature}
                       onClick={(event) => {
                         event.stopPropagation()
