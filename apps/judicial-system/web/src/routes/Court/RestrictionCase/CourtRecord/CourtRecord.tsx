@@ -957,8 +957,8 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

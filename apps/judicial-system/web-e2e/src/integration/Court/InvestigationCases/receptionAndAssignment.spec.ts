@@ -1,7 +1,7 @@
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import {
-  IC_OVERVIEW_ROUTE,
-  IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
@@ -13,7 +13,7 @@ import {
   makeJudge,
 } from '../../../utils'
 
-describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
 
@@ -26,7 +26,7 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
+    cy.visit(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
   })
 
   it('should enable continue button when required fields are valid', () => {
@@ -61,6 +61,6 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_OVERVIEW_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_OVERVIEW_ROUTE)
   })
 })
