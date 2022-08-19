@@ -74,8 +74,6 @@ const Confirmation = () => {
         setWorkingCase,
       ))
 
-    // TODO: handle transition failure
-
     if (shouldSign) {
       requestRulingSignature()
     }

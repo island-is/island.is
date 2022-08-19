@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   CaseDecision,
-  CaseState,
   CaseTransition,
   completedCaseStates,
   isAcceptingCaseDecision,
@@ -73,8 +72,6 @@ export const Confirmation: React.FC = () => {
           : CaseTransition.ACCEPT,
         setWorkingCase,
       ))
-
-    // TODO: handle transition failure
 
     if (shouldSign) {
       requestRulingSignature()
