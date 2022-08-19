@@ -276,8 +276,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
