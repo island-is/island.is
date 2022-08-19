@@ -11,9 +11,7 @@ type QueryType = {
   getBrokenDownElectronicRegistrationStatistics: RegistrationOfTypeForPeriod[]
 }
 
-interface MonthlyStatisticsProps {}
-
-export const MonthlyStatistics = ({}: MonthlyStatisticsProps) => {
+export const MonthlyStatistics = () => {
   const [
     selectedRegistrationTypeOption,
     setSelectedRegistrationTypeOption,
