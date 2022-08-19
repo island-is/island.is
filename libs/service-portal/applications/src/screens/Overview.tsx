@@ -2,12 +2,11 @@ import { useState } from 'react'
 import {
   ActionCardLoader,
   EmptyState,
+  IntroHeader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import {
-  Text,
   Box,
-  Stack,
   GridRow,
   GridColumn,
   Input,
@@ -108,110 +107,103 @@ const Overview: ServicePortalModuleComponent = () => {
   }
 
   return (
-    <Box key="application-overview">
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(
-                  GetIntroductionHeadingOrIntro(statusToShow, true),
-                )}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(GetIntroductionHeadingOrIntro(statusToShow))}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+    <>
+      <IntroHeader
+        title={GetIntroductionHeadingOrIntro(statusToShow, true)}
+        intro={GetIntroductionHeadingOrIntro(statusToShow)}
+      />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
 
       {error && <EmptyState description={m.error} />}
 
-      {!error && !loading && !applications && (
+      {!error && !loading && applications.length === 0 && (
         <EmptyState description={m.noApplicationsAvailable} />
       )}
 
-      {applications && orgData && !loading && !loadingOrg && !error && (
-        <>
-          <Box paddingBottom={[3, 5]}>
-            <GridRow alignItems="flexEnd">
-              <GridColumn span={['1/1', '1/2']}>
-                <Box height="full">
-                  <Input
-                    icon="search"
-                    backgroundColor="blue"
-                    size="xs"
-                    value={filterValue.searchQuery}
-                    onChange={(ev) => handleSearchChange(ev.target.value)}
-                    name="umsoknir-leit"
-                    label={formatMessage(m.searchLabel)}
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                  />
-                </Box>
-              </GridColumn>
-              <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
-                <Box height="full">
-                  <Select
-                    name="institutions"
-                    backgroundColor="blue"
-                    size="xs"
-                    defaultValue={institutions[0]}
-                    options={institutions}
-                    value={filterValue.activeInstitution}
-                    onChange={(e) => {
-                      handleInstitutionChange(e)
-                    }}
-                    label={formatMessage(m.searchInstitutiontLabel)}
-                  />
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </Box>
-          {focusedApplication && (
-            <ApplicationGroup
-              applications={[focusedApplication]}
-              label={formatMessage(m.focusedApplication)}
-              organizations={organizations}
-              refetch={refetch}
-              focus={true}
-            />
-          )}
-          {applicationsSortedByStatus.incomplete?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.incomplete) && (
+      {applications &&
+        applications.length > 0 &&
+        orgData &&
+        !loading &&
+        !loadingOrg &&
+        !error && (
+          <>
+            <Box paddingBottom={[3, 5]}>
+              <GridRow alignItems="flexEnd">
+                <GridColumn span={['1/1', '1/2']}>
+                  <Box height="full">
+                    <Input
+                      icon="search"
+                      backgroundColor="blue"
+                      size="xs"
+                      value={filterValue.searchQuery}
+                      onChange={(ev) => handleSearchChange(ev.target.value)}
+                      name="umsoknir-leit"
+                      label={formatMessage(m.searchLabel)}
+                      placeholder={formatMessage(m.searchPlaceholder)}
+                    />
+                  </Box>
+                </GridColumn>
+                <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
+                  <Box height="full">
+                    <Select
+                      name="institutions"
+                      backgroundColor="blue"
+                      size="xs"
+                      defaultValue={institutions[0]}
+                      options={institutions}
+                      value={filterValue.activeInstitution}
+                      onChange={(e) => {
+                        handleInstitutionChange(e)
+                      }}
+                      label={formatMessage(m.searchInstitutiontLabel)}
+                    />
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </Box>
+            {focusedApplication && (
               <ApplicationGroup
-                applications={applicationsSortedByStatus.incomplete}
-                label={formatMessage(m.incompleteApplications)}
+                applications={[focusedApplication]}
+                label={formatMessage(m.focusedApplication)}
                 organizations={organizations}
                 refetch={refetch}
+                focus={true}
               />
             )}
-          {applicationsSortedByStatus.inProgress?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.inProgress) && (
-              <ApplicationGroup
-                applications={applicationsSortedByStatus.inProgress}
-                label={formatMessage(m.inProgressApplications)}
-                organizations={organizations}
-                refetch={refetch}
-              />
-            )}
-          {applicationsSortedByStatus.finished?.length > 0 &&
-            (statusToShow === ApplicationOverViewStatus.all ||
-              statusToShow === ApplicationOverViewStatus.finished) && (
-              <ApplicationGroup
-                applications={applicationsSortedByStatus.finished}
-                label={formatMessage(m.finishedApplications)}
-                organizations={organizations}
-                refetch={refetch}
-              />
-            )}
-        </>
-      )}
-    </Box>
+            {applicationsSortedByStatus.incomplete?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.incomplete) && (
+                <ApplicationGroup
+                  applications={applicationsSortedByStatus.incomplete}
+                  label={formatMessage(m.incompleteApplications)}
+                  organizations={organizations}
+                  refetch={refetch}
+                />
+              )}
+            {applicationsSortedByStatus.inProgress?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.inProgress) && (
+                <ApplicationGroup
+                  applications={applicationsSortedByStatus.inProgress}
+                  label={formatMessage(m.inProgressApplications)}
+                  organizations={organizations}
+                  refetch={refetch}
+                />
+              )}
+            {applicationsSortedByStatus.finished?.length > 0 &&
+              (statusToShow === ApplicationOverViewStatus.all ||
+                statusToShow === ApplicationOverViewStatus.finished) && (
+                <ApplicationGroup
+                  applications={applicationsSortedByStatus.finished}
+                  label={formatMessage(m.finishedApplications)}
+                  organizations={organizations}
+                  refetch={refetch}
+                />
+              )}
+          </>
+        )}
+    </>
   )
 }
 

@@ -78,17 +78,9 @@ export const mapLinkToStatus = (link: string) => {
 }
 
 export const getBaseUrlForm = () => {
-  const isLocalhost = window.location.origin.includes('localhost')
-  const isDev = window.location.origin.includes('beta.dev01.devland.is')
-  const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-
-  return isLocalhost
-    ? 'http://localhost:4242/umsoknir'
-    : isDev
-    ? 'https://beta.dev01.devland.is/umsoknir'
-    : isStaging
-    ? 'https://beta.staging01.devland.is/umsoknir'
-    : 'https://island.is/umsoknir'
+  const path = window.location.origin
+  const isLocalhost = path.includes('localhost')
+  return isLocalhost ? 'http://localhost:4242/umsoknir' : `${path}/umsoknir`
 }
 
 export const getFilteredApplicationsByStatus = (
