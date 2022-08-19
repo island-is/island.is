@@ -5,9 +5,10 @@ import { defineMessage } from 'react-intl'
 import { NationalRegistryChild } from '@island.is/api/schema'
 import {
   Box,
-  Divider,
+  Button,
   GridColumn,
   GridRow,
+  Inline,
   LoadingDots,
   Stack,
 } from '@island.is/island-ui/core'
@@ -59,6 +60,13 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+  const [print, setPrint] = useState(false)
+
+  const onPrint = () => {
+    setPrint(true)
+    window.print()
+    setPrint(false)
+  }
 
   /**
    * The ChildRegistration module is feature flagged
@@ -97,32 +105,61 @@ const ChildView: FC<Props> = ({
           </GridRow>
         </Box>
       ) : (
-        <IntroHeader
-          title={person?.fullName ?? ''}
-          intro={{
-            id: 'sp.family:data-info-child',
-            defaultMessage:
-              'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
-          }}
-        />
+        <Box printHidden>
+          <IntroHeader
+            hideImgPrint
+            title={person?.fullName ?? ''}
+            intro={{
+              id: 'sp.family:data-info-child',
+              defaultMessage:
+                'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+            }}
+          />
+        </Box>
       )}
-      {!loading && !isChild && modalFlagEnabled && (
-        <ChildRegistrationModal
-          data={{
-            parentName: userName || '',
-            parentNationalId: userNationalId || '',
-            childName: person?.fullName || '',
-            childNationalId: nationalId,
-          }}
-        />
-      )}
-
-      <Stack space={2}>
+      <Box printHidden>
+        <GridRow>
+          <GridColumn paddingBottom={4} span="12/12">
+            <Box
+              display="flex"
+              justifyContent="flexStart"
+              flexDirection={['column', 'row']}
+            >
+              <Inline space={2}>
+                <Box>
+                  {!loading && !isChild && modalFlagEnabled && (
+                    <ChildRegistrationModal
+                      data={{
+                        parentName: userName || '',
+                        parentNationalId: userNationalId || '',
+                        childName: person?.fullName || '',
+                        childNationalId: nationalId,
+                      }}
+                    />
+                  )}
+                </Box>
+                <Button
+                  variant="utility"
+                  size="small"
+                  onClick={onPrint}
+                  icon="print"
+                  iconType="filled"
+                >
+                  {formatMessage(m.print)}
+                </Button>
+              </Inline>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Stack space={print ? 0 : 2} dividers={true}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={formatMessage(m.fullName)}
           content={person?.fullName || '...'}
           loading={loading}
+          paddingBottom={'none'}
+          paddingY={'none'}
           editLink={
             !isChild
               ? {
@@ -134,13 +171,11 @@ const ChildView: FC<Props> = ({
               : undefined
           }
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage(m.natreg)}
           content={formatNationalId(nationalId)}
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={defineMessage(m.legalResidence)}
           content={person?.legalResidence || ''}
@@ -155,9 +190,6 @@ const ChildView: FC<Props> = ({
               : undefined
           }
         />
-        <Divider />
-        <Box marginY={3} />
-
         <UserInfoLine
           title={formatMessage(m.baseInfo)}
           label={formatMessage({
@@ -171,7 +203,6 @@ const ChildView: FC<Props> = ({
           }
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage(m.religion)}
           content={
@@ -189,7 +220,6 @@ const ChildView: FC<Props> = ({
               : undefined
           }
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage(m.gender)}
           content={
@@ -199,7 +229,6 @@ const ChildView: FC<Props> = ({
           }
           loading={loading}
         />
-        <Divider />
         <UserInfoLine
           label={formatMessage(m.citizenship)}
           content={
@@ -209,23 +238,18 @@ const ChildView: FC<Props> = ({
           }
           loading={loading}
         />
-        <Divider />
         {person?.fate && (
-          <>
-            <UserInfoLine
-              label={formatMessage({
-                id: 'sp.family:fate',
-                defaultMessage: 'Afdrif',
-              })}
-              content={
-                error ? formatMessage(dataNotFoundMessage) : person?.fate || ''
-              }
-              loading={loading}
-            />
-            <Divider />
-          </>
+          <UserInfoLine
+            label={formatMessage({
+              id: 'sp.family:fate',
+              defaultMessage: 'Afdrif',
+            })}
+            content={
+              error ? formatMessage(dataNotFoundMessage) : person?.fate || ''
+            }
+            loading={loading}
+          />
         )}
-        <Box marginY={3} />
         {(person?.parent1 || person?.parent2 || loading) && (
           <>
             <Parents
@@ -247,10 +271,9 @@ const ChildView: FC<Props> = ({
               parent2={person?.parent2 ? formatNationalId(person.parent2) : ''}
               loading={loading}
             />
-            <Divider />
           </>
         )}
-        {!person?.fate && !error && hasDetails ? (
+        {!person?.fate && !error && hasDetails && (
           <>
             <Parents
               label={formatMessage({
@@ -280,9 +303,12 @@ const ChildView: FC<Props> = ({
               parent2={person?.custodyText2}
               loading={loading}
             />
-            <Divider />
           </>
-        ) : null}
+        )}
+        {
+          //for the final divider
+          ' '
+        }
       </Stack>
     </>
   )

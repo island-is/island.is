@@ -115,6 +115,7 @@ export const UserInfoLine: FC<Props> = ({
               justifyContent={['flexStart', 'flexEnd']}
               alignItems="center"
               height="full"
+              printHidden
             >
               {editLink.external ? (
                 <a
