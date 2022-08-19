@@ -1,6 +1,5 @@
 const { parse, resolve, relative, join } = require('path')
 const fs = require('fs')
-// const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
 
 const getRootFiles = function (files) {
   return files.reduce((acc, file) => {
@@ -23,10 +22,10 @@ const getAllFiles = function (ref, dirPath, arrayOfFiles) {
 }
 
 module.exports = (config) => {
-  console.log(config.module.rules)
-  // NOTE: can probably be skipped since we inherit loaders from base tsconfig
-  // nrwlConfig(config) // first call it so that it @nrwl/react plugin adds its configs,
-
+  config.externals = {
+    '@testing-library/cypress': '@testing-library/cypress',
+    cypress: 'cypress',
+  }
   config.entry = {
     ...getAllFiles(
       resolve(__dirname, './src'),
@@ -35,13 +34,11 @@ module.exports = (config) => {
     ),
     ...getRootFiles(['./cypress.config.ts']),
   }
-
   config.output = {
     ...config.output,
     filename: '[name].js',
     clean: true,
   }
-  console.log(config)
 
   console.log(config.entry)
   config.module = {
