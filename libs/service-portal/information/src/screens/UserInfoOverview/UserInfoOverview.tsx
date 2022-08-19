@@ -35,8 +35,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   const spouseData = nationalRegistryUser?.spouse
   return (
     <>
-      <IntroHeader title={m.myInfo} intro={spmm.family.userInfoDesc} />
-
+      <IntroHeader title={m.myInfo} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         {called && !loading && !error && !nationalRegistryUser && (
           <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />

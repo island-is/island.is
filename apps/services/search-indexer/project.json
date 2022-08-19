@@ -1,0 +1,81 @@
+{
+  "root": "apps/services/search-indexer",
+  "sourceRoot": "apps/services/search-indexer/src",
+  "projectType": "application",
+  "prefix": "services-search-indexer",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@anatine/esbuildnx:build",
+      "options": {
+        "outputPath": "dist/apps/services/search-indexer",
+        "main": "apps/services/search-indexer/src/main.ts",
+        "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "config/**",
+            "input": "apps/services/search-indexer",
+            "output": "./"
+          },
+          {
+            "glob": "migrate*.js",
+            "input": "apps/services/search-indexer/migration-entrypoints",
+            "output": "./"
+          }
+        ],
+        "webpackConfig": "apps/services/search-indexer/webpack.config.js",
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-search-indexer:build"
+      }
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose -f docker-compose.yml up -d --build",
+        "cwd": "apps/services/search-indexer/dev-services"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateElastic.ts --run-migrations",
+          "yarn ts-node -P apps/services/search-indexer/tsconfig.app.json apps/services/search-indexer/src/migrate/migrateKibana.ts --run-migrations"
+        ],
+        "cwd": "apps/services/search-indexer",
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/services/search-indexer/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/services/search-indexer"]
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

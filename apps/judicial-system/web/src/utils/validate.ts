@@ -146,8 +146,12 @@ export const isDefendantStepValidForSidebarRC = (workingCase: Case) => {
   return workingCase.id && isDefendantStepValidRC(workingCase)
 }
 
-export const isDefendantStepValidIC = (workingCase: Case) => {
+export const isDefendantStepValidIC = (
+  workingCase: Case,
+  caseType: CaseType | undefined,
+) => {
   return (
+    workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
@@ -159,15 +163,13 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
-  return workingCase.id && isDefendantStepValidIC(workingCase)
+  return workingCase.id && isDefendantStepValidIC(workingCase, workingCase.type)
 }
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
-    (workingCase.prosecutor ||
-      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
-    (workingCase.court ||
-      ((workingCase as unknown) as { courtId: string }).courtId) &&
+    workingCase.prosecutor &&
+    workingCase.court &&
     validate([
       [workingCase.requestedCourtDate, ['empty', 'date-format']],
       workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
@@ -179,10 +181,8 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
 
 export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    (workingCase.prosecutor ||
-      ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
-    (workingCase.court ||
-      ((workingCase as unknown) as { courtId: string }).courtId) &&
+    workingCase.prosecutor &&
+    workingCase.court &&
     validate([[workingCase.requestedCourtDate, ['empty', 'date-format']]])
       .isValid
   )

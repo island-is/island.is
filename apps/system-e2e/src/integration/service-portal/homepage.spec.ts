@@ -1,15 +1,11 @@
-describe('Home page', () => {
-  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
-  const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
-  const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+import fakeUsers from '../../fixtures/service-portal/users.json'
 
+describe('Home page', () => {
   beforeEach(() => {
-    cy.log('fakeUsers', fakeUsers)
-    cy.log('authUrl', authUrl)
-    cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
-      url: '/minarsidur/',
+      baseUrl: Cypress.config('baseUrl'),
+      urlPath: '/minarsidur/',
     })
   })
 

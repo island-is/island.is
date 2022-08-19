@@ -73,8 +73,8 @@ const PageLayout: React.FC<PageProps> = ({
           : {
               href:
                 user?.role === UserRole.ADMIN
-                  ? constants.USER_LIST_ROUTE
-                  : constants.CASE_LIST_ROUTE,
+                  ? constants.USERS_ROUTE
+                  : constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
