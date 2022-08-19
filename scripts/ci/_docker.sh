@@ -11,6 +11,22 @@ APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_ROOT"/"$AP
 DOCKERFILE=$1
 TARGET=$2
 
+function get_build_args() {
+  if [ "${DOCKERFILE}" = 'Dockerfile.cypress' ]; then
+    cat << EOF
+    --build-arg APP=${APP} \
+    --build-arg APP_HOME=${APP_HOME} \
+    --build-arg APP_DIST_HOME=${APP_DIST_HOME}
+EOF
+  else
+    cat << EOF
+    --build-arg APP_DIST_HOME=${APP_DIST_HOME}
+EOF
+  fi
+}
+
+DOCKER_BUILD_ARGS=$(get_build_args)
+
 case $PUBLISH in
     true)
         PUBLISH_TO_REGISTRY=(--push)
@@ -22,7 +38,6 @@ case $PUBLISH in
         # Just build the container but do not publish it to the registry
         PUBLISH_TO_REGISTRY=()
         ;;
-
 esac
 
 # shellcheck disable=SC2086
@@ -33,9 +48,7 @@ docker buildx build \
   -f "${DIR}"/"$DOCKERFILE" \
   --target="$TARGET" \
   "${PUBLISH_TO_REGISTRY[@]}" \
+  ${DOCKER_BUILD_ARGS:-} \
   ${EXTRA_DOCKER_BUILD_ARGS:-} \
-  --build-arg APP="${APP}" \
-  --build-arg APP_HOME="${APP_HOME}" \
-  --build-arg APP_DIST_HOME="${APP_DIST_HOME}" \
   -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}" \
   "$PROJECT_ROOT"
