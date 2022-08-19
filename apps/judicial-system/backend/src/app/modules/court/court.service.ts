@@ -266,18 +266,15 @@ export class CourtService {
       subType = subType[isExtension ? 1 : 0]
     }
 
-    if (isIndictmentCase(type)) {
-      // TODO: add support to create indictment cases in court system
-      return Promise.resolve('S-1/2022')
-    }
+    const isIndictment = isIndictmentCase(type)
 
     return this.courtClientService
       .createCase(courtId, {
-        caseType: 'R - Rannsóknarmál',
+        caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
-        basedOn: 'Rannsóknarhagsmunir',
+        basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
       .catch((reason) => {
