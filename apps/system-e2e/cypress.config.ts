@@ -13,15 +13,15 @@ const getEnvironmentUrls = (env: TestEnvironment) => {
     : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
 
+const globalTimeout = 10000
+
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: 60000,
-  pageLoadTimeout: 60000,
-  responseTimeout: 12000,
-  videosFolder: '../../dist/apps/system-e2e/videos',
-  screenshotsFolder: '../../dist/apps/system-e2e/screenshots',
+  defaultCommandTimeout: globalTimeout,
+  pageLoadTimeout: globalTimeout,
+  responseTimeout: globalTimeout,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -30,7 +30,6 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
-    chromeWebSecurity: false,
     specPattern: '**/*.spec.{js,ts}',
     experimentalSessionAndOrigin: true,
     supportFile: '**/support/index.{js,ts}',

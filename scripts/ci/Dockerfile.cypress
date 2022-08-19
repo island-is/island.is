@@ -1,6 +1,7 @@
 FROM cypress/base:14.17.6 as cypress-base
 
 USER root
+RUN id
 
 RUN node --version
 
@@ -89,20 +90,16 @@ ENV TERM xterm \
     npm_config_unsafe_perm true
 
 FROM cypress-base as output-cypress
-ENV TEST_ENVIRONMENT=dev \
+ENV \
   CYPRESS_VIDEOS_FOLDER=/out/videos \
   CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
   CYPRESS_DOWNLOADS_FOLDER=/out/downloads
 
-RUN touch cachebust12
-COPY ${APP_DIST_HOME}/ /${APP_DIST_HOME}
+# node user exists in the base image
+RUN mkdir -p /out \
+  && chown node:node /out
 
-# give every user read access to the "/root" folder where the binary is cached
-# we really only need to worry about the top folder.
-RUN ls -la /root
-RUN chmod 755 /root
-
-RUN chown -R node:node /${APP_DIST_HOME}
+COPY --chown=node:node ${APP_DIST_HOME}/ /${APP_DIST_HOME}
 
 USER node
 # show user effective id and group - it should be non-zero
@@ -113,7 +110,5 @@ RUN id
 RUN ls -la /root/.cache/Cypress/*/Cypress
 RUN cat /root/.cache/Cypress/*/Cypress/vk_swiftshader_icd.json
 
-# user "node" should be able to access the dist folder
 RUN ls -al /${APP_DIST_HOME}
-
 ENTRYPOINT ["cypress", "run", "--browser", "chrome"]
