@@ -117,7 +117,6 @@ describe('ApplicationLifecycleService Unit tests', () => {
           useClass: ApplicationChargeServiceMock,
         },
         ApplicationLifeCycleService,
-        { provide: APPLICATION_CONFIG, useValue: config },
       ],
     }).compile()
 

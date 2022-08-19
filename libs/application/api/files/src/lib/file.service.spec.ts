@@ -11,8 +11,7 @@ import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
-import { ConfigModule } from '@island.is/nest/config'
-import { ApplicationFilesConfig } from './files.config'
+import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
 
 describe('FileService', () => {
@@ -24,7 +23,18 @@ describe('FileService', () => {
     documentToken: 'token',
   }
 
-  const bucket = 'bucket'
+  const bucket = 'test-bucket'
+  const ApplicationFilesConfig = defineConfig({
+    name: 'ApplicationFilesModule',
+    load: () => ({
+      attachmentBucket: bucket,
+      presignBucket: bucket,
+      redis: {
+        nodes: 'nodes',
+        ssl: false,
+      },
+    }),
+  })
 
   const applicationId = '1111-2222-3333-4444'
 
