@@ -14,12 +14,12 @@ TARGET=$2
 function get_build_args() {
   if [ "${DOCKERFILE}" = 'Dockerfile.cypress' ]; then
     cat << EOF
-    --build-arg APP=${APP} \
-    --build-arg APP_HOME=${APP_HOME} \
     --build-arg APP_DIST_HOME=${APP_DIST_HOME}
 EOF
   else
     cat << EOF
+    --build-arg APP=${APP} \
+    --build-arg APP_HOME=${APP_HOME} \
     --build-arg APP_DIST_HOME=${APP_DIST_HOME}
 EOF
   fi
