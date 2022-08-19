@@ -158,6 +158,20 @@ export const serviceSetup = (services: {
         prod: 'IslandIs_User_Production',
         staging: 'IslandIs_User_Development',
       },
+      FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
+        dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        staging: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        prod: 'https://star-re.crm4.dynamics.com/api/data/v9.1',
+      },
+      FINANCIAL_STATEMENTS_INAO_ISSUER:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0',
+      FINANCIAL_STATEMENTS_INAO_SCOPE: {
+        dev: 'https://dev-re.crm4.dynamics.com/.default',
+        staging: 'https://dev-re.crm4.dynamics.com/.default',
+        prod: 'https://star-re.crm4.dynamics.com/.default',
+      },
+      FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
@@ -205,6 +219,10 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
