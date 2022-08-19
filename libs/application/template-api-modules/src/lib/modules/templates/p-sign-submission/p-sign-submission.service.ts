@@ -74,10 +74,12 @@ export class PSignSubmissionService {
             auth,
           })
     const name = this.getName(application)
-    const attachment: Attachment = {
-      name,
-      content,
-    }
+    const attachments: Attachment[] = [
+      {
+        name,
+        content,
+      },
+    ]
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -119,7 +121,7 @@ export class PSignSubmissionService {
     const uploadDataId = 'pkort1.0'
 
     const result: DataUploadResponse = await this.syslumennService
-      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch((e) => {
         return {
           success: false,
