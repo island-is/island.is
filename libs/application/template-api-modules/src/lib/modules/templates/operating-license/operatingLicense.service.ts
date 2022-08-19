@@ -145,7 +145,7 @@ export class OperatingLicenseService {
 
       if (attachmentAnswer) {
         const fileType = attachmentAnswer.name?.split('.').pop()
-        const name: string = `${prefix}_${new Date(Date.now())
+        const name = `${prefix}_${new Date(Date.now())
           .toISOString()
           .substring(0, 10)}.${fileType}`
         const fileName = (application.attachments as ApplicationAttachments)[
