@@ -25,8 +25,6 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { MessageType } from '@island.is/judicial-system/message'
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -74,7 +72,6 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   private async validateAssignedUser(
@@ -482,17 +479,11 @@ export class CaseController {
       )
     }
 
-    const response = await this.caseService.getRulingSignatureConfirmation(
+    return this.caseService.getRulingSignatureConfirmation(
       theCase,
       user,
       documentToken,
     )
-
-    if (response.documentSigned) {
-      this.queue.add({ type: MessageType.RULING_SIGNED, caseId })
-    }
-
-    return response
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)

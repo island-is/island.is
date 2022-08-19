@@ -22,6 +22,8 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
+import { MessageType } from '@island.is/judicial-system/message'
 import { EmailService } from '@island.is/email-service'
 import {
   CaseFileState,
@@ -176,6 +178,8 @@ export class CaseService {
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @InjectQueue(caseModuleConfig().sqs.queueName)
+    private queueService: QueueService,
   ) {}
 
   private formatMessage: FormatMessage = () => {
@@ -797,61 +801,63 @@ export class CaseService {
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
 
-    try {
-      const signedPdf = await this.signingService.waitForSignature(
-        'ruling.pdf',
-        documentToken,
-      )
+    return this.signingService
+      .waitForSignature('ruling.pdf', documentToken)
+      .then(async (signedPdf) => {
+        // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
+        const newRulingDate = nowFactory()
 
-      // No need to wait for this to complete
-      this.uploadSignedRulingPdf(theCase, user, signedPdf)
-    } catch (error) {
-      this.eventService.postErrorEvent(
-        'Failed to get a ruling signature confirmation',
-        {
-          caseId: theCase.id,
-          policeCaseNumber: theCase.policeCaseNumber,
-          courtCaseNumber: theCase.courtCaseNumber,
-          actor: user.name,
-          institution: user.institution?.name,
-        },
-        error as Error,
-      )
+        return this.update(
+          theCase.id,
+          {
+            rulingDate: newRulingDate,
+            ...(!theCase.rulingDate
+              ? {}
+              : {
+                  rulingModifiedHistory: formatRulingModifiedHistory(
+                    theCase.rulingModifiedHistory,
+                    newRulingDate,
+                    theCase.judge?.name,
+                    theCase.judge?.title,
+                  ),
+                }),
+          } as UpdateCaseDto,
+          false,
+        )
+          .then(() => ({ documentSigned: true }))
+          .finally(() => {
+            // No need to wait for this to complete
+            this.uploadSignedRulingPdf(theCase, user, signedPdf).finally(() => {
+              this.queueService.add({
+                type: MessageType.RULING_SIGNED,
+                caseId: theCase.id,
+              })
+            })
+          })
+      })
+      .catch((error) => {
+        this.eventService.postErrorEvent(
+          'Failed to get a ruling signature confirmation',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error as Error,
+        )
 
-      if (error instanceof DokobitError) {
-        return {
-          documentSigned: false,
-          code: error.code,
-          message: error.message,
+        if (error instanceof DokobitError) {
+          return {
+            documentSigned: false,
+            code: error.code,
+            message: error.message,
+          }
         }
-      }
 
-      throw error
-    }
-
-    // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    const newRulingDate = nowFactory()
-    await this.update(
-      theCase.id,
-      {
-        rulingDate: newRulingDate,
-        ...(!theCase.rulingDate
-          ? {}
-          : {
-              rulingModifiedHistory: formatRulingModifiedHistory(
-                theCase.rulingModifiedHistory,
-                newRulingDate,
-                theCase.judge?.name,
-                theCase.judge?.title,
-              ),
-            }),
-      } as UpdateCaseDto,
-      false,
-    )
-
-    return {
-      documentSigned: true,
-    }
+        throw error
+      })
   }
 
   async extend(theCase: Case, user: TUser): Promise<Case> {
