@@ -1,0 +1,37 @@
+{
+  "root": "libs/application/templates/criminal-record",
+  "sourceRoot": "libs/application/templates/criminal-record/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/criminal-record/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/templates/criminal-record"],
+      "options": {
+        "jestConfig": "libs/application/templates/criminal-record/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/criminal-record/codegen.yml"
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/criminal-record/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}

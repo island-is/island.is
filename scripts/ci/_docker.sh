@@ -6,8 +6,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
 
-APP_HOME=$(jq ".projects[\"$APP\"].root" -r < "$PROJECT_ROOT"/workspace.json)
-APP_DIST_HOME=$(jq ".projects[\"$APP\"].architect.build.options.outputPath" -r < "$PROJECT_ROOT"/workspace.json)
+APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_ROOT"/workspace.json)
+APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_ROOT"/"$APP_HOME"/project.json)
 DOCKERFILE=$1
 TARGET=$2
 

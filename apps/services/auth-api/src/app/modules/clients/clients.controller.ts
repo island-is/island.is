@@ -16,7 +16,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  /** Gets a client by id */
+  /** Gets a client by id  */
   @Scopes('@identityserver.api/authentication')
   @Get(':id')
   @ApiOkResponse({ type: Client })

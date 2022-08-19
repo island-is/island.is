@@ -1,0 +1,24 @@
+{
+  "root": "apps/system-e2e",
+  "sourceRoot": "apps/system-e2e/src",
+  "projectType": "application",
+  "prefix": "system-e2e",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "system-test": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "tsConfig": "apps/system-e2e/tsconfig.json"
+      }
+    },
+    "docker-cypress": {}
+  },
+  "tags": []
+}

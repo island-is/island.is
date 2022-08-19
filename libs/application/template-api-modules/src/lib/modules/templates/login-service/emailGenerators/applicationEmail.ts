@@ -39,8 +39,12 @@ export const generateApplicationEmail: ApplicationEmail = (
 
   return {
     from: {
-      name: contactName || applicationSenderName,
-      address: contactEmail || applicationSenderEmail,
+      name: applicationSenderName,
+      address: applicationSenderEmail,
+    },
+    replyTo: {
+      name: contactName,
+      address: contactEmail,
     },
     to: [
       {

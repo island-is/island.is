@@ -1,0 +1,61 @@
+{
+  "root": "apps/judicial-system/api",
+  "sourceRoot": "apps/judicial-system/api/src",
+  "projectType": "application",
+  "prefix": "judicial-system-api",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "@anatine/esbuildnx:build",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/api",
+        "main": "apps/judicial-system/api/src/main.ts",
+        "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
+        "assets": [],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "judicial-system-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/judicial-system/api/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/judicial-system/api/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/judicial-system/api"]
+    },
+    "schemas/build-graphql-schema": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P apps/judicial-system/api/tsconfig.json scripts/build-graphql-schema.ts apps/judicial-system/api/src/app/app.module"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/judicial-system/codegen.yml"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}
