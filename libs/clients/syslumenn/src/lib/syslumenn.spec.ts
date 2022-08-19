@@ -43,7 +43,7 @@ const PERSON = [
     type: PersonType.Plaintiff,
   },
 ]
-const ATTACHMENT = [
+const ATTACHMENTS = [
   {
     name: 'attachment',
     content: 'content',
@@ -125,7 +125,7 @@ describe('SyslumennService', () => {
     it('should return data upload response', async () => {
       const response = await service.uploadData(
         PERSON,
-        ATTACHMENT,
+        ATTACHMENTS,
         {
           key: 'string',
         },
