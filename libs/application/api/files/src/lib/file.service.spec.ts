@@ -12,10 +12,8 @@ import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
-import {
-  APPLICATION_CONFIG,
-  ApplicationConfig,
-} from '../application.configuration'
+import { ApplicationFilesConfig } from './files.config'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 describe('FileService', () => {
   let service: FileService
@@ -98,21 +96,20 @@ describe('FileService', () => {
     } as unknown) as Application)
 
   beforeEach(async () => {
-    const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
       imports: [
         LoggingModule,
         SigningModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [signingModuleConfig],
+          load: [
+            signingModuleConfig,
+            ApplicationFilesConfig,
+            FileStorageConfig,
+          ],
         }),
       ],
-      providers: [
-        FileService,
-        AwsService,
-        { provide: APPLICATION_CONFIG, useValue: config },
-      ],
+      providers: [FileService, AwsService],
     }).compile()
 
     awsService = module.get(AwsService)
