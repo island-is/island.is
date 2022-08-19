@@ -10,6 +10,8 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { useUserProfile } from '@island.is/service-portal/graphql'
+import { parseNumber } from '@island.is/service-portal/core'
 import { gql, useMutation } from '@apollo/client'
 import { formatNationalId, Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -51,6 +53,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
+  const { data: userProfile } = useUserProfile()
 
   const [postChildrenCorrection, { error, loading }] = useMutation(
     NATIONAL_REGISTRY_CHILDREN_CORRECTION,
@@ -81,6 +84,11 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
     })
   }
 
+  console.log('userProfile', userProfile)
+  console.log(
+    'userProfile mobile',
+    parseNumber(userProfile?.mobilePhoneNumber || ''),
+  )
   return (
     <Modal
       id="child-registration-modal"
@@ -138,7 +146,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                   control={control}
                   id="email"
                   name="email"
-                  defaultValue=""
+                  defaultValue={userProfile?.email ?? ''}
                   required={true}
                   type="email"
                   rules={{
@@ -163,7 +171,9 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
                   required={true}
                   type="tel"
                   format={'### ####'}
-                  defaultValue=""
+                  defaultValue={parseNumber(
+                    userProfile?.mobilePhoneNumber || '',
+                  )}
                   rules={{
                     required: {
                       value: true,
