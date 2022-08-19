@@ -60,12 +60,17 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [print, setPrint] = useState(false)
+  const [isPrinting, setIsPrinting] = useState(false)
 
+  //window.onbeforeprint doesn't fire at the right time
+  //so we do the state change here
   const onPrint = () => {
-    setPrint(true)
+    setIsPrinting(true)
     window.print()
-    setPrint(false)
+  }
+
+  window.onafterprint = () => {
+    setIsPrinting(false)
   }
 
   /**
@@ -152,7 +157,7 @@ const ChildView: FC<Props> = ({
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={print ? 0 : 2} dividers={true}>
+      <Stack space={isPrinting ? 0 : 2} dividers={!isPrinting}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={formatMessage(m.fullName)}
