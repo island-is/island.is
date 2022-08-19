@@ -212,6 +212,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
         }
         onClose()
       }}
+      invertButtonColors={
+        signingProgress === 'canceled' || signingProgress === 'error'
+      }
     />
   )
 }
