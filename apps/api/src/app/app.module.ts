@@ -98,23 +98,23 @@ const autoSchemaFile = environment.production
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
-    // EducationModule.register({
-    //   xroad: {
-    //     baseUrl: environment.xroad.baseUrl!,
-    //     clientId: environment.xroad.clientId!,
-    //     services: {
-    //       license: environment.education.xroadLicenseServiceId!,
-    //       grade: environment.education.xroadGradeServiceId!,
-    //     },
-    //   },
-    //   nationalRegistry: {
-    //     baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-    //     user: environment.nationalRegistry.user!,
-    //     password: environment.nationalRegistry.password!,
-    //     host: environment.nationalRegistry.host!,
-    //   },
-    //   fileDownloadBucket: environment.education.fileDownloadBucket!,
-    // }),
+    EducationModule.register({
+      xroad: {
+        baseUrl: environment.xroad.baseUrl!,
+        clientId: environment.xroad.clientId!,
+        services: {
+          license: environment.education.xroadLicenseServiceId!,
+          grade: environment.education.xroadGradeServiceId!,
+        },
+      },
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
+        user: environment.nationalRegistry.user!,
+        password: environment.nationalRegistry.password!,
+        host: environment.nationalRegistry.host!,
+      },
+      fileDownloadBucket: environment.education.fileDownloadBucket!,
+    }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
@@ -148,14 +148,14 @@ const autoSchemaFile = environment.production
     }),
     CmsTranslationsModule,
     TerminusModule,
-    // NationalRegistryModule.register({
-    //   nationalRegistry: {
-    //     baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
-    //     user: environment.nationalRegistry.user!,
-    //     password: environment.nationalRegistry.password!,
-    //     host: environment.nationalRegistry.host!,
-    //   },
-    // }),
+    NationalRegistryModule.register({
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
+        user: environment.nationalRegistry.user!,
+        password: environment.nationalRegistry.password!,
+        host: environment.nationalRegistry.host!,
+      },
+    }),
     HealthInsuranceModule.register({
       soapConfig: {
         wsdlUrl: environment.healthInsurance.wsdlUrl!,
