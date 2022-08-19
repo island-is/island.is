@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
-  MultipleValueList,
   PageLayout,
   CaseInfo,
   BlueBox,
@@ -23,7 +22,7 @@ import {
   HideableText,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -42,7 +41,6 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
-  courtDocuments,
   closedCourt,
   core,
   titles,
@@ -56,6 +54,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
+import CourtDocuments from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -394,27 +393,10 @@ export const CourtRecord: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.title)}
-            </Text>
-          </Box>
-          {/* <MultipleValueList
-            title={formatMessage(
-              m.sections.courtDocuments.firstDocument.title,
-              {
-                caseType: caseTypes[workingCase.type],
-              },
-            )}
-            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
+          <CourtDocuments
             workingCase={workingCase}
-          /> */}
+            setWorkingCase={setWorkingCase}
+          />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>

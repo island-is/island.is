@@ -2,13 +2,6 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const additionalCourtDocumentContainer = style({
-  display: 'flex',
-  justifyContent: 'space-between',
-  borderTop: `1px solid ${theme.color.blue200}`,
-  padding: `${theme.spacing[2]}px 0`,
-})
-
 export const valueWrapper = style({
   display: 'flex',
   justifyContent: 'space-between',
