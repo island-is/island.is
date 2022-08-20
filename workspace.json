@@ -144,7 +144,6 @@
     "contentful-mideind-extension": "libs/contentful-extensions/mideind-translation",
     "contentful-parent-slug-extension": "libs/contentful-extensions/parent-slug",
     "contentful-role-permissions": "apps/contentful-role-permissions",
-    "contentful-role-permissions-e2e": "apps/contentful-role-permissions-e2e",
     "contentful-translation-extension": "libs/contentful-extensions/translation",
     "dokobit-signing": "libs/dokobit-signing",
     "download-service": "apps/download-service",
