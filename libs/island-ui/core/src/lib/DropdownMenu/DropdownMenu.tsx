@@ -38,6 +38,7 @@ export interface DropdownMenuProps {
    */
   icon?: ButtonProps['icon']
   disclosure?: ReactElement
+  hasScroll?: boolean
 }
 
 export const DropdownMenu = ({
@@ -46,6 +47,7 @@ export const DropdownMenu = ({
   title,
   icon,
   disclosure,
+  hasScroll,
 }: DropdownMenuProps) => {
   const menu = useMenuState({ placement: 'bottom', gutter: 8 })
   const menuBoxStyle = useBoxStyles({
@@ -82,7 +84,9 @@ export const DropdownMenu = ({
       <Menu
         {...menu}
         aria-label={menuLabel}
-        className={cn(styles.menu, menuBoxStyle)}
+        className={cn(styles.menu, menuBoxStyle, {
+          [styles.scroll]: hasScroll,
+        })}
       >
         {items.map((item, index) => {
           let anchorProps = {}

@@ -9,6 +9,11 @@ export const menu = style({
   },
 })
 
+export const scroll = style({
+  height: 400,
+  overflowY: 'scroll',
+})
+
 export const menuItem = style({
   transition: 'color .2s',
   selectors: {
