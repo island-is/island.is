@@ -224,10 +224,10 @@ const HearingArrangements = () => {
                   <Checkbox
                     name="isHeightenedSecurityLevel"
                     label={formatMessage(
-                      m.Sections.PROSECUTOR.heightenSecurityLevelLabel,
+                      m.sections.prosecutor.heightenSecurityLevelLabel,
                     )}
                     tooltip={formatMessage(
-                      m.Sections.PROSECUTOR.heightenSecurityLevelInfo,
+                      m.sections.prosecutor.heightenSecurityLevelInfo,
                     )}
                     disabled={
                       user.id !== workingCase.creatingProsecutor?.id &&

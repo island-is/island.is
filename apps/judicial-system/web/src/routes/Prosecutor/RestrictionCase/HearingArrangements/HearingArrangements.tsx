@@ -214,13 +214,11 @@ export const HearingArrangements: React.FC = () => {
                 <Checkbox
                   name="isHeightenedSecurityLevel"
                   label={formatMessage(
-                    rcRequestedHearingArrangements.Sections
-                      .RestrictionCaseProsecutorSubsections
+                    rcRequestedHearingArrangements.sections.prosecutor
                       .heightenSecurityLevelLabel,
                   )}
                   tooltip={formatMessage(
-                    rcRequestedHearingArrangements.Sections
-                      .RestrictionCaseProsecutorSubsections
+                    rcRequestedHearingArrangements.sections.prosecutor
                       .heightenSecurityLevelInfo,
                   )}
                   disabled={
