@@ -4,9 +4,9 @@ import {
   Box,
   Text,
   DropdownMenu,
-  Checkbox,
   Button,
   toast,
+  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 
 import {
@@ -18,42 +18,49 @@ import { IDS_OF_ENTRIES_THAT_CAN_BE_CREATED } from '../constants'
 
 import * as styles from './index.css'
 
+const emptyFunction = () => {}
+
 const Home = ({
   roles,
   contentTypes,
   initialCheckboxState,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const rolesToShow = roles.filter((role) =>
-    role.name.toLowerCase().startsWith('owner-'),
-  )
   const [checkboxState, setCheckboxState] = useState(initialCheckboxState)
+  const [savedCheckboxState, setSavedCheckboxState] = useState(
+    initialCheckboxState,
+  )
 
   const onSave = () => {
     fetch('/api/update-role-permissions', {
       method: 'PUT',
       body: JSON.stringify(checkboxState),
     })
-      .then(() => {
-        toast.success('Save was successful')
+      .then((response) => response.json())
+      .then((data) => {
+        toast.success('Saved successfully')
+        return setSavedCheckboxState(data)
       })
       .catch((err) => {
         console.error(err)
-        return toast.error('Received error from server during save')
+        return toast.error('Error occured during save')
       })
-
-    return
   }
+
+  const canSave =
+    JSON.stringify(savedCheckboxState) !== JSON.stringify(checkboxState)
+
+  console.log(JSON.stringify(roles[roles.length - 1]))
 
   return (
     <Box className={styles.container}>
       <Box display="flex" flexDirection="row" justifyContent="flexEnd">
-        <Button onClick={onSave} size="small">
+        <Button onClick={onSave} size="small" disabled={!canSave}>
           Save
         </Button>
       </Box>
 
       <Box className={styles.rolesContainer}>
-        {rolesToShow.map((role) => (
+        {roles.map((role) => (
           <Box
             border="standard"
             borderWidth="standard"
@@ -87,6 +94,8 @@ const Home = ({
 
                   return (
                     <Box
+                      borderBottomWidth="standard"
+                      border="standard"
                       tabIndex={0}
                       key={`${role.name}-${contentType.name}`}
                       userSelect="none"
@@ -111,7 +120,12 @@ const Home = ({
                       >
                         {contentType.name}
                       </Text>
-                      <Checkbox checked={checked} disabled />
+                      <ToggleSwitchButton
+                        checked={checked}
+                        label=""
+                        hiddenLabel={true}
+                        onChange={emptyFunction}
+                      />
                     </Box>
                   )
                 },
@@ -129,12 +143,17 @@ export const getServerSideProps = async () => {
     getAllRoles(),
     getAllContentTypesInAscendingOrder(),
   ])
+
+  const rolesToShow = roles.filter((role) =>
+    role.name.toLowerCase().startsWith('owner-'),
+  )
+
   const initialCheckboxState = extractInitialCheckboxStateFromRolesAndContentTypes(
-    roles,
+    rolesToShow,
     contentTypes,
     IDS_OF_ENTRIES_THAT_CAN_BE_CREATED,
   )
-  return { props: { roles, contentTypes, initialCheckboxState } }
+  return { props: { roles: rolesToShow, contentTypes, initialCheckboxState } }
 }
 
 export default Home
