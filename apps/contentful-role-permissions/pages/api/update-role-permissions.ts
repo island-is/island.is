@@ -1,5 +1,6 @@
 import { ContentTypeProps, RoleProps } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import slugify from '@sindresorhus/slugify'
 import {
   extractInitialCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
@@ -70,7 +71,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               not: {
                 or: [
                   {
-                    in: [{ doc: 'metadata.tags.sys.id' }, ['owner-test-team']],
+                    in: [{ doc: 'metadata.tags.sys.id' }, [slugify(role.name)]],
                   },
                   {
                     equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],

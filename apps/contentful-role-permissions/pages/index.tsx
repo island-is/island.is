@@ -7,6 +7,7 @@ import {
   Button,
   toast,
   ToggleSwitchButton,
+  Hyphen,
 } from '@island.is/island-ui/core'
 
 import {
@@ -14,7 +15,7 @@ import {
   getAllContentTypesInAscendingOrder,
   getAllRoles,
 } from '../utils'
-import { IDS_OF_ENTRIES_THAT_CAN_BE_CREATED } from '../constants'
+import { IDS_OF_DEFAULT_CONTENT_TYPES } from '../constants'
 
 import * as styles from './index.css'
 
@@ -49,8 +50,6 @@ const Home = ({
   const canSave =
     JSON.stringify(savedCheckboxState) !== JSON.stringify(checkboxState)
 
-  console.log(JSON.stringify(roles[roles.length - 1]))
-
   return (
     <Box className={styles.container}>
       <Box display="flex" flexDirection="row" justifyContent="flexEnd">
@@ -68,9 +67,10 @@ const Home = ({
             padding={3}
             key={role.name}
           >
-            <Text variant="h4" as="label">
+            <Text truncate variant="h4" as="label">
               {role.name}
             </Text>
+
             <DropdownMenu
               title="Editable types"
               icon="caretDown"
@@ -118,7 +118,7 @@ const Home = ({
                         variant="small"
                         color={checked ? 'blue400' : 'currentColor'}
                       >
-                        {contentType.name}
+                        <Hyphen>{contentType.name}</Hyphen>
                       </Text>
                       <ToggleSwitchButton
                         checked={checked}
@@ -131,6 +131,33 @@ const Home = ({
                 },
               }))}
             />
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => {
+                setCheckboxState((prevState) => {
+                  const newState = JSON.parse(JSON.stringify(prevState))
+
+                  for (const roleName in prevState) {
+                    for (const contentTypeName in prevState[roleName]) {
+                      if (
+                        IDS_OF_DEFAULT_CONTENT_TYPES.includes(
+                          contentTypes.find(
+                            (type) => type.name === contentTypeName,
+                          )?.sys?.id,
+                        )
+                      ) {
+                        newState[roleName][contentTypeName] = true
+                      }
+                    }
+                  }
+
+                  return newState
+                })
+              }}
+            >
+              Reset
+            </Button>
           </Box>
         ))}
       </Box>
@@ -151,7 +178,6 @@ export const getServerSideProps = async () => {
   const initialCheckboxState = extractInitialCheckboxStateFromRolesAndContentTypes(
     rolesToShow,
     contentTypes,
-    IDS_OF_ENTRIES_THAT_CAN_BE_CREATED,
   )
   return { props: { roles: rolesToShow, contentTypes, initialCheckboxState } }
 }

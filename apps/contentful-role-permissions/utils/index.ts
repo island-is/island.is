@@ -43,10 +43,46 @@ export const getAllContentTypesInAscendingOrder = async () => {
   return contentfulTypesResponse.items
 }
 
+const policiesAreEditable = (
+  role: RoleProps,
+  contentType: ContentTypeProps,
+) => {
+  let canEditContentType = false
+  for (const policy of role.policies) {
+    if (policy.actions === 'all' && policy.effect === 'allow') {
+      if (
+        !policy.constraint.equals &&
+        !policy.constraint.not &&
+        !policy.constraint.or &&
+        policy.constraint.and
+      ) {
+        for (const obj of policy.constraint.and) {
+          if (obj.equals && obj.equals.length === 2) {
+            console.log(
+              role.name,
+              obj.equals[0].doc,
+              obj.equals[1],
+              contentType.name,
+            )
+            if (
+              obj.equals[0].doc === 'sys.contentType.sys.id' &&
+              obj.equals[1] === contentType.sys.id
+            ) {
+              canEditContentType = true
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return canEditContentType
+}
+
 export const extractInitialCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
-  contentTypeIdsThatAreChecked: string[],
 ): Record<string, Record<string, boolean>> => {
   return roles.reduce(
     (roleAccumulator, role) => ({
@@ -54,9 +90,7 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
       [role.name]: contentTypes.reduce(
         (contentTypeAccumulator, contentType) => ({
           ...contentTypeAccumulator,
-          [contentType.name]: contentTypeIdsThatAreChecked.includes(
-            contentType.sys.id,
-          ),
+          [contentType.name]: policiesAreEditable(role, contentType),
         }),
         {},
       ),
