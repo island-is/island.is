@@ -1,3 +1,4 @@
+import { addWeeks } from 'date-fns'
 import { defineMessage } from 'react-intl'
 
 export const titles = {
@@ -87,6 +88,14 @@ export const titles = {
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Yfirlit kröfu skjá hjá saksóknara í gæslu- og farbannsmálum',
+      }),
+    },
+    indictments: {
+      defendant: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.defendant',
+        defaultMessage: 'Ákærði - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir varnaraðila skjá hjá saksóknara í ákærðum',
       }),
     },
   },

@@ -12,7 +12,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -190,7 +190,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_TWO}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
@@ -224,10 +224,10 @@ const HearingArrangements = () => {
                   <Checkbox
                     name="isHeightenedSecurityLevel"
                     label={formatMessage(
-                      m.sections.prosecutor.heightenSecurityLevelLabel,
+                      m.Sections.PROSECUTOR.heightenSecurityLevelLabel,
                     )}
                     tooltip={formatMessage(
-                      m.sections.prosecutor.heightenSecurityLevelInfo,
+                      m.Sections.PROSECUTOR.heightenSecurityLevelInfo,
                     )}
                     disabled={
                       user.id !== workingCase.creatingProsecutor?.id &&
