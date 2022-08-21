@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Query,
   useUserProfile,
   GenericLicenseType,
 } from '@island.is/service-portal/graphql'
@@ -26,7 +25,7 @@ import { gql, useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import { GenericLicenseDataField } from '@island.is/api/schema'
+import { GenericLicenseDataField, Query } from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
@@ -79,7 +78,13 @@ const GenericLicenseQuery = gql`
           ...genericLicenseDataFieldFragment
         }
         rawData
-        licenseNumber
+        metadata {
+          licenseNumber
+          links {
+            label
+            value
+          }
+        }
       }
     }
   }
@@ -107,31 +112,6 @@ const DataFields = ({
       {fields.map((field, i) => {
         return (
           <React.Fragment key={i}>
-            {field.type === 'Link' && field.value && (
-              <Box
-                display="flex"
-                flexDirection={['column', 'row']}
-                alignItems={['flexStart', 'center']}
-                marginBottom={2}
-              >
-                {pkPass && licenseType && (
-                  <>
-                    <PkPass licenseType={licenseType} />
-                    <Box marginX={[0, 1]} marginY={[1, 0]} />
-                  </>
-                )}
-                <a href={field.value} target="_blank" rel="noreferrer">
-                  <Button
-                    variant="utility"
-                    size="small"
-                    icon="open"
-                    iconType="outline"
-                  >
-                    {field.label}
-                  </Button>
-                </a>
-              </Box>
-            )}
             {field.type === 'Value' && (
               <>
                 {}
@@ -189,7 +169,9 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = userProfile?.locale ?? 'is'
-  const { type }: { type: string | undefined } = useParams()
+  const {
+    type,
+  }: { type: string | undefined; provider: string | undefined } = useParams()
   const licenseType = type ? getTypeFromPath(type) : undefined
   const { data, loading: queryLoading, error } = useQuery<Query>(
     GenericLicenseQuery,
@@ -235,12 +217,49 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
       {queryLoading && <LicenseLoader />}
+
       {!error && !queryLoading && (
-        <DataFields
-          fields={genericLicense?.payload?.data ?? []}
-          licenseType={licenseType}
-          pkPass={genericLicense?.license.pkpass}
-        />
+        <>
+          {genericLicense?.payload?.metadata.links && (
+            <Box
+              display="flex"
+              flexDirection={['column', 'row']}
+              alignItems={['flexStart', 'center']}
+              marginBottom={2}
+            >
+              {genericLicense?.license.pkpass && licenseType && (
+                <>
+                  <PkPass licenseType={licenseType} />
+                  <Box marginX={[0, 1]} marginY={[1, 0]} />
+                </>
+              )}
+              {genericLicense?.payload?.metadata.links.map((link, index) => {
+                return (
+                  <a
+                    href={link.value}
+                    target="_blank"
+                    rel="noreferrer"
+                    key={licenseType + '_link_' + index}
+                  >
+                    <Button
+                      variant="utility"
+                      size="small"
+                      icon="open"
+                      iconType="outline"
+                    >
+                      {link.label}
+                    </Button>
+                  </a>
+                )
+              })}
+            </Box>
+          )}
+          <DataFields
+            fields={genericLicense?.payload?.data ?? []}
+            licenseType={licenseType}
+            pkPass={genericLicense?.license.pkpass}
+          />
+        </>
       )}
     </>
   )

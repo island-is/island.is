@@ -1,4 +1,4 @@
-import { GenericLicenseType } from '@island.is/service-portal/graphql'
+import { GenericLicenseType } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 
 interface Category {
@@ -453,8 +453,8 @@ export const getLicenseDetailHeading = (type: GenericLicenseType) => {
       break
     default:
       return {
-        title: m.yourDrivingLicense,
-        text: m.drivingLicenseDescription,
+        title: m.license,
+        text: '',
       }
       break
   }
@@ -476,7 +476,7 @@ export const getTitleAndLogo = (type: GenericLicenseType) => {
       }
     case GenericLicenseType.HuntingLicense:
       return {
-        title: m.huntingLicense,
+        title: m.firearmLicense,
         logo: './assets/images/island.svg',
       }
     default:
@@ -506,7 +506,7 @@ export const getPathFromType = (type: GenericLicenseType) => {
       return LicenseTypePath.vinnuvelarettindi
       break
     default:
-      return LicenseTypePath.okurettindi
+      return ''
       break
   }
 }
@@ -526,7 +526,7 @@ export const getTypeFromPath = (path: string) => {
       return GenericLicenseType.MachineLicense
       break
     default:
-      return GenericLicenseType.DriversLicense
+      return undefined
       break
   }
 }

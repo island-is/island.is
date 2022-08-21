@@ -33,7 +33,6 @@ export enum GenericLicenseDataFieldType {
   Group = 'Group',
   Category = 'Category',
   Value = 'Value',
-  Link = 'Link',
 }
 
 export enum GenericUserLicensePkPassStatus {
@@ -79,11 +78,22 @@ export type GenericLicenseDataField = {
   fields?: Array<GenericLicenseDataField>
 }
 
+export type GenericUserLicenseMetaLinks = {
+  label?: string
+  value?: string
+}
+
+export type GenericUserLicenseMetadata = {
+  links?: GenericUserLicenseMetaLinks[]
+  licenseNumber: string
+  expired: boolean | null
+}
+
 export type GenericUserLicensePayload = {
   data: Array<GenericLicenseDataField>
   rawData: unknown
-  licenseNumber: string
-  expired: boolean | null
+
+  metadata?: GenericUserLicenseMetadata
 }
 
 export type GenericLicenseUserdata = {

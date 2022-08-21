@@ -41,16 +41,16 @@ export const m = defineMessages({
     defaultMessage:
       'Hér birtast upplýsingar um ADR skírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
   },
-  huntingLicense: {
-    id: 'sp.license:hunting-license',
+  firearmLicense: {
+    id: 'sp.license:firearm-license',
     defaultMessage: 'Skotvopnaleyfi',
   },
-  yourHuntingLicense: {
-    id: 'sp.license:your-hunting-license',
+  yourFirearmLicense: {
+    id: 'sp.license:your-firearm-license',
     defaultMessage: 'Skotvoplaleyfið þitt',
   },
-  huntingLicenseDescription: {
-    id: 'sp.license:hunting-license-description',
+  firearmLicenseDescription: {
+    id: 'sp.license:firearm-license-description',
     defaultMessage: 'Hér birtast upplýsingar um skoptvopnaleyfið þitt.',
   },
   machineLicense: {

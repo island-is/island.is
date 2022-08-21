@@ -10,14 +10,8 @@ import {
 
 import isAfter from 'date-fns/isAfter'
 
-export const parseMachineLicensePayload = (
-  license: VinnuvelaDto,
-): GenericUserLicensePayload | null => {
-  if (!license) return null
-
-  let expired: boolean | null = null
-
-  expired = license.vinnuvelaRettindi
+const checkLicenseExpirationDate = (license: VinnuvelaDto) => {
+  return license.vinnuvelaRettindi
     ? license.vinnuvelaRettindi
         .filter((field) => field.kenna || field.stjorna)
         .every(
@@ -28,6 +22,13 @@ export const parseMachineLicensePayload = (
             !isAfter(new Date(field.stjorna), new Date()),
         )
     : null
+}
+export const parseMachineLicensePayload = (
+  license: VinnuvelaDto,
+): GenericUserLicensePayload | null => {
+  if (!license) return null
+
+  const expired: boolean | null = checkLicenseExpirationDate(license)
 
   const data: Array<GenericLicenseDataField> = [
     {
@@ -82,8 +83,10 @@ export const parseMachineLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    licenseNumber: license.skirteinisNumer?.toString() ?? '',
-    expired: expired,
+    metadata: {
+      licenseNumber: license.skirteinisNumer?.toString() ?? '',
+      expired: expired,
+    },
   }
 }
 

@@ -41,9 +41,32 @@ export class GenericLicenseProvider {
     description: 'ID of license provider',
   })
   id!: GenericLicenseProviderId
+}
 
-  @Field({ description: 'Display name of license' })
-  name?: string
+@ObjectType()
+export class GenericUserLicenseMetaLinks {
+  @Field(() => String)
+  label?: string
+
+  @Field(() => String)
+  value?: string
+}
+@ObjectType()
+export class GenericUserLicenseMetadata {
+  @Field(() => [GenericUserLicenseMetaLinks])
+  links?: Array<GenericUserLicenseMetaLinks>
+
+  @Field(() => String)
+  licenseNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  expired?: boolean | null
+
+  @Field(() => String)
+  title?: string
+
+  @Field(() => String)
+  logo?: string
 }
 
 @ObjectType()
@@ -57,6 +80,9 @@ export class GenericLicense {
     description: 'Provider of the license',
   })
   provider!: GenericLicenseProvider
+
+  @Field({ description: 'Display name of license' })
+  name?: string
 
   @Field({ description: 'Does the license support pkpass?' })
   pkpass!: boolean

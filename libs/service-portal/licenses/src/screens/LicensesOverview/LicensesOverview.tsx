@@ -66,8 +66,10 @@ const GenericLicensesQuery = gql`
           ...genericLicenseDataFieldFragment
         }
         rawData
-        licenseNumber
-        expired
+        metadata {
+          licenseNumber
+          expired
+        }
       }
     }
   }
@@ -121,7 +123,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                   text={
                     formatMessage(m.licenseNumber) +
                     ': ' +
-                    license.payload?.licenseNumber
+                    license.payload?.metadata?.licenseNumber
                   }
                   heading={formatMessage(
                     getTitleAndLogo(license.license.type).title,
@@ -132,6 +134,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                     onClick: () =>
                       history.push(
                         ServicePortalPath.LicensesDetail.replace(
+                          ':provider',
+                          license.license.provider.id,
+                        ).replace(
                           ':type',
                           getPathFromType(license.license.type),
                         ),
@@ -139,13 +144,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                     variant: 'text',
                   }}
                   tag={
-                    license.payload?.expired === true
+                    license.payload?.metadata?.expired === true
                       ? {
                           label: formatMessage(m.isExpired),
                           variant: 'red',
                           outlined: false,
                         }
-                      : license.payload?.expired === false
+                      : license.payload?.metadata?.expired === false
                       ? {
                           label: formatMessage(m.isValid),
                           variant: 'blue',

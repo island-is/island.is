@@ -26,11 +26,7 @@ export const parseDrivingLicensePayload = (
   // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
   const data = [
     // We don't get the name split into two from the API, combine
-    {
-      type: GenericLicenseDataFieldType.Link,
-      label: 'Endurnýja ökuskírteini',
-      value: 'https://island.is/endurnyjun-okuskirteina',
-    },
+
     {
       type: GenericLicenseDataFieldType.Value,
       name: 'Grunnupplýsingar ökuskírteinis',
@@ -56,7 +52,6 @@ export const parseDrivingLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      //name: 'gildirTil',
       label: '4b. Lokadagur',
       value: license.gildirTil ? new Date(license.gildirTil).toISOString() : '',
     },
@@ -73,7 +68,6 @@ export const parseDrivingLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '5. Númer',
-      // name: 'skirteinisNumer',
       value: (license?.id ?? '').toString(),
     },
     {
@@ -111,7 +105,15 @@ export const parseDrivingLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
-    licenseNumber: license.id?.toString() ?? '',
-    expired,
+    metadata: {
+      licenseNumber: license.id?.toString() ?? '',
+      expired,
+      links: [
+        {
+          label: 'Endurnýja ökuskírteini',
+          value: 'https://island.is/endurnyjun-okuskirteina',
+        },
+      ],
+    },
   }
 }
