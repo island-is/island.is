@@ -22,6 +22,12 @@ export class Form {
 
   @Field()
   successText!: string
+
+  @Field()
+  aboutYouHeadingText?: string
+
+  @Field()
+  questionsHeadingText?: string
 }
 
 export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
@@ -32,4 +38,6 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => ({
   recipient: fields.recipient ?? '',
   fields: (fields.fields ?? []).map(mapFormField),
   successText: fields.successText ?? '',
+  aboutYouHeadingText: fields.aboutYouHeadingText ?? '',
+  questionsHeadingText: fields.questionsHeadingText ?? '',
 })

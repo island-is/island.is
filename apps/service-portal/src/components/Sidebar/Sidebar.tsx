@@ -24,7 +24,7 @@ export const Sidebar: FC<{}> = () => {
   const { signOut } = useAuth()
   // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   // const isMobile = width < theme.breakpoints.md
-  const { unreadCounter } = useListDocuments('')
+  const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
   /* This is commented out because this will be revisited next fall (2022) */
