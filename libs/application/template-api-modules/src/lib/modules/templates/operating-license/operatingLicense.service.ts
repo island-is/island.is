@@ -63,7 +63,6 @@ export class OperatingLicenseService {
     success: boolean
     orderId?: string
   }> {
-    const { answers } = application
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
