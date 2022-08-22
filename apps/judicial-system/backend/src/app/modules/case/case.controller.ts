@@ -25,14 +25,7 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { MessageType } from '@island.is/judicial-system/message'
-import {
-  CaseState,
-  CaseType,
-  completedCaseStates,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -79,7 +72,6 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   private async validateAssignedUser(
@@ -219,12 +211,6 @@ export class CaseController {
       update as UpdateCaseDto,
       state !== CaseState.DELETED,
     )
-
-    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-      this.logger.info(`Writing completed case ${caseId} to queue`)
-
-      this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
-    }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
@@ -479,7 +465,7 @@ export class CaseController {
     description:
       'Confirms a previously requested ruling signature for an existing case',
   })
-  getRulingSignatureConfirmation(
+  async getRulingSignatureConfirmation(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,

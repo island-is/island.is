@@ -4,23 +4,22 @@ import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseWriteGuard,
-} from '../../../case'
-import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
-import { FileController } from '../../file.controller'
+} from '../../case'
+import { FileController } from '../file.controller'
 
-describe('FileController - Delete case file guards', () => {
+describe('FileController - Create presigned post guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      FileController.prototype.deleteCaseFile,
+      FileController.prototype.createPresignedPost,
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -56,18 +55,6 @@ describe('FileController - Delete case file guards', () => {
 
     it('should have CaseNotCompletedGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
-    })
-  })
-
-  describe('CaseFileExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have CaseFileExistsGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
 })

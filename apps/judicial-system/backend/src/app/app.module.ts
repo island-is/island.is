@@ -10,6 +10,7 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { environment } from '../environments'
 import {
   caseModuleConfig,
+  notificationModuleConfig,
   CaseModule,
   DefendantModule,
   UserModule,
@@ -45,7 +46,12 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [signingModuleConfig, courtClientModuleConfig, caseModuleConfig],
+      load: [
+        signingModuleConfig,
+        courtClientModuleConfig,
+        caseModuleConfig,
+        notificationModuleConfig,
+      ],
     }),
   ],
 })
