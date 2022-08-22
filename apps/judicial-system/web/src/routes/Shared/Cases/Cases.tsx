@@ -114,16 +114,16 @@ export const Cases: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast
-            : !completedCaseStates.includes(c.state)
+            ? !c.isValidToDateInThePast && c.rulingDate
+            : !c.rulingDate
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast
-            : completedCaseStates.includes(c.state)
+            ? c.isValidToDateInThePast && c.rulingDate
+            : c.rulingDate
         }),
       )
     }
