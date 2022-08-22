@@ -66,8 +66,6 @@ export class FinanceDocumentController {
         resources: pdfId,
       })
 
-      console.log('FINANCE DOCUMENT', documentBase64)
-
       const buffer = Buffer.from(documentBase64, 'base64')
 
       res.header('Content-length', buffer.length.toString())
