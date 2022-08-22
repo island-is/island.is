@@ -64,7 +64,6 @@ const ChildView: FC<Props> = ({
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-
   /**
    * The ChildRegistration module is feature flagged
    * Please remove all code when fully released.
