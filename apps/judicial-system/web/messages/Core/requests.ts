@@ -3,57 +3,57 @@ import { defineMessage, defineMessages } from 'react-intl'
 export const requests = {
   tags: defineMessages({
     draft: {
-      id: 'requests.tags.draft',
+      id: 'judicial.system.core:requests.tags.draft',
       defaultMessage: 'Drög',
       description: 'Notað sem merki þegar mál í stöðu "Drög" í málalista',
     },
     new: {
-      id: 'requests.tags.new',
+      id: 'judicial.system.core:requests.tags.new',
       defaultMessage: 'Nýtt',
       description: 'Notað sem merki þegar mál í stöðu "Nýtt" í málalista',
     },
     sent: {
-      id: 'requests.tags.sent',
+      id: 'judicial.system.core:requests.tags.sent',
       defaultMessage: 'Sent',
       description: 'Notað sem merki þegar mál í stöðu "Sent" í málalista',
     },
     received: {
-      id: 'requests.tags.received',
+      id: 'judicial.system.core:requests.tags.received',
       defaultMessage: 'Móttekið',
       description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
     },
     scheduled: {
-      id: 'requests.tags.scheduled',
+      id: 'judicial.system.core:requests.tags.scheduled',
       defaultMessage: 'Á dagskrá',
       description: 'Notað sem merki þegar mál í stöðu "Á dagskrá" í málalista',
     },
     inactive: {
-      id: 'requests.tags.inactive',
+      id: 'judicial.system.core:requests.tags.inactive',
       defaultMessage: 'Lokið',
       description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
     },
     active: {
-      id: 'requests.tags.active',
+      id: 'judicial.system.core:requests.tags.active',
       defaultMessage: 'Virkt',
       description: 'Notað sem merki þegar mál í stöðu "Virkt" í málalista',
     },
     accepted: {
-      id: 'requests.tags.accepted',
+      id: 'judicial.system.core:requests.tags.accepted',
       defaultMessage: 'Samþykkt',
       description: 'Notað sem merki þegar mál í stöðu "Samþykkt" í málalista',
     },
     rejected: {
-      id: 'requests.tags.rejected',
+      id: 'judicial.system.core:requests.tags.rejected',
       defaultMessage: 'Hafnað',
       description: 'Notað sem merki þegar mál í stöðu "Hafnað" í málalista',
     },
     dismissed: {
-      id: 'requests.tags.dismissed',
+      id: 'judicial.system.core:requests.tags.dismissed',
       defaultMessage: 'Vísað frá',
       description: 'Notað sem merki þegar mál í stöðu "Vísað frá" í málalista',
     },
     unknown: {
-      id: 'requests.tags.unknown',
+      id: 'judicial.system.core:requests.tags.unknown',
       defaultMessage: 'Óþekkt',
       description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
     },
