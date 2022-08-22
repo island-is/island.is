@@ -1,4 +1,3 @@
-import { GenericLicenseType } from '@island.is/api/schema'
 import { m } from '../lib/messages'
 
 interface Category {
@@ -434,18 +433,25 @@ export const mapCategory = (id: string): Category => {
   }
 }
 
-export const getLicenseDetailHeading = (type: GenericLicenseType) => {
+enum LicenseType {
+  DriversLicense = 'DriversLicense',
+  HuntingLicense = 'HuntingLicense',
+  AdrLicense = 'AdrLicense',
+  MachineLicense = 'MachineLicense',
+}
+
+export const getLicenseDetailHeading = (type: LicenseType) => {
   switch (type) {
-    case GenericLicenseType.DriversLicense:
+    case LicenseType.DriversLicense:
       return {
         title: m.yourDrivingLicense,
         text: m.drivingLicenseDescription,
       }
       break
-    case GenericLicenseType.AdrLicense:
+    case LicenseType.AdrLicense:
       return { title: m.yourADRLicense, text: m.adrLicenseDescription }
       break
-    case GenericLicenseType.MachineLicense:
+    case LicenseType.MachineLicense:
       return {
         title: m.yourMachineLicense,
         text: m.machineLicenseDescription,
@@ -459,22 +465,21 @@ export const getLicenseDetailHeading = (type: GenericLicenseType) => {
       break
   }
 }
-
-export const getTitleAndLogo = (type: GenericLicenseType) => {
+export const getTitleAndLogo = (type: LicenseType) => {
   switch (type) {
-    case GenericLicenseType.DriversLicense:
+    case LicenseType.DriversLicense:
       return { title: m.drivingLicense, logo: './assets/images/island.svg' }
-    case GenericLicenseType.AdrLicense:
+    case LicenseType.AdrLicense:
       return {
         title: m.ADRLicense,
         logo: './assets/images/adr_machine.svg',
       }
-    case GenericLicenseType.MachineLicense:
+    case LicenseType.MachineLicense:
       return {
         title: m.machineLicense,
         logo: './assets/images/adr_machine.svg',
       }
-    case GenericLicenseType.HuntingLicense:
+    case LicenseType.HuntingLicense:
       return {
         title: m.firearmLicense,
         logo: './assets/images/island.svg',
@@ -491,18 +496,18 @@ enum LicenseTypePath {
   vinnuvelarettindi = 'vinnuvelarettindi',
 }
 
-export const getPathFromType = (type: GenericLicenseType) => {
+export const getPathFromType = (type: LicenseType) => {
   switch (type) {
-    case GenericLicenseType.AdrLicense:
+    case LicenseType.AdrLicense:
       return LicenseTypePath.adrrettindi
       break
-    case GenericLicenseType.DriversLicense:
+    case LicenseType.DriversLicense:
       return LicenseTypePath.okurettindi
       break
-    case GenericLicenseType.HuntingLicense:
+    case LicenseType.HuntingLicense:
       return LicenseTypePath.skotvopnaleyfi
       break
-    case GenericLicenseType.MachineLicense:
+    case LicenseType.MachineLicense:
       return LicenseTypePath.vinnuvelarettindi
       break
     default:
@@ -514,16 +519,16 @@ export const getPathFromType = (type: GenericLicenseType) => {
 export const getTypeFromPath = (path: string) => {
   switch (path) {
     case LicenseTypePath.adrrettindi:
-      return GenericLicenseType.AdrLicense
+      return LicenseType.AdrLicense
       break
     case LicenseTypePath.okurettindi:
-      return GenericLicenseType.DriversLicense
+      return LicenseType.DriversLicense
       break
     case LicenseTypePath.skotvopnaleyfi:
-      return GenericLicenseType.HuntingLicense
+      return LicenseType.HuntingLicense
       break
     case LicenseTypePath.vinnuvelarettindi:
-      return GenericLicenseType.MachineLicense
+      return LicenseType.MachineLicense
       break
     default:
       return undefined
