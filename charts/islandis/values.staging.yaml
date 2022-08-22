@@ -443,7 +443,7 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Development'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
-    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'INAO_Client'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
