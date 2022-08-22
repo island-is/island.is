@@ -5,6 +5,7 @@ import {
   Case,
   CaseState,
   InstitutionType,
+  isInvestigationCase,
   isRestrictionCase,
   User,
 } from '@island.is/judicial-system/types'
@@ -229,6 +230,25 @@ const useSections = () => {
                     : undefined,
               },
             ],
+    }
+  }
+
+  const getIndictmentCaseProsecutorSection = (
+    workingCase: Case,
+    user?: User,
+    activeSubSection?: number,
+  ): Section => {
+    const { id } = workingCase
+
+    return {
+      name: formatMessage(sections.indictmentCaseProsecutorSection.title),
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(formatMessage(core.indictmentDefendant)),
+          href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
+        },
+      ],
     }
   }
 
@@ -589,11 +609,13 @@ const useSections = () => {
             user,
             activeSubSection,
           )
-        : getInvestigationCaseProsecutorSection(
+        : isInvestigationCase(workingCase?.type)
+        ? getInvestigationCaseProsecutorSection(
             workingCase || ({} as Case),
             user,
             activeSubSection,
-          ),
+          )
+        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case), user),
       isRestrictionCase(workingCase?.type)
         ? getRestrictionCaseCourtSections(
             workingCase || ({} as Case),

@@ -116,16 +116,14 @@ const Defendant: React.FC = () => {
           }
         })
         router.push(
-          `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+          `${constants.INDICTMENTS_PROCESSING_ROUTE}/${createdCase.id}`,
         )
       } else {
         // TODO handle error
         return
       }
     } else {
-      router.push(
-        `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
-      )
+      router.push(`${constants.INDICTMENTS_PROCESSING_ROUTE}/${theCase.id}`)
     }
   }
 
