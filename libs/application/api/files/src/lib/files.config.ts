@@ -24,7 +24,7 @@ export const ApplicationFilesConfig = defineConfig({
       'island-is-dev-storage-application-system',
     ),
     redis: {
-      nodes: env.requiredJSON<string[]>('REDIS_URL_NODE_01', [
+      nodes: env.requiredJSON('REDIS_URL_NODE_01', [
         'localhost:7000',
         'localhost:7001',
         'localhost:7002',
