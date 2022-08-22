@@ -99,7 +99,7 @@ export const IndictmentTypes = [
     value: CaseType.DOMESTIC_VIOLENCE,
   },
   {
-    label: 'Heimilisofbeldi',
+    label: 'Líkamsáras sem leiðir til dauða',
     value: CaseType.ASSAULT_LEADING_TO_DEATH,
   },
   {

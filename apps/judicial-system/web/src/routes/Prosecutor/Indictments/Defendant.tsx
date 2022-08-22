@@ -1,6 +1,8 @@
 import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { uuid } from 'uuidv4'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import {
   FormContentContainer,
@@ -20,11 +22,12 @@ import {
   indictmentsDefendant as m,
   core,
 } from '@island.is/judicial-system-web/messages'
-import { Box, Select, Text } from '@island.is/island-ui/core'
+import { Box, Button, Select, Text } from '@island.is/island-ui/core'
 import { ValueType } from 'react-select'
 import {
   Case,
   CaseType,
+  Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -129,6 +132,43 @@ const Defendant: React.FC = () => {
     }
   }
 
+  const handleCreateDefendantClick = async () => {
+    if (workingCase.id) {
+      const defendantId = await createDefendant(workingCase.id, {
+        gender: undefined,
+        name: '',
+        address: '',
+        nationalId: '',
+        citizenship: '',
+      })
+
+      createEmptyDefendant(defendantId)
+    } else {
+      createEmptyDefendant()
+    }
+
+    window.scrollTo(0, document.body.scrollHeight)
+  }
+
+  const createEmptyDefendant = (defendantId?: string) => {
+    if (workingCase.defendants) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [
+          ...workingCase.defendants,
+          {
+            id: defendantId || uuid(),
+            gender: undefined,
+            name: '',
+            nationalId: '',
+            address: '',
+            citizenship: '',
+          } as TDefendant,
+        ],
+      })
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -191,20 +231,55 @@ const Defendant: React.FC = () => {
             required
           />
         </Box>
-        {workingCase.defendants && workingCase.defendants.length > 0 && (
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {capitalize(formatMessage(core.indictmentDefendant))}
-              </Text>
-            </Box>
-            <DefendantInfo
-              defendant={workingCase.defendants[0]}
-              onChange={handleUpdateDefendant}
-              updateDefendantState={updateDefendantState}
-            />
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {capitalize(formatMessage(core.indictmentDefendant))}
+            </Text>
           </Box>
-        )}
+          <AnimatePresence>
+            {workingCase.defendants?.map((defendant, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+              >
+                <Box
+                  component="section"
+                  marginBottom={
+                    index - 1 === workingCase.defendants?.length ? 0 : 3
+                  }
+                >
+                  <DefendantInfo
+                    defendant={defendant}
+                    noNationalIdText={formatMessage(
+                      m.sections.defendantInfo.doesNotHaveIcelandicNationalId,
+                    )}
+                    onChange={handleUpdateDefendant}
+                    updateDefendantState={updateDefendantState}
+                  />
+                </Box>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            <Button
+              data-testid="addDefendantButton"
+              variant="ghost"
+              icon="add"
+              onClick={handleCreateDefendantClick}
+              disabled={workingCase.defendants?.some(
+                (defendant) =>
+                  !defendant.name ||
+                  !defendant.address ||
+                  (!defendant.noNationalId && !defendant.nationalId),
+              )}
+            >
+              {formatMessage(m.sections.defendantInfo.addDefendantButtonText)}
+            </Button>
+          </Box>
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
