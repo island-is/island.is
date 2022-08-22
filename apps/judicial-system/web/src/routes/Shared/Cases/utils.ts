@@ -1,9 +1,12 @@
 import compareAsc from 'date-fns/compareAsc'
+import { IntlShape } from 'react-intl'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { CaseAppealDecision, CaseState } from '@island.is/judicial-system/types'
+import { requests } from '@island.is/judicial-system-web/messages'
 
 export const mapCaseStateToTagVariant = (
+  formatMessage: IntlShape['formatMessage'],
   state: CaseState,
   isCourtRole: boolean,
   isInvestigationCase?: boolean,
@@ -13,27 +16,36 @@ export const mapCaseStateToTagVariant = (
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
-      return { color: 'red', text: 'Drög' }
+      return { color: 'red', text: formatMessage(requests.tags.draft) }
     case CaseState.SUBMITTED:
       return {
         color: 'purple',
-        text: `${isCourtRole ? 'Ný krafa' : 'Krafa send'}`,
+        text: formatMessage(
+          isCourtRole ? requests.tags.new : requests.tags.sent,
+        ),
       }
     case CaseState.RECEIVED:
       return courtDate
-        ? { color: 'mint', text: 'Á dagskrá' }
-        : { color: 'blueberry', text: 'Krafa móttekin' }
+        ? { color: 'mint', text: formatMessage(requests.tags.scheduled) }
+        : { color: 'blueberry', text: formatMessage(requests.tags.received) }
     case CaseState.ACCEPTED:
       return isValidToDateInThePast
-        ? { color: 'darkerBlue', text: 'Lokið' }
-        : { color: 'blue', text: isInvestigationCase ? 'Samþykkt' : 'Virkt' }
+        ? { color: 'darkerBlue', text: formatMessage(requests.tags.inactive) }
+        : {
+            color: 'blue',
+            text: formatMessage(
+              isInvestigationCase
+                ? requests.tags.accepted
+                : requests.tags.active,
+            ),
+          }
 
     case CaseState.REJECTED:
-      return { color: 'rose', text: 'Hafnað' }
+      return { color: 'rose', text: formatMessage(requests.tags.rejected) }
     case CaseState.DISMISSED:
-      return { color: 'dark', text: 'Vísað frá' }
+      return { color: 'dark', text: formatMessage(requests.tags.dismissed) }
     default:
-      return { color: 'white', text: 'Óþekkt' }
+      return { color: 'white', text: formatMessage(requests.tags.unknown) }
   }
 }
 

@@ -323,6 +323,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   <Tag
                     variant={
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),
@@ -335,6 +336,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   >
                     {
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),

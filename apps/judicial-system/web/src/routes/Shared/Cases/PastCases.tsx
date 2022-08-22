@@ -193,6 +193,7 @@ const PastCases: React.FC<Props> = (props) => {
           }
         }) => {
           const tagVariant = mapCaseStateToTagVariant(
+            formatMessage,
             row.row.original.state,
             user?.role ? isCourtRole(user.role) : false,
             isInvestigationCase(row.row.original.type),

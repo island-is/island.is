@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 
 import { Case, isInvestigationCase } from '@island.is/judicial-system/types'
 import {
@@ -54,7 +55,9 @@ const MobileCase: React.FC<Props> = ({
   isCourtRole,
   children,
 }) => {
+  const { formatMessage } = useIntl()
   const tag = mapCaseStateToTagVariant(
+    formatMessage,
     theCase.state,
     isCourtRole,
     isInvestigationCase(theCase.type),
