@@ -19,7 +19,7 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { parseFullNumber } from '../../../../../utils/phoneHelper'
+import { parseFullNumber } from '@island.is/service-portal/core'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 

@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 
 import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
-import { PageLayout, GDPR } from '@island.is/skilavottord-web/components'
+import { GDPR } from '@island.is/skilavottord-web/components'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 
@@ -23,12 +23,10 @@ export const withGDPR = (WrappedComponent: NextComponentType) => () => {
 
   if (loading || !isAuthenticated) {
     return (
-      <PageLayout>
-        <Stack space={6}>
-          <SkeletonLoader repeat={1} />
-          <SkeletonLoader space={3} repeat={2} height="100px" />
-        </Stack>
-      </PageLayout>
+      <Stack space={6}>
+        <SkeletonLoader repeat={1} />
+        <SkeletonLoader space={3} repeat={2} height="100px" />
+      </Stack>
     )
   } else if (data?.skilavottordGdpr?.gdprStatus === 'true') {
     return <WrappedComponent />
