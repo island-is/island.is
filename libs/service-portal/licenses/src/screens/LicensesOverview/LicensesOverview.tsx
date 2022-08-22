@@ -19,7 +19,11 @@ import { Query } from '@island.is/api/schema'
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
+import {
+  getPathFromProviderId,
+  getPathFromType,
+  getTitleAndLogo,
+} from '../../utils/dataMapper'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -135,7 +139,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                       history.push(
                         ServicePortalPath.LicensesDetail.replace(
                           ':provider',
-                          license.license.provider.id,
+                          getPathFromProviderId(license.license.provider.id),
                         ).replace(
                           ':type',
                           getPathFromType(license.license.type),

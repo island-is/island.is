@@ -439,6 +439,16 @@ enum LicenseType {
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
 }
+enum LicenseProviderId {
+  NationalPoliceCommissioner = 'NationalPoliceCommissioner',
+  EnvironmentAgency = 'EnvironmentAgency',
+  AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+}
+enum LicenseProviderPath {
+  vinnueftirlitid = 'vinnueftirlitid',
+  umhverfisstofnun = 'umhverfisstofnun',
+  rikislogreglustjori = 'rikislogreglustjori',
+}
 
 export const getLicenseDetailHeading = (type: string) => {
   switch (type) {
@@ -532,6 +542,23 @@ export const getTypeFromPath = (path: string) => {
       break
     default:
       return undefined
+      break
+  }
+}
+
+export const getPathFromProviderId = (id: string) => {
+  switch (id) {
+    case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
+      return LicenseProviderPath.vinnueftirlitid
+      break
+    case LicenseProviderId.EnvironmentAgency:
+      return LicenseProviderPath.umhverfisstofnun
+      break
+    case LicenseProviderId.NationalPoliceCommissioner:
+      return LicenseProviderPath.rikislogreglustjori
+      break
+    default:
+      return ''
       break
   }
 }
