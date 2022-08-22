@@ -46,7 +46,7 @@ export const hasYes = (answer: any) => {
 const getHoursMinutes = (value: string) => {
   return {
     hours: parseInt(value.slice(0, 2)),
-    minutes: parseInt(value.slice(0, 2)),
+    minutes: parseInt(value.slice(2, 4)),
   }
 }
 

@@ -15,10 +15,6 @@ export const caseModuleConfig = defineConfig({
         'COMPLETED_CASE_OVERVIEW_URL',
         'http://localhost:4200/krafa/yfirlit/',
       ),
-      defenderCaseOverviewUrl: env.required(
-        'DEFENDER_CASE_OVERVIEW_URL',
-        'http://localhost:4200/verjandi/',
-      ),
     },
     archiveEncryptionKey: env.required(
       'ARCHIVE_ENCRYPTION_KEY',
