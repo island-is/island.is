@@ -32,11 +32,11 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 const Defendant = () => {
   const router = useRouter()
@@ -53,9 +53,7 @@ const Defendant = () => {
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = React.useState<CaseType | undefined>(
-    undefined,
-  )
+  const [caseType, setCaseType] = React.useState<CaseType>()
 
   useEffect(() => {
     if (workingCase.id) {
@@ -250,7 +248,9 @@ const Defendant = () => {
               <Box marginBottom={3}>
                 <Select
                   name="type"
-                  options={constants.ICaseTypes as ReactSelectOption[]}
+                  options={
+                    constants.InvestigationCaseTypes as ReactSelectOption[]
+                  }
                   label={formatMessage(m.sections.investigationType.type.label)}
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
@@ -259,11 +259,11 @@ const Defendant = () => {
                     const type = (selectedOption as ReactSelectOption)
                       .value as CaseType
 
-                    setCaseType(type as CaseType)
+                    setCaseType(type)
                     setAndSendToServer(
                       [
                         {
-                          type: type,
+                          type,
                           force: true,
                         },
                       ],
