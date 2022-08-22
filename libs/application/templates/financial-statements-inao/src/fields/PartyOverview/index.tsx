@@ -150,7 +150,10 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.otherCost} value={answers.partyExpense?.otherCost} />
+            <ValueLine
+              label={m.otherCost}
+              value={answers.partyExpense?.otherCost}
+            />
           </GridColumn>
         </GridRow>
       </Box>

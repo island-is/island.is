@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   Box,
@@ -9,6 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
+import { getErrorViaPath } from '@island.is/application/core'
+
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
@@ -16,7 +18,7 @@ import { useTotals } from '../../hooks'
 
 export const ElectionEquities = (): JSX.Element => {
   const [getTotalEquity, totalEquity] = useTotals(
-    EQUITIESANDLIABILITIESIDS.equityPrefix
+    EQUITIESANDLIABILITIESIDS.equityPrefix,
   )
   const [getTotalAssets, totalAssets] = useTotals(
     EQUITIESANDLIABILITIESIDS.assetPrefix,
@@ -25,6 +27,7 @@ export const ElectionEquities = (): JSX.Element => {
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
 
+  const { errors } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
@@ -38,6 +41,10 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.current}
               name={EQUITIESANDLIABILITIESIDS.current}
+              error={
+                errors &&
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.current)
+              }
               label={formatMessage(m.currentAssets)}
               onBlur={() => getTotalAssets()}
               backgroundColor="blue"
@@ -48,6 +55,10 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.tangible}
               name={EQUITIESANDLIABILITIESIDS.tangible}
+              error={
+                errors &&
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.tangible)
+              }
               label={formatMessage(m.tangibleAssets)}
               onBlur={() => getTotalAssets()}
               backgroundColor="blue"
@@ -55,7 +66,7 @@ export const ElectionEquities = (): JSX.Element => {
             />
           </Box>
           <Total
-            name="assets.total"
+            name="asset.total"
             total={totalAssets}
             label={formatMessage(m.totalAssets)}
           />
@@ -68,6 +79,10 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
+              error={
+                errors &&
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.longTerm)
+              }
               label={formatMessage(m.longTerm)}
               onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
@@ -78,6 +93,10 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
+              error={
+                errors &&
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.shortTerm)
+              }
               label={formatMessage(m.shortTerm)}
               onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
@@ -91,8 +110,12 @@ export const ElectionEquities = (): JSX.Element => {
           />
           <Box paddingY={1}>
             <InputController
-              id={EQUITIESANDLIABILITIESIDS.equity}
-              name={EQUITIESANDLIABILITIESIDS.equity}
+              id={EQUITIESANDLIABILITIESIDS.totalEquity}
+              name={EQUITIESANDLIABILITIESIDS.totalEquity}
+              error={
+                errors &&
+                getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.totalEquity)
+              }
               label={formatMessage(m.equity)}
               onBlur={() => getTotalEquity()}
               backgroundColor="blue"
@@ -100,7 +123,7 @@ export const ElectionEquities = (): JSX.Element => {
             />
           </Box>
           <Total
-            name="equity.total"
+            name={EQUITIESANDLIABILITIESIDS.totalCash}
             total={totalEquity - totalLiabilities}
             label={formatMessage(m.totalExpenses)}
           />

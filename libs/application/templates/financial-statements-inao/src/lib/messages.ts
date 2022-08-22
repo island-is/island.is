@@ -68,6 +68,11 @@ export const m = defineMessages({
     defaultMessage: 'Viðskiptavinur',
     description: 'Info',
   },
+  info: {
+    id: 'fsn.application:info',
+    defaultMessage: 'Upplýsingar',
+    description: 'info',
+  },
   about: {
     id: 'fsn.application:about',
     defaultMessage: 'Upplýsingar',
@@ -75,14 +80,18 @@ export const m = defineMessages({
   },
   reviewContact: {
     id: 'fsn.application:reviewContact',
-    defaultMessage:
-      'Vinsamlegast yfirfarið upplýsingar um tengilið hér að neðan',
+    defaultMessage: 'Vinsamlega yfirfarið tengiliðaupplýsingar hér að neðan',
     description: 'Review contact info',
   },
   fullName: {
     id: 'fsn.application:fullName',
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
+  },
+  candidateFullName: {
+    id: 'fsn.application:candidateFullName',
+    defaultMessage: 'Nafn frambjóðanda',
+    description: 'Full name o candiate',
   },
   presidentalElection: {
     id: 'fsn.application:presidentalElection',
@@ -124,8 +133,14 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlýsing frambjóðanda vegna',
     description: 'statement',
   },
-  elctionStatementLaw: {
-    id: 'fsn.application:elctionStatementLaw',
+  electionDeclare: {
+    id: 'fsn.application:electionStatementLaw',
+    defaultMessage:
+      'Ég lýsi því hér með yfir að viðlögðum drengskap að hvorki heildartekjur né heildarkostnaður vegna framboðs míns í kjörinu voru hærri en kr.',
+    description: 'statement',
+  },
+  electionStatementLaw: {
+    id: 'fsn.application:electionStatementLaw',
     defaultMessage:
       'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
@@ -134,6 +149,11 @@ export const m = defineMessages({
     id: 'fsn.application:nationalId',
     defaultMessage: 'Kennitala',
     description: 'National id',
+  },
+  candidateNationalId: {
+    id: 'fsn.application:candidateId',
+    defaultMessage: 'Kennitala frambjóðanda',
+    description: 'Nationalid of candiate',
   },
   clientNationalId: {
     id: 'fsn.application:clientNationalId',
@@ -467,6 +487,11 @@ export const m = defineMessages({
     defaultMessage: 'Hlaða upp ársreikningi',
     description: 'Upload financial statements',
   },
+  uploadHeader: {
+    id: 'fsn.application:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Upload here',
+  },
   uploadIntro: {
     id: 'fsn.application:upload.intro',
     defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
@@ -475,6 +500,11 @@ export const m = defineMessages({
   uploadDescription: {
     id: 'fsn.application:upload.description',
     defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
+    description: 'Upload financial statements intro',
+  },
+  uploadAccept: {
+    id: 'fsn.application:upload.accept',
+    defaultMessage: 'Eingöng er tekið við skjölum á PDF formi',
     description: 'Upload financial statements intro',
   },
   confirm: {
@@ -489,8 +519,13 @@ export const m = defineMessages({
   },
   participated: {
     id: 'fsn.application:overview.participated',
-    defaultMessage: 'tók þátt í kjöri',
+    defaultMessage: 'tók þátt í kjöri til',
     description: 'Participated in election',
+  },
+  overview: {
+    id: 'fsn.application:overview.general.sectionTitle',
+    defaultMessage: 'Yfirferð',
+    description: 'Overview section title',
   },
   overviewSectionTitle: {
     id: 'fsn.application:overview.general.sectionTitle',
@@ -504,7 +539,12 @@ export const m = defineMessages({
   },
   overviewTitle: {
     id: 'fsn.application:overview.general.name',
-    defaultMessage: 'Yfirlit og staðfesting umsóknar',
+    defaultMessage: 'Yfitlit uppgjörs',
+    description: 'Overview title',
+  },
+  overviewReview: {
+    id: 'fsn.application:overview.general.name',
+    defaultMessage: 'Yfitlit uppgjörs',
     description: 'Overview title',
   },
   overviewDescription: {
@@ -564,6 +604,11 @@ export const m = defineMessages({
     id: 'fsn.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
     description: 'Error message when a required field has not been filled out',
+  },
+  nationalIdError: {
+    id: 'fsn.application:error.nationalIdError',
+    defaultMessage: 'Kennitala er ekki á réttu orm',
+    description: 'Error message when nationalid is wrong',
   },
 })
 

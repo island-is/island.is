@@ -17,9 +17,15 @@ export const cemetryCaretaker = buildSection({
   condition: (answers, externalData) => {
     /* @ts-ignore */
     const userType = externalData?.currentUserType?.data?.code
+    if (userType !== CEMETRY) {
+      return false
+    }
     const applicationAnswers = <FinancialStatementsInao>answers
+    const currentAssets = applicationAnswers.cemetryAsset?.current
     const totalIncome = applicationAnswers.cemetryIncome?.total
-    return userType === CEMETRY && parseInt(totalIncome, 10) < CARETAKERLIMIT
+    const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
+    const isUnderLimit = parseInt(totalIncome, 10) < CARETAKERLIMIT
+    return isUnderLimit && currentAssets === '0' && longTermDebt === '0'
   },
   children: [
     buildMultiField({

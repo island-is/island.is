@@ -16,6 +16,7 @@ export enum ApiActions {
 
 export const GREATER = 'greater'
 export const LESS = 'less'
+export const ELECTIONLIMIT = 550000
 export const CARETAKERLIMIT = 300000
 
 export const INDIVIDUALOPERATIONIDS = {
@@ -31,8 +32,8 @@ export const INDIVIDUALOPERATIONIDS = {
   travelCost: 'individualExpense.travelCost',
   otherCost: 'individualExpense.otherCost',
   capitalCost: 'individualExpense.capitalCost',
-  totalIncome: 'individualIncome.total',
-  totalExpense: 'IndividualExpense.total',
+  totalIncome: 'individualIncome.totalIncome',
+  totalExpense: 'individualExpense.totalExpense',
 }
 
 export const PARTYOPERATIONIDS = {
@@ -40,7 +41,7 @@ export const PARTYOPERATIONIDS = {
   expensePrefix: 'partyExpense',
   publicDonations: 'partyIncome.publicDonations',
   partyDonations: 'partyIncome.partyDonations',
-  municipalityDonations: 'partyIncome.municipalityDonations', 
+  municipalityDonations: 'partyIncome.municipalityDonations',
   corporateDonations: 'partyIncome.corporateDonations',
   individualDonations: 'partyIncome.individualDonations',
   capitalIncome: 'partyIncome.capitalIncome',
@@ -91,8 +92,10 @@ export const EQUITIESANDLIABILITIESIDS = {
   liabilityPrefix: 'liability',
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
+  asset: 'liability.asset',
   equityPrefix: 'equity',
-  equity: 'equity.totalEquity',
+  totalEquity: 'equity.totalEquity',
+  totalCash: 'equity.totalCash',
 }
 
 export const CEMETRYEQUITIESANDLIABILITIESIDS = {

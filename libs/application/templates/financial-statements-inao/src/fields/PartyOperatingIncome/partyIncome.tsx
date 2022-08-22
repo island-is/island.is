@@ -7,18 +7,16 @@ import { m } from '../../lib/messages'
 import { PARTYOPERATIONIDS } from '../../lib/constants'
 
 interface PropTypes {
-  checkIfEmpty: (fieldId: string) => void,
-  getSum: () => void,
+  getSum: () => void
   errors: any
 }
 
-export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.Element => {
+export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
 
-  const onInputBlur = (fieldId: string) => {
+  const onInputBlur = () => {
     getSum()
-    checkIfEmpty(fieldId)
   }
 
   return (
@@ -28,7 +26,7 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.publicDonations}
           name={PARTYOPERATIONIDS.publicDonations}
           label={formatMessage(m.publicDonations)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.publicDonations)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.publicDonations)}
           backgroundColor="blue"
           currency
@@ -40,12 +38,11 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.partyDonations}
           name={PARTYOPERATIONIDS.partyDonations}
           label={formatMessage(m.partyDonations)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.partyDonations)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.partyDonations)}
           backgroundColor="blue"
           currency
           error={errors?.income?.partyDonations?.message}
-
         />
       </Box>
       <Box paddingY={1}>
@@ -53,7 +50,7 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.municipalityDonations}
           name={PARTYOPERATIONIDS.municipalityDonations}
           label={formatMessage(m.municipalityDonations)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.municipalityDonations)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.municipalityDonations)}
           backgroundColor="blue"
           currency
@@ -65,7 +62,7 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.individualDonations}
           name={PARTYOPERATIONIDS.individualDonations}
           label={formatMessage(m.individualDonations)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.individualDonations)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.individualDonations)}
           backgroundColor="blue"
           currency
@@ -77,7 +74,7 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.capitalIncome}
           name={PARTYOPERATIONIDS.capitalIncome}
           label={formatMessage(m.capitalIncome)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.capitalIncome)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.capitalIncome)}
           backgroundColor="blue"
           currency
@@ -89,7 +86,7 @@ export const PartyIncome = ({ errors, checkIfEmpty, getSum }: PropTypes): JSX.El
           id={PARTYOPERATIONIDS.otherIncome}
           name={PARTYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.otherIncome)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency

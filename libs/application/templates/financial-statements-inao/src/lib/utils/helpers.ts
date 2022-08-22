@@ -1,5 +1,5 @@
 export const getTotal = (values: Record<string, string>, key: string) => {
-  if(!values[key]) {
+  if (!values[key]) {
     return 0
   }
   const total = Object.values(values[key])
@@ -10,3 +10,8 @@ export const getTotal = (values: Record<string, string>, key: string) => {
     }, 0)
   return total
 }
+
+export const formatNumber = (num: number) => num.toLocaleString('de-DE')
+
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

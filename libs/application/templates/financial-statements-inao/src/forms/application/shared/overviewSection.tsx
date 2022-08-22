@@ -1,4 +1,5 @@
 import {
+  buildDescriptionField,
   buildCustomField,
   buildMultiField,
   buildSection,
@@ -31,7 +32,7 @@ export const overviewSection = buildSection({
             'election.incomeLimit',
           ) === LESS
             ? m.statement
-            : m.overviewTitle
+            : m.overviewReview
         } else {
           return m.yearlyOverview
         }
@@ -44,7 +45,7 @@ export const overviewSection = buildSection({
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
-          ) === LESS
+          ) === GREATER
             ? m.overviewDescription
             : `${m.electionStatement.defaultMessage} ${getValueViaPath(
                 application.answers,
@@ -56,7 +57,7 @@ export const overviewSection = buildSection({
       },
       children: [
         buildCustomField({
-          id: 'overviewCustomField',
+          id: 'overviewCemetryField',
           title: '',
           condition: (answers, externalData) => {
             /* @ts-ignore */
@@ -67,7 +68,7 @@ export const overviewSection = buildSection({
           component: 'CemetryOverview',
         }),
         buildCustomField({
-          id: 'overviewCustomField',
+          id: 'overviewPartyField',
           title: '',
           condition: (_answers, externalData) => {
             /* @ts-ignore */
@@ -78,7 +79,7 @@ export const overviewSection = buildSection({
           component: 'PartyOverview',
         }),
         buildCustomField({
-          id: 'overviewCustomField',
+          id: 'overviewField',
           title: '',
           condition: (answers) =>
             getValueViaPath(answers, 'election.incomeLimit') === GREATER,
@@ -92,6 +93,11 @@ export const overviewSection = buildSection({
             getValueViaPath(answers, 'election.incomeLimit') === LESS,
           doesNotRequireAnswer: true,
           component: 'ElectionStatement',
+        }),
+        buildDescriptionField({
+          id: 'overviewConfirmations',
+          title: m.overview,
+          titleVariant: 'h3',
         }),
         buildSubmitField({
           id: 'submit',

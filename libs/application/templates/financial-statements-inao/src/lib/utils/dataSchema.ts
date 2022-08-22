@@ -8,12 +8,6 @@ import {
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/types'
 
-const error = {
-  id: 'fsn.application:income',
-  defaultMessage: 'Tekjur',
-  description: 'Applicants income',
-}
-
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -21,23 +15,25 @@ const FileSchema = z.object({
 })
 
 const election = z.object({
-  selectElection: z.string(),
-  incomeLimit: z.string(),
+  selectElection: z.string().refine((x) => !!x, { params: m.required }),
+  incomeLimit: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const conditionalAbout = z.object({
-  operatingYear: z.string(),
+  operatingYear: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const about = z.object({
   nationalId: z
     .string()
     .refine((val) => (val ? kennitala.isPerson(val) : false), {
-      params: error,
+      params: m.nationalIdError,
     }),
-  fullName: z.string(),
-  powerOfAttorneyNationalId: z.string(),
-  powerOfAttorneyName: z.string(),
+  fullName: z.string().refine((x) => !!x, { params: m.required }),
+  powerOfAttorneyNationalId: z
+    .string()
+    .refine((x) => !!x, { params: m.required }),
+  powerOfAttorneyName: z.string().refine((x) => !!x, { params: m.required }),
   phoneNumber: z.string().refine(
     (p) => {
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
@@ -49,18 +45,25 @@ const about = z.object({
 })
 
 const asset = z.object({
-  tangible: z.string(),
-  current: z.string(),
+  tangible: z.string().refine((x) => !!x, { params: m.required }),
+  current: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const equity = z.object({
+  totalEquity: z.string().refine((x) => !!x, { params: m.required }),
+  totalCash: z.string().refine((x) => !!x, { params: m.required }),
+})
+const liability = z.object({
+  longTerm: z.string().refine((x) => !!x, { params: m.required }),
+  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryAsset = z.object({
   tangible: z.string(),
   current: z.string(),
-  total: z.string()
-})
-
-const equity = z.object({
-  totalEquity: z.string(),
+  total: z.string(),
 })
 
 const cemetryEquity = z.object({
@@ -68,12 +71,6 @@ const cemetryEquity = z.object({
   operationResult: z.string(),
   reevaluatePrice: z.string(),
   reevaluateOther: z.string(),
-  total: z.string(),
-})
-
-const liability = z.object({
-  longTerm: z.string(),
-  shortTerm: z.string(),
   total: z.string(),
 })
 
@@ -101,7 +98,7 @@ const cemetryExpense = z.object({
   cemeteryFundExpense: z.string(),
   otherOperationCost: z.string(),
   writtenOffExpense: z.string(),
-  total: z.string()
+  total: z.string(),
 })
 
 const partyIncome = z.object({
@@ -120,19 +117,25 @@ const partyExpense = z.object({
 })
 
 const individualIncome = z.object({
-  corporateDonations: z.string(),
-  individualDonations: z.string(),
-  personalDonations: z.string(),
-  otherIncome: z.string(),
-  capitalIncome: z.string(),
+  corporateDonations: z.string().refine((x) => !!x, { params: m.required }),
+  individualDonations: z.string().refine((x) => !!x, { params: m.required }),
+  personalDonations: z.string().refine((x) => !!x, { params: m.required }),
+  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
+  totalIncome: z.string(),
 })
 
 const individualExpense = z.object({
-  electionOffice: z.string(),
-  advertisements: z.string(),
-  travelCost: z.string(),
-  capitalCost: z.string(),
-  otherCost: z.string(),
+  electionOffice: z.string().refine((x) => !!x, { params: m.required }),
+  advertisements: z.string().refine((x) => !!x, { params: m.required }),
+  travelCost: z.string().refine((x) => !!x, { params: m.required }),
+  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
+  otherCost: z.string().refine((x) => !!x, { params: m.required }),
+  totalExpense: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const operatingCost = z.object({
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryCaretaker = z.array(
@@ -150,6 +153,7 @@ export const dataSchema = z.object({
   election,
   individualIncome,
   individualExpense,
+  operatingCost,
   partyIncome,
   partyExpense,
   cemetryIncome,

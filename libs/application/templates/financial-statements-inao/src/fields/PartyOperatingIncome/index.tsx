@@ -18,7 +18,7 @@ export const PartyOperatingIncome = () => {
   const { getValues, errors, setError } = useFormContext()
 
   const [getTotalIncome, totalIncome] = useTotals(
-    PARTYOPERATIONIDS.incomePrefix
+    PARTYOPERATIONIDS.incomePrefix,
   )
   const [getTotalExpense, totalExpense] = useTotals(
     PARTYOPERATIONIDS.expensePrefix,
@@ -45,11 +45,7 @@ export const PartyOperatingIncome = () => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.income)}
           </Text>
-          <PartyIncome
-            getSum={getTotalIncome}
-            checkIfEmpty={checkIfEmpty}
-            errors={errors}
-          />
+          <PartyIncome getSum={getTotalIncome} errors={errors} />
           <Total
             name="partyIncome.total"
             total={totalIncome}
@@ -66,7 +62,7 @@ export const PartyOperatingIncome = () => {
             errors={errors}
           />
           <Total
-            name="partyExpense.total"
+            name="poperatingCost"
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
           />

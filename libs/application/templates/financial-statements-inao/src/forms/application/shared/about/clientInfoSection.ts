@@ -12,11 +12,11 @@ import { ABOUTIDS, PARTY, CEMETRY } from '../../../../lib/constants'
 
 export const clientInfoSection = buildSection({
   id: 'info',
-  title: m.infoSection,
+  title: m.info,
   children: [
     buildMultiField({
       id: 'about',
-      title: m.about,
+      title: m.info,
       description: m.reviewContact,
       children: [
         buildCustomField({
@@ -32,14 +32,14 @@ export const clientInfoSection = buildSection({
         }),
         buildTextField({
           id: 'about.nationalId',
-          title: m.nationalId,
+          title: m.candidateNationalId,
           width: 'half',
           format: '######-####',
           defaultValue: (application: Application) => application.applicant,
         }),
         buildTextField({
           id: 'about.fullName',
-          title: m.fullName,
+          title: m.candidateFullName,
           width: 'half',
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
