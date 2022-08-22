@@ -6,10 +6,17 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
-import { CaseModule, UserModule, CourtModule, EventModule } from '../index'
+import {
+  CaseModule,
+  UserModule,
+  CourtModule,
+  EventModule,
+  AwsS3Module,
+} from '../index'
 import { Notification } from './models/notification.model'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
+import { InternalNotificationController } from './internalNotification.controller'
 
 @Module({
   imports: [
@@ -19,10 +26,11 @@ import { NotificationController } from './notification.controller'
     forwardRef(() => CaseModule),
     forwardRef(() => UserModule),
     forwardRef(() => CourtModule),
+    forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
     SequelizeModule.forFeature([Notification]),
   ],
-  controllers: [NotificationController],
+  controllers: [NotificationController, InternalNotificationController],
   providers: [NotificationService],
 })
 export class NotificationModule {}
