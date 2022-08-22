@@ -254,10 +254,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
             ],
           },
-          // {
-          //   name: m.vehiclesLookup,
-          //   path: ServicePortalPath.AssetsVehiclesLookup,
-          // },
+          {
+            name: m.vehiclesLookup,
+            path: ServicePortalPath.AssetsVehiclesLookup,
+          },
           {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,
