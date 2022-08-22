@@ -43,12 +43,15 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         prod: 'https://innskra.island.is',
       },
       REDIS_URL_NODE_01: {
-        dev:
+        dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        staging:
+        ]),
+        staging: json([
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod:
+        ]),
+        prod: json([
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
       },
       XROAD_CHARGE_FJS_V2_PATH: {
         dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
