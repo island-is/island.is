@@ -14,11 +14,9 @@ import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 let BullModule: DynamicModule
 
 if (process.env.INIT_SCHEMA === 'true') {
-  console.log('registering with init true')
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   const bullModuleName = 'application_system_api_bull_module'
-  console.log('registering with init false')
   BullModule = NestBullModule.registerQueueAsync({
     name: 'upload',
     useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({

@@ -15,8 +15,14 @@ export const ApplicationFilesConfig = defineConfig({
   name: 'ApplicationFilesModule',
   schema: ApplicationFilesModule,
   load: (env) => ({
-    attachmentBucket: env.optional('APPLICATION_ATTACHMENT_BUCKET') ?? '',
-    presignBucket: env.optional('FILE_SERVICE_PRESIGN_BUCKET') ?? '',
+    attachmentBucket: env.optional(
+      'APPLICATION_ATTACHMENT_BUCKET',
+      'island-is-dev-upload-api',
+    ),
+    presignBucket: env.optional(
+      'FILE_SERVICE_PRESIGN_BUCKET',
+      'island-is-dev-storage-application-system',
+    ),
     redis: {
       nodes: env.requiredJSON<string[]>('REDIS_URL_NODE_01', [
         'localhost:7000',
