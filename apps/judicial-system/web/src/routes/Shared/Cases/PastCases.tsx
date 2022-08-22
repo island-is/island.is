@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
 
+import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
   CaseAppealDecision,
@@ -20,16 +21,66 @@ import {
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
+import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
+import MobileCase from './MobileCase'
 
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
   isHighCourtUser: boolean
+}
+
+export function getDurationDate(
+  state: Case['state'],
+  validToDate?: Case['validToDate'],
+  initialRulingDate?: Case['initialRulingDate'],
+  rulingDate?: Case['rulingDate'],
+  courtEndTime?: Case['courtEndTime'],
+): string | null {
+  if (
+    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
+    !validToDate
+  ) {
+    return null
+  } else if (initialRulingDate) {
+    return `${formatDate(parseISO(initialRulingDate), 'd.M.y')} - ${formatDate(
+      parseISO(validToDate),
+      'd.M.y',
+    )}`
+  } else if (rulingDate) {
+    return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
+      parseISO(validToDate),
+      'd.M.y',
+    )}`
+  } else if (courtEndTime) {
+    return `${formatDate(parseISO(courtEndTime), 'd.M.y')} - ${formatDate(
+      parseISO(validToDate),
+      'd.M.y',
+    )}`
+  } else if (validToDate) {
+    return formatDate(parseISO(validToDate), 'd.M.y') || null
+  }
+  return null
+}
+
+const DurationDate = ({ date }: { date: string | null }) => {
+  const { formatMessage } = useIntl()
+  if (!date) {
+    return null
+  }
+
+  return (
+    <Text fontWeight={'medium'} variant="small">
+      {`${formatMessage(
+        requests.sections.pastRequests.table.headers.duration,
+      )} ${date}`}
+    </Text>
+  )
 }
 
 const PastCases: React.FC<Props> = (props) => {
@@ -175,32 +226,16 @@ const PastCases: React.FC<Props> = (props) => {
           const initialRulingDate = row.row.original.initialRulingDate
           const rulingDate = row.row.original.rulingDate
           const validToDate = row.row.original.validToDate
-          const courtEndDate = row.row.original.courtEndTime
+          const courtEndTime = row.row.original.courtEndTime
           const state = row.row.original.state
 
-          if (
-            [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
-            !validToDate
-          ) {
-            return null
-          } else if (initialRulingDate) {
-            return `${formatDate(
-              parseISO(initialRulingDate),
-              'd.M.y',
-            )} - ${formatDate(parseISO(validToDate), 'd.M.y')}`
-          } else if (rulingDate) {
-            return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
-              parseISO(validToDate),
-              'd.M.y',
-            )}`
-          } else if (courtEndDate) {
-            return `${formatDate(
-              parseISO(courtEndDate),
-              'd.M.y',
-            )} - ${formatDate(parseISO(validToDate), 'd.M.y')}`
-          } else {
-            return formatDate(parseISO(validToDate), 'd.M.y')
-          }
+          return getDurationDate(
+            state,
+            validToDate,
+            initialRulingDate,
+            rulingDate,
+            courtEndTime,
+          )
         },
       },
     ]
@@ -256,7 +291,32 @@ const PastCases: React.FC<Props> = (props) => {
     [cases],
   )
 
-  return (
+  const { width } = useViewport()
+
+  return width < theme.breakpoints.md ? (
+    <>
+      {pastCasesData.map((theCase) => (
+        <Box marginTop={2} key={theCase.id}>
+          <MobileCase
+            theCase={theCase}
+            onClick={() => onRowClick(theCase.id)}
+            isCourtRole={false}
+          >
+            <DurationDate
+              key={`${theCase.id}-duration-date`}
+              date={getDurationDate(
+                theCase.state,
+                theCase.validToDate,
+                theCase.initialRulingDate,
+                theCase.rulingDate,
+                theCase.courtEndTime,
+              )}
+            />
+          </MobileCase>
+        </Box>
+      ))}
+    </>
+  ) : (
     <Table
       testid="pastCasesTable"
       columns={pastCasesColumns}

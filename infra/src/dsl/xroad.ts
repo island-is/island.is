@@ -248,6 +248,16 @@ export const NationalRegistry = new XroadConf({
   },
 })
 
+export const Passports = new XroadConf({
+  env: {
+    XROAD_PASSPORT_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1',
+    },
+  },
+})
+
 export const Labor = new XroadConf({
   env: {
     XROAD_VMST_API_PATH: {

@@ -20,6 +20,10 @@ First, make sure you have docker, then run:
 yarn dev-services judicial-system-backend
 ```
 
+```bash
+yarn dev-services judicial-system-message-handler
+```
+
 Then run the migrations and seed the database:
 
 ```bash
@@ -256,6 +260,44 @@ You can serve this service locally by running:
 
 ```bash
 yarn start judicial-system-message-handler
+```
+
+## Feature flags
+
+If you want to hide some UI element in certain environments you can use a feature flag. Lets say you want to hide the `SECRET_FEATURE` in STAGING and PROD but still be able to see it on DEV. Start by adding it to `Feature` in `/libs/judicial-system/types/src/lib/feature.ts`
+
+```
+export enum Feature {
+  NONE = 'NONE', // must be at least one
+  SECRET_FEATURE = 'SECRET_FEATURE',
+}
+```
+
+Then add the featre in `availableFeatures` in `apps/judicial-system/web/src/components/FeatureProvider/FeatureProvider.tsx`
+
+```
+const availableFeatures: Feature[] = [Feature.SECRET_FEATURE]
+```
+
+Then you need to update the Helm charts. This is done via a script
+
+```
+./infra/scripts/generate-chart-values.sh judicial-system
+```
+
+You can now use the `FeatureContext` to hide `SECRET_FEATURE` in the UI.
+
+```
+  const Component = () => {
+    const { features } = useContext(FeatureContext)
+
+    return (
+      if (features.includes(Feature.SECRET_FEATURE)) {
+        <p>This will only show on DEV, not STAGING or PROD</p>
+      }
+    )
+  }
+
 ```
 
 ## Code owners and maintainers

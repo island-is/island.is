@@ -102,7 +102,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
 
   const [demandsEM, setDemandsEM] = useState<string>('')
@@ -155,8 +155,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             })
           : undefined
 
-        autofill(
-          [{ key: 'demands', value: courtClaimText }],
+        setAndSendToServer(
+          [{ demands: courtClaimText }],
           workingCase,
           setWorkingCase,
         )
@@ -165,7 +165,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -320,8 +320,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

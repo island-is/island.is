@@ -1,0 +1,22 @@
+{
+  "root": "libs/nest/aws",
+  "sourceRoot": "libs/nest/aws/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/nest/aws/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/nest/aws"],
+      "options": {
+        "jestConfig": "libs/nest/aws/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

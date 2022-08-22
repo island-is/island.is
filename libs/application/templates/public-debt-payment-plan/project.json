@@ -1,0 +1,32 @@
+{
+  "root": "libs/application/templates/public-debt-payment-plan",
+  "sourceRoot": "libs/application/templates/public-debt-payment-plan/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/public-debt-payment-plan/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/public-debt-payment-plan"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}

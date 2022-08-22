@@ -1,0 +1,22 @@
+{
+  "root": "libs/api/domains/vehicles",
+  "sourceRoot": "libs/api/domains/vehicles/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/vehicles/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/vehicles"],
+      "options": {
+        "jestConfig": "libs/api/domains/vehicles/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

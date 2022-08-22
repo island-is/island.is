@@ -344,7 +344,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -379,13 +379,13 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(constants.CASE_LIST_ROUTE)}
+            handleClose={() => router.push(constants.CASES_ROUTE)}
             handlePrimaryButtonClick={() => {
               window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASE_LIST_ROUTE)
+              router.push(constants.CASES_ROUTE)
             }}
             handleSecondaryButtonClick={() => {
-              router.push(constants.CASE_LIST_ROUTE)
+              router.push(constants.CASES_ROUTE)
             }}
             primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
