@@ -169,10 +169,14 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    const { scopes: oldScopes } = await this.delegationsService.findById(
+    const currentDelegation = await this.delegationsService.findById(
       user,
       delegationId,
     )
+    if (!currentDelegation) {
+      throw new NotFoundException()
+    }
+    const { scopes: oldScopes } = currentDelegation
 
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
