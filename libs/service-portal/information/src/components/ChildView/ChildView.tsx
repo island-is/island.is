@@ -2,10 +2,13 @@ import { ApolloError } from 'apollo-client'
 import React, { FC, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 
+import * as styles from './ChildView.css'
+
 import { NationalRegistryChild } from '@island.is/api/schema'
 import {
   Box,
   Button,
+  Divider,
   GridColumn,
   GridRow,
   Inline,
@@ -60,18 +63,8 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+
   const [isPrinting, setIsPrinting] = useState(false)
-
-  //window.onbeforeprint doesn't fire at the right time
-  //so we do the state change here
-  const onPrint = () => {
-    setIsPrinting(true)
-    window.print()
-  }
-
-  window.onafterprint = () => {
-    setIsPrinting(false)
-  }
 
   /**
    * The ChildRegistration module is feature flagged
@@ -100,7 +93,7 @@ const ChildView: FC<Props> = ({
       />
     )
   return (
-    <>
+    <Box className={styles.pageWrapper}>
       {loading ? (
         <Box marginBottom={6}>
           <GridRow>
@@ -131,8 +124,8 @@ const ChildView: FC<Props> = ({
               flexDirection={['column', 'row']}
             >
               <Inline space={2}>
-                <Box>
-                  {!loading && !isChild && modalFlagEnabled && (
+                {!loading && !isChild && modalFlagEnabled && (
+                  <>
                     <ChildRegistrationModal
                       data={{
                         parentName: userName || '',
@@ -141,181 +134,245 @@ const ChildView: FC<Props> = ({
                         childNationalId: nationalId,
                       }}
                     />
-                  )}
-                </Box>
-                <Button
-                  variant="utility"
-                  size="small"
-                  onClick={onPrint}
-                  icon="print"
-                  iconType="filled"
-                >
-                  {formatMessage(m.print)}
-                </Button>
+
+                    <Button
+                      variant="utility"
+                      size="small"
+                      onClick={() => window.print()}
+                      icon="print"
+                      iconType="filled"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </>
+                )}
               </Inline>
             </Box>
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={isPrinting ? 0 : 2} dividers={!isPrinting}>
-        <UserInfoLine
-          title={formatMessage(m.myRegistration)}
-          label={formatMessage(m.fullName)}
-          content={person?.fullName || '...'}
-          loading={loading}
-          paddingBottom={'none'}
-          paddingY={'none'}
-          editLink={
-            !isChild
-              ? {
-                  title: editLink,
-                  external: true,
-                  url:
-                    'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
-                }
-              : undefined
-          }
-        />
-        <UserInfoLine
-          label={formatMessage(m.natreg)}
-          content={formatNationalId(nationalId)}
-          loading={loading}
-        />
-        <UserInfoLine
-          label={defineMessage(m.legalResidence)}
-          content={person?.legalResidence || ''}
-          loading={loading}
-          editLink={
-            !isChild
-              ? {
-                  title: editLink,
-                  external: true,
-                  url: 'https://skra.is/folk/flutningur/flutningur-barna/',
-                }
-              : undefined
-          }
-        />
-        <UserInfoLine
-          title={formatMessage(m.baseInfo)}
-          label={formatMessage({
-            id: 'sp.family:birthplace',
-            defaultMessage: 'Fæðingarstaður',
-          })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.birthplace || ''
-          }
-          loading={loading}
-        />
-        <UserInfoLine
-          label={formatMessage(m.religion)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : person?.religion || ''
-          }
-          loading={loading}
-          editLink={
-            !isChild
-              ? {
-                  title: editLink,
-                  external: true,
-                  url:
-                    'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
-                }
-              : undefined
-          }
-        />
-        <UserInfoLine
-          label={formatMessage(m.gender)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.genderDisplay || ''
-          }
-          loading={loading}
-        />
-        <UserInfoLine
-          label={formatMessage(m.citizenship)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.nationality || ''
-          }
-          loading={loading}
-        />
-        {person?.fate && (
+
+      <Stack space={6}>
+        <Stack component="ul" space={2}>
           <UserInfoLine
+            title={formatMessage(m.myRegistration)}
+            label={formatMessage(m.fullName)}
+            content={person?.fullName || '...'}
+            loading={loading}
+            editLink={
+              !isChild
+                ? {
+                    title: editLink,
+                    external: true,
+                    url:
+                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                  }
+                : undefined
+            }
+            className={styles.printable}
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+          <UserInfoLine
+            label={formatMessage(m.natreg)}
+            content={formatNationalId(nationalId)}
+            loading={loading}
+            className={styles.printable}
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+          <UserInfoLine
+            label={defineMessage(m.legalResidence)}
+            content={person?.legalResidence || ''}
+            loading={loading}
+            className={styles.printable}
+            editLink={
+              !isChild
+                ? {
+                    title: editLink,
+                    external: true,
+                    url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                  }
+                : undefined
+            }
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+        </Stack>
+        <Stack component="ul" space={2}>
+          <UserInfoLine
+            title={formatMessage(m.baseInfo)}
             label={formatMessage({
-              id: 'sp.family:fate',
-              defaultMessage: 'Afdrif',
+              id: 'sp.family:birthplace',
+              defaultMessage: 'Fæðingarstaður',
             })}
             content={
-              error ? formatMessage(dataNotFoundMessage) : person?.fate || ''
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : person?.birthplace || ''
             }
             loading={loading}
+            className={styles.printable}
           />
-        )}
-        {(person?.parent1 || person?.parent2 || loading) && (
-          <>
-            <Parents
-              title={formatMessage({
-                id: 'sp.family:custody-and-parents',
-                defaultMessage: 'Forsjá & foreldrar',
-              })}
-              label={formatMessage({
-                id: 'sp.family:parents',
-                defaultMessage: 'Foreldrar',
-              })}
-              parent1={person?.nameParent1}
-              parent2={person?.nameParent2}
-              loading={loading}
-            />
-            <Parents
-              label={formatMessage(m.natreg)}
-              parent1={person?.parent1 ? formatNationalId(person.parent1) : ''}
-              parent2={person?.parent2 ? formatNationalId(person.parent2) : ''}
-              loading={loading}
-            />
-          </>
-        )}
-        {!person?.fate && !error && hasDetails && (
-          <>
-            <Parents
-              label={formatMessage({
-                id: 'sp.family:custody-parents',
-                defaultMessage: 'Forsjáraðilar',
-              })}
-              parent1={person?.nameCustody1}
-              parent2={person?.nameCustody2}
-              loading={loading}
-            />
-            <Parents
-              label={formatMessage(m.natreg)}
-              parent1={
-                person?.custody1 ? formatNationalId(person.custody1) : ''
-              }
-              parent2={
-                person?.custody2 ? formatNationalId(person.custody2) : ''
-              }
-              loading={loading}
-            />
-            <Parents
-              label={formatMessage({
-                id: 'sp.family:custody-status',
-                defaultMessage: 'Staða forsjár',
-              })}
-              parent1={person?.custodyText1}
-              parent2={person?.custodyText2}
-              loading={loading}
-            />
-          </>
-        )}
-        {
-          //for the final divider
-          ' '
-        }
+          <Box printHidden>
+            <Divider />
+          </Box>
+          <UserInfoLine
+            label={formatMessage(m.religion)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : person?.religion || ''
+            }
+            loading={loading}
+            editLink={
+              !isChild
+                ? {
+                    title: editLink,
+                    external: true,
+                    url:
+                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                  }
+                : undefined
+            }
+            className={styles.printable}
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+          <UserInfoLine
+            label={formatMessage(m.gender)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : person?.genderDisplay || ''
+            }
+            loading={loading}
+            className={styles.printable}
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+          <UserInfoLine
+            label={formatMessage(m.citizenship)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : person?.nationality || ''
+            }
+            loading={loading}
+            className={styles.printable}
+          />
+          <Box printHidden>
+            <Divider />
+          </Box>
+          {person?.fate && (
+            <>
+              <UserInfoLine
+                label={formatMessage({
+                  id: 'sp.family:fate',
+                  defaultMessage: 'Afdrif',
+                })}
+                content={
+                  error
+                    ? formatMessage(dataNotFoundMessage)
+                    : person?.fate || ''
+                }
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+            </>
+          )}
+        </Stack>
+        <Stack component="ul" space={2}>
+          {(person?.parent1 || person?.parent2 || loading) && (
+            <>
+              <Parents
+                title={formatMessage({
+                  id: 'sp.family:custody-and-parents',
+                  defaultMessage: 'Forsjá & foreldrar',
+                })}
+                label={formatMessage({
+                  id: 'sp.family:parents',
+                  defaultMessage: 'Foreldrar',
+                })}
+                parent1={person?.nameParent1}
+                parent2={person?.nameParent2}
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+              <Parents
+                label={formatMessage(m.natreg)}
+                parent1={
+                  person?.parent1 ? formatNationalId(person.parent1) : ''
+                }
+                parent2={
+                  person?.parent2 ? formatNationalId(person.parent2) : ''
+                }
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+            </>
+          )}
+          {!person?.fate && !error && hasDetails && (
+            <>
+              <Parents
+                label={formatMessage({
+                  id: 'sp.family:custody-parents',
+                  defaultMessage: 'Forsjáraðilar',
+                })}
+                parent1={person?.nameCustody1}
+                parent2={person?.nameCustody2}
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+              <Parents
+                label={formatMessage(m.natreg)}
+                parent1={
+                  person?.custody1 ? formatNationalId(person.custody1) : ''
+                }
+                parent2={
+                  person?.custody2 ? formatNationalId(person.custody2) : ''
+                }
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+              <Parents
+                label={formatMessage({
+                  id: 'sp.family:custody-status',
+                  defaultMessage: 'Staða forsjár',
+                })}
+                parent1={person?.custodyText1}
+                parent2={person?.custodyText2}
+                loading={loading}
+                className={styles.printable}
+              />
+              <Box printHidden>
+                <Divider />
+              </Box>
+            </>
+          )}
+        </Stack>
       </Stack>
-    </>
+    </Box>
   )
 }
 export default ChildView
