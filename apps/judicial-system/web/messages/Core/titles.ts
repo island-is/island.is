@@ -95,7 +95,7 @@ export const titles = {
         id: 'judicial.system.core:titles.prosecutor.indictments.defendant',
         defaultMessage: 'Ákærði - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir varnaraðila skjá hjá saksóknara í ákærðum',
+          'Notaður sem titill fyrir ákærða skjá hjá saksóknara í ákærum',
       }),
     },
   },
