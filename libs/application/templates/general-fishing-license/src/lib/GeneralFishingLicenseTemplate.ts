@@ -35,7 +35,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   name: application.general.name,
   institution: application.general.institutionName,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],

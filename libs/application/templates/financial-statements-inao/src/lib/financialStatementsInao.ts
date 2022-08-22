@@ -24,7 +24,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   type: ApplicationTypes.FINANCIAL_STATEMENTS_INAO,
   name: m.applicationTitle,
   institution: m.institutionName,
-  allowMultipleApplicationsInDraft: true,
   dataSchema,
   featureFlag: Features.financialStatementInao,
   stateMachineConfig: {

@@ -37,7 +37,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
   readyForProduction: false,
-  allowMultipleApplicationsInDraft: true,
   featureFlag: Features.announcementOfDeath,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

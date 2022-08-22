@@ -47,7 +47,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL,
   name: m.name,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]
       .translation,

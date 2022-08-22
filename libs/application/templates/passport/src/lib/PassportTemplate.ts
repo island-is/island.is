@@ -36,7 +36,6 @@ const PassportTemplate: ApplicationTemplate<
   type: ApplicationTypes.PASSPORT,
   name: m.formName.defaultMessage,
   featureFlag: Features.passportApplication,
-  allowMultipleApplicationsInDraft: true,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

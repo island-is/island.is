@@ -24,7 +24,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: 'draft',
     states: {

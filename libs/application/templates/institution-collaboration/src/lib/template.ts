@@ -79,7 +79,6 @@ const template: ApplicationTemplate<
   name: m.application.applicationName,
   institution: m.application.institutionName,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

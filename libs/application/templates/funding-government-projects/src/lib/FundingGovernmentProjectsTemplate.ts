@@ -40,7 +40,6 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [
     ApplicationConfigurations.FundingGovernmentProjects.translation,
   ],

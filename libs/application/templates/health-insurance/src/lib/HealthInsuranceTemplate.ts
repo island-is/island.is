@@ -35,7 +35,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
   readyForProduction: true,
-  allowMultipleApplicationsInDraft: true,
   dataSchema: HealthInsuranceSchema,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,

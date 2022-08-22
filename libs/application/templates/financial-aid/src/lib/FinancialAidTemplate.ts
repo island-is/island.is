@@ -42,7 +42,6 @@ const FinancialAidTemplate: ApplicationTemplate<
 > = {
   readyForProduction: true,
   type: ApplicationTypes.FINANCIAL_AID,
-  allowMultipleApplicationsInDraft: true,
   name: application.name,
   dataSchema,
   translationNamespaces: [ApplicationConfigurations.FinancialAid.translation],
