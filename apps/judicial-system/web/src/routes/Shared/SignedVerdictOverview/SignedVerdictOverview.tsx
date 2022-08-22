@@ -726,6 +726,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     user?.role === UserRole.REGISTRAR ? (
                     <Button
                       variant="ghost"
+                      data-testid="signCourtRecordButton"
                       loading={isRequestingCourtRecordSignature}
                       onClick={(event) => {
                         event.stopPropagation()

@@ -60,4 +60,8 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.getByTestid('modalSecondaryButton').click()
     cy.getByTestid('alertMessage')
   })
+
+  it('should not be able to sign the court record', () => {
+    cy.get('[data-testid="signCourtRecordButton"]').should('not.exist')
+  })
 })

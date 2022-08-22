@@ -45,4 +45,8 @@ describe('Signed verdict overview - Court - Investigation case', () => {
     cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
     cy.url().should('include', INVESTIGATION_CASE_MODIFY_RULING_ROUTE)
   })
+
+  it('should be able to sign the court record', () => {
+    cy.get('[data-testid="signCourtRecordButton"]').should('exist')
+  })
 })
