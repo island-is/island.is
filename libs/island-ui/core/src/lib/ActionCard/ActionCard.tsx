@@ -135,50 +135,50 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       return null
     }
 
-  if (image.type === 'avatar' && heading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.avatar}
-      >
-        <Text variant="h3" as="p" color="blue400">
-          {getTitleAbbreviation(heading)}
-        </Text>
-      </Box>
-    )
-  }
-  if (!image.url || image.url.length === 0) return null
-  if (image.type === 'image') {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-      >
-        <img className={styles.avatar} src={image.url} alt="action-card" />
-      </Box>
-    )
-  }
-  if (image.type === 'logo') {
-    return (
-      <Box
-        padding={2}
-        marginRight={2}
-        className={styles.logo}
-        style={{ backgroundImage: `url(${image.url})` }}
-      ></Box>
-    )
-  }
-  return null
+    if (image.type === 'avatar' && heading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background="blue100"
+          className={styles.avatar}
+        >
+          <Text variant="h3" as="p" color="blue400">
+            {getTitleAbbreviation(heading)}
+          </Text>
+        </Box>
+      )
+    }
+    if (!image.url || image.url.length === 0) return null
+    if (image.type === 'image') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+        >
+          <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
+    if (image.type === 'logo') {
+      return (
+        <Box
+          padding={2}
+          marginRight={2}
+          className={styles.logo}
+          style={{ backgroundImage: `url(${image.url})` }}
+        ></Box>
+      )
+    }
+    return null
   }
 
   const renderDisabled = () => {
