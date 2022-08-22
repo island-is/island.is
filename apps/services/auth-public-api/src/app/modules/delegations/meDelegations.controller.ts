@@ -147,7 +147,6 @@ export class MeDelegationsController {
     meta: (delegation) => ({
       scopes: delegation.scopes?.map((s) => ({
         scopeName: s.scopeName,
-        validFrom: s.validFrom,
         validTo: s.validTo,
       })),
     }),
@@ -188,7 +187,10 @@ export class MeDelegationsController {
             compareScopesByName,
           ).map((s) => s.scopeName),
           added: differenceWith(newScopes, oldScopes, compareScopesByName).map(
-            (s) => s.scopeName,
+            (s) => ({
+              scopeName: s.scopeName,
+              validTo: s.validTo,
+            }),
           ),
         }),
       },
