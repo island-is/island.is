@@ -2,10 +2,10 @@
 
 ## OWASP Top 10
 
-Thw OWASP Foundation is known for its top ten web application security risks.
-Now the foundation also collected the top ten security considerations for API projects.
+The OWASP Foundation is known for its top ten web application security risks.
+Now the foundation has also collected the top ten security considerations for API projects.
 
-A developer of an API should know of and review these items regularly against its APIs.
+Developers should know of and review these items regularly against their APIs.
 
 https://owasp.org/www-project-api-security/
 

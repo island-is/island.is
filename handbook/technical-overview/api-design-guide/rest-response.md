@@ -4,28 +4,34 @@ A REST API should use an appropriate HTTP Status Code and Content Type when resp
 
 ## Content Type
 
-An API can support multiple response content types. It's preferred to use a JSON content by default.
-When an API supports multiple content types the client can specify the desired content type by using the
+An API can support multiple response content types. It's preferred to use a JSON content type by default.
+When an API supports multiple content types the client can specify the desired content type with the
 [`Accept` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept).
 
 The following table shows a list of common content types:
 
-| Content Type                                                            | Description                                                                                    |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [application/json](https://www.rfc-editor.org/rfc/rfc8259)              | **Default.** Content type for a JSON response body.                                            |
-| [application/problem+json](https://www.rfc-editor.org/rfc/rfc7807.html) | Content type for the [Problem JSON error object](errors.md) for `4xx` and `5xx` statuse codes. |
-| [application/xml](https://www.rfc-editor.org/rfc/rfc7303#section-9.1)   | Content type for a XML response body.                                                          |
-| [text/xml](https://www.rfc-editor.org/rfc/rfc7303#section-9.2)          | Same as the `application/xml` except for the type name is `'xml'`                              |
+| Content Type                                                            | Description                                                                                      |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [application/json](https://www.rfc-editor.org/rfc/rfc8259)              | **Default.** Content type for a JSON response body.                                              |
+| [application/problem+json](https://www.rfc-editor.org/rfc/rfc7807.html) | Content type for the [Problem JSON error object](errors.md) for `4xx` and `5xx` statuse codes.   |
+| [application/xml](https://www.rfc-editor.org/rfc/rfc7303#section-9.1)   | Content type for a XML response body. Should be used when the XML is unreadable by casual users. |
+| [text/xml](https://www.rfc-editor.org/rfc/rfc7303#section-9.2)          | Content type for a XML response body. Should be used when the XML is readable by casual users.   |
 
-{% hint style="info" %}
+{% hint style="info" %}  
 When more details are needed in an error response the API should use an application
-defined errors and supply them in an [error object](errors.md) in the response body.
+defined errors and supply them in an [error object](errors.md) in the response body.  
+{% endhint %}
+
+{% hint style="info" %}  
+In previous version of XML [RFC3023](https://www.rfc-editor.org/rfc/rfc3023) it said that `text/xml`
+was intended for XML content which a casual user is able to read, while `application/xml` is preferred
+when the XML content is unreadable by casual users.  
 {% endhint %}
 
 ## HTTP Status Codes
 
-A developer is encouraged to use the range of [`HTTP Status Codes`](https://httpstatuses.org/) to give the clients
-the mot appropriate result of the request processing.
+REST APIs should use the range of [`HTTP Status Codes`](https://httpstatuses.org/)
+to give the clients the most appropriate result of the request processing.
 
 An API should at least use the following HTTP Status Codes for correspanding HTTP methods:
 

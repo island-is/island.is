@@ -1,20 +1,18 @@
 # Documentation
 
 API documentation should be targeted towards the developer that will consume the API.
-A good documentation is one of the single most important qualities of an API.
-It makes it much easier for other developers to use services and significantly
-reduces implementation time for API consumers. The API developer is responsible for
-keeping the documentation up to date.
+A good documentation is one of the single most important qualities of an API as it
+can significantly reduce the implementation time for the API consumers.
+The API provider is responsible for keeping the documentation up to date.
 
 To help with keeping documentation up to date consider using automatic generation
 tools that during build time can, for example, gather comments in predefined syntax
 and generate the [Open API Specification](https://swagger.io/specification/) (OAS),
 this means that the OAS lives bundled with the code and should be easier for developers to maintain.
 
-A good Open API Specification document describes the following fields:
+## Open Api Specification requirements for the API Catalogue
 
-- [`servers`](https://spec.openapis.org/oas/v3.1.0#server-object): Describing the endpoints for the API service
-- **Note** - To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
+To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
 
 The following fields, not marked as (_Optional_), are required for services to be automatically imported to the _API Catalogue_:
 
@@ -38,9 +36,8 @@ The following fields, not marked as (_Optional_), are required for services to b
     - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service. This is linked to in the service view.
     - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service. This is linked to in the service view.
 
-A good Open API Specification document also contains the following:
+An Open API Specification document MUST also describe the following:
 
-- Uses the [`Servers`](https://spec.openapis.org/oas/v3.1.0#server-object) object in the root to describe the endpoints for the API service.
 - Uses the [`Example Object`](https://spec.openapis.org/oas/v3.1.0#example-object) to show example path and query parameters, request and response body for each operation.
 - Documents all expected HTTP statuses in the [`Response Object`](https://spec.openapis.org/oas/v3.1.0#responses-object), both success and errors.
 - Describes all the content types with a [`Media Type Object`](https://spec.openapis.org/oas/v3.1.0#media-type-object) for operations, both requests and responses.

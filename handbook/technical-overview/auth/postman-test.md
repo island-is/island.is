@@ -92,7 +92,7 @@ Varify the scopes in the _Scope_ input and contact island.is if you suspect that
 When you see the message `unauthorized_client` the most common cause is that the _Client ID_ is invalid.
 
 Please verify that your configured _Client ID_ is matching the _Client ID_ provided from island.is and make
-that you are connecting to the correct IAS environment.
+sure that you are connecting to the correct IAS environment.
 
 ![InvalidClientId](assets/ts_invalid_client_id.png)
 
