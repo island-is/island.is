@@ -63,7 +63,6 @@ export class OperatingLicenseService {
     success: boolean
     orderId?: string
   }> {
-    const { answers } = application
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
@@ -84,19 +83,31 @@ export class OperatingLicenseService {
       const uploadDataName = 'rekstrarleyfi1.0'
       const uploadDataId = 'rekstrarleyfi1.0'
       const info = getValueViaPath(application.answers, 'info') as Info
-      const persons: Person[] = [
-        {
-          name: '',
-          ssn: auth.nationalId,
-          phoneNumber: info?.phoneNumber,
-          email: info?.email,
-          homeAddress: '',
-          postalCode: '',
-          city: '',
-          signed: true,
-          type: PersonType.Plaintiff,
-        },
-      ]
+      const applicant: Person = {
+        name: '',
+        ssn: auth.nationalId,
+        phoneNumber: info?.phoneNumber,
+        email: info?.email,
+        homeAddress: '',
+        postalCode: '',
+        city: '',
+        signed: true,
+        type: PersonType.Plaintiff,
+      }
+
+      const actors: Person[] = application.applicantActors.map((actor) => ({
+        name: '',
+        ssn: actor,
+        phoneNumber: '',
+        email: '',
+        homeAddress: '',
+        postalCode: '',
+        city: '',
+        signed: true,
+        type: PersonType.CounterParty,
+      }))
+
+      const persons: Person[] = [applicant, ...actors]
       const attachments = await this.getAttachments(application)
       const extraData = getExtraData(application)
       const result: DataUploadResponse = await this.syslumennService

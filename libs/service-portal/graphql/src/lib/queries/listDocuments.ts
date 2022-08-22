@@ -1,17 +1,20 @@
 import { gql } from '@apollo/client'
 
 export const LIST_DOCUMENTS = gql`
-  query listDocuments {
-    listDocuments {
-      id
-      subject
-      senderName
-      senderNatReg
-      date
-      fileType
-      url
-      opened
-      categoryId
+  query listDocumentsV2($input: GetDocumentListInput!) {
+    listDocumentsV2(input: $input) {
+      data {
+        id
+        subject
+        senderName
+        senderNatReg
+        date
+        fileType
+        url
+        opened
+        categoryId
+      }
+      totalCount
     }
   }
 `
