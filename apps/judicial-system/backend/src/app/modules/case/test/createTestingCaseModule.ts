@@ -79,7 +79,7 @@ export const createTestingCaseModule = async () => {
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({ formatMessage: jest.fn() }),
+          useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
