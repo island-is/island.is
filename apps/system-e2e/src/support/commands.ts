@@ -37,6 +37,9 @@ const idsLogin = ({
   cy.visit(`${baseUrl}${urlPath}`)
 
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
+    // The input field seems to get re-rendered early.
+    // Waiting prevents the typed phone number from being removed in the re-render.
+    cy.wait(3000)
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
@@ -112,4 +115,29 @@ Cypress.Commands.add('gqlRequest', ({ query }) => {
     body: body,
     method: 'POST',
   })
+})
+
+Cypress.Commands.add('bypassApplicationEntry', (applicant?: string) => {
+  // Wait for banner-loader to finish
+  cy.get('[aria-label="island.is logo"]').should('exist')
+  // Wait for loader to disappear
+  cy.get('[class^="LoadingDots"]').should('not.exist')
+  // Hack to get chosen applicant in list of possible delegations
+  cy.contains('Umsóknaraðili').next().as('applications')
+  if (applicant) {
+    cy.get('@applications')
+      .contains(applicant)
+      .then((li) => {
+        // TODO figure out finding "Hefja umsókn
+        while ((!li.contains('Hefja umsókn'), { timeout: 1 })) {
+          li = li.parent
+          li.click()
+        }
+        cy.get('[aria-label="Útskráning og aðgangsstillingar"]').should(
+          'contain',
+          applicant,
+        )
+      })
+  }
+  cy.contains('Ný umsókn').click()
 })
