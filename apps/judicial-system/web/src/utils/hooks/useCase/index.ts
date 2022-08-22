@@ -289,10 +289,10 @@ const useCase = () => {
         }
 
         if (setWorkingCase) {
-          setWorkingCase({
-            ...workingCase,
+          setWorkingCase((theCase) => ({
+            ...theCase,
             state: data.transitionCase.state,
-          })
+          }))
         }
 
         return true

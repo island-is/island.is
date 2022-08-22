@@ -125,7 +125,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`,
     )
@@ -224,7 +224,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     commits: string[],
   ): Promise<PRWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`,
     )

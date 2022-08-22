@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationConfigurations,
@@ -70,7 +73,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.submitted,
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

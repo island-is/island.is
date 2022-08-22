@@ -28,6 +28,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+        children: [
+          {
+            name: m.inProgressApplications,
+            path: ServicePortalPath.ApplicationInProgressApplications,
+          },
+          {
+            name: m.unfinishedApplications,
+            path: ServicePortalPath.ApplicationIncompleteApplications,
+          },
+          {
+            name: m.finishedApplications,
+            path: ServicePortalPath.ApplicationCompleteApplications,
+          },
+        ],
       },
 
       // Company
@@ -248,10 +262,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
             ],
           },
-          // {
-          //   name: m.vehiclesLookup,
-          //   path: ServicePortalPath.AssetsVehiclesLookup,
-          // },
+          {
+            name: m.vehiclesLookup,
+            path: ServicePortalPath.AssetsVehiclesLookup,
+          },
           {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,

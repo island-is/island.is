@@ -19,12 +19,15 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   CaseDecision,
+  CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -46,11 +49,34 @@ export const Confirmation: React.FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
+  const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
     isRequestingRulingSignature,
   } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
+
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
+        workingCase,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      ))
+
+    if (shouldSign) {
+      requestRulingSignature()
+    }
+  }
 
   return (
     <PageLayout
@@ -115,8 +141,8 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? m.footer.accepting.continueButtonText
@@ -142,7 +168,7 @@ export const Confirmation: React.FC = () => {
               ? 'default'
               : 'destructive'
           }
-          onNextButtonClick={requestRulingSignature}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isRequestingRulingSignature}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={
@@ -155,7 +181,7 @@ export const Confirmation: React.FC = () => {
       {modalVisible && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible(false)}
         />

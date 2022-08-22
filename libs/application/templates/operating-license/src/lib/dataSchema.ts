@@ -15,7 +15,7 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const Time = z.object({
+const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
     params: error.invalidValue,
   }),
@@ -24,10 +24,34 @@ const Time = z.object({
   }),
 })
 
-const OpeningHours = z.object({
-  weekdays: Time,
-  weekends: Time,
+const OpeningHoursRefine = z.object({
+  weekdays: TimeRefine,
+  weekends: TimeRefine,
 })
+
+const Time = z.object({
+  from: z.string().optional(),
+  to: z.string().optional(),
+})
+
+const OpeningHours = z
+  .object({
+    weekdays: Time.optional(),
+    weekends: Time.optional(),
+  })
+  .optional()
+
+type OpeningHours = z.infer<typeof OpeningHours>
+type Time = z.infer<typeof Time>
+
+const refineOpeningHours = (oh: OpeningHours): boolean => {
+  try {
+    OpeningHoursRefine.parse(oh)
+    return true
+  } catch (e) {
+    return false
+  }
+}
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -115,11 +139,31 @@ export const dataSchema = z.object({
       customerCount: z.string(),
     })
     .array(),
-  openingHours: z.object({
-    alcohol: OpeningHours,
-    willServe: z.array(z.enum([YES, NO])).nonempty(),
-    outside: OpeningHours.optional(),
-  }),
+  openingHours: z
+    .object({
+      alcohol: OpeningHours,
+      willServe: z.array(z.enum([YES, NO])).nonempty(),
+      outside: OpeningHours.optional(),
+    })
+    .partial()
+    .refine(
+      ({ alcohol, willServe, outside }) => {
+        return (
+          (willServe?.includes(YES) &&
+            refineOpeningHours(alcohol) &&
+            refineOpeningHours(outside)) ||
+          (!willServe?.includes(YES) &&
+            refineOpeningHours(alcohol) &&
+            (outside
+              ? refineOpeningHours(outside) || !refineOpeningHours(outside)
+              : true))
+        )
+      },
+      {
+        message: error.openingHours.defaultMessage,
+        path: ['willServe'],
+      },
+    ),
   temporaryLicense: z.array(z.enum([YES, NO])).nonempty(),
   debtClaim: z.array(z.enum([YES, NO])).nonempty(),
   otherInfoText: z.string().optional(),
