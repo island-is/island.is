@@ -1,12 +1,16 @@
-import { aliasQuery, getFakeUser, getDiscountData } from '../../support/utils'
-import { AuthUser, BaseUrl } from '../../lib/types'
+import {
+  aliasQuery,
+  getFakeUser,
+  getDiscountData,
+} from '../../../support/utils'
+import { FixtureUser, BaseUrl } from '../../../lib/types'
 
-import fakeUsers from '../../fixtures/air-discount-scheme/users.json'
+import fakeUsers from '../../../fixtures/air-discount-scheme/users.json'
 
 describe('Home page', () => {
   const testEnvironment = Cypress.env('testEnvironment')
 
-  const fakeUser = getFakeUser(fakeUsers as AuthUser[], 'gervimaður afríka')
+  const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'gervimaður afríka')
 
   beforeEach(() => {
     // FIXME: https://github.com/island-is/island.is/issues/7906
