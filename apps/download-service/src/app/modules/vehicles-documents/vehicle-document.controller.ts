@@ -53,17 +53,20 @@ export class VehicleController {
       .withMiddleware(new AuthMiddleware(authUser))
       .vehicleReportPdfGet({ permno: permno })
 
-    console.log('documentResponse', documentResponse)
-
-    const documentBase64 = escape(documentResponse)
-    if (documentBase64) {
+    if (documentResponse) {
       this.auditService.audit({
         action: 'getVehicleHistoryPdf',
         auth: user,
         resources: permno,
       })
 
-      const buffer = Buffer.from(documentBase64).toString('base64')
+      const contentArrayBuffer = await documentResponse.arrayBuffer()
+      const buffer = Buffer.from(contentArrayBuffer)
+
+      // const contentArrayBuffer = await documentResponse.arrayBuffer()
+      // const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
+      // const buffer = Buffer.from(contentBase64, 'base64')
+
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',

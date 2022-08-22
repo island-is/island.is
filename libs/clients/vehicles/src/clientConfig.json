@@ -31,7 +31,7 @@
             "description": "Success",
             "content": {
               "application/pdf": {
-                "schema": { "type": "string", "format": "byte" }
+                "schema": { "type": "string", "format": "binary" }
               }
             }
           },
@@ -52,7 +52,7 @@
             "description": "Success",
             "content": {
               "application/pdf": {
-                "schema": { "type": "string", "format": "byte" }
+                "schema": { "type": "string", "format": "binary" }
               }
             }
           },

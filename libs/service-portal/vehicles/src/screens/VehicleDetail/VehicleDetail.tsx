@@ -133,7 +133,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     size="default"
                     type="button"
                     variant="utility"
-                    onClick={() => formSubmit(`${downloadServiceURL}`, true)}
+                    onClick={() => formSubmit(`${downloadServiceURL}`)}
                   >
                     Ferilskýrsla
                   </Button>
