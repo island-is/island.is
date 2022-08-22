@@ -92,7 +92,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.licenses,
+            name: m.detailInfo,
             path: ServicePortalPath.LicensesDetail,
           },
         ],
