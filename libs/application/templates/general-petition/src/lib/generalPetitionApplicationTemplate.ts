@@ -21,6 +21,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
   name: 'Meðmælendalisti',
   dataSchema: GeneralPetitionSchema,
   readyForProduction: true,
+  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

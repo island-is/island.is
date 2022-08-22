@@ -36,6 +36,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   ],
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
+  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.draft,
     states: {

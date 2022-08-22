@@ -40,6 +40,7 @@ const template: ApplicationTemplate<
   ],
   dataSchema: MortgageCertificateSchema,
   readyForProduction: true,
+  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -24,6 +24,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.NO_DEBT_CERTIFICATE,
   name: m.name,
   institution: m.institutionName,
+  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [
     ApplicationConfigurations.NoDebtCertificate.translation,
   ],

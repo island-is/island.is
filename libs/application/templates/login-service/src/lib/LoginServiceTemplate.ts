@@ -40,6 +40,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
+  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [ApplicationConfigurations.LoginService.translation],
   dataSchema: LoginServiceSchema,
   stateMachineConfig: {

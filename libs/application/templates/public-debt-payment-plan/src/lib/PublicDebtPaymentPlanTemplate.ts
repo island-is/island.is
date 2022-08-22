@@ -40,6 +40,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   readyForProduction: true,
+  allowMultipleApplicationsInDraft: true,
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],

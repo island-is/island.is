@@ -28,6 +28,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE,
   name: m.applicationForDrivingLicense,
   institution: m.nationalCommissionerOfPolice,
+  allowMultipleApplicationsInDraft: true,
   dataSchema,
   readyForProduction: true,
   stateMachineConfig: {

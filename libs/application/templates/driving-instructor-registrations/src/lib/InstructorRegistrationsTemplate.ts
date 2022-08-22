@@ -21,6 +21,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  allowMultipleApplicationsInDraft: true,
   readyForProduction: false,
   featureFlag: Features.drivingInstructorRegistrations,
   stateMachineConfig: {
