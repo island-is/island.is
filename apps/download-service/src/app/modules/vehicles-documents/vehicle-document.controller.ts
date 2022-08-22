@@ -63,10 +63,6 @@ export class VehicleController {
       const contentArrayBuffer = await documentResponse.arrayBuffer()
       const buffer = Buffer.from(contentArrayBuffer)
 
-      // const contentArrayBuffer = await documentResponse.arrayBuffer()
-      // const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
-      // const buffer = Buffer.from(contentBase64, 'base64')
-
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
@@ -111,10 +107,6 @@ export class VehicleController {
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
       const buffer = Buffer.from(contentArrayBuffer)
-
-      // const contentArrayBuffer = await documentResponse.arrayBuffer()
-      // const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
-      // const buffer = Buffer.from(contentBase64, 'base64')
 
       res.header('Content-length', buffer.length.toString())
       res.header(
