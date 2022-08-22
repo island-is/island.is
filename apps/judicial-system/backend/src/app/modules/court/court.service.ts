@@ -92,6 +92,17 @@ export class CourtService {
     })
   }
 
+  private maskFileName(filename: string): string {
+    const fileNameEnding = filename.split('.').pop()
+    const fileNameWithoutEnding = filename.replace(`.${fileNameEnding}`, '')
+    const firstLetterInFileName = fileNameWithoutEnding[0]
+    const mask = '*'.repeat(fileNameWithoutEnding.length - 2) // -2 to keep the first and last letter of the file name
+    const lastLetterinFileNameWithoutEnding =
+      fileNameWithoutEnding[fileNameWithoutEnding.length - 1]
+
+    return `${firstLetterInFileName}${mask}${lastLetterinFileNameWithoutEnding}.${fileNameEnding}`
+  }
+
   async createRequest(
     user: User,
     caseId: string,
@@ -162,7 +173,7 @@ export class CourtService {
             institution: 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.maskFileName(fileName),
           },
           reason,
         )
@@ -203,7 +214,7 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.maskFileName(fileName),
           },
           reason,
         )
@@ -242,7 +253,7 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject,
-            fileName,
+            fileName: this.maskFileName(fileName),
             fileType,
           },
           reason,
