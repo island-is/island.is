@@ -12,9 +12,10 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import differenceWith from 'lodash/differenceWith'
 
-import { Documentation } from '@island.is/nest/swagger'
 import {
+  compareScopesByName,
   CreateDelegationDTO,
   DelegationDirection,
   DelegationDTO,
@@ -28,14 +29,15 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import { AuthScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
+  FeatureFlag,
   FeatureFlagGuard,
   Features,
-  FeatureFlag,
 } from '@island.is/nest/feature-flags'
+import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -168,13 +170,27 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
+    const { scopes: oldScopes } = await this.delegationsService.findById(
+      user,
+      delegationId,
+    )
+
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
         auth: user,
         namespace,
         action: 'update',
         resources: (delegation) => delegation?.id ?? '',
-        meta: { scopes: delegation.scopes },
+        meta: ({ scopes: newScopes }) => ({
+          deleted: differenceWith(
+            oldScopes,
+            newScopes,
+            compareScopesByName,
+          ).map((s) => s.scopeName),
+          added: differenceWith(newScopes, oldScopes, compareScopesByName).map(
+            (s) => s.scopeName,
+          ),
+        }),
       },
       this.delegationsService.update(user, delegation, delegationId),
     )
