@@ -6,11 +6,11 @@ When an error occurs in a API, the service should return the error to the callin
 
 ## Response Body
 
-When an error occurs, a REST API should respond with an 4xx or 5xx [HTTP status code](http-status-codes.md) and the response should contain a Problem Details object as described in the [IETF RFC7807 documentation](https://datatracker.ietf.org/doc/html/rfc7807).
+When an error occurs, a REST API should respond with an 4xx or 5xx [HTTP status code](rest-response.md) and the response should contain a Problem Details object as described in the [IETF RFC7807 documentation](https://datatracker.ietf.org/doc/html/rfc7807).
 
 ### Problem Details Object
 
-For REST APIs the Problem Details object is modelled as a JSON object. The format is identified with the "application/problem+json" content-type.
+For REST APIs the Problem Details object is modelled as a JSON object. The format is identified with the `application/problem+json` content type in the HTTP `Content-Type` header.
 
 The `type` string is the primary problem identifier and is, as such, required. Every other field is optional but it is **HIGHLY RECOMMENDED** to at least have `title` and `status` strings present in the error response.
 
