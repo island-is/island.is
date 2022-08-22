@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
