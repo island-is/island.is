@@ -110,6 +110,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         startDate
         endDate
       }
+      downloadServiceURL
     }
   }
 `

@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { Case, CaseState } from '@island.is/judicial-system/types'
-import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import { INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   investigationCaseAccusedAddress,
@@ -11,7 +11,7 @@ import {
   intercept,
 } from '../../../utils'
 
-describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -34,7 +34,7 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
+    cy.visit(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/test_id`)
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {

@@ -1,5 +1,5 @@
 import { Case } from '@island.is/judicial-system/types'
-import { STEP_FIVE_ROUTE } from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeRestrictionCase,
@@ -9,7 +9,7 @@ import {
   makeCaseFile,
 } from '../../../utils'
 
-describe(`${STEP_FIVE_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
     const file1 = makeCaseFile('file1', 'file1')
     const file2 = makeCaseFile('file2', 'file2')
@@ -23,7 +23,7 @@ describe(`${STEP_FIVE_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${STEP_FIVE_ROUTE}/test_id`)
+    cy.visit(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/test_id`)
   })
 
   it('should upload files to s3', () => {

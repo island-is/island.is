@@ -166,7 +166,7 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
 
   const isModifyingRuling = router.pathname.includes(
-    constants.MODIFY_RULING_ROUTE,
+    constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
   )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -828,8 +828,8 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
+              : `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
@@ -838,7 +838,9 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}
@@ -852,7 +854,7 @@ export const Ruling: React.FC = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

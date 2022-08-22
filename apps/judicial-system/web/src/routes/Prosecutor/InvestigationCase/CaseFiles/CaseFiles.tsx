@@ -466,8 +466,8 @@ export const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoadingWorkingCase}
         />

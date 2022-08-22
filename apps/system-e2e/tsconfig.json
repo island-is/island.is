@@ -1,26 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "strict": true,
-    "sourceMap": false,
-    "outDir": "dist/out-tsc",
-    "allowJs": true,
+    "outDir": "../../../dist/out-tsc",
     "types": ["cypress", "@testing-library/cypress", "node"],
-    "module": "es2015"
+    "resolveJsonModule": true,
+    "allowJs": true
   },
-  "exclude": ["node_modules", "tmp"],
-  "include": ["src/**/*.ts", "src/**/*.js"]
+  "include": ["cypress.config.ts", "src/**/*.ts", "src/**/*.js"]
 }
