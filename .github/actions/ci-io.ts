@@ -64,7 +64,7 @@ export class LocalRunner implements GitActionStatus {
 
     if (changedFiles.length === 0) return []
     try {
-      const printAffected = spawnSync(
+      let printAffected = spawnSync(
         `npx`,
         [
           `nx`,
@@ -80,6 +80,30 @@ export class LocalRunner implements GitActionStatus {
           shell: git.shell,
         },
       )
+      if (printAffected.status !== 0) {
+        log(
+          `Error running nx print-affected. Error is %O, stderr is %O`,
+          printAffected.error,
+          printAffected.stderr,
+        )
+        printAffected = spawnSync(
+          `npx`,
+          [`nx`, `print-affected`, `--select=projects`, '--all'],
+          {
+            encoding: 'utf-8',
+            cwd: git.cwd,
+            shell: git.shell,
+          },
+        )
+        if (printAffected.status !== 0) {
+          log(
+            `Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`,
+            printAffected.stderr,
+            printAffected.stdout,
+          )
+          throw printAffected.error
+        }
+      }
       let affectedComponents = printAffected.stdout
         .split(',')
         .map((s) => s.trim())
@@ -101,7 +125,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`,
     )
@@ -200,7 +224,7 @@ export class LocalRunner implements GitActionStatus {
     workflowId: WorkflowID,
     commits: string[],
   ): Promise<PRWorkflow | undefined> {
-    const branchName = branch.replace('origin/', '')
+    const branchName = branch.replace('origin/', '').replace(/'/g, '')
     app(
       `Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`,
     )

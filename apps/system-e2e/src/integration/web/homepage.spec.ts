@@ -1,8 +1,7 @@
-import { rmSync } from 'fs'
-
 describe('Front page', () => {
   beforeEach(() => {
-    cy.cognitoLogin()
+    const { username, password } = Cypress.env('cognito')
+    cy.cognitoLogin({ username, password })
   })
 
   it('has expected sections', () => {

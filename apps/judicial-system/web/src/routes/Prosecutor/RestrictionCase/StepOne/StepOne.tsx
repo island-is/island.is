@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -54,32 +54,39 @@ export const StepOne: React.FC = () => {
           citizenship: theCase.defendants[0].citizenship,
         })
 
-        router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+        router.push(
+          `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+        )
       }
     } else {
-      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
-    }
-  }
-
-  const updateDefendantState = (
-    defendantId: string,
-    update: UpdateDefendant,
-  ) => {
-    if (workingCase.defendants) {
-      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
-        (defendant) => defendant.id === defendantId,
+      router.push(
+        `${constants.RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
       )
-
-      const newDefendants = [...workingCase.defendants]
-
-      newDefendants[indexOfDefendantToUpdate] = {
-        ...newDefendants[indexOfDefendantToUpdate],
-        ...update,
-      }
-
-      setWorkingCase({ ...workingCase, defendants: newDefendants })
     }
   }
+
+  const updateDefendantState = useCallback(
+    (defendantId: string, update: UpdateDefendant) => {
+      setWorkingCase((theCase: Case) => {
+        if (!theCase.defendants) {
+          return theCase
+        }
+        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+          (defendant) => defendant.id === defendantId,
+        )
+
+        const newDefendants = [...theCase.defendants]
+
+        newDefendants[indexOfDefendantToUpdate] = {
+          ...newDefendants[indexOfDefendantToUpdate],
+          ...update,
+        }
+
+        return { ...theCase, defendants: newDefendants }
+      })
+    },
+    [setWorkingCase],
+  )
 
   return (
     <PageLayout

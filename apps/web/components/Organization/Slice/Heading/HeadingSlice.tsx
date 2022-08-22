@@ -9,7 +9,7 @@ interface SliceProps {
 
 export const HeadingSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
-    <section key={slice.id}>
+    <section key={slice.id} id={slice.id}>
       <Box paddingTop={[8, 6, 6]} paddingBottom={[4, 5, 5]}>
         <Heading {...slice} />
       </Box>

@@ -1,4 +1,3 @@
-import formatISO from 'date-fns/formatISO'
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -75,70 +74,6 @@ export const validateAndSet = (
   })
 }
 
-export const validateAndSetTime = (
-  field: keyof UpdateCase,
-  currentValue: string | undefined,
-  time: string,
-  validations: Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-  setTime?: (value: React.SetStateAction<string | undefined>) => void,
-) => {
-  if (currentValue) {
-    // remove optional
-    if (setTime) {
-      setTime(time)
-    }
-
-    const paddedTime = padTimeWithZero(time)
-    const isValid = validate([[paddedTime, validations]]).isValid
-    const arrestDateMinutes = parseTime(currentValue, paddedTime)
-
-    if (errorMessage !== '' && setErrorMessage && isValid) {
-      setErrorMessage('')
-    }
-
-    setCase({
-      ...theCase,
-      [field]: arrestDateMinutes,
-    })
-  }
-}
-
-export const setAndSendDateToServer = (
-  field: keyof UpdateCase,
-  date: Date | undefined,
-  isValid: boolean,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  if (!isValid) {
-    return
-  }
-
-  let formattedDate = null
-
-  if (date !== undefined) {
-    formattedDate = formatISO(date, {
-      representation: 'complete',
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
-    })
-  }
-}
-
 export const validateAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
@@ -177,27 +112,6 @@ export const validateAndSendTimeToServer = (
 
     if (theCase.id !== '') {
       updateCase(theCase.id, { [field]: dateMinutes })
-    }
-  }
-}
-
-export const setAndSendToServer = (
-  field: keyof UpdateCase,
-  value: string | boolean | undefined,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  const newCase = { ...theCase, [field]: value }
-  setCase(newCase)
-
-  if (theCase.id !== '') {
-    if (typeof value === 'string' || typeof value === 'boolean') {
-      updateCase(theCase.id, { [field]: value })
-      return newCase
-    } else {
-      updateCase(newCase.id, { [field]: null })
-      return newCase
     }
   }
 }

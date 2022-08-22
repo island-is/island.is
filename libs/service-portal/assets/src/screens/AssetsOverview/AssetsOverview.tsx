@@ -1,22 +1,19 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useNamespaces, useLocale } from '@island.is/localization'
+
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  Box,
-  Text,
-  Button,
-  GridColumn,
-  GridRow,
-} from '@island.is/island-ui/core'
-import {
-  ServicePortalModuleComponent,
-  m,
   EmptyState,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import AssetListCards from '../../components/AssetListCards'
+
 import { AssetCardLoader } from '../../components/AssetCardLoader'
+import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
@@ -89,23 +86,17 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Text variant="h3" as="h1">
-        {formatMessage({
+      <IntroHeader
+        title={{
           id: 'sp.assets:title',
           defaultMessage: 'Fasteignir',
-        })}
-      </Text>
-      <GridRow marginBottom={6}>
-        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Text variant="default" paddingTop={2}>
-            {formatMessage({
-              id: 'sp.assets:intro',
-              defaultMessage:
-                'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-            })}
-          </Text>
-        </GridColumn>
-      </GridRow>
+        }}
+        intro={{
+          id: 'sp.assets:intro',
+          defaultMessage:
+            'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+        }}
+      />
 
       {loading && <AssetCardLoader />}
       {assetData?.properties && assetData?.properties?.length > 0 && (
