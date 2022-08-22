@@ -2,15 +2,11 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Case, isInvestigationCase } from '@island.is/judicial-system/types'
-import {
-  capitalize,
-  caseTypes,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 import { Box, Text, FocusableBox, Tag } from '@island.is/island-ui/core'
 
 import * as styles from './MobileCase.css'
-import { mapCaseStateToTagVariant } from './utils'
+import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 
 interface CategoryCardProps {
   heading: string | React.ReactNode
@@ -66,7 +62,7 @@ const MobileCase: React.FC<Props> = ({
   )
   return (
     <CategoryCard
-      heading={capitalize(caseTypes[theCase.type])}
+      heading={displayCaseType(formatMessage, theCase.type, theCase.decision)}
       onClick={onClick}
       tags={[
         <Tag variant={tag.color} outlined disabled key={tag.text}>

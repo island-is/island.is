@@ -1,14 +1,55 @@
 import { createIntl } from 'react-intl'
 
 import { requests } from '@island.is/judicial-system-web/messages'
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
-import { mapCaseStateToTagVariant } from './utils'
-import { request } from 'http'
+import { mapCaseStateToTagVariant, displayCaseType } from './utils'
+
+const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
+  .formatMessage
+
+describe('displayCaseType', () => {
+  const fn = (caseType: CaseType, decision?: CaseDecision) =>
+    displayCaseType(formatMessage, caseType, decision)
+
+  test('should display as travel ban when case descition is accepting alternative travel ban', () => {
+    expect(
+      fn(CaseType.CUSTODY, CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN),
+    ).toBe('Farbann')
+  })
+
+  test.each`
+    caseType
+    ${CaseType.CHILD_PROTECTION_LAWS}
+    ${CaseType.PROPERTY_DAMAGE}
+    ${CaseType.NARCOTICS_OFFENSE}
+    ${CaseType.EMBEZZLEMENT}
+    ${CaseType.FRAUD}
+    ${CaseType.DOMESTIC_VIOLENCE}
+    ${CaseType.ASSAULT_LEADING_TO_DEATH}
+    ${CaseType.MURDER}
+    ${CaseType.MAJOR_ASSULT}
+    ${CaseType.MINOR_ASSULT}
+    ${CaseType.RAPE}
+    ${CaseType.UTILITY_THEFT}
+    ${CaseType.AGGRAVETED_ASSULT}
+    ${CaseType.TAX_VIOLATION}
+    ${CaseType.ATTEMPTED_MURDER}
+    ${CaseType.TRAFFIC_VIOLATION}
+    ${CaseType.THEFT}
+    ${CaseType.OTHER_CRIMINAL_OFFENSES}
+    ${CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE}
+    ${CaseType.OTHER_OFFENSES}
+  `('should display indictment case: $caseType', ({ caseType }) => {
+    expect(fn(caseType)).toEqual('Ákæra')
+  })
+})
 
 describe('mapCaseStateToTagVariant', () => {
-  const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-    .formatMessage
   const fn = (
     state: CaseState,
     isCourtRole: boolean,

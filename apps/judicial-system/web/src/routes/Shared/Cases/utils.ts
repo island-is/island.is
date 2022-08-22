@@ -2,8 +2,30 @@ import compareAsc from 'date-fns/compareAsc'
 import { IntlShape } from 'react-intl'
 
 import { TagVariant } from '@island.is/island-ui/core'
-import { CaseAppealDecision, CaseState } from '@island.is/judicial-system/types'
-import { requests } from '@island.is/judicial-system-web/messages'
+import {
+  CaseDecision,
+  CaseState,
+  CaseType,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
+import { requests, core } from '@island.is/judicial-system-web/messages'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+
+export const displayCaseType = (
+  formatMessage: IntlShape['formatMessage'],
+  caseType: CaseType,
+  decision?: CaseDecision,
+) => {
+  if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+    return capitalize(caseTypes[CaseType.TRAVEL_BAN])
+  }
+
+  const type = isIndictmentCase(caseType)
+    ? formatMessage(core.indictment)
+    : caseTypes[caseType]
+
+  return capitalize(type)
+}
 
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
