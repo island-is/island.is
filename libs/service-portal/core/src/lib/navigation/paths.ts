@@ -32,10 +32,9 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  FamilyRoot = '/min-gogn/fjolskyldan',
-  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
-  FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
-  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
+  Child = '/min-gogn/barn/:nationalId',
+  FamilyMember = '/min-gogn/:nationalId',
+  Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
