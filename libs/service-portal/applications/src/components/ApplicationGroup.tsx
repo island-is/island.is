@@ -46,7 +46,7 @@ export const ApplicationGroup: FC<Props> = ({
         }
         focus={focus}
       />
-      {applications.length > pageSize ? (
+      {applications.length > pageSize && (
         <Box marginX={[0, 4]} marginTop={[1, 4]}>
           <Pagination
             page={page}
@@ -63,7 +63,7 @@ export const ApplicationGroup: FC<Props> = ({
             )}
           />
         </Box>
-      ) : null}
+      )}
     </Box>
   )
 }
