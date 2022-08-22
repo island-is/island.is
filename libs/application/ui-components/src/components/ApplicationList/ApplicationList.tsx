@@ -90,6 +90,7 @@ interface Props {
   >[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
+  focus?: boolean
 }
 
 const ApplicationList = ({
@@ -97,6 +98,7 @@ const ApplicationList = ({
   applications,
   onClick,
   refetch,
+  focus = false,
 }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
@@ -157,6 +159,7 @@ const ApplicationList = ({
                     actionCard?.tag?.variant || stateDefaultData.tag.variant,
                   outlined: false,
                 }}
+                backgroundColor={focus ? 'blue' : 'white'}
                 heading={actionCard?.title ?? application.name}
                 text={actionCard?.description}
                 cta={{
