@@ -4,13 +4,13 @@
 // - Modifying workspace object and running executor recursively.
 
 import { runExecutor } from '@nrwl/devkit'
-import type { ExecutorContext } from '@nrwl/devkit';
+import type { ExecutorContext } from '@nrwl/devkit'
 
 const EXTERNAL_DEPENDENCIES_DEFAULT_VALUE = 'all'
 
 export interface BuildExecutorOptions {
-  watch: boolean;
-  externalDependencies?: string;
+  watch: boolean
+  externalDependencies?: string
 }
 
 /**
@@ -20,7 +20,7 @@ export interface BuildExecutorOptions {
  */
 export default async function* buildExecutor(
   options: BuildExecutorOptions,
-  context: ExecutorContext
+  context: ExecutorContext,
 ): AsyncIterableIterator<unknown> {
   const { projectName: project, targetName: target, workspace } = context
   const targets = workspace.projects[project!]?.targets
@@ -48,6 +48,6 @@ export default async function* buildExecutor(
   return yield* await runExecutor(
     { project, target, configuration: context.configurationName },
     options,
-    context
-  );
+    context,
+  )
 }
