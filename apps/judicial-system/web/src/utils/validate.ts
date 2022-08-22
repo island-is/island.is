@@ -166,8 +166,12 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
   return workingCase.id && isDefendantStepValidIC(workingCase, workingCase.type)
 }
 
-export const isDefendantStepValidIndictments = (workingCase: Case) => {
+export const isDefendantStepValidIndictments = (
+  workingCase: Case,
+  caseType: CaseType | undefined,
+) => {
   return (
+    workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],

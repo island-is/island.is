@@ -47,6 +47,8 @@ const Defendant: React.FC = () => {
   const { createDefendant, updateDefendant } = useDefendants()
   const router = useRouter()
 
+  const [caseType, setCaseType] = React.useState<CaseType>()
+
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
       setWorkingCase((theCase: Case) => {
@@ -157,13 +159,15 @@ const Defendant: React.FC = () => {
             </Text>
           </Box>
           <Select
-            name="indictmentType"
+            name="type"
             options={constants.IndictmentTypes}
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
             onChange={(selectedOption: ValueType<ReactSelectOption>) => {
               const type = (selectedOption as ReactSelectOption)
                 .value as CaseType
+
+              setCaseType(type)
 
               setAndSendToServer(
                 [
@@ -206,7 +210,9 @@ const Defendant: React.FC = () => {
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIndictments(workingCase)}
+          nextIsDisabled={
+            !isDefendantStepValidIndictments(workingCase, caseType)
+          }
           nextIsLoading={isCreatingCase}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
