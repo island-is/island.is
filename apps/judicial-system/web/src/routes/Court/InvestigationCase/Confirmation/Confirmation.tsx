@@ -31,7 +31,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
-  CaseState,
   CaseTransition,
   completedCaseStates,
   isAcceptingCaseDecision,

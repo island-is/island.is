@@ -233,11 +233,7 @@ const useSections = () => {
     }
   }
 
-  const getIndictmentCaseProsecutorSection = (
-    workingCase: Case,
-    user?: User,
-    activeSubSection?: number,
-  ): Section => {
+  const getIndictmentCaseProsecutorSection = (workingCase: Case): Section => {
     const { id } = workingCase
 
     return {
@@ -615,7 +611,7 @@ const useSections = () => {
             user,
             activeSubSection,
           )
-        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case), user),
+        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case)),
       isRestrictionCase(workingCase?.type)
         ? getRestrictionCaseCourtSections(
             workingCase || ({} as Case),
