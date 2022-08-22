@@ -501,6 +501,8 @@ export const slices = gql`
       options
     }
     successText
+    aboutYouHeadingText
+    questionsHeadingText
   }
 
   fragment StepperFields on Stepper {
