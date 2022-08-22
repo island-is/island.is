@@ -1270,19 +1270,7 @@
         },
         "additionalProperties": false
       },
-      "PersidnoLookupResult": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/PersidnoLookup"
-          },
-          "nextCursor": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
+
       "PersidnoLookup": {
         "type": "object",
         "properties": {
