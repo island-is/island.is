@@ -323,6 +323,18 @@ export const m = defineMessages({
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
   },
+  unfinishedApplications: {
+    id: 'service.portal:unfinishedApplications',
+    defaultMessage: 'Ókláraðar umsóknir',
+  },
+  finishedApplications: {
+    id: 'service.portal:finishedApplications',
+    defaultMessage: 'Kláraðar umsóknir',
+  },
+  inProgressApplications: {
+    id: 'service.portal:inProgressApplications',
+    defaultMessage: 'Umsóknir í vinnslu',
+  },
   myInfo: {
     id: 'service.portal:my-info',
     defaultMessage: 'Mín gögn',

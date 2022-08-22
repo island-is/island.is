@@ -130,8 +130,8 @@ describe('CaseController - Get court record pdf', () => {
     it('should generate pdf', () => {
       expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
-        user,
         expect.any(Function),
+        user,
       )
     })
   })

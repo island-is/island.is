@@ -319,7 +319,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           input: {
             size: 3,
             lang: locale as ContentLanguage,
-            tag: getProjectPage?.newsTag.slug,
+            tags: [getProjectPage?.newsTag.slug],
           },
         },
       })
