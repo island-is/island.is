@@ -53,7 +53,7 @@ export class GenericUserLicenseMetaLinks {
 }
 @ObjectType()
 export class GenericUserLicenseMetadata {
-  @Field(() => [GenericUserLicenseMetaLinks])
+  @Field(() => [GenericUserLicenseMetaLinks], { nullable: true })
   links?: Array<GenericUserLicenseMetaLinks>
 
   @Field(() => String)
