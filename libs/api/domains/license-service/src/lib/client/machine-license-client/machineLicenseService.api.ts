@@ -14,7 +14,6 @@ import {
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
-import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
 
 /** Category to attach each log message to */
