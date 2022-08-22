@@ -70,7 +70,56 @@ export class VehicleController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-eignaferill-${permno}.pdf`,
+        `inline; filename=${user.nationalId}-ferilskyrsla-${permno}.pdf`,
+      )
+      res.header('Content-Type: application/pdf')
+      res.header('Pragma: no-cache')
+      res.header('Cache-Control: no-cache')
+      res.header('Cache-Control: nmax-age=0')
+      return res.status(200).end(buffer)
+    }
+    return res.end()
+  }
+
+  @Post('/ownership/:ssn')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Get a pdf ownership document from the Vehicle service',
+  })
+  async getVehicleOwnership(
+    @Param('ssn') ssn: string,
+    @CurrentUser() user: User,
+    @Body() resource: GetVehicleHistoryDocumentDto,
+    @Res() res: Response,
+  ) {
+    const authUser: User = {
+      ...user,
+      authorization: `Bearer ${resource.__accessToken}`,
+    }
+
+    const documentResponse = await this.vehiclePDFService
+      .withMiddleware(new AuthMiddleware(authUser))
+      .ownershipReportPdfGet({ ssn: ssn })
+
+    if (documentResponse) {
+      this.auditService.audit({
+        action: 'getVehicleOwnershipPdf',
+        auth: user,
+        resources: ssn,
+      })
+
+      const contentArrayBuffer = await documentResponse.arrayBuffer()
+      const buffer = Buffer.from(contentArrayBuffer)
+
+      // const contentArrayBuffer = await documentResponse.arrayBuffer()
+      // const contentBase64 = Buffer.from(contentArrayBuffer).toString('base64')
+      // const buffer = Buffer.from(contentBase64, 'base64')
+
+      res.header('Content-length', buffer.length.toString())
+      res.header(
+        'Content-Disposition',
+        `inline; filename=${user.nationalId}-eignaferill.pdf`,
       )
       res.header('Content-Type: application/pdf')
       res.header('Pragma: no-cache')

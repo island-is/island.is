@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  formSubmit,
   IntroHeader,
   m,
   ServicePortalModuleComponent,
@@ -26,6 +27,8 @@ import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -64,9 +67,9 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     defaultFilterValues,
   )
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
+  const ownershipPdf = data?.vehiclesList?.downloadServiceURL
   const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
-
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
@@ -87,9 +90,23 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
-  const exportPDF = async () => {
-    console.log('PDF')
-  }
+  /**
+   * The PDF functionality module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehiclesPdfEnabled`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
+
   return (
     <>
       <IntroHeader title={messages.title} intro={messages.intro} />
@@ -107,19 +124,21 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
 
       {!loading && !error && filteredVehicles.length > 0 && (
         <Box marginBottom={3} display="flex" flexDirection="row">
-          <Box marginRight={2}>
-            <DropdownExport
-              onGetPDF={() => exportPDF()}
-              onGetExcel={() =>
-                exportVehicleOwnedDocument(
-                  filteredVehicles,
-                  formatMessage(messages.myCarsFiles),
-                  data?.vehiclesList?.name ?? userInfo.profile.name,
-                  data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
-                )
-              }
-            />
-          </Box>
+          {modalFlagEnabled && !loading && ownershipPdf && (
+            <Box marginRight={2}>
+              <DropdownExport
+                onGetPDF={() => formSubmit(`${ownershipPdf}`)}
+                onGetExcel={() =>
+                  exportVehicleOwnedDocument(
+                    filteredVehicles,
+                    formatMessage(messages.myCarsFiles),
+                    data?.vehiclesList?.name ?? userInfo.profile.name,
+                    data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
+                  )
+                }
+              />
+            </Box>
+          )}
           <Box>
             <a
               href="/app/skilavottord/my-cars"
@@ -194,5 +213,4 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     </>
   )
 }
-
 export default VehiclesOverview

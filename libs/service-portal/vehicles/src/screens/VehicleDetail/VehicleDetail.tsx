@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useQuery } from '@apollo/client'
@@ -43,6 +43,8 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -59,6 +61,23 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
+  /**
+   * The PDF functionality module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehiclesPdfEnabled`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
+
   const {
     mainInfo,
     basicInfo,
@@ -71,8 +90,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     coOwners,
     downloadServiceURL,
   } = data?.vehiclesDetail || {}
-
-  console.log(downloadServiceURL)
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
@@ -92,7 +109,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
-
   return (
     <>
       <Box marginBottom={6}>
@@ -121,7 +137,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {!loading && downloadServiceURL && (
+        {modalFlagEnabled && !loading && downloadServiceURL && (
           <GridRow marginTop={6}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box display="flex" justifyContent="flexStart" printHidden>
