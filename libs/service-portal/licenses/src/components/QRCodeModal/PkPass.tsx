@@ -13,7 +13,6 @@ import {
   CREATE_PK_PASS_QR_CODE,
   CREATE_PK_PASS,
   useUserProfile,
-  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 import QRCodeModal from './QRCodeModal'
@@ -21,7 +20,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
 type PkPassProps = {
-  licenseType: GenericLicenseType
+  licenseType: string
   expireDate?: string
   textButton?: boolean
 }

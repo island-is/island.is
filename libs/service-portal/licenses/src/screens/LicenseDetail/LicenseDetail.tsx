@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  useUserProfile,
-  GenericLicenseType,
-} from '@island.is/service-portal/graphql'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -97,7 +94,7 @@ const DataFields = ({
   pkPass,
 }: {
   fields: GenericLicenseDataField[]
-  licenseType?: GenericLicenseType
+  licenseType?: string
   pkPass?: boolean
 }) => {
   if (!fields || fields.length === 0) {
@@ -187,7 +184,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
 
   const { genericLicense = null } = data ?? {}
 
-  const heading = getLicenseDetailHeading(licenseType as GenericLicenseType)
+  const heading = getLicenseDetailHeading(licenseType ?? '')
 
   if (error && !queryLoading) {
     return (
