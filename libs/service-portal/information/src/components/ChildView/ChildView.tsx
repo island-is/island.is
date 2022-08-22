@@ -64,7 +64,6 @@ const ChildView: FC<Props> = ({
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const [isPrinting, setIsPrinting] = useState(false)
 
   /**
    * The ChildRegistration module is feature flagged
