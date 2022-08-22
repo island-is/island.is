@@ -1,39 +1,57 @@
 import { useQuery } from '@apollo/client'
-import { Document, Query } from '@island.is/api/schema'
+import { Document, GetDocumentListInput, Query } from '@island.is/api/schema'
 import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
-import uniqBy from 'lodash/uniqBy'
 
-type CategoryType = {
-  label: string
-  value: string
-}
 interface UseListDocumentsProps {
   data: {
     documents: Document[]
-    categories: CategoryType[]
   }
+  totalCount: number
   unreadCounter: number
   loading?: boolean
   error?: any
 }
 
-export const useListDocuments = (natReg: string): UseListDocumentsProps => {
-  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS)
+export const useListDocuments = (
+  input?: GetDocumentListInput,
+): UseListDocumentsProps => {
+  const {
+    senderKennitala,
+    dateFrom,
+    dateTo,
+    categoryId,
+    subjectContains,
+    typeId,
+    sortBy,
+    order,
+    opened,
+    page,
+    pageSize,
+  } = input ?? {}
+  const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
+    variables: {
+      input: {
+        senderKennitala,
+        dateFrom,
+        dateTo,
+        categoryId,
+        subjectContains,
+        typeId,
+        sortBy,
+        order,
+        opened,
+        page,
+        pageSize,
+      },
+    },
+  })
+  const documents = data?.listDocumentsV2?.data || []
+  const totalCount = data?.listDocumentsV2?.totalCount || 0
 
-  const documents = data?.listDocuments || []
-
-  const allCategories = documents.map((document: Document) => ({
-    label: document.senderName,
-    value: document.senderNatReg,
-  }))
-  // Note: Getting unique categories
-  const categories = uniqBy(
-    allCategories,
-    (category: CategoryType) => category.value,
-  )
   return {
-    data: { documents, categories },
-    unreadCounter: documents.filter((x: Document) => x.opened === false).length,
+    data: { documents },
+    totalCount,
+    unreadCounter: documents.filter((x) => x.opened === false).length,
     loading,
     error,
   }

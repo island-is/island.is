@@ -164,7 +164,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
-          tag: FRONTPAGE_NEWS_TAG_ID,
+          tags: [FRONTPAGE_NEWS_TAG_ID],
         },
       },
     }),

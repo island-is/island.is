@@ -95,7 +95,7 @@ export class CmsElasticsearchService {
 
   async getNews(
     index: string,
-    { size, page, order, month, year, tag }: GetNewsInput,
+    { size, page, order, month, year, tags }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
     if (year) {
@@ -110,14 +110,9 @@ export class CmsElasticsearchService {
     }
 
     let tagQuery
-    if (tag) {
+    if (tags) {
       tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
-          },
-        ],
+        tags: tags.map((tag) => ({ key: tag, type: 'genericTag' })),
       }
     }
 
