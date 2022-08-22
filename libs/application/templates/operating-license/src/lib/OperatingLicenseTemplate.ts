@@ -31,7 +31,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
-  // featureFlag: Features.operatingLicense,
+  featureFlag: Features.operatingLicense,
   allowedDelegations: [AuthDelegationType.ProcurationHolder],
   dataSchema,
   stateMachineConfig: {
