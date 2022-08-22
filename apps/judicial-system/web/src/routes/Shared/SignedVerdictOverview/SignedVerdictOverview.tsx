@@ -716,26 +716,27 @@ export const SignedVerdictOverview: React.FC = () => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType={'courtRecord'}
               >
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR ? (
-                  <Button
-                    variant="ghost"
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role === UserRole.JUDGE ||
+                    user?.role === UserRole.REGISTRAR ? (
+                    <Button
+                      variant="ghost"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton
