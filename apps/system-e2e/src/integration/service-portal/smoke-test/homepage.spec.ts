@@ -1,4 +1,4 @@
-import fakeUsers from '../../fixtures/service-portal/users.json'
+import fakeUsers from '../../../fixtures/service-portal/users.json'
 
 describe('Home page', () => {
   beforeEach(() => {

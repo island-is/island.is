@@ -1,10 +1,10 @@
-import { AuthUser } from '../../lib/types'
-import { getFakeUser } from '../../support/utils'
-import fakeUsers from '../../fixtures/skilavottord/users.json'
+import { FixtureUser } from '../../../lib/types'
+import { getFakeUser } from '../../../support/utils'
+import fakeUsers from '../../../fixtures/skilavottord/users.json'
 
-describe('Silavottorð', () => {
+describe('Skilavottorð', () => {
   const path = '/app/skilavottord/my-cars'
-  const fakeUser = getFakeUser(fakeUsers as AuthUser[], 'Gervimaður Útlönd')
+  const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Útlönd')
 
   beforeEach(() => {
     cy.idsLogin({
