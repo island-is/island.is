@@ -570,8 +570,8 @@ export async function getCourtRecordPdfAsString(
 
 export async function getCourtRecordPdfAsBuffer(
   theCase: Case,
-  user: User,
   formatMessage: FormatMessage,
+  user?: User,
 ): Promise<Buffer> {
   const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 

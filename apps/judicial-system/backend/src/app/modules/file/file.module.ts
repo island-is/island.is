@@ -5,7 +5,6 @@ import { CaseModule, CourtModule, AwsS3Module } from '../index'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
-import { InternalFileController } from './internalFile.controller'
 
 @Module({
   imports: [
@@ -14,7 +13,7 @@ import { InternalFileController } from './internalFile.controller'
     forwardRef(() => AwsS3Module),
     SequelizeModule.forFeature([CaseFile]),
   ],
-  controllers: [FileController, InternalFileController],
+  controllers: [FileController],
   providers: [FileService],
   exports: [FileService],
 })
