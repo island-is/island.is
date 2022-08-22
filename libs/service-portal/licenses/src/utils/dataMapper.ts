@@ -440,7 +440,7 @@ enum LicenseType {
   MachineLicense = 'MachineLicense',
 }
 
-export const getLicenseDetailHeading = (type: LicenseType) => {
+export const getLicenseDetailHeading = (type: string) => {
   switch (type) {
     case LicenseType.DriversLicense:
       return {
@@ -465,7 +465,7 @@ export const getLicenseDetailHeading = (type: LicenseType) => {
       break
   }
 }
-export const getTitleAndLogo = (type: LicenseType) => {
+export const getTitleAndLogo = (type: string) => {
   switch (type) {
     case LicenseType.DriversLicense:
       return { title: m.drivingLicense, logo: './assets/images/island.svg' }
@@ -496,7 +496,7 @@ enum LicenseTypePath {
   vinnuvelarettindi = 'vinnuvelarettindi',
 }
 
-export const getPathFromType = (type: LicenseType) => {
+export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
       return LicenseTypePath.adrrettindi
