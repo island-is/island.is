@@ -12,7 +12,7 @@ DOCKERFILE=$1
 TARGET=$2
 
 function get_build_args() {
-  if [ "${DOCKERFILE}" = 'Dockerfile.cypress' ]; then
+  if [ "${APP}" = 'system-e2e' ]; then
     cat << EOF
     --build-arg APP_DIST_HOME=${APP_DIST_HOME}
 EOF
