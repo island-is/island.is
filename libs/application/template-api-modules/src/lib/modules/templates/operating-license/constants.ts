@@ -1,12 +1,23 @@
-export enum PASSPORT_CHARGE_CODES {
-  REGULAR = 'AY105',
-  EXPRESS = 'AY106',
-}
+import { AttachmentPath } from './types/attachments'
+
+export const AttachmentPaths: AttachmentPath[] = [
+  {
+    path: 'attachments.healthLicense.file',
+    prefix: 'starfsleyfi_heilbridisnefndar',
+  },
+  {
+    path: 'attachments.formerLicenseHolderConfirmation.file',
+    prefix: 'stadfesting_fyrri_leyfishafa',
+  },
+  {
+    path: 'attachments.houseBlueprints.file',
+    prefix: 'teikning_husnaedi',
+  },
+  {
+    path: 'attachments.outsideBlueprints.file',
+    prefix: 'teikning_utisvaedi',
+  },
+]
 
 export const YES = 'yes'
 export const NO = 'no'
-export type YesOrNo = 'yes' | 'no'
-
-export type DiscountCheck = {
-  hasDiscount: boolean
-}

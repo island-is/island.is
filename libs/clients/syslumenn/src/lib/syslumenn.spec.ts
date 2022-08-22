@@ -43,10 +43,12 @@ const PERSON = [
     type: PersonType.Plaintiff,
   },
 ]
-const ATTACHMENT = {
-  name: 'attachment',
-  content: 'content',
-}
+const ATTACHMENTS = [
+  {
+    name: 'attachment',
+    content: 'content',
+  },
+]
 
 const VALID_ESTATE_APPLICANT = '0101302399'
 const INVALID_ESTATE_APPLICANT = '0101303019'
@@ -123,7 +125,7 @@ describe('SyslumennService', () => {
     it('should return data upload response', async () => {
       const response = await service.uploadData(
         PERSON,
-        ATTACHMENT,
+        ATTACHMENTS,
         {
           key: 'string',
         },

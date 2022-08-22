@@ -119,7 +119,9 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
       } else {
         setIsNotificationModalVisible(true)
       }
@@ -314,7 +316,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () => await handleNextButtonClick()}
               nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
               nextIsLoading={isLoadingWorkingCase || isTransitioningCase}
@@ -329,7 +331,7 @@ const HearingArrangements = () => {
               handleClose={() => setIsNotificationModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
-                  `${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
               handlePrimaryButtonClick={async () => {
@@ -340,7 +342,7 @@ const HearingArrangements = () => {
 
                 if (notificationSent) {
                   router.push(
-                    `${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                    `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}
@@ -365,7 +367,7 @@ const HearingArrangements = () => {
               handlePrimaryButtonClick={async () => {
                 if (substituteProsecutor) {
                   await setProsecutor(substituteProsecutor)
-                  router.push(constants.CASE_LIST_ROUTE)
+                  router.push(constants.CASES_ROUTE)
                 }
               }}
               handleSecondaryButtonClick={() => {

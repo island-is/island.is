@@ -150,7 +150,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
           nextIsDisabled={!isDefendantStepValidRC(workingCase)}

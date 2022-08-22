@@ -1,6 +1,6 @@
 import {
-  IC_HEARING_ARRANGEMENTS_ROUTE,
-  IC_POLICE_DEMANDS_ROUTE,
+  INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -12,7 +12,7 @@ import {
   Operation,
 } from '../../../utils'
 
-describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeInvestigationCase()
     const caseDataAddition = {
@@ -24,7 +24,7 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
+    cy.visit(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
   })
 
   it('should require a valid requested court date time', () => {
@@ -84,6 +84,6 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('reqCourtDate-time').clear().type('1333')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_POLICE_DEMANDS_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE)
   })
 })

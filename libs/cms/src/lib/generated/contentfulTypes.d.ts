@@ -776,6 +776,12 @@ export interface IFormFields {
 
   /** Success Text */
   successText?: string | undefined
+
+  /** About You Heading Text */
+  aboutYouHeadingText?: string | undefined
+
+  /** Questions Heading text */
+  questionsHeadingText?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
