@@ -52,7 +52,7 @@ interface DialogPromptProps {
   /**
    * Image to be displayed in the dialog
    */
-  img?: string
+  img?: ReactElement
 }
 
 export const DialogPrompt = ({
@@ -98,6 +98,7 @@ export const DialogPrompt = ({
                 circle
                 colorScheme="negative"
                 icon="close"
+                aria-label="Hætta við"
                 onClick={() => {
                   closeModal()
                 }}
@@ -114,14 +115,7 @@ export const DialogPrompt = ({
 
               {img && (
                 <GridColumn span={['0', '3/8']}>
-                  <Hidden below="sm">
-                    <img
-                      src={`assets/images/${img}.svg`}
-                      alt=""
-                      style={{ float: 'right' }}
-                      width="80%"
-                    />
-                  </Hidden>
+                  <Hidden below="sm">{img}</Hidden>
                 </GridColumn>
               )}
               {hasButtons && (
