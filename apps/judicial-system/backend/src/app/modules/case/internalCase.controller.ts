@@ -62,10 +62,10 @@ export class InternalCaseController {
     description: 'Delivers a completed case to court',
   })
   deliver(
-    @Param('caseId') _caseId: string,
+    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
   ): Promise<DeliverResponse> {
-    this.logger.debug('Delivering a case')
+    this.logger.debug(`Delivering case ${caseId}`)
 
     return this.caseService.deliver(theCase)
   }
