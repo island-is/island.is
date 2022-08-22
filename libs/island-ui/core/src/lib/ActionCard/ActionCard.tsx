@@ -242,6 +242,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         title={deleteButton.dialogTitle}
         description={deleteButton.dialogDescription}
         ariaLabel="delete"
+        img={
+          <img
+            src={`assets/images/settings.svg`}
+            style={{ float: 'right' }}
+            width="80%"
+          />
+        }
         disclosureElement={
           <Tag outlined={tag.outlined} variant={tag.variant}>
             <Box display="flex" flexDirection="row" alignItems="center">
