@@ -1,4 +1,3 @@
-import { addWeeks } from 'date-fns'
 import { defineMessage } from 'react-intl'
 
 export const titles = {
