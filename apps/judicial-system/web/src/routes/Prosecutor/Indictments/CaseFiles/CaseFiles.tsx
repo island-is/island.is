@@ -12,8 +12,9 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import { Box, InputFileUpload, Tag, Text } from '@island.is/island-ui/core'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -40,6 +41,20 @@ const CaseFiles: React.FC = () => {
           <Text as="h1" variant="h1">
             {formatMessage(strings.caseFiles.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={2}>
+          <Tag>{workingCase.policeCaseNumber}</Tag>
+        </Box>
+        <Box marginBottom={5}>
+          <Text fontWeight="semiBold">{`${formatMessage(core.court)}: ${
+            workingCase.court?.name
+          }`}</Text>
+          <Text fontWeight="semiBold">{`${capitalize(
+            formatMessage(core.indictmentDefendant),
+          )}: ${workingCase.defendants
+            ?.map((defendant) => defendant.name)
+            .toString()
+            .replace(/,/g, ', ')}`}</Text>
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3} display="flex">
