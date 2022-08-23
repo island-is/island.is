@@ -726,6 +726,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     user?.role === UserRole.REGISTRAR ? (
                     <Button
                       variant="ghost"
+                      size="small"
                       data-testid="signCourtRecordButton"
                       loading={isRequestingCourtRecordSignature}
                       onClick={(event) => {
@@ -746,40 +747,46 @@ export const SignedVerdictOverview: React.FC = () => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType={'ruling'}
                 >
-                  {workingCase.rulingDate ? (
-                    <SignedDocument
-                      signatory={workingCase.judge?.name}
-                      signingDate={workingCase.rulingDate}
-                    />
-                  ) : user && user.id === workingCase.judge?.id ? (
-                    <Button
-                      loading={isRequestingRulingSignature}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        requestRulingSignature()
-                      }}
-                    >
-                      {formatMessage(m.signButton)}
-                    </Button>
-                  ) : (
-                    <Text>{formatMessage(m.unsignedDocument)}</Text>
-                  )}
-                  {user && user.id === workingCase.judge?.id && (
-                    <Button
-                      variant="ghost"
-                      data-testid="modifyRulingButton"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        router.push(
-                          isRestrictionCase(workingCase.type)
-                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
-                        )
-                      }}
-                    >
-                      {capitalize(formatMessage(core.modify))}
-                    </Button>
-                  )}
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
+                      <SignedDocument
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
+                      />
+                    ) : user && user.id === workingCase.judge?.id ? (
+                      <Button
+                        size="small"
+                        loading={isRequestingRulingSignature}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          requestRulingSignature()
+                        }}
+                      >
+                        {formatMessage(m.signButton)}
+                      </Button>
+                    ) : (
+                      <Text>{formatMessage(m.unsignedDocument)}</Text>
+                    )}
+                    {user && user.id === workingCase.judge?.id && (
+                      <Box marginLeft={3}>
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          data-testid="modifyRulingButton"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            router.push(
+                              isRestrictionCase(workingCase.type)
+                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            )
+                          }}
+                        >
+                          {capitalize(formatMessage(core.modify))}
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
                 </PdfButton>
               )}
             </Stack>
