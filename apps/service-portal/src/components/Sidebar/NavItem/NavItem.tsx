@@ -14,8 +14,8 @@ interface Props {
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
-  hover: boolean
-  clicked: boolean
+  hover?: boolean
+  clicked?: boolean
   enabled?: boolean
   expanded?: boolean
   external?: boolean
@@ -98,6 +98,7 @@ const NavItemContent: FC<Props> = ({
               size="medium"
               className={styles.icon}
             /> */}
+            <img src="./assets/images/minarsidur-stillingar.svg" />
             <div className={styles.testIconWrapper}>
               <svg
                 className={clicked ? styles.testIconHover : styles.testIcon}
