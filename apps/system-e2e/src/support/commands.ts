@@ -76,18 +76,13 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'idsLogin',
   ({ phoneNumber, authUrl, baseUrl, urlPath = '/' }) => {
-    if (testEnvironment !== 'local') {
-      const { username, password } = Cypress.env('cognito')
-
-      cy.session('idsLogin', () => {
+    const { username, password } = Cypress.env('cognito')
+    cy.session('idsLogin', () => {
+      if (testEnvironment !== 'local') {
         cy.session('cognitoLogin', () => cognitoLogin({ username, password }))
-        idsLogin({ phoneNumber, authUrl, baseUrl, urlPath })
-      })
-    } else {
-      cy.session('idsLogin', () => {
-        idsLogin({ phoneNumber, authUrl, baseUrl, urlPath })
-      })
-    }
+      }
+      idsLogin({ phoneNumber, authUrl, baseUrl, urlPath })
+    })
   },
 )
 
