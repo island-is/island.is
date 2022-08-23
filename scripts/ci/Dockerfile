@@ -104,3 +104,118 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 USER runner
 
 CMD [ "jest", "main.spec.js" ]
+
+FROM cypress/base:14.17.6 as cypress-base
+
+USER root
+RUN id
+
+RUN node --version
+
+# Chrome dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  fonts-liberation \
+  libcurl4 \
+  libcurl3-gnutls \
+  libcurl3-nss \
+  xdg-utils \
+  wget \
+  curl \
+  # clean up
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
+
+# install libappindicator3-1 - not included with Debian 11
+RUN wget --no-verbose /usr/src/libappindicator3-1_0.4.92-7_amd64.deb "http://ftp.us.debian.org/debian/pool/main/liba/libappindicator/libappindicator3-1_0.4.92-7_amd64.deb" && \
+  dpkg -i /usr/src/libappindicator3-1_0.4.92-7_amd64.deb ; \
+  apt-get install -f -y && \
+  rm -f /usr/src/libappindicator3-1_0.4.92-7_amd64.deb
+
+# install Chrome browser
+RUN wget --no-verbose -O /usr/src/google-chrome-stable_current_amd64.deb "http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_100.0.4896.88-1_amd64.deb" && \
+  dpkg -i /usr/src/google-chrome-stable_current_amd64.deb ; \
+  apt-get install -f -y && \
+  rm -f /usr/src/google-chrome-stable_current_amd64.deb
+
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+
+ARG APP_DIST_HOME
+
+WORKDIR ${APP_DIST_HOME}
+ENV APP_DIST_HOME=${APP_DIST_HOME} \
+  CI=1 \
+# disable shared memory X11 affecting Cypress v4 and Chrome
+# https://github.com/cypress-io/cypress-docker-images/issues/270
+  DBUS_SESSION_BUS_ADDRESS=/dev/null \
+  QT_X11_NO_MITSHM=1 \
+  _X11_NO_MITSHM=1 \
+  _MITSHM=0 \
+  # point Cypress at the /root/cache no matter what user account is used
+  # see https://on.cypress.io/caching
+  CYPRESS_CACHE_FOLDER=/root/.cache/Cypress \
+  # Allow projects to reference globally installed cypress
+  NODE_PATH=/usr/local/lib/node_modules
+
+RUN echo "whoami: $(whoami)" \
+  && npm config -g set user $(whoami) \
+  # command "id" should print:
+  # uid=0(root) gid=0(root) groups=0(root)
+  # which means the current user is root
+  && id \
+  && npm install -g "cypress@10.2.0" "@testing-library/cypress" \
+  && cypress verify \
+  # Cypress cache and installed version
+  # should be in the root user's home folder
+  && cypress cache path \
+  && cypress cache list \
+  && cypress info \
+  && cypress version \
+  # give every user read access to the "/root" folder where the binary is cached
+  # we really only need to worry about the top folder, fortunately
+  && ls -la /root \
+  && chmod 755 /root \
+  # NPM does not need to be installed as it is already included with Node.
+  # Show where Node loads required modules from
+  && node -p 'module.paths' \
+  # should print Cypress version
+  # plus Electron and bundled Node versions
+  && cypress version \
+  && echo  " node version:    $(node -v) \n" \
+    "npm version:     $(npm -v) \n" \
+    "debian version:  $(cat /etc/debian_version) \n" \
+    "user:            $(whoami) \n" \
+    "chrome:          $(google-chrome --version || true) \n"
+
+# a few environment variables to make NPM installs easier
+# good colors for most applications
+ENV TERM xterm \
+    # avoid million NPM install messages
+    npm_config_loglevel warn \
+    # allow installing when the main user is root
+    npm_config_unsafe_perm true
+
+FROM cypress-base as output-cypress
+ENV \
+  CYPRESS_VIDEOS_FOLDER=/out/videos \
+  CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
+  CYPRESS_DOWNLOADS_FOLDER=/out/downloads
+
+# node user exists in the base image
+RUN mkdir -p /out \
+  && chown node:node /out
+
+COPY --chown=node:node --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
+
+USER node
+# show user effective id and group - it should be non-zero
+# meaning the current user "node" is not root
+RUN id
+
+# user "node" should be able to access the Cypress test runner now
+RUN ls -la /root/.cache/Cypress/*/Cypress
+RUN cat /root/.cache/Cypress/*/Cypress/vk_swiftshader_icd.json
+
+RUN ls -al /${APP_DIST_HOME}
+ENTRYPOINT ["cypress", "run", "--browser", "chrome"]
