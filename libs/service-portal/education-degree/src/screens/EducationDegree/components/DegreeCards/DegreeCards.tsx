@@ -42,7 +42,7 @@ const DegreeCards = () => {
             }}
             heading={`Leyfisbréf - ${degree.programme}`}
             text={`Dags: ${degree.date}`}
-            avatar
+            image={{ type: 'avatar' }}
           />
         </Box>
       ))}
