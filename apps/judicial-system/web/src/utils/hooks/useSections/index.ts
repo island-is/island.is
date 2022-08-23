@@ -244,6 +244,13 @@ const useSections = () => {
           name: capitalize(formatMessage(core.indictmentDefendant)),
           href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
         },
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(
+            formatMessage(sections.indictmentCaseProsecutorSection.processing),
+          ),
+          href: `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`,
+        },
       ],
     }
   }
@@ -655,6 +662,7 @@ const useSections = () => {
   return {
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getSections,

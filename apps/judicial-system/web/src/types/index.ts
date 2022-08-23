@@ -33,6 +33,7 @@ export enum RestrictionCaseCourtSubsections {
 
 export enum IndictmentsProsecutorSubsections {
   DEFENDANT = 0,
+  PROCESSING = 1,
 }
 
 export type ReactSelectOption = {
