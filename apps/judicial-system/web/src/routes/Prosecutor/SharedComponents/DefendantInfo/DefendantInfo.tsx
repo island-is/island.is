@@ -35,6 +35,7 @@ import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   defendant: Defendant
+  noNationalIdText?: string
   onChange: (
     defendantId: string,
     updatedDefendant: UpdateDefendant,
@@ -44,7 +45,13 @@ interface Props {
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { defendant, onDelete, onChange, updateDefendantState } = props
+  const {
+    defendant,
+    noNationalIdText,
+    onDelete,
+    onChange,
+    updateDefendantState,
+  } = props
   const { formatMessage } = useIntl()
   const {
     personData,
@@ -148,10 +155,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Checkbox
           name={`noNationalId-${Math.random()}`}
-          label={formatMessage(
-            defendantMessages.sections.defendantInfo
-              .doesNotHaveIcelandicNationalId,
-          )}
+          label={noNationalIdText}
           checked={defendant.noNationalId}
           onChange={() => {
             setNationalIdNotFound(false)

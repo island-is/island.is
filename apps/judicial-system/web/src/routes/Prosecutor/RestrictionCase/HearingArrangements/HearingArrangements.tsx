@@ -11,7 +11,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -182,7 +182,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_TWO}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
       isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
       notFound={caseNotFound}
     >
