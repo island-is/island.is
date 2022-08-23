@@ -20,15 +20,10 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 
 type PkPassProps = {
-  licenseType: string
-  expireDate?: string
+  expireDate: string
   textButton?: boolean
 }
-export const PkPass = ({
-  licenseType,
-  expireDate,
-  textButton = false,
-}: PkPassProps) => {
+export const PkPass = ({ expireDate, textButton = false }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass] = useMutation(CREATE_PK_PASS)
@@ -48,6 +43,8 @@ export const PkPass = ({
   const toggleModal = () => {
     setModalOpen(!modalOpen)
   }
+
+  const licenseType = 'DriversLicense'
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
