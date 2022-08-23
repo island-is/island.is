@@ -99,7 +99,7 @@ ENV \
 RUN mkdir -p /out \
   && chown node:node /out
 
-COPY --chown=node:node ${APP_DIST_HOME}/ /${APP_DIST_HOME}
+COPY --chown=node:node /build/${APP_DIST_HOME}/ /${APP_DIST_HOME}
 
 USER node
 # show user effective id and group - it should be non-zero
