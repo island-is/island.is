@@ -14,7 +14,7 @@ import { ApiResource } from './api-resource.model'
 @Table({
   tableName: 'api_resource_secret',
 })
-export class ApiResourceSecret extends Model<ApiResourceSecret> {
+export class ApiResourceSecret extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

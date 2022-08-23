@@ -70,6 +70,9 @@ import {
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -185,12 +188,14 @@ export const getExtensionInfoText = (
 
   return rejectReason === 'none'
     ? undefined
-    : formatMessage(m.sections.caseExtension.extensionInfo, {
-        hasChildCase: workingCase.childCase ? 'yes' : 'no',
+    : formatMessage(m.sections.caseExtension.extensionInfoV2, {
+        hasChildCase: Boolean(workingCase.childCase),
         caseType: workingCase.type,
         rejectReason,
       })
 }
+
+type availableModals = 'NoModal' | 'SigningModal'
 
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
@@ -203,7 +208,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setSelectedSharingInstitutionId,
   ] = useState<ValueType<ReactSelectOption>>()
 
-  // Signature state
+  // Court record signature state
   const [
     requestCourtRecordSignatureResponse,
     setRequestCourtRecordSignatureResponse,
@@ -220,6 +225,16 @@ export const SignedVerdictOverview: React.FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
+
+  // Ruling signature state
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -277,8 +292,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
       },
-      onError: (reason) => {
-        console.log(reason)
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
       },
     },
@@ -311,19 +325,25 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
-          router.push(`${constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+          router.push(
+            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+          )
         } else {
           router.push(
-            `${constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
         await extendCase(workingCase.id).then((extendedCase) => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             } else {
-              router.push(`${constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             }
           }
         })
@@ -483,7 +503,7 @@ export const SignedVerdictOverview: React.FC = () => {
             <Button
               variant="text"
               preTextIcon="arrowBack"
-              onClick={() => router.push(constants.CASE_LIST_ROUTE)}
+              onClick={() => router.push(constants.CASES_ROUTE)}
             >
               Til baka
             </Button>
@@ -724,10 +744,24 @@ export const SignedVerdictOverview: React.FC = () => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType={'ruling'}
                 >
-                  <SignedDocument
-                    signatory={workingCase.judge?.name}
-                    signingDate={workingCase.rulingDate}
-                  />
+                  {workingCase.rulingDate ? (
+                    <SignedDocument
+                      signatory={workingCase.judge?.name}
+                      signingDate={workingCase.rulingDate}
+                    />
+                  ) : user?.id === workingCase.judge?.id ? (
+                    <Button
+                      loading={isRequestingRulingSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        requestRulingSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  )}
                   {user?.role === UserRole.JUDGE && (
                     <Button
                       variant="ghost"
@@ -736,8 +770,8 @@ export const SignedVerdictOverview: React.FC = () => {
                         event.stopPropagation()
                         router.push(
                           isRestrictionCase(workingCase.type)
-                            ? `${constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
                         )
                       }}
                     >
@@ -829,7 +863,7 @@ export const SignedVerdictOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASES_ROUTE}
           hideNextButton={shouldHideNextButton(workingCase, user)}
           nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
             caseType: workingCase.type,
@@ -908,6 +942,18 @@ export const SignedVerdictOverview: React.FC = () => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}
+        />
+      )}
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => {
+            refreshCase()
+            setModalVisible('NoModal')
+          }}
+          navigateOnClose={false}
         />
       )}
     </PageLayout>

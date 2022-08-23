@@ -7,11 +7,11 @@ import { ApplicationScope } from '@island.is/auth/scopes'
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
-import { FileService } from '../files/file.service'
+import { FileService } from '@island.is/application/api/files'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
@@ -343,7 +343,7 @@ describe('Application system API', () => {
         ],
         "status": 400,
         "title": "Bad Request",
-        "type": "https://httpstatuses.com/400",
+        "type": "https://httpstatuses.org/400",
       }
     `)
   })

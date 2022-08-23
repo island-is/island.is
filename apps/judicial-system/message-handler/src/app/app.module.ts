@@ -3,7 +3,10 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
 import { QueueModule } from '@island.is/message-queue'
 
-import { AppService } from './app.service'
+import { HealthController } from './health.controller'
+import { MessageService } from './message.service'
+import { RulingNotificationService } from './rulingNotification.service'
+import { CaseDeliveryService } from './caseDelivery.service'
 import { appModuleConfig } from './app.config'
 
 const config = appModuleConfig()
@@ -24,6 +27,7 @@ const config = appModuleConfig()
       },
     }),
   ],
-  providers: [AppService],
+  controllers: [HealthController],
+  providers: [RulingNotificationService, CaseDeliveryService, MessageService],
 })
 export class AppModule {}

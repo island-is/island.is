@@ -1,12 +1,12 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  ApplicationConfigurations,
   Application,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { assign } from 'xstate'
 

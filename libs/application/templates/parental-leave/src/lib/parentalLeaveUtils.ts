@@ -1,19 +1,21 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import isSameMonth from 'date-fns/isSameMonth'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   Field,
   FormValue,
-  getValueViaPath,
   Option,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -762,9 +764,39 @@ export const calculateEndDateForPeriodWithStartAndLength = (
 
   const wholeMonthsToAdd = Math.floor(lengthInMonths)
   const daysToAdd =
-    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 28
+    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 30
 
-  return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
+  const lastMonthBeforeEndDate = addMonths(start, wholeMonthsToAdd)
+  let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
+  const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
+
+  // If startDay is first day of the month and daysToAdd = 0
+  if (daysToAdd === 0 && start.getDate() === 1) {
+    return endDate
+  }
+
+  // If endDate is the end of February and startDate is 15
+  if (daysInMonth === 28 && lastMonthBeforeEndDate.getDate() === 15) {
+    endDate = addDays(endDate, -1)
+  }
+
+  // February and months with 31 days
+  if (!isSameMonth(lastMonthBeforeEndDate, endDate)) {
+    if (daysInMonth === 31) {
+      endDate = addDays(endDate, 1)
+    } else if (daysInMonth === 28) {
+      endDate = addDays(endDate, -2)
+    } else if (daysInMonth === 29) {
+      endDate = addDays(endDate, -1)
+    }
+  } else {
+    // startDate is 16 and months with 31 days
+    if (start.getDate() === 16 && daysInMonth === 31) {
+      endDate = addDays(endDate, 1)
+    }
+  }
+
+  return endDate
 }
 
 export const calculatePeriodLengthInMonths = (
@@ -782,20 +814,16 @@ export const calculatePeriodLengthInMonths = (
   return round(diffMonths + roundedDays, 1)
 }
 
-export const removeCountryCode = (application: Application) => {
+const getMobilePhoneNumber = (application: Application) => {
   return (application.externalData.userProfile?.data as {
     mobilePhoneNumber?: string
-  })?.mobilePhoneNumber?.startsWith('+354')
-    ? (application.externalData.userProfile?.data as {
-        mobilePhoneNumber?: string
-      })?.mobilePhoneNumber?.slice(4)
-    : (application.externalData.userProfile?.data as {
-        mobilePhoneNumber?: string
-      })?.mobilePhoneNumber?.startsWith('00354')
-    ? (application.externalData.userProfile?.data as {
-        mobilePhoneNumber?: string
-      })?.mobilePhoneNumber?.slice(5)
-    : (application.externalData.userProfile?.data as {
-        mobilePhoneNumber?: string
-      })?.mobilePhoneNumber
+  })?.mobilePhoneNumber
+}
+
+export const removeCountryCode = (application: Application) => {
+  return getMobilePhoneNumber(application)?.startsWith('+354')
+    ? getMobilePhoneNumber(application)?.slice(4)
+    : getMobilePhoneNumber(application)?.startsWith('00354')
+    ? getMobilePhoneNumber(application)?.slice(5)
+    : getMobilePhoneNumber(application)
 }

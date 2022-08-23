@@ -1,8 +1,5 @@
-import {
-  FieldBaseProps,
-  formatText,
-  FormValue,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { FieldBaseProps, FormValue } from '@island.is/application/types'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,

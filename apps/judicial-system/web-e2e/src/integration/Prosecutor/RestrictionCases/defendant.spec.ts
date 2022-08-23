@@ -1,9 +1,9 @@
-import { STEP_ONE_CUSTODY_REQUEST_ROUTE } from '@island.is/judicial-system/consts'
+import { CREATE_RESTRICTION_CASE_ROUTE } from '@island.is/judicial-system/consts'
 
-describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
+describe(CREATE_RESTRICTION_CASE_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(STEP_ONE_CUSTODY_REQUEST_ROUTE)
+    cy.visit(CREATE_RESTRICTION_CASE_ROUTE)
   })
 
   it('should require a valid police case number', () => {
@@ -62,7 +62,7 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('defenderNotFound').should('exist')
   })
 
-  it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
+  it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     cy.wait('@getPersonByNationalId')
@@ -73,7 +73,13 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('leadInvestigator').type('John Doe')
     cy.getByTestid('continueButton').should('not.be.disabled')
+
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderEmail').clear()
+    cy.getByTestid('defenderPhoneNumber').type('000')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
+    cy.getByTestid('continueButton').should('not.be.disabled')
   })
 })

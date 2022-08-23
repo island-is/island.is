@@ -3,7 +3,11 @@ import formatISO from 'date-fns/formatISO'
 import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import type { CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
@@ -12,6 +16,26 @@ type SubTypes = { [c in CaseType]: string | [string, string] }
 //
 // Maps case types to sub types in the court system
 export const subTypes: SubTypes = {
+  CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
+  PROPERTY_DAMAGE: 'Eignaspjöll',
+  NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
+  EMBEZZLEMENT: 'Fjárdráttur',
+  FRAUD: 'Fjársvik',
+  DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
+  ASSAULT_LEADING_TO_DEATH: 'Líkamsáras sem leiðir til dauða',
+  MURDER: 'Manndráp',
+  MAJOR_ASSULT: 'Meiriháttar líkamsárás',
+  MINOR_ASSULT: 'Minniháttar líkamsárás',
+  RAPE: 'Nauðgun',
+  UTILITY_THEFT: 'Nytjastuldur',
+  AGGRAVETED_ASSULT: 'Sérlega hættuleg líkamsáras',
+  TAX_VIOLATION: 'Skattalagabrot',
+  ATTEMPTED_MURDER: 'Tilraun til manndráps',
+  TRAFFIC_VIOLATION: 'Umferðarlagabrot',
+  THEFT: 'Þjófnaður',
+  OTHER_CRIMINAL_OFFENSES: 'Önnur hegningarlagabrot',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Önnur kynferðisbrot en nauðgun',
+  OTHER_OFFENSES: 'Önnur sérrefsilagabrot',
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -21,7 +45,6 @@ export const subTypes: SubTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  // TODO: replace with appropriate type when it has been created in the court system
   ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
@@ -110,7 +133,6 @@ export class CourtService {
   }
 
   async createCourtRecord(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -136,8 +158,8 @@ export class CourtService {
           'Failed to create a court record',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: 'RVG',
+            institution: 'RVG',
             courtId,
             courtCaseNumber,
             fileName,
@@ -150,12 +172,12 @@ export class CourtService {
   }
 
   async createRuling(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
     fileName: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(
       courtId,
@@ -177,8 +199,8 @@ export class CourtService {
           'Failed to create a court ruling',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             fileName,
@@ -243,13 +265,15 @@ export class CourtService {
       subType = subType[isExtension ? 1 : 0]
     }
 
+    const isIndictment = isIndictmentCase(type)
+
     return this.courtClientService
       .createCase(courtId, {
-        caseType: 'R - Rannsóknarmál',
+        caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
-        basedOn: 'Rannsóknarhagsmunir',
+        basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
       .catch((reason) => {
@@ -301,7 +325,6 @@ export class CourtService {
             courtId,
             courtCaseNumber,
             subject,
-            body,
             recipients,
             fromEmail,
             fromName,

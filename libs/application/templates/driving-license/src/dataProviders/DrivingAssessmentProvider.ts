@@ -3,7 +3,7 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { StudentAssessment } from '@island.is/api/schema'
 

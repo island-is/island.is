@@ -1,18 +1,17 @@
 import {
-  STEP_FIVE_ROUTE,
-  STEP_FOUR_ROUTE,
+  RESTRICTION_CASE_CASE_FILES_ROUTE,
+  RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, intercept } from '../../../utils'
 
-describe(`${STEP_FOUR_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
 
     cy.stubAPIResponses()
-    cy.visit(`${STEP_FOUR_ROUTE}/test_id`)
-
     intercept(caseData)
+    cy.visit(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/test_id`)
   })
 
   it('should validate form', () => {
@@ -37,6 +36,6 @@ describe(`${STEP_FOUR_ROUTE}/:id`, () => {
     cy.get('[name=caseFacts]').type('lorem ipsum')
     cy.get('[name=legalArguments]').type('lorem ipsum')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', STEP_FIVE_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_CASE_FILES_ROUTE)
   })
 })

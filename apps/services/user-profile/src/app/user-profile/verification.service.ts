@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
@@ -175,8 +176,13 @@ export class VerificationService {
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobileNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: confirmSmsDto.mobilePhoneNumber },
+      where: { nationalId, mobilePhoneNumber: mobileNumber },
       order: [['created', 'DESC']],
     })
 
@@ -275,11 +281,22 @@ export class VerificationService {
             },
             {
               component: 'Heading',
-              context: { copy: 'Staðfesting á netfangi', small: true },
+              context: {
+                copy: 'Staðfesting á netfangi',
+                small: true,
+              },
+            },
+            {
+              component: 'Heading',
+              context: {
+                copy: '',
+                small: true,
+                eyebrow: 'Email confirmation',
+              },
             },
             {
               component: 'Copy',
-              context: { copy: 'Öryggiskóðinn þinn', small: true },
+              context: { copy: 'Öryggiskóði / Security code', small: true },
             },
             {
               component: 'Heading',
@@ -289,14 +306,15 @@ export class VerificationService {
               component: 'Copy',
               context: {
                 copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+                  'Þetta er öryggiskóði til staðfestingar á netfangi, hann eyðist sjálfkrafa eftir 5 mínútur. Vinsamlegst hunsaðu póstinn ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
               },
             },
             {
               component: 'Copy',
               context: {
+                small: true,
                 copy:
-                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+                  'This is your security code to verify your email address, it will be deleted automatically after 5 minutes. Please ignore this email if you did not enter your email address on My pages.',
               },
             },
           ],

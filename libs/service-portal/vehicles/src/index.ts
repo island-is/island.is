@@ -33,7 +33,8 @@ export const vehiclesModule: ServicePortalModule = {
     {
       name: m.vehiclesLookup,
       path: ServicePortalPath.AssetsVehiclesLookup,
-      enabled: Boolean(!userInfo.profile.actor), // block if user is logged in as other
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      key: 'VehicleLookup',
       render: () => lazy(() => import('./screens/Lookup/Lookup')),
     },
   ],

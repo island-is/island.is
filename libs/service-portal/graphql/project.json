@@ -1,0 +1,30 @@
+{
+  "root": "libs/service-portal/graphql",
+  "sourceRoot": "libs/service-portal/graphql/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/service-portal/graphql/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/service-portal/graphql/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/service-portal/graphql"]
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "output": "libs/service-portal/graphql/src/schema.ts",
+        "command": "graphql-codegen --config libs/service-portal/graphql/codegen.yml"
+      }
+    }
+  },
+  "tags": []
+}

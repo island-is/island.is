@@ -323,6 +323,18 @@ export const m = defineMessages({
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
   },
+  unfinishedApplications: {
+    id: 'service.portal:unfinishedApplications',
+    defaultMessage: 'Ókláraðar umsóknir',
+  },
+  finishedApplications: {
+    id: 'service.portal:finishedApplications',
+    defaultMessage: 'Kláraðar umsóknir',
+  },
+  inProgressApplications: {
+    id: 'service.portal:inProgressApplications',
+    defaultMessage: 'Umsóknir í vinnslu',
+  },
   myInfo: {
     id: 'service.portal:my-info',
     defaultMessage: 'Mín gögn',
@@ -351,6 +363,14 @@ export const m = defineMessages({
   familyNumber: {
     id: 'service.portal:family-number',
     defaultMessage: 'Fjölskyldunúmer',
+  },
+  familySpouse: {
+    id: 'service.portal:family-spouse',
+    defaultMessage: 'Maki',
+  },
+  familyChild: {
+    id: 'service.portal:family-child',
+    defaultMessage: 'Barn',
   },
   endorsements: {
     id: 'service.portal:endorsements',
@@ -444,6 +464,14 @@ export const m = defineMessages({
   drivingLicense: {
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
+  },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
   },
   notFound: {
     id: 'service.portal:not-found',
@@ -687,5 +715,41 @@ export const m = defineMessages({
   companyTitle: {
     id: 'service.portal:company-title',
     defaultMessage: 'Um fyrirtæki',
+  },
+  datesLabel: {
+    id: 'service.portal:dates-label',
+    defaultMessage: 'Dagsetningar',
+  },
+  datepickerFromLabel: {
+    id: 'service.portal:datepicker-dateFrom-label',
+    defaultMessage: 'Dagsetning frá',
+  },
+  datepickerToLabel: {
+    id: 'service.portal:datepicker-dateTo-label',
+    defaultMessage: 'Dagsetning til',
+  },
+  datepickLabel: {
+    id: 'service.portal:datepicker-placeholder',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  clearFilter: {
+    id: 'service.portal:clear-filter',
+    defaultMessage: 'Hreinsa síu',
+  },
+  clearAllFilters: {
+    id: 'service.portal:clear-all-filters',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  openFilter: {
+    id: 'service.portal:open-filter',
+    defaultMessage: 'Opna síu',
+  },
+  closeFilter: {
+    id: 'service.portal:close-filter',
+    defaultMessage: 'Loka síu',
+  },
+  clearSelected: {
+    id: 'service.portal:clear-selected',
+    defaultMessage: 'Hreinsa val',
   },
 })

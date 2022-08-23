@@ -1,43 +1,50 @@
-import React from 'react'
+import isNumber from 'lodash/isNumber'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
+import { useQuery } from '@apollo/client'
 import {
+  Query,
+  VehiclesCurrentOwnerInfo,
+  VehiclesOperator,
+} from '@island.is/api/schema'
+import {
+  AlertMessage,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
-  Table as T,
+  LoadingDots,
   Stack,
   Text,
-  LoadingDots,
-  AlertMessage,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  amountFormat,
+  formSubmit,
   NotFound,
   ServicePortalModuleComponent,
+  TableGrid,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import isNumber from 'lodash/isNumber'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { amountFormat } from '@island.is/service-portal/core'
-import { useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+
+import OwnersTable from '../../components/DetailTable/OwnersTable'
+import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
 import {
-  VehiclesCurrentOwnerInfo,
-  Query,
-  VehiclesOperator,
-} from '@island.is/api/schema'
-import { messages } from '../../lib/messages'
-import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
-import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
-import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
-import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
-import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
-import OwnersTable from '../../components/DetailTable/OwnersTable'
-import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
-import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
-import FeeInfoItem from '../../components/DetailTable/FeeInfoItem'
+  basicInfoArray,
+  coOwnerInfoArray,
+  feeInfoArray,
+  inspectionInfoArray,
+  operatorInfoArray,
+  ownerInfoArray,
+  registrationInfoArray,
+  technicalInfoArray,
+} from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -54,6 +61,23 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
+  /**
+   * The PDF functionality module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehiclesPdfEnabled`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
+
   const {
     mainInfo,
     basicInfo,
@@ -64,6 +88,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     ownersInfo,
     operators,
     coOwners,
+    downloadServiceURL,
   } = data?.vehiclesDetail || {}
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
@@ -74,6 +99,16 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
+  const basicArr = basicInfo && basicInfoArray(basicInfo, formatMessage)
+  const feeArr = inspectionInfo && feeInfoArray(inspectionInfo, formatMessage)
+  const inspectionArr =
+    inspectionInfo && inspectionInfoArray(inspectionInfo, formatMessage)
+  const currentOwnerArr =
+    currentOwnerInfo && ownerInfoArray(currentOwnerInfo, formatMessage)
+  const registrationArr =
+    registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
+  const technicalArr =
+    technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
   return (
     <>
       <Box marginBottom={6}>
@@ -102,6 +137,27 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
+        {modalFlagEnabled && !loading && downloadServiceURL && (
+          <GridRow marginTop={6}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box display="flex" justifyContent="flexStart" printHidden>
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                    onClick={() => formSubmit(`${downloadServiceURL}`)}
+                  >
+                    Ferilskýrsla
+                  </Button>
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        )}
       </Box>
       <Stack space={2}>
         <UserInfoLine
@@ -129,7 +185,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        <UserInfoLine
+        {/* <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -141,7 +197,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider />
+        <Divider /> */}
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}
@@ -203,28 +259,78 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         )}
       </Stack>
       <Box marginBottom={5} />
-      {basicInfo && <BaseInfoItem data={basicInfo} />}
-      {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
-      {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
+
+      {basicArr && (
+        <TableGrid dataArray={basicArr.rows} title={basicArr.header.title} mt />
+      )}
+      {registrationArr && (
+        <TableGrid
+          dataArray={registrationArr.rows}
+          title={registrationArr.header.title}
+          mt
+        />
+      )}
+
+      {currentOwnerArr && (
+        <TableGrid
+          dataArray={currentOwnerArr.rows}
+          title={currentOwnerArr.header.title}
+          mt
+        />
+      )}
+
       {coOwners &&
         coOwners.length > 0 &&
-        coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
-          <CoOwnerInfoItem key={index} data={owner} />
-        ))}
-      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
-      {inspectionInfo && <FeeInfoItem data={inspectionInfo} />}
-      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
+        coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => {
+          const coOwnerArr = coOwnerInfoArray(owner, formatMessage)
+          return (
+            <TableGrid
+              key={`vehicle-coOwner-${index}`}
+              dataArray={coOwnerArr.rows}
+              title={coOwnerArr.header.title}
+              mt
+            />
+          )
+        })}
+      {inspectionArr && (
+        <TableGrid
+          dataArray={inspectionArr.rows}
+          title={inspectionArr.header.title}
+          mt
+        />
+      )}
+      {feeArr && (
+        <TableGrid dataArray={feeArr.rows} title={feeArr.header.title} mt />
+      )}
+
+      {technicalArr && (
+        <TableGrid
+          dataArray={technicalArr.rows}
+          title={technicalArr.header.title}
+          mt
+        />
+      )}
+
       {operators &&
         operators.length > 0 &&
-        operators.map((operator: VehiclesOperator, index) => (
-          <OperatorInfoItem key={index} data={operator} />
-        ))}
+        operators.map((operator: VehiclesOperator, index) => {
+          const operatorArr = operatorInfoArray(operator, formatMessage)
+          return (
+            <TableGrid
+              key={`vehicle-operator-${index}`}
+              dataArray={operatorArr.rows}
+              title={operatorArr.header.title}
+              mt
+            />
+          )
+        })}
       {ownersInfo && (
         <OwnersTable
           data={ownersInfo}
           title={formatMessage(messages.ownersTitle)}
         />
       )}
+
       <Box paddingTop={4}>
         <Text variant="small">{formatMessage(messages.infoNote)}</Text>
       </Box>

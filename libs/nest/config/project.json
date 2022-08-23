@@ -1,0 +1,22 @@
+{
+  "root": "libs/nest/config",
+  "sourceRoot": "libs/nest/config/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/nest/config/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/nest/config"],
+      "options": {
+        "jestConfig": "libs/nest/config/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

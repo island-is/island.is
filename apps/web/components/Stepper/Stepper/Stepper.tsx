@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
 
 import {
@@ -14,6 +13,7 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { Webreader } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -55,12 +55,8 @@ interface StepperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
   namespace: GetNamespaceQuery['getNamespace']
-}
-
-interface StepOptionSelectItem {
-  label: string
-  value: string
-  transition: string
+  showWebReader?: boolean
+  webReaderClassName?: string
 }
 
 interface QuestionAndAnswer {
@@ -95,7 +91,7 @@ const getInitialStateAndAnswersByQueryParams = (
     if (stepType === STEP_TYPES.ANSWER) break
 
     const options = getStepOptions(step, activeLocale, optionsFromNamespace)
-    const selectedOption = options.find((o) => o.slug === answer)
+    const selectedOption = options.find((o) => o.value === answer)
     if (!selectedOption) break
 
     initialState = stepperMachine.transition(
@@ -108,7 +104,7 @@ const getInitialStateAndAnswersByQueryParams = (
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
-        slug: selectedOption.slug,
+        slug: selectedOption.value,
       })
     }
   }
@@ -155,6 +151,8 @@ const Stepper = ({
   optionsFromNamespace,
   namespace,
   scrollUpWhenNextStepAppears = true,
+  showWebReader = false,
+  webReaderClassName = 'rs_read',
 }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -205,7 +203,7 @@ const Stepper = ({
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
-  const stepOptions = useMemo<StepOption[]>(
+  const stepOptions = useMemo(
     () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
     [activeLocale, currentStep, optionsFromNamespace],
   )
@@ -227,7 +225,7 @@ const Stepper = ({
 
     // Select the option that was previously selected if we want to change an answer
     if (previousAnswer && selectedOption === null) {
-      const option = stepOptions.find((o) => o.slug === previousAnswer) ?? null
+      const option = stepOptions.find((o) => o.value === previousAnswer) ?? null
       setSelectedOption(option)
       previousAnswerIsValid = option !== null
     }
@@ -259,6 +257,7 @@ const Stepper = ({
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
       accumulatedAnswers.push(slug)
       const query = {
+        ...router.query,
         answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
         previousAnswer: slug,
       }
@@ -271,23 +270,24 @@ const Stepper = ({
           className={styles.answerRowContainer}
         >
           <Box marginRight={2}>
-            <Text variant="h4">{question}</Text>
+            <Text variant="h4" color="purple600">
+              {question}
+            </Text>
           </Box>
           <Box marginRight={2}>
-            <Text>{answer}</Text>
+            <Text color="purple600">{answer}</Text>
           </Box>
-          <Box>
+          <Box textAlign="right">
             <Link
-              underline="small"
-              underlineVisibility="always"
-              color="blue400"
               shallow={true}
               href={{
                 pathname: urlWithoutQueryParams,
                 query: query,
               }}
             >
-              {n('changeSelection', 'Breyta')}
+              <Button variant="text" icon="pencil" size="small" nowrap={true}>
+                {n('changeSelection', 'Breyta')}
+              </Button>
             </Link>
           </Box>
         </Box>
@@ -327,7 +327,8 @@ const Stepper = ({
               .push({
                 pathname: pathnameWithoutQueryParams,
                 query: {
-                  answers: `${previousAnswers}${selectedOption.slug}`,
+                  ...router.query,
+                  answers: `${previousAnswers}${selectedOption.value}`,
                 },
               })
               .then(() => {
@@ -355,8 +356,13 @@ const Stepper = ({
     </Box>
   )
 
-  const QuestionTitle = () => (
+  const QuestionTitle = ({
+    containerClassName,
+  }: {
+    containerClassName: string
+  }) => (
     <Box
+      className={containerClassName}
       marginBottom={3}
       marginTop={1}
       onClick={(ev) => {
@@ -386,7 +392,7 @@ const Stepper = ({
                 hasClickedContinueWithoutSelecting && selectedOption === null
               }
               label={option.label}
-              checked={option.slug === selectedOption?.slug}
+              checked={option.value === selectedOption?.value}
               onChange={() => setSelectedOption(option)}
             />
           </Box>
@@ -402,24 +408,11 @@ const Stepper = ({
                 size="sm"
                 name="step-option-select"
                 noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
-                value={{
-                  label: selectedOption?.label ?? '',
-                  value: selectedOption?.slug ?? '',
+                value={selectedOption}
+                onChange={(option) => {
+                  setSelectedOption(option as StepOption)
                 }}
-                onChange={(option: ValueType<StepOptionSelectItem>) => {
-                  const stepOptionSelectItem = option as StepOptionSelectItem
-                  const newSelectedOption = {
-                    label: stepOptionSelectItem.label,
-                    slug: stepOptionSelectItem.value,
-                    transition: stepOptionSelectItem.transition,
-                  }
-                  setSelectedOption(newSelectedOption)
-                }}
-                options={stepOptions.map((option) => ({
-                  label: option.label,
-                  value: option.slug,
-                  transition: option.transition,
-                }))}
+                options={stepOptions}
               />
             </GridColumn>
           </GridRow>
@@ -429,7 +422,15 @@ const Stepper = ({
 
   return (
     <Box className={styles.container}>
-      {currentStep && <QuestionTitle />}
+      {currentStepType !== STEP_TYPES.ANSWER && (
+        <QuestionTitle containerClassName={webReaderClassName} />
+      )}
+      {showWebReader && (
+        <Webreader readId={null} readClass={webReaderClassName} />
+      )}
+      {currentStepType === STEP_TYPES.ANSWER && (
+        <QuestionTitle containerClassName={webReaderClassName} />
+      )}
 
       {renderCurrentStepOptions()}
       {transitionErrorMessage && (
@@ -440,22 +441,27 @@ const Stepper = ({
       {stepOptions?.length > 0 && <ContinueButton />}
 
       {!isOnFirstStep && (
-        <Box marginTop={10}>
-          <Text variant="h3" marginBottom={2}>
-            {n('yourAnswers', 'Svörin þín')}
-          </Text>
-          <Box marginBottom={3}>
-            <Link
-              shallow={true}
-              underline="small"
-              underlineVisibility="always"
-              color="blue400"
-              href={router.asPath.split('?')[0]}
-            >
-              {n('startAgain', 'Byrja aftur')}
-            </Link>
+        <Box
+          marginTop={10}
+          background="purple100"
+          borderRadius="large"
+          padding="containerGutter"
+        >
+          <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+            <Text variant="h3" marginBottom={3} color="purple600">
+              {n('yourAnswers', 'Svörin þín')}
+            </Text>
+            <Box marginBottom={3} textAlign="right">
+              <Link
+                shallow={true}
+                href={`${router.asPath.split('?')[0]}?stepper=true`}
+              >
+                <Button variant="text" icon="reload" size="small" nowrap={true}>
+                  {n('startAgain', 'Byrja aftur')}
+                </Button>
+              </Link>
+            </Box>
           </Box>
-
           {renderQuestionsAndAnswers(
             questionsAndAnswers,
             router.asPath.split('?')[0],

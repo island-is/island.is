@@ -1,24 +1,28 @@
+import isAfter from 'date-fns/isAfter'
+import isEqual from 'lodash/isEqual'
 import React, { useState } from 'react'
-import {
-  ServicePortalModuleComponent,
-  m,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import { useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
-  Stack,
-  Text,
+  Checkbox,
+  DatePicker,
   GridColumn,
   GridRow,
-  Table as T,
   LoadingDots,
-  DatePicker,
-  Checkbox,
+  Stack,
   Tabs,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  EmptyState,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
 import TabContent from './TabContent'
@@ -35,18 +39,25 @@ const getFilteredVehicles = (
 
   if (fromDate) {
     filteredVehicles = filteredVehicles.filter((x: VehiclesVehicle) => {
-      return (
+      const startDate =
         x.operatorStartDate &&
-        new Date(x.operatorStartDate).getTime() >= fromDate.getTime()
+        new Date(x.operatorStartDate).setHours(0, 0, 0, 0)
+      return (
+        startDate &&
+        (isAfter(startDate, fromDate.getTime()) ||
+          isEqual(startDate, fromDate.getTime()))
       )
     })
   }
 
   if (toDate) {
     filteredVehicles = filteredVehicles.filter((x: VehiclesVehicle) => {
+      const endDate =
+        x.operatorEndDate && new Date(x.operatorEndDate).setHours(0, 0, 0, 0)
       return (
-        x.operatorEndDate &&
-        new Date(x.operatorEndDate).getTime() <= toDate.getTime()
+        endDate &&
+        (isAfter(toDate.getTime(), endDate) ||
+          isEqual(endDate, toDate.getTime()))
       )
     })
   }
@@ -99,24 +110,24 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.historyTitle)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(messages.intro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={messages.historyTitle}
+        intro={messages.historyIntro}
+      />
 
+      {error && (
+        <Box>
+          <EmptyState description={m.errorFetch} />
+        </Box>
+      )}
+      {!loading && !error && vehicles.length === 0 && (
+        <Box marginTop={8}>
+          <EmptyState />
+        </Box>
+      )}
       <Stack space={2}>
-        {!loading && !error && (
-          <GridRow marginTop={4}>
+        {!loading && !error && vehicles.length > 0 && (
+          <GridRow>
             <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
               <DatePicker
                 backgroundColor="blue"
@@ -124,7 +135,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
                 icon="calendar"
                 iconType="outline"
                 size="xs"
-                label={formatMessage(m.dateFrom)}
+                label={formatMessage(messages.dateOfPurchase)}
                 selected={fromDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
@@ -141,7 +152,7 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
                 icon="calendar"
                 iconType="outline"
                 size="xs"
-                label={formatMessage(m.dateTo)}
+                label={formatMessage(messages.dateOfSale)}
                 selected={toDate}
                 locale="is"
                 placeholderText={formatMessage(m.chooseDate)}
@@ -170,16 +181,17 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
             </GridColumn>
           </GridRow>
         )}
-        {error && (
-          <Box>
-            <EmptyState description={m.errorFetch} />
-          </Box>
-        )}
-        {!loading && !error && filteredVehicles.length === 0 && (
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        )}
+
+        {!loading &&
+          !error &&
+          vehicles.length > 0 &&
+          filteredVehicles.length === 0 && (
+            <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+              <Text variant="h3" as="h3">
+                {formatMessage(messages.noVehiclesFound)}
+              </Text>
+            </Box>
+          )}
 
         {loading && (
           <Box

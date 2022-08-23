@@ -88,6 +88,7 @@ import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.mo
 import { GetSingleSupportQNAInput } from './dto/getSingleSupportQNA.input'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
+import { FeaturedArticles } from './models/featuredArticles.model'
 
 const { cacheTime } = environment
 
@@ -352,11 +353,14 @@ export class CmsResolver {
   @Query(() => Article, { nullable: true })
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
-  ): Promise<Partial<Article> & { lang: Locale }> {
+  ): Promise<(Partial<Article> & { lang: Locale }) | null> {
     const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
+
+    if (!article) return null
+
     return {
       ...article,
       lang,
@@ -527,11 +531,32 @@ export class ArticleResolver {
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
   async relatedArticles(
-    @Parent() article: Article & { lang?: Locale },
+    @Parent() article: (Article & { lang?: Locale }) | null,
   ): Promise<Article[]> {
+    if (!article) return []
+
     return this.cmsContentfulService.getRelatedArticles(
       article.slug,
       article?.lang ?? 'is',
+    )
+  }
+}
+
+@Resolver(() => FeaturedArticles)
+@Directive(cacheControlDirective())
+export class FeaturedArticlesResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [Article])
+  async resolvedArticles(
+    @Parent() { resolvedArticles: input }: FeaturedArticles,
+  ): Promise<Article[]> {
+    if (input.size === 0) {
+      return []
+    }
+    return await this.cmsElasticsearchService.getArticles(
+      getElasticsearchIndex(input.lang),
+      input,
     )
   }
 }

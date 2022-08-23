@@ -1,19 +1,18 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
   CaseState,
   CaseTransition,
+  Institution,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
   ProsecutorSubsections,
   Sections,
-  ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
@@ -25,8 +24,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
-  setAndSendDateToServer,
-  setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -51,6 +48,7 @@ import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -63,7 +61,7 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
+  const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
   const [
     isProsecutorAccessModalVisible,
     setIsProsecutorAccessModalVisible,
@@ -76,6 +74,7 @@ export const HearingArrangements: React.FC = () => {
     transitionCase,
     isTransitioningCase,
     updateCase,
+    setAndSendToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
@@ -85,17 +84,13 @@ export const HearingArrangements: React.FC = () => {
 
   const { courts, loading: institutionLoading } = useInstitution()
 
-  const prosecutors = userData?.users
-    .filter(
-      (aUser: User) =>
-        aUser.role === UserRole.PROSECUTOR &&
-        (!workingCase?.creatingProsecutor ||
-          aUser.institution?.id ===
-            workingCase?.creatingProsecutor?.institution?.id),
-    )
-    .map((prosecutor: User, _: number) => {
-      return { label: prosecutor.name, value: prosecutor.id }
-    })
+  const prosecutors = userData?.users.filter(
+    (aUser: User) =>
+      aUser.role === UserRole.PROSECUTOR &&
+      (!workingCase?.creatingProsecutor ||
+        aUser.institution?.id ===
+          workingCase?.creatingProsecutor?.institution?.id),
+  )
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -116,7 +111,9 @@ export const HearingArrangements: React.FC = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+        router.push(
+          `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+        )
       } else {
         setModalVisible(true)
       }
@@ -125,26 +122,32 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const setProsecutor = async (prosecutorId: string) => {
+  const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
       return setAndSendToServer(
-        'prosecutorId',
-        prosecutorId,
+        [
+          {
+            prosecutorId: prosecutor.id,
+            force: true,
+          },
+        ],
         workingCase,
         setWorkingCase,
-        updateCase,
       )
     }
   }
 
-  const handleCourtChange = (courtId: string) => {
+  const handleCourtChange = (court: Institution) => {
     if (workingCase) {
       setAndSendToServer(
-        'courtId',
-        courtId,
+        [
+          {
+            courtId: court.id,
+            force: true,
+          },
+        ],
         workingCase,
         setWorkingCase,
-        updateCase,
       )
 
       return true
@@ -153,25 +156,24 @@ export const HearingArrangements: React.FC = () => {
     return false
   }
 
-  const handleProsecutorChange = (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    if (!workingCase) return false
+  const handleProsecutorChange = (prosecutor: User) => {
+    if (!workingCase) {
+      return false
+    }
 
-    const option = selectedOption as ReactSelectOption
     const isRemovingCaseAccessFromSelf =
       user?.id !== workingCase.creatingProsecutor?.id
 
     if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
-      setSubstituteProsecutorId(option.value.toString())
+      setSubstituteProsecutor(prosecutor)
       setIsProsecutorAccessModalVisible(true)
 
       return false
-    } else {
-      setProsecutor(option.value.toString())
-
-      return true
     }
+
+    setProsecutor(prosecutor)
+
+    return true
   }
 
   return (
@@ -221,18 +223,19 @@ export const HearingArrangements: React.FC = () => {
                   )}
                   disabled={
                     user?.id !== workingCase.creatingProsecutor?.id &&
-                    user?.id !==
-                      (((workingCase as unknown) as { prosecutorId: string })
-                        .prosecutorId ?? workingCase.prosecutor?.id)
+                    user?.id !== workingCase.prosecutor?.id
                   }
                   checked={workingCase.isHeightenedSecurityLevel}
                   onChange={(event) =>
                     setAndSendToServer(
-                      'isHeightenedSecurityLevel',
-                      event.target.checked,
+                      [
+                        {
+                          isHeightenedSecurityLevel: event.target.checked,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      updateCase,
                     )
                   }
                   large
@@ -259,16 +262,20 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <RequestCourtDate
                 workingCase={workingCase}
-                onChange={(date: Date | undefined, valid: boolean) =>
-                  setAndSendDateToServer(
-                    'requestedCourtDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  if (date && valid) {
+                    setAndSendToServer(
+                      [
+                        {
+                          requestedCourtDate: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                }}
               />
             </Box>
             <Box component="section" marginBottom={10}>
@@ -314,7 +321,7 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () => await handleNextButtonClick()}
               nextIsDisabled={
                 !isHearingArrangementsStepValidRC(workingCase) ||
@@ -335,7 +342,9 @@ export const HearingArrangements: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                router.push(
+                  `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                )
               }
               errorMessage={
                 sendNotificationError
@@ -349,7 +358,9 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                  router.push(
+                    `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  )
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
@@ -372,9 +383,9 @@ export const HearingArrangements: React.FC = () => {
                   .secondaryButtonText,
               )}
               handlePrimaryButtonClick={async () => {
-                if (substituteProsecutorId) {
-                  await setProsecutor(substituteProsecutorId)
-                  router.push(constants.CASE_LIST_ROUTE)
+                if (substituteProsecutor) {
+                  await setProsecutor(substituteProsecutor)
+                  router.push(constants.CASES_ROUTE)
                 }
               }}
               handleSecondaryButtonClick={() => {

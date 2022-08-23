@@ -18,86 +18,88 @@ import * as styles from './Sidebar.css'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
-  const [{ sidebarState }, dispatch] = useStore()
-  const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
-  const { width } = useWindowSize()
+  //const [{ sidebarState }, dispatch] = useStore()
+  const [collapsed, setCollapsed] = useState(false) //useState(sidebarState === 'closed')
+  // const { width } = useWindowSize()
   const { signOut } = useAuth()
-  const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
-  const isMobile = width < theme.breakpoints.md
-  const { unreadCounter } = useListDocuments('')
+  // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
+  // const isMobile = width < theme.breakpoints.md
+  const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
-  useEffect(() => {
-    if (isTablet) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'closed',
-      })
-      setCollapsed(true)
-    }
-  }, [isTablet])
+  /* This is commented out because this will be revisited next fall (2022) */
+  // useEffect(() => {
+  //   if (isTablet) {
+  //     dispatch({
+  //       type: ActionType.SetSidebarMenuState,
+  //       payload: 'closed',
+  //     })
+  //     setCollapsed(true)
+  //   }
+  // }, [isTablet])
 
-  useEffect(() => {
-    if (isMobile) {
-      dispatch({
-        type: ActionType.SetSidebarMenuState,
-        payload: 'open',
-      })
-      setCollapsed(false)
-    }
-  }, [isMobile])
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     dispatch({
+  //       type: ActionType.SetSidebarMenuState,
+  //       payload: 'open',
+  //     })
+  //     setCollapsed(false)
+  //   }
+  // }, [isMobile])
 
   return (
     <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
       <Box
+        className={collapsed && styles.logoCollapsed}
+        paddingTop={6}
+        paddingBottom={3}
+        paddingLeft={collapsed ? 0 : 4}
+      >
+        <Link to={ServicePortalPath.MinarSidurRoot}>
+          {collapsed ? (
+            <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
+          ) : (
+            <Logo width={136} height={22} id="sidebar" />
+          )}
+        </Link>
+      </Box>
+      {/* This is commented out because this will be revisited next fall (2022) */}
+      {/* <Box
+        className={styles.navIcon}
+        borderRadius="circle"
+        display="flex"
+        alignItems="center"
+        marginRight={2}
+        padding="smallGutter"
+        background="blue200"
+        onClick={() => {
+          dispatch({
+            type: ActionType.SetSidebarMenuState,
+            payload: collapsed ? 'open' : 'closed',
+          })
+          setCollapsed(!collapsed)
+        }}
+      >
+        <Icon
+          type="outline"
+          icon={collapsed ? 'chevronForward' : 'chevronBack'}
+          size="medium"
+          color="blue400"
+        />
+      </Box> */}
+
+      <Box
         display="flex"
         flexDirection="column"
-        justifyContent="flexStart"
+        justifyContent="spaceBetween"
         paddingLeft={collapsed ? 6 : 0}
         paddingRight={collapsed ? 6 : 0}
-        paddingTop={3}
+        paddingBottom={4}
+        paddingTop={5}
+        height="full"
+        className={!collapsed && styles.sidebarScroll}
       >
-        <Box
-          className={collapsed && styles.logoCollapsed}
-          paddingBottom={8}
-          paddingTop={3}
-          height="full"
-          paddingLeft={collapsed ? 0 : 4}
-        >
-          <Link to={ServicePortalPath.MinarSidurRoot}>
-            {collapsed ? (
-              <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
-            ) : (
-              <Logo width={136} height={22} id="sidebar" />
-            )}
-          </Link>
-        </Box>
-        <Box>
-          <Box
-            className={styles.navIcon}
-            borderRadius="circle"
-            display="flex"
-            alignItems="center"
-            marginRight={2}
-            padding="smallGutter"
-            background="blue200"
-            onClick={() => {
-              dispatch({
-                type: ActionType.SetSidebarMenuState,
-                payload: collapsed ? 'open' : 'closed',
-              })
-              setCollapsed(!collapsed)
-            }}
-          >
-            <Icon
-              type="outline"
-              icon={collapsed ? 'chevronForward' : 'chevronBack'}
-              size="medium"
-              color="blue400"
-            />
-          </Box>
-        </Box>
-
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>
             {rootItem.children?.map(
@@ -115,15 +117,16 @@ export const Sidebar: FC<{}> = () => {
             )}
           </Stack>
         ))}
-      </Box>
-      <Box marginTop={1}>
-        <NavItem
-          onClick={() => signOut()}
-          active={false}
-          icon={{ icon: 'logOut', type: 'outline' }}
-        >
-          {formatMessage(sharedMessages.logout)}
-        </NavItem>
+
+        <Box marginTop={1} background="white" width="full">
+          <NavItem
+            onClick={() => signOut()}
+            active={false}
+            icon={{ icon: 'logOut', type: 'outline' }}
+          >
+            {formatMessage(sharedMessages.logout)}
+          </NavItem>
+        </Box>
       </Box>
     </aside>
   )

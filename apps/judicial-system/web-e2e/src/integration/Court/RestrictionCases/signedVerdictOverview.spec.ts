@@ -1,6 +1,6 @@
 import {
-  MODIFY_RULING_ROUTE,
-  SIGNED_VERDICT_OVERVIEW,
+  RESTRICTION_CASE_MODIFY_RULING_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
@@ -20,16 +20,16 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
 
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
   it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
     cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', MODIFY_RULING_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_MODIFY_RULING_ROUTE)
   })
 
-  it.only('should display appropriate components on page', () => {
+  it('should display appropriate components on page', () => {
     cy.get('[aria-controls="caseFilesAccordionItem"]')
   })
 

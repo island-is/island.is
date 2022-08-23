@@ -6,7 +6,7 @@ import { mapToLawyer } from '../utils'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 async function getLawyer(nationalId: string): Promise<Lawyer> {
-  const isValid = validate(nationalId || '', 'national-id')
+  const isValid = validate([[nationalId, ['empty', 'national-id']]]).isValid
   if (!isValid) {
     throw new Error('Invalid national id')
   }

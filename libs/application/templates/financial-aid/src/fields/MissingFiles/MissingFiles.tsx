@@ -1,14 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box, AlertMessage, Input } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  AlertMessage,
+  Input,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import {
   ApplicationEventType,
   ApplicationState,
   FileType,
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
-import { getValueViaPath, RecordObject } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { RecordObject } from '@island.is/application/types'
 
 import { filesText, missingFiles } from '../../lib/messages'
 import { Files } from '..'
@@ -23,7 +30,7 @@ const MissingFiles = ({
   setBeforeSubmitCallback,
   field,
 }: FAFieldBaseProps) => {
-  const { currentApplication, updateApplication } = useApplication(
+  const { currentApplication, updateApplication, loading } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
   const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
@@ -84,6 +91,10 @@ const MissingFiles = ({
       }
       return [true, null]
     })
+
+  if (loading) {
+    return <LoadingDots />
+  }
 
   return (
     <>

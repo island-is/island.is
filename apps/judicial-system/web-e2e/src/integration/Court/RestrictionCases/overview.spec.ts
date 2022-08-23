@@ -8,13 +8,13 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  HEARING_ARRANGEMENTS_ROUTE,
-  OVERVIEW_ROUTE,
+  RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
-describe(`${OVERVIEW_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
@@ -47,9 +47,8 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
-
     intercept(caseDataAddition)
+    cy.visit(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/test_id_stadfest`)
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
@@ -99,6 +98,9 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should(
+      'include',
+      RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+    )
   })
 })

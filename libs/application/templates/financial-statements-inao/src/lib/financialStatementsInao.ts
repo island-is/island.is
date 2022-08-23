@@ -1,4 +1,8 @@
 import {
+  DEPRECATED_DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,9 +10,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from './messages'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
@@ -58,7 +60,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
 
           roles: [
             {

@@ -10,15 +10,10 @@ export const caseModuleConfig = defineConfig({
       replyToEmail: env.required('EMAIL_REPLY_TO', 'ben10@omnitrix.is'),
       replyToName: env.required('EMAIL_REPLY_TO_NAME', 'Réttarvörslugátt'),
     },
-    dokobitAccessToken: env.optional('DOKOBIT_ACCESS_TOKEN'),
     deepLinks: {
       completedCaseOverviewUrl: env.required(
         'COMPLETED_CASE_OVERVIEW_URL',
         'http://localhost:4200/krafa/yfirlit/',
-      ),
-      defenderCaseOverviewUrl: env.required(
-        'DEFENDER_CASE_OVERVIEW_URL',
-        'http://localhost:4200/verjandi/',
       ),
     },
     archiveEncryptionKey: env.required(

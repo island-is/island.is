@@ -1,21 +1,20 @@
 import * as z from 'zod'
 import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
-import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import {
   Application,
   ApplicationStatus,
+  ApplicationTemplate,
+  ApplicationTypes,
   ExternalData,
   FormValue,
-} from '../types/Application'
-import { ApplicationTypes } from '../types/ApplicationTypes'
-import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
-} from '../types/StateMachine'
-import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+} from '@island.is/application/types'
+import { buildForm } from './formBuilders'
+import { DEPRECATED_DefaultStateLifeCycle } from './constants'
 
 const createMockApplication = (
   data: {
@@ -59,6 +58,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
     }),
     externalReviewAccepted: z.boolean(),
     wantsInsurance: z.boolean(),
+    wantsCake: z.boolean(),
   }),
   stateMachineConfig: {
     initial: 'draft',
@@ -67,7 +67,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'draft',
           progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
@@ -95,7 +95,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.66,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
@@ -119,18 +119,39 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
         },
         type: 'final' as const,
       },
       rejected: {
         meta: {
           name: 'Rejected',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: 'applicant',
               write: 'all',
+            },
+          ],
+        },
+      },
+      closed: {
+        meta: {
+          name: 'Closed',
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          roles: [
+            {
+              id: 'applicant',
+              write: {
+                answers: ['person'],
+                externalData: ['salary'],
+              },
+            },
+            {
+              id: 'reviewer',
+              write: {
+                answers: ['wantsCake'],
+              },
             },
           ],
         },
@@ -202,6 +223,7 @@ describe('ApplicationTemplate', () => {
       },
       externalReviewAccepted: false,
       wantsInsurance: true,
+      wantsCake: false,
     }
     const externalData: ExternalData = {
       salary: { data: 1000000, date: new Date(), status: 'success' },
@@ -239,6 +261,22 @@ describe('ApplicationTemplate', () => {
           date: externalData.salary.date,
           status: 'success',
         },
+      })
+    })
+
+    it('should return true', () => {
+      const applicationWithAnswersAndExternalData = createMockApplication({
+        state: 'closed',
+        answers,
+        externalData,
+      })
+      const helper = new ApplicationTemplateHelper(
+        applicationWithAnswersAndExternalData,
+        testApplicationTemplate,
+      )
+      expect(helper.getWritableAnswersAndExternalData('applicant')).toEqual({
+        answers: ['person'],
+        externalData: ['salary'],
       })
     })
 
@@ -309,7 +347,7 @@ describe('ApplicationTemplate', () => {
       application,
       testApplicationTemplate,
     )
-    it('should return the corrent progress for each state', () => {
+    it('should return the correct progress for each state', () => {
       expect(templateHelper.getApplicationProgress('draft')).toBe(0.33)
       expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
       expect(templateHelper.getApplicationProgress('approved')).toBe(1)

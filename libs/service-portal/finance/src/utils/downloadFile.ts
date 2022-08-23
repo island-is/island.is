@@ -10,9 +10,9 @@ export const downloadFile = async (
   const getFile = (name: string, output: string | undefined) => {
     const uri =
       type === 'csv'
-        ? 'data:text/csv;charset=utf-8'
-        : 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64'
-    const encodedUri = encodeURI(`${uri},${output}`)
+        ? 'data:text/plain;charset=utf-8,\uFEFF'
+        : 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
+    const encodedUri = encodeURI(`${uri}${output}`)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
     link.setAttribute('download', name)

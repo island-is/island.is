@@ -1,6 +1,7 @@
 describe('Front page', () => {
   beforeEach(() => {
-    cy.cognitoLogin()
+    const { username, password } = Cypress.env('cognito')
+    cy.cognitoLogin({ username, password })
   })
 
   it('has expected sections', () => {
@@ -44,10 +45,8 @@ describe('Front page', () => {
   it.only('should change welcome message on language toggle', () => {
     cy.visit('/')
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
-      cy.get('button[data-testid="language-toggler"]:visible')
-        .click()
-        .as('clicked')
-      cy.waitFor('@clicked')
+      cy.get('button[data-testid="language-toggler"]:visible').click()
+      cy.location('pathname').should('eq', '/en')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
         previousHeading.text(),

@@ -1,0 +1,24 @@
+{
+  "root": "libs/api/domains/mortgage-certificate",
+  "sourceRoot": "libs/api/domains/mortgage-certificate/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/mortgage-certificate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/mortgage-certificate"],
+      "options": {
+        "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

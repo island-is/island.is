@@ -1,14 +1,17 @@
 import {
+  DefaultStateLifeCycle,
+  getValueViaPath,
+} from '@island.is/application/core'
+import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
@@ -54,10 +57,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.4,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -212,6 +212,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              shouldBeListedForRole: false,
             },
           ],
         },

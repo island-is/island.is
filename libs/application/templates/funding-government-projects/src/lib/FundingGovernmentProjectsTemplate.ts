@@ -1,4 +1,9 @@
 import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,9 +11,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { FundingGovernmentProjectsSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -86,7 +89,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },

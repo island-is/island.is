@@ -1,21 +1,16 @@
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { ServicePortalNavigationItem } from '../service-portal-core'
 import { m } from '../messages'
 import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: m.info,
+    name: m.overview,
+    systemRoute: true,
+    path: ServicePortalPath.MinarSidurRoot,
+    icon: {
+      icon: 'home',
+    },
     children: [
-      // Yfirlit
-      {
-        name: m.overview,
-        systemRoute: true,
-        path: ServicePortalPath.MinarSidurRoot,
-        icon: {
-          icon: 'home',
-        },
-      },
-
       // Rafraen skjol
       {
         name: m.documents,
@@ -33,6 +28,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+        children: [
+          {
+            name: m.inProgressApplications,
+            path: ServicePortalPath.ApplicationInProgressApplications,
+          },
+          {
+            name: m.unfinishedApplications,
+            path: ServicePortalPath.ApplicationIncompleteApplications,
+          },
+          {
+            name: m.finishedApplications,
+            path: ServicePortalPath.ApplicationCompleteApplications,
+          },
+        ],
       },
 
       // Company
@@ -58,10 +67,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.UserInfo,
           },
           {
-            name: m.family,
+            name: m.familySpouse,
             navHide: true,
-            path: ServicePortalPath.FamilyRoot,
+            path: ServicePortalPath.Spouse,
           },
+          {
+            name: m.familyChild,
+            navHide: true,
+            path: ServicePortalPath.Child,
+          },
+
           {
             // Petitions
             name: m.endorsements,
@@ -85,8 +100,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.drivingLicense,
-            path: ServicePortalPath.LicensesDrivingDetail,
+            name: m.detailInfo,
+            path: ServicePortalPath.LicensesDetail,
           },
         ],
       },
@@ -183,6 +198,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'home',
         },
+        children: [
+          {
+            name: 'id',
+            navHide: true,
+            path: ServicePortalPath.AssetsRealEstateDetail,
+          },
+        ],
       },
 
       // Fjarmal
@@ -231,6 +253,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.myVehicles,
             path: ServicePortalPath.AssetsMyVehicles,
+            children: [
+              {
+                // Path param reference
+                name: 'id',
+                navHide: true,
+                path: ServicePortalPath.AssetsVehiclesDetail,
+              },
+            ],
           },
           {
             name: m.vehiclesLookup,
@@ -251,14 +281,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
-          },
-          {
-            name: m.accessControlGrant,
-            path: ServicePortalPath.SettingsAccessControlGrant,
-          },
-          {
-            name: m.accessControlAccess,
-            path: ServicePortalPath.SettingsAccessControlAccess,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.SettingsAccessControlGrant,
+              },
+              {
+                name: m.accessControlAccess,
+                path: ServicePortalPath.SettingsAccessControlAccess,
+              },
+            ],
           },
           {
             name: m.mySettings,

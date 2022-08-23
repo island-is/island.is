@@ -1,17 +1,13 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import {
-  COURT_RECORD_ROUTE,
-  RULING_ROUTE,
+  RESTRICTION_CASE_COURT_RECORD_ROUTE,
+  RESTRICTION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, intercept } from '../../../utils'
 
-describe(`${RULING_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
-    cy.stubAPIResponses()
-  })
-
-  it('should autofill prosecutor demands', () => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -19,29 +15,21 @@ describe(`${RULING_ROUTE}/:id`, () => {
       legalArguments: 'lorem ipsum',
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      isCustodyIsolation: true,
     }
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
+    cy.stubAPIResponses()
     intercept(caseDataAddition)
+    cy.visit(`${RESTRICTION_CASE_RULING_ROUTE}/test_id_stadfest`)
+  })
 
+  it('should autofill prosecutor demands', () => {
     cy.getByTestid('prosecutorDemands').contains(
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     )
   })
 
   it('should show appropriate valid to dates based on decision', () => {
-    const caseData = makeRestrictionCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      caseFacts: 'lorem ipsum',
-      legalArguments: 'lorem ipsum',
-      demands:
-        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    }
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
-
     cy.getByTestid('caseDecisionSection').should('not.exist')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('caseDecisionSection').should('exist')
@@ -52,33 +40,13 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should have a disabled isolationTo datepicker if isolation is nor selected and not if it is', () => {
-    const caseData = makeRestrictionCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      decision: CaseDecision.ACCEPTING,
-      isCustodyIsolation: true,
-    }
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
-
+    cy.get('#case-decision-accepting').check()
     cy.get('#isolationToDate').should('not.have.attr', 'disabled')
     cy.get('[name="isCustodyIsolation"]').uncheck()
     cy.get('#isolationToDate').should('have.attr', 'disabled')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeRestrictionCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      caseFacts: 'lorem ipsum',
-      legalArguments: 'lorem ipsum',
-      demands:
-        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    }
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
     cy.wait('@gqlCaseQuery')
 
     // Introduction validation
@@ -119,6 +87,6 @@ describe(`${RULING_ROUTE}/:id`, () => {
 
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').should('not.be.disabled').click()
-    cy.url().should('include', COURT_RECORD_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_COURT_RECORD_ROUTE)
   })
 })

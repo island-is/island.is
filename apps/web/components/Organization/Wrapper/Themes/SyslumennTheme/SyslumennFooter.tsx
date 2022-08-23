@@ -12,7 +12,7 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useFeatureFlag, useLinkResolver } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -36,10 +36,6 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
 }) => {
   const { isServiceWeb } = useContext(GlobalContext)
   const { linkResolver } = useLinkResolver()
-  const { value: isSyslumennFooterLinkingToSupportPage } = useFeatureFlag(
-    'isSyslumennFooterLinkingToSupportPage',
-    false,
-  )
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -105,7 +101,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {!isSyslumennFooterLinkingToSupportPage || isServiceWeb ? (
+            {isServiceWeb ? (
               items
             ) : (
               <>

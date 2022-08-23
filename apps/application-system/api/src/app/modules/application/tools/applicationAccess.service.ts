@@ -7,12 +7,17 @@ import {
   Application as BaseApplication,
   ApplicationService,
 } from '@island.is/application/api/core'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   Application,
-  ApplicationTemplateHelper,
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { EventObject } from 'xstate'
+
 @Injectable()
 export class ApplicationAccessService {
   constructor(private readonly applicationService: ApplicationService) {}
@@ -51,9 +56,45 @@ export class ApplicationAccessService {
     const templateId = application.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
     const helper = new ApplicationTemplateHelper(application, template)
-    const userRole = template.mapUserToRole(nationalId, application) ?? ''
-    const role = helper.getRoleInState(userRole)
-
+    const currentUserRole =
+      template.mapUserToRole(nationalId, application) || ''
+    const role = helper.getRoleInState(currentUserRole)
     return role?.delete ?? false
+  }
+
+  private async evaluateIfRoleShouldBeListed(
+    userRole: string | undefined,
+    templateHelper: ApplicationTemplateHelper<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+  ) {
+    if (userRole) {
+      const roleInState = templateHelper.getRoleInState(userRole)
+      // if shouldBeListedForRole isnt defined it should show the application for backwards compatibility
+      return roleInState?.shouldBeListedForRole === undefined
+        ? true
+        : roleInState?.shouldBeListedForRole
+    }
+    return true
+  }
+
+  async shouldShowApplicationOnOverview(
+    application: Application,
+    nationalId: string,
+    template?: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+  ): Promise<boolean> {
+    if (template === undefined) {
+      return false
+    }
+
+    const currentUserRole = template.mapUserToRole(nationalId, application)
+    const templateHelper = new ApplicationTemplateHelper(application, template)
+    return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
   }
 }

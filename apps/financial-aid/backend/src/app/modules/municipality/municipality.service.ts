@@ -11,7 +11,8 @@ import {
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
-import { Op, Sequelize } from 'sequelize'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -216,8 +217,8 @@ export class MunicipalityService {
     return { numberOfAffectedRows, updatedMunicipality }
   }
 
-  decryptNavPassword(municipality: MunicipalityModel) {
-    if (municipality.navPassword) {
+  decryptNavPassword(municipality?: MunicipalityModel) {
+    if (municipality?.navPassword) {
       municipality.navPassword = CryptoJS.AES.decrypt(
         municipality.navPassword,
         environment.navEncryptionKey,

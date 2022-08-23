@@ -1,12 +1,15 @@
 import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 
@@ -57,7 +60,7 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,

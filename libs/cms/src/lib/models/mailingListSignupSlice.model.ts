@@ -34,6 +34,12 @@ export class MailingListSignupSlice {
   @Field({ nullable: true })
   disclaimerLabel!: string
 
+  @Field({ nullable: true })
+  categoryLabel!: string
+
+  @Field()
+  categories!: string
+
   @Field()
   buttonText!: string
 
@@ -56,6 +62,8 @@ export const mapMailingListSignup = ({
   yesLabel: fields.yesLabel ?? '',
   noLabel: fields.noLabel ?? '',
   disclaimerLabel: fields.disclaimerLabel ?? '',
+  categoryLabel: fields.categoryLabel ?? '',
+  categories: JSON.stringify(fields.categories) ?? '',
   buttonText: fields.buttonText ?? '',
   signupUrl: fields.signupUrl ?? '',
 })

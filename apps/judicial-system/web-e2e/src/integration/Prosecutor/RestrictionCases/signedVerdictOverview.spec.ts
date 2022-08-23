@@ -1,4 +1,4 @@
-import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import {
@@ -24,8 +24,8 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
 
     cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

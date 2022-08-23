@@ -306,7 +306,7 @@ export const CaseFiles: React.FC = () => {
                     </Box>
                   ) : policeCaseFiles?.hasError ? (
                     policeCaseFiles?.errorCode ===
-                    'https://httpstatuses.com/404' ? (
+                    'https://httpstatuses.org/404' ? (
                       <PoliceCaseFilesMessageBox
                         icon="warning"
                         iconColor="yellow400"
@@ -466,8 +466,8 @@ export const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoadingWorkingCase}
         />

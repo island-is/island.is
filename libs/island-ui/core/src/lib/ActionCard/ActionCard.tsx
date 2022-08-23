@@ -53,7 +53,10 @@ type ActionCardProps = {
     label?: string
     message?: string
   }
-  avatar?: boolean
+  image?: {
+    type: 'avatar' | 'image' | 'logo'
+    url?: string
+  }
   deleteButton?: {
     visible?: boolean
     onClick?: () => void
@@ -113,7 +116,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   unavailable: _unavailable,
   progressMeter: _progressMeter,
   deleteButton: _delete,
-  avatar,
+  image,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -127,27 +130,55 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ? 'red100'
       : 'blue100'
 
-  const renderAvatar = () => {
-    if (!avatar) {
+  const renderImage = () => {
+    if (!image) {
       return null
     }
 
-    return heading ? (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.avatar}
-      >
-        <Text variant="h3" as="p" color="blue400">
-          {getTitleAbbreviation(heading)}
-        </Text>
-      </Box>
-    ) : null
+    if (image.type === 'avatar' && heading) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background="blue100"
+          className={styles.avatar}
+        >
+          <Text variant="h3" as="p" color="blue400">
+            {getTitleAbbreviation(heading)}
+          </Text>
+        </Box>
+      )
+    }
+    if (!image.url || image.url.length === 0) return null
+    if (image.type === 'image') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+        >
+          <img className={styles.avatar} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
+    if (image.type === 'logo') {
+      return (
+        <Box
+          padding={2}
+          marginRight={2}
+          className={styles.logo}
+          style={{ backgroundImage: `url(${image.url})` }}
+        ></Box>
+      )
+    }
+    return null
   }
 
   const renderDisabled = () => {
@@ -196,10 +227,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
         marginBottom={[0, 2]}
       >
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Text variant="small">{date}</Text>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box display="flex" marginRight={1} justifyContent="center">
+            <Icon icon="time" size="medium" type="outline" color="blue400" />
+          </Box>
+          <Box display="flex" justifyContent="center">
+            <Text variant="small">{date}</Text>
+          </Box>
         </Box>
-
         <Inline alignY="center" space={1}>
           {!eyebrow && renderTag()}
           {!eyebrow && renderDelete()}
@@ -231,6 +271,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         title={deleteButton.dialogTitle}
         description={deleteButton.dialogDescription}
         ariaLabel="delete"
+        img={
+          <img
+            src={`assets/images/settings.svg`}
+            style={{ float: 'right' }}
+            width="80%"
+          />
+        }
         disclosureElement={
           <Tag outlined={tag.outlined} variant={tag.variant}>
             <Box display="flex" flexDirection="row" alignItems="center">
@@ -275,7 +322,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box>
+          <Box marginLeft={[0, 3]}>
             <Button
               variant={cta.variant}
               size="small"
@@ -349,7 +396,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
-        {renderAvatar()}
+        {/* Checking image type so the image is placed correctly */}
+        {image?.type !== 'logo' && renderImage()}
         <Box flexDirection="row" width="full">
           {heading && (
             <Box
@@ -358,12 +406,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
-                {heading}
-              </Text>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                {/* Checking image type so the logo is placed correctly */}
+                {image?.type === 'logo' && renderImage()}
+                <Text
+                  variant={headingVariant}
+                  color={
+                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
+                  }
+                >
+                  {heading}
+                </Text>
+              </Box>
               <Hidden above="xs">
                 <Box>{!date && !eyebrow && renderTag()}</Box>
               </Hidden>

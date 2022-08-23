@@ -21,9 +21,13 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
+  historyIntro: {
+    id: 'sp.vehicles:vehicles-history-intro',
+    defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
+  },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -140,7 +144,7 @@ export const messages = defineMessages({
   },
   passengers: {
     id: 'sp.vehicles:passengers',
-    defaultMessage: 'Farþegar',
+    defaultMessage: 'Farþegar án ökumanns',
   },
   specialName: {
     id: 'sp.vehicles:special-name',
@@ -461,5 +465,36 @@ export const messages = defineMessages({
   noVehicleFound: {
     id: 'sp.vehicles:no-vehicle-found',
     defaultMessage: 'Ekkert ökutæki fannst',
+  },
+  dateOfPurchase: {
+    id: 'sp.vehicles:date-of-purchase-from',
+    defaultMessage: 'Kaupdagsetning frá',
+  },
+  dateOfSale: {
+    id: 'sp.vehicles:date-of-sold-to',
+    defaultMessage: 'Söludagsetning til',
+  },
+  recycleCar: {
+    id: 'sp.vehicles:recycle-car',
+    defaultMessage: 'Skilavottorð',
+  },
+  myCarsFiles: {
+    id: 'sp.vehicles:my-cars-files',
+    defaultMessage: 'Eignastöðuvottorð',
+  },
+
+  myCarsFilesPDF: {
+    id: 'sp.vehicles:my-cars-files-pdf',
+    defaultMessage: 'Sækja PDF',
+  },
+
+  myCarsFilesCSV: {
+    id: 'sp.vehicles:my-cars-files-csv',
+    defaultMessage: 'Sækja CSV',
+  },
+
+  myCarsFilesExcel: {
+    id: 'sp.vehicles:my-cars-files-excel',
+    defaultMessage: 'Sækja Excel',
   },
 })

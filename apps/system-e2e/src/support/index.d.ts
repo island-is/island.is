@@ -2,23 +2,6 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
-type TestEnvironment = 'local' | 'dev' | 'staging' | 'prod'
-
-type TestConfig = {
-  authUrl: string
-  baseUrl: string
-}
-
-type CognitoCreds = {
-  cognitoUsername: string
-  cognitoPassword: string
-}
-
-type FakeUser = {
-  name: string
-  phoneNumber: string
-}
-
 declare namespace NodeJS {
   interface ProcessEnv {
     TEST_ENVIRONMENT: TestEnvironment
@@ -28,13 +11,29 @@ declare namespace NodeJS {
 }
 
 declare namespace Cypress {
+  interface Cypress {
+    env(
+      key: 'cognito',
+    ): {
+      username: string
+      password: string
+    }
+    env(key: 'authUrl'): AuthUrl
+    env(key: 'testEnvironment'): Environment
+    config(key: 'baseUrl'): BaseUrl
+  }
+
   interface Chainable {
     /**
      * Custom command to log in using cognito and island.is SSO
      * @example cy.login()
      */
-    idsLogin({ phoneNumber: string }): Chainable<void>
-    cognitoLogin(): Chainable<void>
-    patchSameSiteCookie(interceptUrl: string): void
+    idsLogin(params: IDSLogin): Chainable<void>
+    cognitoLogin(params: CognitoCreds): Chainable<void>
+    getEnvironmentUrls(authUrl: AuthUrl)
+    patchSameSiteCookie(
+      interceptUrl: string,
+      method: 'GET' | 'POST' = 'GET',
+    ): void
   }
 }

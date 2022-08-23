@@ -10,7 +10,7 @@ import {
   PensionFund,
   Attachment,
 } from '@island.is/clients/vmst'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   getSelectedChild,
   getApplicationAnswers,

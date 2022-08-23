@@ -11,6 +11,7 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
+      processEntryButtonText
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -27,9 +28,23 @@ export const GET_ARTICLE_QUERY = gql`
       body {
         ...AllSlices
       }
+      stepper {
+        id
+        title
+        steps {
+          id
+          title
+          slug
+          stepType
+          subtitle {
+            ...HtmlFields
+          }
+          config
+        }
+        config
+      }
       processEntry {
         id
-        type
         processTitle
         processLink
         openLinkInModal
@@ -107,21 +122,6 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
         showTableOfContents
-        stepper {
-          id
-          title
-          steps {
-            id
-            title
-            slug
-            stepType
-            subtitle {
-              ...HtmlFields
-            }
-            config
-          }
-          config
-        }
       }
       featuredImage {
         url

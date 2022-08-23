@@ -5,6 +5,7 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
+import isAfter from 'date-fns/isAfter'
 
 export const parseDrivingLicensePayload = (
   licenses: GenericDrivingLicenseResponse[],
@@ -18,13 +19,17 @@ export const parseDrivingLicensePayload = (
   const birthday = license.kennitala
     ? kennitala.info(license.kennitala).birthday
     : ''
-
+  const expired = license.gildirTil
+    ? !isAfter(new Date(license.gildirTil), new Date())
+    : false
   // Parse license data into the fields as they're displayed on the physical drivers license
   // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
   const data = [
     // We don't get the name split into two from the API, combine
+
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'Grunnupplýsingar ökuskírteinis',
       label: '2. Eiginnafn 1. Kenninafn',
       value: license.nafn,
     },
@@ -71,7 +76,7 @@ export const parseDrivingLicensePayload = (
       fields: (license.rettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: (field.nr ?? '').trim(),
-        label: (field.nr ?? '').trim(),
+        label: '',
         fields: [
           {
             type: GenericLicenseDataFieldType.Value,
@@ -100,5 +105,15 @@ export const parseDrivingLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(license),
+    metadata: {
+      licenseNumber: license.id?.toString() ?? '',
+      expired,
+      links: [
+        {
+          label: 'Endurnýja ökuskírteini',
+          value: 'https://island.is/endurnyjun-okuskirteina',
+        },
+      ],
+    },
   }
 }

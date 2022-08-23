@@ -135,8 +135,8 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     it('should generate pdf', () => {
       expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
+        expect.any(Function),
         user,
-        undefined, // TODO Mock IntlService
       )
     })
   })

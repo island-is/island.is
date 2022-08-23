@@ -112,6 +112,9 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/mailchimp": [
+        "libs/api/domains/mailchimp/src/index.ts"
+      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],
@@ -150,6 +153,9 @@
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
+      ],
+      "@island.is/application/api/files": [
+        "libs/application/api/files/src/index.ts"
       ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/polyfills": [
@@ -242,6 +248,12 @@
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/operating-license": [
+        "libs/application/templates/operating-license/src/index.ts"
+      ],
+      "@island.is/application/templates/operating-license/types": [
+        "libs/application/templates/operating-license/src/types.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
@@ -257,6 +269,7 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
@@ -274,9 +287,15 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/adr-and-machine-license": [
+        "libs/clients/adr-and-machine-license/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
+      ],
+      "@island.is/clients/charge-fjs-v2": [
+        "libs/clients/charge-fjs-v2/src/index.ts"
       ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
@@ -315,6 +334,7 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
