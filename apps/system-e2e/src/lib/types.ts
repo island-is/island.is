@@ -1,22 +1,6 @@
-import type {
-  AuthUser,
-  Discount as ADSDiscount,
-} from '@island.is/air-discount-scheme/types'
+import type { AuthUser, Discount } from '@island.is/air-discount-scheme/types'
 
 type TestEnvironment = 'local' | 'dev' | 'staging' | 'prod'
-
-type Mobile = {
-  mobile: string
-}
-
-type BaseUser = {
-  nationalId: string
-  name: string
-}
-
-type FixtureUser = BaseUser & Mobile
-
-type ADSUser = AuthUser
 
 enum AuthUrl {
   dev = 'https://identity-server.dev01.devland.is',
@@ -33,8 +17,8 @@ enum BaseUrl {
   local = 'http://localhost:4200',
 }
 
-type ADSUserWithDiscount = ADSDiscount & {
-  user: ADSUser
+type AuthUserWithDiscount = Discount & {
+  user: AuthUser
 }
 
 interface TestURLs {
@@ -61,22 +45,20 @@ type FakeUser = {
 
 interface IDSLogin {
   phoneNumber: string
-  authUrl: AuthUrl
   baseUrl: BaseUrl
   urlPath: string
 }
 
-export type {
+export {
+  AuthUrl,
+  BaseUrl,
   CognitoCreds,
   IDSLogin,
   FakeUser,
   FakeChild,
   TestURLs,
   TestEnvironment,
-  ADSUserWithDiscount,
-  ADSUser,
-  ADSDiscount,
-  FixtureUser,
+  AuthUserWithDiscount,
+  AuthUser,
+  Discount,
 }
-
-export { AuthUrl, BaseUrl }

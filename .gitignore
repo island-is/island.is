@@ -56,7 +56,6 @@ Thumbs.db
 
 # Used to store local secrets
 .env.secret
-.env.secret.*
 .env
 helm/**/*.tgz
 /cache*
