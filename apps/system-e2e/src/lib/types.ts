@@ -65,9 +65,9 @@ type FakeUser = {
 
 interface IDSLogin {
   phoneNumber: string
-  authUrl: AuthUrl
-  baseUrl: BaseUrl
-  urlPath: string
+  authUrl?: AuthUrl
+  baseUrl?: BaseUrl
+  urlPath?: string
 }
 
 export type {
