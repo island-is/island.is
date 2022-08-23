@@ -180,6 +180,15 @@ export const isDefendantStepValidIndictments = (
   )
 }
 
+export const isDefendantStepValidForSidebarIndictments = (
+  workingCase: Case,
+) => {
+  return (
+    workingCase.id &&
+    isDefendantStepValidIndictments(workingCase, workingCase.type)
+  )
+}
+
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
   return (
     workingCase.prosecutor &&
@@ -200,6 +209,10 @@ export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
     validate([[workingCase.requestedCourtDate, ['empty', 'date-format']]])
       .isValid
   )
+}
+
+export const isProcessingStepValidIndictments = (workingCase: Case) => {
+  return workingCase.prosecutor && workingCase.court
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
