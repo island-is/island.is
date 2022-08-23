@@ -1,21 +1,17 @@
 import React, { Fragment } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
+
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  CEMETRYOPERATIONIDS,
-} from '../../lib/constants'
+import { CEMETRYOPERATIONIDS } from '../../lib/constants'
 interface PropTypes {
   getSum: () => void
   errors: any
 }
 
-export const CemetryExpenses = ({
-  errors,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
 

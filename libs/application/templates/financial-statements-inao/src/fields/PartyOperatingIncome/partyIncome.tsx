@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { useLocale } from '@island.is/localization'
+import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { PARTYOPERATIONIDS } from '../../lib/constants'
 
@@ -26,20 +27,22 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.publicDonations}
           name={PARTYOPERATIONIDS.publicDonations}
           label={formatMessage(m.publicDonations)}
-          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.publicDonations)}
+          onBlur={() => onInputBlur()}
           backgroundColor="blue"
           currency
-          error={errors?.income?.publicDonations?.message}
+          error={
+            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.publicDonations)
+          }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.partyDonations}
           name={PARTYOPERATIONIDS.partyDonations}
-          label={formatMessage(m.partyDonations)}
+          label={formatMessage(m.publicDonations)}
+          onChange={() => clearErrors(PARTYOPERATIONIDS.publicDonations)}
           onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(PARTYOPERATIONIDS.partyDonations)}
           backgroundColor="blue"
           currency
           error={errors?.income?.partyDonations?.message}
@@ -50,11 +53,14 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.municipalityDonations}
           name={PARTYOPERATIONIDS.municipalityDonations}
           label={formatMessage(m.municipalityDonations)}
-          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.municipalityDonations)}
+          onBlur={() => onInputBlur()}
           backgroundColor="blue"
           currency
-          error={errors?.income?.municipalityDonations?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, PARTYOPERATIONIDS.municipalityDonations)
+          }
         />
       </Box>
       <Box paddingY={1}>
@@ -62,23 +68,28 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.individualDonations}
           name={PARTYOPERATIONIDS.individualDonations}
           label={formatMessage(m.individualDonations)}
-          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.individualDonations)}
+          onBlur={() => onInputBlur()}
           backgroundColor="blue"
           currency
-          error={errors?.income?.individualDonations?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, PARTYOPERATIONIDS.individualDonations)
+          }
         />
       </Box>
       <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.capitalIncome}
           name={PARTYOPERATIONIDS.capitalIncome}
+          onChange={() => clearErrors(PARTYOPERATIONIDS.capitalIncome)}
           label={formatMessage(m.capitalIncome)}
           onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(PARTYOPERATIONIDS.capitalIncome)}
           backgroundColor="blue"
           currency
-          error={errors?.income?.capitalIncome?.message}
+          error={
+            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.capitalIncome)
+          }
         />
       </Box>
       <Box paddingY={1}>
@@ -86,11 +97,13 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={PARTYOPERATIONIDS.otherIncome}
           name={PARTYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
-          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.otherIncome)}
+          onBlur={() => onInputBlur()}
           backgroundColor="blue"
           currency
-          error={errors?.income?.otherIncome?.message}
+          error={
+            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.otherIncome)
+          }
         />
       </Box>
     </Fragment>

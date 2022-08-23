@@ -3,24 +3,19 @@ import { InputController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { PARTYOPERATIONIDS } from '../../lib/constants'
 interface PropTypes {
   getSum: () => void
-  checkIfEmpty: (fieldId: string) => void
   errors: any
 }
 
-export const PartyExpenses = ({
-  errors,
-  checkIfEmpty,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
-  const onInputBlur = (fieldId: string) => {
+  const onInputBlur = () => {
     getSum()
-    checkIfEmpty(fieldId)
   }
 
   return (
@@ -30,9 +25,11 @@ export const PartyExpenses = ({
           id={PARTYOPERATIONIDS.electionOffice}
           name={PARTYOPERATIONIDS.electionOffice}
           label={formatMessage(m.electionOffice)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.electionOffice)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.electionOffice)}
-          error={errors?.expense?.electionOffice?.message}
+          error={
+            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.electionOffice)
+          }
           backgroundColor="blue"
           currency
         />
@@ -42,9 +39,9 @@ export const PartyExpenses = ({
           id={PARTYOPERATIONIDS.otherCost}
           name={PARTYOPERATIONIDS.otherCost}
           label={formatMessage(m.otherCost)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.otherCost)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.otherCost)}
-          error={errors?.expense?.otherCost?.message}
+          error={errors && getErrorViaPath(errors, PARTYOPERATIONIDS.otherCost)}
           backgroundColor="blue"
           currency
         />
@@ -54,9 +51,11 @@ export const PartyExpenses = ({
           id={PARTYOPERATIONIDS.capitalCost}
           name={PARTYOPERATIONIDS.capitalCost}
           label={formatMessage(m.capitalCost)}
-          onBlur={() => onInputBlur(PARTYOPERATIONIDS.capitalCost)}
+          onBlur={() => onInputBlur()}
           onChange={() => clearErrors(PARTYOPERATIONIDS.capitalCost)}
-          error={errors?.expense?.capitalCost?.message}
+          error={
+            errors && getErrorViaPath(errors, PARTYOPERATIONIDS.capitalCost)
+          }
           backgroundColor="blue"
           currency
         />

@@ -7,6 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { PartyIncome } from './partyIncome'
@@ -23,7 +24,7 @@ export const PartyOperatingIncome = () => {
   const [getTotalExpense, totalExpense] = useTotals(
     PARTYOPERATIONIDS.expensePrefix,
   )
-
+  console.log(errors, getValues())
   const { formatMessage } = useLocale()
 
   const checkIfEmpty = (fieldId: string) => {
@@ -47,7 +48,7 @@ export const PartyOperatingIncome = () => {
           </Text>
           <PartyIncome getSum={getTotalIncome} errors={errors} />
           <Total
-            name="partyIncome.total"
+            name={PARTYOPERATIONIDS.totalIncome}
             total={totalIncome}
             label={formatMessage(m.totalIncome)}
           />
@@ -56,13 +57,9 @@ export const PartyOperatingIncome = () => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
-          <PartyExpenses
-            getSum={getTotalExpense}
-            checkIfEmpty={checkIfEmpty}
-            errors={errors}
-          />
+          <PartyExpenses getSum={getTotalExpense} errors={errors} />
           <Total
-            name="poperatingCost"
+            name={PARTYOPERATIONIDS.totalExpense}
             total={totalExpense}
             label={formatMessage(m.totalExpenses)}
           />

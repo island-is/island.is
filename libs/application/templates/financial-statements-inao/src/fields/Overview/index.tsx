@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
+import { useFormContext } from 'react-hook-form'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'

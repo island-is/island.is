@@ -162,7 +162,7 @@ export const m = defineMessages({
   },
   clientName: {
     id: 'fsn.application:clientName',
-    defaultMessage: 'nafn viðskiptavinar',
+    defaultMessage: 'Nafn viðskiptavinar',
     description: 'client name',
   },
   email: {

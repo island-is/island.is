@@ -8,6 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
@@ -78,13 +79,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.partyIncome?.capitalIncome}
+              value={formatCurrency(answers.partyIncome?.capitalIncome)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.individualDonations}
-              value={answers.partyIncome?.individualDonations}
+              value={formatCurrency(answers.partyIncome?.individualDonations)}
             />
           </GridColumn>
         </GridRow>
@@ -93,14 +94,14 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.capitalIncome}
-              value={answers.partyIncome?.municipalityDonations}
+              label={m.municipalityDonations}
+              value={formatCurrency(answers.partyIncome?.municipalityDonations)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.individualDonations}
-              value={answers.partyIncome?.individualDonations}
+              value={formatCurrency(answers.partyIncome?.individualDonations)}
             />
           </GridColumn>
         </GridRow>
@@ -110,13 +111,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.publicDonations}
-              value={answers.partyIncome?.publicDonations}
+              value={formatCurrency(answers.partyIncome?.publicDonations)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.partyDonations}
-              value={answers.partyIncome?.partyDonations}
+              value={formatCurrency(answers.partyIncome?.partyDonations)}
             />
           </GridColumn>
         </GridRow>
@@ -126,7 +127,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.otherIncome}
-              value={answers.partyIncome?.otherIncome}
+              value={formatCurrency(answers.partyIncome?.otherIncome)}
             />
           </GridColumn>
         </GridRow>
@@ -136,13 +137,13 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalCost}
-              value={answers.partyExpense?.capitalCost}
+              value={formatCurrency(answers.partyExpense?.capitalCost)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.electionOffice}
-              value={answers.partyExpense?.electionOffice}
+              value={formatCurrency(answers.partyExpense?.electionOffice)}
             />
           </GridColumn>
         </GridRow>
@@ -152,7 +153,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.otherCost}
-              value={answers.partyExpense?.otherCost}
+              value={formatCurrency(answers.partyExpense?.otherCost)}
             />
           </GridColumn>
         </GridRow>
@@ -166,12 +167,15 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.currentAssets} value={answers.asset?.current} />
+            <ValueLine
+              label={m.currentAssets}
+              value={formatCurrency(answers.asset?.current)}
+            />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.tangibleAssets}
-              value={answers.asset?.tangible}
+              value={formatCurrency(answers.asset?.tangible)}
             />
           </GridColumn>
         </GridRow>
@@ -181,18 +185,24 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.shortTerm}
-              value={answers.liability?.shortTerm}
+              value={formatCurrency(answers.liability?.shortTerm)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.longTerm} value={answers.liability?.longTerm} />
+            <ValueLine
+              label={m.longTerm}
+              value={formatCurrency(answers.liability?.longTerm)}
+            />
           </GridColumn>
         </GridRow>
       </Box>
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.equity} value={answers.equity?.totalEquity} />
+            <ValueLine
+              label={m.equity}
+              value={formatCurrency(answers.equity?.totalEquity)}
+            />
           </GridColumn>
         </GridRow>
       </Box>

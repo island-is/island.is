@@ -27,7 +27,7 @@ export const partyKeyNumbersSection = buildSection({
       title: m.expensesIncome,
       children: [
         buildCustomField({
-          id: 'partyIncome',
+          id: 'partyOperations',
           title: m.keyNumbersIncomeAndExpenses,
           condition: (_answers, externalData) => {
             /* @ts-ignore */

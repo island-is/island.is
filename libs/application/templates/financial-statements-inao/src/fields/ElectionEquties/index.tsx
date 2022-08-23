@@ -10,7 +10,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
-
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
@@ -27,7 +26,7 @@ export const ElectionEquities = (): JSX.Element => {
     EQUITIESANDLIABILITIESIDS.liabilityPrefix,
   )
 
-  const { errors } = useFormContext()
+  const { errors, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   return (
@@ -45,6 +44,7 @@ export const ElectionEquities = (): JSX.Element => {
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.current)
               }
+              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.current)}
               label={formatMessage(m.currentAssets)}
               onBlur={() => getTotalAssets()}
               backgroundColor="blue"
@@ -59,6 +59,7 @@ export const ElectionEquities = (): JSX.Element => {
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.tangible)
               }
+              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.tangible)}
               label={formatMessage(m.tangibleAssets)}
               onBlur={() => getTotalAssets()}
               backgroundColor="blue"
@@ -79,6 +80,7 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
+              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)}
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.longTerm)
@@ -93,6 +95,7 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
+              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)}
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.shortTerm)
@@ -112,6 +115,9 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
+              onChange={() =>
+                clearErrors(EQUITIESANDLIABILITIESIDS.totalEquity)
+              }
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.totalEquity)

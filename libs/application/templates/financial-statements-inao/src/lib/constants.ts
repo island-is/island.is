@@ -46,9 +46,11 @@ export const PARTYOPERATIONIDS = {
   individualDonations: 'partyIncome.individualDonations',
   capitalIncome: 'partyIncome.capitalIncome',
   otherIncome: 'partyIncome.otherIncome',
+  totalIncome: 'partyIncome.total',
   electionOffice: 'partyExpense.electionOffice',
   otherCost: 'partyExpense.otherCost',
   capitalCost: 'partyExpense.capitalCost',
+  totalExpense: 'partyExpense.total',
 }
 
 export const CEMETRYOPERATIONIDS = {

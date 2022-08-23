@@ -51,7 +51,7 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
     result: Record<string, unknown>,
   ): SuccessfulDataProviderResult {
     const fakeResults = {
-      code: INDIVIDUAL,
+      code: PARTY,
     }
     return { date: new Date(), status: 'success', data: fakeResults }
   }

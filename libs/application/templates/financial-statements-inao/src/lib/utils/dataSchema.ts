@@ -102,18 +102,20 @@ const cemetryExpense = z.object({
 })
 
 const partyIncome = z.object({
-  publicDonations: z.string(),
-  partyDonations: z.string(),
-  municipalityDonations: z.string(),
-  individualDonations: z.string(),
-  otherIncome: z.string(),
-  capitalIncome: z.string(),
+  publicDonations: z.string().refine((x) => !!x, { params: m.required }),
+  partyDonations: z.string().refine((x) => !!x, { params: m.required }),
+  municipalityDonations: z.string().refine((x) => !!x, { params: m.required }),
+  individualDonations: z.string().refine((x) => !!x, { params: m.required }),
+  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
+  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string(),
 })
 
 const partyExpense = z.object({
-  electionOffice: z.string(),
-  capitalCost: z.string(),
-  otherCost: z.string(),
+  electionOffice: z.string().refine((x) => !!x, { params: m.required }),
+  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
+  otherCost: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string(),
 })
 
 const individualIncome = z.object({

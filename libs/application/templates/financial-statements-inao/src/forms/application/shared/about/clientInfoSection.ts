@@ -8,7 +8,7 @@ import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
-import { ABOUTIDS, PARTY, CEMETRY } from '../../../../lib/constants'
+import { ABOUTIDS, PARTY, CEMETRY, INDIVIDUAL } from '../../../../lib/constants'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -32,14 +32,26 @@ export const clientInfoSection = buildSection({
         }),
         buildTextField({
           id: 'about.nationalId',
-          title: m.candidateNationalId,
+          title: (application: Application) => {
+            const userType =
+              /* @ts-ignore */
+              application.externalData?.currentUserType?.data?.code
+            return userType === INDIVIDUAL
+              ? m.candidateNationalId
+              : m.candidateNationalId
+          },
           width: 'half',
           format: '######-####',
           defaultValue: (application: Application) => application.applicant,
         }),
         buildTextField({
           id: 'about.fullName',
-          title: m.candidateFullName,
+          title: (application: Application) => {
+            const userType =
+              /* @ts-ignore */
+              application.externalData?.currentUserType?.data?.code
+            return userType === INDIVIDUAL ? m.candidateFullName : m.clientName
+          },
           width: 'half',
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
