@@ -29,7 +29,7 @@ import {
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -118,7 +118,9 @@ export const Overview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

@@ -11,7 +11,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  completedCaseStates,
   InstitutionType,
   NotificationType,
   isRestrictionCase,
