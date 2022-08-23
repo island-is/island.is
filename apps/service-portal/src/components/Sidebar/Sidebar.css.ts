@@ -20,6 +20,8 @@ export const sidebar = style({
   justifyContent: 'flex-start',
   flexDirection: 'column',
   overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.color.blue300} ${theme.color.blue100}`,
   '::-webkit-scrollbar': {
     width: 6,
     backgroundColor: theme.color.blue100,
