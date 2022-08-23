@@ -589,6 +589,7 @@ application-system-api-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-prod-fs-presign-bucket'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
