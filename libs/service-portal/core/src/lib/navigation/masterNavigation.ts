@@ -67,22 +67,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.UserInfo,
           },
           {
-            name: m.family,
+            name: m.familySpouse,
             navHide: true,
-            path: ServicePortalPath.FamilyRoot,
-            children: [
-              {
-                name: m.familySpouse,
-                navHide: true,
-                path: ServicePortalPath.Spouse,
-              },
-              {
-                name: m.familyChild,
-                navHide: true,
-                path: ServicePortalPath.Child,
-              },
-            ],
+            path: ServicePortalPath.Spouse,
           },
+          {
+            name: m.familyChild,
+            navHide: true,
+            path: ServicePortalPath.Child,
+          },
+
           {
             // Petitions
             name: m.endorsements,
@@ -106,8 +100,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         children: [
           {
             navHide: true,
-            name: m.drivingLicense,
-            path: ServicePortalPath.LicensesDrivingDetail,
+            name: m.detailInfo,
+            path: ServicePortalPath.LicensesDetail,
           },
         ],
       },

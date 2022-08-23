@@ -32,10 +32,9 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  FamilyRoot = '/min-gogn/fjolskyldan',
-  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
-  FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
-  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
+  Child = '/min-gogn/barn/:nationalId',
+  FamilyMember = '/min-gogn/:nationalId',
+  Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
@@ -98,8 +97,8 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
-  LicensesDriving = '/skirteini/okuskirteini',
-  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
+  LicensesDetail = '/skirteini/:provider/:type',
+
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in
