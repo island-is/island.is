@@ -45,7 +45,9 @@ import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
+import { IslykillService } from './islykill.service'
 import { DataStatus } from './types/dataStatusTypes'
+import { islyklarExtraTypes } from './types/islyklarExtras'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -55,6 +57,7 @@ export class UserProfileController {
     private readonly userProfileService: UserProfileService,
     private readonly verificationService: VerificationService,
     private readonly auditService: AuditService,
+    private readonly islyklarService: IslykillService,
   ) {}
 
   @Scopes(UserProfileScope.read)
@@ -115,6 +118,9 @@ export class UserProfileController {
       )
     }
 
+    /**
+     * Email verification
+     */
     if (userProfileDto.email) {
       const emailVerified = await this.verificationService.confirmEmail(
         { hash: userProfileDto.emailCode, email: userProfileDto.email },
@@ -134,6 +140,9 @@ export class UserProfileController {
       }
     }
 
+    /**
+     * Mobile phone verification
+     */
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
         {
@@ -155,6 +164,60 @@ export class UserProfileController {
         )
       }
     }
+
+    /**
+     * Islyklar service.
+     * The islyklar service is meant to be a temporary solution
+     * while we have not migrated the user data from the previous db.
+     */
+    if (userProfileDto.email || userProfileDto.mobilePhoneNumber) {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      const emailVerified = userProfileDto.emailStatus === DataStatus.VERIFIED
+      const mobileVerified = userProfileDto.mobileStatus === DataStatus.VERIFIED
+      if (
+        (userProfileDto.email && !emailVerified) ||
+        (userProfileDto.mobilePhoneNumber && !mobileVerified)
+      ) {
+        throw new ForbiddenException(
+          'Create profile: Updating value verification invalid',
+        )
+      }
+
+      if (islyklarData.noUserFound) {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email: emailVerified ? userProfileDto.email : undefined,
+            mobile: mobileVerified
+              ? userProfileDto.mobilePhoneNumber
+              : undefined,
+          })
+          .catch((error) => {
+            throw new BadRequestException(
+              `createIslykillSettings failed in userprofile create: ${error.message}`,
+            )
+          })
+      } else {
+        await this.islyklarService
+          .updateIslykillSettings(user.nationalId, {
+            email: emailVerified ? userProfileDto.email : islyklarData.email,
+            mobile: mobileVerified
+              ? userProfileDto.mobilePhoneNumber
+              : islyklarData.mobile,
+            bankInfo: islyklarData.bankInfo,
+            canNudge: islyklarData.canNudge,
+          })
+          .catch((error) => {
+            throw new BadRequestException(
+              `updateIslykillSettings failed in userprofile create: ${error.message}`,
+            )
+          })
+      }
+    }
+
+    // TODO: Remove email and tel before updating island.is userprofile data
 
     const userProfile = await this.userProfileService.create(userProfileDto)
     this.auditService.audit({
@@ -197,7 +260,7 @@ export class UserProfileController {
     @Param('nationalId')
     nationalId: string,
     @Body()
-    userProfileToUpdate: UpdateUserProfileDto,
+    userProfileToUpdate: UpdateUserProfileDto & islyklarExtraTypes,
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
@@ -215,6 +278,9 @@ export class UserProfileController {
       emailStatus: profile.emailStatus as DataStatus,
     }
 
+    /**
+     * Mobile phone verification
+     */
     if (userProfileToUpdate.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
         {
@@ -237,6 +303,9 @@ export class UserProfileController {
       }
     }
 
+    /**
+     * Email verification
+     */
     if (userProfileToUpdate.email) {
       const emailVerified = await this.verificationService.confirmEmail(
         {
@@ -258,6 +327,68 @@ export class UserProfileController {
         )
       }
     }
+
+    /**
+     * Islyklar service.
+     * The islyklar service is meant to be a temporary solution
+     * while we have not migrated the user data from the previous db.
+     */
+    const islyklarData = await this.islyklarService.getIslykillSettings(
+      user.nationalId,
+    )
+
+    const emailVerified =
+      userProfileToUpdate.emailStatus === DataStatus.VERIFIED
+    const mobileVerified =
+      userProfileToUpdate.mobileStatus === DataStatus.VERIFIED
+    if (
+      (userProfileToUpdate.email && !emailVerified) ||
+      (userProfileToUpdate.mobilePhoneNumber && !mobileVerified)
+    ) {
+      throw new ForbiddenException(
+        'Update profile: Updating value verification invalid',
+      )
+    }
+
+    if (islyklarData.noUserFound) {
+      await this.islyklarService
+        .createIslykillSettings(user.nationalId, {
+          email:
+            userProfileToUpdate.email && emailVerified
+              ? userProfileToUpdate.email
+              : islyklarData.email,
+          mobile:
+            userProfileToUpdate.mobilePhoneNumber && mobileVerified
+              ? userProfileToUpdate.mobilePhoneNumber
+              : islyklarData.mobile,
+        })
+        .catch((error) => {
+          throw new BadRequestException(
+            `createIslykillSettings failed in userprofile update: ${error.message}`,
+          )
+        })
+    } else {
+      await this.islyklarService
+        .updateIslykillSettings(user.nationalId, {
+          email:
+            userProfileToUpdate.email && emailVerified
+              ? userProfileToUpdate.email
+              : islyklarData.email,
+          mobile:
+            userProfileToUpdate.mobilePhoneNumber && mobileVerified
+              ? userProfileToUpdate.mobilePhoneNumber
+              : islyklarData.mobile,
+          canNudge: userProfileToUpdate.canNudge ?? islyklarData.canNudge,
+          bankInfo: userProfileToUpdate.bankInfo ?? islyklarData.bankInfo,
+        })
+        .catch((error) => {
+          throw new BadRequestException(
+            `updateIslykillSettings failed in userprofile update: ${error.message}`,
+          )
+        })
+    }
+
+    // TODO: Remove email and tel before updating island.is userprofile data
 
     const {
       numberOfAffectedRows,

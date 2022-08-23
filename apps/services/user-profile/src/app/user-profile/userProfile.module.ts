@@ -7,6 +7,7 @@ import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'
 import environment from '../../environments/environment'
 import { EmailModule } from '@island.is/email-service'
+import { IslykillService } from './islykill.service'
 import { SmsVerification } from './smsVerification.model'
 import { EmailVerification } from './emailVerification.model'
 import { VerificationService } from './verification.service'
@@ -34,7 +35,12 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
     UserProfileInfraController,
     UserTokenController,
   ],
-  providers: [UserProfileService, VerificationService, SequelizeConfigService],
+  providers: [
+    UserProfileService,
+    VerificationService,
+    SequelizeConfigService,
+    IslykillService,
+  ],
   exports: [UserProfileService],
 })
 export class UserProfileModule {}

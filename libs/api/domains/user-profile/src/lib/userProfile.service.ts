@@ -23,6 +23,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
+import { islyklarExtraTypes } from './types/islyklarExtras'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -177,43 +178,6 @@ export class UserProfileService {
       .userProfileControllerCreate(request)
       .catch(handleError)
 
-    if (input.email || input.mobilePhoneNumber) {
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-
-      const emailVerified =
-        userProfileResponse.emailStatus === DataStatus.VERIFIED
-      const mobileVerified =
-        userProfileResponse.mobileStatus === DataStatus.VERIFIED
-      if (
-        (input.email && !emailVerified) ||
-        (input.mobilePhoneNumber && !mobileVerified)
-      ) {
-        throw new ForbiddenError('Updating value verification invalid')
-      }
-
-      if (islyklarData.noUserFound) {
-        await this.islyklarService
-          .createIslykillSettings(user.nationalId, {
-            email: emailVerified ? input.email : undefined,
-            mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
-          })
-          .catch(handleError)
-      } else {
-        await this.islyklarService
-          .updateIslykillSettings(user.nationalId, {
-            email: emailVerified ? input.email : islyklarData.email,
-            mobile: mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-            bankInfo: islyklarData.bankInfo,
-            canNudge: islyklarData.canNudge,
-          }) // Current version does not return the updated user in the response.
-          .catch(handleError)
-      }
-    }
-
     return userProfileResponse
   }
 
@@ -221,7 +185,7 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    const updateUserDto: UpdateUserProfileDto = {
+    const updateUserDto: UpdateUserProfileDto & islyklarExtraTypes = {
       //temporary as schemas where not working properly
       locale: input.locale as string,
       documentNotifications: input.documentNotifications,
@@ -229,10 +193,10 @@ export class UserProfileService {
       emailCode: input.emailCode,
 
       /**
-       *  Mobile and email will be within islykill service
-       *  Only here for verification purposes in userProfile.controller.
-       *  Will be removed in controller before saving to db
+       * Islykill data
        */
+      canNudge: input.canNudge,
+      bankInfo: input.bankInfo,
       mobilePhoneNumber: input.mobilePhoneNumber,
       email: input.email,
     }
@@ -241,53 +205,16 @@ export class UserProfileService {
       updateUserProfileDto: updateUserDto,
     }
 
-    const islyklarData = await this.islyklarService.getIslykillSettings(
-      user.nationalId,
-    )
-
     const updatedUserProfile = await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
       .catch(handleError)
 
-    const emailVerified = updatedUserProfile.emailStatus === DataStatus.VERIFIED
-    const mobileVerified =
-      updatedUserProfile.mobileStatus === DataStatus.VERIFIED
-    if (
-      (input.email && !emailVerified) ||
-      (input.mobilePhoneNumber && !mobileVerified)
-    ) {
-      throw new ForbiddenError('Updating value verification invalid')
-    }
-
-    if (islyklarData.noUserFound) {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email:
-            input.email && emailVerified ? input.email : islyklarData.email,
-          mobile:
-            input.mobilePhoneNumber && mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-        })
-        .catch(handleError)
-    } else {
-      await this.islyklarService
-        .updateIslykillSettings(user.nationalId, {
-          email:
-            input.email && emailVerified ? input.email : islyklarData.email,
-          mobile:
-            input.mobilePhoneNumber && mobileVerified
-              ? input.mobilePhoneNumber
-              : islyklarData.mobile,
-          canNudge: input.canNudge ?? islyklarData.canNudge,
-          bankInfo: input.bankInfo ?? islyklarData.bankInfo,
-        })
-        .catch(handleError)
-    }
-
     return updatedUserProfile
   }
 
+  /**
+   * TODO: REMOVE ALL ISLYKILL LOGIC FROM HERE.
+   */
   async deleteIslykillValue(
     input: DeleteIslykillValueInput,
     user: User,
