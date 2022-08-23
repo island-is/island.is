@@ -4,7 +4,12 @@ import {
 } from '@island.is/judicial-system/consts'
 import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
-import { intercept, makeCourt, makeRestrictionCase } from '../../../utils'
+import {
+  intercept,
+  makeCourt,
+  makeJudge,
+  makeRestrictionCase,
+} from '../../../utils'
 
 describe('Signed verdict overview - Court - Accepted restriction cases', () => {
   beforeEach(() => {
@@ -16,6 +21,7 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
       isValidToDateInThePast: false,
       validToDate: '2022-06-13T19:51:39.466Z',
       isolationToDate: '2022-06-13T19:51:39.466Z',
+      judge: makeJudge(),
     }
 
     cy.login(UserRole.JUDGE)
@@ -59,5 +65,29 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
     cy.getByTestid('dateModifyingModalSuccess')
     cy.getByTestid('modalSecondaryButton').click()
     cy.getByTestid('alertMessage')
+  })
+})
+
+describe('Signed verdict overview - Court - Not the assigned judge', () => {
+  beforeEach(() => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      state: CaseState.ACCEPTED,
+      isValidToDateInThePast: false,
+      validToDate: '2022-06-13T19:51:39.466Z',
+      isolationToDate: '2022-06-13T19:51:39.466Z',
+      judge: { ...makeJudge(), id: 'some_other_judge_id' },
+    }
+
+    cy.login(UserRole.JUDGE)
+    cy.stubAPIResponses()
+    intercept(caseDataAddition)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
+  })
+
+  it('should not have a button for modifying the ruling', () => {
+    cy.get('[data-testid="modifyRulingButton"]').should('not.exist')
   })
 })
