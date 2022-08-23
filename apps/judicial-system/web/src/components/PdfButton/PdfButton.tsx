@@ -3,7 +3,7 @@ import React from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
-import * as styles from './PdfRow.css'
+import * as styles from './PdfButton.css'
 
 interface Props {
   caseId: string
