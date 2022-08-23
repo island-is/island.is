@@ -338,12 +338,9 @@ export class NationalRegistryService {
   }
 
   private handle404(error: FetchError) {
-    // Temporary throw on all
-    /*
     if (error.status === 404) {
       return undefined
     }
-    */
     throw error
   }
 }
