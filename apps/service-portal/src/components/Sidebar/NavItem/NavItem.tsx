@@ -14,11 +14,8 @@ interface Props {
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
-<<<<<<< HEAD
-=======
   hover: boolean
   clicked: boolean
->>>>>>> e95b49cdf8 (feat: animate icon on click)
   enabled?: boolean
   expanded?: boolean
   external?: boolean
