@@ -92,10 +92,7 @@ export class UserService {
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
       meetsADSRequirements = true
-    } else if (
-      !user.nationalId.startsWith('010130') ||
-      info(user.nationalId).age < MAX_AGE_LIMIT
-    ) {
+    } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
       // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)
