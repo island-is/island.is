@@ -279,6 +279,7 @@ export class NationalRegistryService {
       .catch(this.handle404)
 
     if (response === undefined) {
+      this.logger.warn('Get Forsja: returns empty response')
       return []
     }
     return response
@@ -296,6 +297,7 @@ export class NationalRegistryService {
       .catch(this.handle404)
 
     if (response === undefined) {
+      this.logger.warn('Get Forsja Foreldri: returns empty response')
       return []
     }
 
@@ -327,6 +329,7 @@ export class NationalRegistryService {
       .catch(this.handle404)
 
     if (!response) {
+      this.logger.warn('Get Einstaklingur: returns empty response')
       return null
     }
 
@@ -335,9 +338,12 @@ export class NationalRegistryService {
   }
 
   private handle404(error: FetchError) {
+    // Temporary throw on all
+    /*
     if (error.status === 404) {
       return undefined
     }
+    */
     throw error
   }
 }
