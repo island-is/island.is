@@ -1,4 +1,7 @@
-import { LicenseInfo } from '@island.is/clients/firearm-license'
+import {
+  FirearmProperty,
+  LicenseAndPropertyInfo,
+} from '@island.is/clients/firearm-license'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
@@ -6,7 +9,7 @@ import {
 } from '../../licenceService.type'
 
 export const parseFirearmLicensePayload = (
-  license: LicenseInfo,
+  license: LicenseAndPropertyInfo,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
@@ -46,6 +49,16 @@ export const parseFirearmLicensePayload = (
       label: 'Réttindaflokkar',
       value: license.qualifications,
     },
+    license.properties && {
+      type: GenericLicenseDataFieldType.Group,
+      label: 'Skotvopn',
+      fields: (license.properties.properties ?? []).map((property) => ({
+        type: GenericLicenseDataFieldType.Category,
+        name: 'Staða skotvopns',
+        label: property.category ?? '',
+        fields: parseProperties(property),
+      })),
+    },
     license.licenseImgBase64 && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Mynd',
@@ -60,3 +73,36 @@ export const parseFirearmLicensePayload = (
 }
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
+const parseProperties = (
+  property: FirearmProperty,
+): Array<GenericLicenseDataField> | undefined => {
+  const mappedProperty = [
+    {
+      type: GenericLicenseDataFieldType.Value,
+      name: 'Tegund',
+      value: property.typeOfFirearm ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      name: 'Númer',
+      value: property.serialNumber ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      name: 'Hlaupvídd',
+      value: property.caliber ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      name: 'Heiti',
+      value: property.name ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      name: 'Landsnúmer',
+      value: property.landsnumer ?? '',
+    },
+  ]
+  return mappedProperty
+}

@@ -24,7 +24,7 @@ import {
 import { GenericMachineLicenseApi } from './client/machine-license-client'
 import { GenericFirearmLicenseApi } from './client/firearm-license-client'
 import {
-  FirearmApplicationApi,
+  FirearmApi,
   FirearmLicenseClientModule,
 } from '@island.is/clients/firearm-license'
 
@@ -110,7 +110,7 @@ export class LicenseServiceModule {
           useFactory: (
             adrApi: AdrApi,
             machineApi: VinnuvelaApi,
-            firearmApi: FirearmApplicationApi,
+            firearmApi: FirearmApi,
           ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
@@ -132,7 +132,7 @@ export class LicenseServiceModule {
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi, FirearmApplicationApi],
+          inject: [AdrApi, VinnuvelaApi, FirearmApi],
         },
       ],
       exports: [LicenseServiceService],

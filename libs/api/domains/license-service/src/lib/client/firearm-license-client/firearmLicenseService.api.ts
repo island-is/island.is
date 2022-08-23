@@ -8,7 +8,8 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  FirearmApplicationApi,
+  FirearmApi,
+  LicenseAndPropertyInfo,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
 import { User } from '@island.is/auth-nest-tools'
@@ -23,7 +24,7 @@ export class GenericFirearmLicenseApi
   implements GenericLicenseClient<LicenseInfo> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private firearmApi: FirearmApplicationApi,
+    private firearmApi: FirearmApi,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
@@ -49,14 +50,12 @@ export class GenericFirearmLicenseApi
     let license: unknown
 
     try {
-      license = await this.firearmApi.apiFirearmApplicationLicenseInfoSsnGet({
-        ssn: user.nationalId,
-      })
+      license = await this.firearmApi.getLicenseAndPropertyInfo(user.nationalId)
     } catch (e) {
       this.handleError(e)
     }
 
-    return license as LicenseInfo
+    return license as LicenseAndPropertyInfo
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
