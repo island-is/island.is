@@ -55,7 +55,7 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
   return (
     <Box>
       <GridRow>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
           <InputController
             id={nationaIdField}
             label="Kennitala"
@@ -70,7 +70,7 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
             error={nationalIdFieldErrors}
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+        <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
           <InputController
             id={nameField}
             defaultValue={(application.answers[id] as any)?.name ?? ''}

@@ -12,6 +12,7 @@ import {
   buildSubSection,
   buildRadioField,
   buildSelectField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Form,
@@ -80,7 +81,7 @@ export const getApplication = (): Form => {
               }),
               buildDataProviderItem({
                 id: 'maritalStatus',
-                type: '',
+                type: 'NationalRegistryMaritalStatusProvider',
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),
@@ -100,15 +101,17 @@ export const getApplication = (): Form => {
                 id: 'sides',
                 title: m.informationTitle,
                 children: [
-                  buildDividerField({
-                    title: m.informationSpouse1,
-                    color: 'dark400',
+                  buildDescriptionField({
+                    id: 'header1',
+                    title: 'Hjónaefni 1',
+                    titleVariant: 'h4',
                   }),
                   buildTextField({
                     id: 'applicant.person.nationalId',
                     title: m.nationalId,
                     width: 'half',
                     backgroundColor: 'white',
+                    readOnly: true,
                     format: '######-####',
                     defaultValue: (application: Application) => {
                       return formatNationalId(application.applicant) ?? ''
@@ -119,6 +122,7 @@ export const getApplication = (): Form => {
                     title: 'Nafn',
                     width: 'half',
                     backgroundColor: 'white',
+                    readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
                         .nationalRegistry.data as User
@@ -148,9 +152,11 @@ export const getApplication = (): Form => {
                       return data.email ?? ''
                     },
                   }),
-                  buildDividerField({
-                    title: m.informationSpouse2,
-                    color: 'dark400',
+                  buildDescriptionField({
+                    id: 'header2',
+                    title: 'Hjónaefni 2',
+                    titleVariant: 'h4',
+                    space: 'gutter',
                   }),
                   buildCustomField({
                     id: 'alert',
@@ -198,33 +204,52 @@ export const getApplication = (): Form => {
                   'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
                 children: [
                   buildTextField({
-                    id: 'address',
+                    id: 'personalInfo.address',
                     title: 'Lögheimili',
                     backgroundColor: 'white',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const nationalRegistry = application.externalData
+                        .nationalRegistry.data as User
+                      return nationalRegistry.address.streetAddress
+                    },
                   }),
                   buildTextField({
-                    id: 'citizenship',
+                    id: 'personalInfo.citizenship',
                     title: 'IS',
                     backgroundColor: 'white',
                     width: 'half',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const nationalRegistry = application.externalData
+                        .nationalRegistry.data as User
+                      return nationalRegistry.citizenship.code
+                    },
                   }),
                   buildTextField({
-                    id: 'marital_status',
+                    id: 'personalInfo.maritalStatus',
                     title: 'Hjúskaparstaða fyrir vígslu',
                     backgroundColor: 'white',
                     width: 'half',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const status = application.externalData.maritalStatus
+                        .data as any
+                      return status.maritalStatus
+                    },
                   }),
                   buildDescriptionField({
                     id: 'space',
-                    space: 'gutter',
+                    space: 'containerGutter',
                     title: '',
                   }),
                   buildRadioField({
-                    id: 'timePassedHindrance',
+                    id: 'personalInfo.previousMarriageTermination',
                     title: 'Hvernig lauk síðasta hjúskap?',
                     options: [
-                      { value: 'yes', label: 'Með lögskilnaði' },
-                      { value: 'no', label: 'Með láti maka' },
+                      { value: 'divorce', label: 'Með lögskilnaði' },
+                      { value: 'lostSpouse', label: 'Með láti maka' },
+                      { value: 'annulment', label: 'Með ógildingu' },
                     ],
                     largeButtons: false,
                   }),
@@ -237,33 +262,36 @@ export const getApplication = (): Form => {
             title: 'Vígsla',
             children: [
               buildMultiField({
-                id: 'personalInfo',
+                id: 'ceremonyInfo',
                 title: 'Vígsla',
                 description:
                   'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
                 children: [
                   buildTextField({
-                    id: 'address',
+                    id: 'ceremony.date',
                     title: 'Áætlaður vígsludagur eða tímabil',
                     placeholder: 'Skráðu inn dag eða tímabil',
                   }),
                   buildDescriptionField({
                     id: 'space',
-                    space: 'gutter',
+                    space: 'containerGutter',
                     title: '',
                   }),
                   buildRadioField({
-                    id: 'timePassedHindrance',
-                    title: 'Hvar er vígsla áformuð',
+                    id: 'ceremony.ceremonyPlace',
+                    title: 'Hvar er vígsla áformuð?',
                     options: [
-                      { value: 'yes', label: 'Embætti sýslumanns' },
-                      { value: 'no', label: 'Trú- eða lífsskoðunarfélagi' },
+                      { value: 'office', label: 'Embætti sýslumanns' },
+                      {
+                        value: 'religious',
+                        label: 'Trú- eða lífsskoðunarfélagi',
+                      },
                     ],
                     largeButtons: false,
                     width: 'half',
                   }),
                   buildSelectField({
-                    id: 'select',
+                    id: 'office',
                     title: 'Embætti sýslumanns',
                     placeholder: 'Veldu embætti sýslumanns úr lista',
                     options: [
@@ -273,9 +301,12 @@ export const getApplication = (): Form => {
                       { value: '4', label: '4' },
                       { value: '5', label: '5' },
                     ],
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
+                      'office',
                   }),
                   buildSelectField({
-                    id: 'select2',
+                    id: 'religious',
                     title: 'Trú- eða lífsskoðunarfélag',
                     placeholder: 'Veldu trú- eða lífsskoðunarfélag úr lista',
                     options: [
@@ -285,6 +316,9 @@ export const getApplication = (): Form => {
                       { value: '4', label: '4' },
                       { value: '5', label: '5' },
                     ],
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
+                      'religious',
                   }),
                 ],
               }),
@@ -299,9 +333,10 @@ export const getApplication = (): Form => {
                 title: m.informationWitnessTitle,
                 description: m.informationMaritalSidesDescription,
                 children: [
-                  buildDividerField({
-                    title: m.informationWitness1,
-                    color: 'dark400',
+                  buildDescriptionField({
+                    id: 'header3',
+                    title: 'Svaramaður 1',
+                    titleVariant: 'h4',
                   }),
                   buildCustomField({
                     id: 'witness1.person',
@@ -321,9 +356,11 @@ export const getApplication = (): Form => {
                     width: 'half',
                     backgroundColor: 'blue',
                   }),
-                  buildDividerField({
-                    title: m.informationWitness2,
-                    color: 'dark400',
+                  buildDescriptionField({
+                    id: 'header4',
+                    title: 'Svaramaður 2',
+                    titleVariant: 'h4',
+                    space: 'gutter',
                   }),
                   buildCustomField({
                     id: 'witness2.person',

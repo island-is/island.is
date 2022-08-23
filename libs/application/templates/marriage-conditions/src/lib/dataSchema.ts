@@ -25,6 +25,18 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: individualInfo,
   spouse: individualInfo,
+  witness1: individualInfo,
+  witness2: individualInfo,
+  personalInfo: z.object({
+    address: z.string().refine((v) => v),
+    citizenship: z.string(),
+    maritalStatus: z.string(),
+    previousMarriageTermination: z.string(),
+  }),
+  ceremony: z.object({
+    date: z.string().refine((v) => v),
+    ceremonyPlace: z.string(),
+  }),
 
   //spouse's part of the application
   spouseApprove: z.array(z.enum([YES, NO])).nonempty(),
