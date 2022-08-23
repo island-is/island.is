@@ -1,6 +1,6 @@
-import fakeUsers from '../../fixtures/service-portal/users.json'
+import fakeUsers from '../../../fixtures/service-portal/users.json'
 
-describe('Home page', () => {
+describe('Service Portal', () => {
   beforeEach(() => {
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
