@@ -24,7 +24,7 @@ import { GetVehicleHistoryDocumentDto } from './dto/getVehicleHistoryDocument.dt
 import { PdfApi } from '@island.is/clients/vehicles'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
+@Scopes(ApiScope.vehicles)
 @Controller('vehicles')
 export class VehicleController {
   constructor(

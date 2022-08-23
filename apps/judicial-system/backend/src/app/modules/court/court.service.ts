@@ -92,6 +92,23 @@ export class CourtService {
     })
   }
 
+  private mask(value: string): string {
+    const valueIsFileName = value.split('.').pop() !== value
+    const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
+    const valueWithoutFileExtension = valueIsFileName
+      ? value.replace(`.${fileNameEnding}`, '')
+      : value
+
+    const firstLetterInValue = valueWithoutFileExtension[0]
+    const mask = '*'.repeat(valueWithoutFileExtension.length - 2) // -2 to keep the first and last letter of the file name
+    const lastLetterInValueWithoutFileExtension =
+      valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
+
+    return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
+      valueIsFileName ? `.${fileNameEnding}` : ''
+    }`
+  }
+
   async createRequest(
     user: User,
     caseId: string,
@@ -162,7 +179,7 @@ export class CourtService {
             institution: 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -203,7 +220,7 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -241,8 +258,8 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            subject,
-            fileName,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
             fileType,
           },
           reason,
@@ -324,7 +341,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             courtCaseNumber,
-            subject,
+            subject: this.mask(subject),
             recipients,
             fromEmail,
             fromName,
