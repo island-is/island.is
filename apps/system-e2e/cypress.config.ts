@@ -1,7 +1,6 @@
 import { defineConfig } from 'cypress'
 import { getCognitoCredentials } from './src/support/utils'
-import type { TestEnvironment } from './src/lib/types'
-import { BaseUrl, AuthUrl } from './src/lib/types'
+import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
@@ -13,15 +12,15 @@ const getEnvironmentUrls = (env: TestEnvironment) => {
     : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
 
-const globalTimeout = 10000
-
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: globalTimeout,
-  pageLoadTimeout: globalTimeout,
-  responseTimeout: globalTimeout,
+  defaultCommandTimeout: 60000,
+  pageLoadTimeout: 60000,
+  responseTimeout: 12000,
+  videosFolder: '../../dist/cypress/apps/web-e2e/videos',
+  screenshotsFolder: '../../dist/cypress/apps/web-e2e/screenshots',
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -30,9 +29,10 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
-    specPattern: '**/*.spec.{js,ts}',
+    chromeWebSecurity: false,
+    specPattern: './src/integration/**/*.ts',
     experimentalSessionAndOrigin: true,
-    supportFile: '**/support/index.{js,ts}',
+    supportFile: './src/support/index.ts',
     setupNodeEvents(on, config) {
       const testEnvironment: TestEnvironment =
         process.env.TEST_ENVIRONMENT || 'local'
