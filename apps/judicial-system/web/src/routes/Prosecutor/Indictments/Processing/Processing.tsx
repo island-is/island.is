@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client'
 
 import {
   FormContentContainer,
+  FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -23,14 +24,12 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import * as constants from '@island.is/judicial-system/consts'
 
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Processing: React.FC = () => {
   const {
@@ -39,7 +38,7 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer, updateCase } = useCase()
+  const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
@@ -141,12 +140,19 @@ const Processing: React.FC = () => {
             onChange={handleCourtChange}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <CommentsInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
           />
         </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
+        />
       </FormContentContainer>
     </PageLayout>
   )

@@ -191,8 +191,9 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/akaerdi'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaerur/domskjol'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
