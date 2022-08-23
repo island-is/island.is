@@ -58,6 +58,16 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
         prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
       },
+      APPLICATION_ATTACHMENT_BUCKET: {
+        dev: 'island-is-dev-storage-application-system',
+        staging: 'island-is-staging-storage-application-system',
+        prod: 'island-is-prod-storage-application-system',
+      },
+      FILE_SERVICE_PRESIGN_BUCKET: {
+        dev: 'island-is-dev-fs-presign-bucket',
+        staging: 'island-is-staging-fs-presign-bucket',
+        prod: 'island-is-prod-fs-presign-bucket',
+      },
     })
     .xroad(Base, Client)
     .secrets({
@@ -72,6 +82,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
       DRIVING_LICENSE_BOOK_PASSWORD:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
+      DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
+      DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
