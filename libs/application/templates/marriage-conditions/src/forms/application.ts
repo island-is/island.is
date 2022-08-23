@@ -24,8 +24,11 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
+import { NO, YES } from '../lib/constants'
+import { allowFakeCondition } from '../lib/utils'
+import { MaritalStatus } from '../types/schema'
 
-export const getApplication = (): Form => {
+export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'MarriageConditionsApplicationDraftForm',
     title: '',
@@ -33,6 +36,88 @@ export const getApplication = (): Form => {
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
+      ...(allowFakeData
+        ? [
+            buildSection({
+              id: 'fakeDataSection',
+              title: 'Gervigögn',
+              children: [
+                buildMultiField({
+                  id: 'fakeData',
+                  title: 'Gervigögn',
+                  children: [
+                    buildDescriptionField({
+                      id: 'gervigognDesc',
+                      title: 'Viltu nota gervigögn?',
+                      titleVariant: 'h5',
+                      // Note: text is rendered by a markdown component.. and when
+                      // it sees the indented spaces it seems to assume this is code
+                      // and so it will wrap the text in a <code> block when the double
+                      // spaces are not removed.
+                      description: `
+                  Ath. gervigögn eru eingöngu notuð í stað þess að sækja
+                  forsendugögn í staging umhverfi (dev x-road) hjá Þjóðskrá, auk þess
+                  sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
+                  eins nema að RLS tekur ekki við umsókninni.
+      
+                  Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
+                  til að hægt sé að prófa ferlið.
+                `.replace(/\s{1,}/g, ' '),
+                    }),
+                    buildRadioField({
+                      id: 'fakeData.useFakeData',
+                      title: '',
+                      width: 'half',
+                      options: [
+                        {
+                          value: YES,
+                          label: 'Já',
+                        },
+                        {
+                          value: NO,
+                          label: 'Nei',
+                        },
+                      ],
+                    }),
+                    buildSelectField({
+                      id: 'fakeData.maritalStatus',
+                      title: 'Hjúkskaparstaða',
+                      description: 'Núverandi hjúkskaparstaða umsækjanda',
+                      width: 'half',
+                      condition: allowFakeCondition(YES),
+                      options: [
+                        { value: '1', label: MaritalStatus.Unmarried },
+                        { value: '3', label: MaritalStatus.Married },
+                        { value: '4', label: MaritalStatus.Widowed },
+                        { value: '5', label: MaritalStatus.Separated },
+                        { value: '6', label: MaritalStatus.Divorced },
+                        {
+                          value: '7',
+                          label: MaritalStatus.MarriedLivingSeparately,
+                        },
+                        {
+                          value: '8',
+                          label: MaritalStatus.MarriedToForeignLawPerson,
+                        },
+                        { value: '9', label: MaritalStatus.Unknown },
+                        {
+                          value: '0',
+                          label:
+                            MaritalStatus.ForeignResidenceMarriedToUnregisteredPerson,
+                        },
+                        {
+                          value: 'L',
+                          label:
+                            MaritalStatus.IcelandicResidenceMarriedToUnregisteredPerson,
+                        },
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          ]
+        : []),
       buildSection({
         id: 'introSection',
         title: m.introTitle,

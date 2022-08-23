@@ -6,3 +6,13 @@ export type Individual = {
   phone: string
   email: string
 }
+
+export const YES = 'yes'
+export const NO = 'no'
+
+type YesOrNo = 'yes' | 'no'
+
+export interface MarriageConditionsFakeData {
+  useFakeData?: YesOrNo
+  maritalStatus?: string
+}

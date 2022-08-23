@@ -3,12 +3,38 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  Application,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
+import { MarriageConditionsFakeData, YES } from '../types'
 
 export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   type = 'NationalRegistryMaritalStatusProvider'
 
-  async provide(): Promise<any> {
+  async provide(application: Application): Promise<any> {
+    const fakeData = getValueViaPath<MarriageConditionsFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    if (fakeData?.useFakeData === YES) {
+      const maritalStatus = this.formatMaritalStatus(
+        fakeData.maritalStatus || '',
+      )
+      if (
+        maritalStatus !==
+        (MaritalStatus.Unmarried ||
+          MaritalStatus.Divorced ||
+          MaritalStatus.Widowed)
+      ) {
+        return Promise.reject({
+          reason: `Applicant marital status ${maritalStatus} not applicable`,
+        })
+      }
+
+      return Promise.resolve({
+        maritalStatus,
+      })
+    }
     const query = `
       query NationalRegistryUserQuery {
         nationalRegistryUserV2 {
@@ -24,7 +50,6 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
-        console.log('HELLO ÉG ER RESPONSE!! MEOOOWO', response)
         if (response.errors) {
           console.error(
             `graphql error in ${this.type}: ${response.errors[0].message}`,
@@ -46,10 +71,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           })
         }
 
-        return Promise.resolve({
-          ...response.data.nationalRegistryUser,
-          maritalStatus,
-        })
+        return Promise.resolve(maritalStatus)
       })
       .catch(() => {
         return Promise.reject({})

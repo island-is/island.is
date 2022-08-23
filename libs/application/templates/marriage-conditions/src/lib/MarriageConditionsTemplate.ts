@@ -12,6 +12,11 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
+import {
+  getApplicationFeatureFlags,
+  MarriageConditionsFeatureFlags,
+} from './getApplicationFeatureFlags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,10 +45,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/application').then((val) =>
-                  Promise.resolve(val.getApplication()),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
+                const getApplication = await import(
+                  '../forms/application'
+                ).then((val) => val.getApplication)
+
+                return getApplication({
+                  allowFakeData:
+                    featureFlags[MarriageConditionsFeatureFlags.ALLOW_FAKE],
+                })
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
