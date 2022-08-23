@@ -21,6 +21,7 @@ import {
   DateTime,
   HideableText,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -54,7 +55,6 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
-import CourtDocuments from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 
 export const CourtRecord: React.FC = () => {
   const {

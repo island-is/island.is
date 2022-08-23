@@ -10,6 +10,7 @@ import {
   HideableText,
   PageLayout,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import CourtDocuments from '@island.is/judicial-system-web/src/components/CourtDocuments/CourtDocuments'
 import * as constants from '@island.is/judicial-system/consts'
 
 const getSessionBookingsAutofill = (
