@@ -3,9 +3,9 @@ import { Job } from 'bull'
 import { ApplicationService } from '@island.is/application/api/core'
 import { FileStorageService } from '@island.is/file-storage'
 import { Inject } from '@nestjs/common'
-import type { ApplicationConfig } from './application.configuration'
-import { APPLICATION_CONFIG } from './application.configuration'
 import AmazonS3URI from 'amazon-s3-uri'
+import { ApplicationFilesConfig } from './files.config'
+import { ConfigType } from '@nestjs/config'
 
 interface JobData {
   applicationId: string
@@ -23,8 +23,8 @@ export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
-    @Inject(APPLICATION_CONFIG)
-    private readonly config: ApplicationConfig,
+    @Inject(ApplicationFilesConfig.KEY)
+    private config: ConfigType<typeof ApplicationFilesConfig>,
   ) {}
 
   @Process('upload')

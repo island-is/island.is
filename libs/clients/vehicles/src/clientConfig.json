@@ -20,6 +20,48 @@
   },
   "servers": [{ "url": "/vehicle/vehiclesearch" }],
   "paths": {
+    "/VehicleReportPdf": {
+      "get": {
+        "tags": ["Pdf"],
+        "parameters": [
+          { "name": "permno", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "OAuth2": ["OAuth2"] }]
+      }
+    },
+    "/OwnershipReportPdf": {
+      "get": {
+        "tags": ["Pdf"],
+        "parameters": [
+          { "name": "ssn", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "OAuth2": ["OAuth2"] }]
+      }
+    },
     "/SearchesRemaining": {
       "get": {
         "tags": ["VehicleSearch"],
@@ -84,7 +126,12 @@
           },
           { "name": "permno", "in": "query", "schema": { "type": "string" } },
           { "name": "regno", "in": "query", "schema": { "type": "string" } },
-          { "name": "vin", "in": "query", "schema": { "type": "string" } }
+          { "name": "vin", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "getFees",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
+          }
         ],
         "responses": {
           "200": {
@@ -1223,14 +1270,6 @@
         },
         "additionalProperties": false
       },
-      "PersidnoLookupResult": {
-        "type": "object",
-        "properties": {
-          "data": { "$ref": "#/components/schemas/PersidnoLookup" },
-          "nextCursor": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "PersidnoLookup": {
         "type": "object",
         "properties": {
@@ -1243,7 +1282,10 @@
             "items": { "$ref": "#/components/schemas/Vehicle" },
             "nullable": true
           },
-          "createdTimestamp": { "type": "string", "nullable": true }
+          "createdTimestamp": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -1255,6 +1297,14 @@
           "status": { "type": "integer", "format": "int32", "nullable": true },
           "detail": { "type": "string", "nullable": true },
           "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "PersidnoLookupResult": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/PersidnoLookup" },
+          "nextCursor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
