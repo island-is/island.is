@@ -17,23 +17,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       'fakeData',
     )
     if (fakeData?.useFakeData === YES) {
-      const maritalStatus = this.formatMaritalStatus(
-        fakeData.maritalStatus || '',
-      )
-      if (
-        maritalStatus !==
-        (MaritalStatus.Unmarried ||
-          MaritalStatus.Divorced ||
-          MaritalStatus.Widowed)
-      ) {
-        return Promise.reject({
-          reason: `Applicant marital status ${maritalStatus} not applicable`,
-        })
-      }
-
-      return Promise.resolve({
-        maritalStatus,
-      })
+      return this.handleMaritalStatus(fakeData.maritalStatus || '')
     }
     const query = `
       query NationalRegistryUserQuery {
@@ -56,22 +40,10 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           )
           return Promise.reject({})
         }
-        const maritalStatus = this.formatMaritalStatus(
+        return this.handleMaritalStatus(
           (response.data.nationalRegistryUser as NationalRegistryPerson).spouse
             ?.maritalStatus || '',
         )
-        if (
-          maritalStatus !==
-          (MaritalStatus.Unmarried ||
-            MaritalStatus.Divorced ||
-            MaritalStatus.Widowed)
-        ) {
-          return Promise.reject({
-            reason: `Applicant marital status ${maritalStatus} not applicable`,
-          })
-        }
-
-        return Promise.resolve(maritalStatus)
       })
       .catch(() => {
         return Promise.reject({})
@@ -116,5 +88,23 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       default:
         return MaritalStatus.Unmarried
     }
+  }
+
+  private handleMaritalStatus(maritalCode: string): Promise<any> {
+    const maritalStatus = this.formatMaritalStatus(maritalCode)
+    if (
+      maritalStatus !==
+      (MaritalStatus.Unmarried ||
+        MaritalStatus.Divorced ||
+        MaritalStatus.Widowed)
+    ) {
+      return Promise.reject({
+        reason: `Applicant marital status ${maritalStatus} not applicable`,
+      })
+    }
+
+    return Promise.resolve({
+      maritalStatus,
+    })
   }
 }
