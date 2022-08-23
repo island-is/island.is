@@ -92,7 +92,7 @@ export type ServicePortalRoute = {
    *
    * To feature flag a route:
    * create a feature flag in ConfigCat called `isServicePortalVehicleHistoryPageEnabled`
-   * here your route key would be `VehicleHistory`.
+   * In which case your route key would be `VehicleHistory`.
    */
   key?: string
 

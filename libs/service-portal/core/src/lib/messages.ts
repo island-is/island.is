@@ -323,6 +323,18 @@ export const m = defineMessages({
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
   },
+  unfinishedApplications: {
+    id: 'service.portal:unfinishedApplications',
+    defaultMessage: 'Ókláraðar umsóknir',
+  },
+  finishedApplications: {
+    id: 'service.portal:finishedApplications',
+    defaultMessage: 'Kláraðar umsóknir',
+  },
+  inProgressApplications: {
+    id: 'service.portal:inProgressApplications',
+    defaultMessage: 'Umsóknir í vinnslu',
+  },
   myInfo: {
     id: 'service.portal:my-info',
     defaultMessage: 'Mín gögn',
@@ -452,6 +464,14 @@ export const m = defineMessages({
   drivingLicense: {
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
+  },
+  adrLicense: {
+    id: 'service.portal:adr-license',
+    defaultMessage: 'Ökuréttindi',
+  },
+  machineLicense: {
+    id: 'service.portal:machine-license',
+    defaultMessage: 'Vinnuvélaréttindi',
   },
   notFound: {
     id: 'service.portal:not-found',

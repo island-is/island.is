@@ -5,17 +5,45 @@
   "prefix": "system-e2e",
   "generators": {},
   "targets": {
+    "build": {
+      "builder": "@nrwl/node:webpack",
+      "options": {
+        "outputPath": "dist/apps/system-e2e",
+        "main": "",
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "webpackConfig": "apps/system-e2e/webpack.config.js",
+        "maxWorkers": 2,
+        "assets": []
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "system-test": {
+    "smoke-test": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "apps/system-e2e/cypress.config.ts",
-        "tsConfig": "apps/system-e2e/tsconfig.json"
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "spec": "**/integration/**/smoke-test/*.spec.{ts,js}"
+      }
+    },
+    "acceptance-test": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "spec": "**/integration/**/acceptance-test/*.spec.{ts,js}"
       }
     },
     "docker-cypress": {}

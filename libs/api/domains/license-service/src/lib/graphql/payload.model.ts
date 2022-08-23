@@ -2,6 +2,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
 import graphqlTypeJson from 'graphql-type-json'
+import { GenericUserLicenseMetadata } from './genericLicense.model'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
@@ -45,4 +46,7 @@ export class Payload {
   @IsObject()
   // eslint-disable-next-line @typescript-eslint/ban-types
   rawData?: object
+
+  @Field(() => GenericUserLicenseMetadata)
+  metadata?: GenericUserLicenseMetadata
 }
