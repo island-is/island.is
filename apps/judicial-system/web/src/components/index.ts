@@ -1,7 +1,7 @@
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
 export { default as CaseInfo } from './CaseInfo/CaseInfo'
 export { default as BlueBox } from './BlueBox/BlueBox'
-export { default as CourtDocuments } from './CourtDocuments/CourtDocuments'
+export { default as MultipleValueList } from './MultipleValueList/MultipleValueList'
 export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecordAccordionItem/CourtRecordAccordionItem'
 export { default as FormFooter } from './FormFooter/FormFooter'
 export { default as Header } from './Header/Header'

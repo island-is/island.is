@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -244,7 +244,7 @@ export const Ruling: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
