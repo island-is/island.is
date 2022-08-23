@@ -5,7 +5,7 @@ export const EXPIRES_IN_MILLISECONDS = EXPIRES_IN_SECONDS * 1000
 export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 
-export const ICaseTypes = [
+export const InvestigationCaseTypes = [
   {
     label: 'Húsleit',
     value: CaseType.SEARCH_WARRANT,
@@ -73,6 +73,85 @@ export const ICaseTypes = [
   },
 ]
 
+export const IndictmentTypes = [
+  {
+    label: 'Barnaverndarlög',
+    value: CaseType.CHILD_PROTECTION_LAWS,
+  },
+  {
+    label: 'Eignaspjöll',
+    value: CaseType.PROPERTY_DAMAGE,
+  },
+  {
+    label: 'Fíkniefnalagabrot',
+    value: CaseType.NARCOTICS_OFFENSE,
+  },
+  {
+    label: 'Fjárdráttur',
+    value: CaseType.EMBEZZLEMENT,
+  },
+  {
+    label: 'Fjárdráttur',
+    value: CaseType.FRAUD,
+  },
+  {
+    label: 'Heimilisofbeldi',
+    value: CaseType.DOMESTIC_VIOLENCE,
+  },
+  {
+    label: 'Líkamsáras sem leiðir til dauða',
+    value: CaseType.ASSAULT_LEADING_TO_DEATH,
+  },
+  {
+    label: 'Manndráp',
+    value: CaseType.MURDER,
+  },
+  {
+    label: 'Meiriháttar líkamsárás',
+    value: CaseType.MAJOR_ASSULT,
+  },
+  {
+    label: 'Minniháttar líkamsárás',
+    value: CaseType.MINOR_ASSULT,
+  },
+  {
+    label: 'Nauðgun',
+    value: CaseType.RAPE,
+  },
+  {
+    label: 'Nytjastuldur',
+    value: CaseType.UTILITY_THEFT,
+  },
+  {
+    label: 'Sérlega hættuleg líkamsáras',
+    value: CaseType.AGGRAVETED_ASSULT,
+  },
+  {
+    label: 'Tilraun til manndráps',
+    value: CaseType.ATTEMPTED_MURDER,
+  },
+  {
+    label: 'Umferðarlagabrot',
+    value: CaseType.TRAFFIC_VIOLATION,
+  },
+  {
+    label: 'Þjófnaður',
+    value: CaseType.THEFT,
+  },
+  {
+    label: 'Önnur hegningarlagabrot',
+    value: CaseType.OTHER_CRIMINAL_OFFENSES,
+  },
+  {
+    label: 'Önnur kynferðisbrot en nauðgun',
+    value: CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
+  },
+  {
+    label: 'Önnur sérrefsilagabrot',
+    value: CaseType.OTHER_OFFENSES,
+  },
+]
+
 // Date/time formats
 export const TIME_FORMAT = 'HH:mm'
 
@@ -113,6 +192,7 @@ export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
+export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
