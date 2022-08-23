@@ -678,7 +678,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   </Box>
                 </Box>
                 <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase?.judge?.name}</Text>
+                  <Text variant="h4">{workingCase.judge?.name}</Text>
                 </Box>
               </BlueBox>
             </Box>
@@ -716,26 +716,28 @@ export const SignedVerdictOverview: React.FC = () => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType={'courtRecord'}
               >
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR ? (
-                  <Button
-                    variant="ghost"
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role === UserRole.JUDGE ||
+                    user?.role === UserRole.REGISTRAR ? (
+                    <Button
+                      variant="ghost"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton
@@ -749,7 +751,7 @@ export const SignedVerdictOverview: React.FC = () => {
                       signatory={workingCase.judge?.name}
                       signingDate={workingCase.rulingDate}
                     />
-                  ) : user?.id === workingCase.judge?.id ? (
+                  ) : user && user.id === workingCase.judge?.id ? (
                     <Button
                       loading={isRequestingRulingSignature}
                       onClick={(event) => {
@@ -762,7 +764,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   ) : (
                     <Text>{formatMessage(m.unsignedDocument)}</Text>
                   )}
-                  {user?.role === UserRole.JUDGE && (
+                  {user && user.id === workingCase.judge?.id && (
                     <Button
                       variant="ghost"
                       data-testid="modifyRulingButton"
