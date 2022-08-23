@@ -25,11 +25,11 @@ import {
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Processing: React.FC = () => {
   const {
