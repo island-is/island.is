@@ -30,6 +30,7 @@ import {
   isPoliceReportStepValidRC,
   isRulingValidIC,
   isRulingValidRC,
+  isDefendantStepValidForSidebarIndictments,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -243,6 +244,15 @@ const useSections = () => {
           type: 'SUB_SECTION',
           name: capitalize(formatMessage(core.indictmentDefendant)),
           href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(
+            formatMessage(sections.indictmentCaseProsecutorSection.processing),
+          ),
+          href: isDefendantStepValidForSidebarIndictments(workingCase)
+            ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
+            : undefined,
         },
       ],
     }
@@ -655,6 +665,7 @@ const useSections = () => {
   return {
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getSections,
