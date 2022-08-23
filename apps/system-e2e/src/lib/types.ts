@@ -1,5 +1,5 @@
 import type {
-  AuthUser,
+  AuthUser as ADSUser,
   Discount as ADSDiscount,
 } from '@island.is/air-discount-scheme/types'
 
@@ -16,7 +16,11 @@ type BaseUser = {
 
 type FixtureUser = BaseUser & Mobile
 
-type ADSUser = AuthUser
+enum Timeout {
+  long = 60000,
+  medium = long / 2,
+  short = Math.floor(medium / 2),
+}
 
 enum AuthUrl {
   dev = 'https://identity-server.dev01.devland.is',
@@ -79,4 +83,4 @@ export type {
   FixtureUser,
 }
 
-export { AuthUrl, BaseUrl }
+export { AuthUrl, BaseUrl, Timeout }

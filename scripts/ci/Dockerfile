@@ -188,13 +188,6 @@ RUN echo "whoami: $(whoami)" \
     "user:            $(whoami) \n" \
     "chrome:          $(google-chrome --version || true) \n"
 
-# a few environment variables to make NPM installs easier
-# good colors for most applications
-ENV TERM xterm \
-    # avoid million NPM install messages
-    npm_config_loglevel warn \
-    # allow installing when the main user is root
-    npm_config_unsafe_perm true
 
 FROM cypress-base as output-cypress
 ENV \

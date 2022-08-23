@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress'
 import { getCognitoCredentials } from './src/support/utils'
 import type { TestEnvironment } from './src/lib/types'
-import { BaseUrl, AuthUrl } from './src/lib/types'
+import { BaseUrl, AuthUrl, Timeout } from './src/lib/types'
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
@@ -13,15 +13,13 @@ const getEnvironmentUrls = (env: TestEnvironment) => {
     : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
 
-const globalTimeout = 10000
-
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: globalTimeout,
-  pageLoadTimeout: globalTimeout,
-  responseTimeout: globalTimeout,
+  defaultCommandTimeout: Timeout.long,
+  pageLoadTimeout: Timeout.medium,
+  responseTimeout: Timeout.short,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
