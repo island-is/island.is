@@ -117,6 +117,13 @@ Cypress.Commands.add('gqlRequest', ({ query }) => {
   })
 })
 
+const isTextInNode = (text: string, node: JQuery<HTMLElement>) => {
+  if (node.children.length > 0)
+    for (const child of node.children)
+      if (isTextInNode(text, child)) return true
+  return node == text
+}
+
 Cypress.Commands.add('bypassApplicationEntry', (applicant?: string) => {
   // Wait for banner-loader to finish
   cy.get('[aria-label="island.is logo"]').should('exist')
@@ -129,10 +136,10 @@ Cypress.Commands.add('bypassApplicationEntry', (applicant?: string) => {
       .contains(applicant)
       .then((li) => {
         // TODO figure out finding "Hefja umsókn
-        while ((!li.contains('Hefja umsókn'), { timeout: 1 })) {
-          li = li.parent
-          li.click()
+        while (!isTextInNode(applicant, li)) {
+          li = li.parent()
         }
+        cy.wrap(li).click()
         cy.get('[aria-label="Útskráning og aðgangsstillingar"]').should(
           'contain',
           applicant,
