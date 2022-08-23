@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl'
 
 import { Case } from '@island.is/judicial-system/types'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
 import { useCase, useDeb } from '../../utils/hooks'
-import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 
 interface Props {
   workingCase: Case
