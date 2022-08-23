@@ -30,8 +30,6 @@ import {
   isPoliceReportStepValidRC,
   isRulingValidIC,
   isRulingValidRC,
-  isProcessingStepValidIndictments,
-  isDefendantStepValidIndictments,
   isDefendantStepValidForSidebarIndictments,
 } from '../../validate'
 import {
