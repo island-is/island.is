@@ -3,7 +3,7 @@ export const cypressError = (msg: string) => {
   throw new Error(msg)
 }
 
-import type { ADSUserWithDiscount, FixtureUser } from '../lib/types'
+import type { AuthUser, AuthUserWithDiscount } from '../lib/types'
 
 export const getCognitoCredentials = () => {
   return {
@@ -33,26 +33,23 @@ export const aliasQuery = (
   }
 }
 
-export const getFakeUser = (
-  fakeUsers: FixtureUser[],
-  name: string,
-): FixtureUser =>
+export const getFakeUser = (fakeUsers: AuthUser[], name: string) =>
   fakeUsers
     .filter((e) => e.name.toLowerCase().includes(name.toLowerCase()))
     .reduce((e) => e)
 
 const getDiscountUser = (
-  fakeUser: FixtureUser,
-  discounts: ADSUserWithDiscount[],
+  fakeUser: AuthUser,
+  discounts: AuthUserWithDiscount[],
 ) =>
   discounts.filter((e) => e.nationalId === fakeUser.nationalId).reduce((e) => e)
 
 export const getDiscountData = (
-  fakeUser: FixtureUser,
+  fakeUser: AuthUser,
   res: CyHttpMessages.BaseMessage | undefined,
 ) => {
   const discounts =
-    (res?.body.data.discounts as ADSUserWithDiscount[]) ||
+    (res?.body.data.discounts as AuthUserWithDiscount[]) ||
     cypressError('Error getting response data')
   return { discounts, user: getDiscountUser(fakeUser, discounts) }
 }
