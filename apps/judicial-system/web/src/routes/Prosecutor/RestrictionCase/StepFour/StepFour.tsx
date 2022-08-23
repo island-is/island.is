@@ -48,7 +48,6 @@ export const StepFour: React.FC = () => {
   useDeb(workingCase, 'demands')
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
-  useDeb(workingCase, 'comments')
 
   return (
     <PageLayout

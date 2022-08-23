@@ -41,7 +41,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'prosecutorOnlySessionRequest')
-  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     if (

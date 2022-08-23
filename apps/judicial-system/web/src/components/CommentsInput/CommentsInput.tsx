@@ -8,7 +8,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
+import { useCase, useDeb } from '../../utils/hooks'
 import { commentsInput } from '@island.is/judicial-system-web/messages/Core/commentsInput'
 
 interface Props {
@@ -19,6 +19,7 @@ const CommentsInput: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  useDeb(workingCase, 'comments')
 
   return (
     <>
