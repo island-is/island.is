@@ -597,6 +597,7 @@ application-system-api-worker:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'application_system_api'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'

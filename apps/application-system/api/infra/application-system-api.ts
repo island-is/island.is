@@ -68,6 +68,11 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
     })
     .xroad(Base, Client)
     .secrets({
