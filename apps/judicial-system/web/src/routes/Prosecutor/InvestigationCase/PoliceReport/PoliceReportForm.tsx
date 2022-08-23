@@ -17,6 +17,7 @@ import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -234,42 +235,9 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(icReportForm.comments.heading)}{' '}
-                <Tooltip
-                  placement="right"
-                  as="span"
-                  text={formatMessage(icReportForm.comments.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              name="comments"
-              label={formatMessage(icReportForm.comments.label)}
-              placeholder={formatMessage(icReportForm.comments.placeholder)}
-              value={workingCase.comments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+            <CommentsInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
             />
           </Box>
         </Box>
