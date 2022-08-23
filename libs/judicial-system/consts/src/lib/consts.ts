@@ -108,11 +108,11 @@ export const IndictmentTypes = [
   },
   {
     label: 'Meiriháttar líkamsárás',
-    value: CaseType.MAJOR_ASSULT,
+    value: CaseType.MAJOR_ASSAULT,
   },
   {
     label: 'Minniháttar líkamsárás',
-    value: CaseType.MINOR_ASSULT,
+    value: CaseType.MINOR_ASSAULT,
   },
   {
     label: 'Nauðgun',
@@ -124,7 +124,7 @@ export const IndictmentTypes = [
   },
   {
     label: 'Sérlega hættuleg líkamsáras',
-    value: CaseType.AGGRAVETED_ASSULT,
+    value: CaseType.AGGRAVATED_ASSAULT,
   },
   {
     label: 'Tilraun til manndráps',
