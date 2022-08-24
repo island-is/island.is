@@ -417,7 +417,7 @@ export const StepFive: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
-              fileList={files}
+              fileList={files as UploadFile[]}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}

@@ -31,6 +31,7 @@ export type {
   UploadFileToCourtResponse,
   CaseFile,
   CreateFile,
+  CaseFileStatus,
 } from './lib/file'
 
 export { UserRole, courtRoles, isCourtRole } from './lib/user'

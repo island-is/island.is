@@ -13,7 +13,13 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  Tag,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileSubtype } from '@island.is/judicial-system/types'
@@ -69,9 +75,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.COVER_LETTER,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.COVER_LETTER,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
@@ -91,9 +99,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.INDICTMENT,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.INDICTMENT,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
@@ -113,9 +123,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.CRIMINAL_RECORD,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.CRIMINAL_RECORD,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -131,9 +143,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.COST_BREAKDOWN,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.COST_BREAKDOWN,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -149,9 +163,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.CASE_FILE_CONTENTS,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.CASE_FILE_CONTENTS,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -167,9 +183,11 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.subtype === CaseFileSubtype.CASE_FILE,
-            )}
+            fileList={
+              files.filter(
+                (file) => file.subtype === CaseFileSubtype.CASE_FILE,
+              ) as UploadFile[]
+            }
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}

@@ -148,7 +148,7 @@ export const useS3Upload = (workingCase: Case) => {
     })
 
     request.open('POST', presignedPost.url)
-    request.send(createFormData(presignedPost, file))
+    request.send(createFormData(presignedPost, file as UploadFile))
   }
 
   // Utils
@@ -211,7 +211,7 @@ export const useS3Upload = (workingCase: Case) => {
             type: file.type,
             key: file.key,
             size: file.size,
-            subtype: file.subtype,
+            // subtype: file.subtype,
           },
         },
       })
@@ -243,6 +243,7 @@ export const useS3Upload = (workingCase: Case) => {
         size: newFile.size,
         subtype: filesSubtype,
         caseId: workingCase.id,
+        status: 'uploading',
       }
     })
 

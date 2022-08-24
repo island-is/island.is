@@ -9,13 +9,14 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
+  CaseFile,
   CaseFile as TCaseFile,
   CaseFileState,
+  CaseFileStatus,
 } from '@island.is/judicial-system/types'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
-import { CaseFile, CaseFileStatus } from '../../utils/hooks/useCourtUpload'
 
 interface Props {
   caseId: string
@@ -77,7 +78,7 @@ const CaseFileList: React.FC<Props> = (props) => {
                     : file.status === 'done-broken'
                     ? 'done'
                     : file.status,
-              } as TCaseFile
+              } as UploadFile
             }
             showFileSize={true}
             defaultBackgroundColor={getBackgroundColor(file.status)}
@@ -99,8 +100,12 @@ const CaseFileList: React.FC<Props> = (props) => {
                   }
                 : undefined
             }
-            onRemoveClick={() => (canOpenFiles ? onOpen(file.id) : null)}
-            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
+            onRemoveClick={() =>
+              canOpenFiles && file.id ? onOpen(file.id) : null
+            }
+            onRetryClick={() =>
+              handleRetryClick && file.id && handleRetryClick(file.id)
+            }
           />
           {file.status === 'unsupported' && (
             <Text color="red600" variant="eyebrow" lineHeight="lg">

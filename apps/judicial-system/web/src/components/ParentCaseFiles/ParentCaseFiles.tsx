@@ -6,6 +6,7 @@ import {
   AccordionItem,
   UploadedFile,
   Accordion,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { rcCaseFiles } from '@island.is/judicial-system-web/messages'
 import { icCaseFiles } from '@island.is/judicial-system-web/messages'
@@ -42,7 +43,9 @@ const ParentCaseFiles: React.FC<Props> = ({ files, caseType }) => {
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>
               <UploadedFile
-                file={{ ...file, name: `${index + 1}. ${file.name}` }}
+                file={
+                  { ...file, name: `${index + 1}. ${file.name}` } as UploadFile
+                }
                 showFileSize
                 hideIcons
                 defaultBackgroundColor={{
