@@ -108,11 +108,11 @@ export const IndictmentTypes = [
   },
   {
     label: 'Meiriháttar líkamsárás',
-    value: CaseType.MAJOR_ASSULT,
+    value: CaseType.MAJOR_ASSAULT,
   },
   {
     label: 'Minniháttar líkamsárás',
-    value: CaseType.MINOR_ASSULT,
+    value: CaseType.MINOR_ASSAULT,
   },
   {
     label: 'Nauðgun',
@@ -124,7 +124,7 @@ export const IndictmentTypes = [
   },
   {
     label: 'Sérlega hættuleg líkamsáras',
-    value: CaseType.AGGRAVETED_ASSULT,
+    value: CaseType.AGGRAVATED_ASSAULT,
   },
   {
     label: 'Tilraun til manndráps',
@@ -191,8 +191,9 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/alaerdi'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/akaerdi'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/akaerur/domskjol'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
