@@ -34,6 +34,8 @@ export const GET_USERS_VEHICLES = gql`
           nextInspectionDate
           nextInspectionDateIfPassedInspectionToday
         }
+        operatorNumber
+        primaryOperator
       }
       downloadServiceURL
       createdTimestamp

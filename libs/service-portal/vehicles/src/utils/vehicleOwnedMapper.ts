@@ -81,9 +81,9 @@ export const exportVehicleOwnedDocument = async (
         ? new Date(item.operatorStartDate).toLocaleDateString()
         : '',
       item.ownerPersidno,
-      '?',
-      '? Aðal umr.',
-      '? Nr. umr.',
+      'Nafn vantar',
+      item.primaryOperator ? 'Já' : 'Nei',
+      item.operatorNumber,
       item.termination,
       item.vehicleStatus,
       item.useGroup,

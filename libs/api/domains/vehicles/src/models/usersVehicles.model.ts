@@ -84,6 +84,12 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   deregistrationDate?: string
+
+  @Field({ nullable: true })
+  operatorNumber?: number
+
+  @Field({ nullable: true })
+  primaryOperator?: boolean
 }
 
 @ObjectType()

@@ -42,7 +42,7 @@ export const vehicleOperatorDataHeader = [
   'Kt. eiganda',
   'Nafn eiganda',
   'Aðalumr.',
-  'Númer umráðamanns',
+  'Nr. umráðamanns',
   'Innlögn',
   'Staða',
   'Notkunarflokkur',
