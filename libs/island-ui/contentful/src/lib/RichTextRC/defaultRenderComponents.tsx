@@ -3,6 +3,7 @@ import {
   CompanyList,
   CompanyListConnected,
   GeneralPetitionLists,
+  Calculator as FiskistofaCalculator,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -34,6 +35,8 @@ const renderConnectedComponent = (slice) => {
         return <CompanyListConnected graphqlLink={graphqlLink} />
       }
       break
+    case 'Fiskistofa/Calculator':
+      return <FiskistofaCalculator />
     default:
       break
   }
