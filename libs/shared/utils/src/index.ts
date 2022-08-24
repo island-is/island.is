@@ -4,7 +4,7 @@
  */
 export { getStaticEnv } from './lib/getStaticEnv'
 export { sleep } from './lib/sleep'
-export { isRunningOnEnvironment, getActiveEnvironment } from './lib/environment'
+export { isRunningOnEnvironment } from './lib/environment'
 export { shouldLinkOpenInNewWindow } from './lib/shouldLinkOpenInNewWindow'
 export { getOrganizationLogoUrl } from './lib/getOrganizationLogoUrl'
 export { checkDelegation } from './lib/isDelegation'
