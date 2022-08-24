@@ -26,7 +26,8 @@ describe('P-sign', function () {
     // Data collection
     cy.get('input[name="approveExternalData"]').click()
     cy.get('button[type="submit"]').click()
-    cy.get('[data-testid=errorMessage]').should('not.exist')
+    cy.wait(5000)
+    cy.get('[data-testid="alertMessage"]').should('not.exist')
 
     // Information
     cy.contains('sími')
