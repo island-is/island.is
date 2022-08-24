@@ -15,7 +15,7 @@ describe('Logo', () => {
   test('should display the current users institution', async () => {
     // Arrange
     const history = createMemoryHistory()
-    history.push(constants.STEP_ONE_ROUTE)
+    history.push(constants.RESTRICTION_CASE_DEFENDANT_ROUTE)
 
     render(
       <MockedProvider mocks={[...mockJudgeQuery]} addTypename={false}>

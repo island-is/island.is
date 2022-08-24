@@ -13,7 +13,7 @@ import {
   InfoCard,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -102,7 +102,7 @@ export const JudgeOverview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.JUDGE_OVERVIEW}
+      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -328,8 +328,8 @@ export const JudgeOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
-          nextUrl={`${constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />

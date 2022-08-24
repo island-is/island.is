@@ -303,4 +303,7 @@ export class VehiclesDetail {
 
   @Field(() => [VehiclesOperator], { nullable: true })
   operators?: VehiclesOperator[]
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }

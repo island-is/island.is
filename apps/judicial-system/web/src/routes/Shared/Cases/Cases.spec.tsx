@@ -199,6 +199,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumber: '008-2020-X',
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: true,
+            rulingDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_2',
@@ -209,6 +210,7 @@ const mockPrisonUserCasesQuery = [
             policeCaseNumber: '008-2020-X',
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: false,
+            rulingDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },

@@ -35,7 +35,7 @@ import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { NotificationService } from './notification.service'
 
-// Allows prosecutors to send heads-up and ready-for-court notifications
+// Allows prosecutors to send notifications
 const prosecutorNotificationRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
@@ -48,7 +48,7 @@ const prosecutorNotificationRule = {
   ],
 } as RolesRule
 
-// Allows judges to send court-date and ruling notifiications
+// Allows judges to send notifiications
 const judgeNotificationRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
@@ -56,12 +56,11 @@ const judgeNotificationRule = {
   dtoFieldValues: [
     NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
-    NotificationType.RULING,
     NotificationType.MODIFIED,
   ],
 } as RolesRule
 
-// Allows registrars to send court-date
+// Allows registrars to send notifications
 const registrarNotificationRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,

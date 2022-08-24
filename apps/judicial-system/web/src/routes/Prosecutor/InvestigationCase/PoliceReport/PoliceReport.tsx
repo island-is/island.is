@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -28,7 +28,7 @@ const PoliceReport = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FOUR}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
