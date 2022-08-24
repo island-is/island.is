@@ -318,7 +318,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
         icon: {
-          icon: 'people',
+          icon: 'lockClosed',
         },
       },
     ],

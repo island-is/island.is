@@ -8,6 +8,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import Chevron from './Chevron'
+import { getIconFromType } from '../Icons/Icons'
 
 interface Props {
   path?: ServicePortalPath
@@ -52,6 +53,8 @@ const NavItemContent: FC<Props> = ({
 
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
 
+  const animatedIcon = icon ? getIconFromType(icon) : undefined
+
   return (
     <Box
       className={[
@@ -65,7 +68,14 @@ const NavItemContent: FC<Props> = ({
       justifyContent={collapsed ? 'center' : 'spaceBetween'}
       cursor={showLock ? undefined : 'pointer'}
       position="relative"
-      onClick={showLock ? (hasArray ? undefined : onClick) : onClick}
+      onClick={() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const a: any = icon && document.getElementById(`animated-${icon.icon}`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const b: any = a.contentDocument.querySelector('svg')
+        b && b.dispatchEvent(new Event('click'))
+        if (!hasArray && onClick) onClick()
+      }}
       paddingY={1}
       paddingLeft={collapsed ? 1 : 3}
       paddingRight={collapsed ? 1 : 2}
@@ -91,39 +101,25 @@ const NavItemContent: FC<Props> = ({
                 collapsed && styles.badgeCollapsed,
               )}
             ></Box>
-            {/* <Icon
-              type={active ? 'filled' : 'outline'}
-              icon={icon.icon}
-              color={active ? 'blue400' : 'blue600'}
-              size="medium"
-              className={styles.icon}
-            /> */}
-            <img src="./assets/images/minarsidur-stillingar.svg" />
-            <div className={styles.testIconWrapper}>
-              <svg
-                className={clicked ? styles.testIconHover : styles.testIcon}
-                viewBox="0 0 512 512"
+
+            {animatedIcon ? (
+              <object
+                width={24}
+                id={`animated-${icon.icon}`}
+                type="image/svg+xml"
+                data={animatedIcon}
               >
-                <path
-                  className={styles.testBack}
-                  d="M411.204 144v-30a50 50 0 0 0-59.36-49.1l-263.36 44.95c-23.593 4.496-40.656 25.132-40.64 49.15v49"
-                />
-                <rect
-                  className={clicked ? styles.testCardHover : styles.testCard}
-                  rx="48"
-                  ry="48"
-                />
-                <rect
-                  className={clicked ? styles.testFrontHover : styles.testFront}
-                  rx="48"
-                  ry="48"
-                />
-                <path
-                  className={clicked ? styles.testDotHover : styles.testDot}
-                  d="M368 320c-17.673 0-32-14.327-32-32s14.327-32 32-32 32 14.327 32 32-14.327 32-32 32Z"
-                />
-              </svg>
-            </div>
+                animated icon
+              </object>
+            ) : (
+              <Icon
+                type={active ? 'filled' : 'outline'}
+                icon={icon.icon}
+                color={active ? 'blue400' : 'blue600'}
+                size="medium"
+                className={styles.icon}
+              />
+            )}
           </Box>
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}
