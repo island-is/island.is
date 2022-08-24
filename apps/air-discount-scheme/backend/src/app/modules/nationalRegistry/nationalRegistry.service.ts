@@ -298,6 +298,9 @@ export class NationalRegistryService {
     if (response === undefined) {
       return []
     }
+    // Add the callee parent to custodians
+    // Custody relation isn't circular/transitive
+    response.push(auth.nationalId)
 
     const custodians = []
     for (const custodian of response) {
