@@ -24,16 +24,12 @@ import {
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  capitalize,
-  caseTypes,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { mapCaseStateToTagVariant } from './utils'
+import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 
@@ -311,7 +307,9 @@ const ActiveCases: React.FC<Props> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Box component="span" display="flex" flexDirection="column">
-                    <Text as="span">{capitalize(caseTypes[c.type])}</Text>
+                    <Text as="span">
+                      {displayCaseType(formatMessage, c.type, c.decision)}
+                    </Text>
                     {c.parentCase && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
@@ -323,6 +321,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   <Tag
                     variant={
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),
@@ -335,6 +334,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   >
                     {
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),
