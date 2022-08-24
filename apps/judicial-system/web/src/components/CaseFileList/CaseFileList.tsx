@@ -9,7 +9,6 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
-  CaseFile,
   CaseFile as TCaseFile,
   CaseFileState,
   CaseFileStatus,
@@ -17,6 +16,7 @@ import {
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
+import { CaseFile } from '../../utils/hooks/useCourtUpload'
 
 interface Props {
   caseId: string
@@ -78,7 +78,7 @@ const CaseFileList: React.FC<Props> = (props) => {
                     : file.status === 'done-broken'
                     ? 'done'
                     : file.status,
-              } as UploadFile
+              } as TCaseFile
             }
             showFileSize={true}
             defaultBackgroundColor={getBackgroundColor(file.status)}

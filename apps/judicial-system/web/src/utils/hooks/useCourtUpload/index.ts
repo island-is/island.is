@@ -2,10 +2,8 @@ import { ApolloError, useMutation } from '@apollo/client'
 import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFile,
   CaseFile as TCaseFile,
   CaseFileState,
-  CaseFileStatus,
 } from '@island.is/judicial-system/types'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -17,6 +15,20 @@ export enum UploadState {
   SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
   UPLOAD_ERROR = 'UPLOAD_ERROR',
   UPLOADING = 'UPLOADING',
+}
+
+export type CaseFileStatus =
+  | 'done'
+  | 'done-broken'
+  | 'not-uploaded'
+  | 'broken'
+  | 'uploading'
+  | 'error'
+  | 'case-not-found'
+  | 'unsupported'
+
+export interface CaseFile extends TCaseFile {
+  status: CaseFileStatus
 }
 
 export const useCourtUpload = (

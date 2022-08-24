@@ -207,7 +207,7 @@ export const CaseFiles: React.FC = () => {
         state: CaseFileState.STORED_IN_RVG,
         key,
         size,
-      } as CaseFile)
+      } as UploadFile)
 
       newPoliceCaseFileList = newPoliceCaseFileList.filter(
         (p) => p.id !== policeCaseFile.id,

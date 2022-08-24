@@ -18,15 +18,19 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
+interface TUploadFile extends UploadFile {
+  subtype?: CaseFileSubtype
+}
+
 export const useS3Upload = (workingCase: Case) => {
-  const [files, setFiles] = useState<CaseFile[]>([])
+  const [files, setFiles] = useState<TUploadFile[]>([])
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
-  const filesRef = useRef<CaseFile[]>(files)
+  const filesRef = useRef<UploadFile[]>(files)
   const { formatMessage } = useIntl()
 
   useEffect(() => {
     const uploadCaseFiles = workingCase.caseFiles?.map((caseFile) => {
-      const uploadCaseFile = caseFile
+      const uploadCaseFile = caseFile as UploadFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
@@ -114,7 +118,7 @@ export const useS3Upload = (workingCase: Case) => {
     return formData
   }
 
-  const uploadToS3 = (file: CaseFile, presignedPost: PresignedPost) => {
+  const uploadToS3 = (file: UploadFile, presignedPost: PresignedPost) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -156,7 +160,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Sets ref and state value
    * @param files Files to set to state.
    */
-  const setFilesRefAndState = (files: CaseFile[]) => {
+  const setFilesRefAndState = (files: UploadFile[]) => {
     filesRef.current = files
     setFiles(files)
   }
@@ -165,7 +169,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Updates a file if it's in files and adds it to the end of files if not.
    * @param file The file to update.
    */
-  const updateFile = (file: CaseFile) => {
+  const updateFile = (file: UploadFile) => {
     /**
      * Use the filesRef value instead of the files state value because
      *
@@ -202,7 +206,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Insert file in database and update state.
    * @param file The file to add to case.
    */
-  const addFileToCase = async (file: CaseFile) => {
+  const addFileToCase = async (file: TUploadFile) => {
     if (workingCase && file.size && file.key) {
       await createFileMutation({
         variables: {
@@ -211,14 +215,13 @@ export const useS3Upload = (workingCase: Case) => {
             type: file.type,
             key: file.key,
             size: file.size,
-            // subtype: file.subtype,
+            subtype: file.subtype,
           },
         },
       })
         .then((res) => {
           file.id = res.data.createFile.id
           file.status = 'done'
-          file.subtype = res.data.createFile.subtype
           updateFile(file)
         })
         .catch(() => {
@@ -233,21 +236,14 @@ export const useS3Upload = (workingCase: Case) => {
     isRetry?: boolean,
     filesSubtype?: CaseFileSubtype,
   ) => {
-    const newUploadFiles: CaseFile[] = newFiles.map((newFile) => {
+    const newUploadFiles = newFiles.map((newFile) => {
       return {
-        // TODO: CAN THESE BE REMOVED?
-        created: '',
-        modified: '',
         name: newFile.name,
-        type: newFile.type,
         size: newFile.size,
+        type: newFile.type,
         subtype: filesSubtype,
-        caseId: workingCase.id,
-        status: 'uploading',
       }
-    })
-
-    console.log(files)
+    }) as TUploadFile[]
 
     if (!isRetry) {
       setFilesRefAndState([...newUploadFiles, ...files])
