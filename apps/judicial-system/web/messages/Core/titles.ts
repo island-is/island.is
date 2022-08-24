@@ -89,6 +89,20 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit kröfu skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
     },
+    indictments: {
+      defendant: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.defendant',
+        defaultMessage: 'Ákærði - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir ákærða skjá hjá saksóknara í ákærum',
+      }),
+      processing: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.processing',
+        defaultMessage: 'Málsmeðferð - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Málsmeðferð skjá hjá saksóknara í ákærum',
+      }),
+    },
   },
   court: {
     investigationCases: {

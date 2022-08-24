@@ -18,6 +18,8 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { ApplicationFilesConfig } from '@island.is/application/api/files'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { signingModuleConfig } from '@island.is/dokobit-signing'
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
         signingModuleConfig,
+        ApplicationFilesConfig,
+        FileStorageConfig,
       ],
     }),
   ],

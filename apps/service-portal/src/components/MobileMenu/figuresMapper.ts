@@ -14,10 +14,6 @@ export const getMobileMenuFigure = (path: ServicePortalPath | undefined) => {
       imgName = 'myInfo.svg'
       break
 
-    case ServicePortalPath.FamilyRoot:
-      imgName = 'familyGrid.svg'
-      break
-
     case ServicePortalPath.HealthRoot:
       imgName = 'health.svg'
       break

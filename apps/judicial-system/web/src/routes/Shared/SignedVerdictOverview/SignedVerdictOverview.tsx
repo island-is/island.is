@@ -70,6 +70,9 @@ import {
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -192,6 +195,8 @@ export const getExtensionInfoText = (
       })
 }
 
+type availableModals = 'NoModal' | 'SigningModal'
+
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
@@ -203,7 +208,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setSelectedSharingInstitutionId,
   ] = useState<ValueType<ReactSelectOption>>()
 
-  // Signature state
+  // Court record signature state
   const [
     requestCourtRecordSignatureResponse,
     setRequestCourtRecordSignatureResponse,
@@ -220,6 +225,16 @@ export const SignedVerdictOverview: React.FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
+
+  // Ruling signature state
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -277,8 +292,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
       },
-      onError: (reason) => {
-        console.log(reason)
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
       },
     },
@@ -664,7 +678,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   </Box>
                 </Box>
                 <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase?.judge?.name}</Text>
+                  <Text variant="h4">{workingCase.judge?.name}</Text>
                 </Box>
               </BlueBox>
             </Box>
@@ -702,26 +716,29 @@ export const SignedVerdictOverview: React.FC = () => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType={'courtRecord'}
               >
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR ? (
-                  <Button
-                    variant="ghost"
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role === UserRole.JUDGE ||
+                    user?.role === UserRole.REGISTRAR ? (
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton
@@ -730,26 +747,46 @@ export const SignedVerdictOverview: React.FC = () => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType={'ruling'}
                 >
-                  <SignedDocument
-                    signatory={workingCase.judge?.name}
-                    signingDate={workingCase.rulingDate}
-                  />
-                  {user?.role === UserRole.JUDGE && (
-                    <Button
-                      variant="ghost"
-                      data-testid="modifyRulingButton"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        router.push(
-                          isRestrictionCase(workingCase.type)
-                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
-                        )
-                      }}
-                    >
-                      {capitalize(formatMessage(core.modify))}
-                    </Button>
-                  )}
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
+                      <SignedDocument
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
+                      />
+                    ) : user && user.id === workingCase.judge?.id ? (
+                      <Button
+                        size="small"
+                        loading={isRequestingRulingSignature}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          requestRulingSignature()
+                        }}
+                      >
+                        {formatMessage(m.signButton)}
+                      </Button>
+                    ) : (
+                      <Text>{formatMessage(m.unsignedDocument)}</Text>
+                    )}
+                    {user && user.id === workingCase.judge?.id && (
+                      <Box marginLeft={3}>
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          data-testid="modifyRulingButton"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            router.push(
+                              isRestrictionCase(workingCase.type)
+                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            )
+                          }}
+                        >
+                          {capitalize(formatMessage(core.modify))}
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
                 </PdfButton>
               )}
             </Stack>
@@ -914,6 +951,18 @@ export const SignedVerdictOverview: React.FC = () => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}
+        />
+      )}
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => {
+            refreshCase()
+            setModalVisible('NoModal')
+          }}
+          navigateOnClose={false}
         />
       )}
     </PageLayout>

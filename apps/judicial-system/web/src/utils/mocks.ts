@@ -57,8 +57,8 @@ export const mockHighCourtUser = {
 export const mockPrisonUser = {
   id: 'hc_1',
   role: UserRole.STAFF,
-  name: 'Lalli Landsréttardómari',
-  title: 'dómari',
+  name: 'Finnur fangavörður',
+  title: 'fangavörður',
   institution: mockPrison,
 } as User
 

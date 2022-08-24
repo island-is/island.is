@@ -119,6 +119,58 @@ describe('CourtService - Create court case', () => {
 
   each`
     type
+  ${CaseType.CHILD_PROTECTION_LAWS},
+  ${CaseType.PROPERTY_DAMAGE},
+  ${CaseType.NARCOTICS_OFFENSE},
+  ${CaseType.EMBEZZLEMENT},
+  ${CaseType.FRAUD},
+  ${CaseType.DOMESTIC_VIOLENCE},
+  ${CaseType.ASSAULT_LEADING_TO_DEATH},
+  ${CaseType.MURDER},
+  ${CaseType.MAJOR_ASSAULT},
+  ${CaseType.MINOR_ASSAULT},
+  ${CaseType.RAPE},
+  ${CaseType.UTILITY_THEFT},
+  ${CaseType.AGGRAVATED_ASSAULT},
+  ${CaseType.TAX_VIOLATION},
+  ${CaseType.ATTEMPTED_MURDER},
+  ${CaseType.TRAFFIC_VIOLATION},
+  ${CaseType.THEFT},
+  ${CaseType.OTHER_CRIMINAL_OFFENSES},
+  ${CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE},
+  ${CaseType.OTHER_OFFENSES},
+  `.describe('indictment court case created for $type', ({ type }) => {
+    const user = {} as User
+    const caseId = uuid()
+    const courtId = uuid()
+    const policeCaseNumber = uuid()
+    const isExtension = false
+
+    beforeEach(async () => {
+      await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
+        caseType: 'S - Ákærumál',
+        subtype: subTypes[type as CaseType],
+        status: 'Skráð',
+        receivalDate: formatISO(date, { representation: 'date' }),
+        basedOn: 'Sakamál',
+        sourceNumber: policeCaseNumber,
+      })
+    })
+  })
+
+  each`
+    type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
   `.describe('extendable court case created for $type', ({ type }) => {
