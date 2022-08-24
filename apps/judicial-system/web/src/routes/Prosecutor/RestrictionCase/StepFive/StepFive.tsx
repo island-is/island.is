@@ -417,12 +417,12 @@ export const StepFive: React.FC = () => {
           <ContentBlock>
             <InputFileUpload
               name="fileUpload"
-              fileList={files as UploadFile[]}
+              fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}
               onRemove={(file) => {
-                handleRemoveFromS3(file as CaseFile)
+                handleRemoveFromS3(file)
                 setPoliceCaseFileList([
                   ...policeCaseFileList,
                   (file as unknown) as PoliceCaseFileCheck,

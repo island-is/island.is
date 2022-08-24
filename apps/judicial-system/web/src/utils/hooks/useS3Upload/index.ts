@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFile,
   CaseFileSubtype,
   PresignedPost,
   UploadPoliceCaseFileResponse,
