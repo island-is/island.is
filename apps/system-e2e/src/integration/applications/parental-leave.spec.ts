@@ -4,6 +4,9 @@ import {
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core'
+import { FixtureUser } from '../../lib/types'
+import { getFakeUser } from '../../support/utils'
+import fakeUsers from '../../fixtures/applications/users.json'
 
 //
 // // Create the `intl` object
@@ -25,9 +28,7 @@ function proceed() {
 }
 
 describe('Parental leave', () => {
-  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers') || []
-  const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
-  const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+  const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
   let employerEmail = 'not ready'
 
   before(() => {
@@ -39,15 +40,11 @@ describe('Parental leave', () => {
 
   beforeEach(() => {
     cy.log('fakeUsers', fakeUsers)
-    cy.log('authUrl', authUrl)
-    cy.log('testEnvironment', testEnvironment)
+    const baseUrl = Cypress.config('baseUrl')
     cy.idsLogin({
-      phoneNumber: (
-        fakeUsers.find((user) => user.name.endsWith('Afríka')) || {
-          phoneNumber: '',
-        }
-      ).phoneNumber,
-      url: '/umsoknir/faedingarorlof',
+      phoneNumber: fakeUser.mobile,
+      baseUrl: baseUrl,
+      urlPath: '/umsoknir/faedingarorlof',
     })
   })
 
@@ -261,14 +258,18 @@ describe('Parental leave', () => {
       }
     })
 
-    // phaseEmployerApproval()
     primaryParentApplication()
 
     // part 1 complete
-    cy.task('getLastEmail', 6).then((email) => {
-      // expect(email.text).to.be.a('string')
+    cy.task('getLastEmail', 6).then((emailInfo) => {
+      const email = emailInfo as { html: string }
       expect(email.html).to.be.a('string')
-      const employerUrl = email.html.match(/>(https?:.*)<\/p>/)[1]
+      const employerUrlMatch = email.html.match(/>(https?:.*)<\/p>/)
+      if (employerUrlMatch?.length != 2)
+        throw new Error(
+          'Email does not contain the url to approve the parental leave application',
+        )
+      const employerUrl = employerUrlMatch[1]
       if (!employerUrl)
         throw new Error(
           `Could not find url for employer in email: ${email.html}`,

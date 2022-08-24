@@ -266,11 +266,21 @@ export class DirectorateOfLabourRepository {
     nationalId: string,
   ): Promise<PregnancyStatus | null> {
     if (isRunningInDevelopment) {
+      /**
+       * VMST does not really support cleaning up of applications, but with the help of a developer who is working from them
+       * we got to relax a limitation on Dev which allows us to have more applications then we would ordinarily be able to create.
+       * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
+       * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
+       */
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
       return {
         hasActivePregnancy: true,
-        expectedDateOfBirth: formatISO(addMonths(new Date(), 6), {
-          representation: 'date',
-        }),
+        expectedDateOfBirth: formatISO(
+          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+          {
+            representation: 'date',
+          },
+        ),
       }
     }
 
