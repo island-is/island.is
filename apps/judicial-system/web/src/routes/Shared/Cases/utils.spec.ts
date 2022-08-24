@@ -22,7 +22,7 @@ describe('displayCaseType', () => {
     ).toBe('Farbann')
   })
 
-  test.each`
+  it.each`
     caseType
     ${CaseType.CHILD_PROTECTION_LAWS}
     ${CaseType.PROPERTY_DAMAGE}
