@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -228,7 +228,7 @@ export const StepFive: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -475,8 +475,8 @@ export const StepFive: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.STEP_SIX_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>

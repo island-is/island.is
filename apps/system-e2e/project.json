@@ -5,26 +5,24 @@
   "prefix": "system-e2e",
   "generators": {},
   "targets": {
-    "e2e": {
-      "builder": "@nrwl/cypress:cypress",
+    "build": {
+      "builder": "@nrwl/node:webpack",
       "options": {
-        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "outputPath": "dist/apps/system-e2e",
+        "main": "",
         "tsConfig": "apps/system-e2e/tsconfig.json",
-        "devServerTarget": "",
-        "baseUrl": "http://localhost:4200"
+        "webpackConfig": "apps/system-e2e/webpack.config.js",
+        "maxWorkers": 2,
+        "assets": []
       },
       "configurations": {
         "production": {
-          "devServerTarget": ""
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
         }
-      }
-    },
-    "e2e-ci": {
-      "builder": "@nrwl/workspace:run-commands",
-      "options": {
-        "cypressConfig": "apps/system-e2e/cypress.config.ts",
-        "command": "yarn e2e-ci -n judicial-system-web-e2e -c -d dist/apps/judicial-system/web"
-      }
+      },
+      "outputs": ["{options.outputPath}"]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -32,11 +30,20 @@
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "system-test": {
+    "smoke": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "apps/system-e2e/cypress.config.ts",
-        "tsConfig": "apps/system-e2e/tsconfig.json"
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "spec": "**/integration/**/smoke/*.spec.{ts,js}"
+      }
+    },
+    "acceptance": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/system-e2e/cypress.config.ts",
+        "tsConfig": "apps/system-e2e/tsconfig.json",
+        "spec": "**/integration/**/acceptance/*.spec.{ts,js}"
       }
     },
     "docker-cypress": {}

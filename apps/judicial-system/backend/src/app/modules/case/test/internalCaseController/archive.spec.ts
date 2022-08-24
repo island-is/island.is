@@ -20,6 +20,7 @@ import { oldFilter } from '../../filters/case.filters'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
+
 interface Then {
   result: ArchiveResponse
   error: Error

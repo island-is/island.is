@@ -501,6 +501,8 @@ export const slices = gql`
       options
     }
     successText
+    aboutYouHeadingText
+    questionsHeadingText
   }
 
   fragment StepperFields on Stepper {
@@ -518,6 +520,24 @@ export const slices = gql`
       config
     }
     config
+  }
+
+  fragment GraphCardFields on GraphCard {
+    graphTitle
+    graphDescription
+    organization
+    data
+    datakeys
+    type
+    displayAsCard
+    organizationLogo {
+      id
+      url
+      title
+      contentType
+      width
+      height
+    }
   }
 
   fragment BaseSlices on Slice {
@@ -551,6 +571,7 @@ export const slices = gql`
     ...EventSliceFields
     ...FormFields
     ...StepperFields
+    ...GraphCardFields
   }
 
   fragment AllSlices on Slice {

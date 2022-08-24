@@ -14,6 +14,8 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
+import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
+import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
 @Injectable()
 export class NationalRegistryService {

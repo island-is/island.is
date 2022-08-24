@@ -478,4 +478,23 @@ export const messages = defineMessages({
     id: 'sp.vehicles:recycle-car',
     defaultMessage: 'Skilavottorð',
   },
+  myCarsFiles: {
+    id: 'sp.vehicles:my-cars-files',
+    defaultMessage: 'Eignastöðuvottorð',
+  },
+
+  myCarsFilesPDF: {
+    id: 'sp.vehicles:my-cars-files-pdf',
+    defaultMessage: 'Sækja PDF',
+  },
+
+  myCarsFilesCSV: {
+    id: 'sp.vehicles:my-cars-files-csv',
+    defaultMessage: 'Sækja CSV',
+  },
+
+  myCarsFilesExcel: {
+    id: 'sp.vehicles:my-cars-files-excel',
+    defaultMessage: 'Sækja Excel',
+  },
 })

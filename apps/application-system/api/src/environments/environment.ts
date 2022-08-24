@@ -6,12 +6,6 @@ const devConfig = {
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
   sentryDsn: '',
-  redis: {
-    urls: (
-      process.env.REDIS_NODES ??
-      'localhost:7000,localhost:7001,localhost:7002,localhost:7003,localhost:7004,localhost:7005'
-    ).split(','),
-  },
   audit: {
     defaultNamespace: '@island.is/applications',
   },
@@ -100,13 +94,6 @@ const devConfig = {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
   },
-  application: {
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-  },
-  fileStorage: {
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -119,11 +106,6 @@ const prodConfig = {
     'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
-  redis: {
-    urls: (process.env.REDIS_NODES ?? process.env.REDIS_URL_NODE_01)?.split(
-      ',',
-    ),
-  },
   audit: {
     defaultNamespace: '@island.is/applications',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -197,13 +179,6 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
-  },
-  application: {
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-  },
-  fileStorage: {
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,

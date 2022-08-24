@@ -32,6 +32,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  ChartsCard,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -61,6 +62,8 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 
 import { ArticleChatPanel } from './components/ArticleChatPanel'
+
+import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -583,6 +586,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         />
                       </Box>
                     ),
+                    GraphCard: (chart) => <ChartsCard chart={chart} />,
                   },
                 },
                 activeLocale,

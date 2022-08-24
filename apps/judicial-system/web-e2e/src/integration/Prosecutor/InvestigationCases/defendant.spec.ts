@@ -1,11 +1,11 @@
 import faker from 'faker'
 
-import { NEW_IC_ROUTE } from '@island.is/judicial-system/consts'
+import { CREATE_INVESTIGATION_CASE_ROUTE } from '@island.is/judicial-system/consts'
 
-describe(NEW_IC_ROUTE, () => {
+describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(NEW_IC_ROUTE)
+    cy.visit(CREATE_INVESTIGATION_CASE_ROUTE)
   })
 
   it('should require valid data', () => {
