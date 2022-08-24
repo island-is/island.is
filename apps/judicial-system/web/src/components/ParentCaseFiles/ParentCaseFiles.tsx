@@ -6,7 +6,6 @@ import {
   AccordionItem,
   UploadedFile,
   Accordion,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { rcCaseFiles } from '@island.is/judicial-system-web/messages'
 import { icCaseFiles } from '@island.is/judicial-system-web/messages'
