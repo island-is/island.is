@@ -66,14 +66,14 @@ const CaseFiles: React.FC = () => {
             .replace(/,/g, ', ')}`}</Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.coverLetter)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.COVER_LETTER,
@@ -89,14 +89,15 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.indictment)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
+
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.INDICTMENT,
@@ -112,14 +113,15 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.criminalRecord)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
+
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.CRIMINAL_RECORD,
@@ -134,14 +136,15 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.costBreakdown)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
+
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.COST_BREAKDOWN,
@@ -156,14 +159,15 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.caseFileContents)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
+
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.CASE_FILE_CONTENTS,
@@ -178,14 +182,15 @@ const CaseFiles: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={10}>
-          <Box marginBottom={3} display="flex">
+          <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">
               {formatMessage(strings.caseFiles.sections.caseFile)}
             </Text>
-            <Text color="red400" as="span" variant="h3">
-              *
-            </Text>
           </Box>
+          <Text color="red400" as="span" variant="h3">
+            {` *`}
+          </Text>
+
           <InputFileUpload
             fileList={files.filter(
               (file) => file.subtype === CaseFileSubtype.CASE_FILE,
