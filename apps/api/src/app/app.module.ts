@@ -27,6 +27,8 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
@@ -190,6 +192,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    FiskistofaModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -271,6 +274,7 @@ const autoSchemaFile = environment.production
         DrivingLicenseApiConfig,
         PassportsClientConfig,
         FileStorageConfig,
+        FiskistofaClientConfig,
       ],
     }),
   ],
