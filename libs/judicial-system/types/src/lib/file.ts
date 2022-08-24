@@ -1,4 +1,3 @@
-import { UploadFile, UploadFileStatus } from '@island.is/island-ui/core/types'
 export interface PresignedPost {
   url: string
   fields: { [key: string]: string }
