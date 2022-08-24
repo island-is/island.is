@@ -2608,6 +2608,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'Fiskistofa/Calculator'
     | undefined
 
   /** JSON */
