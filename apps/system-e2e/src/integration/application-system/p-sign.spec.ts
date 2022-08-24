@@ -30,7 +30,10 @@ describe('P-sign', function () {
     cy.get('[data-testid="alertMessage"]').should('not.exist')
 
     // Information
-    cy.contains('sími')
-    cy.get('input').type('7654321')
+    cy.contains('Símanúmer')
+    cy.get('input[name="phone"]').type('7654321')
+    cy.get('input[name="email"]').type('secret@island.is')
+
+    cy.get('button[type="submit"]').click()
   })
 })
