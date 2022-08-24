@@ -192,7 +192,7 @@ export const useS3Upload = (workingCase: Case) => {
     setFilesRefAndState(newFiles)
   }
 
-  const removeFileFromState = (file: CaseFile) => {
+  const removeFileFromState = (file: UploadFile) => {
     const newFiles = [...files]
 
     if (newFiles.includes(file)) {
@@ -270,7 +270,7 @@ export const useS3Upload = (workingCase: Case) => {
     })
   }
 
-  const handleRemoveFromS3 = (file: CaseFile) => {
+  const handleRemoveFromS3 = (file: UploadFile) => {
     if (workingCase) {
       deleteFileMutation({
         variables: {

@@ -13,16 +13,10 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import {
-  Box,
-  InputFileUpload,
-  Tag,
-  Text,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Tag, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFile, CaseFileSubtype } from '@island.is/judicial-system/types'
+import { CaseFileSubtype } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -32,7 +26,13 @@ const CaseFiles: React.FC = () => {
     FormContext,
   )
   const { formatMessage } = useIntl()
-  const { files, handleS3Upload, allFilesUploaded } = useS3Upload(workingCase)
+  const {
+    files,
+    handleS3Upload,
+    handleRemoveFromS3,
+    handleRetry,
+    allFilesUploaded,
+  } = useS3Upload(workingCase)
 
   return (
     <PageLayout
@@ -84,7 +84,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.COVER_LETTER)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -106,7 +107,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.INDICTMENT)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -127,7 +129,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.CRIMINAL_RECORD)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -148,7 +151,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.COST_BREAKDOWN)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -169,7 +173,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.CASE_FILE_CONTENTS)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -190,7 +195,8 @@ const CaseFiles: React.FC = () => {
             onChange={(files) =>
               handleS3Upload(files, false, CaseFileSubtype.CASE_FILE)
             }
-            onRemove={() => ''}
+            onRemove={handleRemoveFromS3}
+            onRetry={handleRetry}
           />
         </Box>
       </FormContentContainer>
