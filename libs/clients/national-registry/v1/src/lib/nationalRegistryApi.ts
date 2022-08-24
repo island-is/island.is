@@ -123,33 +123,6 @@ export class NationalRegistryApi {
     return Array.isArray(documentData) ? documentData : [documentData]
   }
 
-  public async postUserCorrection(
-    values: FamilyCorrection,
-  ): Promise<{ success: boolean; message?: string }> {
-    const response = await this.signal(
-      'CreateAndUpdateMS_Leidretting',
-      {
-        S5RequestID: '',
-        Kennitala: values.ssn,
-        Barn: values.ssnChild,
-        Nafn: values.name,
-        Simanumer: values.phonenumber,
-        Netfang: values.email,
-        Athugasemd: values.comment,
-        Stada: 'Skráð',
-      },
-      true,
-    )
-
-    if (!response) {
-      throw new ForbiddenException(`User correction not sent. Unknown error`)
-    }
-    return {
-      success: response?.success,
-      message: response?.message,
-    }
-  }
-
   private async signal(
     functionName: string,
     args: Record<string, string>,
