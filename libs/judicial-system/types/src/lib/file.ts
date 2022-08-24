@@ -51,14 +51,6 @@ export enum CaseFileSubtype {
   CASE_FILE = 'CASE_FILE',
 }
 
-export type CaseFileStatus =
-  | UploadFileStatus
-  | 'done-broken'
-  | 'not-uploaded'
-  | 'broken'
-  | 'case-not-found'
-  | 'unsupported'
-
 export interface CaseFile {
   id: string
   created: string
