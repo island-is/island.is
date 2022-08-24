@@ -40,7 +40,6 @@ export interface Config {
   }
 }
 
-//TODO: Translate all strings (Ásdís Erna Guðmundsdóttir /disaerna)
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.DriversLicense,
@@ -62,7 +61,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
   {
     type: GenericLicenseType.MachineLicense,
-
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
