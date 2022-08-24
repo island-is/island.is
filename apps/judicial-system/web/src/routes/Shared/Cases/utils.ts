@@ -3,6 +3,7 @@ import { IntlShape } from 'react-intl'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   CaseType,
