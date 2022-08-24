@@ -1,1 +1,1 @@
-export * from './lib/api-domains-fiskistofa'
+export * from './lib/fiskistofa.module'
