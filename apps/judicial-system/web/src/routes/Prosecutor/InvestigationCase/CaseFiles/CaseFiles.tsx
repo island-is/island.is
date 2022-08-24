@@ -419,7 +419,7 @@ export const CaseFiles: React.FC = () => {
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
               onChange={handleS3Upload}
-              onRemove={(file) => handleRemoveFromS3(file as CaseFile)}
+              onRemove={(file) => handleRemoveFromS3(file)}
               onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               showFileSize
