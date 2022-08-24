@@ -66,9 +66,11 @@ const FormProvider = ({ children }: Props) => {
     ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
-    : // This is just a random investigation case type for the default value. This
+    : router.pathname.includes('akaera')
+    ? // These are random case types for the default value. This
       // is updated when the case is created.
-      CaseType.OTHER
+      CaseType.FRAUD
+    : CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()

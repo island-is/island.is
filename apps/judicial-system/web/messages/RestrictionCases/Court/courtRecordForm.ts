@@ -21,29 +21,6 @@ export const rcCourtRecord = {
         description: 'Notaður sem skýritexti fyrir Þinghalds hófst (kk:mm)',
       },
     }),
-    courtDocuments: {
-      title: {
-        id:
-          'judicial.system.restriction_cases:court_record.court_documents.title',
-        defaultMessage: 'Dómskjöl',
-        description: 'Notaður sem titill fyrir "Dómskjöl" hlutan',
-      },
-      firstDocument: {
-        title: {
-          id:
-            'judicial.system.restriction_cases:court_record.court_documents.firstDocument.title',
-          defaultMessage: 'Krafa um {caseType}',
-          description:
-            'Notaður sem titill fyrir fyrsta dómskjal í dómskjala hlutaunum',
-        },
-        label: {
-          id:
-            'judicial.system.restriction_cases.court_record.court_documents.firstDocument.label',
-          defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
-          description: 'Notaður sem text fyrir afan fyrsta þingskjal',
-        },
-      },
-    },
     sessionBookings: defineMessages({
       title: {
         id:
