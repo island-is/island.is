@@ -14,7 +14,9 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [ShipStatusInformation])
-  getResources(@Args('input') input: GetShipStatusInformationInput) {
+  getShipStatusInformation(
+    @Args('input') input: GetShipStatusInformationInput,
+  ) {
     return this.fiskistofaClientService.getShipStatusInformation(
       input.shipNumber,
       input.timePeriod,
