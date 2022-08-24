@@ -18,13 +18,6 @@ describe('P-sign', function () {
 
   it('should be able to create application', () => {
     cy.visit('/umsoknir/p-merki')
-    cy.bypassApplicationEntry('Afríka')
-
-    // Select new application if there are already other applications open giving us a list
-    // of open applications
-    cy.get('button[text="Ny umsókn"]').then((button) => {
-      console.log('BUTTON', button)
-    })
 
     // First page load takes a long time
     cy.contains('Gagnaöflun', { timeout: 10000 })
@@ -33,9 +26,10 @@ describe('P-sign', function () {
     // Data collection
     cy.get('input[name="approveExternalData"]').click()
     cy.get('button[type="submit"]').click()
+    cy.get('[data-testid=errorMessage]').should('not.exist')
 
     // Information
     cy.contains('sími')
-    cy.get('input').type('blablabla')
+    cy.get('input').type('7654321')
   })
 })

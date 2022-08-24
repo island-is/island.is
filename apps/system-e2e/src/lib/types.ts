@@ -14,7 +14,7 @@ enum BaseUrl {
   staging = 'https://beta.staging01.devland.is',
   ads = 'https://loftbru.dev01.devland.is',
   prod = 'https://island.is',
-  local = 'http://localhost:4200',
+  local = 'http://localhost:4242',
 }
 
 type AuthUserWithDiscount = Discount & {
