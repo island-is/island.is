@@ -8,6 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
@@ -23,6 +24,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
+  console.log({ answers })
 
   return (
     <Box marginBottom={2}>
@@ -97,14 +99,14 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.capitalIncome}
-              value={answers.cemetryIncome?.capitalIncome}
+              label={m.otherIncome}
+              value={formatCurrency(answers.cemetryIncome?.otherIncome)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.caretaking}
-              value={answers.cemetryIncome?.caretaking}
+              value={formatCurrency(answers.cemetryIncome?.caretaking)}
             />
           </GridColumn>
         </GridRow>
@@ -114,13 +116,15 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.cemetryFundDonations}
-              value={answers.cemetryIncome?.cemetryFundDonations}
+              value={formatCurrency(
+                answers.cemetryIncome?.cemetryFundDonations,
+              )}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.graveIncome}
-              value={answers.cemetryIncome?.graveIncome}
+              value={formatCurrency(answers.cemetryIncome?.graveIncome)}
             />
           </GridColumn>
         </GridRow>
@@ -129,16 +133,11 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.otherIncome}
-              value={answers.cemetryIncome?.otherIncome}
+              label={m.chapelExpense}
+              value={formatCurrency(answers.cemetryExpense?.chapelExpense)}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.cemeteryFundExpense}
-              value={answers.cemetryExpense?.chapelExpense}
-            />
-          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}></GridColumn>
         </GridRow>
       </Box>
 
@@ -147,13 +146,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.donationsToOther}
-              value={answers.cemetryExpense?.donationsToOther}
+              value={formatCurrency(answers.cemetryExpense?.donationsToOther)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.funeralCost}
-              value={answers.cemetryExpense?.funeralCost}
+              value={formatCurrency(answers.cemetryExpense?.funeralCost)}
             />
           </GridColumn>
         </GridRow>
@@ -163,13 +162,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.otherOperationCost}
-              value={answers.cemetryExpense?.otherOperationCost}
+              value={formatCurrency(answers.cemetryExpense?.otherOperationCost)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.payroll}
-              value={answers.cemetryExpense?.payroll}
+              value={formatCurrency(answers.cemetryExpense?.payroll)}
             />
           </GridColumn>
         </GridRow>
@@ -179,12 +178,30 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.writtenOffExpense}
-              value={answers.cemetryExpense?.writtenOffExpense}
+              value={formatCurrency(answers.cemetryExpense?.writtenOffExpense)}
             />
           </GridColumn>
         </GridRow>
       </Box>
       <Divider />
+      <Box className={starterColumnStyle}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.capitalNumbers)}
+        </Text>
+      </Box>
+      <Box paddingY={2}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            {/* <ValueLine
+              label={m.capitalIncome}
+              value={formatCurrency(answers.capitalNumbers?.capitalIncome)}
+            /> */}
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}></GridColumn>
+        </GridRow>
+      </Box>
+      <Divider />
+
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersDebt)}
@@ -195,13 +212,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.currentAssets}
-              value={answers.cemetryAsset?.current}
+              value={formatCurrency(answers.cemetryAsset?.current)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.tangibleAssets}
-              value={answers.cemetryAsset?.tangible}
+              value={formatCurrency(answers.cemetryAsset?.tangible)}
             />
           </GridColumn>
         </GridRow>
@@ -211,13 +228,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.shortTerm}
-              value={answers.cemetryLiability?.shortTerm}
+              value={formatCurrency(answers.cemetryLiability?.shortTerm)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.longTerm}
-              value={answers.cemetryLiability?.longTerm}
+              value={formatCurrency(answers.cemetryLiability?.longTerm)}
             />
           </GridColumn>
         </GridRow>
@@ -227,13 +244,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.newYearequity}
-              value={answers.cemetryEquity?.newYearEquity}
+              value={formatCurrency(answers.cemetryEquity?.newYearEquity)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.operationResult}
-              value={answers.cemetryEquity?.operationResult}
+              value={formatCurrency(answers.cemetryEquity?.operationResult)}
             />
           </GridColumn>
         </GridRow>
@@ -243,7 +260,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.reevaluatePrice}
-              value={answers.cemetryEquity?.reevaluatePrice}
+              value={formatCurrency(answers.cemetryEquity?.reevaluatePrice)}
             />
           </GridColumn>
         </GridRow>

@@ -3,6 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { CEMETRYOPERATIONIDS } from '../../lib/constants'
 
@@ -11,10 +12,7 @@ interface PropTypes {
   errors: any
 }
 
-export const CemetryIncome = ({
-  errors,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
 
@@ -33,7 +31,9 @@ export const CemetryIncome = ({
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.caretaking)}
           backgroundColor="blue"
           currency
-          error={errors?.cemetryIncome?.caretaking?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.caretaking)
+          }
         />
       </Box>
       <Box paddingY={1}>
@@ -45,7 +45,9 @@ export const CemetryIncome = ({
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.graveIncome)}
           backgroundColor="blue"
           currency
-          error={errors?.cemetryIncome?.graveIncome?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+          }
         />
       </Box>
       <Box paddingY={1}>
@@ -57,11 +59,12 @@ export const CemetryIncome = ({
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.cemetryFundDonations)}
           backgroundColor="blue"
           currency
-          error={errors?.cemetryIncome?.cemetryFundDonations?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+          }
         />
       </Box>
-
-      <Box paddingY={1}>
+      {/* <Box paddingY={1}>
         <InputController
           id={CEMETRYOPERATIONIDS.capitalIncome}
           name={CEMETRYOPERATIONIDS.capitalIncome}
@@ -70,9 +73,11 @@ export const CemetryIncome = ({
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.capitalIncome)}
           backgroundColor="blue"
           currency
-          error={errors?.cemetryIncome?.capitalIncome?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+          }
         />
-      </Box>
+      </Box> */}
       <Box paddingY={1}>
         <InputController
           id={CEMETRYOPERATIONIDS.otherIncome}
@@ -82,7 +87,9 @@ export const CemetryIncome = ({
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency
-          error={errors?.cemetryIncome?.otherIncome?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+          }
         />
       </Box>
     </Fragment>

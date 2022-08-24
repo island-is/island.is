@@ -46,7 +46,7 @@ export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           currency
         />
       </Box>
-      <Box paddingY={1}>
+      {/* <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.capitalCost}
           name={PARTYOPERATIONIDS.capitalCost}
@@ -59,7 +59,7 @@ export const PartyExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           backgroundColor="blue"
           currency
         />
-      </Box>
+      </Box> */}
     </Fragment>
   )
 }

@@ -3,12 +3,15 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
 import {
   CEMETRY,
   CEMETRYEQUITIESANDLIABILITIESIDS,
   CEMETRYOPERATIONIDS,
+  CAPITALNUMBERS,
 } from '../../../lib/constants'
+import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 import { m } from '../../../lib/messages'
 
 export const cemetryKeyNumbersSection = buildSection({
@@ -39,9 +42,10 @@ export const cemetryKeyNumbersSection = buildSection({
         }),
       ],
     }),
+    capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.cemetryEquitiesAndLiabilities',
-      title: m.keyNumbersProperty,
+      title: m.propertiesAndDebts,
       children: [
         buildMultiField({
           id: 'cemetryEquitiesAndLiabilities',

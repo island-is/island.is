@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
-
+import { getErrorViaPath } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
@@ -28,7 +28,7 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.payroll)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.payroll)}
-          error={errors?.cemetryExpense?.payroll?.message}
+          error={errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.payroll)}
           backgroundColor="blue"
           currency
         />
@@ -40,7 +40,9 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.funeralCost)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.funeralCost)}
-          error={errors?.cemetryExpense?.funeralCost?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.funeralCost)
+          }
           backgroundColor="blue"
           currency
         />
@@ -52,7 +54,9 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.chapelExpense)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.chapelExpense)}
-          error={errors?.cemetryExpense?.chapelExpense?.message}
+          error={
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.chapelExpense)
+          }
           backgroundColor="blue"
           currency
         />
@@ -64,7 +68,10 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.cemeteryFundExpense)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.cemeteryFundExpense)}
-          error={errors?.cemetryExpense?.cemeteryFundExpense?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemeteryFundExpense)
+          }
           backgroundColor="blue"
           currency
         />
@@ -76,7 +83,10 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.donationsToOther)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.donationsToOther)}
-          error={errors?.cemetryExpense?.donationsToOther?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.donationsToOther)
+          }
           backgroundColor="blue"
           currency
         />
@@ -88,7 +98,10 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.otherOperationCost)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.otherOperationCost)}
-          error={errors?.cemetryExpense?.otherOperationCost?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherOperationCost)
+          }
           backgroundColor="blue"
           currency
         />
@@ -100,7 +113,10 @@ export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {
           label={formatMessage(m.writtenOffExpense)}
           onBlur={() => onInputBlur()}
           onChange={() => clearErrors(CEMETRYOPERATIONIDS.writtenOffExpense)}
-          error={errors?.cemetryExpense?.writtenOffExpense?.message}
+          error={
+            errors &&
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.writtenOffExpense)
+          }
           backgroundColor="blue"
           currency
         />

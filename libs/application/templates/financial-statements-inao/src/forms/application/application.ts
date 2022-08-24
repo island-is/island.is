@@ -7,11 +7,17 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { clientInfoSection } from './shared/about/clientInfoSection'
 import { m } from '../../lib/messages'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { GREATER, INDIVIDUAL } from '../../lib/constants'
+import {
+  CARETAKERLIMIT,
+  CEMETRY,
+  GREATER,
+  INDIVIDUAL,
+} from '../../lib/constants'
 import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
@@ -83,6 +89,24 @@ export const getApplication = (): Form => {
           buildFileUploadField({
             id: 'attachment.file',
             title: m.upload,
+            condition: (answers, externalData) => {
+              // @ts-ignore
+              const userType = externalData?.currentUserType?.data?.code
+              const applicationAnswers = <FinancialStatementsInao>answers
+              const currentAssets = applicationAnswers.cemetryAsset?.current
+              const totalIncome = applicationAnswers.cemetryIncome?.total
+              const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
+              const isUnderLimit = parseInt(totalIncome, 10) < CARETAKERLIMIT
+              if (
+                userType === CEMETRY &&
+                isUnderLimit &&
+                currentAssets === '0' &&
+                longTermDebt === '0'
+              ) {
+                return false
+              }
+              return true
+            },
             introduction: m.uploadIntro,
             description: m.uploadDescription,
             uploadHeader: m.uploadHeader,

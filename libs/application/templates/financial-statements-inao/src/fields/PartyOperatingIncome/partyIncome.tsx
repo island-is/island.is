@@ -78,7 +78,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           }
         />
       </Box>
-      <Box paddingY={1}>
+      {/* <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.capitalIncome}
           name={PARTYOPERATIONIDS.capitalIncome}
@@ -91,7 +91,7 @@ export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
             errors && getErrorViaPath(errors, PARTYOPERATIONIDS.capitalIncome)
           }
         />
-      </Box>
+      </Box> */}
       <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.otherIncome}

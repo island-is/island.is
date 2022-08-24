@@ -185,6 +185,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
   },
+  propertiesAndDebts: {
+    id: 'fsn.application:keyNumbers.properties',
+    defaultMessage: 'Eignir, skuldir og eigið fé',
+    description: 'Statement property numbers',
+  },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
     defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
@@ -314,6 +319,16 @@ export const m = defineMessages({
     id: 'fsn.application:income.capital',
     defaultMessage: 'Fjármagnstekjur',
     description: 'capital income',
+  },
+  capitalExpense: {
+    id: 'fsn.application:expense.capital',
+    defaultMessage: 'Fjármagnsgjöld',
+    description: 'capital expense',
+  },
+  capitalNumbers: {
+    id: 'fsn.application:income.capitalNumbers',
+    defaultMessage: 'Fjármagnsgjöld',
+    description: 'capital numbers',
   },
   electionOffice: {
     id: 'fsn.application:income.electionOffice',
@@ -559,7 +574,7 @@ export const m = defineMessages({
   },
   success: {
     id: 'fsn.application:success',
-    defaultMessage: 'Uppgjör móttekið',
+    defaultMessage: 'Ársreikningur mótekinn',
     description: 'financial statement success',
   },
   dataCollectionCheckboxLabel: {

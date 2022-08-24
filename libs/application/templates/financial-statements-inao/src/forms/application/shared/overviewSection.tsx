@@ -7,6 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
+import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 import {
   CEMETRY,
   GREATER,

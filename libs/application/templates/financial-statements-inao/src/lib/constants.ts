@@ -74,6 +74,11 @@ export const CEMETRYOPERATIONIDS = {
   writtenOffExpense: 'cemetryExpense.writtenOffExpense',
 }
 
+export const CAPITALNUMBERS = {
+  capitalIncome: 'capitalNumbers.capitalIncome',
+  capitalExpense: 'capitalNumbers.capitalExpense',
+}
+
 export const CEMETRYCARETAKER = {
   caretaking: 'cemetryCaretaker.caretaking',
   nationalId: 'cemetryCaretaker.nationalId',

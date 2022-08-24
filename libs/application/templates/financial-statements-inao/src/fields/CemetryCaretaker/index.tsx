@@ -138,7 +138,7 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
   return (
     <GridContainer>
       {fields.map((field, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+        <Box key={field.id}>
           <CareTakerRepeaterItem
             id={id}
             application={application}
