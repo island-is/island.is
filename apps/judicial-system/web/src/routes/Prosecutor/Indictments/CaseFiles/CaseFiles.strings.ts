@@ -17,8 +17,8 @@ export const caseFiles = {
       defaultMessage: 'Velja gögn til að hlaða upp',
       description: 'Texti í tökkum í öllum file upload svæðum.',
     }),
-    indictmentLetter: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.indictment_letter',
+    coverLetter: defineMessage({
+      id: 'judicial.system.indictments:case_files.sections.cover_letter',
       defaultMessage: 'Fylgibréf',
       description: 'Titill á fylgibréf hluta á dómskjalaskjá í ákærum.',
     }),
@@ -32,18 +32,18 @@ export const caseFiles = {
       defaultMessage: 'Sakavottorð',
       description: 'Titill á sakavottorð hluta á dómskjalaskjá í ákærum.',
     }),
-    bill: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.bill',
+    costBreakdown: defineMessage({
+      id: 'judicial.system.indictments:case_files.sections.cost_breakdown',
       defaultMessage: 'Sakarkostnaður',
       description: 'Titill á sakarkostnaður hluta á dómskjalaskjá í ákærum.',
     }),
-    caseFileRecord: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.case_file_record',
+    caseFileContents: defineMessage({
+      id: 'judicial.system.indictments:case_files.sections.case_file_contents',
       defaultMessage: 'Skjalaskrá',
       description: 'Titill á skjalaskrá hluta á dómskjalaskjá í ákærum.',
     }),
-    caseFiles: defineMessage({
-      id: 'judicial.system.indictments:case_files.sections.case_files',
+    caseFile: defineMessage({
+      id: 'judicial.system.indictments:case_files.sections.case_file',
       defaultMessage: 'Málsgögn',
       description: 'Titill á málsgögn hluta á dómskjalaskjá í ákærum.',
     }),

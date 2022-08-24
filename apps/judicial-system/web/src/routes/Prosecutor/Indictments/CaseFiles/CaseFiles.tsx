@@ -59,7 +59,7 @@ const CaseFiles: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.indictmentLetter)}
+              {formatMessage(strings.caseFiles.sections.coverLetter)}
             </Text>
             <Text color="red400" as="span" variant="h3">
               *
@@ -109,7 +109,7 @@ const CaseFiles: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.bill)}
+              {formatMessage(strings.caseFiles.sections.costBreakdown)}
             </Text>
             <Text color="red400" as="span" variant="h3">
               *
@@ -125,7 +125,7 @@ const CaseFiles: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3} display="flex">
             <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFileRecord)}
+              {formatMessage(strings.caseFiles.sections.caseFileContents)}
             </Text>
             <Text color="red400" as="span" variant="h3">
               *
@@ -141,7 +141,7 @@ const CaseFiles: React.FC = () => {
         <Box component="section" marginBottom={10}>
           <Box marginBottom={3} display="flex">
             <Text variant="h3" as="h3">
-              {formatMessage(strings.caseFiles.sections.caseFiles)}
+              {formatMessage(strings.caseFiles.sections.caseFile)}
             </Text>
             <Text color="red400" as="span" variant="h3">
               *
