@@ -1,17 +1,17 @@
 import { regex as uuidRegex } from 'uuidv4'
 import { getFakeUser } from '../../support/utils'
-import { FakeUser } from '../../lib/types'
+import { FixtureUser } from '../../lib/types'
 import fakeUsers from '../../fixtures/service-portal/users.json'
 
-const fakeUser: FakeUser = getFakeUser(
-  fakeUsers as FakeUser[],
+const fakeUser: FixtureUser = getFakeUser(
+  fakeUsers as FixtureUser[],
   'Gervimaður Afríka',
 )
 
 describe('P-sign', function () {
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUser.phoneNumber,
+      phoneNumber: fakeUser.mobile,
       urlPath: '/umsoknir/p-merki',
     })
   })
