@@ -42,6 +42,7 @@ export class DelegationGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
+
     if (!user.actor) {
       // If there is no actor then the user is not using delegations
       return true
@@ -73,7 +74,8 @@ export class DelegationGuard implements CanActivate {
         }
       } else {
         // This can happen if the user enters a drafted application and does not have access the getTypeIdFromApplicationId needs to get the application from the user id
-        throw new BadSubject()
+        // throw new BadSubject()
+        return true
       }
     }
   }

@@ -194,6 +194,7 @@ export class ApplicationController {
       nationalId,
       typeId,
       status,
+      user.actor?.nationalId
     )
 
     // keep all templates that have been fetched in order to avoid fetching them again
