@@ -103,9 +103,11 @@ export class AppService {
             title: 'Ekki tókst að stofna mál í gegnum Strauminn',
             emoji: ':broken_heart:',
           },
-          `${capitalize(caseTypes[caseToCreate.type])}: ${
-            caseToCreate.policeCaseNumber
-          }\nOrigin: ${CaseOrigin.LOKE}`,
+          `${capitalize(
+            caseTypes[caseToCreate.type],
+          )}: ${caseToCreate.policeCaseNumbers.join(', ')}\nOrigin: ${
+            CaseOrigin.LOKE
+          }`,
           reason,
         )
 

@@ -447,35 +447,35 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     // Arrange
     const type = CaseType.CUSTODY
     const court = 'Héraðsdómur Reykjavíkur'
-    const policeCaseNumber = '1234567'
+    const policeCaseNumbers = ['1234567', '007-2022-01']
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
     const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
+      policeCaseNumbers,
       type,
       court,
-      policeCaseNumber,
       overviewUrl,
     )
 
     // Assert
-    expect(res.subject).toBe('Krafa í máli 1234567')
+    expect(res.subject).toBe('Krafa í máli 1234567, 007-2022-01')
   })
 
   test('should format ready for court email for custody cases', () => {
     // Arrange
     const type = CaseType.CUSTODY
     const court = 'Héraðsdómur Reykjavíkur'
-    const policeCaseNumber = '1234567'
+    const policeCaseNumbers = ['1234567']
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
     const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
+      policeCaseNumbers,
       type,
       court,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -489,15 +489,15 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
     const court = 'Héraðsdómur Reykjaness'
-    const policeCaseNumber = '66666'
+    const policeCaseNumbers = ['66666']
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
     const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
+      policeCaseNumbers,
       type,
       court,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -511,15 +511,15 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     // Arrange
     const type = CaseType.ADMISSION_TO_FACILITY
     const court = 'Héraðsdómur Reykjaness'
-    const policeCaseNumber = '66666'
+    const policeCaseNumbers = ['66666']
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
     const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
+      policeCaseNumbers,
       type,
       court,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -1906,26 +1906,26 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     .formatMessage
 
   const fn = (
-    policeCaseNumber: string,
+    policeCaseNumbers: string[],
     overviewUrl: string,
     courtName?: string,
   ) =>
     formatDefenderResubmittedToCourtEmailNotification(
       formatMessage,
-      policeCaseNumber,
+      policeCaseNumbers,
       overviewUrl,
       courtName,
     )
 
   it('should format email', () => {
-    const policeCaseNumber = 'R-123/2022'
+    const policeCaseNumbers = ['007-2022-06546']
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
     const courtName = 'Héraðsdómur Reykjavíkur'
 
-    const result = fn(policeCaseNumber, overviewUrl, courtName)
+    const result = fn(policeCaseNumbers, overviewUrl, courtName)
 
     expect(result.body).toEqual(
-      'Sækjandi í máli R-123/2022 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+      'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
     )
     expect(result.subject).toEqual('Krafa í máli R-123/2022 send aftur')
   })

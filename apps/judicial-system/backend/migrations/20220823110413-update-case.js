@@ -5,6 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.sequelize
         .query(
+          // Change police_case_number to an array
           `alter table "case" alter column police_case_number type varchar(255)[] using array[police_case_number]`,
           { transaction },
         )
@@ -27,6 +28,7 @@ module.exports = {
         })
         .then(() =>
           queryInterface.sequelize.query(
+            // Change police_case_number column to a string and fill with first value in array for every row
             `alter table "case" alter column police_case_number type varchar(255) using coalesce(police_case_number[1], '')`,
             { transaction },
           ),

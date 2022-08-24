@@ -167,7 +167,7 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               ...(workingCase.courtCaseNumber
                 ? [

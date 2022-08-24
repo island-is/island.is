@@ -124,7 +124,9 @@ const Processing: React.FC = () => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          <Tag>{workingCase.policeCaseNumber}</Tag>
+          {workingCase.policeCaseNumbers.map((policeCaseNumber, index) => (
+            <Tag key={`${policeCaseNumber}-${index}`}>{policeCaseNumber}</Tag>
+          ))}
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectProsecutor
