@@ -5,6 +5,7 @@ import {
   Case,
   CaseState,
   InstitutionType,
+  isInvestigationCase,
   isRestrictionCase,
   User,
 } from '@island.is/judicial-system/types'
@@ -29,6 +30,7 @@ import {
   isPoliceReportStepValidRC,
   isRulingValidIC,
   isRulingValidRC,
+  isDefendantStepValidForSidebarIndictments,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -229,6 +231,30 @@ const useSections = () => {
                     : undefined,
               },
             ],
+    }
+  }
+
+  const getIndictmentCaseProsecutorSection = (workingCase: Case): Section => {
+    const { id } = workingCase
+
+    return {
+      name: formatMessage(sections.indictmentCaseProsecutorSection.title),
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(formatMessage(core.indictmentDefendant)),
+          href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(
+            formatMessage(sections.indictmentCaseProsecutorSection.processing),
+          ),
+          href: isDefendantStepValidForSidebarIndictments(workingCase)
+            ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
+            : undefined,
+        },
+      ],
     }
   }
 
@@ -589,11 +615,13 @@ const useSections = () => {
             user,
             activeSubSection,
           )
-        : getInvestigationCaseProsecutorSection(
+        : isInvestigationCase(workingCase?.type)
+        ? getInvestigationCaseProsecutorSection(
             workingCase || ({} as Case),
             user,
             activeSubSection,
-          ),
+          )
+        : getIndictmentCaseProsecutorSection(workingCase || ({} as Case)),
       isRestrictionCase(workingCase?.type)
         ? getRestrictionCaseCourtSections(
             workingCase || ({} as Case),
@@ -637,6 +665,7 @@ const useSections = () => {
   return {
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getSections,
