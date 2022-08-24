@@ -124,6 +124,7 @@
     "clients-rsk-company-registry": "libs/clients/rsk/company-registry",
     "clients-rsk-personal-tax-return": "libs/clients/rsk/personal-tax-return",
     "clients-rsk-procuring": "libs/clients/rsk/procuring",
+    "clients-smartsolutions": "libs/clients/smartsolutions",
     "clients-syslumenn": "libs/clients/syslumenn",
     "clients-user-profile": "libs/clients/user-profile",
     "clients-vehicles": "libs/clients/vehicles",
