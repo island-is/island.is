@@ -32,11 +32,11 @@ describe('displayCaseType', () => {
     ${CaseType.DOMESTIC_VIOLENCE}
     ${CaseType.ASSAULT_LEADING_TO_DEATH}
     ${CaseType.MURDER}
-    ${CaseType.MAJOR_ASSULT}
-    ${CaseType.MINOR_ASSULT}
+    ${CaseType.MAJOR_ASSAULT}
+    ${CaseType.MINOR_ASSAULT}
     ${CaseType.RAPE}
     ${CaseType.UTILITY_THEFT}
-    ${CaseType.AGGRAVETED_ASSULT}
+    ${CaseType.AGGRAVATED_ASSAULT}
     ${CaseType.TAX_VIOLATION}
     ${CaseType.ATTEMPTED_MURDER}
     ${CaseType.TRAFFIC_VIOLATION}
