@@ -43,9 +43,7 @@ const ParentCaseFiles: React.FC<Props> = ({ files, caseType }) => {
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>
               <UploadedFile
-                file={
-                  { ...file, name: `${index + 1}. ${file.name}` } as UploadFile
-                }
+                file={{ ...file, name: `${index + 1}. ${file.name}` }}
                 showFileSize
                 hideIcons
                 defaultBackgroundColor={{
