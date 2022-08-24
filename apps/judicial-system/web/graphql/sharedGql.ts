@@ -18,6 +18,7 @@ export const CreateFileMutation = gql`
       name
       key
       size
+      subtype
     }
   }
 `

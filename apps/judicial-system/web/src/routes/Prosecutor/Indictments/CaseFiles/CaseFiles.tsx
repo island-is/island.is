@@ -15,6 +15,8 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, InputFileUpload, Tag, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseFileSubtype } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -24,6 +26,7 @@ const CaseFiles: React.FC = () => {
     FormContext,
   )
   const { formatMessage } = useIntl()
+  const { files, handleS3Upload, allFilesUploaded } = useS3Upload(workingCase)
 
   return (
     <PageLayout
@@ -66,10 +69,15 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.COVER_LETTER,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
+            onChange={(files) =>
+              handleS3Upload(files, false, CaseFileSubtype.COVER_LETTER)
+            }
             onRemove={() => ''}
           />
         </Box>
@@ -83,10 +91,15 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.INDICTMENT,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             multiple={false}
+            onChange={(files) =>
+              handleS3Upload(files, false, CaseFileSubtype.INDICTMENT)
+            }
             onRemove={() => ''}
           />
         </Box>
@@ -100,7 +113,9 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.CRIMINAL_RECORD,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -116,7 +131,9 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.COST_BREAKDOWN,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -132,7 +149,9 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.CASE_FILE_CONTENTS,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -148,7 +167,9 @@ const CaseFiles: React.FC = () => {
             </Text>
           </Box>
           <InputFileUpload
-            fileList={[]}
+            fileList={files.filter(
+              (file) => file.subtype === CaseFileSubtype.CASE_FILE,
+            )}
             header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
             onRemove={() => ''}
@@ -159,7 +180,7 @@ const CaseFiles: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           nextUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
-          // nextIsDisabled={!allFilesUploaded || isUploading}
+          nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
         />
       </FormContentContainer>

@@ -1,3 +1,4 @@
+import { UploadFile } from '@island.is/island-ui/core/types'
 export interface PresignedPost {
   url: string
   fields: { [key: string]: string }
@@ -41,16 +42,21 @@ export enum CaseFileState {
   DELETED = 'DELETED',
 }
 
-export interface CaseFile {
-  id: string
+export enum CaseFileSubtype {
+  COVER_LETTER = 'COVER_LETTER',
+  INDICTMENT = 'INDICTMENT',
+  CRIMINAL_RECORD = 'CRIMINAL_RECORD',
+  COST_BREAKDOWN = 'COST_BREAKDOWN',
+  CASE_FILE_CONTENTS = 'CASE_FILE_CONTENTS',
+  CASE_FILE = 'CASE_FILE',
+}
+
+export interface CaseFile extends UploadFile {
   created: string
   modified: string
   caseId: string
-  name: string
-  type: string
-  state: CaseFileState
-  key?: string
-  size: number
+  subtype?: CaseFileSubtype
+  state?: CaseFileState
 }
 
 export interface CreateFile {

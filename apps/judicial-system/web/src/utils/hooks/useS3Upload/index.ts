@@ -11,20 +11,22 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
+  CaseFile,
+  CaseFileSubtype,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 export const useS3Upload = (workingCase: Case) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, setFiles] = useState<CaseFile[]>([])
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
-  const filesRef = useRef<UploadFile[]>(files)
+  const filesRef = useRef<CaseFile[]>(files)
   const { formatMessage } = useIntl()
 
   useEffect(() => {
     const uploadCaseFiles = workingCase.caseFiles?.map((caseFile) => {
-      const uploadCaseFile = caseFile as UploadFile
+      const uploadCaseFile = caseFile
       uploadCaseFile.status = 'done'
       return uploadCaseFile
     })
@@ -112,7 +114,7 @@ export const useS3Upload = (workingCase: Case) => {
     return formData
   }
 
-  const uploadToS3 = (file: UploadFile, presignedPost: PresignedPost) => {
+  const uploadToS3 = (file: CaseFile, presignedPost: PresignedPost) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -154,7 +156,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Sets ref and state value
    * @param files Files to set to state.
    */
-  const setFilesRefAndState = (files: UploadFile[]) => {
+  const setFilesRefAndState = (files: CaseFile[]) => {
     filesRef.current = files
     setFiles(files)
   }
@@ -163,7 +165,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Updates a file if it's in files and adds it to the end of files if not.
    * @param file The file to update.
    */
-  const updateFile = (file: UploadFile) => {
+  const updateFile = (file: CaseFile) => {
     /**
      * Use the filesRef value instead of the files state value because
      *
@@ -186,7 +188,7 @@ export const useS3Upload = (workingCase: Case) => {
     setFilesRefAndState(newFiles)
   }
 
-  const removeFileFromState = (file: UploadFile) => {
+  const removeFileFromState = (file: CaseFile) => {
     const newFiles = [...files]
 
     if (newFiles.includes(file)) {
@@ -200,7 +202,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Insert file in database and update state.
    * @param file The file to add to case.
    */
-  const addFileToCase = async (file: UploadFile) => {
+  const addFileToCase = async (file: CaseFile) => {
     if (workingCase && file.size && file.key) {
       await createFileMutation({
         variables: {
@@ -209,12 +211,14 @@ export const useS3Upload = (workingCase: Case) => {
             type: file.type,
             key: file.key,
             size: file.size,
+            subtype: file.subtype,
           },
         },
       })
         .then((res) => {
           file.id = res.data.createFile.id
           file.status = 'done'
+          file.subtype = res.data.createFile.subtype
           updateFile(file)
         })
         .catch(() => {
@@ -224,8 +228,25 @@ export const useS3Upload = (workingCase: Case) => {
   }
 
   // Event handlers
-  const onChange = (newFiles: File[], isRetry?: boolean) => {
-    const newUploadFiles = newFiles as UploadFile[]
+  const handleS3Upload = (
+    newFiles: File[],
+    isRetry?: boolean,
+    filesSubtype?: CaseFileSubtype,
+  ) => {
+    const newUploadFiles: CaseFile[] = newFiles.map((newFile) => {
+      return {
+        // TODO: CAN THESE BE REMOVED?
+        created: '',
+        modified: '',
+        name: newFile.name,
+        type: newFile.type,
+        size: newFile.size,
+        subtype: filesSubtype,
+        caseId: workingCase.id,
+      }
+    })
+
+    console.log(files)
 
     if (!isRetry) {
       setFilesRefAndState([...newUploadFiles, ...files])
@@ -252,7 +273,7 @@ export const useS3Upload = (workingCase: Case) => {
     })
   }
 
-  const onRemove = (file: UploadFile) => {
+  const handleRemoveFromS3 = (file: CaseFile) => {
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -276,8 +297,8 @@ export const useS3Upload = (workingCase: Case) => {
     }
   }
 
-  const onRetry = (file: UploadFile) => {
-    onChange([file as File], true)
+  const handleRetry = (file: UploadFile) => {
+    handleS3Upload([file as File], true)
   }
 
   return {
@@ -292,8 +313,8 @@ export const useS3Upload = (workingCase: Case) => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
-    onRemove,
-    onRetry,
+    handleS3Upload,
+    handleRemoveFromS3,
+    handleRetry,
   }
 }

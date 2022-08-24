@@ -9,6 +9,7 @@
 
 export type { BoxProps } from './src/lib/Box/types'
 export type { InputBackgroundColor, InputProps } from './src/lib/Input/types'
+export type { UploadFile } from './src/lib/InputFileUpload/InputFileUpload'
 export type {
   DatePickerBackgroundColor,
   DatePickerProps,
