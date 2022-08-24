@@ -346,10 +346,7 @@ const Defendant = () => {
                     >
                       <DefendantInfo
                         defendant={defendant}
-                        noNationalIdText={formatMessage(
-                          m.sections.defendantInfo
-                            .doesNotHaveIcelandicNationalId,
-                        )}
+                        workingCase={workingCase}
                         onDelete={
                           workingCase.defendants &&
                           workingCase.defendants.length > 1

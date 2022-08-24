@@ -16,6 +16,7 @@ import {
   isRestrictionCase,
   UserRole,
   Feature,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -69,6 +70,7 @@ export const Cases: React.FC = () => {
     getInvestigationCaseCourtSections,
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -178,9 +180,13 @@ export const Cases: React.FC = () => {
         routeTo = findLastValidStep(
           getRestrictionCaseProsecutorSection(caseToOpen, user),
         ).href
-      } else {
+      } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseProsecutorSection(caseToOpen, user),
+        ).href
+      } else {
+        routeTo = findLastValidStep(
+          getIndictmentCaseProsecutorSection(caseToOpen),
         ).href
       }
     }

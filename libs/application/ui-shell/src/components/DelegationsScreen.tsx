@@ -204,7 +204,7 @@ export const DelegationsScreen = ({
               {screenData.authDelegations?.map((delegation: Delegation) => (
                 <ActionCard
                   key={delegation.from.nationalId}
-                  image={{ type: 'avatar' }}
+                  avatar
                   heading={delegation.from.name}
                   text={
                     formatMessage(

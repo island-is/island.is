@@ -253,9 +253,7 @@ const Defendant: React.FC = () => {
                 >
                   <DefendantInfo
                     defendant={defendant}
-                    noNationalIdText={formatMessage(
-                      m.sections.defendantInfo.doesNotHaveIcelandicNationalId,
-                    )}
+                    workingCase={workingCase}
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
                   />

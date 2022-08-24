@@ -83,6 +83,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <DefendantInfo
               defendant={workingCase.defendants[0]}
+              workingCase={workingCase}
               onChange={handleUpdateDefendant}
               updateDefendantState={updateDefendantState}
             />

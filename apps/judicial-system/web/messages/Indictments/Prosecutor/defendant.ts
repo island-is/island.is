@@ -28,13 +28,6 @@ export const indictmentsDefendant = {
       }),
     },
     defendantInfo: {
-      doesNotHaveIcelandicNationalId: defineMessage({
-        id:
-          'judicial.system.investigation_cases:defendant.defendant_info.does_not_have_icelandic_national_id_v2',
-        defaultMessage: 'Ákærði er ekki með íslenska kennitölu',
-        description:
-          'Notaður sem texti í "Ákærði er ekki með íslenska kennitölu" hak í "upplýsingar um ákærða" hlutanum á ákærða skrefi í ákærum.',
-      }),
       addDefendantButtonText: defineMessage({
         id:
           'judicial.system.indictments:defendant.defendant_info.add_defendant_button_text',
