@@ -56,7 +56,11 @@ function warning() {
 }
 
 function _get_builder_name() {
-  type podman >/dev/null 2>&1 && echo "podman" || echo "docker"
+  if command -v podman >/dev/null; then
+    echo "podman"
+  else
+      echo "docker"
+  fi
 }
 
 
@@ -110,7 +114,7 @@ function build_image() {
 }
 
 function runner() {
-  if type podman >/dev/null 2>&1; then
+  if command -v podman >/dev/null; then
     podman run --stop-signal SIGKILL --userns=keep-id "$@"
   else
       docker run "$@"
