@@ -6,8 +6,63 @@ import { connect } from 'imap-simple'
 // used to parse emails from the inbox
 // const simpleParser = require('mailparser').simpleParser
 import { simpleParser } from 'mailparser'
+import axios from 'axios'
 
-export const makeEmailAccount = async () => {
+import {
+  GetIdentityVerificationAttributesCommand,
+  SESClient,
+  VerifyEmailAddressCommand,
+} from '@aws-sdk/client-ses'
+/**
+ * Register the email address with AWS SES so we can send emails to it
+ * @param emailAccount
+ */
+async function registerEmailAddressWithSES(emailAccount: {
+  getLastEmail(
+    retries: number,
+  ): Promise<{
+    subject: string | undefined
+    text: string | undefined
+    html: string | false
+  } | null>
+  email: string
+}) {
+  const client = new SESClient({ region: 'eu-west-1' })
+  await client.send(
+    new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
+  )
+  const verifyMsg = await emailAccount.getLastEmail(4)
+  if (verifyMsg && verifyMsg.text) {
+    console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
+    const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
+    if (!verifyUrl || verifyUrl.length != 1) {
+      throw new Error(
+        `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
+          verifyUrl,
+        )}`,
+      )
+    }
+
+    await axios.get(verifyUrl[0])
+    const emailVerifiedStatus = await client.send(
+      new GetIdentityVerificationAttributesCommand({
+        Identities: [emailAccount.email],
+      }),
+    )
+    if (
+      emailVerifiedStatus.VerificationAttributes &&
+      emailVerifiedStatus.VerificationAttributes[emailAccount.email][
+        'VerificationStatus'
+      ] !== 'Success'
+    ) {
+      throw new Error(`Email identity still not validated in AWS SES`)
+    }
+  } else {
+    throw new Error('Verification message not found.')
+  }
+}
+
+const makeEmailAccount = async () => {
   // Generate a new Ethereal email inbox account
   const testAccount = await createTestAccount()
 
@@ -95,3 +150,5 @@ export const makeEmailAccount = async () => {
 
   return userEmail
 }
+
+export { makeEmailAccount, registerEmailAddressWithSES }
