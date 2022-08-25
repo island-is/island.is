@@ -187,9 +187,24 @@ export class NationalRegistryService {
     input: FamilyCorrectionInput,
     nationalId: User['nationalId'],
   ): Promise<FamilyCorrectionResponse> {
+    const userChildren = await this.nationalRegistryApi.getMyChildren(
+      nationalId,
+    )
+    const isAllowed = some(userChildren, ['Barn', input.nationalIdChild])
+
+    /**
+     * Only show data if child SSN is part of user's family.
+     */
+    if (!isAllowed) {
+      throw new ForbiddenException('Child not found')
+    }
+
+    const user = await this.getUser(nationalId)
+
     const correctionInput = {
       ...input,
-      ssn: nationalId,
+      name: user.fullName,
+      nationalId: nationalId,
     }
 
     const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(

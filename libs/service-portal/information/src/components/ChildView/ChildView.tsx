@@ -106,7 +106,7 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
-      {!loading && !isChild && modalFlagEnabled && (
+      {!loading && !isChild && (
         <ChildRegistrationModal
           data={{
             parentName: userName || '',

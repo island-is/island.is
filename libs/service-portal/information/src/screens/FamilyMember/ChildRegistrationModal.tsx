@@ -63,7 +63,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
     await postChildrenCorrection({
       variables: {
         input: {
-          ssnChild: data.childNationalId,
+          nationalIdChild: data.childNationalId,
           name: data.parentName,
           phonenumber: submitData.tel,
           email: submitData.email,
@@ -99,7 +99,6 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
             type="button"
             variant="utility"
             onClick={() => setIsModalOpen(true)}
-            loading={loading}
           >
             {formatMessage(spmm.childRegisterModalButton)}
           </Button>
@@ -233,6 +232,7 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
               size="small"
               icon="arrowForward"
               disabled={false}
+              loading={loading}
             >
               {formatMessage(spmm.childRegisterSend)}
             </Button>

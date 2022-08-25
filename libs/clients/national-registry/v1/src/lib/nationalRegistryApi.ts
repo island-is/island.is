@@ -130,8 +130,8 @@ export class NationalRegistryApi {
       'CreateAndUpdateMS_Leidretting',
       {
         S5RequestID: '',
-        Kennitala: values.ssn,
-        Barn: values.ssnChild,
+        Kennitala: values.nationalId,
+        Barn: values.nationalIdChild,
         Nafn: values.name,
         Simanumer: values.phonenumber,
         Netfang: values.email,
