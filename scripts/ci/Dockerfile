@@ -208,3 +208,22 @@ USER node
 
 RUN ls -al /${APP_DIST_HOME}
 ENTRYPOINT ["./entrypoint.sh"]
+
+FROM cypress-base as output-local
+ARG APP_HOME
+
+ENV \
+  CYPRESS_VIDEOS_FOLDER=/out/videos \
+  CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
+  CYPRESS_DOWNLOADS_FOLDER=/out/downloads
+
+# node user exists in the base image
+RUN mkdir -p /out \
+  && chown node:node /out
+
+COPY --chown=node:node ${APP_HOME}/entrypoint.sh .
+
+USER node
+
+RUN ls -al /${APP_DIST_HOME}
+ENTRYPOINT ["./entrypoint.sh"]

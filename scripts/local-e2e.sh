@@ -25,7 +25,7 @@ ENV_FILE="$PROJECT_DIR/.env.secret"
 DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
 DOCKER_TAG="$(git rev-parse --short HEAD)"
 DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
-DOCKER_TARGET="output-cypress"
+DOCKER_TARGET="output-local"
 DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
 
 # shellcheck disable=SC1091,SC1090
