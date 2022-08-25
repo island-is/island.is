@@ -13,7 +13,7 @@ export class FiskistofaResolver {
   ) {}
 
   @Directive(cacheControlDirective())
-  @Query(() => [ShipStatusInformation])
+  @Query(() => ShipStatusInformation)
   getShipStatusInformation(
     @Args('input') input: GetShipStatusInformationInput,
   ) {
