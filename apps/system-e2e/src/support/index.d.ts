@@ -36,6 +36,5 @@ declare namespace Cypress {
       method: 'GET' | 'POST' = 'GET',
     ): void
     pathUuid()
-    bypassApplicationEntry(applicant?: string)
   }
 }

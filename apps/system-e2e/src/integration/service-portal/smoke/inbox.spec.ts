@@ -1,17 +1,19 @@
+import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
 
 describe('Service Portal', () => {
+  const userName = 'María Sól ÞÍ Torp'
+  const testUser = getFakeUser(fakeUsers, userName)
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
-      baseUrl: Cypress.config('baseUrl'),
+      phoneNumber: testUser,
       urlPath: '/minarsidur/',
     })
   })
 
-  it(`should have user ${fakeUsers[0].name} logged in`, () => {
+  it(`should have ${userName} logged in`, () => {
     cy.visit('/minarsidur/')
-    cy.contains(fakeUsers[0].name)
+    cy.contains(userName)
   })
 
   it('should have Pósthólf', () => {
