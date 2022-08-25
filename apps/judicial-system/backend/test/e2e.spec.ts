@@ -356,7 +356,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.type).toBe(caseTwo.type)
   expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
-  expect(caseOne.policeCaseNumbers).toBe(caseTwo.policeCaseNumbers)
+  expect(caseOne.policeCaseNumbers).toStrictEqual(caseTwo.policeCaseNumbers)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
   expect(caseOne.defenderNationalId ?? null).toBe(
     caseTwo.defenderNationalId ?? null,
