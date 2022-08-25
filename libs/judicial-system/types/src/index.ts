@@ -18,7 +18,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState, CaseFileCategory as CaseFileCategory } from './lib/file'
+export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
   PresignedPost,
