@@ -63,6 +63,22 @@ function _get_builder_name() {
   fi
 }
 
+function builder() {
+  if command -v podman >/dev/null; then
+    podman "$@"
+  else
+      docker "$@"
+  fi
+}
+
+function _image_exists() {
+  image=$(builder images -q "${DOCKER_IMAGE}" 2> /dev/null)
+
+  if [ -z "${image}" ]; then
+    warning "${DOCKER_IMAGE} has not been built yet, starting build now ..."
+    build_image
+  fi
+}
 
 function _get_source_path() {
   [ "${CODE_SOURCE}" = "source" ] && echo "${APP_HOME}"
@@ -93,17 +109,19 @@ function run_container() {
   sed -i 's/^\w*\ *//' "${SECRETS_ENV_FILE}"
 
   _build_app
+  _image_exists
   runner \
     -v "${TMP_DIR}":/out:Z \
     -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
     -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
     --env-file "${SECRETS_ENV_FILE}" \
     "${DOCKER_IMAGE}" "$@"
+  exit 0
 }
 
 # shellcheck disable=SC2086
 function build_image() {
-  $(_get_builder_name) build \
+  builder build \
     -f "${DOCKERFILE}" \
     --target="${DOCKER_TARGET}" \
     "${PUBLISH_TO_REGISTRY[@]}" \
@@ -180,13 +198,17 @@ if [ ! 0 == $# ]; then
             ;;
         esac
       done
+      ;;
+    *)
+      usage
+      ;;
   esac
 else
   usage
 fi
 
 # run dist in container
-[ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless && exit 0
+[ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
 
 # run either from source or dist
 "${CYPRESS_BIN}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
