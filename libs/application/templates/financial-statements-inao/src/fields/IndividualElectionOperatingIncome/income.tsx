@@ -72,20 +72,6 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
           currency
         />
       </Box>
-      <Box paddingY={1}>
-        <InputController
-          id={INDIVIDUALOPERATIONIDS.capitalIncome}
-          name={INDIVIDUALOPERATIONIDS.capitalIncome}
-          error={
-            errors &&
-            getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.capitalIncome)
-          }
-          label={formatMessage(m.capitalIncome)}
-          onBlur={() => getSum()}
-          backgroundColor="blue"
-          currency
-        />
-      </Box>
     </Fragment>
   )
 }

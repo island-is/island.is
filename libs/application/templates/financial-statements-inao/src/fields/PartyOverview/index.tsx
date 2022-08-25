@@ -14,6 +14,10 @@ import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ValueLine } from '../Shared'
+import {
+  columnStyle,
+  starterColumnStyle,
+} from '../Shared/styles/overviewStyles.css'
 
 export const PartyOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -22,7 +26,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
   return (
     <Box marginBottom={2}>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -39,7 +43,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -55,7 +59,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine label={m.email} value={answers.about.email} />
@@ -69,17 +73,17 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersIncomeAndExpenses)}
         </Text>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.capitalIncome}
-              value={formatCurrency(answers.partyIncome?.capitalIncome)}
+              label={m.partyDonations}
+              value={formatCurrency(answers.partyIncome?.partyDonations)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
@@ -90,7 +94,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -106,7 +110,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -120,36 +124,17 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
               value={formatCurrency(answers.partyIncome?.partyDonations)}
             />
           </GridColumn>
+          <GridColumn span={['12/12', '6/12']}></GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.otherIncome}
-              value={formatCurrency(answers.partyIncome?.otherIncome)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box paddingY={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.capitalCost}
-              value={formatCurrency(answers.partyExpense?.capitalCost)}
-            />
-          </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.electionOffice}
               value={formatCurrency(answers.partyExpense?.electionOffice)}
             />
           </GridColumn>
-        </GridRow>
-      </Box>
-      <Box paddingY={2}>
-        <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.otherCost}
@@ -159,12 +144,34 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         </GridRow>
       </Box>
       <Divider />
-      <Box paddingTop={4} paddingBottom={2}>
+      <Box className={starterColumnStyle}>
+        <Text variant="h3" as="h3">
+          {formatMessage(m.capitalNumbers)}
+        </Text>
+      </Box>
+      <Box className={columnStyle}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.electionOffice}
+              value={formatCurrency(answers.capitalNumbers?.capitalIncome)}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.otherCost}
+              value={formatCurrency(answers.capitalNumbers?.capitalCost)}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Divider />
+      <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersDebt)}
         </Text>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -180,7 +187,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -196,7 +203,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine

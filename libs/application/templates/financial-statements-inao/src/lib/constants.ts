@@ -76,7 +76,7 @@ export const CEMETRYOPERATIONIDS = {
 
 export const CAPITALNUMBERS = {
   capitalIncome: 'capitalNumbers.capitalIncome',
-  capitalExpense: 'capitalNumbers.capitalExpense',
+  capitalCost: 'capitalNumbers.capitalCost',
 }
 
 export const CEMETRYCARETAKER = {

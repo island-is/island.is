@@ -30,14 +30,12 @@ export const capitalNumberSection = buildSubSection({
           variant: 'currency',
         }),
         buildTextField({
-          id: CAPITALNUMBERS.capitalExpense,
+          id: CAPITALNUMBERS.capitalCost,
           title: m.capitalExpense,
           condition: (_answers, externalData) => {
-            console.log(externalData)
             // @ts-ignore
-            // const userType = externalData.currentUserType.data.code
-            // return userType !== CEMETRY
-            return true
+            const userType = externalData.currentUserType?.data?.code
+            return userType !== CEMETRY
           },
           width: 'half',
           variant: 'currency',

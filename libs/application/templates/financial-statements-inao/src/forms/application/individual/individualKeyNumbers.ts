@@ -12,6 +12,7 @@ import {
   INDIVIDUALOPERATIONIDS,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
+import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 
 export const individualKeyNumbersSection = buildSection({
   id: 'keyNumbers',
@@ -43,6 +44,7 @@ export const individualKeyNumbersSection = buildSection({
         }),
       ],
     }),
+    capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
       title: m.keyNumbersProperty,

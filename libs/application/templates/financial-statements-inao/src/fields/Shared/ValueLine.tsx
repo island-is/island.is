@@ -12,7 +12,7 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value = '-' }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingBottom={3}>
+    <Box paddingY={3}>
       <Text variant="h4" as="h4">
         {formatMessage(label)}
       </Text>

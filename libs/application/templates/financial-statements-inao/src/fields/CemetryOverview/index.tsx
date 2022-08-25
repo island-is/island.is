@@ -24,7 +24,6 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
-  console.log({ answers })
 
   return (
     <Box marginBottom={2}>
@@ -189,13 +188,13 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           {formatMessage(m.capitalNumbers)}
         </Text>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            {/* <ValueLine
+            <ValueLine
               label={m.capitalIncome}
               value={formatCurrency(answers.capitalNumbers?.capitalIncome)}
-            /> */}
+            />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}></GridColumn>
         </GridRow>
@@ -207,7 +206,7 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           {formatMessage(m.keyNumbersDebt)}
         </Text>
       </Box>
-      <Box paddingY={2}>
+      <Box className={columnStyle}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine

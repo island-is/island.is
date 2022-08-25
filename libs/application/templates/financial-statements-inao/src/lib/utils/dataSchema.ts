@@ -81,7 +81,6 @@ const cemetryLiability = z.object({
 })
 
 const cemetryIncome = z.object({
-  capitalIncome: z.string(),
   caretaking: z.string(),
   graveIncome: z.string(),
   cemetryFundDonations: z.string(),
@@ -107,13 +106,11 @@ const partyIncome = z.object({
   municipalityDonations: z.string().refine((x) => !!x, { params: m.required }),
   individualDonations: z.string().refine((x) => !!x, { params: m.required }),
   otherIncome: z.string().refine((x) => !!x, { params: m.required }),
-  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })
 
 const partyExpense = z.object({
   electionOffice: z.string().refine((x) => !!x, { params: m.required }),
-  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
   otherCost: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })
@@ -123,7 +120,6 @@ const individualIncome = z.object({
   individualDonations: z.string().refine((x) => !!x, { params: m.required }),
   personalDonations: z.string().refine((x) => !!x, { params: m.required }),
   otherIncome: z.string().refine((x) => !!x, { params: m.required }),
-  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
   totalIncome: z.string(),
 })
 
@@ -131,9 +127,13 @@ const individualExpense = z.object({
   electionOffice: z.string().refine((x) => !!x, { params: m.required }),
   advertisements: z.string().refine((x) => !!x, { params: m.required }),
   travelCost: z.string().refine((x) => !!x, { params: m.required }),
-  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
   otherCost: z.string().refine((x) => !!x, { params: m.required }),
   totalExpense: z.string().refine((x) => !!x, { params: m.required }),
+})
+
+const capitalNumbers = z.object({
+  capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
+  capitalCost: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const operatingCost = z.object({
@@ -158,6 +158,7 @@ export const dataSchema = z.object({
   operatingCost,
   partyIncome,
   partyExpense,
+  capitalNumbers,
   cemetryIncome,
   cemetryExpense,
   cemetryAsset,

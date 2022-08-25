@@ -12,6 +12,7 @@ import {
   PARTY,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
+import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 
 export const partyKeyNumbersSection = buildSection({
   id: 'keyNumbers',
@@ -40,6 +41,7 @@ export const partyKeyNumbersSection = buildSection({
         }),
       ],
     }),
+    capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
       title: m.keyNumbersProperty,
