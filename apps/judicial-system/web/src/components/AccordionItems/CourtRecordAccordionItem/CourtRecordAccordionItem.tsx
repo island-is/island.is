@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
+import isSameDay from 'date-fns/isSameDay'
 
 import {
   capitalize,
@@ -57,6 +58,37 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         title={formatMessage(m.sections.timeAndLocation.title)}
       >
         <Text>
+          {!workingCase.courtEndTime
+            ? formatMessage(m.sections.timeAndLocation.textOngoing, {
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+              })
+            : workingCase.courtStartDate &&
+              isSameDay(
+                new Date(workingCase.courtStartDate),
+                new Date(workingCase.courtEndTime),
+              )
+            ? formatMessage(m.sections.timeAndLocation.textSameDay, {
+                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtLocation: workingCase.courtLocation,
+              })
+            : formatMessage(m.sections.timeAndLocation.text, {
+                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                courtStartTime: formatDate(
+                  workingCase.courtStartDate,
+                  TIME_FORMAT,
+                ),
+                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
+                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtLocation: workingCase.courtLocation,
+              })}{' '}
           {workingCase.courtEndTime
             ? formatMessage(m.sections.timeAndLocation.text, {
                 courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),

@@ -31,6 +31,14 @@ export const courtRecordAccordion = {
         description:
           'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum þegar þinghald er enn í gangi.',
       },
+      textSameDay: {
+        id:
+          'judicial.system.core:court_record_accordion.time_and_location.text_same_day',
+        defaultMessage:
+          'Þinghald frá {courtStartDate} kl. {courtStartTime} til {courtEndTime} {courtLocation}.',
+        description:
+          'Notaður sem texti í "tíma og stað" svæði í þingbókarfellilistanum þegar þinghald byrjar og lýkur á sama degi.',
+      },
     }),
     courtAttendees: defineMessages({
       title: {
