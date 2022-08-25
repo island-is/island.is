@@ -1,8 +1,10 @@
 import { Allow } from 'class-validator'
-
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { CreateFile } from '@island.is/judicial-system/types'
+import type {
+  CaseFileSubtype,
+  CreateFile,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class CreateFileInput implements CreateFile {
@@ -16,7 +18,7 @@ export class CreateFileInput implements CreateFile {
 
   @Allow()
   @Field({ nullable: true })
-  readonly subtype?: string
+  readonly subtype?: CaseFileSubtype
 
   @Allow()
   @Field()
