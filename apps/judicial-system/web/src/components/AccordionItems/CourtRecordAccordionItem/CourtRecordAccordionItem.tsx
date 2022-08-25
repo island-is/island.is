@@ -13,15 +13,12 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  closedCourt,
-  core,
-  courtRecordAccordion as m,
-} from '@island.is/judicial-system-web/messages'
+import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case } from '@island.is/judicial-system/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
+import * as m from './strings.courtRecordAccordion'
 
 interface Props {
   workingCase: Case
@@ -50,45 +47,62 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
-      label={formatMessage(m.title)}
+      label={formatMessage(m.courtRecordAccordion.title)}
       labelVariant="h3"
       labelUse="h3"
     >
       <AccordionListItem
-        title={formatMessage(m.sections.timeAndLocation.title)}
+        title={formatMessage(
+          m.courtRecordAccordion.sections.timeAndLocation.title,
+        )}
       >
         <Text>
           {!workingCase.courtEndTime
-            ? formatMessage(m.sections.timeAndLocation.textOngoing, {
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-              })
+            ? formatMessage(
+                m.courtRecordAccordion.sections.timeAndLocation.textOngoing,
+                {
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                },
+              )
             : workingCase.courtStartDate &&
               isSameDay(
                 new Date(workingCase.courtStartDate),
                 new Date(workingCase.courtEndTime),
               )
-            ? formatMessage(m.sections.timeAndLocation.textSameDay, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtLocation: workingCase.courtLocation,
-              })
-            : formatMessage(m.sections.timeAndLocation.text, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtLocation: workingCase.courtLocation,
-              })}{' '}
+            ? formatMessage(
+                m.courtRecordAccordion.sections.timeAndLocation.textSameDay,
+                {
+                  courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                  courtEndTime: formatDate(
+                    workingCase.courtEndTime,
+                    TIME_FORMAT,
+                  ),
+                  courtLocation: workingCase.courtLocation,
+                },
+              )
+            : formatMessage(
+                m.courtRecordAccordion.sections.timeAndLocation.text,
+                {
+                  courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                  courtStartTime: formatDate(
+                    workingCase.courtStartDate,
+                    TIME_FORMAT,
+                  ),
+                  courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
+                  courtEndTime: formatDate(
+                    workingCase.courtEndTime,
+                    TIME_FORMAT,
+                  ),
+                  courtLocation: workingCase.courtLocation,
+                },
+              )}{' '}
         </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>
@@ -98,39 +112,54 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       </AccordionListItem>
       {workingCase.courtAttendees?.trim() && (
         <AccordionListItem
-          title={formatMessage(m.sections.courtAttendees.title)}
+          title={formatMessage(
+            m.courtRecordAccordion.sections.courtAttendees.title,
+          )}
           breakSpaces
         >
           <Text>{workingCase.courtAttendees.trim()}</Text>
         </AccordionListItem>
       )}
-      <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
+      <AccordionListItem
+        title={formatMessage(
+          m.courtRecordAccordion.sections.courtDocuments.title,
+        )}
+      >
         <Text>
-          {formatMessage(m.sections.firstCourtDocument, {
+          {formatMessage(m.courtRecordAccordion.sections.firstCourtDocument, {
             caseType: formatRequestCaseType(workingCase.type),
           })}
         </Text>
         {workingCase.courtDocuments?.map((courtDocument, index) => {
           return (
             <Text key={`${index}${courtDocument.name}`}>
-              {formatMessage(m.sections.courtDocuments.text, {
-                documentName: capitalize(courtDocument.name),
-                documentNumber: index + 2,
-                submittedBy: courtDocument.submittedBy,
-              })}
+              {formatMessage(
+                m.courtRecordAccordion.sections.courtDocuments.text,
+                {
+                  documentName: capitalize(courtDocument.name),
+                  documentNumber: index + 2,
+                  submittedBy: courtDocument.submittedBy,
+                },
+              )}
             </Text>
           )
         })}
       </AccordionListItem>
       <AccordionListItem
-        title={formatMessage(m.sections.sessionBookings.title)}
+        title={formatMessage(
+          m.courtRecordAccordion.sections.sessionBookings.title,
+        )}
         breakSpaces
       >
         <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>
-          <Text>{formatMessage(m.sections.conclusion.disclaimer)}</Text>
+          <Text>
+            {formatMessage(
+              m.courtRecordAccordion.sections.conclusion.disclaimer,
+            )}
+          </Text>
         </Box>
       )}
       {
@@ -141,7 +170,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 SessionArrangements.ALL_PRESENT) && (
               <Box marginBottom={2}>
                 <Text>
-                  {formatMessage(m.sections.appealDecision.disclaimer)}
+                  {formatMessage(
+                    m.courtRecordAccordion.sections.appealDecision.disclaimer,
+                  )}
                 </Text>
               </Box>
             )}
@@ -166,7 +197,9 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       }
       {workingCase.endOfSessionBookings && (
         <AccordionListItem
-          title={formatMessage(m.sections.endOfSessionBookings.title)}
+          title={formatMessage(
+            m.courtRecordAccordion.sections.endOfSessionBookings.title,
+          )}
           breakSpaces
         >
           <Text>{workingCase.endOfSessionBookings}</Text>
