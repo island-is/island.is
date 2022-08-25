@@ -1,6 +1,6 @@
 export interface FamilyCorrection {
-  ssn: string
-  ssnChild: string
+  nationalId: string
+  nationalIdChild: string
   name: string
   phonenumber: string
   email: string

@@ -130,7 +130,10 @@ const CourtRecord = () => {
         ) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður ${
-              workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi'
             } ${formatMessage(core.defendant, { suffix: 'a' })}`,
           )
         }
