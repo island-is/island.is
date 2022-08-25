@@ -202,8 +202,6 @@ export const isDefendantStepValidIndictments = (
       ),
     ]).isValid
 
-  console.log('result', result, workingCase, caseType)
-
   return result
 }
 
