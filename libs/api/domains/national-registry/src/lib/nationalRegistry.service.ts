@@ -183,16 +183,6 @@ export class NationalRegistryService {
     return members
   }
 
-  async postUserCorrection(
-    input: FamilyCorrectionInput,
-  ): Promise<FamilyCorrectionResponse> {
-    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
-      input,
-    )
-
-    return userCorrectionResponse
-  }
-
   private formatGender(genderIndex: string): Gender {
     switch (genderIndex) {
       case '1':
