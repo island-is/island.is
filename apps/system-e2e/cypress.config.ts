@@ -14,10 +14,10 @@ const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
     ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
     : env === 'prod'
-      ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
-      : env === 'staging'
-        ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
-        : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
+    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    : env === 'staging'
+    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
+    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
 export default defineConfig({
   fileServerFolder: '.',
@@ -50,28 +50,34 @@ export default defineConfig({
         new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
       )
       const verifyMsg = await emailAccount.getLastEmail(4)
-      console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
-      const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
-      if (verifyUrl.length != 1) {
-        throw new Error(
-          `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
-            verifyUrl,
-          )}`,
+      if (verifyMsg) {
+        console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
+        const verifyUrl = verifyMsg.text!.match(
+          /https:\/\/email-verification.+/,
         )
-      }
+        if (!verifyUrl || verifyUrl.length != 1) {
+          throw new Error(
+            `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
+              verifyUrl,
+            )}`,
+          )
+        }
 
-      await axios.get(verifyUrl[0])
-      const emailVerifiedStatus = await client.send(
-        new GetIdentityVerificationAttributesCommand({
-          Identities: [emailAccount.email],
-        }),
-      )
-      if (
-        emailVerifiedStatus.VerificationAttributes[emailAccount.email][
-          'VerificationStatus'
-        ] !== 'Success'
-      ) {
-        throw new Error(`Email identity still not validated in AWS SES`)
+        await axios.get(verifyUrl[0])
+        const emailVerifiedStatus = await client.send(
+          new GetIdentityVerificationAttributesCommand({
+            Identities: [emailAccount.email],
+          }),
+        )
+        if (
+          emailVerifiedStatus.VerificationAttributes![emailAccount.email][
+            'VerificationStatus'
+          ] !== 'Success'
+        ) {
+          throw new Error(`Email identity still not validated in AWS SES`)
+        }
+      } else {
+        throw new Error('Verification message not found.')
       }
 
       on('task', {

@@ -71,9 +71,6 @@ const FormMultiField: FC<{
             !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
           const span = isHalfColumn ? '1/2' : '1/1'
 
-          console.debug(
-            `Multi-field part ${field.type} with test id ${field.dataTestId}`,
-          )
           return (
             <GridColumn
               key={field.id || index}

@@ -429,28 +429,28 @@ export class ParentalLeaveService {
         attachments,
       )
 
-      // const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-      //   {
-      //     nationalRegistryId,
-      //     parentalLeave: parentalLeaveDTO,
-      //   },
-      // )
-      //
-      // if (!response.id) {
-      //   throw new Error(
-      //     `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
-      //   )
-      // }
+      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+        {
+          nationalRegistryId,
+          parentalLeave: parentalLeaveDTO,
+        },
+      )
+
+      if (!response.id) {
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
+        )
+      }
 
       const selfEmployed = isSelfEmployed === YES
 
       if (!selfEmployed) {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
-        // await this.sharedTemplateAPIService.sendEmail(
-        //   generateApplicationApprovedByEmployerEmail,
-        //   application,
-        // )
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedByEmployerEmail,
+          application,
+        )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
@@ -459,7 +459,7 @@ export class ParentalLeaveService {
         )
       }
 
-      return { status: 'accepted', id: `${Math.random()}` }
+      return response
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)

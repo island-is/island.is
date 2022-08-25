@@ -43,16 +43,22 @@ export const makeEmailAccount = async () => {
       console.log(emailConfig)
 
       try {
+        console.log(`connecting to mail server...`)
         const connection = await connect(emailConfig)
+        console.log(`connected`)
 
         // grab up to 50 emails from the inbox
+        console.log(`Opening inbox...`)
         await connection.openBox('INBOX')
+        console.log(`Opened inbox.`)
         const searchCriteria = ['UNSEEN']
         const fetchOptions = {
           bodies: [''],
           markSeen: true,
         }
+        console.log(`Starting search for new messages...`)
         const messages = await connection.search(searchCriteria, fetchOptions)
+        console.log(`Search finished`)
         // and close the connection to avoid it hanging
         connection.end()
 

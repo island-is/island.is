@@ -55,7 +55,6 @@ const FormField: FC<{
   }
 
   const Component = allFields[field.component]
-  console.debug(`Rendering single field ${field.component}`)
   if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }

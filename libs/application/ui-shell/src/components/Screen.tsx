@@ -290,7 +290,6 @@ const Screen: FC<ScreenProps> = ({
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
-  console.debug(`Rendering ${screen.type}`)
   const shouldCreateTopLevelRegion = !(
     screen.type === FormItemTypes.REPEATER ||
     screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
