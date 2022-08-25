@@ -11,6 +11,7 @@ class Ship {
   @Field()
   name!: string
 
+  @Field()
   timePeriod!: string
 }
 

@@ -11,19 +11,14 @@
   "paths": {
     "/v1/kvotastadaskipa/{skipnumer}": {
       "get": {
-        "tags": [
-          "KvotastadaSkipa"
-        ],
+        "tags": ["KvotastadaSkipa"],
         "summary": "Sækir gögn um kvótastöðu skips út frá skipanúmeri.",
         "parameters": [
           {
             "name": "skipnumer",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -31,19 +26,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/KvotastadaSkipsDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/KvotastadaSkipsDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/KvotastadaSkipsDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" }
               }
             }
           },
@@ -51,40 +40,22 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -92,9 +63,7 @@
     },
     "/v1/kvotastadaskipa": {
       "get": {
-        "tags": [
-          "KvotastadaSkipa"
-        ],
+        "tags": ["KvotastadaSkipa"],
         "summary": "Sækir gögn um kvótastöðu allra skipa.",
         "responses": {
           "200": {
@@ -103,25 +72,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/KvotastadaSkipaDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/KvotastadaSkipaDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/KvotastadaSkipaDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/KvotastadaSkipaDTO" }
                 }
               }
             }
@@ -129,21 +92,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -151,28 +102,20 @@
     },
     "/v1/landanir/dagsetningar": {
       "get": {
-        "tags": [
-          "Landanir"
-        ],
+        "tags": ["Landanir"],
         "summary": "Sækir gögn um landanir út frá dagsetningum.",
         "parameters": [
           {
             "name": "DagsFra",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "DagsTil",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -182,25 +125,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               }
             }
@@ -208,21 +145,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -230,19 +155,14 @@
     },
     "/v1/landanir/skipnumer/{skipnumer}": {
       "get": {
-        "tags": [
-          "Landanir"
-        ],
+        "tags": ["Landanir"],
         "summary": "Sækir gögn um landanir útfrá skipanúmeri.",
         "parameters": [
           {
             "name": "skipnumer",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -252,25 +172,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               }
             }
@@ -278,21 +192,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -300,37 +202,26 @@
     },
     "/v1/landanir/seljendur/{seljandikennitala}/dagsetningar": {
       "get": {
-        "tags": [
-          "Landanir"
-        ],
+        "tags": ["Landanir"],
         "summary": "Sækir gögn um landanir út frá kennitölu seljanda og dagsetningum.",
         "parameters": [
           {
             "name": "seljandikennitala",
             "in": "path",
             "required": true,
-            "schema": {
-              "pattern": "^\\d{10}$",
-              "type": "string"
-            }
+            "schema": { "pattern": "^\\d{10}$", "type": "string" }
           },
           {
             "name": "DagsFra",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "DagsTil",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -340,25 +231,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LondunDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/LondunDTO" }
                 }
               }
             }
@@ -366,21 +251,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -388,28 +261,20 @@
     },
     "/v1/medalverdfisks/dagsetningar": {
       "get": {
-        "tags": [
-          "MedalverdFisks"
-        ],
+        "tags": ["MedalverdFisks"],
         "summary": "Sækir gögn um meðalaverð fisks",
         "parameters": [
           {
             "name": "DagsFra",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "DagsTil",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -419,25 +284,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedalverdFisksDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedalverdFisksDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedalverdFisksDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/MedalverdFisksDTO" }
                 }
               }
             }
@@ -445,21 +304,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -467,19 +314,14 @@
     },
     "/v1/skip/{skipnumer}": {
       "get": {
-        "tags": [
-          "Skip"
-        ],
+        "tags": ["Skip"],
         "summary": "Sækir gögn um skip út frá skipanúmeri.",
         "parameters": [
           {
             "name": "skipnumer",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -487,19 +329,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkipDTO"
-                }
+                "schema": { "$ref": "#/components/schemas/SkipDTO" }
               }
             }
           },
@@ -507,40 +343,22 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -548,28 +366,20 @@
     },
     "/v1/skip/eigandaskipti/dagsetningar": {
       "get": {
-        "tags": [
-          "Skip"
-        ],
+        "tags": ["Skip"],
         "summary": "Sækir gögn um eigandaskipti skips út frá dagsetningum.",
         "parameters": [
           {
             "name": "DagsFra",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "DagsTil",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -605,21 +415,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -627,19 +425,14 @@
     },
     "/v1/skip/kennitala/{kennitala}": {
       "get": {
-        "tags": [
-          "Skip"
-        ],
+        "tags": ["Skip"],
         "summary": "Sækir lista af skipum eftir kennitölu útgerðaraðila eða eiganda.",
         "parameters": [
           {
             "name": "kennitala",
             "in": "path",
             "required": true,
-            "schema": {
-              "pattern": "^\\d{10}$",
-              "type": "string"
-            }
+            "schema": { "pattern": "^\\d{10}$", "type": "string" }
           }
         ],
         "responses": {
@@ -649,25 +442,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SkipDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SkipDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SkipDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/SkipDTO" }
                 }
               }
             }
@@ -675,21 +462,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -697,27 +472,20 @@
     },
     "/v1/stadaskips/{skipnumer}/fiskveidiar/{timabil}": {
       "get": {
-        "tags": [
-          "StadaSkips"
-        ],
+        "tags": ["StadaSkips"],
         "summary": "Sækir gögn um aflamark skips og ýmsar tilfærslur afla út frá skipaskrárnúmeri og tímabili.",
         "parameters": [
           {
             "name": "skipnumer",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "timabil",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -745,40 +513,22 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -786,51 +536,35 @@
     },
     "/v1/stadaskips/{skipnumer}/fiskveidiar/{timabil}/breytt": {
       "get": {
-        "tags": [
-          "StadaSkips"
-        ],
+        "tags": ["StadaSkips"],
         "summary": "Skilar breyttum gögnum um aflamark skips og ýmsum tilfærslum út frá breytingum, skipaskrárnúmeri og tímabili.",
         "parameters": [
           {
             "name": "skipnumer",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "timabil",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "fisktegundNr",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "aflamarkBreytingMagn",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "aflaBreytingMagn",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -858,40 +592,22 @@
             "description": "Not Found",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -899,9 +615,7 @@
     },
     "/v1/stodtoflur/astond": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um ástönd frá stoðtöflu.",
         "responses": {
           "200": {
@@ -910,25 +624,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AstandDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AstandDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AstandDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/AstandDTO" }
                 }
               }
             }
@@ -936,21 +644,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -958,9 +654,7 @@
     },
     "/v1/stodtoflur/geymsluadferdir": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um geymsluaðferðir frá stoðtöflu.",
         "responses": {
           "200": {
@@ -969,25 +663,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GeymsluadferdDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GeymsluadferdDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GeymsluadferdDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/GeymsluadferdDTO" }
                 }
               }
             }
@@ -995,21 +683,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1017,9 +693,7 @@
     },
     "/v1/stodtoflur/veidisvaedi": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um veiðisvæði frá stoðtöflu.",
         "responses": {
           "200": {
@@ -1028,25 +702,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidisvaediDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidisvaediDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidisvaediDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidisvaediDTO" }
                 }
               }
             }
@@ -1054,21 +722,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1076,9 +732,7 @@
     },
     "/v1/stodtoflur/fisktegundir": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um fiskitegundir frá stoðtöflu.",
         "responses": {
           "200": {
@@ -1087,25 +741,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FisktegundDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FisktegundDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FisktegundDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/FisktegundDTO" }
                 }
               }
             }
@@ -1113,21 +761,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1135,9 +771,7 @@
     },
     "/v1/stodtoflur/veidistofnar": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um veiðistofna frá stoðtöflu.",
         "responses": {
           "200": {
@@ -1146,25 +780,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidistofnDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidistofnDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidistofnDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidistofnDTO" }
                 }
               }
             }
@@ -1172,21 +800,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1194,9 +810,7 @@
     },
     "/v1/stodtoflur/veidarfaeri": {
       "get": {
-        "tags": [
-          "Stodtoflur"
-        ],
+        "tags": ["Stodtoflur"],
         "summary": "Sækir gögn um veiðarfæri frá stoðtöflu.",
         "responses": {
           "200": {
@@ -1205,25 +819,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidarfaeriDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidarfaeriDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidarfaeriDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidarfaeriDTO" }
                 }
               }
             }
@@ -1231,21 +839,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1253,19 +849,14 @@
     },
     "/v1/veidileyfi/dagsetning": {
       "get": {
-        "tags": [
-          "Veidileyfi"
-        ],
+        "tags": ["Veidileyfi"],
         "summary": "Sækir gögn um veiðileyfi út frá dagsetningu.",
         "parameters": [
           {
             "name": "dagsetning",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -1275,25 +866,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidileyfiDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidileyfiDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VeidileyfiDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/VeidileyfiDTO" }
                 }
               }
             }
@@ -1301,21 +886,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1323,19 +896,14 @@
     },
     "/v1/veidileyfi/sviptingar/dagsetning": {
       "get": {
-        "tags": [
-          "Veidileyfi"
-        ],
+        "tags": ["Veidileyfi"],
         "summary": "Sækir gögn um veiðileyfis sviptingar út frá dagsetningu.",
         "parameters": [
           {
             "name": "dagsetning",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -1371,21 +939,9 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1397,14 +953,10 @@
       "AflamarkSkipsBreyttDTO": {
         "type": "object",
         "properties": {
-          "skipUppl": {
-            "$ref": "#/components/schemas/AflamarkSkipsUpplDTO"
-          },
+          "skipUppl": { "$ref": "#/components/schemas/AflamarkSkipsUpplDTO" },
           "aflamarkstegundir": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AflamarkstegundirDTO"
-            },
+            "items": { "$ref": "#/components/schemas/AflamarkstegundirDTO" },
             "description": "Listi aflamarkstegunda eftir beytta stöðu",
             "nullable": true
           }
@@ -1419,9 +971,7 @@
           },
           "aflamarkstegundir": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AflamarkstegundirDTO"
-            },
+            "items": { "$ref": "#/components/schemas/AflamarkstegundirDTO" },
             "description": "Listi raunverulegrar stöðu aflamaarkstegunda",
             "nullable": true
           }
@@ -1613,9 +1163,7 @@
           },
           "kvotastadaSkipa": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/KvotastadaSkipsDTO"
-            },
+            "items": { "$ref": "#/components/schemas/KvotastadaSkipsDTO" },
             "description": "Skip grunnupplýsingar og listi af kvótategundum skips.",
             "nullable": true
           }
@@ -1630,9 +1178,7 @@
           },
           "kvotategundir": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/KvotategundDTO"
-            },
+            "items": { "$ref": "#/components/schemas/KvotategundDTO" },
             "description": "Listi af kvótategundum skips.",
             "nullable": true
           }
@@ -1766,17 +1312,13 @@
           },
           "londunarAflar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LondunAfliDTO"
-            },
+            "items": { "$ref": "#/components/schemas/LondunAfliDTO" },
             "description": "Listi af afla löndunar.",
             "nullable": true
           },
           "londunarKvotaAflar": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LondunarKvotaAfliDTO"
-            },
+            "items": { "$ref": "#/components/schemas/LondunarKvotaAfliDTO" },
             "description": "Listi af kvótaafla löndunar.",
             "nullable": true
           },
@@ -1884,29 +1426,13 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": { }
+        "additionalProperties": false
       },
       "SkipDTO": {
         "type": "object",
@@ -2195,9 +1721,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": [ ]
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }
