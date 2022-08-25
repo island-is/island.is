@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react'
 import InputMask from 'react-input-mask'
-import { useKey } from 'react-use'
 
 import { Button, Input } from '@island.is/island-ui/core'
 
@@ -23,24 +22,24 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   inputMask,
   buttonText,
 }) => {
-  const [nextValue, setNextValue] = useState<string>('')
+  // State needed since InputMask dose not clear input if invalid value is entered
+  const [value, setValue] = useState('')
   const valueRef = useRef<HTMLInputElement>(null)
-
-  // Add document on enter press
-  useKey(
-    'Enter',
-    () => {
-      onAddValue(nextValue)
-      clearInput()
-    },
-    undefined,
-    [nextValue],
-  )
 
   const clearInput = () => {
     if (valueRef.current) {
       valueRef.current.value = ''
       valueRef.current.focus()
+      setValue('')
+    }
+  }
+
+  const handleEnter = (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (event.key === 'Enter') {
+      onAddValue(value)
+      clearInput()
     }
   }
 
@@ -51,7 +50,7 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
           <InputMask
             mask={inputMask}
             maskPlaceholder={null}
-            onChange={(evt) => setNextValue(evt.target.value)}
+            onChange={(event) => setValue(event.target.value)}
           >
             <Input
               name="value-input"
@@ -60,6 +59,7 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
               size="sm"
               autoComplete="off"
               ref={valueRef}
+              onKeyDown={handleEnter}
             />
           </InputMask>
         ) : (
@@ -69,16 +69,17 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
             placeholder={inputPlaceholder}
             size="sm"
             autoComplete="off"
-            onChange={(evt) => setNextValue(evt.target.value)}
+            onChange={(event) => setValue(event.target.value)}
             ref={valueRef}
+            onKeyDown={handleEnter}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={!nextValue}
+          disabled={!value}
           onClick={() => {
-            onAddValue(nextValue)
+            onAddValue(value)
             clearInput()
           }}
           fluid
