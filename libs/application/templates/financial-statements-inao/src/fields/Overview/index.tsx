@@ -88,7 +88,6 @@ export const Overview = ({ application }: FieldBaseProps) => {
               answers.individualIncome?.individualDonations,
             )}
           />
-
           <ValueLine
             label={m.otherIncome}
             value={formatCurrency(answers.individualIncome?.otherIncome)}

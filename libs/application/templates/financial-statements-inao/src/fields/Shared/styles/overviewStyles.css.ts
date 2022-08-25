@@ -12,12 +12,6 @@ export const columnStyle = style({
 })
 
 export const starterColumnStyle = style({
-  paddingTop: '0.5rem',
+  paddingTop: '1rem',
   paddingBottom: '0.5rem',
-  '@media': {
-    'screen and (min-width: 576px)': {
-      paddingTop: '1rem',
-      paddingBottom: '0.5rem',
-    },
-  },
 })

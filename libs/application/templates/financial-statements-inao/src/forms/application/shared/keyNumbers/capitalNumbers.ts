@@ -32,11 +32,6 @@ export const capitalNumberSection = buildSubSection({
         buildTextField({
           id: CAPITALNUMBERS.capitalCost,
           title: m.capitalExpense,
-          condition: (_answers, externalData) => {
-            // @ts-ignore
-            const userType = externalData.currentUserType?.data?.code
-            return userType !== CEMETRY
-          },
           width: 'half',
           variant: 'currency',
         }),

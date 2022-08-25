@@ -26,123 +26,86 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
   return (
     <Box marginBottom={2}>
       <Divider />
-      <Box className={starterColumnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.nationalId}
-              value={
-                answers.about?.nationalId
-                  ? formatNationalId(answers.about.nationalId)
-                  : '-'
-              }
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.fullName} value={answers.about.fullName} />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyName}
-              value={answers.about.powerOfAttorneyName}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.powerOfAttorneyNationalId}
-              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine label={m.email} value={answers.about.email} />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.phoneNumber}
-              value={formatPhoneNumber(answers.about.phoneNumber)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.nationalId}
+            value={
+              answers.about?.nationalId
+                ? formatNationalId(answers.about.nationalId)
+                : '-'
+            }
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine label={m.fullName} value={answers.about.fullName} />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.powerOfAttorneyName}
+            value={answers.about.powerOfAttorneyName}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.powerOfAttorneyNationalId}
+            value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
+          />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine label={m.email} value={answers.about.email} />
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.phoneNumber}
+            value={formatPhoneNumber(answers.about.phoneNumber)}
+          />
+        </GridColumn>
+      </GridRow>
       <Divider />
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.keyNumbersIncomeAndExpenses)}
         </Text>
       </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.partyDonations}
-              value={formatCurrency(answers.partyIncome?.partyDonations)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.individualDonations}
-              value={formatCurrency(answers.partyIncome?.individualDonations)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.municipalityDonations}
-              value={formatCurrency(answers.partyIncome?.municipalityDonations)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.individualDonations}
-              value={formatCurrency(answers.partyIncome?.individualDonations)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.publicDonations}
-              value={formatCurrency(answers.partyIncome?.publicDonations)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.partyDonations}
-              value={formatCurrency(answers.partyIncome?.partyDonations)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}></GridColumn>
-        </GridRow>
-      </Box>
-      <Box className={columnStyle}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.electionOffice}
-              value={formatCurrency(answers.partyExpense?.electionOffice)}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.otherCost}
-              value={formatCurrency(answers.partyExpense?.otherCost)}
-            />
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.partyDonations}
+            value={formatCurrency(answers.partyIncome?.partyDonations)}
+          />
+          <ValueLine
+            label={m.individualDonations}
+            value={formatCurrency(answers.partyIncome?.individualDonations)}
+          />
+          <ValueLine
+            label={m.municipalityDonations}
+            value={formatCurrency(answers.partyIncome?.municipalityDonations)}
+          />
+          <ValueLine
+            label={m.individualDonations}
+            value={formatCurrency(answers.partyIncome?.individualDonations)}
+          />
+          <ValueLine
+            label={m.publicDonations}
+            value={formatCurrency(answers.partyIncome?.publicDonations)}
+          />
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.electionOffice}
+            value={formatCurrency(answers.partyExpense?.electionOffice)}
+          />
+          <ValueLine
+            label={m.otherCost}
+            value={formatCurrency(answers.partyExpense?.otherCost)}
+          />
+        </GridColumn>
+      </GridRow>
       <Divider />
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
