@@ -1,7 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
 
-import { FamilyMemberResolver, UserResolver, ChildResolver } from './graphql'
+import {
+  FamilyMemberResolver,
+  UserResolver,
+  ChildResolver,
+  CorrectionResolver,
+} from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
 import {
   NationalRegistryApi,
@@ -26,6 +31,7 @@ export class NationalRegistryModule {
         UserResolver,
         FamilyMemberResolver,
         ChildResolver,
+        CorrectionResolver,
         {
           provide: NationalRegistryApi,
           useFactory: async () =>
