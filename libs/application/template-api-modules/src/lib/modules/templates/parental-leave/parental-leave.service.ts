@@ -94,7 +94,12 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
-      (props) => generateAssignOtherParentApplicationEmail(props, senderName, senderEmail),
+      (props) =>
+        generateAssignOtherParentApplicationEmail(
+          props,
+          senderName,
+          senderEmail,
+        ),
       application,
     )
 
@@ -170,7 +175,13 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      (props, assignLink) => generateAssignEmployerApplicationEmail(props, assignLink, senderName, senderEmail),
+      (props, assignLink) =>
+        generateAssignEmployerApplicationEmail(
+          props,
+          assignLink,
+          senderName,
+          senderEmail,
+        ),
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
@@ -450,13 +461,23 @@ export class ParentalLeaveService {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationApprovedByEmployerEmail(props, senderName, senderEmail),
+          (props) =>
+            generateApplicationApprovedByEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
-          (props) => generateApplicationApprovedByEmployerToEmployerEmail(props, senderName, senderEmail),
+          (props) =>
+            generateApplicationApprovedByEmployerToEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
       }

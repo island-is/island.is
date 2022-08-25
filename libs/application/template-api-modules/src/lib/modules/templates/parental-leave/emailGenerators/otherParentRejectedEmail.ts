@@ -15,10 +15,10 @@ export type OtherParentRejectedEmail = (
 
 // TODO handle translations
 export const generateOtherParentRejected: OtherParentRejectedEmail = (
-    props,
-    senderName,
-    senderEmail,
-  ) => {
+  props,
+  senderName,
+  senderEmail,
+) => {
   const {
     application,
     options: { email, clientLocationOrigin },

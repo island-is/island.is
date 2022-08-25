@@ -18,7 +18,7 @@ export type AssignOtherParentEmail = (
 export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail = (
   props,
   senderName,
-  senderEmail
+  senderEmail,
 ): Message => {
   const {
     application,

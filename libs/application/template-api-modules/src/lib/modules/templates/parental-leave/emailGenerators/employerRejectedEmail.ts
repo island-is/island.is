@@ -13,13 +13,12 @@ export type EmployerRejectedEmail = (
   senderEmail?: string,
 ) => Message
 
-
 // TODO handle translations
 export const generateEmployerRejected: EmployerRejectedEmail = (
-    props,
-    senderName,
-    senderEmail,
-  ) => {
+  props,
+  senderName,
+  senderEmail,
+) => {
   const {
     application,
     options: { email, clientLocationOrigin },

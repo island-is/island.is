@@ -14,13 +14,12 @@ export type AssignEmployerEmail = (
   senderEmail?: string,
 ) => Message
 
-
 // TODO handle translations
 export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   props,
   assignLink,
   senderName,
-  senderEmail
+  senderEmail,
 ): Message => {
   const {
     application,
