@@ -89,23 +89,6 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
                 courtLocation: workingCase.courtLocation,
               })}{' '}
-          {workingCase.courtEndTime
-            ? formatMessage(m.sections.timeAndLocation.text, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
-                courtLocation: workingCase.courtLocation,
-              })
-            : formatMessage(m.sections.timeAndLocation.textOngoing, {
-                courtStartTime: formatDate(
-                  workingCase.courtStartDate,
-                  TIME_FORMAT,
-                ),
-              })}
         </Text>
         {!workingCase.isClosedCourtHidden && (
           <Box marginBottom={3}>
