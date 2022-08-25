@@ -9,6 +9,7 @@ import {
   SESClient,
   VerifyEmailAddressCommand,
 } from '@aws-sdk/client-ses'
+import { UnwrapPromise } from 'next/dist/lib/coalesced-function'
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
@@ -19,6 +20,55 @@ const getEnvironmentUrls = (env: TestEnvironment) => {
     ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
     : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
 }
+
+/**
+ * Register the email address with AWS SES so we can send emails to it
+ * @param emailAccount
+ */
+async function registerEmailAddressWithSES(emailAccount: {
+  getLastEmail(
+    retries: number,
+  ): Promise<{
+    subject: string | undefined
+    text: string | undefined
+    html: string | false
+  } | null>
+  email: string
+}) {
+  const client = new SESClient({ region: 'eu-west-1' })
+  await client.send(
+    new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
+  )
+  const verifyMsg = await emailAccount.getLastEmail(4)
+  if (verifyMsg) {
+    console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
+    const verifyUrl = verifyMsg.text!.match(/https:\/\/email-verification.+/)
+    if (!verifyUrl || verifyUrl.length != 1) {
+      throw new Error(
+        `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
+          verifyUrl,
+        )}`,
+      )
+    }
+
+    await axios.get(verifyUrl[0])
+    const emailVerifiedStatus = await client.send(
+      new GetIdentityVerificationAttributesCommand({
+        Identities: [emailAccount.email],
+      }),
+    )
+    if (
+      emailVerifiedStatus.VerificationAttributes![emailAccount.email][
+        'VerificationStatus'
+      ] !== 'Success'
+    ) {
+      throw new Error(`Email identity still not validated in AWS SES`)
+    }
+  } else {
+    throw new Error('Verification message not found.')
+  }
+}
+
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
@@ -38,55 +88,32 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     supportFile: '**/support/index.{js,ts}',
     async setupNodeEvents(on, config) {
-      // const options = {
-      //   // send in the options from your webpack.config.js, so it works the same
-      //   // as your app's code
-      //   webpackOptions: sample,
-      // }
-      // on('file:preprocessor', webpackPreprocessor(options))
-      const emailAccount = await makeEmailAccount()
-      const client = new SESClient({ region: 'eu-west-1' })
-      await client.send(
-        new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
-      )
-      const verifyMsg = await emailAccount.getLastEmail(4)
-      if (verifyMsg) {
-        console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
-        const verifyUrl = verifyMsg.text!.match(
-          /https:\/\/email-verification.+/,
-        )
-        if (!verifyUrl || verifyUrl.length != 1) {
-          throw new Error(
-            `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
-              verifyUrl,
-            )}`,
-          )
-        }
-
-        await axios.get(verifyUrl[0])
-        const emailVerifiedStatus = await client.send(
-          new GetIdentityVerificationAttributesCommand({
-            Identities: [emailAccount.email],
-          }),
-        )
-        if (
-          emailVerifiedStatus.VerificationAttributes![emailAccount.email][
-            'VerificationStatus'
-          ] !== 'Success'
-        ) {
-          throw new Error(`Email identity still not validated in AWS SES`)
-        }
-      } else {
-        throw new Error('Verification message not found.')
-      }
+      const emailAccounts: {
+        [name: string]: UnwrapPromise<ReturnType<typeof makeEmailAccount>>
+      } = {}
 
       on('task', {
-        getUserEmail: () => {
-          return emailAccount.email
+        createEmailAccount: async (name: string) => {
+          if (!emailAccounts[name]) {
+            const emailAccount = await makeEmailAccount()
+            await registerEmailAddressWithSES(emailAccount)
+            emailAccounts[name] = emailAccount
+            return emailAccount.email
+          } else {
+            return emailAccounts[name].email
+          }
         },
 
-        getLastEmail: (retries: number) => {
-          return emailAccount.getLastEmail(retries)
+        getLastEmail: ({
+          name,
+          retries,
+        }: {
+          name: string
+          retries: number
+        }) => {
+          if (!emailAccounts[name])
+            throw new Error(`Email user not created yet`)
+          return emailAccounts[name].getLastEmail(retries)
         },
       })
       const testEnvironment: TestEnvironment =

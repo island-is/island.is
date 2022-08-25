@@ -1,4 +1,4 @@
-import { MessageDescriptor, createIntl, createIntlCache } from '@formatjs/intl'
+import { createIntl, createIntlCache, MessageDescriptor } from '@formatjs/intl'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
@@ -30,20 +30,25 @@ function proceed() {
 describe('Parental leave', () => {
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
   let employerEmail = 'not ready'
+  let applicantEmail = 'not ready'
+  const employer = 'employer'
+  const applicant = 'applicant'
 
   before(() => {
-    cy.task('getUserEmail').then((email) => {
+    cy.task('createEmailAccount', applicant).then((email) => {
+      expect(email).to.be.a('string')
+      applicantEmail = email as string
+    })
+    cy.task('createEmailAccount', employer).then((email) => {
       expect(email).to.be.a('string')
       employerEmail = email as string
     })
   })
 
   beforeEach(() => {
-    cy.log('fakeUsers', fakeUsers)
-    const baseUrl = Cypress.config('baseUrl')
     cy.idsLogin({
       phoneNumber: fakeUser.mobile,
-      baseUrl: baseUrl,
+      baseUrl: Cypress.config('baseUrl'),
       urlPath: '/umsoknir/faedingarorlof',
     })
   })
@@ -84,7 +89,7 @@ describe('Parental leave', () => {
       name: label(parentalLeaveFormMessages.applicant.email),
     })
       .click()
-      .type('{selectall}noreply@island.is')
+      .type(`{selectall}${applicantEmail}`)
 
     cy.findByRole('textbox', {
       name: label(parentalLeaveFormMessages.applicant.phoneNumber),
@@ -261,21 +266,23 @@ describe('Parental leave', () => {
     primaryParentApplication()
 
     // part 1 complete
-    cy.task('getLastEmail', 6).then((emailInfo) => {
-      const email = emailInfo as { html: string }
-      expect(email.html).to.be.a('string')
-      const employerUrlMatch = email.html.match(/>(https?:.*)<\/p>/)
-      if (employerUrlMatch?.length != 2)
-        throw new Error(
-          'Email does not contain the url to approve the parental leave application',
-        )
-      const employerUrl = employerUrlMatch[1]
-      if (!employerUrl)
-        throw new Error(
-          `Could not find url for employer in email: ${email.html}`,
-        )
-      cy.visit(employerUrl)
-      phaseEmployerApproval()
-    })
+    cy.task('getLastEmail', { name: employer, retries: 6 }).then(
+      (emailInfo) => {
+        const email = emailInfo as { html: string }
+        expect(email.html).to.be.a('string')
+        const employerUrlMatch = email.html.match(/>(https?:.*)<\/p>/)
+        if (employerUrlMatch?.length != 2)
+          throw new Error(
+            'Email does not contain the url to approve the parental leave application',
+          )
+        const employerUrl = employerUrlMatch[1]
+        if (!employerUrl)
+          throw new Error(
+            `Could not find url for employer in email: ${email.html}`,
+          )
+        cy.visit(employerUrl)
+        phaseEmployerApproval()
+      },
+    )
   })
 })
