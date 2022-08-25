@@ -102,11 +102,8 @@ function run_container() {
 
   cp "${SECRETS_FILE}" "${SECRETS_ENV_FILE}"
 
-  # remove commented out env vars
-  sed -i '/^#/d' "${SECRETS_ENV_FILE}"
-
-  # remove 'export ' prefix
-  sed -i 's/^\w*\ *//' "${SECRETS_ENV_FILE}"
+  # transform .env secrets file to actual .env file
+  grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}"
 
   _build_app
   _image_exists
