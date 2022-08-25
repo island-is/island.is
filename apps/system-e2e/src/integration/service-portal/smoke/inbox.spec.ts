@@ -2,18 +2,17 @@ import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
 
 describe('Service Portal', () => {
-  const userName = 'María Sól ÞÍ Torp'
-  const testUser = getFakeUser(fakeUsers, userName)
+  const testUser = getFakeUser(fakeUsers, 'María Sól ÞÍ Torp')
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: testUser,
+      phoneNumber: testUser.phoneNumber,
       urlPath: '/minarsidur/',
     })
   })
 
-  it(`should have ${userName} logged in`, () => {
+  it(`should have ${testUser.name} logged in`, () => {
     cy.visit('/minarsidur/')
-    cy.contains(userName)
+    cy.contains(testUser.name)
   })
 
   it('should have Pósthólf', () => {
