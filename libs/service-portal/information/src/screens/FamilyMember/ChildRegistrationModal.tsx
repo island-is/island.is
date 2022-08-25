@@ -64,7 +64,6 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
       variables: {
         input: {
           nationalIdChild: data.childNationalId,
-          name: data.parentName,
           phonenumber: submitData.tel,
           email: submitData.email,
           comment: submitData.text,

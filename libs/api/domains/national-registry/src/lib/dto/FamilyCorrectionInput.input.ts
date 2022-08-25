@@ -9,10 +9,6 @@ export class FamilyCorrectionInput {
 
   @Field()
   @IsString()
-  name!: string
-
-  @Field()
-  @IsString()
   phonenumber!: string
 
   @Field()
