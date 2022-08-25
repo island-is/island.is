@@ -44,6 +44,7 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
+  const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(
     (newPoliceCaseNumbers: string[]) => {
       setClientPoliceNumbers(newPoliceCaseNumbers)
@@ -65,9 +66,10 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
     (value: string) => {
       if (validate([[value, ['empty', 'police-casenumber-format']]]).isValid) {
         updatePoliceNumbers([...clientPoliceNumbers, value])
+        setHasError(false)
       }
     },
-    [clientPoliceNumbers, updatePoliceNumbers],
+    [clientPoliceNumbers, updatePoliceNumbers, setHasError],
   )
 
   const onRemove = useCallback(
@@ -77,6 +79,8 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
       )
       if (newPoliceCaseNumbers.length > 0) {
         updatePoliceNumbers(newPoliceCaseNumbers)
+      } else {
+        setHasError(true)
       }
       setClientPoliceNumbers(newPoliceCaseNumbers)
     },
@@ -87,6 +91,7 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
     <>
       <SectionHeading title={formatMessage(m.heading)} required />
       <MultipleValueList
+        name="policeCaseNumbers"
         inputMask="999-9999-9999999"
         inputLabel={formatMessage(m.label)}
         inputPlaceholder={formatMessage(m.placeholder, {
@@ -95,8 +100,20 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
         })}
         onAddValue={onAdd}
         buttonText={formatMessage(m.buttonText)}
+        isDisabled={(value) =>
+          !validate([[value, ['empty', 'police-casenumber-format']]]).isValid
+        }
+        onBlur={() => {
+          setHasError(clientPoliceNumbers.length === 0)
+        }}
+        hasError={hasError}
+        errorMessage={validate([[undefined, ['empty']]]).errorMessage}
       >
-        <Box display="flex" flexWrap="wrap">
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          data-testid="policeCaseNumbers-list"
+        >
           {clientPoliceNumbers.map((policeCaseNumber, index) => (
             <Box
               key={`${policeCaseNumber}-${index}`}

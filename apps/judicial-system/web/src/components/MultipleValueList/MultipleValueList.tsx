@@ -12,6 +12,13 @@ interface MultipleValueListProps {
   inputPlaceholder: string
   inputMask?: string
   buttonText: string
+  name: string
+  isDisabled: (value?: string) => boolean
+  hasError?: boolean
+  errorMessage?: string
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
 }
 
 const MultipleValueList: React.FC<MultipleValueListProps> = ({
@@ -20,7 +27,12 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   inputLabel,
   inputPlaceholder,
   inputMask,
+  name,
   buttonText,
+  isDisabled,
+  hasError,
+  errorMessage,
+  onBlur,
 }) => {
   // State needed since InputMask dose not clear input if invalid value is entered
   const [value, setValue] = useState('')
@@ -37,7 +49,7 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   const handleEnter = (
     event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !isDisabled(value)) {
       onAddValue(value)
       clearInput()
     }
@@ -51,20 +63,23 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
             mask={inputMask}
             maskPlaceholder={null}
             onChange={(event) => setValue(event.target.value)}
+            onBlur={onBlur}
           >
             <Input
-              name="value-input"
+              name={name}
               label={inputLabel}
               placeholder={inputPlaceholder}
               size="sm"
               autoComplete="off"
               ref={valueRef}
               onKeyDown={handleEnter}
+              hasError={hasError}
+              errorMessage={errorMessage}
             />
           </InputMask>
         ) : (
           <Input
-            name="value-input"
+            name={name}
             label={inputLabel}
             placeholder={inputPlaceholder}
             size="sm"
@@ -72,12 +87,15 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
             onChange={(event) => setValue(event.target.value)}
             ref={valueRef}
             onKeyDown={handleEnter}
+            onBlur={onBlur}
+            hasError={hasError}
+            errorMessage={errorMessage}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={!value}
+          disabled={isDisabled(value)}
           onClick={() => {
             onAddValue(value)
             clearInput()

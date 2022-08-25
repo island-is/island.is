@@ -55,7 +55,7 @@ const Defendant: React.FC = () => {
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = useState<CaseType>(workingCase.type)
+  const [caseType, setCaseType] = useState<CaseType>()
   useEffect(() => {
     if (workingCase.id) {
       setCaseType(workingCase.type)
@@ -215,7 +215,7 @@ const Defendant: React.FC = () => {
             </Text>
           </Box>
           <Select
-            name="type"
+            name="case-type"
             options={constants.IndictmentTypes}
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
