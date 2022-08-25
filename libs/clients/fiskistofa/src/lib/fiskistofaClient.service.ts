@@ -5,7 +5,6 @@ import type { ConfigType } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { mapAllowedCatchForShip } from './fiskiStofaClient.utils'
-import fs from 'fs'
 
 @Injectable()
 export class FiskistofaClientService {
@@ -65,7 +64,6 @@ export class FiskistofaClientService {
         timabil: timePeriod,
       },
     )
-    fs.writeFileSync('aaaaa.json', JSON.stringify(allowedCatchForShip))
     return mapAllowedCatchForShip(allowedCatchForShip)
   }
 }
