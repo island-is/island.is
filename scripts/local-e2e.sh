@@ -118,7 +118,9 @@ function runner() {
 }
 
 usage() {
-  echo "Usage: $(basename "$0") <menu|service-name>" 2>&1
+  echo
+  echo "Usage: $(basename "$0") <build|menu|run>" 2>&1
+  echo
   echo "menu          opens up Cypress interactive spec dashboard " 2>&1
   echo "build         builds the CI docker image" 2>&1
   echo "run           -i integration -t smoke|acceptance -c source|dist|container [-b browser, default: chrome] [-d, default: headless]" 2>&1
