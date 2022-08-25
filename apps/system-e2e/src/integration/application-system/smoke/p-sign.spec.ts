@@ -11,7 +11,7 @@ const fakeUser: FixtureUser = getFakeUser(
 describe('P-sign', function () {
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       urlPath: '/umsoknir/p-merki',
     })
   })
