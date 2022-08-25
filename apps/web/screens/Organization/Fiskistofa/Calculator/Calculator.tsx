@@ -7,6 +7,7 @@ import {
 import {
   Box,
   Button,
+  GridContainer,
   Inline,
   Input,
   LoadingDots,
@@ -15,8 +16,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
-export const Calculator = ({}) => {
+const Calculator = ({}) => {
   const shipNumberRef = useRef<number>(1281)
   const timePeriodRef = useRef<{ label: string; value: string }>({
     label: '19/20',
@@ -38,7 +40,7 @@ export const Calculator = ({}) => {
   })
 
   return (
-    <Box>
+    <GridContainer>
       <Inline alignY="center" space={3}>
         <Box width="full">
           <Input
@@ -255,8 +257,8 @@ export const Calculator = ({}) => {
           </T.Row>
         </T.Body>
       </T.Table>
-    </Box>
+    </GridContainer>
   )
 }
 
-export default Calculator
+export default withMainLayout(Calculator)
