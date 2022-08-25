@@ -108,6 +108,13 @@ export const sections = {
       defaultMessage: 'Ákærumeðferð',
       description: 'Notaður sem titill í hliðarstiku í ákærum hjá sækjendum',
     },
+    processing: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.processing',
+      defaultMessage: 'Málsmeðferð',
+      description:
+        'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
+    },
   }),
   investigationCaseCourtSection: defineMessages({
     title: {
