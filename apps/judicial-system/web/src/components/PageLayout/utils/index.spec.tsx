@@ -9,7 +9,7 @@ import {
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { makeRestrictionCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import { caseResult } from './'
 

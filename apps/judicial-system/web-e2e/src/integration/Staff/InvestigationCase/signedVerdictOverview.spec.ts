@@ -1,6 +1,11 @@
 import faker from 'faker'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { intercept, makeCourt, mockCase, makeCaseFile } from '../../../utils'
 
