@@ -31,6 +31,7 @@ import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
+  generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
   assignLinkEmployerSMS,
@@ -44,7 +45,6 @@ import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
-import { generateEmployerRejected } from './emailGenerators/employerRejectedEmail'
 
 interface VMSTError {
   type: string
@@ -57,6 +57,8 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
+const senderName = 'island.is'
+const senderEmail = 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
@@ -92,7 +94,7 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateAssignOtherParentApplicationEmail,
+      (props) => generateAssignOtherParentApplicationEmail(props, senderName, senderEmail),
       application,
     )
 
@@ -112,7 +114,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateOtherParentRejected,
+      (props) => generateOtherParentRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -139,7 +141,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateEmployerRejected,
+      (props) => generateEmployerRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -168,7 +170,7 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignEmployerApplicationEmail,
+      (props, assignLink) => generateAssignEmployerApplicationEmail(props, assignLink, senderName, senderEmail),
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
@@ -448,13 +450,13 @@ export class ParentalLeaveService {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerEmail,
+          (props) => generateApplicationApprovedByEmployerEmail(props, senderName, senderEmail),
           application,
         )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerToEmployerEmail,
+          (props) => generateApplicationApprovedByEmployerToEmployerEmail(props, senderName, senderEmail),
           application,
         )
       }
