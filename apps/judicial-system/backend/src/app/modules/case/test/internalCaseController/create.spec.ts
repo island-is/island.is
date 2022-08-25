@@ -119,7 +119,7 @@ describe('InternalCaseController - Internal create', () => {
   })
 
   describe('case created with a prosecutor', () => {
-    const prosecutorNationalId = '9876543210'
+    const prosecutorNationalId = '1234567890'
     const caseToCreate = {
       type: CaseType.AUTOPSY,
       policeCaseNumber: '007-2021-777',
