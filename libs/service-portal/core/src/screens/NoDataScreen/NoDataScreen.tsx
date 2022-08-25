@@ -15,8 +15,7 @@ import { ServicePortalPath } from '../../lib/navigation/paths'
 
 interface ButtonType {
   link?: ServicePortalPath | string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClick?: any
+  onClick?: () => void
   icon?: Pick<IconProps, 'icon' | 'type'>
   type: 'internal' | 'external' | 'click'
   text: string
