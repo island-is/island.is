@@ -1,4 +1,3 @@
-import { createIntl, createIntlCache, MessageDescriptor } from '@formatjs/intl'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
@@ -7,21 +6,7 @@ import { coreMessages } from '@island.is/application/core'
 import { FixtureUser } from '../../lib/types'
 import { getFakeUser } from '../../support/utils'
 import fakeUsers from '../../fixtures/applications/users.json'
-
-//
-// // Create the `intl` object
-const cache = createIntlCache()
-const intl = createIntl(
-  {
-    locale: 'is',
-    onError: (err) => {
-      console.error(err)
-    },
-  },
-  cache,
-)
-
-const label = (l: MessageDescriptor) => intl.formatMessage(l)
+import { label } from '../../lib/i18n-messages'
 
 function proceed() {
   cy.get('[data-testid="proceed"]').click()
@@ -31,11 +16,10 @@ describe('Parental leave', () => {
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
   let employerEmail = 'not ready'
   let applicantEmail = 'not ready'
-  const employer = 'employer'
-  const applicant = 'applicant'
+  const employer = 'employer' // user reference for the employer email account
 
   before(() => {
-    cy.task('createEmailAccount', applicant).then((email) => {
+    cy.task('createEmailAccount', 'applicant').then((email) => {
       expect(email).to.be.a('string')
       applicantEmail = email as string
     })
@@ -256,16 +240,10 @@ describe('Parental leave', () => {
     )
     cy.visit('/umsoknir/faedingarorlof')
 
-    cy.get('body').then((body) => {
-      const newAppButton = body.find("[data-testid='create-new-application']")
-      if (newAppButton.length > 0) {
-        newAppButton.click()
-      }
-    })
-
+    // primary parent application complete
     primaryParentApplication()
 
-    // part 1 complete
+    // now completing the employer confirmation part
     cy.task('getLastEmail', { name: employer, retries: 6 }).then(
       (emailInfo) => {
         const email = emailInfo as { html: string }
