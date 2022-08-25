@@ -62,7 +62,6 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { caseModuleConfig } from './case.config'
 
 @Controller('api')
 @ApiTags('cases')
