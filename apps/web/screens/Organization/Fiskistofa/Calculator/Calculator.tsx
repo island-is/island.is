@@ -218,6 +218,7 @@ const Calculator = ({}) => {
               ),
             )}
           </T.Row>
+          {/* TODO: remove what's below here from api */}
           <T.Row>
             <T.Data>Heildaraflamark</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
