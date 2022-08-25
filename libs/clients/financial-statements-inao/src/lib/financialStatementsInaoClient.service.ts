@@ -27,7 +27,7 @@ export class FinancialStatementsInaoClientService {
     },
   })
 
-  async getClientTypes() {
+  async getClientTypes(): Promise<Client[] | null> {
     const url = `${this.basePath}/GlobalOptionSetDefinitions(Name='star_clienttypechoice')`
     const response = await this.fetch(url)
     const data = await response.json()
@@ -45,7 +45,7 @@ export class FinancialStatementsInaoClientService {
     return clientTypes
   }
 
-  async getClientType(typeCode: string) {
+  async getClientType(typeCode: string): Promise<Client | null> {
     const clientTypes = await this.getClientTypes()
 
     const found = clientTypes?.filter((x) => x.label === typeCode)
@@ -56,9 +56,11 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
-  async getUserClientType(nationalId: string) {
+  async getUserClientType(nationalId: string): Promise<Client | null> {
     const select = '$select=star_nationalid, star_name, star_type'
-    const filter = `$filter=star_nationalid eq '${nationalId}'`
+    const filter = `$filter=star_nationalid eq '${encodeURIComponent(
+      nationalId,
+    )}'`
     const url = `${this.basePath}/star_clients?${select}&${filter}`
     const response = await this.fetch(url)
     const data = await response.json()
@@ -84,7 +86,7 @@ export class FinancialStatementsInaoClientService {
     return null
   }
 
-  async getElections() {
+  async getElections(): Promise<Election[] | null> {
     const url = `${this.basePath}/star_elections`
     const response = await this.fetch(url)
     const data = await response.json()
