@@ -6,13 +6,14 @@ import {
   CaseCustodyRestrictions,
   CaseState,
   SessionArrangements,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
+import { makeProsecutor, intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -23,7 +24,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
