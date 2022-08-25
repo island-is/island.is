@@ -54,13 +54,13 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   condition?: Condition
 }
 
-export class ApplicationTemplateAPIAction {
+/*export class ApplicationTemplateAPIAction {
   //Data Provider type
   dataProviderType?: string
   // Name of the action that will be run on the API
   // these actions are exported are found in:
   // /libs/application/template-api-modules
-  apiModuleAction = ''
+  apiModuleAction?: string
   // If response/error should be written to application.externalData, defaults to true
   shouldPersistToExternalData?: boolean
   // Id inside application.externalData, value of apiModuleAction is used by default
@@ -86,6 +86,16 @@ export class ApplicationTemplateAPIAction {
     result: PerformActionResult,
   ) => ErrorReasonException | void
 
+  params?: { [key: string]: unknown }
+}*/
+
+export interface ApplicationTemplateAPIAction {
+  apiModuleAction: string
+  shouldPersistToExternalData?: boolean
+  externalDataId?: string
+  throwOnError?: boolean
+  order?: number
+  namespace?: string
   params?: { [key: string]: unknown }
 }
 

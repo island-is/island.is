@@ -6,7 +6,6 @@ export { SharedDataProviders } from '@island.is/application/core'
 
 export const FishingLicenceDataProviders = {
   generalFishingLicenceProvider: {
-    dataProviderType: 'generalFishingLicenceProvider',
     apiModuleAction: ApiActions.getShips,
     externalDataId: 'directoryOfFisheries',
   },

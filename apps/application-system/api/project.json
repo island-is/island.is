@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "@nrwl/node:webpack", //CHANGE THIS BACK
       "options": {
         "outputPath": "dist/apps/application-system/api",
         "main": "apps/application-system/api/src/main.ts",

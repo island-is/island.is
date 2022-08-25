@@ -3,43 +3,21 @@ import { ApplicationTemplateAPIAction } from '@island.is/application/types'
 
 export const SharedDataProviders = {
   nationalRegistryProvider: {
-    dataProviderType: 'nationalRegistryUserProvider',
     apiModuleAction: 'getUser',
     externalDataId: 'nationalRegistry',
     namespace: 'nationalRegistry',
-    errorReasons: [
-      {
-        problemType: ProblemType.HTTP_NOT_FOUND,
-        reason: {
-          title: 'Internal Server Error',
-          summary: 'Something went wrong in a bad bad way',
-        },
-        statusCode: 404,
-      },
-    ],
   },
   familyRelationsProvider: {
     apiModuleAction: 'getFamily',
     namespace: 'nationalRegistry',
-    dataProviderType: 'nationalRegistryFamilyProvider',
   },
   userProfileProvider: {
     apiModuleAction: 'getUserProfile',
     namespace: 'userProfile',
-    dataProviderType: 'userProfileProvider',
-    useMockData: false,
-    mockData: {
-      success: true,
-      response: {
-        email: 'mockEmai2@island.is',
-        mobilePhoneNumber: '9999999',
-      },
-    },
   },
   paymentCatalogProvider: {
     apiModuleAction: 'paymentCatalog',
     namespace: 'paymentCatalog',
-    dataProviderType: 'paymentCatalogProvider',
   },
 } as AvailableSharedDataProviders
 
