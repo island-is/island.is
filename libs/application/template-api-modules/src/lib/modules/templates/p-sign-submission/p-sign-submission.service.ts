@@ -111,11 +111,11 @@ export class PSignSubmissionService {
 
     const extraData: { [key: string]: string } =
       application.answers.deliveryMethod === 'sendHome'
-        ? {
+        ? { Afhentingarmati: 'Sent með pósti' }
+        : {
             Afhentingarmati: 'Sótt á næsta afgreiðslustað',
             StarfsstodID: application.answers.district as string,
           }
-        : { Afhentingarmati: 'Sent með pósti' }
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'

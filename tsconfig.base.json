@@ -154,6 +154,9 @@
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
+      "@island.is/application/api/files": [
+        "libs/application/api/files/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"

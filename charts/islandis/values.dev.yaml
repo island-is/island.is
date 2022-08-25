@@ -265,7 +265,7 @@ api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
-    NODE_OPTIONS: '--max-old-space-size=976'
+    NODE_OPTIONS: '--max-old-space-size=2000'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -354,10 +354,10 @@ api:
   resources:
     limits:
       cpu: '800m'
-      memory: '1024Mi'
+      memory: '2048Mi'
     requests:
       cpu: '200m'
-      memory: '512Mi'
+      memory: '1024Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
@@ -597,10 +597,13 @@ application-system-api-worker:
     - 'node'
   enabled: true
   env:
+    APPLICATION_ATTACHMENT_BUCKET: 'island-is-dev-storage-application-system'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'application_system_api'
+    FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
@@ -653,6 +656,8 @@ application-system-api-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
+    DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
@@ -857,6 +862,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
