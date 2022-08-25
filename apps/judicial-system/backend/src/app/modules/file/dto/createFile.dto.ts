@@ -1,7 +1,7 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseFileSubtype } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 export class CreateFileDto {
   @IsString()
@@ -10,8 +10,8 @@ export class CreateFileDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseFileSubtype })
-  readonly subtype?: CaseFileSubtype
+  @ApiPropertyOptional({ enum: CaseFileCategory })
+  readonly category?: CaseFileCategory
 
   @IsString()
   @ApiProperty()

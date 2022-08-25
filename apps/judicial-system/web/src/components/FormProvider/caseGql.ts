@@ -145,7 +145,7 @@ export const CaseQuery = gql`
         created
         state
         key
-        subtype
+        category
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

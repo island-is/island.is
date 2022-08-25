@@ -41,7 +41,7 @@ export enum CaseFileState {
   DELETED = 'DELETED',
 }
 
-export enum CaseFileSubtype {
+export enum CaseFileCategory {
   COVER_LETTER = 'COVER_LETTER',
   INDICTMENT = 'INDICTMENT',
   CRIMINAL_RECORD = 'CRIMINAL_RECORD',

@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
         'case_file',
-        'subtype',
+        'category',
         {
           type: Sequelize.ENUM(
             'COVER_LETTER',
@@ -25,12 +25,12 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface
-        .removeColumn('case_file', 'subtype', {
+        .removeColumn('case_file', 'category', {
           transaction: t,
         })
         .then(() => {
           queryInterface.sequelize.query(
-            'DROP TYPE IF EXISTS "enum_case_file_subtype";',
+            'DROP TYPE IF EXISTS "enum_case_file_category";',
             { transaction: t },
           )
         }),

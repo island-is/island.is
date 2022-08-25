@@ -11,14 +11,14 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
-  CaseFileSubtype,
+  CaseFileCategory,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 interface TUploadFile extends UploadFile {
-  subtype?: CaseFileSubtype
+  category?: CaseFileCategory
 }
 
 export const useS3Upload = (workingCase: Case) => {
@@ -214,7 +214,7 @@ export const useS3Upload = (workingCase: Case) => {
             type: file.type,
             key: file.key,
             size: file.size,
-            subtype: file.subtype,
+            category: file.category,
           },
         },
       })
@@ -233,14 +233,14 @@ export const useS3Upload = (workingCase: Case) => {
   const handleS3Upload = (
     newFiles: File[],
     isRetry?: boolean,
-    filesSubtype?: CaseFileSubtype,
+    filesCategory?: CaseFileCategory,
   ) => {
     const newUploadFiles = newFiles.map((newFile) => {
       return {
         name: newFile.name,
         size: newFile.size,
         type: newFile.type,
-        subtype: filesSubtype,
+        category: filesCategory,
       }
     }) as TUploadFile[]
 

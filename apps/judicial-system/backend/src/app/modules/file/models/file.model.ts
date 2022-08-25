@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import {
   CaseFileState,
-  CaseFileSubtype,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 // TODO Find a way to import from an index file
@@ -65,10 +65,10 @@ export class CaseFile extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: Object.values(CaseFileSubtype),
+    values: Object.values(CaseFileCategory),
   })
-  @ApiProperty({ enum: CaseFileSubtype })
-  subtype?: CaseFileSubtype
+  @ApiProperty({ enum: CaseFileCategory })
+  category?: CaseFileCategory
 
   @Column({
     type: DataType.ENUM,

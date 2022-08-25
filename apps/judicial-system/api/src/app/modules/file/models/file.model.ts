@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import type {
   CaseFile as TCaseFile,
   CaseFileState,
-  CaseFileSubtype,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 
 @ObjectType()
@@ -27,7 +27,7 @@ export class CaseFile implements TCaseFile {
   readonly type!: string
 
   @Field(() => String, { nullable: true })
-  readonly subtype?: CaseFileSubtype
+  readonly category?: CaseFileCategory
 
   @Field(() => String)
   readonly state!: CaseFileState
