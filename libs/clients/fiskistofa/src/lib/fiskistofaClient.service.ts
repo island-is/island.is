@@ -5,6 +5,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { mapAllowedCatchForShip } from './fiskiStofaClient.utils'
+import fs from 'fs'
 
 @Injectable()
 export class FiskistofaClientService {
@@ -32,6 +33,10 @@ export class FiskistofaClientService {
       this.clientConfig.accessTokenServiceUrl,
       {
         method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           grant_type: 'client_credentials',
           client_id: this.clientConfig.accessTokenServiceClientId,
@@ -41,14 +46,14 @@ export class FiskistofaClientService {
       },
     )
 
-    const { access_token: accessToken } = await accessTokenResponse.json()
+    const { access_token } = await accessTokenResponse.json()
 
-    if (!accessToken) {
+    if (!access_token) {
       throw new Error('Fiskistofa client configuration and login went wrong')
     }
 
     return api.withMiddleware(
-      new AuthHeaderMiddleware(`Bearer ${JSON.parse(accessToken)}`),
+      new AuthHeaderMiddleware(`Bearer ${access_token}`),
     )
   }
 
@@ -60,6 +65,7 @@ export class FiskistofaClientService {
         timabil: timePeriod,
       },
     )
+    fs.writeFileSync('aaaaa.json', JSON.stringify(allowedCatchForShip))
     return mapAllowedCatchForShip(allowedCatchForShip)
   }
 }
