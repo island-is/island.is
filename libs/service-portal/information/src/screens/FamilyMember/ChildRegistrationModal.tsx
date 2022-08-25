@@ -63,7 +63,6 @@ export const ChildRegistrationModal: FC<Props> = ({ data }) => {
     await postChildrenCorrection({
       variables: {
         input: {
-          ssn: data.parentNationalId,
           ssnChild: data.childNationalId,
           name: data.parentName,
           phonenumber: submitData.tel,
