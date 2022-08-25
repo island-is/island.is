@@ -7,6 +7,7 @@ import {
 import {
   Box,
   Button,
+  Inline,
   Input,
   LoadingDots,
   Select,
@@ -38,32 +39,39 @@ export const Calculator = ({}) => {
 
   return (
     <Box>
-      <Input
-        name="shipnumber-input"
-        onChange={(ev) => (shipNumberRef.current = Number(ev.target.value))}
-        type="number"
-        label="Skipsnúmer"
-      />
-      <Select
-        name="time-period-select"
-        options={[
-          { label: '18/19', value: '1819' },
-          { label: '19/20', value: '1920' },
-          { label: '20/21', value: '2021' },
-        ]}
-      />
-      <Button
-        onClick={() =>
-          setSearchInput((prev) => ({
-            ...prev,
-            shipNumber: shipNumberRef.current,
-            timePeriod: timePeriodRef.current?.value,
-          }))
-        }
-        size="small"
-      >
-        Leita
-      </Button>
+      <Inline alignY="center" space={3}>
+        <Box width="full">
+          <Input
+            name="shipnumber-input"
+            onChange={(ev) => (shipNumberRef.current = Number(ev.target.value))}
+            type="number"
+            label="Skipsnúmer"
+          />
+        </Box>
+        <Box style={{ width: '200px' }}>
+          <Select
+            label="Tímabil"
+            name="time-period-select"
+            options={[
+              { label: '18/19', value: '1819' },
+              { label: '19/20', value: '1920' },
+              { label: '20/21', value: '2021' },
+            ]}
+          />
+        </Box>
+        <Button
+          onClick={() =>
+            setSearchInput((prev) => ({
+              ...prev,
+              shipNumber: shipNumberRef.current,
+              timePeriod: timePeriodRef.current?.value,
+            }))
+          }
+          size="default"
+        >
+          Go
+        </Button>
+      </Inline>
 
       <Box
         width="full"
@@ -96,7 +104,7 @@ export const Calculator = ({}) => {
             <T.Data>Úthlutun</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.allocation}</T.Data>
+                <T.Data key={category.name}>{category.allocation}</T.Data>
               ),
             )}
           </T.Row>
@@ -104,7 +112,7 @@ export const Calculator = ({}) => {
             <T.Data>Sérst. úthl.</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.specialAlloction}</T.Data>
+                <T.Data key={category.name}>{category.specialAlloction}</T.Data>
               ),
             )}
           </T.Row>
@@ -112,7 +120,7 @@ export const Calculator = ({}) => {
             <T.Data>Milli ára</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.betweenYears}</T.Data>
+                <T.Data key={category.name}>{category.betweenYears}</T.Data>
               ),
             )}
           </T.Row>
@@ -120,18 +128,25 @@ export const Calculator = ({}) => {
             <T.Data>Milli skipa</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.betweenShips}</T.Data>
+                <T.Data key={category.name}>{category.betweenShips}</T.Data>
               ),
             )}
           </T.Row>
           <T.Row>
             <T.Data>Aflamarksbr.</T.Data>
+            {data?.getShipStatusInformation?.allowedCatchCategories?.map(
+              (category) => (
+                <T.Data key={category.name}>
+                  <input type="text" />
+                </T.Data>
+              ),
+            )}
           </T.Row>
           <T.Row>
             <T.Data>Aflamark</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.allowedCatch}</T.Data>
+                <T.Data key={category.name}>{category.allowedCatch}</T.Data>
               ),
             )}
           </T.Row>
@@ -139,18 +154,25 @@ export const Calculator = ({}) => {
             <T.Data>Afli</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.catch}</T.Data>
+                <T.Data key={category.name}>{category.catch}</T.Data>
               ),
             )}
           </T.Row>
           <T.Row>
             <T.Data>Aflabreyting</T.Data>
+            {data?.getShipStatusInformation?.allowedCatchCategories?.map(
+              (category) => (
+                <T.Data key={category.name}>
+                  <input type="text" />
+                </T.Data>
+              ),
+            )}
           </T.Row>
           <T.Row>
             <T.Data>Staða</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.status}</T.Data>
+                <T.Data key={category.name}>{category.status}</T.Data>
               ),
             )}
           </T.Row>
@@ -158,7 +180,7 @@ export const Calculator = ({}) => {
             <T.Data>Tilfærsla</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.displacement}</T.Data>
+                <T.Data key={category.name}>{category.displacement}</T.Data>
               ),
             )}
           </T.Row>
@@ -166,7 +188,7 @@ export const Calculator = ({}) => {
             <T.Data>Ný staða</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.newStatus}</T.Data>
+                <T.Data key={category.name}>{category.newStatus}</T.Data>
               ),
             )}
           </T.Row>
@@ -174,7 +196,7 @@ export const Calculator = ({}) => {
             <T.Data>Á næsta ár</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.nextYear}</T.Data>
+                <T.Data key={category.name}>{category.nextYear}</T.Data>
               ),
             )}
           </T.Row>
@@ -182,7 +204,7 @@ export const Calculator = ({}) => {
             <T.Data>Umframafli</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.excessCatch}</T.Data>
+                <T.Data key={category.name}>{category.excessCatch}</T.Data>
               ),
             )}
           </T.Row>
@@ -190,7 +212,7 @@ export const Calculator = ({}) => {
             <T.Data>Ónotað</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.unused}</T.Data>
+                <T.Data key={category.name}>{category.unused}</T.Data>
               ),
             )}
           </T.Row>
@@ -198,7 +220,9 @@ export const Calculator = ({}) => {
             <T.Data>Heildaraflamark</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.totalAllowedCatch}</T.Data>
+                <T.Data key={category.name}>
+                  {category.totalAllowedCatch}
+                </T.Data>
               ),
             )}
           </T.Row>
@@ -207,7 +231,7 @@ export const Calculator = ({}) => {
             <T.Data>Hlutdeild</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.rateOfShare}</T.Data>
+                <T.Data key={category.name}>{category.rateOfShare}</T.Data>
               ),
             )}
           </T.Row>
@@ -215,7 +239,7 @@ export const Calculator = ({}) => {
             <T.Data>Á næsta ár kvóti</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.nextYearQuota}</T.Data>
+                <T.Data key={category.name}>{category.nextYearQuota}</T.Data>
               ),
             )}
           </T.Row>
@@ -223,7 +247,9 @@ export const Calculator = ({}) => {
             <T.Data>Af næsta ár kvóti</T.Data>
             {data?.getShipStatusInformation?.allowedCatchCategories?.map(
               (category) => (
-                <T.Data>{category.nextYearFromQuota}</T.Data>
+                <T.Data key={category.name}>
+                  {category.nextYearFromQuota}
+                </T.Data>
               ),
             )}
           </T.Row>
