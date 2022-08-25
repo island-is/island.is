@@ -1,5 +1,6 @@
 import { InferGetServerSidePropsType } from 'next'
 import { useState } from 'react'
+import slugify from '@sindresorhus/slugify'
 import {
   Box,
   Text,
@@ -8,14 +9,23 @@ import {
   toast,
   ToggleSwitchButton,
   Hyphen,
+  Stack,
+  Inline,
+  Checkbox,
+  Tooltip,
 } from '@island.is/island-ui/core'
 
 import {
   extractInitialCheckboxStateFromRolesAndContentTypes,
+  extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes,
+  extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
 } from '../utils'
-import { IDS_OF_DEFAULT_CONTENT_TYPES } from '../constants'
+import {
+  DEFAULT_EDITABLE_ENTRY_TYPE_IDS,
+  DEFAULT_READ_ONLY_ENTRY_IDS,
+} from '../constants'
 
 import * as styles from './index.css'
 
@@ -25,21 +35,39 @@ const Home = ({
   roles,
   contentTypes,
   initialCheckboxState,
+  initialReadonlyCheckboxState,
+  initialRoleNamesThatCanReadAllAssets,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [checkboxState, setCheckboxState] = useState(initialCheckboxState)
-  const [savedCheckboxState, setSavedCheckboxState] = useState(
-    initialCheckboxState,
+
+  const [savedState, setSavedState] = useState({
+    checkboxState: initialCheckboxState,
+    readonlyCheckboxState: initialReadonlyCheckboxState,
+    roleNamesThatCanReadAllAssets: initialRoleNamesThatCanReadAllAssets,
+  })
+
+  const [readonlyCheckboxState, setReadonlyCheckboxState] = useState(
+    initialReadonlyCheckboxState,
   )
+
+  const [
+    roleNamesThatCanReadAllAssets,
+    setRoleNamesThatCanReadAllAssets,
+  ] = useState<string[]>(initialRoleNamesThatCanReadAllAssets)
 
   const onSave = () => {
     fetch('/api/update-role-permissions', {
       method: 'PUT',
-      body: JSON.stringify(checkboxState),
+      body: JSON.stringify({
+        checkboxState,
+        readonlyCheckboxState,
+        roleNamesThatCanReadAllAssets,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         toast.success('Saved successfully')
-        return setSavedCheckboxState(data)
+        return setSavedState(data)
       })
       .catch((err) => {
         console.error(err)
@@ -48,7 +76,12 @@ const Home = ({
   }
 
   const canSave =
-    JSON.stringify(savedCheckboxState) !== JSON.stringify(checkboxState)
+    JSON.stringify(savedState) !==
+    JSON.stringify({
+      checkboxState,
+      readonlyCheckboxState,
+      roleNamesThatCanReadAllAssets,
+    })
 
   return (
     <Box className={styles.container}>
@@ -67,97 +100,256 @@ const Home = ({
             padding={3}
             key={role.name}
           >
-            <Text truncate variant="h4" as="label">
-              {role.name}
-            </Text>
+            <Box marginBottom={2}>
+              <Text truncate variant="h4" as="label" marginBottom={0}>
+                {role.name}
+              </Text>
+              <Text variant="small">Tag: {slugify(role.name)}</Text>
+            </Box>
 
-            <DropdownMenu
-              title="Editable types"
-              icon="caretDown"
-              hasScroll={true}
-              items={contentTypes.map((contentType) => ({
-                title: contentType.name,
-                render: () => {
-                  const checked = checkboxState[role.name][contentType.name]
+            <Inline space={5}>
+              <Box>
+                <DropdownMenu
+                  title="Read only entries"
+                  icon="caretDown"
+                  hasScroll={true}
+                  items={contentTypes.map((contentType) => ({
+                    title: contentType.name,
+                    render: () => {
+                      const checked =
+                        readonlyCheckboxState[role.name][contentType.name]
 
-                  const toggleCheckbox = () => {
-                    setCheckboxState((prevState) => ({
-                      ...prevState,
-                      [role.name]: {
-                        ...prevState[role.name],
-                        [contentType.name]: !prevState[role.name][
-                          contentType.name
-                        ],
-                      },
-                    }))
-                  }
-
-                  return (
-                    <Box
-                      borderBottomWidth="standard"
-                      border="standard"
-                      tabIndex={0}
-                      key={`${role.name}-${contentType.name}`}
-                      userSelect="none"
-                      cursor="pointer"
-                      display="flex"
-                      flexDirection="row"
-                      flexWrap="nowrap"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                      padding={1}
-                      onClick={toggleCheckbox}
-                      onKeyDown={(ev) => {
-                        if (ev.key === ' ' || ev.key === 'Enter') {
-                          ev.preventDefault()
-                          toggleCheckbox()
-                        }
-                      }}
-                    >
-                      <Text
-                        variant="small"
-                        color={checked ? 'blue400' : 'currentColor'}
-                      >
-                        <Hyphen>{contentType.name}</Hyphen>
-                      </Text>
-                      <ToggleSwitchButton
-                        checked={checked}
-                        label=""
-                        hiddenLabel={true}
-                        onChange={emptyFunction}
-                      />
-                    </Box>
-                  )
-                },
-              }))}
-            />
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => {
-                setCheckboxState((prevState) => {
-                  const newState = JSON.parse(JSON.stringify(prevState))
-
-                  for (const roleName in prevState) {
-                    for (const contentTypeName in prevState[roleName]) {
-                      if (
-                        IDS_OF_DEFAULT_CONTENT_TYPES.includes(
-                          contentTypes.find(
-                            (type) => type.name === contentTypeName,
-                          )?.sys?.id,
-                        )
-                      ) {
-                        newState[roleName][contentTypeName] = true
+                      const toggleCheckbox = () => {
+                        setReadonlyCheckboxState((prevState) => ({
+                          ...prevState,
+                          [role.name]: {
+                            ...prevState[role.name],
+                            [contentType.name]: !prevState[role.name][
+                              contentType.name
+                            ],
+                          },
+                        }))
                       }
-                    }
-                  }
 
-                  return newState
-                })
-              }}
-            >
-              Reset
-            </Button>
+                      return (
+                        <Box
+                          borderBottomWidth="standard"
+                          border="standard"
+                          tabIndex={0}
+                          key={`${role.name}-${contentType.name}`}
+                          userSelect="none"
+                          cursor="pointer"
+                          display="flex"
+                          flexDirection="row"
+                          flexWrap="nowrap"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                          padding={1}
+                          onClick={toggleCheckbox}
+                          onKeyDown={(ev) => {
+                            if (ev.key === ' ' || ev.key === 'Enter') {
+                              ev.preventDefault()
+                              toggleCheckbox()
+                            }
+                          }}
+                        >
+                          <Text
+                            variant="small"
+                            color={checked ? 'blue400' : 'currentColor'}
+                          >
+                            <Hyphen>{contentType.name}</Hyphen>
+                          </Text>
+                          <ToggleSwitchButton
+                            checked={checked}
+                            label=""
+                            hiddenLabel={true}
+                            onChange={emptyFunction}
+                          />
+                        </Box>
+                      )
+                    },
+                  }))}
+                />
+
+                <Stack space={1}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setReadonlyCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
+                            if (
+                              DEFAULT_READ_ONLY_ENTRY_IDS.includes(
+                                contentTypes.find(
+                                  (type) => type.name === contentTypeName,
+                                )?.sys?.id,
+                              )
+                            ) {
+                              newState[roleName][contentTypeName] = true
+                            }
+                          }
+                        }
+
+                        return newState
+                      })
+                    }}
+                  >
+                    Set to default
+                  </Button>
+
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setReadonlyCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
+                            newState[roleName][contentTypeName] = false
+                          }
+                        }
+                        return newState
+                      })
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </Stack>
+              </Box>
+              <Box>
+                <DropdownMenu
+                  title="Editable entries"
+                  icon="caretDown"
+                  hasScroll={true}
+                  items={contentTypes.map((contentType) => ({
+                    title: contentType.name,
+                    render: () => {
+                      const checked = checkboxState[role.name][contentType.name]
+
+                      const toggleCheckbox = () => {
+                        setCheckboxState((prevState) => ({
+                          ...prevState,
+                          [role.name]: {
+                            ...prevState[role.name],
+                            [contentType.name]: !prevState[role.name][
+                              contentType.name
+                            ],
+                          },
+                        }))
+                      }
+
+                      return (
+                        <Box
+                          borderBottomWidth="standard"
+                          border="standard"
+                          tabIndex={0}
+                          key={`${role.name}-${contentType.name}`}
+                          userSelect="none"
+                          cursor="pointer"
+                          display="flex"
+                          flexDirection="row"
+                          flexWrap="nowrap"
+                          alignItems="center"
+                          justifyContent="spaceBetween"
+                          padding={1}
+                          onClick={toggleCheckbox}
+                          onKeyDown={(ev) => {
+                            if (ev.key === ' ' || ev.key === 'Enter') {
+                              ev.preventDefault()
+                              toggleCheckbox()
+                            }
+                          }}
+                        >
+                          <Text
+                            variant="small"
+                            color={checked ? 'blue400' : 'currentColor'}
+                          >
+                            <Hyphen>{contentType.name}</Hyphen>
+                          </Text>
+                          <ToggleSwitchButton
+                            checked={checked}
+                            label=""
+                            hiddenLabel={true}
+                            onChange={emptyFunction}
+                          />
+                        </Box>
+                      )
+                    },
+                  }))}
+                />
+
+                <Stack space={1}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
+                            if (
+                              DEFAULT_EDITABLE_ENTRY_TYPE_IDS.includes(
+                                contentTypes.find(
+                                  (type) => type.name === contentTypeName,
+                                )?.sys?.id,
+                              )
+                            ) {
+                              newState[roleName][contentTypeName] = true
+                            }
+                          }
+                        }
+
+                        return newState
+                      })
+                    }}
+                  >
+                    Set to default
+                  </Button>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
+                            newState[roleName][contentTypeName] = false
+                          }
+                        }
+                        return newState
+                      })
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </Stack>
+              </Box>
+              <Box marginTop={1}>
+                <Inline alignY="center">
+                  <Checkbox
+                    checked={roleNamesThatCanReadAllAssets.includes(role.name)}
+                    label="Can read all assets"
+                    onChange={() =>
+                      setRoleNamesThatCanReadAllAssets((prev) => {
+                        if (prev.includes(role.name))
+                          return prev.filter((name) => name !== role.name)
+                        return prev.concat(role.name)
+                      })
+                    }
+                  />
+                  <Tooltip
+                    placement="right"
+                    text={`If this is not checked then roles can only read assets tagged with ${slugify(
+                      role.name,
+                    )}`}
+                  />
+                </Inline>
+              </Box>
+            </Inline>
           </Box>
         ))}
       </Box>
@@ -179,7 +371,26 @@ export const getServerSideProps = async () => {
     rolesToShow,
     contentTypes,
   )
-  return { props: { roles: rolesToShow, contentTypes, initialCheckboxState } }
+
+  const initialReadonlyCheckboxState = extractInititalReadonlyCheckboxStateFromRolesAndContentTypes(
+    rolesToShow,
+    contentTypes,
+  )
+
+  const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes(
+    rolesToShow,
+    contentTypes,
+  )
+
+  return {
+    props: {
+      roles: rolesToShow,
+      contentTypes,
+      initialCheckboxState,
+      initialReadonlyCheckboxState,
+      initialRoleNamesThatCanReadAllAssets,
+    },
+  }
 }
 
 export default Home

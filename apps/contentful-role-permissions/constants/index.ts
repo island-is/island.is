@@ -3,7 +3,7 @@ export const contentfulManagementAccessToken =
 export const spaceId = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
 export const environmentId = process.env.CONTENTFUL_ENVIRONMENT || 'master'
 
-export const IDS_OF_DEFAULT_CONTENT_TYPES = [
+export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'accordionSlice',
   'alertBanner',
   'article',
@@ -25,4 +25,11 @@ export const IDS_OF_DEFAULT_CONTENT_TYPES = [
   'sidebarCard',
   'sliceConnectedComponent',
   'twoColumnText',
+]
+
+export const DEFAULT_READ_ONLY_ENTRY_IDS = [
+  'article',
+  'articleCategory',
+  'articleGroup',
+  'articleSubgroup',
 ]
