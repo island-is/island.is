@@ -61,7 +61,10 @@ export class AppService {
         'Content-Type': 'application/json',
         authorization: `Bearer ${this.config.backend.accessToken}`,
       },
-      body: JSON.stringify(caseToCreate),
+      body: JSON.stringify({
+        ...caseToCreate,
+        policeCaseNumbers: [caseToCreate.policeCaseNumber],
+      }),
     })
       .then(async (res) => {
         const response = await res.json()
@@ -103,11 +106,9 @@ export class AppService {
             title: 'Ekki tókst að stofna mál í gegnum Strauminn',
             emoji: ':broken_heart:',
           },
-          `${capitalize(
-            caseTypes[caseToCreate.type],
-          )}: ${caseToCreate.policeCaseNumbers.join(', ')}\nOrigin: ${
-            CaseOrigin.LOKE
-          }`,
+          `${capitalize(caseTypes[caseToCreate.type])}: ${
+            caseToCreate.policeCaseNumber
+          }\nOrigin: ${CaseOrigin.LOKE}`,
           reason,
         )
 
