@@ -144,12 +144,12 @@ usage() {
   echo
   echo "menu          opens up Cypress interactive spec dashboard " 2>&1
   echo "build         [-a app-name: default system-e2e]" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-d, default: headless]" 2>&1
+  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose cypress debugging]" 2>&1
   echo
   echo "examples " 2>&1
-  echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -d" 2>&1
+  echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -l" 2>&1
   echo "         $(basename "$0") run -i skilavottord -t acceptance -c container -b electron" 2>&1
-  echo "         $(basename "$0") run -i web -t smoke -c dist -b firefox -d" 2>&1
+  echo "         $(basename "$0") run -i web -t smoke -c dist -b firefox -l" 2>&1
   exit 1
 }
 
@@ -184,7 +184,7 @@ if [ ! 0 == $# ]; then
       ;;
     run)
       shift
-      while getopts ":i:c:t:b:e:d" opt; do
+      while getopts ":i:c:t:b:e:ld" opt; do
         case "${opt}" in
           i)
             INTEGRATION=${OPTARG}
@@ -200,6 +200,9 @@ if [ ! 0 == $# ]; then
             BROWSER=${OPTARG}
             ;;
           d)
+            export DEBUG="cypress:*"
+            ;;
+          l)
             HEAD="--headed"
             ;;
           e)
