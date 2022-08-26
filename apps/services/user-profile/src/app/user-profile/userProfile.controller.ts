@@ -106,10 +106,6 @@ export class UserProfileController {
     userProfile.setDataValue('canNudge', islyklarData?.canNudge)
     userProfile.setDataValue('bankInfo', islyklarData?.bankInfo)
 
-    console.log('userProfileuserProfileuserProfileuserProfileuserProfile', {
-      userProfile,
-    })
-
     return userProfile
   }
 
