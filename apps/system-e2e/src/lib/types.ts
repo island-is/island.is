@@ -17,8 +17,8 @@ type BaseUser = {
 type FixtureUser = BaseUser & Mobile
 
 enum Timeout {
-  long = 60000,
-  medium = long / 2,
+  long = 30000,
+  medium = Math.floor(long / 2),
   short = Math.floor(medium / 2),
 }
 

@@ -127,14 +127,13 @@ export interface Case {
   type: CaseType
   description?: string
   state: CaseState
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   defendants?: Defendant[]
   defenderName?: string
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -208,7 +207,7 @@ export type CreateCase = Pick<
   Case,
   | 'type'
   | 'description'
-  | 'policeCaseNumber'
+  | 'policeCaseNumbers'
   | 'defenderName'
   | 'defenderNationalId'
   | 'defenderEmail'
@@ -226,7 +225,6 @@ export interface UpdateCase
     | 'defenderEmail'
     | 'defenderPhoneNumber'
     | 'sendRequestToDefender'
-    | 'defenderIsSpokesperson'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -280,7 +278,7 @@ export interface UpdateCase
   > {
   type?: CaseType
   state?: CaseState
-  policeCaseNumber?: string
+  policeCaseNumbers?: string[]
   courtId?: string
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string | null

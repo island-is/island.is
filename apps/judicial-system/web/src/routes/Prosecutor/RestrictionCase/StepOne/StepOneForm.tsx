@@ -19,7 +19,9 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
+import PoliceCaseNumbers, {
+  usePoliceCaseNumbers,
+} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
@@ -59,6 +61,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
     },
     [workingCase.id, updateDefendantState, updateDefendant],
   )
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   return (
     <>
@@ -72,6 +77,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
           <PoliceCaseNumbers
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            clientPoliceNumbers={clientPoliceNumbers}
+            setClientPoliceNumbers={setClientPoliceNumbers}
           />
         </Box>
         {workingCase.defendants && (
@@ -154,7 +161,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
-          nextIsDisabled={!isDefendantStepValidRC(workingCase)}
+          nextIsDisabled={
+            !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+          }
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }

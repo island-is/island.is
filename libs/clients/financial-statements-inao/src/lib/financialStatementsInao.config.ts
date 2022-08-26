@@ -1,6 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 
-export const dataverseClientConfig = defineConfig({
+export const FinancialStatementsInaoClientConfig = defineConfig({
   name: 'DataverseClient',
   load: (env) => ({
     basePath: env.required('FINANCIAL_STATEMENTS_INAO_BASE_PATH', ''),
