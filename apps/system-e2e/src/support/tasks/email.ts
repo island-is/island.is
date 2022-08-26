@@ -1,5 +1,6 @@
 import { UnwrapPromise } from 'next/dist/lib/coalesced-function'
 import { makeEmailAccount, registerEmailAddressWithSES } from '../email-account'
+import { cypressError } from '../utils'
 const emailAccounts: {
   [name: string]: UnwrapPromise<ReturnType<typeof makeEmailAccount>>
 } = {}
