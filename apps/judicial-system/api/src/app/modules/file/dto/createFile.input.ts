@@ -17,7 +17,7 @@ export class CreateFileInput implements CreateFile {
   readonly type!: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly category?: CaseFileCategory
 
   @Allow()
