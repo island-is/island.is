@@ -14,6 +14,7 @@ import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import DeleteImage from '../../assets/settings.svg'
 
 type ActionCardProps = {
   date?: string
@@ -244,7 +245,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         ariaLabel="delete"
         img={
           <img
-            src={`assets/images/settings.svg`}
+            src={DeleteImage}
+            alt={'globe'}
             style={{ float: 'right' }}
             width="80%"
           />
