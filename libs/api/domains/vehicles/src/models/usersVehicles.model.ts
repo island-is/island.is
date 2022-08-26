@@ -90,6 +90,12 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   primaryOperator?: boolean
+
+  @Field({ nullable: true })
+  ownerSsid?: string
+
+  @Field({ nullable: true })
+  ownerName?: string
 }
 
 @ObjectType()

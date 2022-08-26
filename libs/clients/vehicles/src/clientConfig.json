@@ -2219,6 +2219,14 @@
           "primaryOperator": {
             "type": "boolean",
             "nullable": true
+          },
+          "ownerSsid": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

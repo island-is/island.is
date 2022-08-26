@@ -68,7 +68,6 @@ export const exportVehicleOwnedDocument = async (
     ]
   })
 
-  // TODO: Get correct data from service to match these columns.
   const operatorsData = operatorVehicles.map((item: VehiclesVehicle) => {
     return [
       item.permno,
@@ -80,8 +79,8 @@ export const exportVehicleOwnedDocument = async (
       item.operatorStartDate
         ? new Date(item.operatorStartDate).toLocaleDateString()
         : '',
-      item.ownerPersidno,
-      'Nafn vantar',
+      item.ownerSsid,
+      item.ownerName,
       item.primaryOperator ? 'Já' : 'Nei',
       item.operatorNumber,
       item.termination,

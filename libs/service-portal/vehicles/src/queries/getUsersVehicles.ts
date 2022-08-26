@@ -36,6 +36,8 @@ export const GET_USERS_VEHICLES = gql`
         }
         operatorNumber
         primaryOperator
+        ownerSsid
+        ownerName
       }
       downloadServiceURL
       createdTimestamp
