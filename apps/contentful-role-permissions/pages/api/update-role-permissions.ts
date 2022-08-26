@@ -47,9 +47,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const role = rolesMap.get(roleName)
     if (!role) continue
 
-    // TODO: remove this test
-    if (!roleName.includes('test')) continue
-
     const policies: Role['policies'] = []
 
     for (const contentTypeName in data.checkboxState[roleName]) {
