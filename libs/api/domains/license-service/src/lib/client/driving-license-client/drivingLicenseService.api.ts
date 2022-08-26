@@ -187,6 +187,7 @@ export class GenericDrivingLicenseApi
           aths: rettindi.aths,
         }
       }),
+      athugasemdir: license.athugasemdir,
       mynd: {
         id: license.mynd?.id,
         kennitala: license.mynd?.kennitala,
