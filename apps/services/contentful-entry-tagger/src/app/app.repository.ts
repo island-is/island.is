@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { createClient as createManagementClient } from 'contentful-management'
+import {
+  Asset,
+  createClient as createManagementClient,
+  Entry,
+  Link,
+  Tag,
+} from 'contentful-management'
 import { ClientAPI } from 'contentful-management/dist/typings/create-contentful-api'
-import { TagProps } from 'contentful-management/dist/typings/entities/tag'
-import { Entry } from './types'
 
 const SPACE_ID = '8k0h54kbe6bj'
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT || 'master'
 const MAX_TAGS_PER_ENVIRONMENT = 500
 
-const mapTagsToSysObjects = (tags?: TagProps[]) => {
+const mapTagsToSysObjects = (tags?: Link<'Tag'>[] | Tag[]) => {
   return (
     tags?.map((t) => ({
       sys: { type: 'Link', linkType: 'Tag', id: t.sys.id },
@@ -39,7 +43,7 @@ export class AppRepository {
     return roles
   }
 
-  async tagEntry(entry: Entry, tags: string[]) {
+  async tagEntry(entry: Asset | Entry, tags: string[]) {
     const isAsset = entry.sys.type === 'Asset'
 
     const managementClient = this.getManagementClient()
