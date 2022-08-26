@@ -10,13 +10,13 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
 
   it('should require valid data', () => {
     // Police case number
-    cy.getByTestid('policeCaseNumber').type('0').blur()
-    cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
-    cy.getByTestid('policeCaseNumber').clear().blur()
+    cy.get('#policeCaseNumbers').type('0').type('{enter}')
+    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 0)
+    cy.get('#policeCaseNumbers').blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('policeCaseNumber').clear().type('00000000000')
+    cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
+    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
     cy.getByTestid('inputErrorMessage').should('not.exist')
-    cy.getByTestid('continueButton').should('be.disabled')
 
     // National id
     cy.getByTestid('nationalId').type('0').blur()
@@ -88,7 +88,7 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
   })
 
   it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
-    cy.getByTestid('policeCaseNumber').type('00000000000')
+    cy.get('#policeCaseNumbers').type('00000000000').type('{enter}')
     cy.getByTestid('select-type').click()
     cy.get('[id="react-select-type-option-5-6"]').click()
 

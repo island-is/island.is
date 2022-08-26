@@ -35,7 +35,9 @@ import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
+import PoliceCaseNumbers, {
+  usePoliceCaseNumbers,
+} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 const Defendant = () => {
@@ -60,6 +62,10 @@ const Defendant = () => {
       setCaseType(workingCase.type)
     }
   }, [workingCase.id, workingCase.type])
+
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -236,6 +242,8 @@ const Defendant = () => {
             <PoliceCaseNumbers
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
+              clientPoliceNumbers={clientPoliceNumbers}
+              setClientPoliceNumbers={setClientPoliceNumbers}
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -403,7 +411,9 @@ const Defendant = () => {
         <FormFooter
           previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
+          nextIsDisabled={
+            !isDefendantStepValidIC(workingCase, caseType, clientPoliceNumbers)
+          }
           nextIsLoading={isCreatingCase}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

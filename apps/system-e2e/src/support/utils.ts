@@ -1,11 +1,14 @@
 import type { CyHttpMessages } from 'cypress/types/net-stubbing'
-export const cypressError = (msg: string) => {
+import { BaseUrl, AuthUrl } from '../lib/types'
+import type { TestEnvironment } from '../lib/types'
+
+const cypressError = (msg: string) => {
   throw new Error(msg)
 }
 
 import type { ADSUserWithDiscount, FixtureUser } from '../lib/types'
 
-export const getCognitoCredentials = () => {
+const getCognitoCredentials = () => {
   return {
     username:
       process.env.AWS_COGNITO_USERNAME ||
@@ -16,7 +19,7 @@ export const getCognitoCredentials = () => {
   }
 }
 
-export const hasOperationName = (
+const hasOperationName = (
   req: CyHttpMessages.IncomingHttpRequest,
   operationName: string,
 ) => {
@@ -24,7 +27,7 @@ export const hasOperationName = (
   return typeof body === 'object' && body.operationName === operationName
 }
 
-export const aliasQuery = (
+const aliasQuery = (
   req: CyHttpMessages.IncomingHttpRequest,
   operationName: string,
 ) => {
@@ -33,10 +36,7 @@ export const aliasQuery = (
   }
 }
 
-export const getFakeUser = (
-  fakeUsers: FixtureUser[],
-  name: string,
-): FixtureUser =>
+const getFakeUser = (fakeUsers: FixtureUser[], name: string): FixtureUser =>
   fakeUsers
     .filter((e) => e.name.toLowerCase().includes(name.toLowerCase()))
     .reduce((e) => e)
@@ -47,7 +47,7 @@ const getDiscountUser = (
 ) =>
   discounts.filter((e) => e.nationalId === fakeUser.nationalId).reduce((e) => e)
 
-export const getDiscountData = (
+const getDiscountData = (
   fakeUser: FixtureUser,
   res: CyHttpMessages.BaseMessage | undefined,
 ) => {
@@ -55,4 +55,24 @@ export const getDiscountData = (
     (res?.body.data.discounts as ADSUserWithDiscount[]) ||
     cypressError('Error getting response data')
   return { discounts, user: getDiscountUser(fakeUser, discounts) }
+}
+
+const getEnvironmentUrls = (env: TestEnvironment) => {
+  return env === 'dev'
+    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    : env === 'prod'
+    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    : env === 'staging'
+    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
+    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
+}
+
+export {
+  cypressError,
+  getCognitoCredentials,
+  hasOperationName,
+  aliasQuery,
+  getFakeUser,
+  getDiscountData,
+  getEnvironmentUrls,
 }

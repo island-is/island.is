@@ -152,6 +152,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           type: FieldTypes.SELECT,
           component: FieldComponents.SELECT,
           title: parentalLeaveFormMessages.ratio.label,
+          dataTestId: 'select-percentage-use',
           placeholder: parentalLeaveFormMessages.ratio.placeholder,
           id: fieldId,
           children: undefined,

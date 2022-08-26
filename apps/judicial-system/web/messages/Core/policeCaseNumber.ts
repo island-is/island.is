@@ -26,4 +26,10 @@ export const policeCaseNumber = defineMessages({
     description:
       'Notaður sem texti á "Bæta við númeri" takkann á sakbornings skrefi í öllum málstegundum.',
   },
+  removeNumber: {
+    id: 'judicial.system.core:police_case_number.remove_number',
+    defaultMessage: 'Eyða númeri {policeCaseNumber}',
+    description:
+      'Notaður sem aria label á takkana fyrir loke númer á sakbornings skrefi í öllum málstegundum.',
+  },
 })
