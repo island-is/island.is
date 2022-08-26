@@ -3,10 +3,10 @@ import {
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core'
-import { FixtureUser } from '../../lib/types'
-import { getFakeUser } from '../../support/utils'
-import fakeUsers from '../../fixtures/applications/users.json'
-import { label } from '../../lib/i18n-messages'
+import { FixtureUser } from '../../../lib/types'
+import { getFakeUser } from '../../../support/utils'
+import fakeUsers from '../../../fixtures/applications/users.json'
+import { label } from '../../../lib/i18n-messages'
 
 function proceed() {
   cy.get('[data-testid="proceed"]').click()
