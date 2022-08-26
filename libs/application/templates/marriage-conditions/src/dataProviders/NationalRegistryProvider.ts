@@ -1,4 +1,8 @@
-import { MaritalStatus, NationalRegistryPerson } from '../types/schema'
+import {
+  MaritalStatus,
+  NationalRegistryPerson,
+  NationalRegistryBirthplace,
+} from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
@@ -8,27 +12,48 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
 
-export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
-  type = 'NationalRegistryMaritalStatusProvider'
+export class NationalRegistryProvider extends BasicDataProvider {
+  type = 'NationalRegistryProvider'
 
   async provide(application: Application): Promise<any> {
     const fakeData = getValueViaPath<MarriageConditionsFakeData>(
       application.answers,
       'fakeData',
     )
-    if (fakeData?.useFakeData === YES) {
-      return this.handleMaritalStatus(fakeData.maritalStatus || '')
-    }
+    const useFakeData = fakeData?.useFakeData === YES
+
+    const ALLOWED_MARITAL_STATUSES = [
+      MaritalStatus.Unmarried,
+      MaritalStatus.Divorced,
+      MaritalStatus.Widowed,
+    ]
     const query = `
-      query NationalRegistryUserQuery {
-        nationalRegistryUserV2 {
-          spouse {
-            name
-            nationalId
-            maritalStatus
-          }
+    query NationalRegistryUserQuery {
+      nationalRegistryUserV2 {
+        nationalId
+        fullName
+        citizenship {
+          code
+          name
+        }
+        address {
+          postalCode
+          city
+          streetName
+          municipalityCode
+        }
+        spouse {
+          name
+          nationalId
+          maritalStatus
+        }
+        birthplace {
+          dateOfBirth
+          municipalityCode
+          location
         }
       }
+    }
     `
 
     return this.useGraphqlGateway(query)
@@ -38,12 +63,26 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           console.error(
             `graphql error in ${this.type}: ${response.errors[0].message}`,
           )
-          return Promise.reject({})
+          return Promise.reject({reason: `graphql error in ${this.type}: ${response.errors[0].message}`,})
         }
-        return this.handleMaritalStatus(
-          (response.data.nationalRegistryUser as NationalRegistryPerson).spouse
-            ?.maritalStatus || '',
+        const nationalRegistryUser: NationalRegistryPerson =
+          response.data.nationalRegistryUser
+        console.log("HALLOOO",JSON.stringify(nationalRegistryUser))
+        const maritalStatus: MaritalStatus = this.formatMaritalStatus(
+          useFakeData
+            ? nationalRegistryUser.spouse?.maritalStatus || ''
+            : fakeData?.maritalStatus || '',
         )
+
+        if (ALLOWED_MARITAL_STATUSES.includes(maritalStatus)) {
+          return Promise.resolve(
+           nationalRegistryUser
+            // maritalStatus:maritalStatus,
+          )
+        }
+        return Promise.reject({
+          reason: `Applicant marital status ${maritalStatus} not applicable`,
+        })
       })
       .catch(() => {
         return Promise.reject({})
@@ -88,23 +127,5 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       default:
         return MaritalStatus.Unmarried
     }
-  }
-
-  private handleMaritalStatus(maritalCode: string): Promise<any> {
-    const maritalStatus = this.formatMaritalStatus(maritalCode)
-    if (
-      maritalStatus !==
-      (MaritalStatus.Unmarried ||
-        MaritalStatus.Divorced ||
-        MaritalStatus.Widowed)
-    ) {
-      return Promise.reject({
-        reason: `Applicant marital status ${maritalStatus} not applicable`,
-      })
-    }
-
-    return Promise.resolve({
-      maritalStatus,
-    })
   }
 }

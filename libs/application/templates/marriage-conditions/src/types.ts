@@ -14,5 +14,5 @@ type YesOrNo = 'yes' | 'no'
 
 export interface MarriageConditionsFakeData {
   useFakeData?: YesOrNo
-  maritalStatus?: string
+  maritalStatus: string
 }
