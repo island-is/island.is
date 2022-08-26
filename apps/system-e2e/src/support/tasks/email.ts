@@ -17,7 +17,7 @@ const emailTask = {
   },
 
   getLastEmail: ({ name, retries }: { name: string; retries: number }) => {
-    if (!emailAccounts[name]) throw new Error(`Email user not created yet`)
+    if (!emailAccounts[name]) cypressError(`Email user not created yet`)
     return emailAccounts[name].getLastEmail(retries)
   },
 }
