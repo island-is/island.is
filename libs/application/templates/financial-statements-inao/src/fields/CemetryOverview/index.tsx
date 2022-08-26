@@ -13,7 +13,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { ValueLine } from '../Shared'
+import { FileValueLine, ValueLine } from '../Shared'
 import { CARETAKERLIMIT } from '../../lib/constants'
 import {
   columnStyle,
@@ -24,7 +24,6 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
-
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -253,6 +252,8 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           })}
         </Fragment>
       ) : null}
+      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+      <Divider />
     </Box>
   )
 }

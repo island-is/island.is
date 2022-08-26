@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationTitle: {
     id: 'fsn.application:applicationTitle',
-    defaultMessage: 'Skil á upplýsingum',
+    defaultMessage: 'Skil á ársreikningi',
     description: 'Application for Digital',
   },
   inao: {
@@ -496,6 +496,11 @@ export const m = defineMessages({
     defaultMessage:
       'Endilega lestu yfir til að vera viss um að allar upplýsingar hafi verið gefnar',
     description: 'financial statements',
+  },
+  files: {
+    id: 'fsn.application:files',
+    defaultMessage: 'Skjöl',
+    description: 'files',
   },
   upload: {
     id: 'fsn.application:upload',

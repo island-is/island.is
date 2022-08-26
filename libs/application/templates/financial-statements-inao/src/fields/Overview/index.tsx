@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
-import { ValueLine } from '../Shared'
+import { FileValueLine, ValueLine } from '../Shared'
 import { formatCurrency } from '../../lib/utils/helpers'
 import {
   columnStyle,
@@ -176,6 +176,8 @@ export const Overview = ({ application }: FieldBaseProps) => {
           />
         </GridColumn>
       </GridRow>
+      <Divider />
+      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
       <Divider />
     </Box>
   )

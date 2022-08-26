@@ -24,7 +24,6 @@ export const PartyOperatingIncome = () => {
   const [getTotalExpense, totalExpense] = useTotals(
     PARTYOPERATIONIDS.expensePrefix,
   )
-  console.log(errors, getValues())
   const { formatMessage } = useLocale()
 
   const checkIfEmpty = (fieldId: string) => {

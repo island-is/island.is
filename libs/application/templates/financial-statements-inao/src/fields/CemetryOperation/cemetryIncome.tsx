@@ -64,20 +64,6 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           }
         />
       </Box>
-      {/* <Box paddingY={1}>
-        <InputController
-          id={CEMETRYOPERATIONIDS.capitalIncome}
-          name={CEMETRYOPERATIONIDS.capitalIncome}
-          label={formatMessage(m.capitalIncome)}
-          onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(CEMETRYOPERATIONIDS.capitalIncome)}
-          backgroundColor="blue"
-          currency
-          error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
-          }
-        />
-      </Box> */}
       <Box paddingY={1}>
         <InputController
           id={CEMETRYOPERATIONIDS.otherIncome}

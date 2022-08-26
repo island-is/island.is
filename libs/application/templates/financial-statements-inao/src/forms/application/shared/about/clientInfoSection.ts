@@ -24,7 +24,6 @@ export const clientInfoSection = buildSection({
           childInputIds: Object.values(ABOUTIDS),
           title: '',
           condition: (_answers, externalData) => {
-            console.log({ externalData })
             /* @ts-ignore */
             const userType = externalData?.currentUserType?.data?.code
             return userType === CEMETRY || userType === PARTY

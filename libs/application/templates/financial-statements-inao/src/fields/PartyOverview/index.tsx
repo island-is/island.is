@@ -13,7 +13,7 @@ import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import { ValueLine } from '../Shared'
+import { FileValueLine, ValueLine } from '../Shared'
 import {
   columnStyle,
   starterColumnStyle,
@@ -176,6 +176,8 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         </GridRow>
       </Box>
+      <Divider />
+      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
       <Divider />
     </Box>
   )
