@@ -19,6 +19,7 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'news',
   'oneColumnText',
   'organizationSubpage',
+  'organizationPage',
   'overviewLinks',
   'processEntry',
   'questionAndAnswer',
@@ -32,4 +33,6 @@ export const DEFAULT_READ_ONLY_ENTRY_IDS = [
   'articleCategory',
   'articleGroup',
   'articleSubgroup',
+  'subArticle',
+  'organization',
 ]
