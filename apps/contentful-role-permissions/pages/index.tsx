@@ -17,7 +17,7 @@ import {
 
 import {
   extractInitialCheckboxStateFromRolesAndContentTypes,
-  extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes,
+  extractInitialRoleNamesThatCanReadAllAssetsFromRoles,
   extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
@@ -377,9 +377,8 @@ export const getServerSideProps = async () => {
     contentTypes,
   )
 
-  const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes(
+  const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRoles(
     rolesToShow,
-    contentTypes,
   )
 
   return {

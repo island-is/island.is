@@ -50,38 +50,22 @@ const policiesAreEditable = (
   role: RoleProps,
   contentType: ContentTypeProps,
 ) => {
-  let canEditContentType = false
-  for (const policy of role.policies) {
-    if (policy.actions === 'all' && policy.effect === 'allow') {
-      if (
-        !policy.constraint.equals &&
-        !policy.constraint.not &&
-        !policy.constraint.or &&
-        policy.constraint.and
-      ) {
-        for (const obj of policy.constraint.and) {
-          if (obj.equals && obj.equals.length === 2) {
-            if (
-              obj.equals[0].doc === 'sys.contentType.sys.id' &&
-              obj.equals[1] === contentType.sys.id
-            ) {
-              canEditContentType = true
-              break
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return canEditContentType
+  const policies = []
+  applyEditEntryPolicies(policies, role.name, contentType)
+  return policies.every((p1) =>
+    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  )
 }
 
 const policiesAreReadOnlyEntries = (
   role: RoleProps,
   contentType: ContentTypeProps,
 ) => {
-  return false
+  const policies = []
+  applyReadOnlyEntryPolicies(policies, contentType)
+  return policies.every((p1) =>
+    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  )
 }
 
 export const extractInitialCheckboxStateFromRolesAndContentTypes = (
@@ -122,9 +106,8 @@ export const extractInititalReadonlyCheckboxStateFromRolesAndContentTypes = (
   )
 }
 
-export const extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes = (
+export const extractInitialRoleNamesThatCanReadAllAssetsFromRoles = (
   roles: RoleProps[],
-  contentTypes: ContentTypeProps[],
 ): string[] => {
   const roleNames: string[] = []
   for (const role of roles) {
@@ -138,7 +121,6 @@ export const extractInitialRoleNamesThatCanReadAllAssetsFromRolesAndContentTypes
       roleNames.push(role.name)
     }
   }
-
   return roleNames
 }
 
@@ -200,13 +182,13 @@ export const applyAssetPolicies = (
   })
 }
 
-export const applyEntryPolicies = (
+export const applyEditEntryPolicies = (
   policies: Role['policies'],
   roleName: string,
   contentType: ContentTypeProps,
 ) => {
   policies.push({
-    actions: 'all',
+    actions: ['create'],
     effect: 'allow',
     constraint: {
       and: [
@@ -217,25 +199,60 @@ export const applyEntryPolicies = (
       ],
     },
   })
+
+  // TODO: debug why this isn't working
+
+  const actions: ActionType[] = [
+    'read',
+    'archive',
+    'delete',
+    'publish',
+    'unarchive',
+    'unpublish',
+    'update',
+  ]
+
+  for (const action of actions) {
+    policies.push({
+      actions: [action],
+      effect: 'allow',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Entry'] },
+          { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
+          {
+            in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
+          },
+        ],
+      },
+    })
+    policies.push({
+      actions: [action],
+      effect: 'allow',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Entry'] },
+          { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
+          {
+            equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
+          },
+        ],
+      },
+    })
+  }
+}
+
+export const applyReadOnlyEntryPolicies = (
+  policies: Role['policies'],
+  contentType: ContentTypeProps,
+) => {
   policies.push({
     actions: ['read'],
-    effect: 'deny',
+    effect: 'allow',
     constraint: {
       and: [
         { equals: [{ doc: 'sys.type' }, 'Entry'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-        {
-          not: {
-            or: [
-              {
-                in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
-              },
-              {
-                equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
-              },
-            ],
-          },
-        },
       ],
     },
   })

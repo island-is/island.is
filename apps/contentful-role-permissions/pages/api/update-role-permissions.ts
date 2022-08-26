@@ -2,7 +2,8 @@ import { ContentTypeProps, Role, RoleProps } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import {
   applyAssetPolicies,
-  applyEntryPolicies,
+  applyEditEntryPolicies,
+  applyReadOnlyEntryPolicies,
   extractInitialCheckboxStateFromRolesAndContentTypes,
   extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
@@ -58,13 +59,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const checked = data.checkboxState[roleName][contentTypeName]
       if (!checked) continue
 
-      applyAssetPolicies(
-        policies,
-        role.name,
-        roleNamesThatCanReadAllAssetsSet.has(role.name),
-      )
-      applyEntryPolicies(policies, role.name, contentType)
+      applyEditEntryPolicies(policies, role.name, contentType)
+
+      const readOnlyChecked =
+        data.readonlyCheckboxState?.[roleName]?.[contentTypeName]
+      if (readOnlyChecked) {
+        applyReadOnlyEntryPolicies(policies, contentType)
+      }
     }
+
+    applyAssetPolicies(
+      policies,
+      role.name,
+      roleNamesThatCanReadAllAssetsSet.has(role.name),
+    )
 
     const updateQuery = client.role.update(
       { roleId: role.sys.id },
