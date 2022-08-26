@@ -155,10 +155,12 @@ const CourtDocuments: FC<Props> = (props) => {
         </Text>
       </Box>
       <MultipleValueList
+        name="court-documents"
         onAddValue={handleAddDocument}
         inputLabel={formatMessage(courtDocuments.add.label)}
         inputPlaceholder={formatMessage(courtDocuments.add.placeholder)}
         buttonText={formatMessage(courtDocuments.add.buttonText)}
+        isDisabled={(value) => !value}
       >
         <>
           <Box marginBottom={1}>

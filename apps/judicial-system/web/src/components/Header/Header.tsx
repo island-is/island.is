@@ -12,13 +12,14 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Button,
 } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core } from './Header.strings'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -65,90 +66,101 @@ const HeaderContainer: React.FC = () => {
               )}
               headerItems={
                 user && (
-                  <UserMenu
-                    language="is"
-                    authenticated={isAuthenticated}
-                    username={user.name}
-                    dropdownItems={
-                      <>
-                        <div className={styles.dropdownItem}>
-                          <Box marginRight={2}>
-                            <Icon
-                              icon="person"
-                              type="outline"
-                              color="blue400"
-                            />
-                          </Box>
-                          <Box>
-                            <Box marginBottom={2}>
-                              <Text>
-                                {capitalize(
-                                  user.role === UserRole.DEFENDER
-                                    ? formatMessage(core.defender)
-                                    : user.title,
-                                )}
-                              </Text>
-                            </Box>
-                            <Box marginBottom={2}>
-                              <Text>
-                                {capitalize(
-                                  user.role === UserRole.DEFENDER
-                                    ? practice
-                                    : user.institution?.name,
-                                )}
-                              </Text>
-                            </Box>
-                            <Box marginBottom={2}>
-                              <Text>
-                                {formatPhoneNumber(
-                                  user.role === UserRole.DEFENDER
-                                    ? phoneNr
-                                    : user.mobileNumber,
-                                )}
-                              </Text>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      onClick={() =>
+                        window.open(constants.FEEDBACK_FORM_URL, '_blank')
+                      }
+                    >
+                      {formatMessage(core.headerFeedbackButtonLabel)}
+                    </Button>
+                    <UserMenu
+                      language="is"
+                      authenticated={isAuthenticated}
+                      username={user.name}
+                      dropdownItems={
+                        <>
+                          <div className={styles.dropdownItem}>
+                            <Box marginRight={2}>
+                              <Icon
+                                icon="person"
+                                type="outline"
+                                color="blue400"
+                              />
                             </Box>
                             <Box>
-                              <Text>
-                                {user.role === UserRole.DEFENDER
-                                  ? email
-                                  : user.email}
-                              </Text>
+                              <Box marginBottom={2}>
+                                <Text>
+                                  {capitalize(
+                                    user.role === UserRole.DEFENDER
+                                      ? formatMessage(core.defender)
+                                      : user.title,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box marginBottom={2}>
+                                <Text>
+                                  {capitalize(
+                                    user.role === UserRole.DEFENDER
+                                      ? practice
+                                      : user.institution?.name,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box marginBottom={2}>
+                                <Text>
+                                  {formatPhoneNumber(
+                                    user.role === UserRole.DEFENDER
+                                      ? phoneNr
+                                      : user.mobileNumber,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box>
+                                <Text>
+                                  {user.role === UserRole.DEFENDER
+                                    ? email
+                                    : user.email}
+                                </Text>
+                              </Box>
                             </Box>
-                          </Box>
-                        </div>
-                        <div className={styles.dropdownItem}>
-                          <Box marginRight={2}>
-                            <Icon
-                              icon="informationCircle"
-                              type="outline"
-                              color="blue400"
-                            />
-                          </Box>
-                          <Box>
-                            {user.role === UserRole.DEFENDER ? (
-                              <Text>
-                                {formatMessage(
-                                  core.headerTipDisclaimerDefenders,
-                                )}
-                              </Text>
-                            ) : (
-                              <MarkdownWrapper
-                                markdown={formatMessage(
-                                  core.headerTipDisclaimer,
-                                  {
-                                    linkStart:
-                                      '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
-                                    linkEnd: '</a>',
-                                  },
-                                )}
+                          </div>
+                          <div className={styles.dropdownItem}>
+                            <Box marginRight={2}>
+                              <Icon
+                                icon="informationCircle"
+                                type="outline"
+                                color="blue400"
                               />
-                            )}
-                          </Box>
-                        </div>
-                      </>
-                    }
-                    onLogout={handleLogout}
-                  />
+                            </Box>
+                            <Box>
+                              {user.role === UserRole.DEFENDER ? (
+                                <Text>
+                                  {formatMessage(
+                                    core.headerTipDisclaimerDefenders,
+                                  )}
+                                </Text>
+                              ) : (
+                                <MarkdownWrapper
+                                  markdown={formatMessage(
+                                    core.headerTipDisclaimer,
+                                    {
+                                      linkStart:
+                                        '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                      linkEnd: '</a>',
+                                    },
+                                  )}
+                                />
+                              )}
+                            </Box>
+                          </div>
+                        </>
+                      }
+                      onLogout={handleLogout}
+                    />
+                  </>
                 )
               }
             />
