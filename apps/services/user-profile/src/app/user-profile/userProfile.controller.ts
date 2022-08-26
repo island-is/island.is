@@ -260,12 +260,16 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new ForbiddenException()
     }
-    try {
-      return await this.findOneByNationalId(nationalId, user)
-    } catch (error) {
+
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
+
+    if (!userProfile) {
       const ret = await this.create({ nationalId }, user)
       return ret
     }
+    return userProfile
   }
 
   @Scopes(UserProfileScope.write)
