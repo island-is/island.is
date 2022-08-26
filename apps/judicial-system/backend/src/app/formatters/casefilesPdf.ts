@@ -35,7 +35,9 @@ function constructCasefilesPdf(
   setLineGap(doc, 40)
   addLargeHeading(
     doc,
-    `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
+    `Mál nr. ${
+      theCase.courtCaseNumber
+    } - LÖKE nr: ${theCase.policeCaseNumbers.join(', ')}`,
     'Helvetica',
   )
   setLineGap(doc, 8)

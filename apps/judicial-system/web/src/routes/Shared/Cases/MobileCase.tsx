@@ -70,7 +70,7 @@ const MobileCase: React.FC<Props> = ({
         </Tag>,
       ]}
     >
-      <Text>{theCase.policeCaseNumber}</Text>
+      <Text>{theCase.policeCaseNumbers.join(', ')}</Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
       <br />
       {theCase.defendants && theCase.defendants.length > 0 && (
