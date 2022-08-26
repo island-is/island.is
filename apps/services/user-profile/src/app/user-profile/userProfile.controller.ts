@@ -47,7 +47,6 @@ import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from './types/dataStatusTypes'
-import { islyklarExtraTypes } from './types/islyklarExtras'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -87,11 +86,29 @@ export class UserProfileController {
     const userProfile = await this.userProfileService.findByNationalId(
       nationalId,
     )
-    if (!userProfile) {
+
+    const islyklarData = await this.islyklarService.getIslykillSettings(
+      user.nationalId,
+    )
+
+    if (!userProfile && islyklarData.noUserFound) {
       throw new NotFoundException(
         `A user profile with nationalId ${nationalId} does not exist`,
       )
     }
+
+    /**
+     * Replace email and mobile with islykladata
+     * Add specific islykladata 'canNudge' and 'bankInfo'
+     */
+    userProfile.setDataValue('mobilePhoneNumber', islyklarData?.mobile)
+    userProfile.setDataValue('email', islyklarData?.email)
+    userProfile.setDataValue('canNudge', islyklarData?.canNudge)
+    userProfile.setDataValue('bankInfo', islyklarData?.bankInfo)
+
+    console.log('userProfileuserProfileuserProfileuserProfileuserProfile', {
+      userProfile,
+    })
 
     return userProfile
   }
@@ -217,14 +234,24 @@ export class UserProfileController {
       }
     }
 
-    // TODO: Remove email and tel before updating island.is userprofile data
+    /**
+     * Email and mobile number should not be stored within the userprofile db.
+     * This should only be stored with the islyklar data.
+     */
+    const userProfileCreateObject = {
+      ...userProfileDto,
+      email: undefined,
+      mobile: undefined,
+    }
 
-    const userProfile = await this.userProfileService.create(userProfileDto)
+    const userProfile = await this.userProfileService.create(
+      userProfileCreateObject,
+    )
     this.auditService.audit({
       auth: user,
       action: 'create',
-      resources: userProfileDto.nationalId,
-      meta: { fields: Object.keys(userProfileDto) },
+      resources: userProfileCreateObject.nationalId,
+      meta: { fields: Object.keys(userProfileCreateObject) },
     })
     return userProfile
   }
@@ -260,7 +287,7 @@ export class UserProfileController {
     @Param('nationalId')
     nationalId: string,
     @Body()
-    userProfileToUpdate: UpdateUserProfileDto & islyklarExtraTypes,
+    userProfileToUpdate: UpdateUserProfileDto,
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
@@ -350,17 +377,29 @@ export class UserProfileController {
       )
     }
 
+    let email =
+      userProfileToUpdate.email && emailVerified
+        ? userProfileToUpdate.email
+        : islyklarData.email
+
+    if (userProfileToUpdate.email === DataStatus.EMPTY) {
+      email = undefined
+    }
+
+    let mobile =
+      userProfileToUpdate.mobilePhoneNumber && mobileVerified
+        ? userProfileToUpdate.mobilePhoneNumber
+        : islyklarData.mobile
+
+    if (userProfileToUpdate.mobilePhoneNumber === DataStatus.EMPTY) {
+      mobile = undefined
+    }
+
     if (islyklarData.noUserFound) {
       await this.islyklarService
         .createIslykillSettings(user.nationalId, {
-          email:
-            userProfileToUpdate.email && emailVerified
-              ? userProfileToUpdate.email
-              : islyklarData.email,
-          mobile:
-            userProfileToUpdate.mobilePhoneNumber && mobileVerified
-              ? userProfileToUpdate.mobilePhoneNumber
-              : islyklarData.mobile,
+          email,
+          mobile,
         })
         .catch((error) => {
           throw new BadRequestException(
@@ -370,14 +409,8 @@ export class UserProfileController {
     } else {
       await this.islyklarService
         .updateIslykillSettings(user.nationalId, {
-          email:
-            userProfileToUpdate.email && emailVerified
-              ? userProfileToUpdate.email
-              : islyklarData.email,
-          mobile:
-            userProfileToUpdate.mobilePhoneNumber && mobileVerified
-              ? userProfileToUpdate.mobilePhoneNumber
-              : islyklarData.mobile,
+          email,
+          mobile,
           canNudge: userProfileToUpdate.canNudge ?? islyklarData.canNudge,
           bankInfo: userProfileToUpdate.bankInfo ?? islyklarData.bankInfo,
         })
@@ -388,12 +421,23 @@ export class UserProfileController {
         })
     }
 
-    // TODO: Remove email and tel before updating island.is userprofile data
+    /**
+     * Email and mobile number should not be stored within the userprofile db.
+     * This should only be stored with the islyklar data.
+     */
+    const userProfileUpdateObject = {
+      ...userProfileToUpdate,
+      email: undefined,
+      mobile: undefined,
+    }
 
     const {
       numberOfAffectedRows,
       updatedUserProfile,
-    } = await this.userProfileService.update(nationalId, userProfileToUpdate)
+    } = await this.userProfileService.update(
+      nationalId,
+      userProfileUpdateObject,
+    )
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
         `A user profile with nationalId ${nationalId} does not exist`,

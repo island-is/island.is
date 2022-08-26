@@ -104,4 +104,20 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   mobileStatus?: string
+
+  /**
+   * Islyklar data that does not exist in the db
+   * https://sequelize.org/docs/v6/core-concepts/getters-setters-virtuals/#virtual-fields
+   */
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  @ApiProperty()
+  canNudge?: boolean
+
+  @Column({
+    type: DataType.VIRTUAL,
+  })
+  @ApiProperty()
+  bankInfo?: string
 }

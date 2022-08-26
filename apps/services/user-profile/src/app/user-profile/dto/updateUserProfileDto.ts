@@ -59,4 +59,17 @@ export class UpdateUserProfileDto {
   @IsString()
   @ApiPropertyOptional()
   readonly smsCode?: string
+
+  /**
+   * Islyklar data
+   */
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly canNudge?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly bankInfo?: string
 }

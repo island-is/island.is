@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import differenceInMonths from 'date-fns/differenceInMonths'
-import { ApolloError, ForbiddenError } from 'apollo-server-express'
+import { ApolloError } from 'apollo-server-express'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
+
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
@@ -10,20 +13,16 @@ import {
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
 } from '@island.is/clients/user-profile'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
-import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { islyklarExtraTypes } from './types/islyklarExtras'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -41,39 +40,10 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(
-    private userProfileApi: UserProfileApi,
-    private readonly islyklarService: IslykillService,
-  ) {}
+  constructor(private userProfileApi: UserProfileApi) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async getIslykillProfile(user: User) {
-    try {
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-
-      return {
-        nationalId: user.nationalId,
-        emailVerified: false,
-        mobilePhoneNumberVerified: false,
-        documentNotifications: false,
-        emailStatus: DataStatus.NOT_VERIFIED,
-        mobileStatus: DataStatus.NOT_VERIFIED,
-
-        // Islyklar data:
-        mobilePhoneNumber: islyklarData?.mobile,
-        email: islyklarData?.email,
-        canNudge: islyklarData?.canNudge,
-        bankInfo: islyklarData?.bankInfo,
-      }
-    } catch (error) {
-      logger.error(JSON.stringify(error))
-      return null
-    }
   }
 
   async getUserProfileStatus(user: User) {
@@ -126,25 +96,9 @@ export class UserProfileService {
         nationalId: user.nationalId,
       })
 
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-      return {
-        ...profile,
-        // Temporary solution while we still run the old user profile service.
-        mobilePhoneNumber: islyklarData?.mobile,
-        email: islyklarData?.email,
-        canNudge: islyklarData?.canNudge,
-        bankInfo: islyklarData?.bankInfo,
-      }
+      return profile
     } catch (error) {
-      if (error.status === 404) {
-        /**
-         * Even if userProfileApiWithAuth does not exist.
-         * Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
-         */
-        return await this.getIslykillProfile(user)
-      }
+      if (error.status === 404) return null
       handleError(error)
     }
   }
@@ -185,7 +139,7 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    const updateUserDto: UpdateUserProfileDto & islyklarExtraTypes = {
+    const updateUserDto: UpdateUserProfileDto = {
       //temporary as schemas where not working properly
       locale: input.locale as string,
       documentNotifications: input.documentNotifications,
@@ -212,37 +166,19 @@ export class UserProfileService {
     return updatedUserProfile
   }
 
-  /**
-   * TODO: REMOVE ALL ISLYKILL LOGIC FROM HERE.
-   */
   async deleteIslykillValue(
     input: DeleteIslykillValueInput,
     user: User,
   ): Promise<DeleteIslykillSettings> {
-    const islyklarData = await this.islyklarService.getIslykillSettings(
-      user.nationalId,
-    )
-    if (islyklarData.noUserFound) {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email: undefined,
-          mobile: undefined,
-        })
-        .catch(handleError)
-    } else {
-      await this.islyklarService
-        .updateIslykillSettings(user.nationalId, {
-          email: input.email ? undefined : islyklarData.email,
-          mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
-          canNudge: islyklarData.canNudge,
-          bankInfo: islyklarData.bankInfo,
-        })
-        .catch(handleError)
-    }
-
     const profileUpdate = {
-      ...(input.email && { emailStatus: DataStatus.EMPTY }),
-      ...(input.mobilePhoneNumber && { mobileStatus: DataStatus.EMPTY }),
+      ...(input.email && {
+        emailStatus: DataStatus.EMPTY,
+        email: DataStatus.EMPTY,
+      }),
+      ...(input.mobilePhoneNumber && {
+        mobileStatus: DataStatus.EMPTY,
+        mobilePhoneNumber: DataStatus.EMPTY,
+      }),
     }
 
     await this.userProfileApiWithAuth(user)

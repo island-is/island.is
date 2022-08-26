@@ -25,6 +25,11 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
 }
 
 const prodConfig = {
@@ -50,6 +55,11 @@ const prodConfig = {
     defaultNamespace: '@island.is/user-profile',
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-user-profile',
+  },
+  islykill: {
+    cert: process.env.ISLYKILL_CERT,
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,

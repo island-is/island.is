@@ -128,11 +128,6 @@ const prodConfig = () => ({
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
   },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
 })
 const devConfig = () => ({
   production: false,
@@ -285,11 +280,6 @@ const devConfig = () => ({
       process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
     username: process.env.PAYMENT_SCHEDULE_USER,
     password: process.env.PAYMENT_SCHEDULE_PASSWORD,
-  },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
 })
 export const getConfig =
