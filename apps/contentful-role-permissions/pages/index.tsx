@@ -1,5 +1,5 @@
 import { InferGetServerSidePropsType } from 'next'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import slugify from '@sindresorhus/slugify'
 import {
   Box,
@@ -13,6 +13,7 @@ import {
   Inline,
   Checkbox,
   Tooltip,
+  Input,
 } from '@island.is/island-ui/core'
 
 import {
@@ -55,6 +56,8 @@ const Home = ({
     setRoleNamesThatCanReadAllAssets,
   ] = useState<string[]>(initialRoleNamesThatCanReadAllAssets)
 
+  const [nameSearch, setNameSearch] = useState('')
+
   const onSave = () => {
     fetch('/api/update-role-permissions', {
       method: 'PUT',
@@ -83,8 +86,22 @@ const Home = ({
       roleNamesThatCanReadAllAssets,
     })
 
+  const filteredRoles = useMemo(
+    () =>
+      roles.filter((role) =>
+        role.name.toLowerCase().includes(nameSearch.toLowerCase()),
+      ),
+    [nameSearch],
+  )
+
   return (
     <Box className={styles.container}>
+      <Input
+        name="name-search"
+        label="Role name search"
+        onChange={(ev) => setNameSearch(ev.target.value)}
+      />
+
       <Box display="flex" flexDirection="row" justifyContent="flexEnd">
         <Button onClick={onSave} size="small" disabled={!canSave}>
           Save
@@ -92,7 +109,7 @@ const Home = ({
       </Box>
 
       <Box className={styles.rolesContainer}>
-        {roles.map((role) => (
+        {filteredRoles.map((role) => (
           <Box
             border="standard"
             borderWidth="standard"
