@@ -104,3 +104,10 @@ Cypress.Commands.add('pathUuid', () => {
     .location('pathname')
     .then((path: string) => path.split('/').pop()?.split('?').shift())
 })
+
+Cypress.Commands.add('bypassApplicationFluff', () => {
+  cy.intercept('/api/graphql?op=ActorDelegations', { authActorDelegations: [] })
+  cy.intercept('/api/graphql?op=ApplicationApplications', {
+    applicationApplications: [],
+  })
+})

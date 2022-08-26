@@ -36,5 +36,6 @@ declare namespace Cypress {
       method: 'GET' | 'POST' = 'GET',
     ): void
     pathUuid()
+    bypassApplicationFluff()
   }
 }

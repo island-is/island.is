@@ -33,6 +33,7 @@ enum BaseUrl {
   dev = 'https://beta.dev01.devland.is',
   staging = 'https://beta.staging01.devland.is',
   ads = 'https://loftbru.dev01.devland.is',
+  applicationSystem = 'http://localhost:4242',
   prod = 'https://island.is',
   local = 'http://localhost:4200',
 }
