@@ -7,7 +7,7 @@ const intl = createIntl(
   {
     locale: 'is',
     onError: (err) => {
-      console.error(err)
+      cypressError.error(err)
     },
   },
   cache,
