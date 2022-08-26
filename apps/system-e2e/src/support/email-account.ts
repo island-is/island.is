@@ -58,7 +58,7 @@ async function registerEmailAddressWithSES(emailAccount: {
       throw new Error(`Email identity still not validated in AWS SES`)
     }
   } else {
-    throw new Error('Verification message not found.')
+    cypressError('Verification message not found.')
   }
 }
 
