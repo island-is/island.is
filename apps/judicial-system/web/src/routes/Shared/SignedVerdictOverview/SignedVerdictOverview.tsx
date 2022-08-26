@@ -576,7 +576,7 @@ export const SignedVerdictOverview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               {
                 title: formatMessage(core.courtCaseNumber),

@@ -197,24 +197,6 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
-  headerTipDisclaimer: {
-    id: 'judicial.system.core:header_tip_disclaimer',
-    defaultMessage:
-      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
-    description:
-      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
-  },
-  headerTipDisclaimerDefenders: {
-    id: 'judicial.system.core:header_tip_disclaimer_defenders',
-    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
-    description:
-      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
-  },
-  defender: {
-    id: 'judicial.system.core:defender',
-    defaultMessage: 'lögmaður',
-    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
-  },
   linkCopied: {
     id: 'judicial.system.core:link_copied',
     defaultMessage: 'Hlekkur afritaður',
