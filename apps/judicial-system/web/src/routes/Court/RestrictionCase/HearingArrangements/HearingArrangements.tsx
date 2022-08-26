@@ -17,7 +17,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -124,7 +124,9 @@ export const HearingArrangements: React.FC = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
@@ -142,7 +144,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -191,7 +193,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={
@@ -220,7 +222,9 @@ export const HearingArrangements: React.FC = () => {
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+            router.push(
+              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+            )
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -229,7 +233,9 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

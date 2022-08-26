@@ -72,10 +72,12 @@ export class ChildrenResidenceChangeService {
       throw new Error('File content was undefined')
     }
 
-    const attachment: Attachment = {
-      name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-      content: fileContent.toString('base64'),
-    }
+    const attachments: Attachment[] = [
+      {
+        name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
+        content: fileContent.toString('base64'),
+      },
+    ]
 
     const parentA: Person = {
       name: applicant.fullName,
@@ -132,7 +134,7 @@ export class ChildrenResidenceChangeService {
     const uploadDataName = 'Lögheimilisbreyting barns'
 
     const response = await this.syslumennService
-      .uploadData(participants, attachment, extraData, uploadDataName)
+      .uploadData(participants, attachments, extraData, uploadDataName)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,

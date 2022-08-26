@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import isSameDay from 'date-fns/isSameDay'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -33,6 +34,22 @@ import {
   addNormalCenteredText,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
+
+export function formatCourtEndDate(
+  formatMessage: FormatMessage,
+  courtStartDate?: Date,
+  courtEndTime?: Date,
+): string {
+  return courtEndTime
+    ? formatMessage(courtRecord.signOff, {
+        endDate:
+          courtStartDate && isSameDay(courtStartDate, courtEndTime)
+            ? 'NONE'
+            : formatDate(courtEndTime, 'd. MMMM'),
+        endTime: formatDate(courtEndTime, 'p'),
+      })
+    : formatMessage(courtRecord.inSession)
+}
 
 function constructRestrictionCourtRecordPdf(
   theCase: Case,
@@ -254,11 +271,11 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
@@ -499,11 +516,11 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
@@ -553,8 +570,8 @@ export async function getCourtRecordPdfAsString(
 
 export async function getCourtRecordPdfAsBuffer(
   theCase: Case,
-  user: User,
   formatMessage: FormatMessage,
+  user?: User,
 ): Promise<Buffer> {
   const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 

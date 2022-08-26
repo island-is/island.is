@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
@@ -32,11 +32,11 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 const Defendant = () => {
   const router = useRouter()
@@ -50,6 +50,16 @@ const Defendant = () => {
   } = useContext(FormContext)
   const { createCase, isCreatingCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
+  // This state is needed because type is initially set to OHTER on the
+  // workingCase and we need to validate that the user selects an option
+  // from the case type list to allow the user to continue.
+  const [caseType, setCaseType] = React.useState<CaseType>()
+
+  useEffect(() => {
+    if (workingCase.id) {
+      setCaseType(workingCase.type)
+    }
+  }, [workingCase.id, workingCase.type])
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -86,14 +96,16 @@ const Defendant = () => {
           }
         })
         router.push(
-          `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+          `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
         )
       } else {
         // TODO handle error
         return
       }
     } else {
-      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
+      router.push(
+        `${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`,
+      )
     }
   }
 
@@ -204,7 +216,7 @@ const Defendant = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_ONE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_ONE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
@@ -221,7 +233,7 @@ const Defendant = () => {
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
-            <LokeCaseNumber
+            <PoliceCaseNumbers
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
@@ -236,26 +248,31 @@ const Defendant = () => {
               <Box marginBottom={3}>
                 <Select
                   name="type"
-                  options={constants.ICaseTypes as ReactSelectOption[]}
+                  options={
+                    constants.InvestigationCaseTypes as ReactSelectOption[]
+                  }
                   label={formatMessage(m.sections.investigationType.type.label)}
                   placeholder={formatMessage(
                     m.sections.investigationType.type.placeholder,
                   )}
-                  onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+                    const type = (selectedOption as ReactSelectOption)
+                      .value as CaseType
+
+                    setCaseType(type)
                     setAndSendToServer(
                       [
                         {
-                          type: (selectedOption as ReactSelectOption)
-                            .value as CaseType,
+                          type,
                           force: true,
                         },
                       ],
                       workingCase,
                       setWorkingCase,
                     )
-                  }
+                  }}
                   value={
-                    workingCase?.id
+                    workingCase.id
                       ? {
                           value: CaseType[workingCase.type],
                           label: capitalize(caseTypes[workingCase.type]),
@@ -329,6 +346,7 @@ const Defendant = () => {
                     >
                       <DefendantInfo
                         defendant={defendant}
+                        workingCase={workingCase}
                         onDelete={
                           workingCase.defendants &&
                           workingCase.defendants.length > 1
@@ -383,9 +401,9 @@ const Defendant = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASE_LIST_ROUTE}`}
+          previousUrl={`${constants.CASES_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isDefendantStepValidIC(workingCase)}
+          nextIsDisabled={!isDefendantStepValidIC(workingCase, caseType)}
           nextIsLoading={isCreatingCase}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

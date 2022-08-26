@@ -12,9 +12,32 @@ export enum CaseOrigin {
 }
 
 export enum CaseType {
+  // Indictment cases
+  CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
+  PROPERTY_DAMAGE = 'PROPERTY_DAMAGE',
+  NARCOTICS_OFFENSE = 'NARCOTICS_OFFENSE',
+  EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FRAUD = 'FRAUD',
+  DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
+  ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
+  MURDER = 'MURDER',
+  MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MINOR_ASSAULT = 'MINOR_ASSAULT',
+  RAPE = 'RAPE',
+  UTILITY_THEFT = 'UTILITY_THEFT',
+  AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
+  TAX_VIOLATION = 'TAX_VIOLATION',
+  ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
+  THEFT = 'THEFT',
+  OTHER_CRIMINAL_OFFENSES = 'OTHER_CRIMINAL_OFFENSES',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE = 'SEXUAL_OFFENSES_OTHER_THAN_RAPE',
+  OTHER_OFFENSES = 'OTHER_OFFENSES',
+  // Restriction Cases
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
   ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
+  // Investigation Cases
   SEARCH_WARRANT = 'SEARCH_WARRANT',
   BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
   PHONE_TAPPING = 'PHONE_TAPPING',
@@ -111,7 +134,6 @@ export interface Case {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -203,7 +225,6 @@ export interface UpdateCase
     | 'defenderEmail'
     | 'defenderPhoneNumber'
     | 'sendRequestToDefender'
-    | 'defenderIsSpokesperson'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -281,6 +302,29 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
+export const indictmentCases = [
+  CaseType.CHILD_PROTECTION_LAWS,
+  CaseType.PROPERTY_DAMAGE,
+  CaseType.NARCOTICS_OFFENSE,
+  CaseType.EMBEZZLEMENT,
+  CaseType.FRAUD,
+  CaseType.DOMESTIC_VIOLENCE,
+  CaseType.ASSAULT_LEADING_TO_DEATH,
+  CaseType.MURDER,
+  CaseType.MAJOR_ASSAULT,
+  CaseType.MINOR_ASSAULT,
+  CaseType.RAPE,
+  CaseType.UTILITY_THEFT,
+  CaseType.AGGRAVATED_ASSAULT,
+  CaseType.TAX_VIOLATION,
+  CaseType.ATTEMPTED_MURDER,
+  CaseType.TRAFFIC_VIOLATION,
+  CaseType.THEFT,
+  CaseType.OTHER_CRIMINAL_OFFENSES,
+  CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
+  CaseType.OTHER_OFFENSES,
+]
+
 export const restrictionCases = [
   CaseType.CUSTODY,
   CaseType.TRAVEL_BAN,
@@ -304,6 +348,10 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
+
+export function isIndictmentCase(type?: CaseType): boolean {
+  return Boolean(type && indictmentCases.includes(type))
+}
 
 export function isRestrictionCase(type?: CaseType): boolean {
   return Boolean(type && restrictionCases.includes(type))

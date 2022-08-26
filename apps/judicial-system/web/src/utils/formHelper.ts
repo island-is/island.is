@@ -74,38 +74,6 @@ export const validateAndSet = (
   })
 }
 
-export const validateAndSetTime = (
-  field: keyof UpdateCase,
-  currentValue: string | undefined,
-  time: string,
-  validations: Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-  setTime?: (value: React.SetStateAction<string | undefined>) => void,
-) => {
-  if (currentValue) {
-    // remove optional
-    if (setTime) {
-      setTime(time)
-    }
-
-    const paddedTime = padTimeWithZero(time)
-    const isValid = validate([[paddedTime, validations]]).isValid
-    const arrestDateMinutes = parseTime(currentValue, paddedTime)
-
-    if (errorMessage !== '' && setErrorMessage && isValid) {
-      setErrorMessage('')
-    }
-
-    setCase({
-      ...theCase,
-      [field]: arrestDateMinutes,
-    })
-  }
-}
-
 export const validateAndSendToServer = (
   field: keyof UpdateCase,
   value: string,

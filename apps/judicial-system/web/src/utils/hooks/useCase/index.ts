@@ -289,10 +289,10 @@ const useCase = () => {
         }
 
         if (setWorkingCase) {
-          setWorkingCase({
-            ...workingCase,
+          setWorkingCase((theCase) => ({
+            ...theCase,
             state: data.transitionCase.state,
-          })
+          }))
         }
 
         return true
@@ -369,6 +369,12 @@ const useCase = () => {
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {
+        return
+      }
+
+      // The case has not been created
+      if (!workingCase.id) {
+        setWorkingCase({ ...workingCase, ...updatesToCase })
         return
       }
 

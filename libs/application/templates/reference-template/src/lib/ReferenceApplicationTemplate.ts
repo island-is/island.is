@@ -1,5 +1,6 @@
 import {
   DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
@@ -90,6 +91,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
   featureFlag: Features.exampleApplication,
+  allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -160,7 +162,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign',
           progress: 0.75,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.createApplication,
           },
@@ -193,7 +195,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.completeApplication,
           },

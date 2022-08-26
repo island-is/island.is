@@ -19,8 +19,6 @@ services:
     networks:
       - local
     privileged: true
-    sysctls:
-      net.core.somaxconn: '511'
     environment:
       - IP=0.0.0.0
     ports:
