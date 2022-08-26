@@ -142,7 +142,7 @@ const makeEmailAccount = async () => {
           }
         }
       } catch (e) {
-        console.error(e)
+        cypressError(e)
         return null
       }
     },
