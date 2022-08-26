@@ -1,11 +1,11 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const courtRecordAccordion = {
-  title: {
+  title: defineMessage({
     id: 'judicial.system.core:court_record_accordion.title',
     defaultMessage: 'Þingbók',
     description: 'Notaður sem titill fyrir Þingbókarfellilistann',
-  },
+  }),
   sections: {
     timeAndLocation: defineMessages({
       title: {
@@ -61,13 +61,13 @@ export const courtRecordAccordion = {
           '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
       },
     }),
-    firstCourtDocument: {
+    firstCourtDocument: defineMessage({
       id: 'judicial.system.core:court_record_accordion.firstCourtDocument',
       defaultMessage:
         'Krafa um {caseType} þingmerkt nr. 1. Rannsóknargögn málsins liggja frammi.',
       dscription:
         'Notaður sem texti fyrir fyrsta skjal þar sem þingskjöl eru upptalinn',
-    },
+    }),
     conclusion: defineMessages({
       disclaimer: {
         id: 'judicial.system.core:court_record_accordion.conclusion.disclaimer',
