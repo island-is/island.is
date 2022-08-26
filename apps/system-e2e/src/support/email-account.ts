@@ -7,7 +7,7 @@ import { connect } from 'imap-simple'
 // const simpleParser = require('mailparser').simpleParser
 import { simpleParser } from 'mailparser'
 import axios from 'axios'
-
+import { cypressError } from './utils'
 import {
   GetIdentityVerificationAttributesCommand,
   SESClient,
