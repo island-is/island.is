@@ -134,7 +134,6 @@ export interface Case {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -226,7 +225,6 @@ export interface UpdateCase
     | 'defenderEmail'
     | 'defenderPhoneNumber'
     | 'sendRequestToDefender'
-    | 'defenderIsSpokesperson'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
