@@ -76,8 +76,7 @@ export class GenericFirearmLicenseApi
   async getLicenseDetail(
     user: User,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    const license = this.getLicense(user)
-    return license
+    return this.getLicense(user)
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {
