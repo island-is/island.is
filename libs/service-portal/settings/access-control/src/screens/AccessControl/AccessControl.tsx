@@ -34,7 +34,10 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   if (!loading && data?.authDelegations.length === 0) {
     return (
       <NoDataScreen
-        title="Umboð"
+        title={formatMessage({
+          id: 'sp.settings-access-control:empty-title',
+          defaultMessage: 'Umboð',
+        })}
         button={{
           type: 'internal',
           link: ServicePortalPath.SettingsAccessControlGrant,

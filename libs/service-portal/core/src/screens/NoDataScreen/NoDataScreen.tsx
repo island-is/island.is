@@ -82,64 +82,58 @@ export const NoDataScreen: FC<Props> = ({
     )
   }
   return (
-    <>
-      <GridRow>
-        <GridColumn span={['1/1', '6/12']} offset={['0', '3/12']}>
+    <GridRow>
+      <GridColumn span={['1/1', '6/12']} offset={['0', '3/12']}>
+        <Box
+          marginTop={[3, 6]}
+          marginBottom={6}
+          textAlign="center"
+          justifyContent="center"
+        >
+          {tag && (
+            <Box marginBottom={4}>
+              <Tag variant={tagVariant}>{tag}</Tag>
+            </Box>
+          )}
+          <Text variant="h1" as="h1" marginBottom={3}>
+            {title}
+          </Text>
+          <Text variant="default" as="div">
+            {children}
+          </Text>
           <Box
-            marginTop={[3, 6]}
-            marginBottom={6}
-            textAlign="center"
+            display="flex"
+            flexDirection={['column', 'row']}
             justifyContent="center"
+            alignItems="center"
+            marginTop={4}
           >
-            {tag && (
-              <Box marginBottom={4}>
-                <Tag variant={tagVariant}>{tag}</Tag>
+            {button && (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                {renderButton(button)}
               </Box>
             )}
-            <Text variant="h1" as="h1" marginBottom={3}>
-              {title}
-            </Text>
-            <Text variant="default" as="div">
-              {children}
-            </Text>
-            <Box
-              display="flex"
-              flexDirection={['column', 'row']}
-              justifyContent="center"
-              alignItems="center"
-              marginTop={4}
-            >
-              {button && (
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  {renderButton(button)}
-                </Box>
-              )}
-              {secondaryButton && (
-                <Box
-                  marginLeft={[0, 2]}
-                  marginTop={[3, 0]}
-                  display="flex"
-                  textAlign="center"
-                  justifyContent="center"
-                >
-                  {renderButton(secondaryButton)}
-                </Box>
-              )}
-            </Box>
+            {secondaryButton && (
+              <Box
+                marginLeft={[0, 2]}
+                marginTop={[3, 0]}
+                display="flex"
+                textAlign="center"
+                justifyContent="center"
+              >
+                {renderButton(secondaryButton)}
+              </Box>
+            )}
           </Box>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['1/1', '6/12']} offset={['0', '3/12']}>
-          <Box display="flex" justifyContent="center" marginTop={[3, 5]}>
-            <img
-              src={figure ? figure : './assets/images/jobsGrid.svg'}
-              alt=""
-              className={styles.img}
-            />
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </>
+        </Box>
+        <Box display="flex" justifyContent="center" marginTop={[3, 5]}>
+          <img
+            src={figure ? figure : './assets/images/jobsGrid.svg'}
+            alt=""
+            className={styles.img}
+          />
+        </Box>
+      </GridColumn>
+    </GridRow>
   )
 }
