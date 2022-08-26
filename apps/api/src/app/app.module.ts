@@ -65,6 +65,7 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -120,7 +121,7 @@ const autoSchemaFile = environment.production
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     DirectorateOfLabourModule.register(),
-    FileUploadModule.register({ fileStorage: environment.fileStorage }),
+    FileUploadModule,
     DocumentModule.register({
       documentClientConfig: {
         basePath: environment.documentService.basePath!,
@@ -269,6 +270,7 @@ const autoSchemaFile = environment.production
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
         PassportsClientConfig,
+        FileStorageConfig,
       ],
     }),
   ],

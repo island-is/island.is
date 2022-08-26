@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -228,7 +228,7 @@ export const StepFive: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -266,7 +266,7 @@ export const StepFive: React.FC = () => {
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
-              policeCaseNumber: workingCase.policeCaseNumber,
+              policeCaseNumber: workingCase.policeCaseNumbers.join(', '),
             })}
           </Text>
           <Text marginTop={1}>

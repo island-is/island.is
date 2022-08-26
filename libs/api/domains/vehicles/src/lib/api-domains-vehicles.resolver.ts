@@ -1,9 +1,9 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { VehiclesService } from './api-domains-vehicles.service'
-import { VehiclesList } from '../models/usersVehicles.model'
+import { VehiclesHistory, VehiclesList } from '../models/usersVehicles.model'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
@@ -15,21 +15,36 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
 @Resolver()
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
+  ) {}
 
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
-    return await this.vehiclesService.getVehiclesForUser(user, false, false)
+    const data = await this.vehiclesService.getVehiclesForUser(
+      user,
+      false,
+      false,
+    )
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+
+    return { ...data, downloadServiceURL }
   }
 
-  @Query(() => VehiclesList, { name: 'vehiclesHistoryList', nullable: true })
+  @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
   @Audit()
   async getVehicleHistory(@CurrentUser() user: User) {
     return await this.vehiclesService.getVehiclesForUser(user, true, true)
@@ -41,12 +56,14 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getVehicleDetail(user, {
+    const data = await this.vehiclesService.getVehicleDetail(user, {
       clientPersidno: user.nationalId,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
+    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/history/${input.permno}`
+    return { ...data, downloadServiceURL }
   }
 
   @Query(() => Number, {

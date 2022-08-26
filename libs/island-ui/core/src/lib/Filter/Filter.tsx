@@ -92,7 +92,7 @@ export const Filter: FC<FilterProps> = ({
             width="full"
             justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
           >
-            <Inline space={2} reverse={reverse}>
+            <Inline space={2} reverse={reverse} alignY="bottom">
               <Box
                 component={PopoverDisclosure}
                 background="white"

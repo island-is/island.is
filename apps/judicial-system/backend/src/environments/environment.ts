@@ -4,21 +4,6 @@ const devConfig = {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
-  notifications: {
-    prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
-    courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
-    ) as {
-      [key: string]: string
-    },
-  },
-  email: {
-    fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Réttarvörslugátt',
-    replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Réttarvörslugátt',
-  },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
@@ -54,14 +39,6 @@ const devConfig = {
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
-  },
-  deepLinks: {
-    completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
-    prosecutorRestrictionCaseOverviewUrl:
-      'http://localhost:4200/krafa/stadfesta/',
-    prosecutorInvestigationCaseOverviewUrl:
-      'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
-    defenderCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -162,21 +139,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
-  notifications: {
-    courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
-    ) as {
-      [key: string]: string
-    },
-    prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
-  },
-  email: {
-    fromEmail: process.env.EMAIL_FROM ?? '',
-    fromName: process.env.EMAIL_FROM_NAME ?? '',
-    replyToEmail: process.env.EMAIL_REPLY_TO ?? '',
-    replyToName: process.env.EMAIL_REPLY_TO_NAME ?? '',
-  },
   smsOptions: {
     url: process.env.NOVA_URL ?? '',
     username: process.env.NOVA_USERNAME ?? '',
@@ -211,14 +173,6 @@ const prodConfig = {
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
-  },
-  deepLinks: {
-    completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,
-    prosecutorRestrictionCaseOverviewUrl:
-      process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
-    prosecutorInvestigationCaseOverviewUrl:
-      process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
-    defenderCaseOverviewUrl: process.env.DEFENDER_CASE_OVERVIEW_URL,
   },
 }
 

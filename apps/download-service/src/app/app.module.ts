@@ -17,12 +17,18 @@ import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
+import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import {
+  VehiclesClientConfig,
+  VehiclesClientModule,
+} from '@island.is/clients/vehicles'
 
 @Module({
   controllers: [
     DocumentController,
     DocumentsInfraController,
     FinanceDocumentController,
+    VehicleController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -34,9 +40,15 @@ import { environment } from '../environments'
       tokenUrl: environment.documentService.tokenUrl,
     }),
     FinanceClientModule,
+    VehiclesClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FinanceClientConfig, IdsClientConfig, XRoadConfig],
+      load: [
+        FinanceClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+        VehiclesClientConfig,
+      ],
     }),
   ],
   providers: [],

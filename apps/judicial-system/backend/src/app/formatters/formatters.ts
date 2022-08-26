@@ -141,19 +141,19 @@ export function formatCourtResubmittedToCourtSmsNotification(
 
 export function formatDefenderResubmittedToCourtEmailNotification(
   formatMessage: FormatMessage,
-  policeCaseNumber: string,
+  policeCaseNumbers: string[],
   overviewUrl: string,
   courtName?: string,
 ) {
   const subject = formatMessage(
     notifications.defenderResubmittedToCourt.subject,
     {
-      policeCaseNumber,
+      policeCaseNumber: policeCaseNumbers.join(', '),
     },
   )
 
   const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
-    policeCaseNumber,
+    policeCaseNumber: policeCaseNumbers.join(', '),
     court: courtName?.replace('dómur', 'dómi') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
@@ -164,19 +164,19 @@ export function formatDefenderResubmittedToCourtEmailNotification(
 
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
+  policeCaseNumbers: string[],
   caseType?: CaseType,
   courtName?: string,
-  policeCaseNumber?: string,
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.readyForCourt.subject, {
-    policeCaseNumber,
+    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
   })
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
     caseType,
     courtName: courtName?.replace('dómur', 'dóm'),
-    policeCaseNumber,
+    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

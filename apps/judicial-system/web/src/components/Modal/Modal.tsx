@@ -18,6 +18,7 @@ interface ModalProps {
   isPrimaryButtonDisabled?: boolean
   errorMessage?: string
   children?: ReactNode
+  invertButtonColors?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -32,6 +33,7 @@ const Modal: React.FC<ModalProps> = ({
   isPrimaryButtonDisabled,
   errorMessage,
   children,
+  invertButtonColors,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -85,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({
             <Box marginRight={3}>
               <Button
                 data-testid="modalSecondaryButton"
-                variant="ghost"
+                variant={invertButtonColors ? undefined : 'ghost'}
                 onClick={handleSecondaryButtonClick}
               >
                 {secondaryButtonText}
@@ -95,6 +97,7 @@ const Modal: React.FC<ModalProps> = ({
           {primaryButtonText && (
             <Button
               data-testid="modalPrimaryButton"
+              variant={invertButtonColors ? 'ghost' : undefined}
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}
               disabled={isPrimaryButtonDisabled}
@@ -127,6 +130,7 @@ const ModalPortal = ({
   isPrimaryButtonDisabled,
   errorMessage,
   children,
+  invertButtonColors,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -144,6 +148,7 @@ const ModalPortal = ({
       isPrimaryButtonDisabled={isPrimaryButtonDisabled}
       errorMessage={errorMessage}
       children={children}
+      invertButtonColors={invertButtonColors}
     />,
     modalRoot,
   )

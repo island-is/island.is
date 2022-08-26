@@ -154,6 +154,9 @@
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
+      "@island.is/application/api/files": [
+        "libs/application/api/files/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
@@ -311,6 +314,9 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/financial-statements-inao": [
+        "libs/clients/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],

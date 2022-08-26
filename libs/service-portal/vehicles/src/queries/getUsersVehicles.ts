@@ -35,6 +35,7 @@ export const GET_USERS_VEHICLES = gql`
           nextInspectionDateIfPassedInspectionToday
         }
       }
+      downloadServiceURL
       createdTimestamp
     }
   }

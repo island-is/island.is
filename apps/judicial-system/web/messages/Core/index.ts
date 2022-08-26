@@ -95,6 +95,11 @@ export const core = defineMessages({
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  indictmentDefendant: {
+    id: 'judicial.system.core:indictment_defendant',
+    defaultMessage: 'ákærði',
+    description: 'Notað fyrir orðið ákærði í öllum flæðum.',
+  },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',
     defaultMessage: 'Krafa um {caseType}',
@@ -191,24 +196,6 @@ export const core = defineMessages({
     id: 'judicial.system.core:continue',
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
-  },
-  headerTipDisclaimer: {
-    id: 'judicial.system.core:header_tip_disclaimer',
-    defaultMessage:
-      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
-    description:
-      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
-  },
-  headerTipDisclaimerDefenders: {
-    id: 'judicial.system.core:header_tip_disclaimer_defenders',
-    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
-    description:
-      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
-  },
-  defender: {
-    id: 'judicial.system.core:defender',
-    defaultMessage: 'lögmaður',
-    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
   },
   linkCopied: {
     id: 'judicial.system.core:link_copied',
