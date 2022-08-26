@@ -188,58 +188,31 @@ export const applyEditEntryPolicies = (
   contentType: ContentTypeProps,
 ) => {
   policies.push({
-    actions: ['create'],
+    actions: 'all',
     effect: 'allow',
     constraint: {
       and: [
         { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
         {
-          equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id],
+          in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
         },
       ],
     },
   })
-
-  // TODO: debug why this isn't working
-
-  const actions: ActionType[] = [
-    'read',
-    'archive',
-    'delete',
-    'publish',
-    'unarchive',
-    'unpublish',
-    'update',
-  ]
-
-  for (const action of actions) {
-    policies.push({
-      actions: [action],
-      effect: 'allow',
-      constraint: {
-        and: [
-          { equals: [{ doc: 'sys.type' }, 'Entry'] },
-          { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-          {
-            in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
-          },
-        ],
-      },
-    })
-    policies.push({
-      actions: [action],
-      effect: 'allow',
-      constraint: {
-        and: [
-          { equals: [{ doc: 'sys.type' }, 'Entry'] },
-          { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-          {
-            equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
-          },
-        ],
-      },
-    })
-  }
+  policies.push({
+    actions: 'all',
+    effect: 'allow',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
+        {
+          equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
+        },
+      ],
+    },
+  })
 }
 
 export const applyReadOnlyEntryPolicies = (

@@ -208,6 +208,24 @@ const Home = ({
                         const newState = JSON.parse(JSON.stringify(prevState))
                         for (const roleName in prevState) {
                           for (const contentTypeName in prevState[roleName]) {
+                            newState[roleName][contentTypeName] = true
+                          }
+                        }
+                        return newState
+                      })
+                    }}
+                  >
+                    Set all
+                  </Button>
+
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setReadonlyCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
                             newState[roleName][contentTypeName] = false
                           }
                         }
@@ -308,6 +326,23 @@ const Home = ({
                     }}
                   >
                     Set to default
+                  </Button>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => {
+                      setCheckboxState((prevState) => {
+                        const newState = JSON.parse(JSON.stringify(prevState))
+                        for (const roleName in prevState) {
+                          for (const contentTypeName in prevState[roleName]) {
+                            newState[roleName][contentTypeName] = true
+                          }
+                        }
+                        return newState
+                      })
+                    }}
+                  >
+                    Set all
                   </Button>
                   <Button
                     variant="text"

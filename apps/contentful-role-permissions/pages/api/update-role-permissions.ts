@@ -59,10 +59,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const checked = data.checkboxState[roleName][contentTypeName]
       if (!checked) continue
 
-      applyEditEntryPolicies(policies, role.name, contentType)
-
       const readOnlyChecked =
         data.readonlyCheckboxState?.[roleName]?.[contentTypeName]
+
+      applyEditEntryPolicies(policies, role.name, contentType)
+
       if (readOnlyChecked) {
         applyReadOnlyEntryPolicies(policies, contentType)
       }
