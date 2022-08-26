@@ -14,22 +14,24 @@ YELLOW=$(echo -en '\033[00;33m')
 LBLUE=$(echo -en '\033[01;34m')
 
 
+export \
+  APP="system-e2e" \
+  TEST_ENVIRONMENT="local"
+
 PROJECT_DIR=$(git rev-parse --show-toplevel)
-APP="system-e2e"
 APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)
 APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)
-
 CYPRESS_BIN="$PROJECT_DIR/node_modules/.bin/cypress"
 ENV_FILE="$PROJECT_DIR/.env.secret"
+
+# shellcheck disable=SC1091,SC1090
+source "$ENV_FILE"
 
 DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
 DOCKER_TAG="$(git rev-parse --short HEAD)"
 DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
 DOCKER_TARGET="output-local"
 DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
-
-# shellcheck disable=SC1091,SC1090
-source "$ENV_FILE"
 
 function info() {
   local msg
@@ -141,8 +143,8 @@ usage() {
   echo "Usage: $(basename "$0") <build|menu|run>" 2>&1
   echo
   echo "menu          opens up Cypress interactive spec dashboard " 2>&1
-  echo "build         builds the CI docker image" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c source|dist|container [-b browser, default: chrome] [-d, default: headless]" 2>&1
+  echo "build         [-a app-name: default system-e2e]" 2>&1
+  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-d, default: headless]" 2>&1
   echo
   echo "examples " 2>&1
   echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -d" 2>&1
@@ -161,6 +163,19 @@ if [ ! 0 == $# ]; then
   case "$1" in
     build)
       shift
+      while getopts ":a:" opt; do
+        case "${opt}" in
+          a)
+            export APP=${OPTARG}
+            ;;
+          :)
+            error "-${OPTARG} requires an argument."
+            ;;
+          \?)
+            usage
+            ;;
+        esac
+      done
       build_image && exit 0
       ;;
     menu)
@@ -169,7 +184,7 @@ if [ ! 0 == $# ]; then
       ;;
     run)
       shift
-      while getopts ":i:c:t:b:d" opt; do
+      while getopts ":i:c:t:b:e:d" opt; do
         case "${opt}" in
           i)
             INTEGRATION=${OPTARG}
@@ -186,6 +201,10 @@ if [ ! 0 == $# ]; then
             ;;
           d)
             HEAD="--headed"
+            ;;
+          e)
+            [ "${OPTARG}" != "local" ] && [ "${OPTARG}" != "dev" ] && [ "${OPTARG}" != "staging" ] && [ "${OPTARG}" != "prod" ] && usage
+            export TEST_ENVIRONMENT=${OPTARG}
             ;;
           :)
             error "-${OPTARG} requires an argument."
