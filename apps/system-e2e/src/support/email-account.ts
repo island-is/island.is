@@ -36,7 +36,7 @@ async function registerEmailAddressWithSES(emailAccount: {
     console.log(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
     const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
     if (!verifyUrl || verifyUrl.length !== 1) {
-      throw new Error(
+      cypressError(
         `Email validation should have provided 1 URL but that did not happen. Here are the matches in the email message: ${JSON.stringify(
           verifyUrl,
         )}`,
