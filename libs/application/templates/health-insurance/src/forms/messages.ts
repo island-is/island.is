@@ -129,9 +129,9 @@ export const m = defineMessages({
     description: 'Nationality',
   },
   editNationalRegistryData: {
-    id: 'hi.application:nationalRegistryData.edit',
+    id: 'hi.application:nationalRegistryData.edit#markdown',
     defaultMessage:
-      'Tilkynna <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">flutning lögheimilis</a>',
+      'Tilkynna [flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/).',
     description:
       'Need to update your address? Go to <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">Change of Address</a>',
   },
@@ -148,7 +148,7 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar/minar-stillingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
+      'Vinsamlegast uppfærið netfang og símanúmer á [Mínum síðum](https://island.is/minarsidur/stillingar/minar-stillingar/) ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
     description:
       'Update your e-mail and phone number on <a href="https://island.is/minarsidur/stillingar/minar-stillingar" target="_blank" style="color:#0061ff">My Pages</a> if incorrect. Refresh this page once updated.',
   },
@@ -441,7 +441,7 @@ export const m = defineMessages({
   waitingPeriodDescription: {
     id: 'hi.application:waitingPeriod.description',
     defaultMessage:
-      'Þegar flutt er til Íslands frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.<br/><br/> Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar <a href="https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur" target="_blank" style="color:#0061ff">læknisfræðilegar undanþágur</a> eru frá sex mánaða biðtímanum.',
+      'Þegar flutt er til Íslands frá landi utan  <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.<br/><br/> Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar <a href="https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur" target="_blank" style="color:#0061ff">læknisfræðilegar undanþágur</a> eru frá sex mánaða biðtímanum.',
     description:
       'When moving to Iceland or being a citizen from a country outside the <a href="https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/" target="_blank" style="color:#0061ff">EU/EEA</a>, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait.<br/><br/> You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some <a href="https://island.is/en/apply-for-health-insurance#waiting-period" target="_blank" style="color:#0061ff">medical exceptions</a> to the waiting period.',
   },
