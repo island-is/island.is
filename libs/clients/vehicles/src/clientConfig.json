@@ -2227,6 +2227,23 @@
           "ownerName": {
             "type": "string",
             "nullable": true
+          },
+          "lastInspectionResult": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastInspectionDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastInspectionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextInspectionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -37,12 +37,19 @@ export const exportVehicleOwnedDocument = async (
         : '',
       nationalId,
       name,
-      item.ownerPersidno === nationalId ? 'Já' : 'Nei',
+      item.ownerSsid === nationalId ? 'Já' : 'Nei',
       item.otherOwners ? 'Já' : 'Nei',
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 
@@ -59,12 +66,19 @@ export const exportVehicleOwnedDocument = async (
         : '',
       nationalId,
       name,
-      item.ownerPersidno === nationalId ? 'Já' : 'Nei',
+      item.ownerSsid === nationalId ? 'Já' : 'Nei',
       item.otherOwners ? 'Já' : 'Nei',
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 
@@ -86,7 +100,14 @@ export const exportVehicleOwnedDocument = async (
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 

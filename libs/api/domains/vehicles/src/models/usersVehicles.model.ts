@@ -96,6 +96,18 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   ownerName?: string
+
+  @Field({ nullable: true })
+  lastInspectionResult?: string
+
+  @Field({ nullable: true })
+  lastInspectionDate?: string
+
+  @Field({ nullable: true })
+  lastInspectionType?: string
+
+  @Field({ nullable: true })
+  nextInspectionDate?: string
 }
 
 @ObjectType()
