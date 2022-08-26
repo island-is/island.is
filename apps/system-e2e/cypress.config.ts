@@ -23,7 +23,7 @@ export default defineConfig({
     specPattern: '**/*.spec.{js,ts}',
     experimentalSessionAndOrigin: true,
     supportFile: '**/support/index.{js,ts}',
-    async setupNodeEvents(on, config) {
+    setupNodeEvents(on, config) {
       on('task', { ...emailTask })
       const testEnvironment: TestEnvironment =
         process.env.TEST_ENVIRONMENT || 'local'
