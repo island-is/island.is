@@ -13,7 +13,7 @@ function proceed() {
 }
 
 describe('Parental leave', () => {
-  const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
+  const fakeUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
   let employerEmail = 'not ready'
   let applicantEmail = 'not ready'
   const employer = 'employer' // user reference for the employer email account
