@@ -1,5 +1,5 @@
 import type { CyHttpMessages } from 'cypress/types/net-stubbing'
-import { BaseUrl, AuthUrl } from '../lib/types'
+import { BaseAuthority, AuthUrl } from '../lib/types'
 import type { TestEnvironment } from '../lib/types'
 
 const cypressError = (msg: string) => {
@@ -57,14 +57,30 @@ const getDiscountData = (
   return { discounts, user: getDiscountUser(fakeUser, discounts) }
 }
 
+const getEnvironmentBaseUrl = (authority: string) =>
+  `https://${
+    (process.env.BASE_URL_PREFIX?.length ?? 0) > 0
+      ? process.env.BASE_URL_PREFIX + '-'
+      : ''
+  }${authority}`
+
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
-    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    ? {
+        authUrl: AuthUrl.dev,
+        baseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
+      }
     : env === 'prod'
-    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    ? {
+        authUrl: AuthUrl.prod,
+        baseUrl: getEnvironmentBaseUrl(BaseAuthority.prod),
+      }
     : env === 'staging'
-    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
-    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
+    ? {
+        authUrl: AuthUrl.staging,
+        baseUrl: getEnvironmentBaseUrl(BaseAuthority.staging),
+      }
+    : { authUrl: AuthUrl.local, baseUrl: `http://${BaseAuthority.local}` }
 }
 
 export {
@@ -75,4 +91,5 @@ export {
   getFakeUser,
   getDiscountData,
   getEnvironmentUrls,
+  getEnvironmentBaseUrl,
 }
