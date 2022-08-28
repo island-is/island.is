@@ -31,7 +31,7 @@ Date and time should be represented as a string using the format `yyyy-MM-ddThh:
 - **yyyy** represents year, (four-digits).
 - **MM** represents month, (two-digits _01 - 12_).
 - **dd** represents day of month, (two-digits _01 - 31_).
-- **hh** represents hour, (two digits _00 - 24_).
+- **hh** represents hour, (two digits _00 - 23_).
 - **mm** represents minute, (two digits _00 - 59_).
 - **ss** represents second, (two digits _00 - 59_).
 - **sss** represents a decimal fraction of a second, (one or more digits).
