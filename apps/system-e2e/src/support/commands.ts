@@ -106,8 +106,16 @@ Cypress.Commands.add('pathUuid', () => {
 })
 
 Cypress.Commands.add('bypassApplicationFluff', () => {
-  cy.intercept('/api/graphql?op=ActorDelegations', { authActorDelegations: [] })
+  cy.intercept('/api/graphql?op=ActorDelegations', {
+    body: {
+      data: { authActorDelegations: [] },
+    },
+  })
   cy.intercept('/api/graphql?op=ApplicationApplications', {
-    applicationApplications: [],
+    body: {
+      data: {
+        applicationApplications: [],
+      },
+    },
   })
 })
