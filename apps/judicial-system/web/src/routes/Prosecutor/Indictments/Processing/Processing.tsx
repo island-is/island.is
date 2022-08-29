@@ -106,10 +106,7 @@ const Processing: React.FC = () => {
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
         <Box component="section" marginBottom={5}>
-          <SelectProsecutor
-            workingCase={workingCase}
-            onChange={handleProsecutorChange}
-          />
+          <SelectProsecutor onChange={handleProsecutorChange} />
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt

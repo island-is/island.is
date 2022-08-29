@@ -189,10 +189,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <BlueBox>
                 <Box marginBottom={2}>
-                  <SelectProsecutor
-                    workingCase={workingCase}
-                    onChange={handleProsecutorChange}
-                  />
+                  <SelectProsecutor onChange={handleProsecutorChange} />
                 </Box>
                 <Checkbox
                   name="isHeightenedSecurityLevel"

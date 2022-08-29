@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
-import { Case, User, UserRole } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { strings } from './SelectProsecutor.strings'
 import { SelectProsecutorUsersQuery } from './selectProsecutorUsersGql'
@@ -13,14 +14,15 @@ import { SelectProsecutorUsersQuery } from './selectProsecutorUsersGql'
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
 interface Props {
-  workingCase: Case
   onChange: (prosecutor: User) => boolean
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
-  const { workingCase, onChange } = props
+  const { onChange } = props
 
   const { formatMessage } = useIntl()
+
+  const { workingCase } = useContext(FormContext)
 
   const [selectedProsecutor, setSelectedProsecutor] = useState<
     ValueType<ProsecutorSelectOption>
