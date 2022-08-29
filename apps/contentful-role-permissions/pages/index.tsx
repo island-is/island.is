@@ -30,7 +30,9 @@ import {
 
 import * as styles from './index.css'
 
-const emptyFunction = () => {}
+const emptyFunction = () => {
+  return undefined
+}
 
 const Home = ({
   roles,

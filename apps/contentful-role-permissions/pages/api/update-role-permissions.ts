@@ -11,7 +11,7 @@ import {
   getContentfulManagementApiClient,
 } from '../../utils'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const data = JSON.parse(req.body) as {
     checkboxState: ReturnType<
       typeof extractInitialCheckboxStateFromRolesAndContentTypes
@@ -87,3 +87,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   return res.status(200).json(data)
 }
+
+export default handler
