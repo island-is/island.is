@@ -2,18 +2,18 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    queryInterface.renameColumn(
-      'client',
-      'supports_delegation',
-      'supports_custom_delegation',
-    )
+    await queryInterface.addColumn('client', 'supports_custom_delegation', {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    })
+
+    await queryInterface.sequelize.query(`
+      UPDATE client SET supports_custom_delegation = supports_delegation
+    `)
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.renameColumn(
-      'client',
-      'supports_custom_delegation',
-      'supports_delegation',
-    )
+    queryInterface.removeColumn('client', 'supports_custom_delegation')
   },
 }
