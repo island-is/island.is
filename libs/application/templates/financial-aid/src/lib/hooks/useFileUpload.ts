@@ -284,11 +284,11 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   }
 
   const onUploadRejection = (files: FileRejection[]) => {
-      files.forEach((file: FileRejection) => {
-        if (file.file.size > FILE_SIZE_LIMIT) {
-          return setUploadErrorMessage(formatMessage(filesText.sizeErrorMessage))
-        }
-      })
+    files.forEach((file: FileRejection) => {
+      if (file.file.size > FILE_SIZE_LIMIT) {
+        return setUploadErrorMessage(formatMessage(filesText.sizeErrorMessage))
+      }
+    })
   }
 
   const openFileById = (fileId: String) => {

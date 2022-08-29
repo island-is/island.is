@@ -95,7 +95,8 @@ export const filesText = defineMessages({
   sizeErrorMessage: {
     id: 'fa.application:section.filesText.sizeErrorMessage',
     defaultMessage: 'Hámark 10 MB á skrá',
-    description: 'Error message when user uploads files exceeding the allowed size',
+    description:
+      'Error message when user uploads files exceeding the allowed size',
   },
 })
 
