@@ -4,6 +4,7 @@ import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../emailVerification.model'
 import { SmsVerification } from '../smsVerification.model'
+import { IslykillService } from '../islykill.service'
 import { SmsService } from '@island.is/nova-sms'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
@@ -15,12 +16,21 @@ jest.useFakeTimers('modern')
 let app: INestApplication
 let emailService: EmailService
 let smsService: SmsService
+let islykillService: IslykillService
 
 const mockProfile = {
   nationalId: '1234567890',
   locale: 'en',
   email: 'email@example.com',
   mobilePhoneNumber: '9876543',
+}
+
+const mockIslykillProfile = {
+  nationalId: mockProfile.nationalId,
+  email: mockProfile.email,
+  mobile: mockProfile.mobilePhoneNumber,
+  bankInfo: '9876543',
+  canNudge: true,
 }
 const { email, mobilePhoneNumber, ...mockProfileNoEmailNoPhone } = mockProfile
 
@@ -53,11 +63,16 @@ beforeAll(async () => {
   jest.spyOn(smsService, 'sendSms').mockImplementation()
 })
 
+beforeEach(() => {
+  islykillService = app.get<IslykillService>(IslykillService)
+  jest
+    .spyOn(islykillService, 'getIslykillSettings')
+    .mockImplementation(() => Promise.resolve(mockIslykillProfile))
+})
+
 describe('User profile API', () => {
   describe('POST /userProfile', () => {
     it('POST /userProfile should register userProfile with no phonenumber or email', async () => {
-      // Arrange
-
       // Act
       const response = await request(app.getHttpServer())
         .post('/userProfile')
@@ -67,6 +82,16 @@ describe('User profile API', () => {
     })
 
     it('POST /userProfile should register userProfile and create verification', async () => {
+      // Arrange
+      jest
+        .spyOn(islykillService, 'updateIslykillSettings')
+        .mockImplementation(() =>
+          Promise.resolve({
+            nationalId: mockProfile.nationalId,
+            valid: true,
+          }),
+        )
+
       // Act
       await request(app.getHttpServer())
         .post('/emailVerification/')
@@ -157,6 +182,16 @@ describe('User profile API', () => {
 
   describe('GET /userProfile', () => {
     it('GET /userProfile should return 404 not found error msg', async () => {
+      //Arrange
+      jest
+        .spyOn(islykillService, 'getIslykillSettings')
+        .mockImplementation(() =>
+          Promise.resolve({
+            nationalId: mockProfile.nationalId,
+            noUserFound: true,
+          }),
+        )
+
       // Act
       const getResponse = await request(app.getHttpServer())
         .get(`/userProfile/${mockProfile.nationalId}`)
@@ -293,6 +328,15 @@ describe('User profile API', () => {
 
     it('POST /emailVerification/:nationalId returns 400 bad request on missing email', async () => {
       // Arrange
+      jest
+        .spyOn(islykillService, 'getIslykillSettings')
+        .mockImplementation(() =>
+          Promise.resolve({
+            nationalId: mockProfile.nationalId,
+            noUserFound: true,
+          }),
+        )
+
       await request(app.getHttpServer())
         .post('/userProfile')
         .send({

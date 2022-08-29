@@ -88,7 +88,7 @@ export class UserProfileController {
     )
 
     const islyklarData = await this.islyklarService.getIslykillSettings(
-      user.nationalId,
+      nationalId,
     )
 
     if (!userProfile && islyklarData.noUserFound) {
@@ -249,6 +249,17 @@ export class UserProfileController {
       resources: userProfileCreateObject.nationalId,
       meta: { fields: Object.keys(userProfileCreateObject) },
     })
+
+    userProfile.setDataValue(
+      'mobilePhoneNumber',
+      userProfileDto.mobilePhoneNumberVerified
+        ? userProfileDto.mobilePhoneNumber
+        : undefined,
+    )
+    userProfile.setDataValue(
+      'email',
+      userProfileDto.emailVerified ? userProfileDto.email : undefined,
+    )
     return userProfile
   }
 
