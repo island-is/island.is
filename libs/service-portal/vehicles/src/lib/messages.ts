@@ -497,4 +497,8 @@ export const messages = defineMessages({
     id: 'sp.vehicles:my-cars-files-excel',
     defaultMessage: 'Sækja Excel',
   },
+  vehicleHistoryReport: {
+    id: 'sp.vehicles:vehicle-history-report',
+    defaultMessage: 'Ferilskýrsla',
+  },
 })
