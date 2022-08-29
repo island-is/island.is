@@ -4,6 +4,8 @@ import {
   APPLICATION_TYPES,
   OPERATION_CATEGORY,
   CATEGORIES,
+  Operation,
+  Property,
 } from './types/application'
 import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
@@ -34,32 +36,36 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     leyfiTilUtiveitinga: answers.openingHours?.willServe?.includes(YES)
       ? 'Já'
       : 'Nei',
-    afgrAfgengisVirkirdagarFra: formatOpeningHours(
-      answers.openingHours.alcohol?.weekdays?.from,
-    ),
-    afgrAfgengisVirkirdagarTo: formatOpeningHours(
-      answers.openingHours.alcohol?.weekdays?.to,
-    ),
-    afgrAfgengisAdfaranottFridagaFra: formatOpeningHours(
-      answers.openingHours.alcohol?.weekends?.from,
-    ),
-    afgrAfgengisAdfaranottFridagaTil: formatOpeningHours(
-      answers.openingHours.alcohol?.weekends?.to,
-    ),
-    afgrAfgengisVirkirdagarUtiveitingarFra: formatOpeningHours(
-      answers.openingHours.outside?.weekdays?.from,
-    ),
-    afgrAfgengisVirkirdagarUtiveitingarTil: formatOpeningHours(
-      answers.openingHours.outside?.weekdays?.to,
-    ),
-    afgrAfgengisAdfaranottFridagaUtiveitingarFra: formatOpeningHours(
-      answers.openingHours.outside?.weekends?.from,
-    ),
-    afgrAfgengisAdfaranottFridagaUtiveitingarTil: formatOpeningHours(
-      answers.openingHours.outside?.weekends?.to,
-    ),
+    ...(displayOpeningHours(answers)
+      ? {
+          afgrAfgengisVirkirdagarFra: formatOpeningHours(
+            answers.openingHours?.alcohol?.weekdays?.from,
+          ),
+          afgrAfgengisVirkirdagarTo: formatOpeningHours(
+            answers.openingHours?.alcohol?.weekdays?.to,
+          ),
+          afgrAfgengisAdfaranottFridagaFra: formatOpeningHours(
+            answers.openingHours?.alcohol?.weekends?.from,
+          ),
+          afgrAfgengisAdfaranottFridagaTil: formatOpeningHours(
+            answers.openingHours?.alcohol?.weekends?.to,
+          ),
+          afgrAfgengisVirkirdagarUtiveitingarFra: formatOpeningHours(
+            answers.openingHours?.outside?.weekdays?.from,
+          ),
+          afgrAfgengisVirkirdagarUtiveitingarTil: formatOpeningHours(
+            answers.openingHours?.outside?.weekdays?.to,
+          ),
+          afgrAfgengisAdfaranottFridagaUtiveitingarFra: formatOpeningHours(
+            answers.openingHours?.outside?.weekends?.from,
+          ),
+          afgrAfgengisAdfaranottFridagaUtiveitingarTil: formatOpeningHours(
+            answers.openingHours?.outside?.weekends?.to,
+          ),
+        }
+      : {}),
     rymi: JSON.stringify(
-      answers.properties.map((property) => ({
+      answers.properties.map((property: Property) => ({
         stadur: property.address,
         fasteignanumer: property.propertyNumber,
         rymisnumer: property.spaceNumber,
@@ -100,4 +106,15 @@ const formatOpeningHours = (value?: string) => {
   const { hours, minutes } = getHoursMinutes(value)
 
   return `${hours}:${minutes}`
+}
+
+export const displayOpeningHours = (answers: any) => {
+  return (
+    (answers.applicationInfo as Operation)?.operation ===
+      APPLICATION_TYPES.RESTURANT ||
+    (answers.applicationInfo as Operation)?.hotel?.category?.includes(
+      OPERATION_CATEGORY.TWO,
+    ) ||
+    false
+  )
 }

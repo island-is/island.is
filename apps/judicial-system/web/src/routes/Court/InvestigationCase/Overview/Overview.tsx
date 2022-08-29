@@ -146,7 +146,7 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               {
                 title: formatMessage(core.prosecutor),
