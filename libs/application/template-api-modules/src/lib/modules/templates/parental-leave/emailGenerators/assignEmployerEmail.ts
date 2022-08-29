@@ -2,15 +2,24 @@ import get from 'lodash/get'
 
 import { Message } from '@island.is/email-service'
 
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 
 export let assignLinkEmployerSMS = ''
 
+export type AssignEmployerEmail = (
+  props: EmailTemplateGeneratorProps,
+  assignLink: string,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
+
 // TODO handle translations
-export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGenerator = (
+export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   props,
   assignLink,
+  senderName,
+  senderEmail,
 ): Message => {
   const {
     application,
@@ -25,8 +34,8 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: senderName ?? email.sender,
+      address: senderEmail ?? email.address,
     },
     to: [
       {

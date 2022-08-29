@@ -238,6 +238,8 @@ const Slider = ({
             <Box
               className={styles.TrackCell}
               key={index}
+              role="button"
+              aria-label={`${index} months`}
               style={calculateCellStyle(index)}
               onClick={(e) => onCellClick(index, e)}
             />

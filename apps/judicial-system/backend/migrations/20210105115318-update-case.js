@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     try {
       // ALTER TYPE ... ADD cannot run inside a transaction block
       await queryInterface.sequelize.query(
@@ -14,7 +14,7 @@ module.exports = {
     }
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async () => {
     // no need to roll back
     return
   },

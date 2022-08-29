@@ -22,7 +22,7 @@ type GivenWhenThen = (
   caseId: string,
   courtId: string,
   type: CaseType,
-  policeCaseNumber: string,
+  policeCaseNumbers: string[],
   isExtension: boolean,
 ) => Promise<Then>
 
@@ -47,7 +47,7 @@ describe('CourtService - Create court case', () => {
       caseId: string,
       courtId: string,
       type: CaseType,
-      policeCaseNumber: string,
+      policeCaseNumbers: string[],
       isExtension: boolean,
     ) => {
       const then = {} as Then
@@ -58,7 +58,7 @@ describe('CourtService - Create court case', () => {
           caseId,
           courtId,
           type,
-          policeCaseNumber,
+          policeCaseNumbers,
           isExtension,
         )
       } catch (error) {
@@ -91,7 +91,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = false
 
     beforeEach(async () => {
@@ -100,7 +100,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -112,7 +112,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -143,7 +143,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = false
 
     beforeEach(async () => {
@@ -152,7 +152,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -164,7 +164,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Sakamál',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -177,7 +177,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = false
 
     beforeEach(async () => {
@@ -186,7 +186,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -198,7 +198,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -211,7 +211,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = true
 
     beforeEach(async () => {
@@ -220,7 +220,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -232,7 +232,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -242,7 +242,7 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const courtCaseNumber = uuid()
     const isExtension = randomBoolean()
     let then: Then
@@ -256,7 +256,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -271,7 +271,7 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = randomBoolean()
     let then: Then
 
@@ -284,7 +284,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
