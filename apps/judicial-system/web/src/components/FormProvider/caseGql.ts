@@ -9,7 +9,7 @@ export const CaseQuery = gql`
       type
       description
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId

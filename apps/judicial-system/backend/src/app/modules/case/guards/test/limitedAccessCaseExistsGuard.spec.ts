@@ -61,7 +61,7 @@ describe('Restricted Case Exists Guard', () => {
       'origin',
       'type',
       'state',
-      'policeCaseNumber',
+      'policeCaseNumbers',
       'defenderName',
       'defenderNationalId',
       'defenderEmail',

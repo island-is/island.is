@@ -18,7 +18,7 @@ const attributes: (keyof Case)[] = [
   'origin',
   'type',
   'state',
-  'policeCaseNumber',
+  'policeCaseNumbers',
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
