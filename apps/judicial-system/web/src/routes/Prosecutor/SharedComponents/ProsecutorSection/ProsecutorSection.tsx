@@ -8,8 +8,8 @@ import { User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { strings } from './SelectProsecutor.strings'
-import { SelectProsecutorUsersQuery } from './selectProsecutorUsersGql'
+import { strings } from './ProsecutorSection.strings'
+import { ProsecutorSectionUsersQuery } from './prosecutorSectionUsersGql'
 
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
@@ -17,7 +17,7 @@ interface Props {
   onChange: (prosecutor: User) => boolean
 }
 
-const SelectProsecutor: React.FC<Props> = (props) => {
+const ProsecutorSection: React.FC<Props> = (props) => {
   const { onChange } = props
 
   const { formatMessage } = useIntl()
@@ -36,18 +36,18 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       : null,
   )
 
-  const [selectProsecutors, setSelectProsecutors] = useState<
+  const [availableProsecutors, setAvailableProsecutors] = useState<
     ProsecutorSelectOption[]
   >([])
 
-  const { data, loading } = useQuery(SelectProsecutorUsersQuery, {
+  const { data, loading } = useQuery(ProsecutorSectionUsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
   useEffect(() => {
     if (data?.users) {
-      setSelectProsecutors(
+      setAvailableProsecutors(
         data.users
           .filter(
             (aUser: User) =>
@@ -80,7 +80,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
         label={formatMessage(strings.label)}
         placeholder={formatMessage(strings.placeholder)}
         value={selectedProsecutor}
-        options={selectProsecutors}
+        options={availableProsecutors}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
           onChange((selectedOption as ProsecutorSelectOption).prosecutor) &&
             setSelectedProsecutor(selectedOption as ProsecutorSelectOption)
@@ -92,4 +92,4 @@ const SelectProsecutor: React.FC<Props> = (props) => {
   )
 }
 
-export default SelectProsecutor
+export default ProsecutorSection

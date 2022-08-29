@@ -44,7 +44,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {
@@ -189,7 +189,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={5}>
               <BlueBox>
                 <Box marginBottom={2}>
-                  <SelectProsecutor onChange={handleProsecutorChange} />
+                  <ProsecutorSection onChange={handleProsecutorChange} />
                 </Box>
                 <Checkbox
                   name="isHeightenedSecurityLevel"

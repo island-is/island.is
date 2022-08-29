@@ -26,7 +26,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import PoliceCaseNumbersTags from '../../SharedComponents/PoliceCaseNumbersTags/PoliceCaseNumbersTags'
 
@@ -106,7 +106,7 @@ const Processing: React.FC = () => {
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
         <Box component="section" marginBottom={5}>
-          <SelectProsecutor onChange={handleProsecutorChange} />
+          <ProsecutorSection onChange={handleProsecutorChange} />
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt
