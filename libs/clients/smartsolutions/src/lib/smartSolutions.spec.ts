@@ -20,16 +20,4 @@ describe('SmartSolutionsApi', () => {
       expect(res).not.toBeNull()
     })
   })
-  describe('createPkPass', () => {
-    it('should return a valid response', async () => {
-      const res = await service.createPass()
-      expect(res).not.toBeNull()
-    })
-  })
-  describe('verifyPkPass', () => {
-    it('should return a valid response', async () => {
-      const res = await service.listTemplates()
-      expect(res).not.toBeNull()
-    })
-  })
 })
