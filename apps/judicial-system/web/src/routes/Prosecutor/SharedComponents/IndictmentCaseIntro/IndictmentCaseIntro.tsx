@@ -1,9 +1,9 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, Defendant } from '@island.is/judicial-system/types'
 import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
@@ -25,6 +25,19 @@ interface Props {
   workingCase: Case
 }
 
+export const getDefantantLabel = (
+  formatMessage: IntlShape['formatMessage'],
+  defantants: Defendant[],
+) => {
+  if (defantants.length === 1) {
+    return formatMessage(core.indictmentDefendant, {
+      gender: defantants[0].gender,
+    })
+  }
+
+  return formatMessage(core.indictmentDefendants)
+}
+
 const IndictmentCaseIntro: React.FC<Props> = ({ workingCase }) => {
   const { policeCaseNumbers, defendants, court } = workingCase
   const { formatMessage } = useIntl()
@@ -36,7 +49,7 @@ const IndictmentCaseIntro: React.FC<Props> = ({ workingCase }) => {
       )}
       {defendants && (
         <Entry
-          label={capitalize(formatMessage(core.indictmentDefendant))}
+          label={capitalize(getDefentantLabel(formatMessage, defendants))}
           value={enumerate(
             flatMap(defendants, (d) => (d.name ? [d.name] : [])),
             formatMessage(core.and),
