@@ -4,7 +4,7 @@ const devConfig = {
     dsn: process.env.SENTRY_DSN,
   },
   auth: {
-    issuer: 'https://identity-server.staging01.devland.is',
+    issuer: 'https://identity-server.dev01.devland.is',
     audience: '@urvinnslusjodur.is/skilavottord',
     nextAuthCookieName: 'next-auth.session-token',
   },
