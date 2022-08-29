@@ -80,9 +80,7 @@ const Processing: React.FC = () => {
         <PoliceCaseNumbersTags
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
-        <Box component="section" marginBottom={5}>
-          <ProsecutorSection />
-        </Box>
+        <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}

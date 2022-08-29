@@ -9,23 +9,6 @@ export const rcRequestedHearingArrangements = {
       'Notaður sem titill á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
-    prosecutor: defineMessages({
-      heightenSecurityLevelLabel: {
-        id:
-          'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_label',
-        defaultMessage: 'Hækka öryggisstig',
-        description:
-          'Notaður sem texti í "Hækka öryggisstig" checkboxi á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      heightenSecurityLevelInfo: {
-        id:
-          'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor.heighten_security_level_info',
-        defaultMessage:
-          'Með því að hækka öryggisstig á kröfunni verður krafan eingöngu aðgengileg þeim sem stofnaði kröfuna ásamt skráðum ákæranda í málinu.',
-        description:
-          'Notaður sem upplýsingatexti í "Hækka öryggisstig" checkboxi á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-    }),
     arrestDate: defineMessages({
       heading: {
         id:

@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  BlueBox,
   CaseInfo,
   FormContentContainer,
   FormFooter,
@@ -36,7 +35,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Input, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import type { User } from '@island.is/judicial-system/types'
@@ -188,43 +187,9 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={7}>
               <CaseInfo workingCase={workingCase} userRole={user.role} />
             </Box>
-            <Box component="section" marginBottom={5}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <ProsecutorSectionHeightenedSecurity
-                    onChange={handleProsecutorChange}
-                  />
-                </Box>
-                <Checkbox
-                  name="isHeightenedSecurityLevel"
-                  label={formatMessage(
-                    m.sections.prosecutor.heightenSecurityLevelLabel,
-                  )}
-                  tooltip={formatMessage(
-                    m.sections.prosecutor.heightenSecurityLevelInfo,
-                  )}
-                  disabled={
-                    user.id !== workingCase.creatingProsecutor?.id &&
-                    user.id !== workingCase.prosecutor?.id
-                  }
-                  checked={workingCase.isHeightenedSecurityLevel}
-                  onChange={(event) =>
-                    setAndSendToServer(
-                      [
-                        {
-                          isHeightenedSecurityLevel: event.target.checked,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  large
-                  filled
-                />
-              </BlueBox>
-            </Box>
+            <ProsecutorSectionHeightenedSecurity
+              onChange={handleProsecutorChange}
+            />
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
