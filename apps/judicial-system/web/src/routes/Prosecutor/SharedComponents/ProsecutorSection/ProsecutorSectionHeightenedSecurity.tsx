@@ -33,8 +33,8 @@ const ProsecutorSectionHeightenedSecurity: React.FC<Props> = (props) => {
         </Box>
         <Checkbox
           name="isHeightenedSecurityLevel"
-          label={formatMessage(strings.heightenSecurityLevelLabel)}
-          tooltip={formatMessage(strings.heightenSecurityLevelInfo)}
+          label={formatMessage(strings.heightenSecurityLabel)}
+          tooltip={formatMessage(strings.heightenSecurityInfo)}
           disabled={
             user?.id !== workingCase.creatingProsecutor?.id &&
             user?.id !== workingCase.prosecutor?.id
