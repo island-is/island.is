@@ -6,7 +6,7 @@ import {
   CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from './types/localeTypes'
 
 @Table({
@@ -112,12 +112,12 @@ export class UserProfile extends Model {
   @Column({
     type: DataType.VIRTUAL,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   canNudge?: boolean
 
   @Column({
     type: DataType.VIRTUAL,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   bankInfo?: string
 }
