@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
 import { Controller, Control, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 interface Props {
   autoFocus?: boolean
@@ -40,7 +41,7 @@ interface ChildParams {
   name: string
 }
 
-export const InputController: FC<Props> = ({
+export const InputController: FC<Props & TestSupport> = ({
   autoFocus,
   defaultValue,
   disabled = false,
@@ -65,9 +66,10 @@ export const InputController: FC<Props> = ({
   maxLength,
   loading,
   size = 'md',
+  dataTestId,
   autoComplete,
 }) => {
-  function renderChildInput(c: ChildParams) {
+  function renderChildInput(c: ChildParams & TestSupport) {
     const { value, onChange, ...props } = c
     if (currency) {
       return (
@@ -79,6 +81,7 @@ export const InputController: FC<Props> = ({
           readOnly={readOnly}
           placeholder={placeholder}
           label={label}
+          data-testid={dataTestId}
           type="text"
           decimalSeparator=","
           backgroundColor={backgroundColor}
@@ -116,6 +119,7 @@ export const InputController: FC<Props> = ({
           readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
+          data-testid={dataTestId}
           label={label}
           suffix={suffix}
           value={value}
@@ -149,6 +153,7 @@ export const InputController: FC<Props> = ({
           disabled={disabled}
           readOnly={readOnly}
           backgroundColor={backgroundColor}
+          data-testid={dataTestId}
           placeholder={placeholder}
           label={label}
           type={type as 'text' | 'tel'}
@@ -185,6 +190,7 @@ export const InputController: FC<Props> = ({
           label={label}
           backgroundColor={backgroundColor}
           autoFocus={autoFocus}
+          data-testid={dataTestId}
           hasError={error !== undefined}
           errorMessage={error}
           required={required}

@@ -266,7 +266,7 @@ export const CaseFiles: React.FC = () => {
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
-              policeCaseNumber: workingCase.policeCaseNumber,
+              policeCaseNumber: workingCase.policeCaseNumbers.join(', '),
             })}
           </Text>
           <Text marginTop={1}>
