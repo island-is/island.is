@@ -8,6 +8,7 @@ import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { Tag, TagVariant } from '../Tag/Tag'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface RadioButtonProps {
   name?: string
@@ -58,8 +59,9 @@ export const RadioButton = ({
   hasError,
   errorMessage,
   large,
+  dataTestId,
   backgroundColor,
-}: RadioButtonProps) => {
+}: RadioButtonProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -84,6 +86,7 @@ export const RadioButton = ({
         name={name}
         disabled={disabled}
         id={id}
+        data-testid={dataTestId}
         onChange={onChange}
         value={value}
         checked={checked}
