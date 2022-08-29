@@ -194,6 +194,7 @@ export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
 export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/akaerdi'
 export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaerur/domskjol'
+export const INDICTMENTS_OVERVIEW_ROUTE = '/akaerur/stadfesta'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
