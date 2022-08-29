@@ -163,9 +163,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       }
       {workingCase.endOfSessionBookings && (
         <AccordionListItem
-          title={formatMessage(
-            m.courtRecordAccordion.sections.endOfSessionBookings.title,
-          )}
+          title={formatMessage(m.sections.endOfSessionBookings.title)}
           breakSpaces
         >
           <Text>{workingCase.endOfSessionBookings}</Text>
