@@ -268,11 +268,13 @@ const ActiveCases: React.FC<Props> = (props) => {
                         <Text as="span">{c.courtCaseNumber}</Text>
                       </Box>
                       <Text as="span" variant="small" color="dark400">
-                        {c.policeCaseNumber}
+                        {c.policeCaseNumbers.join(', ')}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    <Text as="span">
+                      {c.policeCaseNumbers.join(', ') || '-'}
+                    </Text>
                   )}
                 </td>
                 <td className={cn(styles.td, styles.largeColumn)}>

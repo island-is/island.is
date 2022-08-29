@@ -11,9 +11,10 @@ import {
   ParentalLeave,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
+import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import differenceInDays from 'date-fns/differenceInDays'
-
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
 import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
@@ -21,7 +22,7 @@ import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.mod
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV === 'development'
+const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
 const df = 'yyyy-MM-dd'
 
 enum PensionFundType {
@@ -44,14 +45,9 @@ export class DirectorateOfLabourRepository {
   async getUnions(): Promise<Union[]> {
     if (isRunningInDevelopment) {
       return [
-        {
-          id: 'id-vr',
-          name: 'VR',
-        },
-        {
-          id: 'id-efling',
-          name: 'Efling',
-        },
+        { id: 'F511', name: 'VR' },
+        { id: 'F512', name: 'Verslunarmannafélag Hafnarfjarðar' },
+        { id: 'F999', name: 'Bandalag háskólamanna (BHM)' },
       ]
     }
 
@@ -75,20 +71,14 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
-    if (isRunningInDevelopment) {
-      return [
-        {
-          id: 'id-frjalsi',
-          name: 'Frjalsi',
-        },
-        {
-          id: 'id-fluga',
-          name: 'Fluga',
-        },
-      ]
-    }
-
-    const pensionFunds = await this.getAllPensionFunds()
+    const pensionFunds = isRunningInDevelopment
+      ? [
+          { id: 'L030', name: 'Starfsmenn Akureyrarbæjar' },
+          { id: 'L050', name: 'Starfsmenn Hafnafjarðarbæjar' },
+          { id: 'L860', name: 'VR' },
+          { id: 'X135', name: 'Frjálsi' },
+        ]
+      : await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>
       pensionFund.id.startsWith(PensionFundType.required),
@@ -96,20 +86,14 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPrivatePensionFunds(): Promise<PensionFund[]> {
-    if (isRunningInDevelopment) {
-      return [
-        {
-          id: 'id-frjalsi',
-          name: 'Frjalsi',
-        },
-        {
-          id: 'id-draumur',
-          name: 'Draumur',
-        },
-      ]
-    }
-
-    const pensionFunds = await this.getAllPensionFunds()
+    const pensionFunds = isRunningInDevelopment
+      ? [
+          { id: 'L030', name: 'Starfsmenn Akureyrarbæjar' },
+          { id: 'L050', name: 'Starfsmenn Hafnafjarðarbæjar' },
+          { id: 'L860', name: 'VR' },
+          { id: 'X135', name: 'Frjálsi' },
+        ]
+      : await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>
       pensionFund.id.startsWith(PensionFundType.private),
@@ -282,9 +266,21 @@ export class DirectorateOfLabourRepository {
     nationalId: string,
   ): Promise<PregnancyStatus | null> {
     if (isRunningInDevelopment) {
+      /**
+       * VMST does not really support cleaning up of applications, but with the help of a developer who is working for them
+       * we got to relax a limitation on Dev which allows us to have more applications then we would ordinarily be able to create.
+       * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
+       * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
+       */
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
       return {
         hasActivePregnancy: true,
-        expectedDateOfBirth: '2021-06-17',
+        expectedDateOfBirth: formatISO(
+          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+          {
+            representation: 'date',
+          },
+        ),
       }
     }
 

@@ -9,10 +9,20 @@ export const createWrappedFetchWithLogging = (
     fetch(input, init)
       .then(async (response) => {
         if (response.ok) {
-          logger.info(`vmst-module.success: ${input}`)
+          logger.info(
+            `vmst-module.success: input - ${JSON.stringify(
+              input,
+            )}, init - ${JSON.stringify(init)}`,
+          )
         } else {
           const body = await response.json()
-          logger.error(`vmst-module.error: ${input}`, body)
+          logger.error(
+            `vmst-module.error: input - ${JSON.stringify(
+              input,
+            )}, init - ${JSON.stringify(init)}, response - ${JSON.stringify(
+              body,
+            )}`,
+          )
           return reject(body)
         }
 
