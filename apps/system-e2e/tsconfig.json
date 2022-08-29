@@ -1,13 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compileOnSave": false,
   "compilerOptions": {
-    "strict": false
+    "outDir": "../../../dist/out-tsc",
+    "types": ["cypress", "@testing-library/cypress", "node"],
+    "resolveJsonModule": true,
+    "allowJs": true
   },
-  "include": [],
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ]
+  "include": ["cypress.config.ts", "src/**/*.ts", "src/**/*.js"]
 }

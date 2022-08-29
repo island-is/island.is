@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, ArrayMinSize, IsArray, IsString } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
@@ -15,8 +15,11 @@ export class CreateCaseInput implements CreateCase {
   readonly description?: string
 
   @Allow()
-  @Field()
-  readonly policeCaseNumber!: string
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  @Field(() => [String])
+  readonly policeCaseNumbers!: string[]
 
   @Allow()
   @Field({ nullable: true })

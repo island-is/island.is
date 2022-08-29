@@ -42,6 +42,7 @@ const extractCommonFields = (
     doesNotRequireAnswer = false,
     id,
     title,
+    dataTestId,
     width = 'full',
   } = data
 
@@ -51,6 +52,7 @@ const extractCommonFields = (
     defaultValue,
     description,
     disabled,
+    dataTestId,
     doesNotRequireAnswer,
     title,
     width,
