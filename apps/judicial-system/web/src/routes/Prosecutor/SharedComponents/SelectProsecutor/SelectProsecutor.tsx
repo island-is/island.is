@@ -1,23 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
-import { Case, User } from '@island.is/judicial-system/types'
+import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { strings } from './SelectProsecutor.strings'
+import { SelectProsecutorUsersQuery } from './selectProsecutorUsersGql'
 
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
 interface Props {
   workingCase: Case
-  prosecutors: User[]
   onChange: (prosecutor: User) => boolean
 }
 
 const SelectProsecutor: React.FC<Props> = (props) => {
-  const { workingCase, prosecutors, onChange } = props
+  const { workingCase, onChange } = props
 
   const { formatMessage } = useIntl()
 
@@ -33,13 +34,34 @@ const SelectProsecutor: React.FC<Props> = (props) => {
       : null,
   )
 
-  const selectProsecutors: ProsecutorSelectOption[] = prosecutors.map(
-    (prosecutor) => ({
-      label: prosecutor.name,
-      value: prosecutor.id,
-      prosecutor,
-    }),
-  )
+  const [selectProsecutors, setSelectProsecutors] = useState<
+    ProsecutorSelectOption[]
+  >([])
+
+  const { data, loading } = useQuery(SelectProsecutorUsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
+  useEffect(() => {
+    if (data?.users) {
+      setSelectProsecutors(
+        data.users
+          .filter(
+            (aUser: User) =>
+              aUser.role === UserRole.PROSECUTOR &&
+              (!workingCase.creatingProsecutor ||
+                aUser.institution?.id ===
+                  workingCase.creatingProsecutor?.institution?.id),
+          )
+          .map((prosecutor: User) => ({
+            label: prosecutor.name,
+            value: prosecutor.id,
+            prosecutor,
+          })),
+      )
+    }
+  }, [data?.users, workingCase.creatingProsecutor])
 
   return (
     <>
@@ -61,6 +83,7 @@ const SelectProsecutor: React.FC<Props> = (props) => {
           onChange((selectedOption as ProsecutorSelectOption).prosecutor) &&
             setSelectedProsecutor(selectedOption as ProsecutorSelectOption)
         }}
+        disabled={loading}
         required
       />
     </>

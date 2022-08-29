@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import {
@@ -8,7 +7,6 @@ import {
   CaseTransition,
   Institution,
   NotificationType,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -26,7 +24,6 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
 import {
   useCase,
@@ -77,20 +74,7 @@ export const HearingArrangements: React.FC = () => {
     setAndSendToServer,
   } = useCase()
 
-  const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
   const { courts, loading: institutionLoading } = useInstitution()
-
-  const prosecutors = userData?.users.filter(
-    (aUser: User) =>
-      aUser.role === UserRole.PROSECUTOR &&
-      (!workingCase?.creatingProsecutor ||
-        aUser.institution?.id ===
-          workingCase?.creatingProsecutor?.institution?.id),
-  )
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -183,7 +167,7 @@ export const HearingArrangements: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
-      isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
+      isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
     >
       <PageHeader
@@ -191,7 +175,7 @@ export const HearingArrangements: React.FC = () => {
           titles.prosecutor.restrictionCases.hearingArrangements,
         )}
       />
-      {prosecutors && !institutionLoading ? (
+      {!institutionLoading ? (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -207,7 +191,6 @@ export const HearingArrangements: React.FC = () => {
                 <Box marginBottom={2}>
                   <SelectProsecutor
                     workingCase={workingCase}
-                    prosecutors={prosecutors}
                     onChange={handleProsecutorChange}
                   />
                 </Box>

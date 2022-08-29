@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   BlueBox,
@@ -20,9 +19,7 @@ import {
   CaseTransition,
   Institution,
   NotificationType,
-  UserRole,
 } from '@island.is/judicial-system/types'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   useCase,
@@ -70,12 +67,6 @@ const HearingArrangements = () => {
     setAndSendToServer,
   } = useCase()
 
-  const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const [prosecutors, setProsecutors] = useState<User[]>()
   const [
     isNotificationModalVisible,
     setIsNotificationModalVisible,
@@ -85,20 +76,6 @@ const HearingArrangements = () => {
     setIsProsecutorAccessModalVisible,
   ] = useState<boolean>(false)
   const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
-
-  useEffect(() => {
-    if (userData?.users && workingCase) {
-      setProsecutors(
-        userData.users.filter(
-          (aUser: User) =>
-            aUser.role === UserRole.PROSECUTOR &&
-            (!workingCase.creatingProsecutor ||
-              aUser.institution?.id ===
-                workingCase.creatingProsecutor?.institution?.id),
-        ),
-      )
-    }
-  }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
@@ -200,7 +177,7 @@ const HearingArrangements = () => {
           titles.prosecutor.investigationCases.hearingArrangements,
         )}
       />
-      {user && prosecutors && courts && (
+      {user && courts && (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -216,7 +193,6 @@ const HearingArrangements = () => {
                 <Box marginBottom={2}>
                   <SelectProsecutor
                     workingCase={workingCase}
-                    prosecutors={prosecutors}
                     onChange={handleProsecutorChange}
                   />
                 </Box>

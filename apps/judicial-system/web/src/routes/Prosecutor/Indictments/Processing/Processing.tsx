@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 
 import {
   FormContentContainer,
@@ -18,8 +17,7 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { Institution, User } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -42,26 +40,6 @@ const Processing: React.FC = () => {
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
-  const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const [prosecutors, setProsecutors] = useState<User[]>()
-
-  useEffect(() => {
-    if (userData?.users && workingCase) {
-      setProsecutors(
-        userData.users.filter(
-          (aUser: User) =>
-            aUser.role === UserRole.PROSECUTOR &&
-            (!workingCase.creatingProsecutor ||
-              aUser.institution?.id ===
-                workingCase.creatingProsecutor?.institution?.id),
-        ),
-      )
-    }
-  }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
 
   const setProsecutor = async (prosecutor: User) => {
     if (workingCase) {
@@ -130,7 +108,6 @@ const Processing: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SelectProsecutor
             workingCase={workingCase}
-            prosecutors={prosecutors || []}
             onChange={handleProsecutorChange}
           />
         </Box>
