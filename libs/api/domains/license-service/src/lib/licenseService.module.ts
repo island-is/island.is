@@ -8,6 +8,7 @@ import { MainResolver } from './graphql/main.resolver'
 
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
 import { GenericAdrLicenseApi } from './client/adr-license-client/adrLicenseService.api'
+import { GenericMachineLicenseApi } from './client/machine-license-client'
 import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
@@ -21,7 +22,10 @@ import {
   VinnuvelaApi,
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
-import { GenericMachineLicenseApi } from './client/machine-license-client'
+import {
+  SmartSolutionsApi,
+  SmartSolutionsClientModule,
+} from '@island.is/clients/smartsolutions'
 
 export interface Config {
   xroad: {
@@ -75,10 +79,15 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register(), AdrAndMachineLicenseClientModule],
+      imports: [
+        CacheModule.register(),
+        AdrAndMachineLicenseClientModule,
+        SmartSolutionsClientModule,
+      ],
       providers: [
         MainResolver,
         LicenseServiceService,
+        SmartSolutionsApi,
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
@@ -89,7 +98,11 @@ export class LicenseServiceModule {
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
-          useFactory: (adrApi: AdrApi, machineApi: VinnuvelaApi) => async (
+          useFactory: (
+            adrApi: AdrApi,
+            machineApi: VinnuvelaApi,
+            smartApi: SmartSolutionsApi,
+          ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
           ): Promise<GenericLicenseClient<unknown> | null> => {
@@ -98,17 +111,22 @@ export class LicenseServiceModule {
                 return new GenericDrivingLicenseApi(
                   config,
                   logger,
+                  smartApi,
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(logger, adrApi)
+                return new GenericAdrLicenseApi(logger, adrApi, smartApi)
               case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(logger, machineApi)
+                return new GenericMachineLicenseApi(
+                  logger,
+                  machineApi,
+                  smartApi,
+                )
               default:
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi],
+          inject: [AdrApi, VinnuvelaApi, SmartSolutionsApi],
         },
       ],
       exports: [LicenseServiceService],
