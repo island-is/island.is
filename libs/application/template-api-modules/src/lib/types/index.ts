@@ -95,3 +95,8 @@ export abstract class BaseTemplateApiApplicationService {
     expiresIn: number,
   ): Promise<string>
 }
+
+export interface SmsProps {
+  phoneNumber: string,
+  message: string,
+}
