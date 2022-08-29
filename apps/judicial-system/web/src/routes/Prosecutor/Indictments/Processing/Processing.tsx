@@ -17,7 +17,7 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Institution, User } from '@island.is/judicial-system/types'
+import { Institution } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -40,31 +40,6 @@ const Processing: React.FC = () => {
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
-
-  const setProsecutor = async (prosecutor: User) => {
-    if (workingCase) {
-      return setAndSendToServer(
-        [
-          {
-            prosecutorId: prosecutor.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }
-
-  const handleProsecutorChange = (prosecutor: User) => {
-    if (!workingCase) {
-      return false
-    }
-
-    setProsecutor(prosecutor)
-
-    return true
-  }
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -106,7 +81,7 @@ const Processing: React.FC = () => {
           policeCaseNumbers={workingCase.policeCaseNumbers}
         />
         <Box component="section" marginBottom={5}>
-          <ProsecutorSection onChange={handleProsecutorChange} />
+          <ProsecutorSection />
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt
