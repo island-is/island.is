@@ -30,6 +30,7 @@ const getTranslationStrings = (apolloClient: typeof client) => {
             'judicial.system.core',
             'judicial.system.restriction_cases',
             'judicial.system.investigation_cases',
+            'judicial.system.indictments',
           ],
           lang: 'is',
         },
