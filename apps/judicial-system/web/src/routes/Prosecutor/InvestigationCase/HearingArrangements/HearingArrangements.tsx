@@ -211,56 +211,52 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={7}>
               <CaseInfo workingCase={workingCase} userRole={user.role} />
             </Box>
-            {prosecutors && (
-              <Box component="section" marginBottom={5}>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <SelectProsecutor
-                      workingCase={workingCase}
-                      prosecutors={prosecutors}
-                      onChange={handleProsecutorChange}
-                    />
-                  </Box>
-                  <Checkbox
-                    name="isHeightenedSecurityLevel"
-                    label={formatMessage(
-                      m.sections.prosecutor.heightenSecurityLevelLabel,
-                    )}
-                    tooltip={formatMessage(
-                      m.sections.prosecutor.heightenSecurityLevelInfo,
-                    )}
-                    disabled={
-                      user.id !== workingCase.creatingProsecutor?.id &&
-                      user.id !== workingCase.prosecutor?.id
-                    }
-                    checked={workingCase.isHeightenedSecurityLevel}
-                    onChange={(event) =>
-                      setAndSendToServer(
-                        [
-                          {
-                            isHeightenedSecurityLevel: event.target.checked,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
-                    large
-                    filled
+            <Box component="section" marginBottom={5}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <SelectProsecutor
+                    workingCase={workingCase}
+                    prosecutors={prosecutors}
+                    onChange={handleProsecutorChange}
                   />
-                </BlueBox>
-              </Box>
-            )}
-            {courts && (
-              <Box component="section" marginBottom={5}>
-                <SelectCourt
-                  workingCase={workingCase}
-                  courts={courts}
-                  onChange={handleCourtChange}
+                </Box>
+                <Checkbox
+                  name="isHeightenedSecurityLevel"
+                  label={formatMessage(
+                    m.sections.prosecutor.heightenSecurityLevelLabel,
+                  )}
+                  tooltip={formatMessage(
+                    m.sections.prosecutor.heightenSecurityLevelInfo,
+                  )}
+                  disabled={
+                    user.id !== workingCase.creatingProsecutor?.id &&
+                    user.id !== workingCase.prosecutor?.id
+                  }
+                  checked={workingCase.isHeightenedSecurityLevel}
+                  onChange={(event) =>
+                    setAndSendToServer(
+                      [
+                        {
+                          isHeightenedSecurityLevel: event.target.checked,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  large
+                  filled
                 />
-              </Box>
-            )}
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <SelectCourt
+                workingCase={workingCase}
+                courts={courts}
+                onChange={handleCourtChange}
+              />
+            </Box>
             <Box component="section" marginBottom={5}>
               <RequestCourtDate
                 workingCase={workingCase}
