@@ -12,6 +12,7 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
+  SmsProps,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
 import {
@@ -40,18 +41,20 @@ export class SharedTemplateApiService {
   ) {}
 
   async sendSms(
-    phoneNumber: string,
-    message: string,
+    props: SmsProps
   ) {
+    const { phoneNumber, message } = props
+
     return this.smsService.sendSms(phoneNumber, message)
   }
 
   async assignApplicationThroughSms(
-    phoneNumber: string,
-    message: string,
+    props: SmsProps,
     application: Application,
     expiresIn: number,
   ) {
+    const { phoneNumber, message } = props
+
     const token = await this.applicationService.createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
