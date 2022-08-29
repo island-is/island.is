@@ -13,13 +13,14 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Tag, Text } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
+import PoliceCaseNumbersTags from '../../SharedComponents/PoliceCaseNumbersTags/PoliceCaseNumbersTags'
 
 const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -51,9 +52,9 @@ const CaseFiles: React.FC = () => {
             {formatMessage(strings.caseFiles.heading)}
           </Text>
         </Box>
-        <Box marginBottom={2}>
-          <Tag>{workingCase.policeCaseNumber}</Tag>
-        </Box>
+        <PoliceCaseNumbersTags
+          policeCaseNumbers={workingCase.policeCaseNumbers}
+        />
         <Box marginBottom={5}>
           <Text fontWeight="semiBold">{`${formatMessage(core.court)}: ${
             workingCase.court?.name
