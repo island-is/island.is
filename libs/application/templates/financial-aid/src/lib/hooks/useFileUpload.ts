@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
+import { FileRejection } from 'react-dropzone'
+import { useIntl } from 'react-intl'
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
+
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFilesResponse,
   FileType,
   SignedUrl,
 } from '@island.is/financial-aid/shared/lib'
-import { gql } from '@apollo/client'
 import { encodeFilenames } from '../utils'
+import { FILE_SIZE_LIMIT } from '../constants'
+import { filesText } from '../messages'
 
 export const CreateSignedUrlMutation = gql`
   mutation CreateMunicipalitiesFinancialAidSignedUrlQuery(
@@ -48,6 +53,7 @@ export const SignedUrlQuery = gql`
 `
 
 export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
+  const { formatMessage } = useIntl()
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
@@ -277,6 +283,14 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onChange([file as File], true)
   }
 
+  const onUploadRejection = (files: FileRejection[]) => {
+      files.forEach((file: FileRejection) => {
+        if (file.file.size > FILE_SIZE_LIMIT) {
+          return setUploadErrorMessage(formatMessage(filesText.sizeErrorMessage))
+        }
+      })
+  }
+
   const openFileById = (fileId: String) => {
     return openFile({ variables: { input: { id: fileId } } })
   }
@@ -287,6 +301,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onChange,
     onRemove,
     onRetry,
+    onUploadRejection,
     uploadFiles,
     uploadStateFiles,
     openFileById,
