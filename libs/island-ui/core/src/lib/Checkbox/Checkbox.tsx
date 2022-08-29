@@ -6,6 +6,7 @@ import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
 import { InputBackgroundColor } from '../Input/types'
 import * as styles from './Checkbox.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface CheckboxProps {
   name?: string
@@ -48,8 +49,9 @@ export const Checkbox = ({
   large,
   strong,
   backgroundColor,
+  dataTestId,
   filled = false,
-}: CheckboxProps) => {
+}: CheckboxProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -75,6 +77,7 @@ export const Checkbox = ({
         name={name}
         disabled={disabled}
         id={id}
+        data-testid={dataTestId}
         onChange={onChange}
         value={value}
         checked={checked}

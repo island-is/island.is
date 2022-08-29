@@ -24,7 +24,11 @@ import {
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -267,12 +271,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
                       </Box>
-                      <Text as="span" variant="small" color="dark400">
-                        {c.policeCaseNumber}
+                      <Text
+                        as="span"
+                        variant="small"
+                        color="dark400"
+                        title={c.policeCaseNumbers.join(', ')}
+                      >
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                      {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
+                    </Text>
                   )}
                 </td>
                 <td className={cn(styles.td, styles.largeColumn)}>

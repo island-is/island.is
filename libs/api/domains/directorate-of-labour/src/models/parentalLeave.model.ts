@@ -51,4 +51,8 @@ export class ParentalLeave {
   @Field(() => [ParentalLeaveAttachment], { nullable: true })
   @IsOptional()
   attachments?: ParentalLeaveAttachment[]
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  testData?: string
 }
