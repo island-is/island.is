@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const selectProsecutor = defineMessages({
+export const strings = defineMessages({
   heading: {
     id: 'judicial.system.core:select_prosecutor.heading',
     defaultMessage: 'Ákærandi',

@@ -5,7 +5,7 @@ import { ValueType } from 'react-select'
 import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Case, User } from '@island.is/judicial-system/types'
-import { selectProsecutor as m } from '@island.is/judicial-system-web/messages'
+import { strings } from './SelectProsecutor.strings'
 
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
@@ -44,16 +44,16 @@ const SelectProsecutor: React.FC<Props> = (props) => {
     <>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          {`${formatMessage(m.heading)} `}
+          {`${formatMessage(strings.heading)} `}
           <Box component="span" data-testid="prosecutor-tooltip">
-            <Tooltip text={formatMessage(m.tooltip)} />
+            <Tooltip text={formatMessage(strings.tooltip)} />
           </Box>
         </Text>
       </Box>
       <Select
         name="prosecutor"
-        label={formatMessage(m.label)}
-        placeholder={formatMessage(m.placeholder)}
+        label={formatMessage(strings.label)}
+        placeholder={formatMessage(strings.placeholder)}
         value={selectedProsecutor}
         options={selectProsecutors}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
