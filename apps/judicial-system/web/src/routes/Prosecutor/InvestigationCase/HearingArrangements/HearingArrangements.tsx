@@ -44,7 +44,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
+import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
 
 const HearingArrangements = () => {
   const router = useRouter()
@@ -191,7 +191,9 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={5}>
               <BlueBox>
                 <Box marginBottom={2}>
-                  <ProsecutorSection onChange={handleProsecutorChange} />
+                  <ProsecutorSectionHeightenedSecurity
+                    onChange={handleProsecutorChange}
+                  />
                 </Box>
                 <Checkbox
                   name="isHeightenedSecurityLevel"
