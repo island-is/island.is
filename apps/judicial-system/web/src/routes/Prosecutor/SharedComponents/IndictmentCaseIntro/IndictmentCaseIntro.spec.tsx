@@ -2,14 +2,14 @@ import { createIntl } from 'react-intl'
 
 import { Defendant, Gender } from '@island.is/judicial-system/types'
 
-import { getDefantantLabel } from './IndictmentCaseIntro'
+import { getDefentantLabel } from './IndictmentCaseIntro'
 
 describe('getDefendantLabel', () => {
   const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
     .formatMessage
 
   const fn = (defendants: Defendant[]) =>
-    getDefantantLabel(formatMessage, defendants)
+    getDefentantLabel(formatMessage, defendants)
 
   test('should render label for female', () => {
     const defendants = [{ gender: Gender.FEMALE }] as Defendant[]

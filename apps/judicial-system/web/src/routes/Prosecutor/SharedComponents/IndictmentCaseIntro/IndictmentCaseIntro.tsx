@@ -25,7 +25,7 @@ interface Props {
   workingCase: Case
 }
 
-export const getDefantantLabel = (
+export const getDefentantLabel = (
   formatMessage: IntlShape['formatMessage'],
   defantants: Defendant[],
 ) => {
