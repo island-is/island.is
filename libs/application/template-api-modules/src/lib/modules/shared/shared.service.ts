@@ -22,6 +22,7 @@ import {
 } from './shared.queries'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -30,11 +31,42 @@ export class SharedTemplateApiService {
     private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
+    @Inject(SmsService)
+    private readonly smsService: SmsService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
   ) {}
+
+  async sendSms(
+    phoneNumber: string,
+    message: string,
+  ) {
+    return this.smsService.sendSms(phoneNumber, message)
+  }
+
+  async assignApplicationThroughSms(
+    phoneNumber: string,
+    message: string,
+    application: Application,
+    expiresIn: number,
+  ) {
+    const token = await this.applicationService.createAssignToken(
+      application,
+      getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
+    )
+
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
+
+    return this.smsService.sendSms(phoneNumber, `${message} ${assignLink}`)
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
