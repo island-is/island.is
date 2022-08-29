@@ -17,7 +17,7 @@ import {
   titles,
   processing as m,
 } from '@island.is/judicial-system-web/messages'
-import { Box, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
 import {
