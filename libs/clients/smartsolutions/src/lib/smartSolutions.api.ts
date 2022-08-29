@@ -8,19 +8,23 @@ import {
   PkPassServiceErrorResponse,
   UpsertPkPassResponse,
 } from './smartSolutions.types'
-import { User } from '../../gen/schema'
+import { SmartSolutionsClientConfig } from '..'
+import { ConfigType } from '@nestjs/config'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
 @Injectable()
 export class SmartSolutionsApi {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private config: ConfigType<typeof SmartSolutionsClientConfig>,
+  ) {}
 
   private fetchUrl(payload: string): Promise<Response> {
     return fetch(`https://smartpages-api.smartsolutions.is/graphql`, {
       method: 'POST',
       headers: {
-        'X-API-KEY': '8e772138-c65a-4351-8834-ff13a88299fb',
+        'X-API-KEY': this.config.pkPassApiKey,
         'Content-Type': 'application/json',
       },
       body: payload,
@@ -109,12 +113,12 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassQrCode(user: User, payload: CreatePkPassDataInput) {
+  async generatePkPassQrCode(payload: CreatePkPassDataInput) {
     const pass = await this.upsertPkPass(payload)
     return pass?.data?.upsertPass?.distributionQRCode ?? null
   }
 
-  async generatePkPassUrl(user: User, payload: CreatePkPassDataInput) {
+  async generatePkPassUrl(payload: CreatePkPassDataInput) {
     const pass = await this.upsertPkPass(payload)
     return pass?.data?.upsertPass?.distributionUrl ?? null
   }
