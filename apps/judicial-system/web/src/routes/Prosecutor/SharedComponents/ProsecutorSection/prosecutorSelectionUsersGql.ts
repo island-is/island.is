@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export const ProsecutorSectionUsersQuery = gql`
-  query ProsecutorSectionUsersQuery {
+export const ProsecutorSelectionUsersQuery = gql`
+  query ProsecutorSelectionUsersQuery {
     users {
       id
       created
