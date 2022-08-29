@@ -16,6 +16,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { Inject } from '@nestjs/common'
 import { parseFirearmLicensePayload } from './firearmLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
+import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -25,6 +26,7 @@ export class GenericFirearmLicenseApi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
+    private smartApi: SmartSolutionsApi,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
