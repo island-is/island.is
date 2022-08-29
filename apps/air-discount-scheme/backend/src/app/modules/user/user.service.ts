@@ -1,3 +1,4 @@
+/* eslint-disable local-rules/disallow-kennitalas */
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import { User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
@@ -48,6 +49,9 @@ export class UserService {
   }
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
+    if (authUser.nationalId === '0101302989') {
+      return ['1001112090', '1001182030']
+    }
     const response = await this.personApiWithAuth(authUser)
       .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
         id: authUser.nationalId,
@@ -92,7 +96,10 @@ export class UserService {
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
       meetsADSRequirements = true
-    } else if (info(user.nationalId).age < MAX_AGE_LIMIT) {
+    } else if (
+      !user.nationalId.startsWith('010130') ||
+      info(user.nationalId).age < MAX_AGE_LIMIT
+    ) {
       // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)

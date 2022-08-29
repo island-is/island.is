@@ -1,3 +1,4 @@
+/* eslint-disable local-rules/disallow-kennitalas */
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
@@ -31,7 +32,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     gender: 'kvk',
     lastName: 'Developersdóttir',
     middleName: 'EagleAir',
-    postalcode: 900,
+    postalcode: 600,
   },
   {
     // Gervibarn Ísabellu
@@ -41,7 +42,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Ísabelluson',
     gender: 'kk',
     address: 'Hrimblugrugg 2',
-    postalcode: 900,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
@@ -96,29 +97,29 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Færeyjar',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 100,
+    postalcode: 600,
     city: 'Reykjavík',
   },
   {
     // Gervibarn Ameríku
     nationalId: '2222222229',
     firstName: 'Litli',
-    middleName: 'Jói',
+    middleName: 'ellefu ára',
     lastName: 'Ameríkuson',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 100,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
     // Gervibarn Ameríku
     nationalId: '3333333339',
     firstName: 'Litla',
-    middleName: 'Jóna',
+    middleName: 'fimm ára',
     lastName: 'Ameríkudóttir',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 100,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
 
@@ -130,7 +131,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Baldursson',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 900,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
@@ -141,7 +142,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Baldursson',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 900,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
@@ -152,7 +153,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Sigurðarson',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 900,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
@@ -163,7 +164,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Afríka',
     gender: 'kk',
     address: 'Urðarbraut 1',
-    postalcode: 540,
+    postalcode: 600,
     city: 'Blönduós',
   },
   {
@@ -174,7 +175,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Júlíusson',
     gender: 'kk',
     address: 'Urðarbraut 1',
-    postalcode: 540,
+    postalcode: 600,
     city: 'Blönduós',
   },
   {
@@ -185,7 +186,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Asksdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
-    postalcode: 540,
+    postalcode: 600,
     city: 'Blönduós',
   },
   {
@@ -196,7 +197,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Júlíusdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
-    postalcode: 540,
+    postalcode: 600,
     city: 'Blönduós',
   },
   {
@@ -207,7 +208,7 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Útlönd',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 900,
+    postalcode: 600,
     city: 'Vestmannaeyjar',
   },
   {
@@ -218,7 +219,27 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Gervimannsdóttir',
     gender: 'kvk',
     address: 'Urðarbraut 1',
-    postalcode: 210,
+    postalcode: 600,
+    city: 'Garðabær',
+  },
+  {
+    nationalId: '1001112090',
+    firstName: 'Litli',
+    middleName: 'ellefu ára',
+    lastName: 'Gervimannsson',
+    gender: 'kk',
+    address: 'Urðarbraut 1',
+    postalcode: 600,
+    city: 'Garðabær',
+  },
+  {
+    nationalId: '1001182030',
+    firstName: 'Litla',
+    middleName: 'fjögurra ára',
+    lastName: 'Gervimannsdóttir',
+    gender: 'kk',
+    address: 'Urðarbraut 1',
+    postalcode: 600,
     city: 'Garðabær',
   },
 ]
@@ -272,6 +293,9 @@ export class NationalRegistryService {
   }
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
+    if (authUser.nationalId === '0101302989') {
+      return ['1001112090', '1001182030']
+    }
     const response = await this.personApiWithAuth(authUser)
       .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
         id: authUser.nationalId,
@@ -288,6 +312,11 @@ export class NationalRegistryService {
     auth: AuthUser,
     childNationalId: string,
   ): Promise<Array<NationalRegistryUser | null>> {
+    if (['1001112090', '1001182030'].includes(childNationalId)) {
+      const custo = await this.getUser('0101302989', auth)
+      return [custo]
+    }
+
     const response = await this.personApiWithAuth(auth)
       .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
         id: auth.nationalId,
