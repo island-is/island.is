@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
-import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { Box, Select, Tooltip } from '@island.is/island-ui/core'
 import { Case, User } from '@island.is/judicial-system/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { strings } from './SelectProsecutor.strings'
 
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
@@ -42,14 +43,14 @@ const SelectProsecutor: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {`${formatMessage(strings.heading)} `}
+      <SectionHeading
+        title={`${formatMessage(strings.heading)} `}
+        tooltip={
           <Box component="span" data-testid="prosecutor-tooltip">
             <Tooltip text={formatMessage(strings.tooltip)} />
           </Box>
-        </Text>
-      </Box>
+        }
+      />
       <Select
         name="prosecutor"
         label={formatMessage(strings.label)}
