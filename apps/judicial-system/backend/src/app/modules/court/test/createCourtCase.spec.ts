@@ -22,7 +22,7 @@ type GivenWhenThen = (
   caseId: string,
   courtId: string,
   type: CaseType,
-  policeCaseNumber: string,
+  policeCaseNumbers: string[],
   isExtension: boolean,
 ) => Promise<Then>
 
@@ -47,7 +47,7 @@ describe('CourtService - Create court case', () => {
       caseId: string,
       courtId: string,
       type: CaseType,
-      policeCaseNumber: string,
+      policeCaseNumbers: string[],
       isExtension: boolean,
     ) => {
       const then = {} as Then
@@ -58,7 +58,7 @@ describe('CourtService - Create court case', () => {
           caseId,
           courtId,
           type,
-          policeCaseNumber,
+          policeCaseNumbers,
           isExtension,
         )
       } catch (error) {
@@ -91,7 +91,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = false
 
     beforeEach(async () => {
@@ -100,7 +100,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -112,7 +112,59 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
+      })
+    })
+  })
+
+  each`
+    type
+  ${CaseType.CHILD_PROTECTION_LAWS},
+  ${CaseType.PROPERTY_DAMAGE},
+  ${CaseType.NARCOTICS_OFFENSE},
+  ${CaseType.EMBEZZLEMENT},
+  ${CaseType.FRAUD},
+  ${CaseType.DOMESTIC_VIOLENCE},
+  ${CaseType.ASSAULT_LEADING_TO_DEATH},
+  ${CaseType.MURDER},
+  ${CaseType.MAJOR_ASSAULT},
+  ${CaseType.MINOR_ASSAULT},
+  ${CaseType.RAPE},
+  ${CaseType.UTILITY_THEFT},
+  ${CaseType.AGGRAVATED_ASSAULT},
+  ${CaseType.TAX_VIOLATION},
+  ${CaseType.ATTEMPTED_MURDER},
+  ${CaseType.TRAFFIC_VIOLATION},
+  ${CaseType.THEFT},
+  ${CaseType.OTHER_CRIMINAL_OFFENSES},
+  ${CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE},
+  ${CaseType.OTHER_OFFENSES},
+  `.describe('indictment court case created for $type', ({ type }) => {
+    const user = {} as User
+    const caseId = uuid()
+    const courtId = uuid()
+    const policeCaseNumbers = [uuid()]
+    const isExtension = false
+
+    beforeEach(async () => {
+      await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumbers,
+        isExtension,
+      )
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
+        caseType: 'S - Ákærumál',
+        subtype: subTypes[type as CaseType],
+        status: 'Skráð',
+        receivalDate: formatISO(date, { representation: 'date' }),
+        basedOn: 'Sakamál',
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -125,7 +177,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = false
 
     beforeEach(async () => {
@@ -134,7 +186,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -146,7 +198,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -159,7 +211,7 @@ describe('CourtService - Create court case', () => {
     const user = {} as User
     const caseId = uuid()
     const courtId = uuid()
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = true
 
     beforeEach(async () => {
@@ -168,7 +220,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -180,7 +232,7 @@ describe('CourtService - Create court case', () => {
         status: 'Skráð',
         receivalDate: formatISO(date, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        sourceNumber: policeCaseNumbers[0],
       })
     })
   })
@@ -190,7 +242,7 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const courtCaseNumber = uuid()
     const isExtension = randomBoolean()
     let then: Then
@@ -204,7 +256,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })
@@ -219,7 +271,7 @@ describe('CourtService - Create court case', () => {
     const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const isExtension = randomBoolean()
     let then: Then
 
@@ -232,7 +284,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         isExtension,
       )
     })

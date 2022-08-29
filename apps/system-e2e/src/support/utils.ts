@@ -1,20 +1,25 @@
 import type { CyHttpMessages } from 'cypress/types/net-stubbing'
-export const cypressError = (msg: string) => {
+import { BaseUrl, AuthUrl } from '../lib/types'
+import type { TestEnvironment } from '../lib/types'
+
+const cypressError = (msg: string) => {
   throw new Error(msg)
 }
 
-export const getCognitoCredentials = () => {
+import type { ADSUserWithDiscount, FixtureUser } from '../lib/types'
+
+const getCognitoCredentials = () => {
   return {
-    cognitoUsername:
+    username:
       process.env.AWS_COGNITO_USERNAME ||
       cypressError('AWS_COGNITO_USERNAME env variable missing'),
-    cognitoPassword:
+    password:
       process.env.AWS_COGNITO_PASSWORD ||
       cypressError('AWS_COGNITO_PASSWORD env variable missing'),
   }
 }
 
-export const hasOperationName = (
+const hasOperationName = (
   req: CyHttpMessages.IncomingHttpRequest,
   operationName: string,
 ) => {
@@ -22,7 +27,7 @@ export const hasOperationName = (
   return typeof body === 'object' && body.operationName === operationName
 }
 
-export const aliasQuery = (
+const aliasQuery = (
   req: CyHttpMessages.IncomingHttpRequest,
   operationName: string,
 ) => {
@@ -31,38 +36,43 @@ export const aliasQuery = (
   }
 }
 
-export const getFakeUser = (fakeUsers: FakeUser[], name: string) =>
+const getFakeUser = (fakeUsers: FixtureUser[], name: string): FixtureUser =>
   fakeUsers
     .filter((e) => e.name.toLowerCase().includes(name.toLowerCase()))
     .reduce((e) => e)
 
-export const getFamily = (user: FakeUser) => {
-  return [
-    Object.assign(
-      {},
-      ...Object.entries(user)
-        .filter(([k]) => k !== 'children')
-        .map(([k, v]) => ({ [k]: v })),
-    ),
-    ...(user.children || []),
-  ]
-}
+const getDiscountUser = (
+  fakeUser: FixtureUser,
+  discounts: ADSUserWithDiscount[],
+) =>
+  discounts.filter((e) => e.nationalId === fakeUser.nationalId).reduce((e) => e)
 
-const getDiscountUser = (fakeUser: FakeUser, discounts: Discount[]) =>
-  discounts.filter((e) => e.user.name === fakeUser.name).reduce((e) => e)
-
-export const getDiscountData = (
-  fakeUser: FakeUser,
+const getDiscountData = (
+  fakeUser: FixtureUser,
   res: CyHttpMessages.BaseMessage | undefined,
 ) => {
   const discounts =
-    (res?.body.data.discounts as Discount[]) ||
+    (res?.body.data.discounts as ADSUserWithDiscount[]) ||
     cypressError('Error getting response data')
-  return { discounts, discountUser: getDiscountUser(fakeUser, discounts) }
+  return { discounts, user: getDiscountUser(fakeUser, discounts) }
 }
 
-export const getBaseUrl = (
-  config: Cypress.ResolvedConfigOptions & Cypress.RuntimeConfigOptions,
-): string => config.baseUrl || cypressError('Base url is missing, quitting.')
+const getEnvironmentUrls = (env: TestEnvironment) => {
+  return env === 'dev'
+    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
+    : env === 'prod'
+    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
+    : env === 'staging'
+    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
+    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
+}
 
-export const testEnvironment = process.env.TEST_ENVIRONMENT || 'local'
+export {
+  cypressError,
+  getCognitoCredentials,
+  hasOperationName,
+  aliasQuery,
+  getFakeUser,
+  getDiscountData,
+  getEnvironmentUrls,
+}

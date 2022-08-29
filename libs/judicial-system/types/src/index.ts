@@ -48,6 +48,8 @@ export {
   SessionArrangements,
   restrictionCases,
   investigationCases,
+  indictmentCases,
+  isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,

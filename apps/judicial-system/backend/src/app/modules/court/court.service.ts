@@ -3,7 +3,11 @@ import formatISO from 'date-fns/formatISO'
 import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import type { CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  isIndictmentCase,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
@@ -12,6 +16,26 @@ type SubTypes = { [c in CaseType]: string | [string, string] }
 //
 // Maps case types to sub types in the court system
 export const subTypes: SubTypes = {
+  CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
+  PROPERTY_DAMAGE: 'Eignaspjöll',
+  NARCOTICS_OFFENSE: 'Fíkniefnalagabrot',
+  EMBEZZLEMENT: 'Fjárdráttur',
+  FRAUD: 'Fjársvik',
+  DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
+  ASSAULT_LEADING_TO_DEATH: 'Líkamsáras sem leiðir til dauða',
+  MURDER: 'Manndráp',
+  MAJOR_ASSAULT: 'Meiriháttar líkamsárás',
+  MINOR_ASSAULT: 'Minniháttar líkamsárás',
+  RAPE: 'Nauðgun',
+  UTILITY_THEFT: 'Nytjastuldur',
+  AGGRAVATED_ASSAULT: 'Sérlega hættuleg líkamsáras',
+  TAX_VIOLATION: 'Skattalagabrot',
+  ATTEMPTED_MURDER: 'Tilraun til manndráps',
+  TRAFFIC_VIOLATION: 'Umferðarlagabrot',
+  THEFT: 'Þjófnaður',
+  OTHER_CRIMINAL_OFFENSES: 'Önnur hegningarlagabrot',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'Önnur kynferðisbrot en nauðgun',
+  OTHER_OFFENSES: 'Önnur sérrefsilagabrot',
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -21,7 +45,6 @@ export const subTypes: SubTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  // TODO: replace with appropriate type when it has been created in the court system
   ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
@@ -69,6 +92,23 @@ export class CourtService {
     })
   }
 
+  private mask(value: string): string {
+    const valueIsFileName = value.split('.').pop() !== value
+    const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
+    const valueWithoutFileExtension = valueIsFileName
+      ? value.replace(`.${fileNameEnding}`, '')
+      : value
+
+    const firstLetterInValue = valueWithoutFileExtension[0]
+    const mask = '*'.repeat(valueWithoutFileExtension.length - 2) // -2 to keep the first and last letter of the file name
+    const lastLetterInValueWithoutFileExtension =
+      valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
+
+    return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
+      valueIsFileName ? `.${fileNameEnding}` : ''
+    }`
+  }
+
   async createRequest(
     user: User,
     caseId: string,
@@ -110,7 +150,6 @@ export class CourtService {
   }
 
   async createCourtRecord(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -136,11 +175,11 @@ export class CourtService {
           'Failed to create a court record',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: 'RVG',
+            institution: 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -150,12 +189,12 @@ export class CourtService {
   }
 
   async createRuling(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
     fileName: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(
       courtId,
@@ -177,11 +216,11 @@ export class CourtService {
           'Failed to create a court ruling',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -219,8 +258,8 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            subject,
-            fileName,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
             fileType,
           },
           reason,
@@ -235,7 +274,7 @@ export class CourtService {
     caseId: string,
     courtId: string,
     type: CaseType,
-    policeCaseNumber: string,
+    policeCaseNumbers: string[],
     isExtension: boolean,
   ): Promise<string> {
     let subType = subTypes[type]
@@ -243,14 +282,17 @@ export class CourtService {
       subType = subType[isExtension ? 1 : 0]
     }
 
+    const isIndictment = isIndictmentCase(type)
+
     return this.courtClientService
       .createCase(courtId, {
-        caseType: 'R - Rannsóknarmál',
+        caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
-        basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
+        // TODO: pass in all policeCaseNumbers when CourtService supports it
+        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
@@ -261,7 +303,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             type,
-            policeCaseNumber,
+            policeCaseNumbers: policeCaseNumbers.join(', '),
             isExtension,
           },
           reason,
@@ -300,7 +342,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             courtCaseNumber,
-            subject,
+            subject: this.mask(subject),
             recipients,
             fromEmail,
             fromName,

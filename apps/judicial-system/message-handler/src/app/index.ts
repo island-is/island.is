@@ -1,2 +1,2 @@
 export { AppModule } from './app.module'
-export { AppService } from './app.service'
+export { MessageService } from './message.service'

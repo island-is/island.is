@@ -17,6 +17,7 @@ import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -40,7 +41,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'prosecutorOnlySessionRequest')
-  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     if (
@@ -234,50 +234,17 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(icReportForm.comments.heading)}{' '}
-                <Tooltip
-                  placement="right"
-                  as="span"
-                  text={formatMessage(icReportForm.comments.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              name="comments"
-              label={formatMessage(icReportForm.comments.label)}
-              placeholder={formatMessage(icReportForm.comments.placeholder)}
-              value={workingCase.comments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+            <CommentsInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
             />
           </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

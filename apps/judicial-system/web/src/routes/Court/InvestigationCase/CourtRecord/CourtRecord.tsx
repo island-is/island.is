@@ -4,13 +4,13 @@ import { IntlShape, useIntl } from 'react-intl'
 import {
   BlueBox,
   CaseInfo,
-  CourtDocuments,
   DateTime,
   FormContentContainer,
   FormFooter,
   HideableText,
   PageLayout,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -19,7 +19,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -47,7 +47,6 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -89,6 +88,7 @@ const getSessionBookingsAutofill = (
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
+
   const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -130,7 +130,10 @@ const CourtRecord = () => {
         ) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður ${
-              workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi'
             } ${formatMessage(core.defendant, { suffix: 'a' })}`,
           )
         }
@@ -213,7 +216,7 @@ const CourtRecord = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.COURT_RECORD}
+      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -337,23 +340,9 @@ const CourtRecord = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.header)}
-            </Text>
-          </Box>
           <CourtDocuments
-            title={formatMessage(core.requestCaseType, {
-              caseType: formatRequestCaseType(workingCase.type),
-            })}
-            tagText={formatMessage(m.sections.courtDocuments.tag)}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.text)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -854,9 +843,9 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
           hideNextButton={
             !workingCase.decision ||
