@@ -102,7 +102,6 @@ export class LicenseServiceModule {
       providers: [
         MainResolver,
         LicenseServiceService,
-        SmartSolutionsApi,
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,

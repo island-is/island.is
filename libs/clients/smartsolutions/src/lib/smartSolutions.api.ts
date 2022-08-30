@@ -8,8 +8,8 @@ import {
   PkPassServiceErrorResponse,
   UpsertPkPassResponse,
 } from './smartSolutions.types'
-import { SmartSolutionsClientConfig } from '..'
 import { ConfigType } from '@nestjs/config'
+import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -17,6 +17,7 @@ const LOG_CATEGORY = 'smartsolutions'
 export class SmartSolutionsApi {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(SmartSolutionsClientConfig.KEY)
     private config: ConfigType<typeof SmartSolutionsClientConfig>,
   ) {}
 
