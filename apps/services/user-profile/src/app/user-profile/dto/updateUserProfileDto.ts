@@ -64,7 +64,7 @@ export class UpdateUserProfileDto {
    * Islyklar data
    */
   @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional()
   readonly canNudge?: boolean
 

@@ -433,8 +433,8 @@ export class UserProfileController {
     }
 
     /**
-     * Email and mobile number should not be stored within the userprofile db.
-     * This should only be stored with the islyklar data.
+     * Email and mobile number should NOT be stored within the userprofile db.
+     * This should only be stored with the islyklar data. Removing from update object.
      */
     const userProfileUpdateObject = {
       ...userProfileToUpdate,
@@ -460,6 +460,10 @@ export class UserProfileController {
       resources: updatedUserProfile.nationalId,
       meta: { fields: updatedFields },
     })
+
+    // Return updated user with islyklar email and mobile
+    updatedUserProfile.setDataValue('mobilePhoneNumber', mobile)
+    updatedUserProfile.setDataValue('email', email)
     return updatedUserProfile
   }
 
