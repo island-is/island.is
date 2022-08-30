@@ -89,8 +89,6 @@
           "node -e \"console.log('You must manually add these to your .env.secrets file:')\"",
           "node -e \"console.log('  CONTENTFUL_HOST ')\"",
           "node -e \"console.log('  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN ')\"",
-          "node -e \"console.log('')\"",
-          "node -e \"console.log('Note: CONTENTFUL_ACCESS_TOKEN was added automatically with <yarn get-secrets api>')\"",
           "node -e \"console.log('')\""
         ],
         "parallel": false
