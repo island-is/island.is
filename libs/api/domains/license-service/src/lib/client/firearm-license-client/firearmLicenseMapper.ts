@@ -106,3 +106,45 @@ const parseProperties = (
   ]
   return mappedProperty
 }
+
+export const createPkPassDataInput = (
+  license: LicenseAndPropertyInfo,
+  nationalId: string,
+) => {
+  if (!license || !nationalId) return null
+
+  return [
+    {
+      identifier: 'gildir',
+      value: license.expirationDate ?? '',
+    },
+    {
+      identifier: 'nafn',
+      value: license.name ?? '',
+    },
+    {
+      identifier: 'kt',
+      value: nationalId ?? '',
+    },
+    {
+      identifier: 'heimilisfang',
+      value: license.address ?? '',
+    },
+    {
+      identifier: 'postnr.',
+      value: 'ekki komið',
+    },
+    {
+      identifier: 'numer',
+      value: license.licenseNumber ?? '',
+    },
+    {
+      identifier: 'rettindi',
+      value: license.qualifications ?? '',
+    },
+    {
+      identifier: 'utgefandi',
+      value: 'Lögreglan',
+    },
+  ]
+}

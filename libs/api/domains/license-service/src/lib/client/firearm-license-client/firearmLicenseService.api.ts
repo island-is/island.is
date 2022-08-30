@@ -7,20 +7,26 @@ import {
 } from '../../licenceService.type'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { User } from '@island.is/auth-nest-tools'
+import { Inject, Injectable } from '@nestjs/common'
 import {
+  createPkPassDataInput,
+  parseFirearmLicensePayload,
+} from './firearmLicenseMapper'
+import { FetchError } from '@island.is/clients/middlewares'
+import {
+  CreatePkPassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
+import {
+  LicenseInfo,
   FirearmApi,
   LicenseAndPropertyInfo,
-  LicenseInfo,
 } from '@island.is/clients/firearm-license'
-import { User } from '@island.is/auth-nest-tools'
-import { Inject } from '@nestjs/common'
-import { parseFirearmLicensePayload } from './firearmLicenseMapper'
-import { FetchError } from '@island.is/clients/middlewares'
-import { SmartSolutionsApi } from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
-
+@Injectable()
 export class GenericFirearmLicenseApi
   implements GenericLicenseClient<LicenseInfo> {
   constructor(
@@ -80,13 +86,39 @@ export class GenericFirearmLicenseApi
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user)
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {
-    return null
+    const license = await this.fetchLicense(user)
+    const inputValues = createPkPassDataInput(license, user.nationalId)
+
+    if (!inputValues) return null
+    //Fetch template from api?
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
+      inputFieldValues: inputValues,
+      thumbnail: {
+        imageBase64String: license.licenseImgBase64 ?? '',
+      },
+    }
+
+    const pass = await this.smartApi.generatePkPassUrl(payload)
+    return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
-    return null
+    const license = await this.fetchLicense(user)
+    const inputValues = createPkPassDataInput(license, user.nationalId)
+
+    if (!inputValues) return null
+    //Fetch template from api?
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
+      inputFieldValues: inputValues,
+      thumbnail: {
+        imageBase64String: license.licenseImgBase64 ?? '',
+      },
+    }
+    const pass = await this.smartApi.generatePkPassQrCode(payload)
+    return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

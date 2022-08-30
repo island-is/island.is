@@ -43,7 +43,7 @@ export class SmartSolutionsApi {
           distributionQRCode
         }
       }
-    }`
+    `
 
     const body = {
       query: createPkPassMutation,
@@ -51,8 +51,6 @@ export class SmartSolutionsApi {
         inputData: payload,
       },
     }
-
-    this.logger.debug(body)
 
     let res: Response | null = null
 
@@ -105,7 +103,6 @@ export class SmartSolutionsApi {
     }
 
     const response = json as UpsertPkPassResponse
-    this.logger.debug(JSON.stringify(response))
 
     if (response.data) {
       return response as UpsertPkPassResponse
@@ -151,12 +148,9 @@ export class SmartSolutionsApi {
     }
 
     if (!res) {
-      this.logger.warn(
-        'Unable to get pkpass drivers license, null from fetch',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
+      this.logger.warn('Unable to get pkpass templates, null from fetch', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -184,7 +178,7 @@ export class SmartSolutionsApi {
     try {
       json = await res.json()
     } catch (e) {
-      this.logger.warn('Unable to parse JSON for list templateasservice', {
+      this.logger.warn('Unable to parse JSON for list templates', {
         exception: e,
         category: LOG_CATEGORY,
       })
@@ -192,7 +186,6 @@ export class SmartSolutionsApi {
     }
 
     const response = json as PassTemplatesResponse
-    this.logger.debug(JSON.stringify(response))
 
     if (response.data) {
       return response as PassTemplatesResponse
