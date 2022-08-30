@@ -10,8 +10,8 @@ export let assignLinkEmployerSMS = ''
 export type AssignEmployerEmail = (
   props: EmailTemplateGeneratorProps,
   assignLink: string,
-  senderName?: string,
-  senderEmail?: string,
+  senderName?: string | undefined,
+  senderEmail?: string | undefined,
 ) => Message
 
 // TODO handle translations

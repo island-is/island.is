@@ -7,8 +7,8 @@ import { pathToAsset } from '../parental-leave.utils'
 
 export type ApplicationApprovedByEmployerEmail = (
   props: EmailTemplateGeneratorProps,
-  senderName?: string,
-  senderEmail?: string,
+  senderName?: string | undefined,
+  senderEmail?: string | undefined,
 ) => Message
 
 // TODO handle translations

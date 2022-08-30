@@ -9,8 +9,8 @@ import { pathToAsset } from '../parental-leave.utils'
 
 export type EmployerRejectedEmail = (
   props: EmailTemplateGeneratorProps,
-  senderName?: string,
-  senderEmail?: string,
+  senderName?: string | undefined,
+  senderEmail?: string | undefined,
 ) => Message
 
 // TODO handle translations

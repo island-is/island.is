@@ -10,8 +10,8 @@ export let linkOtherParentSMS = ''
 
 export type AssignOtherParentEmail = (
   props: EmailTemplateGeneratorProps,
-  senderName?: string,
-  senderEmail?: string,
+  senderName?: string | undefined,
+  senderEmail?: string | undefined,
 ) => Message
 
 // TODO handle translations

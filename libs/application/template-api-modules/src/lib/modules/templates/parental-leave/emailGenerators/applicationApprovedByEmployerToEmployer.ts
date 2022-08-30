@@ -10,8 +10,8 @@ import { dateFormat } from '@island.is/shared/constants'
 
 export type EmployerRejectedToEmployerEmail = (
   props: EmailTemplateGeneratorProps,
-  senderName?: string,
-  senderEmail?: string,
+  senderName?: string | undefined,
+  senderEmail?: string | undefined,
 ) => Message
 
 // TODO handle translations

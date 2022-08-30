@@ -41,7 +41,7 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
-import { apiConstants, isRunningInDevelopment } from './constants'
+import { apiConstants, isRunningInProduction } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
@@ -57,8 +57,8 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
-const senderName = isRunningInDevelopment ? undefined : 'island.is'
-const senderEmail = isRunningInDevelopment ? undefined : 'noreply@island.is'
+const senderName = !isRunningInProduction ? undefined : 'island.is'
+const senderEmail = !isRunningInProduction ? undefined : 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
