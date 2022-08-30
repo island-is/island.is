@@ -1,4 +1,10 @@
-import { ContentTypeProps, Role, RoleProps } from 'contentful-management'
+import slugify from '@sindresorhus/slugify'
+import {
+  ContentTypeProps,
+  Role,
+  RoleProps,
+  TagProps,
+} from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import {
   applyAssetPolicies,
@@ -20,6 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       typeof extractInititalReadonlyCheckboxStateFromRolesAndContentTypes
     >
     roleNamesThatCanReadAllAssets: string[]
+    tags: TagProps[]
   }
 
   const client = getContentfulManagementApiClient()
@@ -41,11 +48,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     data.roleNamesThatCanReadAllAssets,
   )
 
+  const tagsMap = new Map(data.tags.map((tag) => [tag.name, tag.sys.id]))
+
   const updateQueries = []
 
   for (const roleName in data.checkboxState) {
     const role = rolesMap.get(roleName)
     if (!role) continue
+    const tagName = slugify(roleName)
+
+    if (!tagsMap.has(tagName)) {
+      console.log(`No tag exists with tag name: ${tagName}`)
+      return res
+        .status(500)
+        .json({ message: `No tag exists with tag name: ${tagName}` })
+    }
+
+    const tagId = tagsMap.get(tagName)
 
     const policies: Role['policies'] = []
 
@@ -59,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const readOnlyChecked =
         data.readonlyCheckboxState?.[roleName]?.[contentTypeName]
 
-      applyEditEntryPolicies(policies, role.name, contentType)
+      applyEditEntryPolicies(policies, contentType, tagId)
 
       if (readOnlyChecked) {
         applyReadOnlyEntryPolicies(policies, contentType)
@@ -68,8 +87,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     applyAssetPolicies(
       policies,
-      role.name,
       roleNamesThatCanReadAllAssetsSet.has(role.name),
+      tagId,
     )
 
     const updateQuery = client.role.update(

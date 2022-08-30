@@ -22,6 +22,8 @@ import {
   extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
+  getAllTags,
+  getTagNameToTagIdMap,
 } from '../utils'
 import {
   DEFAULT_EDITABLE_ENTRY_TYPE_IDS,
@@ -40,6 +42,7 @@ const Home = ({
   initialCheckboxState,
   initialReadonlyCheckboxState,
   initialRoleNamesThatCanReadAllAssets,
+  tags,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [checkboxState, setCheckboxState] = useState(initialCheckboxState)
 
@@ -67,6 +70,7 @@ const Home = ({
         checkboxState,
         readonlyCheckboxState,
         roleNamesThatCanReadAllAssets,
+        tags,
       }),
     })
       .then((response) => response.json())
@@ -86,6 +90,7 @@ const Home = ({
       checkboxState,
       readonlyCheckboxState,
       roleNamesThatCanReadAllAssets,
+      roles,
     })
 
   const filteredRoles = useMemo(
@@ -412,18 +417,22 @@ const Home = ({
 }
 
 export const getServerSideProps = async () => {
-  const [roles, contentTypes] = await Promise.all([
+  const [roles, contentTypes, tags] = await Promise.all([
     getAllRoles(),
     getAllContentTypesInAscendingOrder(),
+    getAllTags(),
   ])
 
   const rolesToShow = roles.filter((role) =>
     role.name.toLowerCase().startsWith('owner-'),
   )
 
+  const tagsMap = getTagNameToTagIdMap(tags)
+
   const initialCheckboxState = extractInitialCheckboxStateFromRolesAndContentTypes(
     rolesToShow,
     contentTypes,
+    tagsMap,
   )
 
   const initialReadonlyCheckboxState = extractInititalReadonlyCheckboxStateFromRolesAndContentTypes(
@@ -433,6 +442,7 @@ export const getServerSideProps = async () => {
 
   const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRoles(
     rolesToShow,
+    tagsMap,
   )
 
   return {
@@ -442,6 +452,7 @@ export const getServerSideProps = async () => {
       initialCheckboxState,
       initialReadonlyCheckboxState,
       initialRoleNamesThatCanReadAllAssets,
+      tags,
     },
   }
 }

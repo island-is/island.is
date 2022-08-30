@@ -9,6 +9,7 @@ import {
   PlainClientAPI,
   Role,
   RoleProps,
+  TagProps,
 } from 'contentful-management'
 import slugify from '@sindresorhus/slugify'
 import type { ActionType } from 'contentful-management/dist/typings/entities/role'
@@ -46,12 +47,26 @@ export const getAllContentTypesInAscendingOrder = async () => {
   return contentfulTypesResponse.items
 }
 
+export const getAllTags = async () => {
+  const client = getContentfulManagementApiClient()
+  const response = await client.tag.getMany({
+    limit: 1000,
+  })
+  const tags = response.items
+  return tags
+}
+
+export const getTagNameToTagIdMap = (tags: TagProps[]) => {
+  return new Map(tags.map((tag) => [tag.name, tag.sys.id]))
+}
+
 const policiesAreEditable = (
   role: RoleProps,
   contentType: ContentTypeProps,
+  tagId: string,
 ) => {
   const policies = []
-  applyEditEntryPolicies(policies, role.name, contentType)
+  applyEditEntryPolicies(policies, contentType, tagId)
   return policies.every((p1) =>
     role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
   )
@@ -71,6 +86,7 @@ const policiesAreReadOnlyEntries = (
 export const extractInitialCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
+  tagsMap: Map<string, string>,
 ): Record<string, Record<string, boolean>> => {
   return roles.reduce(
     (roleAccumulator, role) => ({
@@ -78,7 +94,11 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
       [role.name]: contentTypes.reduce(
         (contentTypeAccumulator, contentType) => ({
           ...contentTypeAccumulator,
-          [contentType.name]: policiesAreEditable(role, contentType),
+          [contentType.name]: policiesAreEditable(
+            role,
+            contentType,
+            tagsMap.get(slugify(role.name)),
+          ),
         }),
         {},
       ),
@@ -108,11 +128,12 @@ export const extractInititalReadonlyCheckboxStateFromRolesAndContentTypes = (
 
 export const extractInitialRoleNamesThatCanReadAllAssetsFromRoles = (
   roles: RoleProps[],
+  tagsMap: Map<string, string>,
 ): string[] => {
   const roleNames: string[] = []
   for (const role of roles) {
     const policies = []
-    applyAssetPolicies(policies, role.name, true)
+    applyAssetPolicies(policies, true, tagsMap.get(slugify(role.name)))
     if (
       policies.every((p1) =>
         role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
@@ -126,8 +147,8 @@ export const extractInitialRoleNamesThatCanReadAllAssetsFromRoles = (
 
 export const applyAssetPolicies = (
   policies: Role['policies'],
-  roleName: string,
   allowReadingAllAssets = false,
+  tagId: string,
 ) => {
   policies.push({
     actions: [
@@ -169,7 +190,7 @@ export const applyAssetPolicies = (
           not: {
             or: [
               {
-                in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
+                in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
               },
               {
                 equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
@@ -184,8 +205,8 @@ export const applyAssetPolicies = (
 
 export const applyEditEntryPolicies = (
   policies: Role['policies'],
-  roleName: string,
   contentType: ContentTypeProps,
+  tagId: string,
 ) => {
   policies.push({
     actions: 'all',
@@ -195,7 +216,7 @@ export const applyEditEntryPolicies = (
         { equals: [{ doc: 'sys.type' }, 'Entry'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
         {
-          in: [{ doc: 'metadata.tags.sys.id' }, [slugify(roleName)]],
+          in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
         },
       ],
     },
