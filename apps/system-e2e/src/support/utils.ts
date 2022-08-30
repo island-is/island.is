@@ -59,7 +59,8 @@ const getDiscountData = (
 
 const getEnvironmentBaseUrl = (authority: string) => {
   const prefix =
-    (process.env.BASE_URL_PREFIX?.length ?? 0) > 0
+    (process.env.BASE_URL_PREFIX?.length ?? 0) > 0 &&
+    process.env.BASE_URL_PREFIX !== 'main'
       ? `${process.env.BASE_URL_PREFIX}-`
       : ''
   return `https://${prefix}${authority}`

@@ -5,9 +5,10 @@ import { Box, Text } from '@island.is/island-ui/core'
 interface Props {
   title: string
   required?: boolean
+  tooltip?: React.ReactNode
 }
 
-const SectionHeading: React.FC<Props> = ({ title, required }) => (
+const SectionHeading: React.FC<Props> = ({ title, required, tooltip }) => (
   <Box marginBottom={3}>
     <Text as="h3" variant="h3">
       {title}
@@ -17,6 +18,8 @@ const SectionHeading: React.FC<Props> = ({ title, required }) => (
           *
         </Text>
       )}
+      {tooltip && ' '}
+      {tooltip && <Box component="span">{tooltip}</Box>}
     </Text>
   </Box>
 )
