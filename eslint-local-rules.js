@@ -44,9 +44,9 @@ module.exports = {
       },
       messages: {
         noAsyncRegister:
-          'Disallowing async register functions in modules to prevent from unexpected startup failures or timeouts.',
+          'Disallowing async register functions in modules to prevent unexpected startup failures or timeouts.',
         noAsyncProviderFactory:
-          'Disallowing async useFactory in module providers to prevent from unexpected startup failures or timeouts.',
+          'Disallowing async useFactory in module providers to prevent unexpected startup failures or timeouts.',
       },
     },
     schema: [],
