@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const core = defineMessages({
+export const header = defineMessages({
   headerTipDisclaimer: {
     id: 'judicial.system.core:header_tip_disclaimer',
     defaultMessage:
