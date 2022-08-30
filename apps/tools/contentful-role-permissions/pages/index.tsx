@@ -50,6 +50,7 @@ const Home = ({
     checkboxState: initialCheckboxState,
     readonlyCheckboxState: initialReadonlyCheckboxState,
     roleNamesThatCanReadAllAssets: initialRoleNamesThatCanReadAllAssets,
+    tags,
   })
 
   const [readonlyCheckboxState, setReadonlyCheckboxState] = useState(
@@ -90,7 +91,7 @@ const Home = ({
       checkboxState,
       readonlyCheckboxState,
       roleNamesThatCanReadAllAssets,
-      roles,
+      tags,
     })
 
   const filteredRoles = useMemo(
