@@ -14,6 +14,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.removeColumn('client', 'supports_custom_delegation')
+    await queryInterface.removeColumn('client', 'supports_custom_delegation')
   },
 }
