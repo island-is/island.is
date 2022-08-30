@@ -1093,8 +1093,9 @@ export class CaseService {
       (await this.deliverCaseFilesToCourt(theCase))
 
     const caseDeliveredToPolice =
-      theCase.origin === CaseOrigin.LOKE &&
-      (await this.deliverCaseToPolice(theCase))
+      Boolean(theCase.rulingModifiedHistory) || // no relevant changes
+      (theCase.origin === CaseOrigin.LOKE &&
+        (await this.deliverCaseToPolice(theCase)))
 
     if (!signedRulingDeliveredToCourt || !courtRecordDeliveredToCourt) {
       this.sendEmailToCourt(
