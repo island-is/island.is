@@ -12,7 +12,7 @@
       "rules": {
         "@next/next/no-html-link-for-pages": [
           "error",
-          "apps/contentful-role-permissions/pages"
+          "apps/tools/contentful-role-permissions/pages"
         ]
       }
     },

@@ -1,6 +1,6 @@
 {
-  "root": "apps/contentful-role-permissions",
-  "sourceRoot": "apps/contentful-role-permissions",
+  "root": "apps/tools/contentful-role-permissions",
+  "sourceRoot": "apps/tools/contentful-role-permissions",
   "projectType": "application",
   "targets": {
     "build": {
@@ -8,8 +8,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "root": "apps/contentful-role-permissions",
-        "outputPath": "dist/apps/contentful-role-permissions"
+        "root": "apps/tools/contentful-role-permissions",
+        "outputPath": "dist/apps/tools/contentful-role-permissions"
       },
       "configurations": {
         "production": {}
@@ -36,9 +36,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/contentful-role-permissions"],
+      "outputs": ["coverage/apps/tools/contentful-role-permissions"],
       "options": {
-        "jestConfig": "apps/contentful-role-permissions/jest.config.js",
+        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.js",
         "passWithNoTests": true
       }
     },
@@ -47,7 +47,7 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "apps/contentful-role-permissions/**/*.{ts,tsx,js,jsx}"
+          "apps/tools/contentful-role-permissions/**/*.{ts,tsx,js,jsx}"
         ]
       }
     }
