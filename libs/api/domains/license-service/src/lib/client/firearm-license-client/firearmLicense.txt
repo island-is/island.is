@@ -1,0 +1,109 @@
+import {
+  FirearmApi,
+  FirearmLicenseApiProvider,
+  FirearmLicenseClientConfig,
+} from '@island.is/clients/firearm-license'
+import {
+  CreatePkPassDataInput,
+  SmartSolutionsApi,
+  SmartSolutionsClientConfig,
+} from '@island.is/clients/smartsolutions'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { XRoadConfig } from '@island.is/nest/config'
+import { ConfigModule } from '@nestjs/config'
+import { Test } from '@nestjs/testing'
+import { createPkPassDataInput } from './firearmLicenseMapper'
+import { startMocking } from '@island.is/shared/mocking'
+import {
+  MOCK_NATIONAL_ID,
+  requestHandlers,
+} from '../../__mock_data__/requestHandlers'
+import { User } from '@island.is/auth-nest-tools'
+import VALID_LICENSE_INFO from '../../__mock_data__/validLicenseInfo.json'
+import VALID_PKPASS_PAYLOAD from '../../__mock_data__/validPkPassPayload.json'
+
+export const MOCK_USER = {
+  nationalId: '0',
+  scope: ['test-scope-1'],
+  client_id: 'test-client',
+  delegationType: ['Custom'],
+  actor: {
+    nationalId: '1',
+    scope: ['test-scope-2'],
+  },
+  authorization: '',
+  client: '',
+  ip: '',
+  userAgent: '',
+} as User
+
+startMocking(requestHandlers)
+
+describe('GenericFirearmLicenseService', () => {
+  let service: SmartSolutionsApi
+  let firearms: FirearmApi
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [
+            SmartSolutionsClientConfig,
+            FirearmLicenseClientConfig,
+            XRoadConfig,
+          ],
+        }),
+      ],
+      providers: [
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        SmartSolutionsApi,
+        FirearmLicenseApiProvider,
+      ],
+    }).compile()
+
+    service = module.get(SmartSolutionsApi)
+    firearms = await module.resolve(FirearmApi)
+  })
+
+  //Just the absolute basiscs, add to later
+
+  describe('Module', () => {
+    it('should be defined', () => {
+      expect(service).toBeTruthy()
+    })
+  })
+
+  describe('listTemplates', () => {
+    it('should return a list of templates', async () => {
+      const url = await service.listTemplates()
+      //const url = await service.getPkPassUrl(MOCK_USER)
+      expect(url).not.toBeNull
+    })
+  })
+  describe('getPkPass', () => {
+    it('should return a valid pkpass', async () => {
+      //Arrange
+      const { thumbnail, ...payload } = VALID_PKPASS_PAYLOAD
+
+      const pass = await service.generatePkPassUrl(payload)
+      expect(pass).not.toBeNull
+    })
+  })
+  describe('firearms', () => {
+    it('should return a license', async () => {
+      const license = await firearms.getLicenseAndPropertyInfo(MOCK_NATIONAL_ID)
+      expect(license).toMatchObject({
+        ssn: '1',
+        name: 'Oll rettindi Jonsson',
+      })
+    })
+    it('should throw error, invalid ssn', async () => {
+      const license = await firearms.getLicenseAndPropertyInfo('')
+      expect(license).toThrowError()
+    })
+  })
+})
