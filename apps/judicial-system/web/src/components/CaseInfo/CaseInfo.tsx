@@ -40,7 +40,7 @@ const CaseInfo: React.FC<Props> = ({
             caseNumber: userRole
               ? courtRoles.includes(userRole)
                 ? workingCase.courtCaseNumber
-                : workingCase.policeCaseNumber
+                : workingCase.policeCaseNumbers.join(', ')
               : '',
           })}
         </Text>
