@@ -29,7 +29,7 @@ const mockIslykillProfile = {
   nationalId: mockProfile.nationalId,
   email: mockProfile.email,
   mobile: mockProfile.mobilePhoneNumber,
-  bankInfo: '9876543',
+  bankInfo: '000-00-000000',
   canNudge: true,
 }
 const { email, mobilePhoneNumber, ...mockProfileNoEmailNoPhone } = mockProfile
