@@ -29,7 +29,6 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
-  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
