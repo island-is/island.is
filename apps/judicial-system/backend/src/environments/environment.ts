@@ -25,17 +25,6 @@ const devConfig = {
     timeToLivePost: '15',
     timeToLiveGet: '5',
   },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  policeServiceOptions: {
-    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
-    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
-  },
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
@@ -158,17 +147,6 @@ const prodConfig = {
     bucket: process.env.S3_BUCKET ?? '',
     timeToLivePost: process.env.S3_TIME_TO_LIVE_POST ?? '',
     timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET ?? '',
-  },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  policeServiceOptions: {
-    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
-    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
   },
   events: {
     url: process.env.EVENT_URL,
