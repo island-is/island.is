@@ -37,7 +37,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import type { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
@@ -57,11 +56,6 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const [substituteProsecutor, setSubstituteProsecutor] = useState<User>()
-  const [
-    isProsecutorAccessModalVisible,
-    setIsProsecutorAccessModalVisible,
-  ] = useState<boolean>(false)
   const { user } = useContext(UserContext)
   const {
     sendNotification,
@@ -105,21 +99,6 @@ export const HearingArrangements: React.FC = () => {
     }
   }
 
-  const setProsecutor = async (prosecutor: User) => {
-    if (workingCase) {
-      return setAndSendToServer(
-        [
-          {
-            prosecutorId: prosecutor.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }
-
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
       setAndSendToServer(
@@ -137,26 +116,6 @@ export const HearingArrangements: React.FC = () => {
     }
 
     return false
-  }
-
-  const handleProsecutorChange = (prosecutor: User) => {
-    if (!workingCase) {
-      return false
-    }
-
-    const isRemovingCaseAccessFromSelf =
-      user?.id !== workingCase.creatingProsecutor?.id
-
-    if (workingCase.isHeightenedSecurityLevel && isRemovingCaseAccessFromSelf) {
-      setSubstituteProsecutor(prosecutor)
-      setIsProsecutorAccessModalVisible(true)
-
-      return false
-    }
-
-    setProsecutor(prosecutor)
-
-    return true
   }
 
   return (
@@ -185,9 +144,7 @@ export const HearingArrangements: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <CaseInfo workingCase={workingCase} userRole={user?.role} />
             </Box>
-            <ProsecutorSectionHeightenedSecurity
-              onChange={handleProsecutorChange}
-            />
+            <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
@@ -309,33 +266,6 @@ export const HearingArrangements: React.FC = () => {
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
-            />
-          )}
-          {isProsecutorAccessModalVisible && (
-            <Modal
-              title={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal.heading,
-              )}
-              text={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal.text,
-              )}
-              primaryButtonText={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal
-                  .primaryButtonText,
-              )}
-              secondaryButtonText={formatMessage(
-                rcRequestedHearingArrangements.prosecutorAccessModal
-                  .secondaryButtonText,
-              )}
-              handlePrimaryButtonClick={async () => {
-                if (substituteProsecutor) {
-                  await setProsecutor(substituteProsecutor)
-                  router.push(constants.CASES_ROUTE)
-                }
-              }}
-              handleSecondaryButtonClick={() => {
-                setIsProsecutorAccessModalVisible(false)
-              }}
             />
           )}
         </>

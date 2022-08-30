@@ -59,35 +59,4 @@ export const rcRequestedHearingArrangements = {
         'Notaður sem texti í "viltu senda tilkynningu" tilkynningaglugganum á óskir um fyrirtöku skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
     },
   }),
-  prosecutorAccessModal: defineMessages({
-    heading: {
-      id:
-        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.heading',
-      defaultMessage: 'Viltu skrá annan saksóknara á málið?',
-      description:
-        'Notaður sem titill fyrir "viltu skrá annan saksóknara á málið" tilkynningagluggan á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    text: {
-      id:
-        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.text',
-      defaultMessage:
-        'Með því að skrá annan saksóknara á málið lokast þinn aðgangur að málinu og það verður ekki lengur sýnilegt þér í listanum.',
-      description:
-        'Notaður sem texti í "viltu skrá annan saksóknara á málið" tilkynningaglugganum á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    primaryButtonText: {
-      id:
-        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.primary_button_text',
-      defaultMessage: 'Já, halda áfram',
-      description:
-        'Notaður sem texti í "halda áfram" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-    secondaryButtonText: {
-      id:
-        'judicial.system.restriction_cases:requested_hearing_arrangements.prosecutor_access_modal.secondary_button_text',
-      defaultMessage: 'Nei, hætta við',
-      description:
-        'Notaður sem texti í "hætta við" takkanum í tilkynningaglugganum á óskir um fyrirtöku skrefi í rannsóknarheimildum.',
-    },
-  }),
 }
