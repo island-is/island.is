@@ -20,7 +20,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
-import PoliceCaseNumbersTags from '../../SharedComponents/PoliceCaseNumbersTags/PoliceCaseNumbersTags'
+import IndictmentCaseIntro from '../../SharedComponents/IndictmentCaseIntro/IndictmentCaseIntro'
 
 const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -52,9 +52,7 @@ const CaseFiles: React.FC = () => {
             {formatMessage(strings.caseFiles.heading)}
           </Text>
         </Box>
-        <PoliceCaseNumbersTags
-          policeCaseNumbers={workingCase.policeCaseNumbers}
-        />
+        <IndictmentCaseIntro workingCase={workingCase} />
         <Box marginBottom={5}>
           <Text fontWeight="semiBold">{`${formatMessage(core.court)}: ${
             workingCase.court?.name
