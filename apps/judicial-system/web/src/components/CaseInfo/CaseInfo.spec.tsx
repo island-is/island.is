@@ -46,7 +46,7 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
 
   test('should render label for signle defentant', () => {
     const defendants = [{}] as Defendant[]
-    expect(fn(defendants)).toBe('varnaraðali')
+    expect(fn(defendants)).toBe('varnaraðili')
   })
 
   test('should render label for multiple defendants', () => {
