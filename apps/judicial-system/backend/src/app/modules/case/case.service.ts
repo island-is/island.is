@@ -701,7 +701,7 @@ export class CaseService {
           'Failed to request a court record signature',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: user.name,
             institution: user.institution?.name,
@@ -740,7 +740,7 @@ export class CaseService {
         'Failed to get a court record signature confirmation',
         {
           caseId: theCase.id,
-          policeCaseNumber: theCase.policeCaseNumber,
+          policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
           courtCaseNumber: theCase.courtCaseNumber,
           actor: user.name,
           institution: user.institution?.name,
@@ -791,7 +791,7 @@ export class CaseService {
           'Failed to request a ruling signature',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: theCase.judge?.name,
             institution: theCase.judge?.institution?.name,
@@ -849,7 +849,7 @@ export class CaseService {
           'Failed to get a ruling signature confirmation',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: user.name,
             institution: user.institution?.name,
@@ -877,7 +877,7 @@ export class CaseService {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
             defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
@@ -936,7 +936,7 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}`,
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}`,
         pdf,
       )
     } catch (error) {
@@ -954,7 +954,7 @@ export class CaseService {
       theCase.id,
       theCase.courtId ?? '',
       theCase.type,
-      theCase.policeCaseNumber,
+      theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
     )
 

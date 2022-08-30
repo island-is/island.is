@@ -260,6 +260,9 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
+      "@island.is/application/templates/parental-leave/messages": [
+        "libs/application/templates/parental-leave/src/lib/messages.ts"
+      ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],

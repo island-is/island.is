@@ -211,6 +211,7 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
   attachments?: Attachment[],
+  onlyValidate?: boolean,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -226,6 +227,8 @@ export const transformApplicationToParentalLeaveDTO = (
   )
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
+
+  const testData: string = onlyValidate!.toString()
 
   return {
     applicationId: application.id,
@@ -255,6 +258,7 @@ export const transformApplicationToParentalLeaveDTO = (
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
+    testData,
   }
 }
 

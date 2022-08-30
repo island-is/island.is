@@ -96,7 +96,7 @@ describe('InternalCaseController - Internal create', () => {
   describe('case created without a prosecutor', () => {
     const caseToCreate = {
       type: CaseType.AUTOPSY,
-      policeCaseNumber: '007-2021-777',
+      policeCaseNumbers: ['007-2021-777'],
       accusedNationalId: '1234567890',
       accusedName: 'John Doe',
       accusedAddress: 'Some Street',
@@ -122,7 +122,7 @@ describe('InternalCaseController - Internal create', () => {
     const prosecutorNationalId = '1234567890'
     const caseToCreate = {
       type: CaseType.AUTOPSY,
-      policeCaseNumber: '007-2021-777',
+      policeCaseNumbers: ['007-2021-777'],
       prosecutorNationalId,
       accusedNationalId: '1234567890',
       accusedName: 'John Doe',
