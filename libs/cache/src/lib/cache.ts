@@ -1,4 +1,4 @@
-import { ClusterNode, RedisOptions, ClusterOptions, Cluster } from 'ioredis'
+import Redis, { ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 import { RedisClusterCache } from 'apollo-server-cache-redis'
 
 import { logger } from '@island.is/logging'
@@ -13,9 +13,9 @@ type Options = {
 const DEFAULT_PORT = 6379
 
 class Cache {
-  private client: Cluster
+  private client: Redis.Cluster
 
-  constructor(client: Cluster) {
+  constructor(client: Redis.Cluster) {
     this.client = client
   }
 
@@ -47,12 +47,12 @@ class Cache {
     return this.client.hgetall(key)
   }
 
-  expire(key: string, seconds: number): Promise<number> {
+  expire(key: string, seconds: number): Promise<Redis.BooleanResponse> {
     return this.client.expire(key, seconds)
   }
 
   async ping(): Promise<boolean> {
-    return (await this.client.ping()) === 'PONG'
+    return (await this.client.ping()) === 'pong'
   }
 }
 
@@ -77,6 +77,7 @@ const getRedisClusterOptions = (
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
     slotsRefreshTimeout: 3000,
+    slotsRefreshInterval: 10000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address, 0),
@@ -113,5 +114,5 @@ export const createApolloCache = (options: Options) => {
 export const createRedisCluster = (options: Options) => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
-  return new Cluster(nodes, getRedisClusterOptions(options))
+  return new Redis.Cluster(nodes, getRedisClusterOptions(options))
 }
