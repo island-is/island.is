@@ -28,7 +28,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import PoliceCaseNumbersTags from '../../SharedComponents/PoliceCaseNumbersTags/PoliceCaseNumbersTags'
+import IndictmentCaseIntro from '../../SharedComponents/IndictmentCaseIntro/IndictmentCaseIntro'
 
 const Processing: React.FC = () => {
   const {
@@ -77,9 +77,7 @@ const Processing: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <PoliceCaseNumbersTags
-          policeCaseNumbers={workingCase.policeCaseNumbers}
-        />
+        <IndictmentCaseIntro workingCase={workingCase} />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt

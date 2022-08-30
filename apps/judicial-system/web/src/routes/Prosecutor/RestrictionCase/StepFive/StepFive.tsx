@@ -130,9 +130,9 @@ export const StepFive: React.FC = () => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onRemove,
-    onRetry,
-    onChange,
+    handleRemoveFromS3,
+    handleRetry,
+    handleS3Upload,
     files,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
@@ -420,15 +420,15 @@ export const StepFive: React.FC = () => {
               fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
-              onChange={onChange}
+              onChange={handleS3Upload}
               onRemove={(file) => {
-                onRemove(file)
+                handleRemoveFromS3(file)
                 setPoliceCaseFileList([
                   ...policeCaseFileList,
                   (file as unknown) as PoliceCaseFileCheck,
                 ])
               }}
-              onRetry={onRetry}
+              onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               disabled={isUploading}
               showFileSize
