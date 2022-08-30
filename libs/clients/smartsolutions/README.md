@@ -1,4 +1,4 @@
-# Clients Smart Solutions
+# Smart Solutions
 
 This library was generated with [Nx](https://nx.dev).
 
