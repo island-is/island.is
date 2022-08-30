@@ -29,6 +29,7 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -55,6 +56,7 @@ import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
+import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -177,6 +179,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
+    private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @InjectQueue(caseModuleConfig().sqs.queueName)
     private queueService: QueueService,
@@ -470,6 +473,23 @@ export class CaseService {
 
         return false
       })
+  }
+
+  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
+    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const defendantNationalIds = theCase.defendants
+      ?.filter((defendant) => !defendant.noNationalId && defendant.nationalId)
+      .map((defendant) => defendant.nationalId ?? '')
+
+    return this.policeService.updatePoliceCase(
+      theCase.id,
+      theCase.type,
+      theCase.state,
+      pdf,
+      theCase.policeCaseNumbers,
+      defendantNationalIds,
+      theCase.conclusion,
+    )
   }
 
   private async createCase(
@@ -1072,6 +1092,10 @@ export class CaseService {
       Boolean(theCase.rulingModifiedHistory) || // case files did not change
       (await this.deliverCaseFilesToCourt(theCase))
 
+    const caseDeliveredToPolice =
+      theCase.origin === CaseOrigin.LOKE &&
+      (await this.deliverCaseToPolice(theCase))
+
     if (!signedRulingDeliveredToCourt || !courtRecordDeliveredToCourt) {
       this.sendEmailToCourt(
         theCase,
@@ -1091,6 +1115,7 @@ export class CaseService {
       signedRulingDeliveredToCourt,
       courtRecordDeliveredToCourt,
       caseFilesDeliveredToCourt,
+      caseDeliveredToPolice,
     }
   }
 }

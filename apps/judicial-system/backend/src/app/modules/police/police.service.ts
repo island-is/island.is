@@ -16,7 +16,7 @@ import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { EventService } from '../event'
@@ -179,5 +179,62 @@ export class PoliceService {
     )
 
     return this.throttle
+  }
+
+  async updatePoliceCase(
+    caseId: string,
+    caseType: CaseType,
+    caseState: CaseState,
+    courtRecordPdf: string,
+    policeCaseNumbers: string[],
+    defendantNationalIds?: string[],
+    caseConclusion?: string,
+  ): Promise<boolean> {
+    return fetch(`${this.xRoadPath}/api/Rettarvarsla/UpdateRVCase/${caseId}`, {
+      method: 'PUT',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': environment.xRoad.clientId,
+      },
+      agent: this.agent,
+      body: JSON.stringify({
+        rvMal_ID: caseId,
+        caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        ssn:
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0]
+            : '',
+        type: caseType,
+        courtVerdict: caseState,
+        courtVerdictString: caseConclusion,
+        courtDocument: Base64.btoa(courtRecordPdf),
+      }),
+    } as RequestInit)
+      .then(async (res) => {
+        if (res.ok) {
+          return true
+        }
+
+        const response = await res.text()
+
+        throw response
+      })
+      .catch((reason) => {
+        this.logger.error(`Failed to update police case ${caseId}`, { reason })
+
+        this.eventService.postErrorEvent(
+          'Failed to update police case',
+          {
+            caseId,
+            caseType,
+            caseState,
+            policeCaseNumbers: policeCaseNumbers.join(', '),
+          },
+          reason,
+        )
+
+        return false
+      })
   }
 }
