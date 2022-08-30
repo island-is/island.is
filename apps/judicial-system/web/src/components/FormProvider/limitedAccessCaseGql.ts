@@ -7,7 +7,7 @@ export const LimitedAccessCaseQuery = gql`
       origin
       type
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId

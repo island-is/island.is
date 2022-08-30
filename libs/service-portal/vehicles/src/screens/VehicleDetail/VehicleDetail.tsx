@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useQuery } from '@apollo/client'
@@ -11,6 +11,7 @@ import {
 import {
   AlertMessage,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
@@ -21,6 +22,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  formSubmit,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
@@ -41,6 +43,8 @@ import {
   technicalInfoArray,
 } from '../../utils/createUnits'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -57,6 +61,23 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     },
   })
 
+  /**
+   * The PDF functionality module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehiclesPdfEnabled`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
+
   const {
     mainInfo,
     basicInfo,
@@ -67,6 +88,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     ownersInfo,
     operators,
     coOwners,
+    downloadServiceURL,
   } = data?.vehiclesDetail || {}
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
@@ -87,7 +109,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     registrationInfo && registrationInfoArray(registrationInfo, formatMessage)
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
-
   return (
     <>
       <Box marginBottom={6}>
@@ -116,6 +137,27 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
             ) : null}
           </GridColumn>
         </GridRow>
+        {modalFlagEnabled && !loading && downloadServiceURL && (
+          <GridRow marginTop={6}>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box display="flex" justifyContent="flexStart" printHidden>
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                    onClick={() => formSubmit(`${downloadServiceURL}`)}
+                  >
+                    {formatMessage(messages.vehicleHistoryReport)}
+                  </Button>
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        )}
       </Box>
       <Stack space={2}>
         <UserInfoLine
@@ -143,7 +185,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        {/* <UserInfoLine
+        <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -155,7 +197,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider /> */}
+        <Divider />
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}

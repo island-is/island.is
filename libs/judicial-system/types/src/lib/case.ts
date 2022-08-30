@@ -21,11 +21,11 @@ export enum CaseType {
   DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   MURDER = 'MURDER',
-  MAJOR_ASSULT = 'MAJOR_ASSULT',
-  MINOR_ASSULT = 'MINOR_ASSULT',
+  MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MINOR_ASSAULT = 'MINOR_ASSAULT',
   RAPE = 'RAPE',
   UTILITY_THEFT = 'UTILITY_THEFT',
-  AGGRAVETED_ASSULT = 'AGGRAVETED_ASSULT',
+  AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   TAX_VIOLATION = 'TAX_VIOLATION',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
   TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
@@ -127,14 +127,13 @@ export interface Case {
   type: CaseType
   description?: string
   state: CaseState
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   defendants?: Defendant[]
   defenderName?: string
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -208,7 +207,7 @@ export type CreateCase = Pick<
   Case,
   | 'type'
   | 'description'
-  | 'policeCaseNumber'
+  | 'policeCaseNumbers'
   | 'defenderName'
   | 'defenderNationalId'
   | 'defenderEmail'
@@ -226,7 +225,6 @@ export interface UpdateCase
     | 'defenderEmail'
     | 'defenderPhoneNumber'
     | 'sendRequestToDefender'
-    | 'defenderIsSpokesperson'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -280,7 +278,7 @@ export interface UpdateCase
   > {
   type?: CaseType
   state?: CaseState
-  policeCaseNumber?: string
+  policeCaseNumbers?: string[]
   courtId?: string
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string | null
@@ -313,11 +311,11 @@ export const indictmentCases = [
   CaseType.DOMESTIC_VIOLENCE,
   CaseType.ASSAULT_LEADING_TO_DEATH,
   CaseType.MURDER,
-  CaseType.MAJOR_ASSULT,
-  CaseType.MINOR_ASSULT,
+  CaseType.MAJOR_ASSAULT,
+  CaseType.MINOR_ASSAULT,
   CaseType.RAPE,
   CaseType.UTILITY_THEFT,
-  CaseType.AGGRAVETED_ASSULT,
+  CaseType.AGGRAVATED_ASSAULT,
   CaseType.TAX_VIOLATION,
   CaseType.ATTEMPTED_MURDER,
   CaseType.TRAFFIC_VIOLATION,

@@ -98,7 +98,6 @@ export const Sidebar: FC<{}> = () => {
         paddingBottom={4}
         paddingTop={5}
         height="full"
-        className={!collapsed && styles.sidebarScroll}
       >
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>

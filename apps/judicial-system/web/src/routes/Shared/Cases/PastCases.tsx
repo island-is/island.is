@@ -17,7 +17,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
-  caseTypes,
+  displayFirstPlusRemaining,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
@@ -25,7 +25,11 @@ import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
-import { getAppealDate, mapCaseStateToTagVariant } from './utils'
+import {
+  displayCaseType,
+  getAppealDate,
+  mapCaseStateToTagVariant,
+} from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 
@@ -100,7 +104,7 @@ const PastCases: React.FC<Props> = (props) => {
         accessor: 'courtCaseNumber' as keyof Case,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string; policeCaseNumber: string }
+            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
           }
         }) => {
           return (
@@ -108,8 +112,12 @@ const PastCases: React.FC<Props> = (props) => {
               <Box component="span" display="block">
                 {row.row.original.courtCaseNumber}
               </Box>
-              <Text as="span" variant="small">
-                {row.row.original.policeCaseNumber}
+              <Text
+                as="span"
+                variant="small"
+                title={row.row.original.policeCaseNumbers.join(', ')}
+              >
+                {displayFirstPlusRemaining(row.row.original.policeCaseNumbers)}
               </Text>
             </>
           )
@@ -162,10 +170,7 @@ const PastCases: React.FC<Props> = (props) => {
           return (
             <>
               <Box component="span" display="block">
-                {thisRow.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? capitalize(caseTypes['TRAVEL_BAN'])
-                  : capitalize(caseTypes[thisRow.type])}
+                {displayCaseType(formatMessage, thisRow.type, thisRow.decision)}
               </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">
@@ -193,6 +198,7 @@ const PastCases: React.FC<Props> = (props) => {
           }
         }) => {
           const tagVariant = mapCaseStateToTagVariant(
+            formatMessage,
             row.row.original.state,
             user?.role ? isCourtRole(user.role) : false,
             isInvestigationCase(row.row.original.type),

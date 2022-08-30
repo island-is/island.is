@@ -50,11 +50,13 @@ export const PrerequisitesForm: Form = buildForm({
                         options: [
                           {
                             value: YES,
+                            dataTestId: 'mockdata-yes',
                             label:
                               parentalLeaveFormMessages.shared.yesOptionLabel,
                           },
                           {
                             value: NO,
+                            dataTestId: 'mockdata-no',
                             label:
                               parentalLeaveFormMessages.shared.noOptionLabel,
                           },
@@ -316,6 +318,7 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: 'SUBMIT',
+                      dataTestId: 'select-child',
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                     },

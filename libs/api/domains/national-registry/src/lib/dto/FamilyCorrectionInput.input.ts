@@ -5,15 +5,7 @@ import { IsString } from 'class-validator'
 export class FamilyCorrectionInput {
   @Field()
   @IsString()
-  ssn!: string
-
-  @Field()
-  @IsString()
-  ssnChild!: string
-
-  @Field()
-  @IsString()
-  name!: string
+  nationalIdChild!: string
 
   @Field()
   @IsString()

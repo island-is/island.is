@@ -261,6 +261,7 @@ const FormExternalDataProvider: FC<{
                 checked={value}
                 hasError={error !== undefined}
                 backgroundColor="blue"
+                dataTestId="agree-to-data-providers"
                 name={`${id}`}
                 label={
                   <Markdown>

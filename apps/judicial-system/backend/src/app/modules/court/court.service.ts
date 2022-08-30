@@ -24,11 +24,11 @@ export const subTypes: SubTypes = {
   DOMESTIC_VIOLENCE: 'Heimilisofbeldi',
   ASSAULT_LEADING_TO_DEATH: 'Líkamsáras sem leiðir til dauða',
   MURDER: 'Manndráp',
-  MAJOR_ASSULT: 'Meiriháttar líkamsárás',
-  MINOR_ASSULT: 'Minniháttar líkamsárás',
+  MAJOR_ASSAULT: 'Meiriháttar líkamsárás',
+  MINOR_ASSAULT: 'Minniháttar líkamsárás',
   RAPE: 'Nauðgun',
   UTILITY_THEFT: 'Nytjastuldur',
-  AGGRAVETED_ASSULT: 'Sérlega hættuleg líkamsáras',
+  AGGRAVATED_ASSAULT: 'Sérlega hættuleg líkamsáras',
   TAX_VIOLATION: 'Skattalagabrot',
   ATTEMPTED_MURDER: 'Tilraun til manndráps',
   TRAFFIC_VIOLATION: 'Umferðarlagabrot',
@@ -90,6 +90,23 @@ export class CourtService {
       value: content,
       options: { filename: fileName, contentType },
     })
+  }
+
+  private mask(value: string): string {
+    const valueIsFileName = value.split('.').pop() !== value
+    const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
+    const valueWithoutFileExtension = valueIsFileName
+      ? value.replace(`.${fileNameEnding}`, '')
+      : value
+
+    const firstLetterInValue = valueWithoutFileExtension[0]
+    const mask = '*'.repeat(valueWithoutFileExtension.length - 2) // -2 to keep the first and last letter of the file name
+    const lastLetterInValueWithoutFileExtension =
+      valueWithoutFileExtension[valueWithoutFileExtension.length - 1]
+
+    return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
+      valueIsFileName ? `.${fileNameEnding}` : ''
+    }`
   }
 
   async createRequest(
@@ -162,7 +179,7 @@ export class CourtService {
             institution: 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -203,7 +220,7 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            fileName,
+            fileName: this.mask(fileName),
           },
           reason,
         )
@@ -241,8 +258,8 @@ export class CourtService {
             institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
-            subject,
-            fileName,
+            subject: this.mask(subject),
+            fileName: this.mask(fileName),
             fileType,
           },
           reason,
@@ -257,7 +274,7 @@ export class CourtService {
     caseId: string,
     courtId: string,
     type: CaseType,
-    policeCaseNumber: string,
+    policeCaseNumbers: string[],
     isExtension: boolean,
   ): Promise<string> {
     let subType = subTypes[type]
@@ -274,7 +291,8 @@ export class CourtService {
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        // TODO: pass in all policeCaseNumbers when CourtService supports it
+        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
@@ -285,7 +303,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             type,
-            policeCaseNumber,
+            policeCaseNumbers: policeCaseNumbers.join(', '),
             isExtension,
           },
           reason,
@@ -324,7 +342,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             courtCaseNumber,
-            subject,
+            subject: this.mask(subject),
             recipients,
             fromEmail,
             fromName,

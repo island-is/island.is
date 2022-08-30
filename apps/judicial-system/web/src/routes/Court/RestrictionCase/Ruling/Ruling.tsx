@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -244,7 +244,7 @@ export const Ruling: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -280,10 +280,9 @@ export const Ruling: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
+                  user &&
+                  (user.id === workingCase.judge?.id ||
+                    user.id === workingCase.registrar?.id)
                 }
                 isCaseCompleted={completedCaseStates.includes(
                   workingCase.state,

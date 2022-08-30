@@ -7,6 +7,11 @@ export const sections = {
       '{caseType, select, CUSTODY {Gæsluvarðhald} TRAVEL_BAN {Farbann} ADMISSION_TO_FACILITY {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}',
     description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
   }),
+  indictmentTitle: defineMessage({
+    id: 'judicial.system.core:sections.indictment_title',
+    defaultMessage: 'Sakamál',
+    description: 'Notaður sem titill á hliðarstiku í sakamálum',
+  }),
   restrictionCaseProsecutorSection: defineMessages({
     caseTitle: {
       id:
@@ -94,6 +99,28 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í rannsóknarheimildum hjá sækjendum',
+    },
+  }),
+  indictmentCaseProsecutorSection: defineMessages({
+    title: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.title',
+      defaultMessage: 'Ákærumeðferð',
+      description: 'Notaður sem titill í hliðarstiku í ákærum hjá sækjendum',
+    },
+    processing: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.processing',
+      defaultMessage: 'Málsmeðferð',
+      description:
+        'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
+    },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_files',
+      defaultMessage: 'Dómskjöl',
+      description:
+        'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
     },
   }),
   investigationCaseCourtSection: defineMessages({
