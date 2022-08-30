@@ -57,12 +57,13 @@ const getDiscountData = (
   return { discounts, user: getDiscountUser(fakeUser, discounts) }
 }
 
-const getEnvironmentBaseUrl = (authority: string) =>
-  `https://${
+const getEnvironmentBaseUrl = (authority: string) => {
+  const prefix =
     (process.env.BASE_URL_PREFIX?.length ?? 0) > 0
-      ? process.env.BASE_URL_PREFIX + '-'
+      ? `${process.env.BASE_URL_PREFIX}-`
       : ''
-  }${authority}`
+  return `https://${prefix}${authority}`
+}
 
 const getEnvironmentUrls = (env: TestEnvironment) => {
   return env === 'dev'
