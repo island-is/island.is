@@ -13,7 +13,7 @@ export const Footer: FC = () => {
       topLinksContact={t.topLinksContact}
       bottomLinksTitle={t.bottomLinksTitle}
       bottomLinks={t.bottomLinks}
-      hideLanguageSwith={true}
+      hideLanguageSwitch={true}
     />
   )
 }

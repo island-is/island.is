@@ -68,7 +68,7 @@ describe('CaseController - Create', () => {
     const caseToCreate = {
       type: CaseType.AUTOPSY,
       description: 'Some details',
-      policeCaseNumber: '007-2021-777',
+      policeCaseNumbers: ['007-2021-777'],
       defenderName: 'John John',
       defenderNationalId: '0000000009',
       defenderEmail: 'john@dummy.is',

@@ -41,6 +41,15 @@ export enum CaseFileState {
   DELETED = 'DELETED',
 }
 
+export enum CaseFileCategory {
+  COVER_LETTER = 'COVER_LETTER',
+  INDICTMENT = 'INDICTMENT',
+  CRIMINAL_RECORD = 'CRIMINAL_RECORD',
+  COST_BREAKDOWN = 'COST_BREAKDOWN',
+  CASE_FILE_CONTENTS = 'CASE_FILE_CONTENTS',
+  CASE_FILE = 'CASE_FILE',
+}
+
 export interface CaseFile {
   id: string
   created: string
