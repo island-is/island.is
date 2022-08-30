@@ -1,4 +1,6 @@
-# Contentful role permissions
+<!-- gitbook-ignore -->
+
+# Contentful Role Permissions
 
 ## What
 
