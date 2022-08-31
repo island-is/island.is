@@ -13,7 +13,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -141,9 +141,7 @@ export const HearingArrangements: React.FC = () => {
                 {formatMessage(rcRequestedHearingArrangements.heading)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user?.role} />
-            </Box>
+            <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
             <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
               <SelectCourt

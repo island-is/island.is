@@ -25,7 +25,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
-  CaseInfo,
+  ProsecutorCaseInfo,
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -160,13 +160,7 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

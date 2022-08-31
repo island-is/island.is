@@ -3,7 +3,8 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  CaseInfo,
+  BlueBox,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -143,9 +144,7 @@ const HearingArrangements = () => {
                 {formatMessage(m.heading)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
             <ProsecutorSectionHeightenedSecurity />
             <Box component="section" marginBottom={5}>
               <SelectCourt
