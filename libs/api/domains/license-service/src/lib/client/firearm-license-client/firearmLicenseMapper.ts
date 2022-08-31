@@ -144,7 +144,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'skotvopn',
-      value: '',
+      value: 'placeholder',
     },
     {
       identifier: 'utgefandi',
