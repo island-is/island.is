@@ -20,7 +20,6 @@ import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
-import { UserProfileStatus } from './models/userProfileStatus.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -31,13 +30,6 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<UserProfile | null | undefined> {
     return this.userUserProfileService.getUserProfile(user)
-  }
-
-  @Query(() => UserProfileStatus, { nullable: true })
-  getUserProfileStatus(
-    @CurrentUser() user: User,
-  ): Promise<UserProfileStatus | undefined> {
-    return this.userUserProfileService.getUserProfileStatus(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })

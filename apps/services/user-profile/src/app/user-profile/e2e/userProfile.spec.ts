@@ -188,7 +188,7 @@ describe('User profile API', () => {
         .mockImplementation(() =>
           Promise.resolve({
             nationalId: mockProfile.nationalId,
-            noUserFound: true,
+            empty: true,
           }),
         )
 
@@ -333,7 +333,7 @@ describe('User profile API', () => {
         .mockImplementation(() =>
           Promise.resolve({
             nationalId: mockProfile.nationalId,
-            noUserFound: true,
+            empty: true,
           }),
         )
 

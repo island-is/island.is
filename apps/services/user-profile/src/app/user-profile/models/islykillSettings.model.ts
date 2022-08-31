@@ -45,5 +45,5 @@ export class IslykillSettings {
     description: 'No user with requested ssn found in request',
     nullable: true,
   })
-  noUserFound?: boolean
+  empty?: boolean
 }

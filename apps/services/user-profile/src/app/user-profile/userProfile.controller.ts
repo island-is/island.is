@@ -90,25 +90,24 @@ export class UserProfileController {
     )
 
     // Has No data.
-    if (!userProfile && islyklarData.noUserFound) {
+    if (!userProfile && islyklarData.empty) {
       throw new NotFoundException(
         `A user profile with nationalId ${nationalId} does not exist`,
       )
     }
 
     /**
-     * User only has islyklar data.
      * If the user only has islyklar data,
      * a userprofile should be created for data combination.
      */
-    if (!userProfile && !islyklarData.noUserFound) {
-      userProfile = await this.create({ nationalId }, user)
+    if (!userProfile && !islyklarData.empty) {
+      userProfile = await this.findOrCreateUserProfile(nationalId, user)
     }
 
-    userProfile.setDataValue('mobilePhoneNumber', islyklarData?.mobile)
-    userProfile.setDataValue('email', islyklarData?.email)
-    userProfile.setDataValue('canNudge', islyklarData?.canNudge)
-    userProfile.setDataValue('bankInfo', islyklarData?.bankInfo)
+    userProfile?.setDataValue('mobilePhoneNumber', islyklarData?.mobile)
+    userProfile?.setDataValue('email', islyklarData?.email)
+    userProfile?.setDataValue('canNudge', islyklarData?.canNudge)
+    userProfile?.setDataValue('bankInfo', islyklarData?.bankInfo)
 
     return userProfile
   }
@@ -203,7 +202,7 @@ export class UserProfileController {
         )
       }
 
-      if (islyklarData.noUserFound) {
+      if (islyklarData.empty) {
         await this.islyklarService
           .createIslykillSettings(user.nationalId, {
             email: emailVerified ? userProfileDto.email : undefined,
@@ -410,7 +409,7 @@ export class UserProfileController {
       mobile = undefined
     }
 
-    if (islyklarData.noUserFound) {
+    if (islyklarData.empty) {
       await this.islyklarService
         .createIslykillSettings(user.nationalId, {
           email,

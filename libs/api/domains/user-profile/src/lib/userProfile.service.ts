@@ -24,8 +24,6 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
 
-export const MAX_OUT_OF_DATE_MONTHS = 6
-
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service'
 
@@ -46,48 +44,6 @@ export class UserProfileService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getUserProfileStatus(user: User) {
-    /**
-     * this.getUserProfile can be a bit slower with the addition of islyklar data call.
-     * getUserProfileStatus can be used for a check if the userprofile exists, or if the userdata is old
-     * Old userdata can mean a user will be prompted to verify their info in the UI.
-     */
-    try {
-      const profile = await this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerFindOneByNationalId({
-        nationalId: user.nationalId,
-      })
-
-      /**
-       * If user has empty email or tel data
-       * Then the user will be prompted every 6 months (MAX_OUT_OF_DATE_MONTHS)
-       * to verify if they want to keep their info empty
-       */
-      const emptyMail = profile?.emailStatus === 'EMPTY'
-      const emptyMobile = profile?.mobileStatus === 'EMPTY'
-      const modifiedProfileDate = profile?.modified
-      const dateNow = new Date()
-      const dateModified = new Date(modifiedProfileDate)
-      const diffInMonths = differenceInMonths(dateNow, dateModified)
-      const diffOutOfDate = diffInMonths >= MAX_OUT_OF_DATE_MONTHS
-      const outOfDateEmailMobile = (emptyMail || emptyMobile) && diffOutOfDate
-
-      return {
-        hasData: !!modifiedProfileDate,
-        hasModifiedDateLate: outOfDateEmailMobile,
-      }
-    } catch (error) {
-      if (error.status === 404) {
-        return {
-          hasData: false,
-          hasModifiedDateLate: true,
-        }
-      }
-      handleError(error)
-    }
-  }
-
   async getUserProfile(user: User) {
     try {
       const profile = await this.userProfileApiWithAuth(
@@ -99,7 +55,7 @@ export class UserProfileService {
       return profile
     } catch (error) {
       if (error.status === 404) return null
-      handleError(error)
+      handleError({ error, message: 'Get user error', status: error.status })
     }
   }
 

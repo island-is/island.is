@@ -48,10 +48,6 @@ HAS_IL -- Only Islyklar data --> RETURN[Return user object]
 HAS_NO --> RET_NULL[Return null]
 ```
 
-## `getUserProfileStatus`
-
-`getUserProfile` can be a bit slower with the addition of islyklar data call. `getUserProfileStatus` can be used for a check if the userprofile exists, or if the userdata is old. Old userdata can mean a user will be prompted to verify their info in the UI.
-
 ## `getIslykillProfile`
 
 Returns default values for the userProfile while fetching the islyklar data. Used when a `userProfileApiWithAuth` returns 404 so the user will get no userProfileApi data but will get their islyklar data.

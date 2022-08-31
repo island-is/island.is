@@ -74,7 +74,7 @@ export class IslykillService {
         if (e.status === 404) {
           return {
             nationalId,
-            noUserFound: true,
+            empty: true,
           }
         }
         throw new BadRequestException(e, errorMsg)
