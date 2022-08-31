@@ -97,10 +97,7 @@
     "dev": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "yarn start api",
-          "yarn start web"
-        ],
+        "commands": ["yarn start api", "yarn start web"],
         "parallel": true
       }
     },
