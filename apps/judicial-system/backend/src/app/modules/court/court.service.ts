@@ -1,7 +1,8 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
@@ -11,6 +12,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
+import { courtModuleConfig } from './court.config'
 
 type SubTypes = { [c in CaseType]: string | [string, string] }
 //
@@ -76,9 +78,19 @@ export const subTypes: SubTypes = {
 @Injectable()
 export class CourtService {
   constructor(
+    @Inject(courtModuleConfig.KEY)
+    private readonly config: ConfigType<typeof courtModuleConfig>,
     private readonly courtClientService: CourtClientService,
     private readonly eventService: EventService,
   ) {}
+
+  private async confirmApiAvailability(): Promise<void> {
+    if (this.config.courtApiAvailable) {
+      return
+    }
+
+    throw 'Court API is not available'
+  }
 
   private uploadStream(
     courtId: string,
@@ -117,12 +129,15 @@ export class CourtService {
     fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
+    return this.confirmApiAvailability()
+      .then(() =>
+        this.uploadStream(
+          courtId,
+          `${fileName}.pdf`,
+          'application/pdf',
+          content,
+        ),
+      )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
@@ -156,12 +171,15 @@ export class CourtService {
     fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
+    return this.confirmApiAvailability()
+      .then(() =>
+        this.uploadStream(
+          courtId,
+          `${fileName}.pdf`,
+          'application/pdf',
+          content,
+        ),
+      )
       .then((streamId) =>
         this.courtClientService.createThingbok(courtId, {
           caseNumber: courtCaseNumber,
@@ -196,12 +214,15 @@ export class CourtService {
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
+    return this.confirmApiAvailability()
+      .then(() =>
+        this.uploadStream(
+          courtId,
+          `${fileName}.pdf`,
+          'application/pdf',
+          content,
+        ),
+      )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId ?? '', {
           caseNumber: courtCaseNumber,
@@ -239,7 +260,8 @@ export class CourtService {
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content)
+    return this.confirmApiAvailability()
+      .then(() => this.uploadStream(courtId, fileName, fileType, content))
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
@@ -284,16 +306,18 @@ export class CourtService {
 
     const isIndictment = isIndictmentCase(type)
 
-    return this.courtClientService
-      .createCase(courtId, {
-        caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType,
-        status: 'Skráð',
-        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
-        basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
-        // TODO: pass in all policeCaseNumbers when CourtService supports it
-        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
-      })
+    return this.confirmApiAvailability()
+      .then(() =>
+        this.courtClientService.createCase(courtId, {
+          caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+          subtype: subType as string,
+          status: 'Skráð',
+          receivalDate: formatISO(nowFactory(), { representation: 'date' }),
+          basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
+          // TODO: pass in all policeCaseNumbers when CourtService supports it
+          sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+        }),
+      )
       .catch((reason) => {
         this.eventService.postErrorEvent(
           'Failed to create a court case',
@@ -324,15 +348,17 @@ export class CourtService {
     fromEmail: string,
     fromName: string,
   ): Promise<string> {
-    return this.courtClientService
-      .createEmail(courtId, {
-        caseNumber: courtCaseNumber,
-        subject,
-        body,
-        recipients,
-        fromEmail,
-        fromName,
-      })
+    return this.confirmApiAvailability()
+      .then(() =>
+        this.courtClientService.createEmail(courtId, {
+          caseNumber: courtCaseNumber,
+          subject,
+          body,
+          recipients,
+          fromEmail,
+          fromName,
+        }),
+      )
       .catch((reason) => {
         this.eventService.postErrorEvent(
           'Failed to create an email',
