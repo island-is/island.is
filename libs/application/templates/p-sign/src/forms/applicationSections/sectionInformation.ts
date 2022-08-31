@@ -8,6 +8,7 @@ import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
+import { UserProfile } from '@island.is/api/schema'
 
 export const sectionInformation = buildSection({
   id: 'information',
@@ -73,6 +74,11 @@ export const sectionInformation = buildSection({
           variant: 'email',
           width: 'half',
           backgroundColor: 'blue',
+          defaultValue: (application: Application) => {
+            const data = application.externalData.userProfile
+              .data as UserProfile
+            return data.email
+          },
         }),
         buildTextField({
           id: 'phone',
@@ -80,6 +86,11 @@ export const sectionInformation = buildSection({
           variant: 'tel',
           width: 'half',
           backgroundColor: 'blue',
+          defaultValue: (application: Application) => {
+            const data = application.externalData.userProfile
+              .data as UserProfile
+            return data.mobilePhoneNumber
+          },
         }),
         buildDateField({
           id: 'validityPeriod',
