@@ -31,7 +31,7 @@ describe('Parental leave', () => {
 
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: Cypress.config('baseUrl'),
       urlPath: '/umsoknir/faedingarorlof',
     })

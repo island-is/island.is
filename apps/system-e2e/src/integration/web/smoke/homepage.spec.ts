@@ -25,7 +25,10 @@ describe('Front page', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
       .should('have.length.at.least', 3)
-      .each((link) => cy.visit(link.prop('href')))
+      .each((link) => {
+        cy.visit(link.prop('href'))
+        cy.location('pathname')
+      })
   })
 
   it('should have link on life events pages to navigate back to the main page', () => {
