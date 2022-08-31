@@ -167,7 +167,7 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -382,14 +382,9 @@ export const Overview: React.FC = () => {
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
             handleClose={() => router.push(constants.CASES_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASES_ROUTE)
-            }}
             handleSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
           />
         )}

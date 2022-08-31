@@ -11,13 +11,18 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import {
   Case,
+  CaseFileCategory,
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
+interface TUploadFile extends UploadFile {
+  category?: CaseFileCategory
+}
+
 export const useS3Upload = (workingCase: Case) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, setFiles] = useState<TUploadFile[]>([])
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
   const { formatMessage } = useIntl()
@@ -146,7 +151,7 @@ export const useS3Upload = (workingCase: Case) => {
     })
 
     request.open('POST', presignedPost.url)
-    request.send(createFormData(presignedPost, file))
+    request.send(createFormData(presignedPost, file as UploadFile))
   }
 
   // Utils
@@ -200,7 +205,7 @@ export const useS3Upload = (workingCase: Case) => {
    * Insert file in database and update state.
    * @param file The file to add to case.
    */
-  const addFileToCase = async (file: UploadFile) => {
+  const addFileToCase = async (file: TUploadFile) => {
     if (workingCase && file.size && file.key) {
       await createFileMutation({
         variables: {
@@ -209,6 +214,7 @@ export const useS3Upload = (workingCase: Case) => {
             type: file.type,
             key: file.key,
             size: file.size,
+            category: file.category,
           },
         },
       })
@@ -224,8 +230,19 @@ export const useS3Upload = (workingCase: Case) => {
   }
 
   // Event handlers
-  const onChange = (newFiles: File[], isRetry?: boolean) => {
-    const newUploadFiles = newFiles as UploadFile[]
+  const handleS3Upload = (
+    newFiles: File[],
+    isRetry?: boolean,
+    filesCategory?: CaseFileCategory,
+  ) => {
+    const newUploadFiles = newFiles.map((newFile) => {
+      return {
+        name: newFile.name,
+        size: newFile.size,
+        type: newFile.type,
+        category: filesCategory,
+      }
+    }) as TUploadFile[]
 
     if (!isRetry) {
       setFilesRefAndState([...newUploadFiles, ...files])
@@ -252,7 +269,7 @@ export const useS3Upload = (workingCase: Case) => {
     })
   }
 
-  const onRemove = (file: UploadFile) => {
+  const handleRemoveFromS3 = (file: UploadFile) => {
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -276,8 +293,8 @@ export const useS3Upload = (workingCase: Case) => {
     }
   }
 
-  const onRetry = (file: UploadFile) => {
-    onChange([file as File], true)
+  const handleRetry = (file: UploadFile) => {
+    handleS3Upload([file as File], true)
   }
 
   return {
@@ -292,8 +309,8 @@ export const useS3Upload = (workingCase: Case) => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
-    onRemove,
-    onRetry,
+    handleS3Upload,
+    handleRemoveFromS3,
+    handleRetry,
   }
 }

@@ -252,3 +252,21 @@ export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
     ? `fd. ${nationalId}`
     : `kt. ${formatNationalId(nationalId)}`
 }
+
+/** Displays the first element in a list followed by a number indicating
+ *  how many elements are left
+ *  fx. displayFirstPlusRemaining(['apple', 'pear', 'orange']) => 'apple +2'
+ */
+export const displayFirstPlusRemaining = (
+  list: string[] | undefined | null,
+) => {
+  if (!list || list.length === 0) {
+    return ''
+  }
+
+  if (list.length === 1) {
+    return list[0]
+  }
+
+  return `${list[0]} +${list.length - 1}`
+}

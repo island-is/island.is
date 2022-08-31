@@ -266,7 +266,7 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}-${format(
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}-${format(
           nowFactory(),
           'yyyy-MM-dd-HH:mm',
         )}`,
@@ -376,7 +376,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.policeCaseNumber || '',
+      theCase.policeCaseNumbers,
       `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
     )
@@ -392,7 +392,7 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
-    const { type, court, policeCaseNumber } = theCase
+    const { type, court, policeCaseNumbers } = theCase
 
     const overviewUrl = `${
       isRestrictionCase(theCase.type)
@@ -402,9 +402,9 @@ export class NotificationService {
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
+      policeCaseNumbers,
       type,
       court?.name,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -538,7 +538,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const subject = `Fyrirtaka í máli ${theCase.policeCaseNumber}`
+    const subject = `Fyrirtaka í máli: ${theCase.policeCaseNumbers.join(', ')}`
     const html = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,

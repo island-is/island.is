@@ -107,11 +107,11 @@ export class Case extends Model {
    * A case number in LÖKE (police information system) connected to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  policeCaseNumber!: string
+  policeCaseNumbers!: string[]
 
   /**********
    * The case's defendants
