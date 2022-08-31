@@ -107,12 +107,12 @@ export const createTestingCaseModule = async () => {
         return mock()
       }
     })
-    // .overrideProvider(LOGGER_PROVIDER)
-    // .useValue({
-    //   debug: jest.fn(),
-    //   info: jest.fn(),
-    //   error: jest.fn(),
-    // })
+    .overrideProvider(LOGGER_PROVIDER)
+    .useValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+    })
     .compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
