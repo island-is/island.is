@@ -41,7 +41,7 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
-import { apiConstants, isRunningInProduction } from './constants'
+import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
