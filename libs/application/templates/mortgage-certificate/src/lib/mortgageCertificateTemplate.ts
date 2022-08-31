@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles, MCEvents } from './constants'
 import * as z from 'zod'
@@ -59,9 +60,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -112,9 +113,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
             whenToPrune: 3 * 30 * 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitRequestToSyslumenn,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitRequestToSyslumenn,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -151,9 +152,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
             whenToPrune: 3 * 30 * 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.validateMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -234,12 +235,12 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 1 hour will be pruned automatically
             whenToPrune: 1 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -274,9 +275,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getMortgageCertificate,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getMortgageCertificate,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

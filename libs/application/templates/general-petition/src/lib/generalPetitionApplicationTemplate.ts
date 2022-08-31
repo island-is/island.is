@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
@@ -58,11 +59,11 @@ const GeneralPetitionApplicationTemplate: ApplicationTemplate<
           name: 'Approved',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiModuleActions.CreateEndorsementList,
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.CreateEndorsementList,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

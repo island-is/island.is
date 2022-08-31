@@ -8,6 +8,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
@@ -87,10 +88,10 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -141,11 +142,10 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.addAttachment,
+          onEntry: defineTemplateApi({
+            action: ApiActions.addAttachment,
             shouldPersistToExternalData: true,
-          },
-
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -192,9 +192,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.reviewApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.reviewApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

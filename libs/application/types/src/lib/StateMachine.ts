@@ -9,10 +9,8 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
-import { PerformActionResult } from './TemplateApiModuleTypes'
-import { ProviderErrorReason } from './DataProviderResult'
-import { ProblemType } from '@island.is/shared/problem'
 import { Condition } from './Condition'
+import { AnyParamsObject, TemplateApi } from './template-api/TemplateApi'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -32,7 +30,10 @@ export type ReadWriteValues =
       answers?: string[]
       externalData?: string[]
     }
-export interface RoleInState<T extends EventObject = AnyEventObject> {
+export interface RoleInState<
+  T extends EventObject = AnyEventObject,
+  R = AnyParamsObject
+> {
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
@@ -40,7 +41,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
   shouldBeListedForRole?: boolean
-  api?: ApplicationTemplateAPIAction[]
+  api?: TemplateApi<R>[]
 }
 
 export interface ApplicationContext {
@@ -52,57 +53,6 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
   condition?: Condition
-}
-
-/*export class ApplicationTemplateAPIAction {
-  //Data Provider type
-  dataProviderType?: string
-  // Name of the action that will be run on the API
-  // these actions are exported are found in:
-  // /libs/application/template-api-modules
-  apiModuleAction?: string
-  // If response/error should be written to application.externalData, defaults to true
-  shouldPersistToExternalData?: boolean
-  // Id inside application.externalData, value of apiModuleAction is used by default
-  externalDataId?: string
-  // Should the state transition be blocked if this action errors out
-  // defaults to true
-  throwOnError?: boolean
-  // Order of execution of actions, defaults to 0
-  order?: number
-  // Use mocks? defaults to false
-  useMockData?: boolean | ((application: Application) => boolean)
-  mockData?:
-    | PerformActionResult
-    | ((application: Application) => PerformActionResult)
-  // Shared data providers namspace
-  namespace?: string
-
-  //Error messages to be displayed to the user. Maps to the ProblemType enum thrown by the Service
-  errorReasons?: ErrorReasonException[]
-
-  //Conditonally  return an error reason from a valid response from the provider
-  errorReasonHandler?: (
-    result: PerformActionResult,
-  ) => ErrorReasonException | void
-
-  params?: { [key: string]: unknown }
-}*/
-
-export interface ApplicationTemplateAPIAction {
-  apiModuleAction: string
-  shouldPersistToExternalData?: boolean
-  externalDataId?: string
-  throwOnError?: boolean
-  order?: number
-  namespace?: string
-  params?: { [key: string]: unknown }
-}
-
-export interface ErrorReasonException {
-  reason: ProviderErrorReason | StaticText
-  problemType: ProblemType
-  statusCode: number
 }
 
 export type StateLifeCycle =
@@ -118,7 +68,10 @@ export type StateLifeCycle =
       whenToPrune: number | ((application: Application) => Date)
     }
 
-export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
+export interface ApplicationStateMeta<
+  T extends EventObject = AnyEventObject,
+  R = AnyParamsObject
+> {
   name: string
   lifecycle: StateLifeCycle
   actionCard?: {
@@ -128,8 +81,8 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   }
   progress?: number
   roles?: RoleInState<T>[]
-  onExit?: ApplicationTemplateAPIAction
-  onEntry?: ApplicationTemplateAPIAction
+  onExit?: TemplateApi<R>
+  onEntry?: TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

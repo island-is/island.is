@@ -6,4 +6,5 @@ export enum ProblemType {
   HTTP_INTERNAL_SERVER_ERROR = 'https://httpstatuses.org/500',
   VALIDATION_FAILED = 'https://docs.devland.is/reference/problems/validation-failed',
   BAD_SUBJECT = 'https://docs.devland.is/reference/problems/bad-subject',
+  TEMPLATE_API_ERROR = 'https://docs.devland.is/reference/problems/template-api-error',
 }

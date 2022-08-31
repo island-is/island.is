@@ -5,11 +5,11 @@ import { IsString, IsArray, IsNumber } from 'class-validator'
 class DataProvider {
   @Field(() => String)
   @IsString()
-  id!: string
+  actionId!: string
 
-  @Field(() => String)
-  @IsString()
-  type!: string
+  @Field(() => Number)
+  @IsNumber()
+  order!: number
 }
 
 @InputType()

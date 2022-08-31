@@ -16,10 +16,10 @@ import {
   ApplicationStateMachine,
   ApplicationStateMeta,
   ApplicationStateSchema,
-  ApplicationTemplateAPIAction,
   createApplicationMachine,
   ReadWriteValues,
   RoleInState,
+  TemplateApi,
 } from '@island.is/application/types'
 
 enum FinalStates {
@@ -96,24 +96,17 @@ export class ApplicationTemplateHelper<
     )
   }
 
-  private getTemplateAPIAction(
-    action: ApplicationTemplateAPIAction | null,
-  ): ApplicationTemplateAPIAction | null {
+  private getTemplateAPIAction(action: TemplateApi | null): TemplateApi | null {
     if (action === null) {
       return null
     }
 
-    return {
-      externalDataId: action.apiModuleAction,
-      shouldPersistToExternalData: true,
-      throwOnError: true,
-      ...action,
-    }
+    return action
   }
 
   getOnExitStateAPIAction(
     stateKey: string = this.application.state,
-  ): ApplicationTemplateAPIAction | null {
+  ): TemplateApi | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onExit ?? null
 
@@ -122,7 +115,7 @@ export class ApplicationTemplateHelper<
 
   getOnEntryStateAPIAction(
     stateKey: string = this.application.state,
-  ): ApplicationTemplateAPIAction | null {
+  ): TemplateApi | null {
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
 
@@ -265,9 +258,7 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getDataProvidersFromRoleInState(
-    role: ApplicationRole,
-  ): ApplicationTemplateAPIAction[] {
+  getApisFromRoleInState(role: ApplicationRole): TemplateApi[] {
     const roleInState = this.getRoleInState(role)
     return roleInState?.api ?? []
   }

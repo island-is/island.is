@@ -6,6 +6,7 @@ import {
   ApplicationRole,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -38,11 +39,11 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.INSTRUCTOR,

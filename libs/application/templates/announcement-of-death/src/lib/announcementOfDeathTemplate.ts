@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   StateLifeCycle,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -49,11 +50,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.syslumennOnEntry,
+          onEntry: defineTemplateApi({
+            action: ApiActions.syslumennOnEntry,
             shouldPersistToExternalData: true,
             throwOnError: false,
-          },
+          }),
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -89,11 +90,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           },
           progress: 0.5,
           lifecycle: HalfYearLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -137,11 +138,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           name: 'Delegated',
           progress: 1,
           lifecycle: DayLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.assignElectedPerson,
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignElectedPerson,
             shouldPersistToExternalData: false,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

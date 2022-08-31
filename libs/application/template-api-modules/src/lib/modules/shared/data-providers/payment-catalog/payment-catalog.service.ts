@@ -11,10 +11,12 @@ export class PaymentCatalogService {
   async paymentCatalog({
     params,
   }: TemplateApiModuleActionProps): Promise<PaymentCatalogItem[]> {
-    const organizationId = params?.organizationId as string
+    const parameters = params as { organizationId: string }
 
-    const data = await (organizationId
-      ? this.paymentClientApi.getCatalogByPerformingOrg(organizationId)
+    const data = await (parameters
+      ? this.paymentClientApi.getCatalogByPerformingOrg(
+          parameters.organizationId,
+        )
       : this.paymentClientApi.getCatalog())
 
     return data.item

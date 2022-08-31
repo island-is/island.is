@@ -8,6 +8,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -116,9 +117,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -146,9 +147,9 @@ const template: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

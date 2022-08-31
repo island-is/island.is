@@ -1,6 +1,6 @@
 import { ApplicationService } from '@island.is/application/api/core'
 import {
-  ApplicationTemplateAPIAction,
+  TemplateApi,
   ApplicationWithAttachments,
   ExternalData,
   PerformActionResult,
@@ -34,16 +34,14 @@ export class TemplateApiActionRunner {
    */
   async run(
     application: ApplicationWithAttachments,
-    actions: ApplicationTemplateAPIAction[],
+    actions: TemplateApi[],
     auth: User,
   ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
 
-    const groupedActions = this.groupByOrder(
-      this.sortAndSetUndefinedOrderToZero(actions),
-    )
+    const groupedActions = this.groupByOrder(this.sortActions(actions))
     await this.runActions(groupedActions)
 
     await this.persistExternalData(actions)
@@ -51,15 +49,8 @@ export class TemplateApiActionRunner {
     return this.application
   }
 
-  sortAndSetUndefinedOrderToZero(actions: ApplicationTemplateAPIAction[]) {
-    const defaultsToZero = actions.map((action) => {
-      if (!action.order) {
-        action.order = 0
-      }
-      return action
-    })
-
-    const sortedActions = defaultsToZero.sort((a, b) => {
+  sortActions(actions: TemplateApi[]) {
+    const sortedActions = actions.sort((a, b) => {
       if (a.order === undefined) {
         return 1
       }
@@ -72,9 +63,7 @@ export class TemplateApiActionRunner {
     return sortedActions
   }
 
-  groupByOrder(
-    actions: ApplicationTemplateAPIAction[],
-  ): ApplicationTemplateAPIAction[][] {
+  groupByOrder(actions: TemplateApi[]): TemplateApi[][] {
     const groupedActions = actions.reduce((acc, action) => {
       const order = action.order ?? 0
       if (!acc[order]) {
@@ -82,10 +71,10 @@ export class TemplateApiActionRunner {
       }
       acc[order].push(action)
       return acc
-    }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
+    }, {} as { [key: number]: TemplateApi[] })
 
     const result = Object.keys(groupedActions).map(
-      (value: string): ApplicationTemplateAPIAction[] => {
+      (value: string): TemplateApi[] => {
         return groupedActions[(value as unknown) as number]
       },
     )
@@ -93,7 +82,7 @@ export class TemplateApiActionRunner {
     return result
   }
 
-  async runActions(actionGroups: ApplicationTemplateAPIAction[][]) {
+  async runActions(actionGroups: TemplateApi[][]) {
     const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
         const ps = Promise.all(
@@ -108,104 +97,48 @@ export class TemplateApiActionRunner {
     await result
   }
 
-  async callProvider(action: ApplicationTemplateAPIAction) {
-    const {
-      apiModuleAction,
-      externalDataId,
-      mockData,
-      namespace,
-      params,
-    } = action
-    let actionResult: PerformActionResult | undefined
+  async callProvider(api: TemplateApi) {
+    const { actionId, action, externalDataId, params } = api
 
-    const useMocks =
-      typeof action.useMockData === 'function'
-        ? action.useMockData(this.application)
-        : action.useMockData === true
-    if (useMocks) {
-      actionResult =
-        typeof mockData === 'function' ? mockData(this.application) : mockData
-    } else {
-      actionResult = await this.templateAPIService.performAction({
-        templateId: this.application.typeId,
-        type: apiModuleAction,
-        namespace,
-        props: {
-          application: this.application,
-          auth: this.auth,
-          params,
-        },
-      })
-    }
+    const actionResult = await this.templateAPIService.performAction({
+      templateId: this.application.typeId,
+      actionId,
+      props: {
+        application: this.application,
+        auth: this.auth,
+        params,
+      },
+    })
 
-    if (!actionResult)
-      throw new Error(
-        `No Action is defined for ${useMocks ? 'mock' : ''} ${apiModuleAction}`,
-      )
+    if (!actionResult) throw new Error(`No Action is defined for ${actionId}`)
 
-    await this.updateExternalData(
-      action,
-      actionResult,
-      apiModuleAction,
-      externalDataId,
-    )
+    await this.updateExternalData(actionResult, action, externalDataId)
   }
 
   buildExternalData(
-    action: ApplicationTemplateAPIAction,
     actionResult: PerformActionResult,
-    apiModuleAction: string,
+    action: string,
     externalDataId?: string,
   ): ExternalData {
-    if (!actionResult.success) {
-      const errorReason = action.errorReasons?.find(
-        (x) => x.problemType === actionResult.problemType,
-      )
-      return {
-        [externalDataId || apiModuleAction]: {
-          status: 'failure',
-          date: new Date(),
-          data: {},
-          reason: errorReason?.reason,
-          statusCode: errorReason?.statusCode ?? 500,
-        },
-      }
-    }
-
-    if (typeof action.errorReasonHandler === 'function') {
-      const exceptionHandlerResult = action.errorReasonHandler(actionResult)
-      if (exceptionHandlerResult) {
-        return {
-          [externalDataId || apiModuleAction]: {
-            status: 'failure',
-            date: new Date(),
-            data: {},
-            reason: exceptionHandlerResult.reason,
-            statusCode: exceptionHandlerResult.statusCode,
-          },
-        }
-      }
-    }
-
     return {
-      [externalDataId || apiModuleAction]: {
+      [externalDataId || action]: {
         status: actionResult.success ? 'success' : 'failure',
         date: new Date(),
-        data: actionResult.response as ExternalData['data'],
+        data: (actionResult.success
+          ? actionResult.response
+          : actionResult.error) as ExternalData['data'],
       },
     }
   }
 
   async updateExternalData(
-    action: ApplicationTemplateAPIAction,
     actionResult: PerformActionResult,
-    apiModuleAction: string,
+    action: string,
     externalDataId?: string,
   ): Promise<void> {
     const newExternalDataEntry = this.buildExternalData(
-      action,
       actionResult,
-      apiModuleAction,
+      action,
       externalDataId,
     )
     this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
@@ -216,15 +149,11 @@ export class TemplateApiActionRunner {
     }
   }
 
-  async persistExternalData(
-    actions: ApplicationTemplateAPIAction[],
-  ): Promise<void> {
-    actions.map((action) => {
-      if (action.shouldPersistToExternalData === false) {
+  async persistExternalData(api: TemplateApi[]): Promise<void> {
+    api.map((api) => {
+      if (api.shouldPersistToExternalData === false) {
         //default should be true
-        delete this.newExternalData[
-          action.externalDataId || action.apiModuleAction
-        ]
+        delete this.newExternalData[api.externalDataId || api.action]
       }
     })
 

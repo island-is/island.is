@@ -12,6 +12,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { defineTemplateApi } from '@island.is/application/types'
 
 const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -38,11 +39,11 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.SCHOOL_EMPLOYEE,

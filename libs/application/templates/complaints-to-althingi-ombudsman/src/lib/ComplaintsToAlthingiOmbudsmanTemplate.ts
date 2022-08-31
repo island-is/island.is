@@ -8,6 +8,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
@@ -71,9 +72,9 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
           name: States.submitted,
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

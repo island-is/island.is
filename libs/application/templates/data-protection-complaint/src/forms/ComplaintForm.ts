@@ -10,7 +10,6 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  SharedDataProviders,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -53,13 +52,13 @@ export const ComplaintForm: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
-              provider: SharedDataProviders.nationalRegistryProvider,
+              //provider: null/ SharedDataProviders.nationalRegistryProvider,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
-              provider: SharedDataProviders.userProfileProvider,
+              //provider: SharedDataProviders.userProfileProvider,
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),

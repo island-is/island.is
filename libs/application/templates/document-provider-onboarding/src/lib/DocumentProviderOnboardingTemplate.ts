@@ -11,6 +11,7 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { API_MODULE_ACTIONS } from '../../constants'
 
@@ -163,9 +164,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           name: 'Waiting to assign reviewer',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.assignReviewer,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -225,9 +226,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           name: 'Rejected',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.applicationRejected,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -245,9 +246,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           name: 'TestPhase',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.applicationApproved,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

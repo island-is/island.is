@@ -39,7 +39,7 @@ import {
   ApplicationTypes,
   FormValue,
   ExternalData,
-  ApplicationTemplateAPIAction,
+  TemplateApi,
   PdfTypes,
   ApplicationStatus,
   ApplicationTemplate,
@@ -56,7 +56,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import {
-  getApplicationDataProviders,
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
@@ -74,10 +73,6 @@ import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
-import {
-  buildDataProviders,
-  buildExternalData,
-} from './utils/externalDataUtils'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -571,29 +566,29 @@ export class ApplicationController {
     )
 
     const providersFromRole = userRole
-      ? helper.getDataProvidersFromRoleInState(userRole)
+      ? helper.getApisFromRoleInState(userRole)
       : []
 
-    const listOfProviders: ApplicationTemplateAPIAction[] = []
+    const templateApis: TemplateApi[] = []
 
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
       const found = providersFromRole.find(
-        (x) => x.dataProviderType === externalDataDto.dataProviders[i].type,
+        (x) => x.actionId === externalDataDto.dataProviders[i].actionId,
       )
 
       if (found) {
-        listOfProviders.push(found)
+        templateApis.push(found)
       } else {
         throw new BadRequestException(
-          'Data provider not found with id ' +
-            externalDataDto.dataProviders[i].id,
+          'Data provider not found with action ' +
+            externalDataDto.dataProviders[i].actionId,
         )
       }
     }
 
     const updatedApplication = await this.templateApiActionRunner.run(
       existingApplication as BaseApplication,
-      listOfProviders,
+      templateApis,
       user,
     )
 
@@ -714,18 +709,18 @@ export class ApplicationController {
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     auth: User,
-    action: ApplicationTemplateAPIAction,
+    api: TemplateApi,
   ): Promise<TemplateAPIModuleActionResult> {
     const {
-      apiModuleAction,
+      action,
       shouldPersistToExternalData,
       externalDataId,
       throwOnError,
-    } = action
+    } = api
 
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
-      type: apiModuleAction,
+      actionId: action,
       props: {
         application,
         auth,
@@ -736,7 +731,7 @@ export class ApplicationController {
 
     if (shouldPersistToExternalData) {
       const newExternalDataEntry: ExternalData = {
-        [externalDataId || apiModuleAction]: {
+        [externalDataId || action]: {
           status: actionResult.success ? 'success' : 'failure',
           date: new Date(),
           data: actionResult.success

@@ -10,6 +10,10 @@ import {
   generateAssignApplicationEmail,
 } from './emailGenerators'
 
+export interface ReferenceParams {
+  id: number
+}
+
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService {
@@ -17,13 +21,21 @@ export class ReferenceTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async getReferenceData({ application }: TemplateApiModuleActionProps) {
+  async getReferenceData({
+    application,
+    params,
+  }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     const name = getValueViaPath(
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
+
+    const id = params as ReferenceParams
+    console.log('------------------------')
+    console.log('id is ', id.id)
+    console.log('------------------------')
     /*
     throw new ProblemError({
       type: ProblemType.HTTP_NOT_FOUND,

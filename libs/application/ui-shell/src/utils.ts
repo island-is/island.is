@@ -16,10 +16,13 @@ export function verifyExternalData(
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
 ): boolean {
+  console.log({ dataProviders })
+  console.log({ externalData })
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
-
+    console.log({ id })
     const dataProviderResult = externalData[id]
+    console.log({ dataProviderResult })
     if (!dataProviderResult || dataProviderResult.status === 'failure') {
       return false
     }

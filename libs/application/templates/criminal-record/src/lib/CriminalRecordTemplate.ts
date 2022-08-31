@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
@@ -88,12 +89,12 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 1 hour will be pruned automatically
             whenToPrune: 1 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -128,9 +129,9 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.getCriminalRecord,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.getCriminalRecord,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

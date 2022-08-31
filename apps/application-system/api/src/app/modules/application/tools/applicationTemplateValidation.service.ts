@@ -236,9 +236,9 @@ export class ApplicationValidationService {
 
     const illegalDataProviders: string[] = []
 
-    dataProviders.forEach(({ id }) => {
-      if (permittedDataProviders.indexOf(id) === -1) {
-        illegalDataProviders.push(id)
+    dataProviders.forEach(({ actionId }) => {
+      if (permittedDataProviders.indexOf(actionId) === -1) {
+        illegalDataProviders.push(actionId)
       }
     })
     if (illegalDataProviders.length > 0) {

@@ -59,7 +59,7 @@ export interface BaseTemplateAPIModuleConfig {
 export interface TemplateApiModuleActionProps {
   application: ApplicationWithAttachments
   auth: User
-  params?: { [key: string]: unknown }
+  params?: { [key: string]: unknown } | unknown
 }
 
 export interface EmailTemplateGeneratorProps {

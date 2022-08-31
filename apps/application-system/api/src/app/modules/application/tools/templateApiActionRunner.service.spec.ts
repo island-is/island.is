@@ -3,7 +3,7 @@ import { TemplateApiActionRunner } from './templateApiActionRunner.service'
 import { Test } from '@nestjs/testing'
 import { LoggingModule } from '@island.is/logging'
 import {
-  ApplicationTemplateAPIAction,
+  TemplateApi,
   ApplicationWithAttachments,
   ExternalData,
   PerformActionResult,
@@ -50,20 +50,20 @@ beforeAll(async () => {
 
 describe('TemplateApi Action runner', () => {
   it(`Should sort and default to Zero`, async () => {
-    const actions: ApplicationTemplateAPIAction[] = [
+    const actions: TemplateApi[] = [
       {
-        apiModuleAction: 'withOrder2',
+        action: 'withOrder2',
         order: 2,
       },
       {
-        apiModuleAction: 'withOrder1',
+        action: 'withOrder1',
         order: 1,
       },
       {
-        apiModuleAction: 'withNoOrderSet',
+        action: 'withNoOrderSet',
       },
       {
-        apiModuleAction: 'otherWithOrder2',
+        action: 'otherWithOrder2',
         order: 2,
       },
     ]
@@ -77,25 +77,25 @@ describe('TemplateApi Action runner', () => {
   })
 
   it(`Should group actions by order`, async () => {
-    const orderedActions: ApplicationTemplateAPIAction[] = [
+    const orderedActions: TemplateApi[] = [
       {
-        apiModuleAction: 'withOrder0',
+        action: 'withOrder0',
         order: 0,
       },
       {
-        apiModuleAction: 'otherWithOrder0',
+        action: 'otherWithOrder0',
         order: 0,
       },
       {
-        apiModuleAction: 'withNoOrder1',
+        action: 'withNoOrder1',
         order: 1,
       },
       {
-        apiModuleAction: 'otherWithOrder1',
+        action: 'otherWithOrder1',
         order: 1,
       },
       {
-        apiModuleAction: 'otherWithOrder2',
+        action: 'otherWithOrder2',
         order: 2,
       },
     ]

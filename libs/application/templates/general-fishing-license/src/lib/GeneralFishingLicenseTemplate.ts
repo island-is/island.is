@@ -7,6 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
@@ -68,11 +69,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [
-                FishingLicenceDataProviders.generalFishingLicenceProvider,
-                FishingLicenceDataProviders.nationalRegistryProvider,
-                FishingLicenceDataProviders.paymentCatalogProvider,
-              ],
+              api: [],
               write: 'all',
             },
           ],
@@ -126,9 +123,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -161,9 +158,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

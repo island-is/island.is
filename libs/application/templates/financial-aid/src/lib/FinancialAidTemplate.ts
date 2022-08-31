@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
@@ -219,11 +220,11 @@ const FinancialAidTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.submitted,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.CREATEAPPLICATION,
+          onEntry: defineTemplateApi({
+            action: ApiActions.CREATEAPPLICATION,
             shouldPersistToExternalData: true,
             externalDataId: 'veita',
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

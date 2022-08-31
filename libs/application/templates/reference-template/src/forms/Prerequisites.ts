@@ -10,7 +10,13 @@ import {
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { ReferenceApplicationDataProviders } from '../dataProviders'
+
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  NationalRegistryFamilyApi,
+} from '@island.is/application/types'
+import { ReferenceDataApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -26,28 +32,22 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'approveDataProvider',
-              provider: ReferenceApplicationDataProviders.userProfileProvider,
+              provider: UserProfileApi,
               title: 'User profile',
               subTitle: 'User profile',
             }),
             buildDataProviderItem({
-              id: 'approveDataProvider1',
-              provider:
-                ReferenceApplicationDataProviders.familyRelationProvider,
+              provider: NationalRegistryFamilyApi,
               title: 'Upplýsingar um fjölskyldumeðlimi',
               subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),
             buildDataProviderItem({
-              id: 'approveDataProvider2',
-              provider: ReferenceApplicationDataProviders.referenceProvider,
+              provider: ReferenceDataApi,
               title: 'getReferenceData',
               subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              id: 'approveDataProvider3',
-              provider:
-                ReferenceApplicationDataProviders.nationalRegistryProvider,
+              provider: NationalRegistryUserApi,
               title: 'Þjóðskrá',
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),
@@ -63,7 +63,7 @@ export const Prerequisites: Form = buildForm({
               description: (application: Application) =>
                 `Gildið frá data provider: ${get(
                   application.externalData,
-                  'reference.data.referenceData.numbers',
+                  'getReferenceData.data.referenceData.numbers',
                   'fannst ekki',
                 )}`,
             }),

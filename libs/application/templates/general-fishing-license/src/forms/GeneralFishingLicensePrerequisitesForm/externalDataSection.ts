@@ -22,18 +22,18 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           //id: 'nationalRegistry',
-          provider: FishingLicenceDataProviders.nationalRegistryProvider,
+          // provider: FishingLicenceDataProviders.nationalRegistryProvider,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
         buildDataProviderItem({
-          provider: FishingLicenceDataProviders.generalFishingLicenceProvider,
+          //provider: FishingLicenceDataProviders.generalFishingLicenceProvider,
           title: externalData.directoryOfFisheries.title,
           subTitle: externalData.directoryOfFisheries.description,
         }),
         buildDataProviderItem({
           // id: 'feeInfoProvider',
-          provider: FishingLicenceDataProviders.paymentCatalogProvider,
+          //provider: FishingLicenceDataProviders.paymentCatalogProvider,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,
         }),

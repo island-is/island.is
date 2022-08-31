@@ -6,6 +6,7 @@ import {
   Application,
   DefaultEvents,
   ApplicationRole,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -71,9 +72,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           },
           progress: 0.9,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -97,9 +98,9 @@ const OperatingLicenseTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.submitOperatingLicenseApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitOperatingLicenseApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

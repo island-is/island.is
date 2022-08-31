@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
@@ -127,9 +128,9 @@ const template: ApplicationTemplate<
                 ),
             },
           ],
-          onEntry: {
-            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.sendApplication,
+          }),
         },
         type: 'final' as const,
       },

@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
@@ -103,9 +104,9 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       [ApplicationStates.IN_REVIEW]: {
         meta: {
           name: applicationName,
-          onEntry: {
-            apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE.sendApplyHealthInsuranceApplication,
+          }),
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           roles: [

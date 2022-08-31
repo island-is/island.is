@@ -5,11 +5,7 @@ import { Type } from 'class-transformer'
 class DataProviderDto {
   @IsString()
   @ApiProperty()
-  id!: string
-
-  @IsString()
-  @ApiProperty()
-  type!: string
+  actionId!: string
 
   @ApiPropertyOptional()
   @IsNumber()

@@ -7,6 +7,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -105,9 +106,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             description: stateDescriptions.inReview,
           },
           lifecycle: pruneAfter(twentyEightDays),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.sendNotificationToCounterParty,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.sendNotificationToCounterParty,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -166,9 +167,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.submitted },
           },
           lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.submitApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -202,9 +203,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectApplication,
+          }),
           roles: [
             {
               id: Roles.ParentB,
@@ -232,9 +233,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.rejectedApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.rejectedApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,
@@ -263,9 +264,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
           lifecycle: pruneAfter(oneYear),
-          onEntry: {
-            apiModuleAction: TemplateApiActions.approveApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.approveApplication,
+          }),
           roles: [
             {
               id: Roles.ParentA,

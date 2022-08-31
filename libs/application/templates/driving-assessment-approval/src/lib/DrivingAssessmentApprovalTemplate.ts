@@ -5,6 +5,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -95,9 +96,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitAssessmentConfirmation,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitAssessmentConfirmation,
+          }),
           roles: [
             {
               id: Roles.TEACHER,

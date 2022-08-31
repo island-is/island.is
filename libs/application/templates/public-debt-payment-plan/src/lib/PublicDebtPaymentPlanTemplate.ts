@@ -8,6 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
@@ -137,9 +138,9 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             title: application.name,
             description: application.description,
           },
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.sendApplication,
+          }),
           progress: 1,
           lifecycle: {
             shouldBeListed: true,

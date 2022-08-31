@@ -38,9 +38,8 @@ import type { Logger } from '@island.is/logging'
 
 interface ApplicationApiAction {
   templateId: string
-  type: string
+  actionId: string
   props: TemplateApiModuleActionProps
-  namespace?: string
 }
 
 @Injectable()
@@ -109,12 +108,12 @@ export class TemplateAPIService {
     // No index signature with a parameter of type 'string' was found on type
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    if (typeof service[action.type] === 'function') {
+    if (typeof service[action.actionId] === 'function') {
       try {
         // No index signature with a parameter of type 'string' was found on type
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const response = await service[action.type](action.props)
+        const response = await service[action.actionId](action.props)
 
         return {
           success: true,
@@ -140,9 +139,17 @@ export class TemplateAPIService {
   async performAction(
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
-    if (action.namespace) {
-      const service = this.sharedServicesProvider.getProvider(action.namespace)
-      return this.tryRunningActionOnService(service, action)
+    if (action.actionId.includes('.')) {
+      const id = action.actionId.split('.')
+      const namespace = id[0]
+      const service = this.sharedServicesProvider.getProvider(namespace)
+      const newAction = {
+        ...action,
+        actionId: id[1],
+      }
+      console.log('useing namespace', namespace)
+      console.log('use action', newAction)
+      return this.tryRunningActionOnService(service, newAction)
     }
 
     switch (action.templateId) {

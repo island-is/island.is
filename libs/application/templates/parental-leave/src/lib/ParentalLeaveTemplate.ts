@@ -16,6 +16,7 @@ import {
   ApplicationTemplate,
   Application,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import {
@@ -168,10 +169,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.assignOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -231,11 +232,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
-          onEntry: {
-            apiModuleAction:
+          onEntry: defineTemplateApi({
+            action:
               API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -262,10 +263,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -352,11 +353,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
-          onEntry: {
-            apiModuleAction:
-              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -384,11 +384,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.75,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.sendApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -512,10 +512,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.4,
-          onEntry: {
-            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+          onEntry: defineTemplateApi({
+            action: API_MODULE_ACTIONS.assignEmployer,
             throwOnError: true,
-          },
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

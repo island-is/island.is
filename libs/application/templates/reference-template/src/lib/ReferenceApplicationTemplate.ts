@@ -11,6 +11,10 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+  NationalRegistryFamilyApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -20,7 +24,7 @@ import { Features } from '@island.is/feature-flags'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { ApiActions } from '../shared'
-import { ReferenceApplicationDataProviders } from '../dataProviders'
+import { ReferenceDataApi } from '../dataProviders'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -118,11 +122,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                ReferenceApplicationDataProviders.anotherReferenceProvider,
-                ReferenceApplicationDataProviders.familyRelationProvider,
-                ReferenceApplicationDataProviders.nationalRegistryProvider,
-                ReferenceApplicationDataProviders.userProfileProvider,
-                ReferenceApplicationDataProviders.referenceProvider,
+                ReferenceDataApi.configure({
+                  params: {
+                    id: 1986,
+                  },
+                }),
+                NationalRegistryUserApi,
+                UserProfileApi,
+                NationalRegistryFamilyApi,
               ],
               delete: true,
             },
@@ -171,9 +178,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Waiting to assign',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
-            apiModuleAction: ApiActions.createApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -204,9 +211,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'In Review',
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
-          onExit: {
-            apiModuleAction: ApiActions.completeApplication,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.completeApplication,
+          }),
           roles: [
             {
               id: Roles.ASSIGNEE,

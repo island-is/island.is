@@ -6,6 +6,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -45,9 +46,9 @@ const PassportTemplate: ApplicationTemplate<
           name: m.formName.defaultMessage,
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
-          onExit: {
-            apiModuleAction: ApiActions.checkForDiscount,
-          },
+          onExit: defineTemplateApi({
+            action: ApiActions.checkForDiscount,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -85,9 +86,9 @@ const PassportTemplate: ApplicationTemplate<
           },
           progress: 0.7,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.createCharge,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.createCharge,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -114,9 +115,9 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           progress: 0.9,
           lifecycle: pruneAfter(sixtyDays),
-          onEntry: {
-            apiModuleAction: ApiActions.assignParentB,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignParentB,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -156,9 +157,9 @@ const PassportTemplate: ApplicationTemplate<
               label: m.actionCardDoneTag,
             },
           },
-          onEntry: {
-            apiModuleAction: ApiActions.submitPassportApplication,
-          },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitPassportApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

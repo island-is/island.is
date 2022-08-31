@@ -33,6 +33,7 @@ import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
+import { ActionMenuItem } from '@island.is/service-portal/core'
 
 const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   title,
@@ -152,8 +153,9 @@ const FormExternalDataProvider: FC<{
     description,
     checkboxLabel,
   } = externalDataProvider
-  const relevantDataProviders = dataProviders.filter((p) => p.id)
+  const relevantDataProviders = dataProviders.filter((p) => p.action)
 
+  console.log('relevenat data provider ', relevantDataProviders)
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
   // If id is undefined then the error won't be attached to the field with id
@@ -168,9 +170,9 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(({ id, type }) => ({
-                id,
-                type,
+              dataProviders: relevantDataProviders.map(({ action, order }) => ({
+                actionId: action,
+                order,
               })),
             },
             locale,
