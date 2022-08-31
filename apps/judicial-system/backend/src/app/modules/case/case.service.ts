@@ -476,9 +476,13 @@ export class CaseService {
 
   private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
-    const defendantNationalIds = theCase.defendants
-      ?.filter((defendant) => !defendant.noNationalId && defendant.nationalId)
-      .map((defendant) => defendant.nationalId ?? '')
+    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+      (ids, defendant) =>
+        !defendant.noNationalId && defendant.nationalId
+          ? [...ids, defendant.nationalId]
+          : ids,
+      [],
+    )
 
     return this.policeService.updatePoliceCase(
       theCase.id,
