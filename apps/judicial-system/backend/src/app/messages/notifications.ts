@@ -174,6 +174,13 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
+    subject: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
+      defaultMessage: 'Fyrirtaka í máli: {courtCaseNumber}',
+      description:
+        'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
+    },
     body: {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.body',

@@ -211,6 +211,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
 export function formatProsecutorCourtDateEmailNotification(
   formatMessage: FormatMessage,
   type: CaseType,
+  courtCaseNumber?: string,
   court?: string,
   courtDate?: Date,
   courtRoom?: string,
@@ -218,7 +219,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): string {
+): { subject: string; body: string } {
   const cf = notifications.prosecutorCourtDateEmail
   const scheduledCaseText = formatMessage(cf.scheduledCase, {
     court,
@@ -249,7 +250,7 @@ export function formatProsecutorCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(cf.body, {
+  const body = formatMessage(cf.body, {
     scheduledCaseText,
     courtDateText,
     courtRoomText,
@@ -258,6 +259,12 @@ export function formatProsecutorCourtDateEmailNotification(
     defenderText,
     sessionArrangements,
   })
+
+  const subject = formatMessage(cf.subject, {
+    courtCaseNumber: courtCaseNumber || '',
+  })
+
+  return { body, subject }
 }
 
 export function formatPrisonCourtDateEmailNotification(
