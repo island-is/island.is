@@ -30,20 +30,20 @@
         "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "smoke-test": {
+    "smoke": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "apps/system-e2e/cypress.config.ts",
         "tsConfig": "apps/system-e2e/tsconfig.json",
-        "spec": "**/integration/**/smoke-test/*.spec.{ts,js}"
+        "spec": "**/integration/**/smoke/*.spec.{ts,js}"
       }
     },
-    "acceptance-test": {
+    "acceptance": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
         "cypressConfig": "apps/system-e2e/cypress.config.ts",
         "tsConfig": "apps/system-e2e/tsconfig.json",
-        "spec": "**/integration/**/acceptance-test/*.spec.{ts,js}"
+        "spec": "**/integration/**/acceptance/*.spec.{ts,js}"
       }
     },
     "docker-cypress": {}

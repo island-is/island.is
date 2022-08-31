@@ -26,6 +26,7 @@ const postgresInfo: PostgresInfo = {
   name: 'application_system_api',
   username: 'application_system_api',
 }
+export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
@@ -58,6 +59,21 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
         prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
       },
+      APPLICATION_ATTACHMENT_BUCKET: {
+        dev: 'island-is-dev-storage-application-system',
+        staging: 'island-is-staging-storage-application-system',
+        prod: 'island-is-prod-storage-application-system',
+      },
+      FILE_SERVICE_PRESIGN_BUCKET: {
+        dev: 'island-is-dev-fs-presign-bucket',
+        staging: 'island-is-staging-fs-presign-bucket',
+        prod: 'island-is-prod-fs-presign-bucket',
+      },
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
     })
     .xroad(Base, Client)
     .secrets({
@@ -72,6 +88,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
       DRIVING_LICENSE_BOOK_PASSWORD:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
+      DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
+      DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -132,7 +150,8 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]:
+        'http://web-api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -169,6 +188,20 @@ export const serviceSetup = (services: {
         prod: 'IslandIs_User_Production',
         staging: 'IslandIs_User_Development',
       },
+      FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
+        dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        staging: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        prod: 'https://star-re.crm4.dynamics.com/api/data/v9.1',
+      },
+      FINANCIAL_STATEMENTS_INAO_ISSUER:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0',
+      FINANCIAL_STATEMENTS_INAO_SCOPE: {
+        dev: 'https://dev-re.crm4.dynamics.com/.default',
+        staging: 'https://dev-re.crm4.dynamics.com/.default',
+        prod: 'https://star-re.crm4.dynamics.com/.default',
+      },
+      FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
       SERVICE_DOCUMENTS_BASEPATH: ref(
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
@@ -216,6 +249,10 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

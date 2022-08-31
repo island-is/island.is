@@ -1,27 +1,17 @@
 import { defineConfig } from 'cypress'
-import { getCognitoCredentials } from './src/support/utils'
+import { getCognitoCredentials, getEnvironmentUrls } from './src/support/utils'
+import { emailTask } from './src/support/tasks/email'
+
 import type { TestEnvironment } from './src/lib/types'
-import { BaseUrl, AuthUrl } from './src/lib/types'
-
-const getEnvironmentUrls = (env: TestEnvironment) => {
-  return env === 'dev'
-    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
-    : env === 'prod'
-    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
-    : env === 'staging'
-    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
-    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
-}
-
-const globalTimeout = 10000
+import { Timeout } from './src/lib/types'
 
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: globalTimeout,
-  pageLoadTimeout: globalTimeout,
-  responseTimeout: globalTimeout,
+  defaultCommandTimeout: Timeout.long,
+  pageLoadTimeout: Timeout.medium,
+  responseTimeout: Timeout.short,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -34,6 +24,7 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     supportFile: '**/support/index.{js,ts}',
     setupNodeEvents(on, config) {
+      on('task', { ...emailTask })
       const testEnvironment: TestEnvironment =
         process.env.TEST_ENVIRONMENT || 'local'
       if (testEnvironment !== 'local') {

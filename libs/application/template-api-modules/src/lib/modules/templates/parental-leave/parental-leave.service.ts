@@ -31,6 +31,7 @@ import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
+  generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
   assignLinkEmployerSMS,
@@ -40,11 +41,10 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
-import { apiConstants } from './constants'
+import { apiConstants, isRunningInDevelopment } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
-import { generateEmployerRejected } from './emailGenerators/employerRejectedEmail'
 
 interface VMSTError {
   type: string
@@ -57,6 +57,8 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
+const senderName = isRunningInDevelopment ? undefined : 'island.is'
+const senderEmail = isRunningInDevelopment ? undefined : 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
@@ -92,7 +94,12 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateAssignOtherParentApplicationEmail,
+      (props) =>
+        generateAssignOtherParentApplicationEmail(
+          props,
+          senderName,
+          senderEmail,
+        ),
       application,
     )
 
@@ -112,7 +119,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateOtherParentRejected,
+      (props) => generateOtherParentRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -139,7 +146,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      generateEmployerRejected,
+      (props) => generateEmployerRejected(props, senderName, senderEmail),
       application,
     )
 
@@ -168,7 +175,13 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignEmployerApplicationEmail,
+      (props, assignLink) =>
+        generateAssignEmployerApplicationEmail(
+          props,
+          assignLink,
+          senderName,
+          senderEmail,
+        ),
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
@@ -291,7 +304,6 @@ export class ParentalLeaveService {
         numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
-
       if (
         !isUsingTransferredRights &&
         !willStartToUseTransferredRightsWithPeriod
@@ -427,6 +439,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
+        false, // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -448,13 +461,23 @@ export class ParentalLeaveService {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerEmail,
+          (props) =>
+            generateApplicationApprovedByEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
-          generateApplicationApprovedByEmployerToEmployerEmail,
+          (props) =>
+            generateApplicationApprovedByEmployerToEmployerEmail(
+              props,
+              senderName,
+              senderEmail,
+            ),
           application,
         )
       }
@@ -463,6 +486,37 @@ export class ParentalLeaveService {
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
+    }
+  }
+
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
+    const nationalRegistryId = application.applicant
+    const attachments = await this.getAttachments(application)
+
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
+        nationalRegistryId,
+      )
+
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        true,
+      )
+
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request
+      // for validation purposes
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
+
+      return
+    } catch (e) {
+      this.logger.error('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 }

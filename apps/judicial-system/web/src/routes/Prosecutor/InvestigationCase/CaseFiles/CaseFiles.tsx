@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -130,9 +130,9 @@ export const CaseFiles: React.FC = () => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
-    onRemove,
-    onRetry,
+    handleS3Upload,
+    handleRemoveFromS3,
+    handleRetry,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
   const { user } = useContext(UserContext)
@@ -228,7 +228,7 @@ export const CaseFiles: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -266,7 +266,7 @@ export const CaseFiles: React.FC = () => {
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
-              policeCaseNumber: workingCase.policeCaseNumber,
+              policeCaseNumber: workingCase.policeCaseNumbers.join(', '),
             })}
           </Text>
           <Text marginTop={1}>
@@ -418,9 +418,9 @@ export const CaseFiles: React.FC = () => {
               fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
-              onChange={onChange}
-              onRemove={onRemove}
-              onRetry={onRetry}
+              onChange={handleS3Upload}
+              onRemove={(file) => handleRemoveFromS3(file)}
+              onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               showFileSize
             />

@@ -13,7 +13,7 @@ export enum Sections {
   JUDGE_EXTENSION = 4,
 }
 
-export enum ProsecutorSubsections {
+export enum RestrictionCaseProsecutorSubsections {
   STEP_ONE = 0,
   STEP_TWO = 1,
   STEP_THREE = 2,
@@ -22,13 +22,19 @@ export enum ProsecutorSubsections {
   PROSECUTOR_OVERVIEW = 5,
 }
 
-export enum CourtSubsections {
+export enum RestrictionCaseCourtSubsections {
   RECEPTION_AND_ASSIGNMENT = 0,
   JUDGE_OVERVIEW = 1,
   HEARING_ARRANGEMENTS = 2,
   RULING = 3,
   COURT_RECORD = 4,
   CONFIRMATION = 5,
+}
+
+export enum IndictmentsProsecutorSubsections {
+  DEFENDANT = 0,
+  PROCESSING = 1,
+  CASE_FILES = 2,
 }
 
 export type ReactSelectOption = {

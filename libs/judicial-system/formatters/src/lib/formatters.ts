@@ -101,11 +101,11 @@ export const caseTypes: CaseTypes = {
   DOMESTIC_VIOLENCE: 'heimilisofbeldi',
   ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
   MURDER: 'manndráp',
-  MAJOR_ASSULT: 'meiriháttar líkamsárás',
-  MINOR_ASSULT: 'minniháttar líkamsárás',
+  MAJOR_ASSAULT: 'meiriháttar líkamsárás',
+  MINOR_ASSAULT: 'minniháttar líkamsárás',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',
-  AGGRAVETED_ASSULT: 'sérlega hættuleg líkamsáras',
+  AGGRAVATED_ASSAULT: 'sérlega hættuleg líkamsáras',
   TAX_VIOLATION: 'skattalagabrot',
   ATTEMPTED_MURDER: 'tilraun til manndráps',
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
@@ -251,4 +251,22 @@ export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
   return noNationalId
     ? `fd. ${nationalId}`
     : `kt. ${formatNationalId(nationalId)}`
+}
+
+/** Displays the first element in a list followed by a number indicating
+ *  how many elements are left
+ *  fx. displayFirstPlusRemaining(['apple', 'pear', 'orange']) => 'apple +2'
+ */
+export const displayFirstPlusRemaining = (
+  list: string[] | undefined | null,
+) => {
+  if (!list || list.length === 0) {
+    return ''
+  }
+
+  if (list.length === 1) {
+    return list[0]
+  }
+
+  return `${list[0]} +${list.length - 1}`
 }

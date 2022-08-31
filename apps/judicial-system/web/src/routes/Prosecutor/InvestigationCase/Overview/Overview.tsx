@@ -28,7 +28,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -116,7 +116,9 @@ export const Overview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -165,7 +167,7 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -380,14 +382,9 @@ export const Overview: React.FC = () => {
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
             handleClose={() => router.push(constants.CASES_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASES_ROUTE)
-            }}
             handleSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
-            primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
           />
         )}

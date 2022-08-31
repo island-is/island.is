@@ -128,11 +128,17 @@ const someDefendantIsInvalid = (workingCase: Case) => {
   )
 }
 
-export const isDefendantStepValidRC = (workingCase: Case) => {
+export const isDefendantStepValidRC = (
+  workingCase: Case,
+  policeCaseNumbers: string[],
+) => {
   return (
+    policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
-      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
       workingCase.type === CaseType.TRAVEL_BAN
@@ -143,19 +149,26 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidForSidebarRC = (workingCase: Case) => {
-  return workingCase.id && isDefendantStepValidRC(workingCase)
+  return (
+    workingCase.id &&
+    isDefendantStepValidRC(workingCase, workingCase.policeCaseNumbers)
+  )
 }
 
 export const isDefendantStepValidIC = (
   workingCase: Case,
   caseType: CaseType | undefined,
+  policeCaseNumbers: string[],
 ) => {
   return (
+    policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
-      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
     ]).isValid
@@ -163,7 +176,46 @@ export const isDefendantStepValidIC = (
 }
 
 export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
-  return workingCase.id && isDefendantStepValidIC(workingCase, workingCase.type)
+  return (
+    workingCase.id &&
+    isDefendantStepValidIC(
+      workingCase,
+      workingCase.type,
+      workingCase.policeCaseNumbers,
+    )
+  )
+}
+
+export const isDefendantStepValidIndictments = (
+  workingCase: Case,
+  caseType: CaseType | undefined,
+  policeCaseNumbers: string[],
+) => {
+  const result =
+    policeCaseNumbers.length > 0 &&
+    workingCase.type === caseType &&
+    !someDefendantIsInvalid(workingCase) &&
+    validate([
+      [workingCase.type, ['empty']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
+    ]).isValid
+
+  return result
+}
+
+export const isDefendantStepValidForSidebarIndictments = (
+  workingCase: Case,
+) => {
+  return (
+    workingCase.id &&
+    isDefendantStepValidIndictments(
+      workingCase,
+      workingCase.type,
+      workingCase.policeCaseNumbers,
+    )
+  )
 }
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
@@ -186,6 +238,10 @@ export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
     validate([[workingCase.requestedCourtDate, ['empty', 'date-format']]])
       .isValid
   )
+}
+
+export const isProcessingStepValidIndictments = (workingCase: Case) => {
+  return workingCase.prosecutor && workingCase.court
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case) => {

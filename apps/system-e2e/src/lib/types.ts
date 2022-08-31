@@ -1,5 +1,5 @@
 import type {
-  AuthUser,
+  AuthUser as ADSUser,
   Discount as ADSDiscount,
 } from '@island.is/air-discount-scheme/types'
 
@@ -16,7 +16,11 @@ type BaseUser = {
 
 type FixtureUser = BaseUser & Mobile
 
-type ADSUser = AuthUser
+enum Timeout {
+  long = 30000,
+  medium = Math.floor(long / 2),
+  short = Math.floor(medium / 2),
+}
 
 enum AuthUrl {
   dev = 'https://identity-server.dev01.devland.is',
@@ -25,12 +29,12 @@ enum AuthUrl {
   local = dev,
 }
 
-enum BaseUrl {
-  dev = 'https://beta.dev01.devland.is',
-  staging = 'https://beta.staging01.devland.is',
-  ads = 'https://loftbru.dev01.devland.is',
-  prod = 'https://island.is',
-  local = 'http://localhost:4200',
+enum BaseAuthority {
+  dev = 'beta.dev01.devland.is',
+  staging = 'beta.staging01.devland.is',
+  ads = 'loftbru.dev01.devland.is',
+  prod = 'island.is',
+  local = 'localhost:4200',
 }
 
 type ADSUserWithDiscount = ADSDiscount & {
@@ -39,7 +43,7 @@ type ADSUserWithDiscount = ADSDiscount & {
 
 interface TestURLs {
   authUrl: AuthUrl
-  baseUrl: BaseUrl
+  baseUrl: BaseAuthority
 }
 
 type CognitoCreds = {
@@ -61,9 +65,9 @@ type FakeUser = {
 
 interface IDSLogin {
   phoneNumber: string
-  authUrl: AuthUrl
-  baseUrl: BaseUrl
-  urlPath: string
+  authUrl?: AuthUrl
+  baseUrl?: BaseAuthority
+  urlPath?: string
 }
 
 export type {
@@ -79,4 +83,4 @@ export type {
   FixtureUser,
 }
 
-export { AuthUrl, BaseUrl }
+export { AuthUrl, BaseAuthority, Timeout }
