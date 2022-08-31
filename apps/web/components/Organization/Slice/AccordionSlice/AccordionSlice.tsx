@@ -11,8 +11,9 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import * as styles from './AccordionSlice.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import * as styles from './AccordionSlice.css'
 
 interface SliceProps {
   slice: AccordionSliceSchema
@@ -75,7 +76,11 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
                   label: item.link?.text ?? 'Default',
                   icon: 'arrowForward',
                   onClick: () =>
-                    !!item.link && window.open(item.link?.url, '_blank'),
+                    !!item.link?.url &&
+                    window.open(
+                      item.link.url,
+                      item.link.url.includes('://') ? '_blank' : '_self',
+                    ),
                 }}
               />
             </Box>
