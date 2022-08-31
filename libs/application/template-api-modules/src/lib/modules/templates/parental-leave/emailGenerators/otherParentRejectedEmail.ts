@@ -6,6 +6,7 @@ import { ApplicationConfigurations } from '@island.is/application/types'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
 
 export type OtherParentRejectedEmail = (
   props: EmailTemplateGeneratorProps,
@@ -31,8 +32,9 @@ export const generateOtherParentRejected: OtherParentRejectedEmail = (
 
   return {
     from: {
-      name: senderName ?? email.sender,
-      address: senderEmail ?? email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

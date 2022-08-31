@@ -51,6 +51,10 @@ export class CaseDeliveryService {
             )
           }
 
+          if (!response.caseDeliveredToPolice) {
+            logger.error(`Failed to deliver case ${caseId} to police`)
+          }
+
           return
         }
 
