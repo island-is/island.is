@@ -19,13 +19,11 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
-  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
 import {
   BaseTemplateAPIModuleConfig,
-  SmsProps,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import {
@@ -35,13 +33,18 @@ import {
   generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
-  linkOtherParentSMS,
 } from './emailGenerators'
+import {
+  generateAssignEmployerApplicationSms,
+  generateAssignOtherParentApplicationSms,
+  generateEmployerRejectedApplicationSms,
+  generateOtherParentRejectedApplicationSms,
+} from './smsGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
 } from './parental-leave.utils'
-import { apiConstants, isRunningInDevelopment } from './constants'
+import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 
@@ -84,10 +87,6 @@ export class ParentalLeaveService {
     const { otherParentPhoneNumber } = getApplicationAnswers(
       application.answers,
     )
-    const { applicantName } = getApplicationExternalData(
-      application.externalData,
-    )
-    const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
@@ -95,13 +94,10 @@ export class ParentalLeaveService {
     )
 
     if (otherParentPhoneNumber) {
-      const smsProps: SmsProps = {
-        phoneNumber: otherParentPhoneNumber,
-        message: `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
-        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${linkOtherParentSMS}`
-      }
-      await this.sharedTemplateAPIService.sendSms(smsProps)
+      await this.sharedTemplateAPIService.sendSms(
+        generateAssignOtherParentApplicationSms,
+        application,
+      )
     }
   }
 
@@ -123,14 +119,10 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      const smsProps: SmsProps = {
-        phoneNumber: applicantPhoneNumber,
-        message: `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
-        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
-        ${link}`
-      }
-
-      await this.sharedTemplateAPIService.sendSms(smsProps)
+      await this.sharedTemplateAPIService.sendSms(
+        () => generateOtherParentRejectedApplicationSms(application, link),
+        application,
+      )
     }
   }
 
@@ -152,23 +144,15 @@ export class ParentalLeaveService {
 
       const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      const smsProps: SmsProps = {
-        phoneNumber: applicantPhoneNumber,
-        message: `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
-        Your employer has denied your request. You therefore need to modify your application.
-        ${link}`
-      }
-
-      await this.sharedTemplateAPIService.sendSms(smsProps)
+      await this.sharedTemplateAPIService.sendSms(
+        () => generateEmployerRejectedApplicationSms(application, link),
+        application,
+      )
     }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
     const { employerPhoneNumber } = getApplicationAnswers(application.answers)
-    const { applicantName } = getApplicationExternalData(
-      application.externalData,
-    )
-    const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
@@ -178,14 +162,8 @@ export class ParentalLeaveService {
 
     // send confirmation sms to employer
     if (employerPhoneNumber) {
-      const smsProps: SmsProps = {
-        phoneNumber: employerPhoneNumber,
-        message: `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
-        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður`,
-      }
-
       await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        smsProps,
+        generateAssignEmployerApplicationSms,
         application,
         SIX_MONTHS_IN_SECONDS_EXPIRES,
       )
