@@ -91,3 +91,58 @@ const parseVvrRights = (
 
   return fields?.length ? fields : undefined
 }
+
+export const createPkPassDataBackside = (license: VinnuvelaDto) => {
+  if (!license || !license.vinnuvelaRettindi) return null
+
+  let i = -1
+  return license.vinnuvelaRettindi?.map((v) => {
+    i++
+    return {
+      orderIndex: i.toString(),
+      label: `${v.flokkur} ${v.stuttHeiti}`,
+      value: v.kenna
+        ? `${v.stjorna}\nKennsluréttindi til ${v.kenna}`
+        : `${v.stjorna}`,
+      expirationDate: v.stjorna ?? '',
+    }
+  })
+}
+
+export const createPkPassDataInput = (
+  license: VinnuvelaDto,
+  nationalId: string,
+) => {
+  if (!license || !nationalId) return null
+
+  return [
+    {
+      identifier: 'fulltNafn',
+      value: license.fulltNafn ?? '',
+    },
+    {
+      identifier: 'skirteinisNumer',
+      value: license.skirteinisNumer ?? '',
+    },
+    {
+      identifier: 'kennitala',
+      value: nationalId ?? '',
+    },
+    {
+      identifier: 'utgafuStadur',
+      value: license.utgafuStadur ?? '',
+    },
+    {
+      identifier: 'utgafuLand',
+      value: license.utgafuLand ?? '',
+    },
+    {
+      identifier: 'fyrstiUtgafudagur',
+      value: license.fyrstiUtgafuDagur ?? '',
+    },
+    {
+      identifier: 'okuskirteinisnumer',
+      value: license.okuskirteinisNumer ?? '',
+    },
+  ]
+}

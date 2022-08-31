@@ -13,9 +13,15 @@ import {
   VinnuvelaApi,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
-import { parseMachineLicensePayload } from './machineLicenseMappers'
-import { ApolloError } from 'apollo-server-express'
+import {
+  createPkPassDataInput,
+  parseMachineLicensePayload,
+} from './machineLicenseMappers'
 import { FetchError } from '@island.is/clients/middlewares'
+import {
+  CreatePkPassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -26,6 +32,7 @@ export class GenericMachineLicenseApi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
+    private smartApi: SmartSolutionsApi,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
@@ -83,13 +90,33 @@ export class GenericMachineLicenseApi
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user)
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   async getPkPassUrl(user: User): Promise<string | null> {
-    return null
+    const license = await this.fetchLicense(user)
+    const inputValues = createPkPassDataInput(license, user.nationalId)
+    //const backside = createPkPassDataBackside(license)
+    if (!inputValues) return null
+    //Fetch template from api?
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '61012578-c2a0-489e-8dbd-3df5b3e538ea',
+      inputFieldValues: inputValues,
+    }
+
+    const pass = await this.smartApi.generatePkPassUrl(payload)
+    return pass ?? null
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
-    return null
+    const license = await this.fetchLicense(user)
+    const inputValues = createPkPassDataInput(license, user.nationalId)
+
+    if (!inputValues) return null
+    //Fetch template from api?
+    const payload: CreatePkPassDataInput = {
+      passTemplateId: '61012578-c2a0-489e-8dbd-3df5b3e538ea',
+      inputFieldValues: inputValues,
+    }
+    const pass = await this.smartApi.generatePkPassQrCode(payload)
+    return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
