@@ -8,7 +8,6 @@ export interface CreatePkPassDataInput {
     imageBase64String?: string
   }
 }
-
 export interface CreatePkPassDTO {
   distributionUrl?: string
   deliveryPageUrl?: string

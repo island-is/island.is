@@ -22,7 +22,7 @@ export class SmartSolutionsApi {
   ) {}
 
   private fetchUrl(payload: string): Promise<Response> {
-    return fetch(`https://smartpages-api.smartsolutions.is/graphql`, {
+    return fetch(`https://smartpages-api-dev.smartsolutions.is/graphql`, {
       method: 'POST',
       headers: {
         'X-API-KEY': this.config.pkPassApiKey,
@@ -140,7 +140,7 @@ export class SmartSolutionsApi {
     try {
       res = await this.fetchUrl(JSON.stringify(listTemplatesQuery))
     } catch (e) {
-      this.logger.warn('Unable to retrieve pk pass templates', {
+      this.logger.warn('Unable to retreive pk pass templates', {
         exception: e,
         category: LOG_CATEGORY,
       })
