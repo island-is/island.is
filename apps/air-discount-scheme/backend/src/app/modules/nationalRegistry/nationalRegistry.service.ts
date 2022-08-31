@@ -347,7 +347,7 @@ export class NationalRegistryService {
 
   private handleInvalidJson(error: { type: string }): Einstaklingsupplysingar {
     // OpenAPI client fails when national ids do not contain the promised information,
-    // (f.x. kerfiskennitala). The client fails with 'invalid-json'.
+    // (e.g. kerfiskennitala). The client fails with 'invalid-json'.
     // Instead of the backend failing we return a null user with no ADS rights.
     if (error.type === 'invalid-json') {
       return {
