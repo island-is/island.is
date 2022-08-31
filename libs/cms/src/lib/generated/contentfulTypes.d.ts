@@ -763,7 +763,7 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFormFields {
   /** Title */
-  title: string
+  title?: string | undefined
 
   /** Intro */
   intro?: string | undefined
@@ -3285,6 +3285,9 @@ export interface ITimelineFields {
 
   /** Events */
   events: ITimelineEvent[]
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** Timeline section with a collection of timeline events */
