@@ -43,7 +43,8 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "pseudomap"
+    "pseudomap",
+    "safer-buffer"
   ],
   "keepNames": true
 }

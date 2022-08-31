@@ -164,7 +164,7 @@ RUN echo "whoami: $(whoami)" \
   # uid=0(root) gid=0(root) groups=0(root)
   # which means the current user is root
   && id \
-  && npm install -g "cypress@10.2.0" "@testing-library/cypress" \
+  && npm install -g "cypress@10.6.0" "@testing-library/cypress" \
   && cypress verify \
   # Cypress cache and installed version
   # should be in the root user's home folder
@@ -190,6 +190,8 @@ RUN echo "whoami: $(whoami)" \
 
 
 FROM cypress-base as output-cypress
+ARG APP_HOME
+
 ENV \
   CYPRESS_VIDEOS_FOLDER=/out/videos \
   CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
@@ -200,15 +202,28 @@ RUN mkdir -p /out \
   && chown node:node /out
 
 COPY --chown=node:node --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
+COPY --chown=node:node ${APP_HOME}/entrypoint.sh .
 
 USER node
-# show user effective id and group - it should be non-zero
-# meaning the current user "node" is not root
-RUN id
-
-# user "node" should be able to access the Cypress test runner now
-RUN ls -la /root/.cache/Cypress/*/Cypress
-RUN cat /root/.cache/Cypress/*/Cypress/vk_swiftshader_icd.json
 
 RUN ls -al /${APP_DIST_HOME}
-ENTRYPOINT ["cypress", "run", "--browser", "chrome"]
+ENTRYPOINT ["./entrypoint.sh"]
+
+FROM cypress-base as output-local
+ARG APP_HOME
+
+ENV \
+  CYPRESS_VIDEOS_FOLDER=/out/videos \
+  CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots \
+  CYPRESS_DOWNLOADS_FOLDER=/out/downloads
+
+# node user exists in the base image
+RUN mkdir -p /out \
+  && chown node:node /out
+
+COPY --chown=node:node ${APP_HOME}/entrypoint.sh .
+
+USER node
+
+RUN ls -al /${APP_DIST_HOME}
+ENTRYPOINT ["./entrypoint.sh"]

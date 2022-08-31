@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,7 +15,6 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import type { Case } from '@island.is/judicial-system/types'
@@ -33,7 +32,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendToServer } = useCase()
-  const { user } = useContext(UserContext)
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -69,13 +67,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             {formatMessage(icReportForm.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <BlueBox>
             <Text>{workingCase.demands}</Text>

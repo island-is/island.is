@@ -3,7 +3,7 @@ import { IntlShape, useIntl } from 'react-intl'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -30,7 +30,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   GridRow,
@@ -98,7 +97,6 @@ const CourtRecord = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
   const [
@@ -130,7 +128,10 @@ const CourtRecord = () => {
         ) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður ${
-              workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi'
             } ${formatMessage(core.defendant, { suffix: 'a' })}`,
           )
         }
@@ -226,9 +227,7 @@ const CourtRecord = () => {
             {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>

@@ -1,12 +1,25 @@
 import get from 'lodash/get'
 
+import { Message } from '@island.is/email-service'
+
 import { ApplicationConfigurations } from '@island.is/application/types'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
+
+export type OtherParentRejectedEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
 
 // TODO handle translations
-export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
+export const generateOtherParentRejected: OtherParentRejectedEmail = (
+  props,
+  senderName,
+  senderEmail,
+) => {
   const {
     application,
     options: { email, clientLocationOrigin },
@@ -19,8 +32,9 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

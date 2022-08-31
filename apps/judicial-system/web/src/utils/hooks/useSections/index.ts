@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   Case,
   CaseState,
+  Gender,
   InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
@@ -31,6 +32,7 @@ import {
   isRulingValidIC,
   isRulingValidRC,
   isDefendantStepValidForSidebarIndictments,
+  isProcessingStepValidIndictments,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -242,7 +244,9 @@ const useSections = () => {
       children: [
         {
           type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.indictmentDefendant)),
+          name: capitalize(
+            formatMessage(core.indictmentDefendant, { gender: Gender.MALE }),
+          ),
           href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
         },
         {
@@ -253,6 +257,17 @@ const useSections = () => {
           href: isDefendantStepValidForSidebarIndictments(workingCase)
             ? `${constants.INDICTMENTS_PROCESSING_ROUTE}/${id}`
             : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(
+            formatMessage(sections.indictmentCaseProsecutorSection.caseFiles),
+          ),
+          href:
+            isDefendantStepValidForSidebarIndictments(workingCase) &&
+            isProcessingStepValidIndictments(workingCase)
+              ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
+              : undefined,
         },
       ],
     }
