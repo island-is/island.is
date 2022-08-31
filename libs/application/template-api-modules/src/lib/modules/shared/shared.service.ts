@@ -12,6 +12,7 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
+  AssignSmsTemplateGenerator,
   SmsProps,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
@@ -49,12 +50,10 @@ export class SharedTemplateApiService {
   }
 
   async assignApplicationThroughSms(
-    props: SmsProps,
+    smsTemplateGenerator: AssignSmsTemplateGenerator,
     application: Application,
     expiresIn: number,
   ) {
-    const { phoneNumber, message } = props
-
     const token = await this.applicationService.createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
@@ -68,7 +67,9 @@ export class SharedTemplateApiService {
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
-    return this.smsService.sendSms(phoneNumber, `${message} ${assignLink}`)
+    const { phoneNumber, message } = smsTemplateGenerator(application, assignLink)
+
+    return this.smsService.sendSms(phoneNumber, message)
   }
 
   async sendEmail(

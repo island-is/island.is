@@ -100,3 +100,13 @@ export interface SmsProps {
   phoneNumber: string,
   message: string,
 }
+
+export type AssignSmsTemplateGenerator = (
+  application: Application,
+  assignLink: string
+) => SmsMessage
+
+export interface SmsMessage {
+  phoneNumber: string,
+  message: string
+}
