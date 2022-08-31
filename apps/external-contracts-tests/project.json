@@ -14,7 +14,7 @@
       }
     },
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/external-contracts-tests",
