@@ -9,8 +9,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { CheckboxState } from '../../types'
 import {
   applyAssetPolicies,
-  applyEditEntryPolicies,
-  applyReadOnlyEntryPolicies,
+  applyEntryPolicies,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getContentfulManagementApiClient,
@@ -75,11 +74,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const readOnlyChecked =
         data.readonlyCheckboxState?.[roleName]?.[contentTypeName]
 
-      applyEditEntryPolicies(policies, contentType, tagId)
-
-      if (readOnlyChecked) {
-        applyReadOnlyEntryPolicies(policies, contentType)
-      }
+      applyEntryPolicies(policies, contentType, tagId, readOnlyChecked)
     }
 
     applyAssetPolicies(

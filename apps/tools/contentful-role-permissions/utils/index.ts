@@ -67,7 +67,7 @@ const policiesAreEditable = (
   tagId: string,
 ) => {
   const policies = []
-  applyEditEntryPolicies(policies, contentType, tagId)
+  applyEntryPolicies(policies, contentType, tagId, false)
   return policies.every((p1) =>
     role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
   )
@@ -76,11 +76,17 @@ const policiesAreEditable = (
 const policiesAreReadOnlyEntries = (
   role: RoleProps,
   contentType: ContentTypeProps,
+  tagId: string,
 ) => {
   const policies = []
-  applyReadOnlyEntryPolicies(policies, contentType)
-  return policies.every((p1) =>
-    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  applyEntryPolicies(policies, contentType, tagId, true)
+  const p1 = policies[1]
+
+  return (
+    role.policies.find((p2) => {
+      console.log(JSON.stringify(p1) + ' is equal to: ' + JSON.stringify(p2))
+      return JSON.stringify(p1) === JSON.stringify(p2)
+    }) !== undefined
   )
 }
 
@@ -108,9 +114,10 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
   )
 }
 
-export const extractInititalReadonlyCheckboxStateFromRolesAndContentTypes = (
+export const extractInitialReadonlyCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
+  tagsMap: Map<string, string>,
 ): CheckboxState => {
   return roles.reduce(
     (roleAccumulator, role) => ({
@@ -118,7 +125,11 @@ export const extractInititalReadonlyCheckboxStateFromRolesAndContentTypes = (
       [role.name]: contentTypes.reduce(
         (contentTypeAccumulator, contentType) => ({
           ...contentTypeAccumulator,
-          [contentType.name]: policiesAreReadOnlyEntries(role, contentType),
+          [contentType.name]: policiesAreReadOnlyEntries(
+            role,
+            contentType,
+            tagsMap[slugify(role.name)],
+          ),
         }),
         {},
       ),
@@ -204,10 +215,11 @@ export const applyAssetPolicies = (
   })
 }
 
-export const applyEditEntryPolicies = (
+export const applyEntryPolicies = (
   policies: Role['policies'],
   contentType: ContentTypeProps,
   tagId: string,
+  canReadAllEntriesOfType?: boolean,
 ) => {
   policies.push({
     actions: 'all',
@@ -216,38 +228,38 @@ export const applyEditEntryPolicies = (
       and: [
         { equals: [{ doc: 'sys.type' }, 'Entry'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-        {
-          in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
-        },
       ],
     },
   })
-  policies.push({
-    actions: 'all',
-    effect: 'allow',
-    constraint: {
-      and: [
-        { equals: [{ doc: 'sys.type' }, 'Entry'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
-        {
-          equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
-        },
-      ],
-    },
-  })
-}
 
-export const applyReadOnlyEntryPolicies = (
-  policies: Role['policies'],
-  contentType: ContentTypeProps,
-) => {
+  const actions: ActionType[] = [
+    'update',
+    'delete',
+    'publish',
+    'unpublish',
+    'archive',
+    'unarchive',
+  ]
+
+  if (!canReadAllEntriesOfType) {
+    actions.push('read')
+  }
+
   policies.push({
-    actions: ['read'],
-    effect: 'allow',
+    actions: actions,
+    effect: 'deny',
     constraint: {
       and: [
         { equals: [{ doc: 'sys.type' }, 'Entry'] },
         { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.sys.id] },
+        {
+          not: {
+            or: [
+              { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
+              { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
+            ],
+          },
+        },
       ],
     },
   })

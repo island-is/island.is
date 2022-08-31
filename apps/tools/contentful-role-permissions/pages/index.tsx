@@ -19,7 +19,7 @@ import {
 import {
   extractInitialCheckboxStateFromRolesAndContentTypes,
   extractInitialRoleNamesThatCanReadAllAssetsFromRoles,
-  extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
+  extractInitialReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getAllTags,
@@ -214,6 +214,8 @@ const Home = ({
                               )
                             ) {
                               newState[roleName][contentTypeName] = true
+                            } else {
+                              newState[roleName][contentTypeName] = false
                             }
                           }
                         }
@@ -342,6 +344,8 @@ const Home = ({
                               )
                             ) {
                               newState[roleName][contentTypeName] = true
+                            } else {
+                              newState[roleName][contentTypeName] = false
                             }
                           }
                         }
@@ -436,9 +440,10 @@ export const getServerSideProps = async () => {
     tagsMap,
   )
 
-  const initialReadonlyCheckboxState = extractInititalReadonlyCheckboxStateFromRolesAndContentTypes(
+  const initialReadonlyCheckboxState = extractInitialReadonlyCheckboxStateFromRolesAndContentTypes(
     rolesToShow,
     contentTypes,
+    tagsMap,
   )
 
   const initialRoleNamesThatCanReadAllAssets = extractInitialRoleNamesThatCanReadAllAssetsFromRoles(
