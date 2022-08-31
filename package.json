@@ -83,7 +83,6 @@
     "@nestjs/sequelize": "8.0.0",
     "@nestjs/swagger": "4.8.2",
     "@nestjs/terminus": "7.0.1",
-    "@nrwl/next": "13.10.5",
     "@rehooks/component-size": "1.0.3",
     "@sentry/browser": "6.9.0",
     "@sentry/integrations": "6.9.0",
