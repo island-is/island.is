@@ -25,7 +25,7 @@ describe('Air discount scheme', () => {
     const baseUrl = Cypress.config('baseUrl')
 
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: baseUrl,
       urlPath: '/min-rettindi',
     })
