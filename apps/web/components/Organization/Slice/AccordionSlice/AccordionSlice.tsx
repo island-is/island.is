@@ -12,7 +12,6 @@ import {
   Html,
 } from '@island.is/web/graphql/schema'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import * as styles from './AccordionSlice.css'
 
 interface SliceProps {
