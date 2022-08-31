@@ -82,9 +82,9 @@ const policiesAreReadOnlyEntries = (
   applyEntryPolicies(policies, contentType, tagId, true)
   const p1 = policies[1]
 
+  // TODO: fix the read only indicator on load
   return (
     role.policies.find((p2) => {
-      console.log(JSON.stringify(p1) + ' is equal to: ' + JSON.stringify(p2))
       return JSON.stringify(p1) === JSON.stringify(p2)
     }) !== undefined
   )
