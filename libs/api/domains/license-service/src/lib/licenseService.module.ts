@@ -110,7 +110,6 @@ export class LicenseServiceModule {
                 return new GenericDrivingLicenseApi(
                   config,
                   logger,
-                  smartApi,
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
