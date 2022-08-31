@@ -82,14 +82,14 @@
       "options": {
         "commands": [
           "yarn get-secrets api web",
-          "node -e \"console.log('#############')\"",
-          "node -e \"console.log('# ATTENTION #')\"",
-          "node -e \"console.log('#############')\"",
-          "node -e \"console.log('')\"",
-          "node -e \"console.log('You must manually add these to your .env.secrets file:')\"",
-          "node -e \"console.log('  CONTENTFUL_HOST ')\"",
-          "node -e \"console.log('  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN ')\"",
-          "node -e \"console.log('')\""
+          "echo '#############'",
+          "echo '# ATTENTION #'",
+          "echo '#############'",
+          "echo ''",
+          "echo 'You must manually add these to your .env.secrets file:'",
+          "echo '  CONTENTFUL_HOST '",
+          "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
+          "echo ''"
         ],
         "parallel": false
       }
