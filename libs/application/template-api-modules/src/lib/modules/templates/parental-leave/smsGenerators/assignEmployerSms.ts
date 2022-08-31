@@ -1,4 +1,7 @@
-import { getApplicationAnswers, getApplicationExternalData } from '@island.is/application/templates/parental-leave'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '@island.is/application/templates/parental-leave'
 import { AssignSmsTemplateGenerator } from '../../../../types'
 
 export const generateAssignEmployerApplicationSms: AssignSmsTemplateGenerator = (
@@ -6,9 +9,7 @@ export const generateAssignEmployerApplicationSms: AssignSmsTemplateGenerator = 
   assignLink,
 ) => {
   const { employerPhoneNumber } = getApplicationAnswers(application.answers)
-  const { applicantName } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { applicantName } = getApplicationExternalData(application.externalData)
   const applicantId = application.applicant
 
   return {
