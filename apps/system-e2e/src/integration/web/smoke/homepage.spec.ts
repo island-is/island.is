@@ -1,7 +1,6 @@
 describe('Front page', () => {
   beforeEach(() => {
-    const { username, password } = Cypress.env('cognito')
-    cy.cognitoLogin({ username, password })
+    cy.cognitoLogin()
   })
 
   it('has expected sections', () => {
@@ -11,7 +10,7 @@ describe('Front page', () => {
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
-  // dummy change
+
   it('should have life events', () => {
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
@@ -21,14 +20,11 @@ describe('Front page', () => {
       })
   })
 
-  it('should navigate to featured link', () => {
+  it.only('should navigate to featured link', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
       .should('have.length.at.least', 3)
-      .each((link) => {
-        cy.visit(link.prop('href'))
-        cy.location('pathname')
-      })
+      .each((link) => cy.visit(link.prop('href')))
   })
 
   it('should have link on life events pages to navigate back to the main page', () => {
