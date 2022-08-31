@@ -117,3 +117,30 @@ const parseRights = (
     })),
   }
 }
+
+export const createPkPassDataInput = (license: AdrDto) => {
+  if (!license) return null
+
+  return [
+    {
+      identifier: 'fulltNafn',
+      value: license.fulltNafn ?? '',
+    },
+    {
+      identifier: 'skirteinisNumer',
+      value: license.skirteinisNumer ?? '',
+    },
+    {
+      identifier: 'faedingardagur',
+      value: license.faedingarDagur ?? '',
+    },
+    {
+      identifier: 'rikisfang',
+      value: license.rikisfang ?? '',
+    },
+    {
+      identifier: 'gildirTil',
+      value: license.gildirTil ?? '',
+    },
+  ]
+}
