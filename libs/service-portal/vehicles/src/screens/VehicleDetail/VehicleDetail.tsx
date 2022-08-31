@@ -151,7 +151,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     variant="utility"
                     onClick={() => formSubmit(`${downloadServiceURL}`)}
                   >
-                    Ferilskýrsla
+                    {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
                 </Box>
               </Box>
@@ -185,7 +185,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        {/* <UserInfoLine
+        <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -197,7 +197,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider /> */}
+        <Divider />
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}

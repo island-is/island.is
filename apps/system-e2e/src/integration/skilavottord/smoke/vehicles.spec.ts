@@ -2,7 +2,7 @@ import { FixtureUser } from '../../../lib/types'
 import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/skilavottord/users.json'
 
-describe('Skilavottorð', () => {
+describe.skip('Skilavottorð', () => {
   const path = '/app/skilavottord/my-cars'
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Útlönd')
 

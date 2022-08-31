@@ -190,7 +190,10 @@ export const Applications: FC = () => {
               </Text>
               {shouldRenderNewApplicationButton ? (
                 <Box marginTop={[2, 0]}>
-                  <Button onClick={createApplication}>
+                  <Button
+                    onClick={createApplication}
+                    data-testid="create-new-application"
+                  >
                     {formatMessage(coreMessages.newApplication)}
                   </Button>
                 </Box>

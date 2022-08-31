@@ -3,11 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('FinancialStatementsInaoClientType')
 export class ClientType {
   @Field()
-  clientTypeId!: string
+  value!: string
 
   @Field()
-  name!: string
-
-  @Field()
-  code!: string
+  label!: string
 }

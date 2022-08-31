@@ -29,13 +29,12 @@ enum AuthUrl {
   local = dev,
 }
 
-enum BaseUrl {
-  dev = 'https://beta.dev01.devland.is',
-  staging = 'https://beta.staging01.devland.is',
-  ads = 'https://loftbru.dev01.devland.is',
-  applicationSystem = 'http://localhost:4242',
-  prod = 'https://island.is',
-  local = 'http://localhost:4200',
+enum BaseAuthority {
+  dev = 'beta.dev01.devland.is',
+  staging = 'beta.staging01.devland.is',
+  ads = 'loftbru.dev01.devland.is',
+  prod = 'island.is',
+  local = 'localhost:4200',
 }
 
 type ADSUserWithDiscount = ADSDiscount & {
@@ -44,7 +43,7 @@ type ADSUserWithDiscount = ADSDiscount & {
 
 interface TestURLs {
   authUrl: AuthUrl
-  baseUrl: BaseUrl
+  baseUrl: BaseAuthority
 }
 
 type CognitoCreds = {
@@ -67,7 +66,7 @@ type FakeUser = {
 interface IDSLogin {
   phoneNumber: string
   authUrl?: AuthUrl
-  baseUrl?: BaseUrl
+  baseUrl?: BaseAuthority
   urlPath?: string
 }
 
@@ -84,4 +83,4 @@ export type {
   FixtureUser,
 }
 
-export { AuthUrl, BaseUrl, Timeout }
+export { AuthUrl, BaseAuthority, Timeout }

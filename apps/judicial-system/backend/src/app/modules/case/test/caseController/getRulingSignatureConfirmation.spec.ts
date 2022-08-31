@@ -115,7 +115,11 @@ describe('CaseController - Get ruling signature confirmation', () => {
     const userId = uuid()
     const user = { id: userId } as User
     const caseId = uuid()
-    const theCase = { id: caseId, judgeId: userId } as Case
+    const theCase = {
+      id: caseId,
+      judgeId: userId,
+      policeCaseNumbers: ['007-2022-1'],
+    } as Case
     const documentToken = uuid()
     let then: Then
 

@@ -43,7 +43,7 @@ const initialState: Case = {
   origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
-  policeCaseNumber: '',
+  policeCaseNumbers: [],
   defendants: [{ id: '' } as Defendant],
 }
 
