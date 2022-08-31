@@ -13,7 +13,7 @@ import {
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
   AssignSmsTemplateGenerator,
-  SmsProps,
+  SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
 import {
@@ -42,9 +42,10 @@ export class SharedTemplateApiService {
   ) {}
 
   async sendSms(
-    props: SmsProps
+    smsTemplateGenerator: SmsTemplateGenerator,
+    application: Application,
   ) {
-    const { phoneNumber, message } = props
+    const { phoneNumber, message } = smsTemplateGenerator(application)
 
     return this.smsService.sendSms(phoneNumber, message)
   }

@@ -96,10 +96,9 @@ export abstract class BaseTemplateApiApplicationService {
   ): Promise<string>
 }
 
-export interface SmsProps {
-  phoneNumber: string,
-  message: string,
-}
+export type SmsTemplateGenerator = (
+  application: Application,
+) => SmsMessage
 
 export type AssignSmsTemplateGenerator = (
   application: Application,
