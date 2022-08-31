@@ -13,6 +13,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
+  isIndictmentCase,
   isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -165,18 +166,20 @@ export function formatDefenderResubmittedToCourtEmailNotification(
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   policeCaseNumbers: string[],
-  caseType?: CaseType,
+  caseType: CaseType,
   courtName?: string,
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.readyForCourt.subject, {
-    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
+    isIndictmentCase: isIndictmentCase(caseType),
+    caseType: caseTypes[caseType],
   })
 
-  const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
-    caseType,
+  const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
+    isIndictmentCase: isIndictmentCase(caseType),
     courtName: courtName?.replace('dómur', 'dóm'),
-    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
+    policeCaseNumbersCount: policeCaseNumbers.length,
+    policeCaseNumbers: policeCaseNumbers.join(', ') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

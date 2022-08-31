@@ -42,23 +42,16 @@ export const notifications = {
   },
   readyForCourt: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.ready_for_court.subject',
-      defaultMessage: 'Krafa í máli {policeCaseNumber}',
+      id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',
+      defaultMessage:
+        '{isIndictmentCase, select, true {Ákæra} other {Krafa um {caseType}}} send',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
     prosecutorHtml: {
       id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v1',
+        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v3',
       defaultMessage:
-        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
-    },
-    prosecutorHtmlV2: {
-      id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v2',
-      defaultMessage:
-        'Þú hefur sent kröfu um {caseType, select, CUSTODY {gæsluvarðhald} TRAVEL_BAN {farbann} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {rannsóknarheimild}} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
+        'Þú hefur sent {isIndictmentCase, select, true {ákæru} other {kröfu}} á {courtName} vegna LÖKE {policeCaseNumbersCount, plural, zero {máls} one {máls {policeCaseNumbers}} other {mála: {policeCaseNumbers}}}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
     },

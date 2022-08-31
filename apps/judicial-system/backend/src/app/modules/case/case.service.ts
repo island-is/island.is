@@ -952,9 +952,7 @@ export class CaseService {
 
   async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
     try {
-      await this.refreshFormatMessage()
-
-      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+      const pdf = await this.getRequestPdf(theCase)
 
       await this.courtService.createRequest(
         user,
