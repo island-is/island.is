@@ -53,7 +53,8 @@
     "mimic-response",
     "to-readable-stream",
     "url-parse-lax",
-    "safer-buffer"
+    "safer-buffer",
+    "ioredis"
   ],
   "keepNames": true
 }
