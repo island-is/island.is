@@ -12,7 +12,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import {
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   PageLayout,
@@ -24,7 +24,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -73,7 +72,6 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const { formatMessage } = useIntl()
 
@@ -130,9 +128,9 @@ export const StepFive: React.FC = () => {
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onRemove,
-    onRetry,
-    onChange,
+    handleRemoveFromS3,
+    handleRetry,
+    handleS3Upload,
     files,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
@@ -241,13 +239,7 @@ export const StepFive: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <ParentCaseFiles
           caseType={workingCase.type}
           files={workingCase.parentCase?.caseFiles}
@@ -266,7 +258,7 @@ export const StepFive: React.FC = () => {
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
-              policeCaseNumber: workingCase.policeCaseNumber,
+              policeCaseNumber: workingCase.policeCaseNumbers.join(', '),
             })}
           </Text>
           <Text marginTop={1}>
@@ -420,15 +412,15 @@ export const StepFive: React.FC = () => {
               fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
-              onChange={onChange}
+              onChange={handleS3Upload}
               onRemove={(file) => {
-                onRemove(file)
+                handleRemoveFromS3(file)
                 setPoliceCaseFileList([
                   ...policeCaseFileList,
                   (file as unknown) as PoliceCaseFileCheck,
                 ])
               }}
-              onRetry={onRetry}
+              onRetry={handleRetry}
               errorMessage={uploadErrorMessage}
               disabled={isUploading}
               showFileSize

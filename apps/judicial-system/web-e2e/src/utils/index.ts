@@ -124,7 +124,7 @@ export const mockCase = (type: CaseType) => {
     origin: CaseOrigin.RVG,
     type,
     court: makeCourt(),
-    policeCaseNumber: '007-2021-202000',
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
         id: faker.datatype.uuid(),

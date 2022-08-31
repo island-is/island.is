@@ -122,7 +122,7 @@ export const mockCase = (caseType: CaseType): Case => {
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type: caseType,
-    policeCaseNumber: '007-2021-202000',
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
         id: 'test_defendant_id',

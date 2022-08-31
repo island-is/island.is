@@ -18,7 +18,7 @@ import {
   PageLayout,
   PoliceRequestAccordionItem,
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   CaseFileList,
   Decision,
@@ -265,9 +265,7 @@ export const Ruling: React.FC = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />

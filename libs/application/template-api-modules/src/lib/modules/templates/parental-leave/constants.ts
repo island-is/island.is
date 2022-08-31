@@ -15,3 +15,5 @@ export const apiConstants = {
     selfEmployed: 'selfEmployed',
   },
 }
+
+export const isRunningInProduction = process.env.NODE_ENV === 'production'

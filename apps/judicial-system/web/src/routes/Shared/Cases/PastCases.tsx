@@ -17,6 +17,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
+  displayFirstPlusRemaining,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
@@ -103,7 +104,7 @@ const PastCases: React.FC<Props> = (props) => {
         accessor: 'courtCaseNumber' as keyof Case,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string; policeCaseNumber: string }
+            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
           }
         }) => {
           return (
@@ -111,8 +112,12 @@ const PastCases: React.FC<Props> = (props) => {
               <Box component="span" display="block">
                 {row.row.original.courtCaseNumber}
               </Box>
-              <Text as="span" variant="small">
-                {row.row.original.policeCaseNumber}
+              <Text
+                as="span"
+                variant="small"
+                title={row.row.original.policeCaseNumbers.join(', ')}
+              >
+                {displayFirstPlusRemaining(row.row.original.policeCaseNumbers)}
               </Text>
             </>
           )

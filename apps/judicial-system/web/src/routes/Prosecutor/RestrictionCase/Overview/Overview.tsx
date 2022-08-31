@@ -25,7 +25,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
-  CaseInfo,
+  ProsecutorCaseInfo,
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -160,19 +160,13 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -427,10 +421,6 @@ export const Overview: React.FC = () => {
             })}
             text={modalText}
             handleClose={() => router.push(constants.CASES_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASES_ROUTE)
-            }}
             handleSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
@@ -439,7 +429,6 @@ export const Overview: React.FC = () => {
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
           />
         )}

@@ -126,6 +126,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           progress: 0.25,
+          onExit: {
+            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
