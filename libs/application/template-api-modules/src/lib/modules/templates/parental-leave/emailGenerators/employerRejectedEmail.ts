@@ -6,11 +6,12 @@ import { ApplicationConfigurations } from '@island.is/application/types'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
 
 export type EmployerRejectedEmail = (
   props: EmailTemplateGeneratorProps,
-  senderName?: string | undefined,
-  senderEmail?: string | undefined,
+  senderName?: string,
+  senderEmail?: string,
 ) => Message
 
 // TODO handle translations
@@ -31,8 +32,9 @@ export const generateEmployerRejected: EmployerRejectedEmail = (
 
   return {
     from: {
-      name: senderName ?? email.sender,
-      address: senderEmail ?? email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

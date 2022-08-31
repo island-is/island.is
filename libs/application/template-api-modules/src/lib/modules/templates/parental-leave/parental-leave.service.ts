@@ -57,8 +57,8 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
-const senderName = !isRunningInProduction ? undefined : 'island.is'
-const senderEmail = !isRunningInProduction ? undefined : 'noreply@island.is'
+const senderName = 'island.is'
+const senderEmail = 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
