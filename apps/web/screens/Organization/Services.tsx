@@ -130,6 +130,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
+      namespace={namespace}
       breadcrumbItems={[
         {
           title: 'Ísland.is',

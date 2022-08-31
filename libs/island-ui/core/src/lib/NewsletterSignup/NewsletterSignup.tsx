@@ -7,6 +7,7 @@ import * as styles from './NewsletterSignup.css'
 import { Box } from '../Box/Box'
 import { Hidden } from '../Hidden/Hidden'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { BoxProps } from '../Box/types'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'
@@ -39,6 +40,8 @@ interface Props {
   ) => void
   onSubmit: (event: React.FormEvent<unknown>) => void
   value: string
+  inputAndButtonContainerBoxProps?: BoxProps
+  buttonBoxProps?: BoxProps
 }
 
 export const NewsletterSignup: React.FC<Props> = ({
@@ -57,6 +60,16 @@ export const NewsletterSignup: React.FC<Props> = ({
   errorMessage,
   successTitle,
   successMessage,
+  inputAndButtonContainerBoxProps = {
+    display: 'flex',
+    flexDirection: ['column', 'column', 'row'],
+  },
+  buttonBoxProps = {
+    display: 'flex',
+    alignItems: 'center',
+    paddingTop: [3, 2, 0],
+    marginLeft: [0, 0, 8],
+  },
 }) => {
   return (
     <Box className={styles.variants[variant]}>
@@ -76,7 +89,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           <Text variant="default" paddingBottom={3}>
             {text}
           </Text>
-          <Box display="flex" flexDirection={['column', 'column', 'row']}>
+          <Box {...inputAndButtonContainerBoxProps}>
             <Box className={styles.inputWrap}>
               <Input
                 id={id}
@@ -94,13 +107,7 @@ export const NewsletterSignup: React.FC<Props> = ({
                 )}
               </Hidden>
             </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              className={styles.buttonWrap}
-              paddingTop={[3, 2, 0]}
-              marginLeft={[0, 0, 8]}
-            >
+            <Box className={styles.buttonWrap} {...buttonBoxProps}>
               <Box>
                 <Button as="span" onClick={onSubmit} variant="text">
                   {buttonText}

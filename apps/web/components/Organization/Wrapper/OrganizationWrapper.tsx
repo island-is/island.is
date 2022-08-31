@@ -5,6 +5,7 @@ import NextLink from 'next/link'
 import { theme } from '@island.is/island-ui/theme'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import {
+  GetNamespaceQuery,
   Image,
   Organization,
   OrganizationPage,
@@ -28,6 +29,7 @@ import {
 import {
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
+  MailingListSignup,
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -52,6 +54,7 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -74,6 +77,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
+  namespace?: GetNamespaceQuery['getNamespace']['fields']
 }
 
 interface HeaderProps {
@@ -369,6 +373,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
+  namespace,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -434,18 +439,76 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         items={secondaryNavList}
                       />
                     )}
-                  {organizationPage.sidebarCards.map((card) => (
-                    <ProfileCard
-                      title={card.title}
-                      description={card.content}
-                      link={card.link}
-                      image={
-                        card.image?.url ||
-                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                  <Box
+                    marginY={
+                      organizationPage.secondaryMenu &&
+                      secondaryNavList.length > 0
+                        ? 0
+                        : 3
+                    }
+                    className={styles.sidebarCardContainer}
+                  >
+                    {organizationPage.sidebarCards.map((card) => {
+                      if (card.__typename === 'SidebarCard') {
+                        return (
+                          <ProfileCard
+                            key={card.id}
+                            title={card.title}
+                            description={card.contentString}
+                            link={card.link}
+                            image={
+                              card.image?.url ||
+                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                            }
+                            size="small"
+                          />
+                        )
                       }
-                      size="small"
-                    />
-                  ))}
+                      // TODO: also check if it's a LatestNewsCard type
+                      if (
+                        card.__typename === 'ConnectedComponent' &&
+                        (card.type === 'LatestNewsCard' ||
+                          card['componentType'] === 'LatestNewsCard')
+                      ) {
+                        return (
+                          <LatestNewsCardConnectedComponent
+                            key={card.id}
+                            {...card.json}
+                          />
+                        )
+                      }
+
+                      if (card.__typename === 'MailingListSignupSlice') {
+                        return (
+                          <MailingListSignup
+                            id={'mailingListSignupForm-' + card.id}
+                            title={card.title}
+                            description={card.description}
+                            inputLabel={card.inputLabel}
+                            buttonText={card.buttonText}
+                            signupID={card.id}
+                            boxProps={{
+                              padding: 3,
+                              border: 'standard',
+                              borderRadius: 'standard',
+                            }}
+                            inputAndButtonContainerBoxProps={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'flexStart',
+                            }}
+                            buttonBoxProps={{
+                              marginTop: 3,
+                            }}
+                            variant="white"
+                            namespace={namespace ?? (({} as unknown) as any)}
+                          />
+                        )
+                      }
+
+                      return null
+                    })}
+                  </Box>
                 </>
               )}
               {sidebarContent}

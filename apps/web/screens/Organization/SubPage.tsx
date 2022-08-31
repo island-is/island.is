@@ -112,6 +112,7 @@ const SubPage: Screen<SubPageProps> = ({
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       fullWidthContent={true}
+      namespace={namespace}
       pageFeaturedImage={
         subpage.featuredImage ?? organizationPage.featuredImage
       }

@@ -58,8 +58,8 @@ export class OrganizationPage {
   @Field(() => [FooterItem])
   footerItems!: Array<FooterItem>
 
-  @Field(() => [SliceUnion])
-  sidebarCards!: Array<typeof SliceUnion | null>
+  @Field(() => [SliceUnion], { nullable: true })
+  sidebarCards?: Array<typeof SliceUnion | null>
 
   @Field(() => [Link], { nullable: true })
   externalLinks?: Array<Link>

@@ -93,6 +93,7 @@ const Homestay: Screen<HomestayProps> = ({
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
+      namespace={namespace}
       pageFeaturedImage={subpage.featuredImage}
       breadcrumbItems={[
         {
