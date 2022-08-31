@@ -77,6 +77,7 @@ export const sectionInformationActor = buildSection({
           defaultValue: (application: Application) => {
             const data = application.externalData.userProfile
               .data as UserProfile
+              console.log(data)
             return data.email
           },
         }),
