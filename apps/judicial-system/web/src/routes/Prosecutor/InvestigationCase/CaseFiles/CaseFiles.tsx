@@ -12,7 +12,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import {
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   PageLayout,
@@ -35,7 +35,6 @@ import {
   useDeb,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   AlertMessage,
   Box,
@@ -135,7 +134,6 @@ export const CaseFiles: React.FC = () => {
     handleRetry,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
-  const { user } = useContext(UserContext)
 
   useDeb(workingCase, 'caseFilesComments')
 
@@ -241,13 +239,7 @@ export const CaseFiles: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <ParentCaseFiles
             caseType={workingCase.type}
