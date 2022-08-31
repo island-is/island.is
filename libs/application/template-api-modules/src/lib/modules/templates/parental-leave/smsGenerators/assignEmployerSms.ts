@@ -2,9 +2,9 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
-import { AssignSmsTemplateGenerator } from '../../../../types'
+import { AssignmentSmsTemplateGenerator } from '../../../../types'
 
-export const generateAssignEmployerApplicationSms: AssignSmsTemplateGenerator = (
+export const generateAssignEmployerApplicationSms: AssignmentSmsTemplateGenerator = (
   application,
   assignLink,
 ) => {

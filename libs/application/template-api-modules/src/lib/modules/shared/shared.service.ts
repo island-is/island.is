@@ -12,7 +12,7 @@ import {
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
-  AssignSmsTemplateGenerator,
+  AssignmentSmsTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
@@ -51,7 +51,7 @@ export class SharedTemplateApiService {
   }
 
   async assignApplicationThroughSms(
-    smsTemplateGenerator: AssignSmsTemplateGenerator,
+    smsTemplateGenerator: AssignmentSmsTemplateGenerator,
     application: Application,
     expiresIn: number,
   ) {
