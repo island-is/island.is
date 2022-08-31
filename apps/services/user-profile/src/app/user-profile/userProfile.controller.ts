@@ -83,14 +83,13 @@ export class UserProfileController {
       throw new ForbiddenException()
     }
 
-    const userProfile = await this.userProfileService.findByNationalId(
-      nationalId,
-    )
+    let userProfile = await this.userProfileService.findByNationalId(nationalId)
 
     const islyklarData = await this.islyklarService.getIslykillSettings(
       nationalId,
     )
 
+    // Has No data.
     if (!userProfile && islyklarData.noUserFound) {
       throw new NotFoundException(
         `A user profile with nationalId ${nationalId} does not exist`,
@@ -98,9 +97,14 @@ export class UserProfileController {
     }
 
     /**
-     * Replace email and mobile with islykladata
-     * Add specific islykladata 'canNudge' and 'bankInfo'
+     * User only has islyklar data.
+     * If the user only has islyklar data,
+     * a userprofile should be created for data combination.
      */
+    if (!userProfile && !islyklarData.noUserFound) {
+      userProfile = await this.create({ nationalId }, user)
+    }
+
     userProfile.setDataValue('mobilePhoneNumber', islyklarData?.mobile)
     userProfile.setDataValue('email', islyklarData?.email)
     userProfile.setDataValue('canNudge', islyklarData?.canNudge)
