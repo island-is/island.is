@@ -52,8 +52,6 @@ export class SmartSolutionsApi {
       },
     }
 
-    this.logger.debug(body)
-
     let res: Response | null = null
 
     try {
@@ -105,7 +103,6 @@ export class SmartSolutionsApi {
     }
 
     const response = json as UpsertPkPassResponse
-    this.logger.debug(JSON.stringify(response))
 
     if (response.data) {
       return response as UpsertPkPassResponse
@@ -189,7 +186,6 @@ export class SmartSolutionsApi {
     }
 
     const response = json as PassTemplatesResponse
-    this.logger.debug(JSON.stringify(response))
 
     if (response.data) {
       return response as PassTemplatesResponse
