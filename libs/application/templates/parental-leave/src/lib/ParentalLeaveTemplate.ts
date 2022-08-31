@@ -462,9 +462,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
-        // on: {
-        //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        // },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
