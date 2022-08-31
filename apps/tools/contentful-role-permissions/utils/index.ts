@@ -13,6 +13,7 @@ import {
 } from 'contentful-management'
 import slugify from '@sindresorhus/slugify'
 import type { ActionType } from 'contentful-management/dist/typings/entities/role'
+import type { CheckboxState } from '../types'
 
 let client: PlainClientAPI | null = null
 
@@ -87,7 +88,7 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
   tagsMap: Map<string, string>,
-): Record<string, Record<string, boolean>> => {
+): CheckboxState => {
   return roles.reduce(
     (roleAccumulator, role) => ({
       ...roleAccumulator,
@@ -110,7 +111,7 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
 export const extractInititalReadonlyCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
-): Record<string, Record<string, boolean>> => {
+): CheckboxState => {
   return roles.reduce(
     (roleAccumulator, role) => ({
       ...roleAccumulator,

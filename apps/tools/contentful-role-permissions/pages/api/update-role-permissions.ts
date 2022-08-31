@@ -6,28 +6,25 @@ import {
   TagProps,
 } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { CheckboxState } from '../../types'
 import {
   applyAssetPolicies,
   applyEditEntryPolicies,
   applyReadOnlyEntryPolicies,
-  extractInitialCheckboxStateFromRolesAndContentTypes,
-  extractInititalReadonlyCheckboxStateFromRolesAndContentTypes,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getContentfulManagementApiClient,
 } from '../../utils'
 
+interface RequestBody {
+  checkboxState: CheckboxState
+  readonlyCheckboxState: CheckboxState
+  roleNamesThatCanReadAllAssets: string[]
+  tags: TagProps[]
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = JSON.parse(req.body) as {
-    checkboxState: ReturnType<
-      typeof extractInitialCheckboxStateFromRolesAndContentTypes
-    >
-    readonlyCheckboxState: ReturnType<
-      typeof extractInititalReadonlyCheckboxStateFromRolesAndContentTypes
-    >
-    roleNamesThatCanReadAllAssets: string[]
-    tags: TagProps[]
-  }
+  const data = JSON.parse(req.body) as RequestBody
 
   const client = getContentfulManagementApiClient()
 
