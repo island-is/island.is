@@ -5,6 +5,7 @@ import {
   FormContentContainer,
   FormFooter,
   PageLayout,
+  ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
@@ -28,7 +29,6 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import IndictmentCaseIntro from '../../SharedComponents/IndictmentCaseIntro/IndictmentCaseIntro'
 
 const Processing: React.FC = () => {
   const {
@@ -77,7 +77,7 @@ const Processing: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <IndictmentCaseIntro workingCase={workingCase} />
+        <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt

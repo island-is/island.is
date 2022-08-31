@@ -7,7 +7,7 @@ import {
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
-  CaseInfo,
+  CourtCaseInfo,
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
@@ -97,9 +97,7 @@ export const Confirmation: React.FC = () => {
             Yfirlit úrskurðar
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
