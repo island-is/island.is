@@ -2,7 +2,6 @@ import formatISO from 'date-fns/formatISO'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {
   CaseType,
@@ -79,7 +78,6 @@ export const subTypes: SubTypes = {
 export class CourtService {
   constructor(
     @Inject(courtModuleConfig.KEY)
-    private readonly config: ConfigType<typeof courtModuleConfig>,
     private readonly courtClientService: CourtClientService,
     private readonly eventService: EventService,
   ) {}
