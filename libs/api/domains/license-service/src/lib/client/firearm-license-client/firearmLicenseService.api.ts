@@ -95,15 +95,14 @@ export class GenericFirearmLicenseApi
     const payload: CreatePkPassDataInput = {
       passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
       inputFieldValues: inputValues,
-      thumbnail: {
-        imageBase64String: license.licenseImgBase64 ?? '',
-      },
+      //thumbnail: {
+      //imageBase64String: license.licenseImgBase64 ?? '',
+      //},
     }
 
     const pass = await this.smartApi.generatePkPassUrl(payload)
     return pass ?? null
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
     const license = await this.fetchLicense(user)
     const inputValues = createPkPassDataInput(license, user.nationalId)
@@ -113,9 +112,9 @@ export class GenericFirearmLicenseApi
     const payload: CreatePkPassDataInput = {
       passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
       inputFieldValues: inputValues,
-      thumbnail: {
-        imageBase64String: license.licenseImgBase64 ?? '',
-      },
+      //thumbnail: {
+      //imageBase64String: license.licenseImgBase64 ?? '',
+      //},
     }
     const pass = await this.smartApi.generatePkPassQrCode(payload)
     return pass ?? null

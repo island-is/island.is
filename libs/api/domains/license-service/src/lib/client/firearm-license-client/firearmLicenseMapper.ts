@@ -143,6 +143,10 @@ export const createPkPassDataInput = (
       value: license.qualifications ?? '',
     },
     {
+      identifier: 'skotvopn',
+      value: '',
+    },
+    {
       identifier: 'utgefandi',
       value: 'Lögreglan',
     },
