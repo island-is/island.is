@@ -68,7 +68,10 @@ export class SharedTemplateApiService {
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
-    const { phoneNumber, message } = smsTemplateGenerator(application, assignLink)
+    const { phoneNumber, message } = smsTemplateGenerator(
+      application,
+      assignLink,
+    )
 
     return this.smsService.sendSms(phoneNumber, message)
   }
