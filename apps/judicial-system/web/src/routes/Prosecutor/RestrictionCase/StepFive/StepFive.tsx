@@ -12,7 +12,7 @@ import {
   PoliceCaseFile,
 } from '@island.is/judicial-system/types'
 import {
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   PageLayout,
@@ -24,7 +24,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -73,7 +72,6 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const { formatMessage } = useIntl()
 
@@ -241,13 +239,7 @@ export const StepFive: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <ParentCaseFiles
           caseType={workingCase.type}
           files={workingCase.parentCase?.caseFiles}

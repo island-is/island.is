@@ -18,7 +18,7 @@ import {
 import {
   AccordionListItem,
   CaseFileList,
-  CaseInfo,
+  ProsecutorCaseInfo,
   CommentsAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -155,13 +155,7 @@ export const Overview: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
