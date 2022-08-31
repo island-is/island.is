@@ -10,44 +10,71 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
-import { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
+import { policeModuleConfig } from './police.config'
 
 @Injectable()
 export class PoliceService {
-  private xRoadPath = createXRoadAPIPath(
-    environment.xRoad.basePathWithEnv,
-    XRoadMemberClass.GovernmentInstitution,
-    environment.policeServiceOptions.memberCode,
-    environment.policeServiceOptions.apiPath,
-  )
-
-  private agent = new Agent({
-    cert: environment.xRoad.clientCert,
-    key: environment.xRoad.clientKey,
-    ca: environment.xRoad.clientCa,
-    rejectUnauthorized: false,
-  })
+  private xRoadPath: string
+  private agent: Agent
 
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
   constructor(
+    @Inject(policeModuleConfig.KEY)
+    private readonly config: ConfigType<typeof policeModuleConfig>,
     private readonly eventService: EventService,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) {
+    this.xRoadPath = createXRoadAPIPath(
+      config.tlsBasePathWithEnv,
+      XRoadMemberClass.GovernmentInstitution,
+      config.policeMemberCode,
+      config.policeApiPath,
+    )
+    this.agent = new Agent({
+      cert: config.clientCert,
+      key: config.clientKey,
+      ca: config.clientPem,
+      rejectUnauthorized: false,
+    })
+  }
+
+  private async fetchPoliceDocumentApi(url: string): Promise<Response> {
+    if (!this.config.policeDocumentApiAvailable) {
+      throw 'Police document API not available'
+    }
+
+    return fetch(url, {
+      headers: { 'X-Road-Client': this.config.clientId },
+      agent: this.agent,
+    } as RequestInit)
+  }
+
+  private async fetchPoliceCaseApi(
+    url: string,
+    requestInit: RequestInit,
+  ): Promise<Response> {
+    if (!this.config.policeCaseApiAvailable) {
+      throw 'Police case API not available'
+    }
+
+    return fetch(url, requestInit)
+  }
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
@@ -58,12 +85,8 @@ export class PoliceService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const pdf = await fetch(
+    const pdf = await this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-      {
-        headers: { 'X-Road-Client': environment.xRoad.clientId },
-        agent: this.agent,
-      } as RequestInit,
     )
       .then(async (res) => {
         if (res.ok) {
@@ -114,12 +137,8 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
-    return await fetch(
+    return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/api/Rettarvarsla/GetDocumentListById/${caseId}`,
-      {
-        headers: { 'X-Road-Client': environment.xRoad.clientId },
-        agent: this.agent,
-      } as RequestInit,
     )
       .then(async (res: Response) => {
         if (res.ok) {
@@ -179,5 +198,65 @@ export class PoliceService {
     )
 
     return this.throttle
+  }
+
+  async updatePoliceCase(
+    caseId: string,
+    caseType: CaseType,
+    caseState: CaseState,
+    courtRecordPdf: string,
+    policeCaseNumbers: string[],
+    defendantNationalIds?: string[],
+    caseConclusion?: string,
+  ): Promise<boolean> {
+    return this.fetchPoliceCaseApi(
+      `${this.xRoadPath}/api/Rettarvarsla/UpdateRVCase/${caseId}`,
+      {
+        method: 'PUT',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          rvMal_ID: caseId,
+          caseNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+          ssn:
+            defendantNationalIds && defendantNationalIds[0]
+              ? defendantNationalIds[0]
+              : '',
+          type: caseType,
+          courtVerdict: caseState,
+          courtVerdictString: caseConclusion,
+          courtDocument: Base64.btoa(courtRecordPdf),
+        }),
+      } as RequestInit,
+    )
+      .then(async (res) => {
+        if (res.ok) {
+          return true
+        }
+
+        const response = await res.text()
+
+        throw response
+      })
+      .catch((reason) => {
+        this.logger.error(`Failed to update police case ${caseId}`, { reason })
+
+        this.eventService.postErrorEvent(
+          'Failed to update police case',
+          {
+            caseId,
+            caseType,
+            caseState,
+            policeCaseNumbers: policeCaseNumbers.join(', '),
+          },
+          reason,
+        )
+
+        return false
+      })
   }
 }
