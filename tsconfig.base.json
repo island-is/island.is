@@ -10,13 +10,8 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -24,9 +19,7 @@
     "baseUrl": ".",
     "strict": true,
     "paths": {
-      "*": [
-        "libs/shared/types/src/lib/*"
-      ],
+      "*": ["libs/shared/types/src/lib/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -54,12 +47,8 @@
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
-      "@island.is/api/domains/assets": [
-        "libs/api/domains/assets/src/index.ts"
-      ],
-      "@island.is/api/domains/auth": [
-        "libs/api/domains/auth/src/index.ts"
-      ],
+      "@island.is/api/domains/assets": ["libs/api/domains/assets/src/index.ts"],
+      "@island.is/api/domains/auth": ["libs/api/domains/auth/src/index.ts"],
       "@island.is/api/domains/communications": [
         "libs/api/domains/communications/src/index.ts"
       ],
@@ -159,24 +148,16 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
-      "@island.is/api/mocks": [
-        "libs/api/mocks/src/index.ts"
-      ],
-      "@island.is/api/mocks-react": [
-        "libs/api/mocks/src/react.ts"
-      ],
-      "@island.is/api/schema": [
-        "libs/api/schema/src/index.ts"
-      ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
+      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
+      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
       "@island.is/application/api/files": [
         "libs/application/api/files/src/index.ts"
       ],
-      "@island.is/application/core": [
-        "libs/application/core/src/index.ts"
-      ],
+      "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
@@ -291,9 +272,7 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
-      "@island.is/application/types": [
-        "libs/application/types/src/index.ts"
-      ],
+      "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
@@ -303,30 +282,18 @@
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
-      "@island.is/auth-api-lib": [
-        "libs/auth-api-lib/src/index.ts"
-      ],
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
       "@island.is/auth-api-lib/personal-representative": [
         "libs/auth-api-lib/src/lib/personal-representative/index.ts"
       ],
-      "@island.is/auth-nest-tools": [
-        "libs/auth-nest-tools/src/index.ts"
-      ],
-      "@island.is/auth/react": [
-        "libs/auth/react/src/index.ts"
-      ],
-      "@island.is/auth/scopes": [
-        "libs/auth/scopes/src/index.ts"
-      ],
-      "@island.is/cache": [
-        "libs/cache/src/index.ts"
-      ],
+      "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
+      "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
+      "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
+      "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
-      "@island.is/clients/assets": [
-        "libs/clients/assets/src/index.ts"
-      ],
+      "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
       ],
@@ -342,18 +309,14 @@
       "@island.is/clients/document-provider": [
         "libs/clients/document-provider/src/index.ts"
       ],
-      "@island.is/clients/documents": [
-        "libs/clients/documents/src/index.ts"
-      ],
+      "@island.is/clients/documents": ["libs/clients/documents/src/index.ts"],
       "@island.is/clients/driving-license": [
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
       ],
-      "@island.is/clients/finance": [
-        "libs/clients/finance/src/index.ts"
-      ],
+      "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
@@ -363,15 +326,11 @@
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
-      "@island.is/clients/islykill": [
-        "libs/clients/islykill/src/index.ts"
-      ],
+      "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
-      "@island.is/clients/mms": [
-        "libs/clients/mms/src/index.ts"
-      ],
+      "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -381,12 +340,8 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
-      "@island.is/clients/passports": [
-        "libs/clients/passports/src/index.ts"
-      ],
-      "@island.is/clients/payment": [
-        "libs/clients/payment/src/index.ts"
-      ],
+      "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
+      "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
@@ -405,27 +360,15 @@
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
-      "@island.is/clients/syslumenn": [
-        "libs/clients/syslumenn/src/index.ts"
-      ],
+      "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
-      "@island.is/clients/vehicles": [
-        "libs/clients/vehicles/src/index.ts"
-      ],
-      "@island.is/clients/vmst": [
-        "libs/clients/vmst/src/index.ts"
-      ],
-      "@island.is/clients/zendesk": [
-        "libs/clients/zendesk/src/index.ts"
-      ],
-      "@island.is/cms": [
-        "libs/cms/src/index.ts"
-      ],
-      "@island.is/cms-translations": [
-        "libs/cms-translations/src/index.ts"
-      ],
+      "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
+      "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
+      "@island.is/cms": ["libs/cms/src/index.ts"],
+      "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
       ],
@@ -444,21 +387,11 @@
       "@island.is/content-search-toolkit": [
         "libs/content-search-toolkit/src/index.ts"
       ],
-      "@island.is/dokobit-signing": [
-        "libs/dokobit-signing/src/index.ts"
-      ],
-      "@island.is/email-service": [
-        "libs/email-service/src/index.ts"
-      ],
-      "@island.is/feature-flags": [
-        "libs/feature-flags/src/index.ts"
-      ],
-      "@island.is/file-storage": [
-        "libs/file-storage/src/index.ts"
-      ],
-      "@island.is/financial-aid-web/osk/*": [
-        "apps/financial-aid/web-osk/*"
-      ],
+      "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
+      "@island.is/email-service": ["libs/email-service/src/index.ts"],
+      "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
+      "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
+      "@island.is/financial-aid-web/osk/*": ["apps/financial-aid/web-osk/*"],
       "@island.is/financial-aid-web/veita/*": [
         "apps/financial-aid/web-veita/*"
       ],
@@ -471,51 +404,29 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/health-insurance": [
-        "libs/health-insurance/src/index.ts"
-      ],
+      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],
-      "@island.is/infra-metrics": [
-        "libs/infra-metrics/src/index.ts"
-      ],
-      "@island.is/infra-monitoring": [
-        "libs/infra-monitoring/src/index.ts"
-      ],
-      "@island.is/infra-nest-server": [
-        "libs/infra-nest-server/src/index.ts"
-      ],
-      "@island.is/infra-next-server": [
-        "libs/infra-next-server/src/index.ts"
-      ],
-      "@island.is/infra-tracing": [
-        "libs/infra-tracing/src/index.ts"
-      ],
+      "@island.is/infra-metrics": ["libs/infra-metrics/src/index.ts"],
+      "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
+      "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
+      "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
+      "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],
-      "@island.is/island-ui/core": [
-        "libs/island-ui/core/src/index.ts"
-      ],
-      "@island.is/island-ui/core/types": [
-        "libs/island-ui/core/types.ts"
-      ],
-      "@island.is/island-ui/theme": [
-        "libs/island-ui/theme/src/index.ts"
-      ],
-      "@island.is/island-ui/utils": [
-        "libs/island-ui/utils/src/index.ts"
-      ],
+      "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
+      "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
+      "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
       "@island.is/island-ui/vanilla-extract-utils": [
         "libs/island-ui/vanilla-extract-utils/src/index.ts"
       ],
-      "@island.is/judicial-system-web/*": [
-        "apps/judicial-system/web/*"
-      ],
+      "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/judicial-system/audit-trail": [
         "libs/judicial-system/audit-trail/src/index.ts"
       ],
@@ -537,63 +448,27 @@
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
       ],
-      "@island.is/localization": [
-        "libs/localization/src/index.ts"
-      ],
-      "@island.is/logging": [
-        "libs/logging/src/index.ts"
-      ],
-      "@island.is/message-queue": [
-        "libs/message-queue/src/index.ts"
-      ],
-      "@island.is/nest/audit": [
-        "libs/nest/audit/src/index.ts"
-      ],
-      "@island.is/nest/aws": [
-        "libs/nest/aws/src/index.ts"
-      ],
-      "@island.is/nest/config": [
-        "libs/nest/config/src/index.ts"
-      ],
-      "@island.is/nest/feature-flags": [
-        "libs/nest/feature-flags/src/index.ts"
-      ],
-      "@island.is/nest/pagination": [
-        "libs/nest/pagination/src/index.ts"
-      ],
-      "@island.is/nest/problem": [
-        "libs/nest/problem/src/index.ts"
-      ],
-      "@island.is/nest/sequelize": [
-        "libs/nest/sequelize/src/index.ts"
-      ],
-      "@island.is/nest/swagger": [
-        "libs/nest/swagger/src/index.ts"
-      ],
-      "@island.is/nest/validators": [
-        "libs/nest/validators/src/index.ts"
-      ],
-      "@island.is/next-ids-auth": [
-        "libs/next-ids-auth/src/index.ts"
-      ],
-      "@island.is/nova-sms": [
-        "libs/nova-sms/src/index.ts"
-      ],
-      "@island.is/plausible": [
-        "libs/plausible/src/index.ts"
-      ],
+      "@island.is/localization": ["libs/localization/src/index.ts"],
+      "@island.is/logging": ["libs/logging/src/index.ts"],
+      "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
+      "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
+      "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
+      "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
+      "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
+      "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
+      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
+      "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
+      "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
+      "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/react/feature-flags": [
         "libs/react/feature-flags/src/index.ts"
       ],
-      "@island.is/regulations": [
-        "libs/regulations/src/index.ts"
-      ],
-      "@island.is/regulations/*": [
-        "libs/regulations/src/sub/*"
-      ],
-      "@island.is/residence-history": [
-        "libs/residence-history/src/index.ts"
-      ],
+      "@island.is/regulations": ["libs/regulations/src/index.ts"],
+      "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
+      "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
@@ -669,73 +544,32 @@
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
       ],
-      "@island.is/shared/components": [
-        "libs/shared/components/src/index.ts"
-      ],
-      "@island.is/shared/connected": [
-        "libs/shared/connected/src/index.ts"
-      ],
-      "@island.is/shared/constants": [
-        "libs/shared/constants/src/index.ts"
-      ],
-      "@island.is/shared/form-fields": [
-        "libs/shared/form-fields/src/index.ts"
-      ],
-      "@island.is/shared/mocking": [
-        "libs/shared/mocking/src/index.ts"
-      ],
-      "@island.is/shared/pii": [
-        "libs/shared/pii/src/index.ts"
-      ],
-      "@island.is/shared/problem": [
-        "libs/shared/problem/src/index.ts"
-      ],
-      "@island.is/shared/table": [
-        "libs/shared/table/src/index.ts"
-      ],
+      "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
+      "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
+      "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],
+      "@island.is/shared/form-fields": ["libs/shared/form-fields/src/index.ts"],
+      "@island.is/shared/mocking": ["libs/shared/mocking/src/index.ts"],
+      "@island.is/shared/pii": ["libs/shared/pii/src/index.ts"],
+      "@island.is/shared/problem": ["libs/shared/problem/src/index.ts"],
+      "@island.is/shared/table": ["libs/shared/table/src/index.ts"],
       "@island.is/shared/translations": [
         "libs/shared/translations/src/index.ts"
       ],
-      "@island.is/shared/types": [
-        "libs/shared/types/src/index.ts"
-      ],
-      "@island.is/shared/utils": [
-        "libs/shared/utils/src/index.ts"
-      ],
-      "@island.is/shared/utils/server": [
-        "libs/shared/utils/src/server.ts"
-      ],
-      "@island.is/skilavottord-web/*": [
-        "apps/skilavottord/web/*"
-      ],
+      "@island.is/shared/types": ["libs/shared/types/src/index.ts"],
+      "@island.is/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@island.is/shared/utils/server": ["libs/shared/utils/src/server.ts"],
+      "@island.is/skilavottord-web/*": ["apps/skilavottord/web/*"],
       "@island.is/skilavottord/consts": [
         "libs/skilavottord/consts/src/index.ts"
       ],
-      "@island.is/skilavottord/types": [
-        "libs/skilavottord/types/src/index.ts"
-      ],
-      "@island.is/testing/containers": [
-        "libs/testing/containers/src/index.ts"
-      ],
-      "@island.is/testing/fixtures": [
-        "libs/testing/fixtures/src/index.ts"
-      ],
-      "@island.is/testing/nest": [
-        "libs/testing/nest/src/index.ts"
-      ],
-      "@island.is/user-monitoring": [
-        "libs/user-monitoring/src/index.ts"
-      ],
-      "@island.is/web/*": [
-        "apps/web/*"
-      ],
-      "@island.is/web/component*": [
-        "apps/web/component*/real.ts"
-      ]
+      "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
+      "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
+      "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
+      "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
+      "@island.is/web/*": ["apps/web/*"],
+      "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
