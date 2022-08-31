@@ -84,14 +84,6 @@ export class CourtService {
     private readonly eventService: EventService,
   ) {}
 
-  private async confirmApiAvailability(): Promise<void> {
-    if (this.config.courtApiAvailable) {
-      return
-    }
-
-    throw 'Court API is not available'
-  }
-
   private uploadStream(
     courtId: string,
     fileName: string,
@@ -129,15 +121,12 @@ export class CourtService {
     fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.confirmApiAvailability()
-      .then(() =>
-        this.uploadStream(
-          courtId,
-          `${fileName}.pdf`,
-          'application/pdf',
-          content,
-        ),
-      )
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
@@ -171,15 +160,12 @@ export class CourtService {
     fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.confirmApiAvailability()
-      .then(() =>
-        this.uploadStream(
-          courtId,
-          `${fileName}.pdf`,
-          'application/pdf',
-          content,
-        ),
-      )
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createThingbok(courtId, {
           caseNumber: courtCaseNumber,
@@ -214,15 +200,12 @@ export class CourtService {
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.confirmApiAvailability()
-      .then(() =>
-        this.uploadStream(
-          courtId,
-          `${fileName}.pdf`,
-          'application/pdf',
-          content,
-        ),
-      )
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId ?? '', {
           caseNumber: courtCaseNumber,
@@ -260,8 +243,7 @@ export class CourtService {
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.confirmApiAvailability()
-      .then(() => this.uploadStream(courtId, fileName, fileType, content))
+    return this.uploadStream(courtId, fileName, fileType, content)
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
@@ -306,18 +288,16 @@ export class CourtService {
 
     const isIndictment = isIndictmentCase(type)
 
-    return this.confirmApiAvailability()
-      .then(() =>
-        this.courtClientService.createCase(courtId, {
-          caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-          subtype: subType as string,
-          status: 'Skráð',
-          receivalDate: formatISO(nowFactory(), { representation: 'date' }),
-          basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
-          // TODO: pass in all policeCaseNumbers when CourtService supports it
-          sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
-        }),
-      )
+    return this.courtClientService
+      .createCase(courtId, {
+        caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
+        subtype: subType as string,
+        status: 'Skráð',
+        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
+        basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
+        // TODO: pass in all policeCaseNumbers when CourtService supports it
+        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
+      })
       .catch((reason) => {
         this.eventService.postErrorEvent(
           'Failed to create a court case',
@@ -348,17 +328,15 @@ export class CourtService {
     fromEmail: string,
     fromName: string,
   ): Promise<string> {
-    return this.confirmApiAvailability()
-      .then(() =>
-        this.courtClientService.createEmail(courtId, {
-          caseNumber: courtCaseNumber,
-          subject,
-          body,
-          recipients,
-          fromEmail,
-          fromName,
-        }),
-      )
+    return this.courtClientService
+      .createEmail(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        body,
+        recipients,
+        fromEmail,
+        fromName,
+      })
       .catch((reason) => {
         this.eventService.postErrorEvent(
           'Failed to create an email',
