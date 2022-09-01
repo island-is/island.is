@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
   PageLayout,
@@ -20,7 +21,6 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
-import PoliceCaseNumbersTags from '../../SharedComponents/PoliceCaseNumbersTags/PoliceCaseNumbersTags'
 
 const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -52,20 +52,7 @@ const CaseFiles: React.FC = () => {
             {formatMessage(strings.caseFiles.heading)}
           </Text>
         </Box>
-        <PoliceCaseNumbersTags
-          policeCaseNumbers={workingCase.policeCaseNumbers}
-        />
-        <Box marginBottom={5}>
-          <Text fontWeight="semiBold">{`${formatMessage(core.court)}: ${
-            workingCase.court?.name
-          }`}</Text>
-          <Text fontWeight="semiBold">{`${capitalize(
-            formatMessage(core.indictmentDefendant),
-          )}: ${workingCase.defendants
-            ?.map((defendant) => defendant.name)
-            .toString()
-            .replace(/,/g, ', ')}`}</Text>
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3} display="inlineFlex">
             <Text variant="h3" as="h3">

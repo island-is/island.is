@@ -9,4 +9,7 @@ export class DeliverResponse {
 
   @ApiProperty()
   caseFilesDeliveredToCourt!: boolean
+
+  @ApiProperty()
+  caseDeliveredToPolice!: boolean
 }

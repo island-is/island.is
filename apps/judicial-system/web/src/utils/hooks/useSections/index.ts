@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import {
   Case,
   CaseState,
+  Gender,
   InstitutionType,
   isInvestigationCase,
   isRestrictionCase,
@@ -243,7 +244,9 @@ const useSections = () => {
       children: [
         {
           type: 'SUB_SECTION',
-          name: capitalize(formatMessage(core.indictmentDefendant)),
+          name: capitalize(
+            formatMessage(core.indictmentDefendant, { gender: Gender.MALE }),
+          ),
           href: `${constants.INDICTMENTS_DEFENDANT_ROUTE}/${id}`,
         },
         {
