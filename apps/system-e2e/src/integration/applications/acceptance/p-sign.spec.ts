@@ -1,22 +1,17 @@
 import { regex as uuidRegex } from 'uuidv4'
 import { getFakeUser } from '../../../support/utils'
-import { BaseUrl, FixtureUser, Timeout } from '../../../lib/types'
+import { BaseAuthority, FixtureUser, Timeout } from '../../../lib/types'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
 
 const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
 
 describe('P-sign', function () {
   beforeEach(() => {
-    // FIXME: https://github.com/island-is/island.is/issues/8261
-    if (Cypress.env().testEnvironment == 'local') {
-      const baseUrl = BaseUrl.applicationSystem
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      Cypress.config('baseUrl', baseUrl)
-    }
     cy.idsLogin({
       phoneNumber: fakeUser.phoneNumber,
+      baseUrl: BaseAuthority.applications,
       urlPath: '/umsoknir/p-merki',
+      setBaseUrl: true,
     })
   })
 

@@ -27,11 +27,17 @@ const idsLogin = ({
   authUrl = Cypress.env('authUrl'),
   baseUrl = Cypress.config('baseUrl'),
   urlPath = '/',
+  setBaseUrl = false,
 }: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
     },
+  }
+  if (setBaseUrl) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    Cypress.config('baseUrl', baseUrl)
   }
 
   cy.patchSameSiteCookie(`${baseUrl}/api/auth/signin/identity-server?`, 'POST')
