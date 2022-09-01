@@ -8,7 +8,7 @@ import * as styles from './Modal.css'
 
 interface ModalProps {
   title: string
-  text: string | ReactNode
+  text?: string | ReactNode
   primaryButtonText?: string
   secondaryButtonText?: string
   handleClose?: () => void
@@ -75,12 +75,14 @@ const Modal: React.FC<ModalProps> = ({
             {title}
           </Text>
         </Box>
-        <Box marginBottom={6} className={styles.breakSpaces}>
-          {
-            // Check if text is a string or Element
-            React.isValidElement(text) ? text : <Text>{text}</Text>
-          }
-        </Box>
+        {text && (
+          <Box marginBottom={6} className={styles.breakSpaces}>
+            {
+              // Check if text is a string or Element
+              React.isValidElement(text) ? text : <Text>{text}</Text>
+            }
+          </Box>
+        )}
         {children}
         <Box display="flex">
           {secondaryButtonText && (

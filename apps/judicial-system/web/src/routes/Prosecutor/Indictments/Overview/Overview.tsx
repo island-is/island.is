@@ -1,10 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   FormContentContainer,
+  FormFooter,
   InfoCard,
+  Modal,
   PageLayout,
   PdfButton,
   ProsecutorCaseInfo,
@@ -22,6 +26,8 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseState } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
 import * as styles from './Overview.css'
@@ -30,7 +36,11 @@ const Overview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+  const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
+    'noModal',
+  )
   const { formatMessage } = useIntl()
+  const router = useRouter()
   const { onOpen } = useFileList({ caseId: workingCase.id })
 
   return (
@@ -93,19 +103,44 @@ const Overview: React.FC = () => {
             }
           />
         </Box>
-        {workingCase.caseFiles?.map((caseFile, index) => {
-          return (
-            <Box key={index} className={styles.caseFileContainer}>
-              <PdfButton
-                renderAs="row"
-                caseId={workingCase.id}
-                title={caseFile.name}
-                handleClick={() => onOpen(caseFile.id)}
-              />
-            </Box>
-          )
-        })}
+        <Box component="section" marginBottom={10}>
+          {workingCase.caseFiles?.map((caseFile, index) => {
+            return (
+              <Box key={index} className={styles.caseFileContainer}>
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={caseFile.name}
+                  handleClick={() => onOpen(caseFile.id)}
+                />
+              </Box>
+            )
+          })}
+        </Box>
       </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
+          nextButtonText={formatMessage(strings.overview.nextButtonText, {
+            isNewIndictment:
+              workingCase.state === CaseState.NEW ||
+              workingCase.state === CaseState.DRAFT,
+          })}
+          onNextButtonClick={() => setModal('caseSubmittedModal')}
+        />
+      </FormContentContainer>
+      <AnimatePresence>
+        {modal === 'caseSubmittedModal' && (
+          <Modal
+            title={formatMessage(strings.overview.modalHeading)}
+            handleClose={() => router.push(constants.CASES_ROUTE)}
+            handlePrimaryButtonClick={() => {
+              // router.push(constants.CASES_ROUTE)
+            }}
+            primaryButtonText={formatMessage(strings.overview.modalButtonText)}
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }
