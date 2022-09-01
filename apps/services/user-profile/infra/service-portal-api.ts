@@ -53,8 +53,8 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       },
     })
     .resources({
-      limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '400m', memory: '512Mi' },
+      limits: { cpu: '800m', memory: '2048Mi' },
+      requests: { cpu: '200m', memory: '1024Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
     .grantNamespaces(
