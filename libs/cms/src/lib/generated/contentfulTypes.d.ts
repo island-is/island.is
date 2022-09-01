@@ -763,7 +763,7 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFormFields {
   /** Title */
-  title?: string | undefined
+  title: string
 
   /** Intro */
   intro?: string | undefined
