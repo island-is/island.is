@@ -25,23 +25,35 @@ import {
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  useCase,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './Overview.strings'
 import * as styles from './Overview.css'
 
 const Overview: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const [modal, setModal] = useState<'noModal' | 'caseSubmittedModal'>(
     'noModal',
   )
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { onOpen } = useFileList({ caseId: workingCase.id })
+  const { transitionCase } = useCase()
+
+  const handleNextButtonClick = async () => {
+    await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+    setModal('caseSubmittedModal')
+  }
 
   return (
     <PageLayout
@@ -126,16 +138,16 @@ const Overview: React.FC = () => {
               workingCase.state === CaseState.NEW ||
               workingCase.state === CaseState.DRAFT,
           })}
-          onNextButtonClick={() => setModal('caseSubmittedModal')}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
       <AnimatePresence>
         {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(strings.overview.modalHeading)}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              // router.push(constants.CASES_ROUTE)
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onPrimaryButtonClick={() => {
+              router.push(constants.CASES_ROUTE)
             }}
             primaryButtonText={formatMessage(strings.overview.modalButtonText)}
           />

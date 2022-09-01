@@ -900,7 +900,7 @@ export const SignedVerdictOverview: React.FC = () => {
           primaryButtonText={formatMessage(
             m.sections.shareCaseModal.buttonClose,
           )}
-          handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+          onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
       <AnimatePresence exitBeforeEnter>
@@ -958,7 +958,7 @@ export const SignedVerdictOverview: React.FC = () => {
               ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
               : ''
           }
-          handlePrimaryButtonClick={() => {
+          onPrimaryButtonClick={() => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}

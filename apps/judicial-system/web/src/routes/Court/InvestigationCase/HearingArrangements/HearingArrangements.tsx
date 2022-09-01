@@ -321,7 +321,7 @@ const HearingArrangements = () => {
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
@@ -335,7 +335,7 @@ const HearingArrangements = () => {
               }}
               handleSecondaryButtonClick={() => {
                 sendNotification(
-                  workingCase.id,
+              onSecondaryButtonClick
                   NotificationType.COURT_DATE,
                   true,
                 )

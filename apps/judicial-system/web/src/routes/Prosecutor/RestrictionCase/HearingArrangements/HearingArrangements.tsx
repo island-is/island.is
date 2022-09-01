@@ -240,8 +240,8 @@ export const HearingArrangements: React.FC = () => {
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
-              handleClose={() => setModalVisible(false)}
-              handleSecondaryButtonClick={() =>
+              onClose={() => setModalVisible(false)}
+              onSecondaryButtonClick={() =>
                 router.push(
                   `${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
@@ -251,7 +251,7 @@ export const HearingArrangements: React.FC = () => {
                   ? formatMessage(errors.sendNotification)
                   : undefined
               }
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.HEADS_UP,

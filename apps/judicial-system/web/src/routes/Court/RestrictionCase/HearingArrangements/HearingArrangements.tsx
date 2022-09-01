@@ -219,7 +219,7 @@ export const HearingArrangements: React.FC = () => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
             router.push(
-              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+          onSecondaryButtonClickON_CASE_RULING_ROUTE}/${workingCase.id}`,
             )
           }}
           handlePrimaryButtonClick={async () => {

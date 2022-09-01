@@ -220,13 +220,13 @@ const HearingArrangements = () => {
               text={formatMessage(m.modal.text)}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
-              handleClose={() => setIsNotificationModalVisible(false)}
-              handleSecondaryButtonClick={() =>
+              onClose={() => setIsNotificationModalVisible(false)}
+              onSecondaryButtonClick={() =>
                 router.push(
                   `${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.HEADS_UP,

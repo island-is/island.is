@@ -189,7 +189,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Reyna aftur'
       }
-      handlePrimaryButtonClick={() => {
+      onPrimaryButtonClick={() => {
         if (navigateOnClose) {
           router.push(
             `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
@@ -200,7 +200,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       handleSecondaryButtonClick={async () => {
         if (signingProgress === 'success') {
           if (navigateOnClose) {
-            router.push(
+      onSecondaryButtonClick
               `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
             )
           }

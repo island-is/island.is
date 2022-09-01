@@ -386,8 +386,8 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handleSecondaryButtonClick={() => {
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             secondaryButtonText="Loka glugga"

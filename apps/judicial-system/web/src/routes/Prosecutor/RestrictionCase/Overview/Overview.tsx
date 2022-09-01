@@ -431,8 +431,8 @@ export const Overview: React.FC = () => {
               caseType: workingCase.type,
             })}
             text={modalText}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handleSecondaryButtonClick={() => {
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             errorMessage={
