@@ -1,5 +1,6 @@
 import { buildForm, buildCustomField } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -8,10 +9,8 @@ export const done: Form = buildForm({
   children: [
     buildCustomField({
       id: 'congrats',
-      component: 'Congratulations',
-      title: 'Umsókn send áfram á þinn maka',
-      description:
-        'Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
+      component: 'NextSteps',
+      title: m.nextStepsTitle,
     }),
   ],
 })

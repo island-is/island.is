@@ -166,10 +166,92 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: 'email',
   },
+  address: {
+    id: 'mac.application:address',
+    defaultMessage: 'Lögheimili',
+    description: 'address',
+  },
+  citizenship: {
+    id: 'mac.application:citizenship',
+    defaultMessage: 'Ríkisfang',
+    description: 'citizenship',
+  },
+  maritalStatus: {
+    id: 'mac.application:maritalStatus',
+    defaultMessage: 'Hjúskaparstaða fyrir vígslu',
+    description: 'marital status',
+  },
+  previousMarriageTermination: {
+    id: 'mac.application:previousMarriageTermination',
+    defaultMessage: 'Hvernig lauk síðasta hjúskap',
+    description: 'previous marriage',
+  },
+  terminationByDivorce: {
+    id: 'mac.application:terminationByDivorce',
+    defaultMessage: 'Með lögskilnaði',
+    description: '',
+  },
+  terminationByLosingSpouse: {
+    id: 'mac.application:terminationByLosingSpouse',
+    defaultMessage: 'Með láti maka',
+    description: '',
+  },
+  terminationByAnnulment: {
+    id: 'mac.application:terminationByAnnulment',
+    defaultMessage: 'Með ógildingu',
+    description: '',
+  },
+  personalInformationTitle: {
+    id: 'mac.application:personalInformationTitle',
+    defaultMessage: 'Persónuuplýsingar',
+    description: 'personal info',
+  },
+  personalInformationDescription: {
+    id: 'mac.application:personalInformationDescription',
+    defaultMessage:
+      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+    description: 'personal info',
+  },
+  ceremony: {
+    id: 'mac.application:ceremony',
+    defaultMessage: 'Vígsla',
+    description: '',
+  },
+  ceremonyDescription: {
+    id: 'mac.application:ceremonyDescription',
+    defaultMessage:
+      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+    description: '',
+  },
+  ceremonyDate: {
+    id: 'mac.application:ceremonyDate',
+    defaultMessage: 'Áætlaður vígsludagur',
+    description: '',
+  },
+  ceremonyDatePlaceholder: {
+    id: 'mac.application:ceremonyDatePlaceholder',
+    defaultMessage: 'Skráðu inn dag',
+    description: '',
+  },
+  ceremonyPlace: {
+    id: 'mac.application:ceremonyPlace',
+    defaultMessage: 'Hvar er vígsla áformuð?',
+    description: '',
+  },
 
   /* Spouse confirmation screens */
 
   /* Payment */
+  payment: {
+    id: 'mac.application:payment',
+    defaultMessage: 'Greiðsla',
+    description: '',
+  },
+  proceedToPayment: {
+    id: 'mac.application:proceedToPayment',
+    defaultMessage: 'Áfram í greiðslu',
+    description: '',
+  },
   paymentPendingDescription: {
     id: 'mac.application:paymentPendingDescription',
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
@@ -233,5 +315,68 @@ export const m = defineMessages({
     id: 'mac.application:forwardingToPayment',
     defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
     description: 'Forwarding you to payment handler...',
+  },
+
+  /* Overview */
+  overview: {
+    id: 'mac.application:overview',
+    defaultMessage: 'Yfirlit',
+    description: '',
+  },
+  applicationOverview: {
+    id: 'mac.application:applicationOverview',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: '',
+  },
+
+  /* Next steps for spouse 1 */
+  nextStepsTitle: {
+    id: 'mac.application:nextStepsTitle',
+    defaultMessage: 'Umsókn send áfram á þinn maka',
+    description: '',
+  },
+  nextStepsDescription: {
+    id: 'mac.application:nextStepsDescription',
+    defaultMessage:
+      'Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
+    description: '',
+  },
+  nextSteps: {
+    id: 'mac.application:nextSteps',
+    defaultMessage: 'Next steps',
+    description: '',
+  },
+  bullet1: {
+    id: 'mac.application:bullet1',
+    defaultMessage: ' þarf að fylla út sinn hluta umsóknarinnar.',
+    description: '',
+  },
+  bullet2: {
+    id: 'mac.application:bullet2',
+    defaultMessage:
+      'Ef maki þinn tekur ekki afstöðu til samningsins innan 60 daga þarf að hefja umsóknarferlið að nýju á Ísland.is.',
+    description: '',
+  },
+  bullet3: {
+    id: 'mac.application:bullet3',
+    defaultMessage:
+      'Könnunarvottorð frá sýslumanni gildir í 30 daga frá útgáfudegi.',
+    description: '',
+  },
+  bullet4: {
+    id: 'mac.application:bullet4',
+    defaultMessage:
+      'Könnunarvottorð verður sent í pósthólf ykkar beggja á island.is og þið berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir hjónavígsluna.',
+    description: '',
+  },
+  copyLink: {
+    id: 'mac.application:copyLink',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+  shareLink: {
+    id: 'mac.application:shareLink',
+    defaultMessage: 'Deila hlekk',
+    description: '',
   },
 })

@@ -8,7 +8,7 @@ export const done: Form = buildForm({
   children: [
     buildCustomField({
       id: 'congrats',
-      component: 'Congratulations',
+      component: 'NextSteps',
       title: 'Umsókn móttekin',
     }),
   ],

@@ -56,10 +56,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       // spaces are not removed.
                       description: `
                   Ath. gervigögn eru eingöngu notuð í stað þess að sækja
-                  forsendugögn í staging umhverfi (dev x-road) hjá Þjóðskrá, auk þess
-                  sem hægt er að senda inn umsóknina í "þykjó" - þeas. allt hagar sér
-                  eins nema að RLS tekur ekki við umsókninni.
-      
+                  forsendugögn í staging umhverfi (dev x-road) hjá Þjóðskrá.
                   Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
                   til að hægt sé að prófa ferlið.
                 `.replace(/\s{1,}/g, ' '),
@@ -81,8 +78,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     }),
                     buildSelectField({
                       id: 'fakeData.maritalStatus',
-                      title: 'Hjúkskaparstaða',
-                      description: 'Núverandi hjúkskaparstaða umsækjanda',
+                      title: 'Hjúskaparstaða',
+                      description: 'Núverandi hjúskaparstaða umsækjanda',
                       width: 'half',
                       condition: allowFakeCondition(YES),
                       options: [
@@ -180,7 +177,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
         children: [
           buildSubSection({
             id: 'sides',
-            title: 'Hjónaefni',
+            title: m.informationMaritalSides,
             children: [
               buildMultiField({
                 id: 'sides',
@@ -188,7 +185,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 children: [
                   buildDescriptionField({
                     id: 'header1',
-                    title: 'Hjónaefni 1',
+                    title: m.informationSpouse1,
                     titleVariant: 'h4',
                   }),
                   buildTextField({
@@ -204,7 +201,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildTextField({
                     id: 'applicant.person.name',
-                    title: 'Nafn',
+                    title: m.name,
                     width: 'half',
                     backgroundColor: 'white',
                     readOnly: true,
@@ -239,7 +236,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildDescriptionField({
                     id: 'header2',
-                    title: 'Hjónaefni 2',
+                    title: m.informationSpouse2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
@@ -280,17 +277,16 @@ export const getApplication = ({ allowFakeData = false }): Form => {
           }),
           buildSubSection({
             id: 'info',
-            title: 'Persónuupplýsingar',
+            title: m.personalInformationTitle,
             children: [
               buildMultiField({
                 id: 'personalInfo',
-                title: 'Persónuupplýsingar',
-                description:
-                  'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+                title: m.personalInformationTitle,
+                description: m.personalInformationDescription,
                 children: [
                   buildTextField({
                     id: 'personalInfo.address',
-                    title: 'Lögheimili',
+                    title: m.address,
                     backgroundColor: 'white',
                     readOnly: true,
                     defaultValue: (application: Application) => {
@@ -301,7 +297,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildTextField({
                     id: 'personalInfo.citizenship',
-                    title: 'IS',
+                    title: m.citizenship,
                     backgroundColor: 'white',
                     width: 'half',
                     readOnly: true,
@@ -313,7 +309,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildTextField({
                     id: 'personalInfo.maritalStatus',
-                    title: 'Hjúskaparstaða fyrir vígslu',
+                    title: m.maritalStatus,
                     backgroundColor: 'white',
                     width: 'half',
                     readOnly: true,
@@ -330,19 +326,19 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildRadioField({
                     id: 'personalInfo.previousMarriageTermination',
-                    title: 'Hvernig lauk síðasta hjúskap?',
+                    title: m.previousMarriageTermination,
                     options: [
                       {
                         value: MarriageTermination.divorce,
-                        label: 'Með lögskilnaði',
+                        label: m.terminationByDivorce,
                       },
                       {
                         value: MarriageTermination.lostSpouse,
-                        label: 'Með láti maka',
+                        label: m.terminationByLosingSpouse,
                       },
                       {
                         value: MarriageTermination.annulment,
-                        label: 'Með ógildingu',
+                        label: m.terminationByAnnulment,
                       },
                     ],
                     largeButtons: false,
@@ -360,18 +356,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
           }),
           buildSubSection({
             id: 'info',
-            title: 'Vígsla',
+            title: m.ceremony,
             children: [
               buildMultiField({
                 id: 'ceremonyInfo',
-                title: 'Vígsla',
-                description:
-                  'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+                title: m.ceremony,
+                description: m.ceremonyDescription,
                 children: [
                   buildDateField({
                     id: 'ceremony.date',
-                    title: 'Áætlaður vígsludagur',
-                    placeholder: 'Skráðu inn dag',
+                    title: m.ceremonyDate,
+                    placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
                   }),
                   buildDescriptionField({
@@ -381,7 +376,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildRadioField({
                     id: 'ceremony.ceremonyPlace',
-                    title: 'Hvar er vígsla áformuð?',
+                    title: m.ceremonyPlace,
                     options: [
                       { value: 'office', label: 'Embætti sýslumanns' },
                       {
@@ -428,7 +423,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
           }),
           buildSubSection({
             id: 'info2',
-            title: 'Svaramenn',
+            title: m.informationWitnessTitle,
             children: [
               buildMultiField({
                 id: 'witnesses',
@@ -437,7 +432,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 children: [
                   buildDescriptionField({
                     id: 'header3',
-                    title: 'Svaramaður 1',
+                    title: m.informationWitness1,
                     titleVariant: 'h4',
                   }),
                   buildCustomField({
@@ -460,7 +455,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                   }),
                   buildDescriptionField({
                     id: 'header4',
-                    title: 'Svaramaður 2',
+                    title: m.informationWitness1,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
@@ -490,11 +485,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
       }),
       buildSection({
         id: 'marriageOverview',
-        title: 'Yfirlit',
+        title: m.overview,
         children: [
           buildMultiField({
             id: 'applicationOverview',
-            title: 'Yfirlit umsóknar',
+            title: m.applicationOverview,
             description: m.informationSubtitle,
             children: [
               buildCustomField({
@@ -508,7 +503,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
       }),
       buildSection({
         id: 'paymentTotal',
-        title: 'Greiðsla',
+        title: m.payment,
         children: [
           buildMultiField({
             id: 'payment',
@@ -527,7 +522,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 actions: [
                   {
                     event: DefaultEvents.PAYMENT,
-                    name: 'Áfram í greiðslu',
+                    name: m.proceedToPayment,
                     type: 'primary',
                   },
                 ],

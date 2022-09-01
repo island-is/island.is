@@ -5,48 +5,45 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { CopyLink } from '@island.is/application/ui-components'
+import { formatText } from '@island.is/application/core'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-export const Congratulations = ({ application }: PropTypes): JSX.Element => {
+export const NextSteps = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const spouseName = (application.answers.spouse as any)?.name ?? ''
+  const spouseName = (application.answers.spouse as any).person.name ?? ''
+
+  const bullets = [m.bullet2, m.bullet3, m.bullet4]
 
   return (
     <Box>
       <Text variant="default" marginBottom={2}>
-        Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn
-        maka.
+        {formatMessage(m.nextStepsDescription)}
       </Text>
       <Text variant="h3" marginBottom={2}>
-        Næstu skref
+        {formatMessage(m.nextSteps)}
       </Text>
       <BulletList type={'ul'} space={2}>
-        <Bullet>{spouseName} þarf að fylla út sinn hluta umsóknarinnar.</Bullet>
         <Bullet>
-          Ef maki þinn tekur ekki afstöðu til samningsins innan 60 daga þarf að
-          hefja umsóknarferlið að nýju á Ísland.is.
+          {spouseName} {formatText(m.bullet1, application, formatMessage)}
         </Bullet>
-        <Bullet>
-          Könnunarvottorð frá sýslumanni gildir í 30 daga frá útgáfudegi.
-        </Bullet>
-        <Bullet>
-          Könnunarvottorð verður sent í pósthólf ykkar beggja á island.is og þið
-          berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir
-          hjónavígsluna.
-        </Bullet>
+        {bullets.map((bullet, i) => (
+          <Bullet key={i}>
+            {formatText(bullet, application, formatMessage)}
+          </Bullet>
+        ))}
       </BulletList>
 
       <Box marginTop={3}>
-        <Text variant="h4">Deila hlekk</Text>
+        <Text variant="h4">{formatMessage(m.shareLink)}</Text>
         <Box marginTop={2}>
           <CopyLink
             linkUrl={
               `${document.location.origin}/hjonavigsla/` + application.id
             }
-            buttonTitle={'Afrita hlekk'}
+            buttonTitle={formatMessage(m.copyLink)}
           />
         </Box>
       </Box>
