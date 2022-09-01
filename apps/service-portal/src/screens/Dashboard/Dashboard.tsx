@@ -1,6 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { FC, Suspense, useEffect, useMemo } from 'react'
-import {  useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import {
   Box,
@@ -130,16 +130,16 @@ export const Dashboard: FC<{}> = () => {
     <Box>
       <Greeting />
       <GridContainer className={styles.relative}>
-        {!isLegalGuardian && 
-        <Box className={styles.imageAbsolute}>
-          <img
-            src={`./assets/images/${
-              IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
-            }`}
-            alt=""
+        {!isLegalGuardian && (
+          <Box className={styles.imageAbsolute}>
+            <img
+              src={`./assets/images/${
+                IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
+              }`}
+              alt=""
             />
-        </Box>
-          }
+          </Box>
+        )}
         <GridRow data-testid={'service-portal-dashboard'}>
           {navigation.map((rootItem, rootIndex) => {
             return rootItem.children?.map(
@@ -147,16 +147,14 @@ export const Dashboard: FC<{}> = () => {
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
                 !navRoot.navHide && (
                   <GridColumn
-                  key={rootItem.name + '-' + rootIndex}
+                    key={rootItem.name + '-' + rootIndex}
                     span={['12/12', '12/12', '6/12', '4/12']}
                     paddingBottom={3}
                   >
-                    <div
-                      onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
-                    >
+                    <div onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}>
                       {navRoot.path && (
                         <CategoryCard
-                        truncateHeading
+                          truncateHeading
                           onClick={() =>
                             navRoot.path && history.push(navRoot.path)
                           }

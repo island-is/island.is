@@ -184,13 +184,13 @@ export const subLinkActive = style({
 
 export const animatedIcon = style({
   height: 32,
-  width: 32
+  width: 32,
 })
 
 globalStyle(`${animatedIcon} svg`, {
-  height: 32
+  height: 32,
 })
 
 export const dashboard = style({
-  borderLeft: `4px solid ${theme.color.white}`
+  borderLeft: `4px solid ${theme.color.white}`,
 })

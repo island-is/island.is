@@ -56,7 +56,7 @@ const Greeting: FC<{}> = () => {
               type="info"
               title={formatMessage({
                 id: 'service-portal:rights-of-a-child-title',
-                defaultMessage: 'Barnasáttmálinn'
+                defaultMessage: 'Barnasáttmálinn',
               })}
               message={formatMessage({
                 id: 'service.portal:rights-of-a-child',

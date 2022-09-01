@@ -6,11 +6,9 @@ export const relative = style({
 })
 
 export const imageAbsolute = style({
+  display: 'none',
   ...themeUtils.responsiveStyle({
-    xs: {
-      display: 'none',
-    },
-    sm: {
+    lg: {
       display: 'block',
       position: 'absolute',
       top: -252,

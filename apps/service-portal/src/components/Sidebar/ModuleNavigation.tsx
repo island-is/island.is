@@ -62,7 +62,6 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
       onMouseLeave={() => {
         setHover(false)
       }}
-     
     >
       {/* {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
