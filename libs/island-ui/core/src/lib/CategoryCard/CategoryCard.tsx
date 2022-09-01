@@ -25,7 +25,7 @@ type Tag = {
 export type CategoryCardProps = {
   ref?: UseMeasureRef<HTMLElement>
   width?: number
-  icon?: JSX.Element
+  icon?: React.ReactElement
   heading: string
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
@@ -42,6 +42,7 @@ export type CategoryCardProps = {
   stackWidth?: number
   /** Hyphenate the heading */
   hyphenate?: boolean
+  /** On click event (link sometimes doesnt work) */
   onClick?: () => void
 }
 
