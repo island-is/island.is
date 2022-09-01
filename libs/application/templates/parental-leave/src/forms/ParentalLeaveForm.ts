@@ -73,6 +73,34 @@ export const ParentalLeaveForm: Form = buildForm({
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
         buildSubSection({
+          id: 'leaveType',
+          title: 'Veldu orlof',
+          children: [
+            buildAsyncSelectField({
+              title: 'Veldu umsókn',
+              id: 'applicant.applicationType',
+              // loadingError: parentalLeaveFormMessages.errors.loading,
+              isSearchable: true,
+              placeholder:
+                parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
+              loadOptions: async ({ apolloClient }) => {
+                const { data } = await apolloClient.query<GetUnionsQuery>({
+                  query: GetUnions,
+                })
+
+                return (
+                  data?.getUnions
+                    ?.filter(({ id }) => id !== NO_UNION)
+                    .map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    })) ?? []
+                )
+              },
+            }),
+          ]
+        }),
+        buildSubSection({
           id: 'emailAndPhoneNumber',
           title: parentalLeaveFormMessages.applicant.subSection,
           children: [
