@@ -140,7 +140,7 @@ export const Dashboard: FC<{}> = () => {
             />
         </Box>
           }
-        <GridRow>
+        <GridRow data-testid={'service-portal-dashboard'}>
           {navigation.map((rootItem, rootIndex) => {
             return rootItem.children?.map(
               (navRoot, index) =>
