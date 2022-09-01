@@ -32,8 +32,8 @@ module.exports = {
           queryInterface.sequelize.query(
             'DROP TYPE IF EXISTS enum_case_file_category',
             { transaction: t },
-          )
-        )
+          ),
+        ),
     )
   },
 }
