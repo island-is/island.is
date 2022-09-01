@@ -13,7 +13,9 @@ export interface IslykillApiModuleConfig {
 }
 
 export class IslykillApiModule {
-  static register(config: IslykillApiModuleConfig): DynamicModule {
+  static async register(
+    config: IslykillApiModuleConfig,
+  ): Promise<DynamicModule> {
     function lykillError(errorMsg: any) {
       logger.error(errorMsg)
     }
@@ -23,7 +25,7 @@ export class IslykillApiModule {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
       }
-      const data = fs.readFileSync(config.cert, {
+      const data = await fs.promises.readFile(config.cert, {
         encoding: 'base64',
       })
 
