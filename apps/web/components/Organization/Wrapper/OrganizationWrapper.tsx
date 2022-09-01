@@ -464,7 +464,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                           />
                         )
                       }
-                      // TODO: also check if it's a LatestNewsCard type
+
                       if (
                         card.__typename === 'ConnectedComponent' &&
                         (card.type === 'LatestNewsCard' ||
