@@ -46,7 +46,7 @@ import { ResourcesService } from './resources.service'
 
 type ClientDelegationInfo = Pick<
   Client,
-  | 'supportsDelegation'
+  | 'supportsCustomDelegation'
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
@@ -345,7 +345,7 @@ export class DelegationsService {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
     if (
-      (!client || client.supportsDelegation) &&
+      (!client || client.supportsCustomDelegation) &&
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.Custom))
     ) {
@@ -682,7 +682,7 @@ export class DelegationsService {
       attributes: [
         'supportsLegalGuardians',
         'supportsProcuringHolders',
-        'supportsDelegation',
+        'supportsCustomDelegation',
         'supportsPersonalRepresentatives',
       ],
     })
