@@ -1,10 +1,20 @@
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { logger } from '@island.is/logging'
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 
 import { IslykillSettings } from './models/islykillSettings.model'
 import { UpdateIslykillSettings } from './models/updateIslykillSettings.model'
 import { CreateIslykillSettings } from './models/createIslykillSettings.model'
+
+const LOG_CATEGORY = 'islykill-service'
+
+const handleLogging = (error: any) => {
+  logger.error('Islykill error', {
+    error: JSON.stringify(error),
+    category: LOG_CATEGORY,
+  })
+}
 
 @Injectable()
 export class IslykillService {
@@ -43,6 +53,7 @@ export class IslykillService {
         }
       })
       .catch((e) => {
+        handleLogging({ e, message: errorMsg, status: e.status })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
@@ -77,6 +88,7 @@ export class IslykillService {
             empty: true,
           }
         }
+        handleLogging({ e, message: errorMsg, status: e.status })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
@@ -104,6 +116,7 @@ export class IslykillService {
         }
       })
       .catch((e) => {
+        handleLogging({ e, message: errorMsg, status: e.status })
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
