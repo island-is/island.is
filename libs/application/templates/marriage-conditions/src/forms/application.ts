@@ -5,7 +5,6 @@ import {
   buildDataProviderItem,
   buildMultiField,
   buildCustomField,
-  buildDividerField,
   buildTextField,
   buildSubmitField,
   buildDescriptionField,
@@ -13,6 +12,7 @@ import {
   buildRadioField,
   buildSelectField,
   getValueViaPath,
+  buildDateField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -24,7 +24,7 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
-import { NO, YES } from '../lib/constants'
+import { MarriageTermination, NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { MaritalStatus } from '../types/schema'
 
@@ -332,11 +332,27 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'personalInfo.previousMarriageTermination',
                     title: 'Hvernig lauk síðasta hjúskap?',
                     options: [
-                      { value: 'divorce', label: 'Með lögskilnaði' },
-                      { value: 'lostSpouse', label: 'Með láti maka' },
-                      { value: 'annulment', label: 'Með ógildingu' },
+                      {
+                        value: MarriageTermination.divorce,
+                        label: 'Með lögskilnaði',
+                      },
+                      {
+                        value: MarriageTermination.lostSpouse,
+                        label: 'Með láti maka',
+                      },
+                      {
+                        value: MarriageTermination.annulment,
+                        label: 'Með ógildingu',
+                      },
                     ],
                     largeButtons: false,
+                    condition: (answers) => {
+                      return (
+                        (answers.personalInfo as any)?.maritalStatus ===
+                          'DIVORCED' ||
+                        (answers.fakeData as any)?.maritalStatus === '6'
+                      )
+                    },
                   }),
                 ],
               }),
@@ -352,10 +368,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 description:
                   'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
                 children: [
-                  buildTextField({
+                  buildDateField({
                     id: 'ceremony.date',
-                    title: 'Áætlaður vígsludagur eða tímabil',
-                    placeholder: 'Skráðu inn dag eða tímabil',
+                    title: 'Áætlaður vígsludagur',
+                    placeholder: 'Skráðu inn dag',
+                    width: 'half',
                   }),
                   buildDescriptionField({
                     id: 'space',

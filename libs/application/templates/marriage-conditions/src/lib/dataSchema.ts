@@ -1,7 +1,7 @@
 import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { YES, NO } from './constants'
+import { YES, NO, MarriageTermination } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
@@ -31,7 +31,13 @@ export const dataSchema = z.object({
     address: z.string().refine((v) => v),
     citizenship: z.string(),
     maritalStatus: z.string(),
-    previousMarriageTermination: z.string(),
+    previousMarriageTermination: z
+      .enum([
+        MarriageTermination.divorce,
+        MarriageTermination.lostSpouse,
+        MarriageTermination.annulment,
+      ])
+      .optional(),
   }),
   ceremony: z.object({
     date: z.string().refine((v) => v),

@@ -22,3 +22,9 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
 }
+
+export enum MarriageTermination {
+  divorce = 'divorce',
+  lostSpouse = 'lostSpouse',
+  annulment = 'annulment',
+}

@@ -93,18 +93,18 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   private handleMaritalStatus(maritalCode: string): Promise<any> {
     const maritalStatus = this.formatMaritalStatus(maritalCode)
     if (
-      maritalStatus !==
-      (MaritalStatus.Unmarried ||
-        MaritalStatus.Divorced ||
-        MaritalStatus.Widowed)
+      [
+        MaritalStatus.Unmarried,
+        MaritalStatus.Divorced,
+        MaritalStatus.Widowed,
+      ].includes(maritalStatus)
     ) {
-      return Promise.reject({
-        reason: `Applicant marital status ${maritalStatus} not applicable`,
+      return Promise.resolve({
+        maritalStatus,
       })
     }
-
-    return Promise.resolve({
-      maritalStatus,
+    return Promise.reject({
+      reason: `Applicant marital status ${maritalStatus} not applicable`,
     })
   }
 }

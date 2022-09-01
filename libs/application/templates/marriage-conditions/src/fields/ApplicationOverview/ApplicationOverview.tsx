@@ -12,7 +12,6 @@ type InfoProps = {
 }
 
 export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
-  console.log(application.answers)
   const { formatMessage } = useLocale()
   const { answers } = application
   const applicant = answers.applicant as Individual
@@ -89,12 +88,15 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
               <Text variant="h4">{'Hjúskaparstaða fyrir vígslu'}</Text>
               <Text>{(answers.personalInfo as any).maritalStatus}</Text>
             </Box>
-            <Box width="half">
-              <Text variant="h4">{'Hvernig lauk síðasta hjúskap?'}</Text>
-              <Text>
-                {(answers.personalInfo as any).previousMarriageTermination}
-              </Text>
-            </Box>
+            {answers.maritalStatus === 'DIVORCED' ||
+              ((answers.fakeData as any).maritalStatus === '6' && (
+                <Box width="half">
+                  <Text variant="h4">{'Hvernig lauk síðasta hjúskap?'}</Text>
+                  <Text>
+                    {(answers.personalInfo as any).previousMarriageTermination}
+                  </Text>
+                </Box>
+              ))}
           </Box>
         </Box>
       </Box>

@@ -12,25 +12,30 @@ interface PropTypes extends FieldBaseProps {
 
 export const Congratulations = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const spouseName = (application.answers.spouse as any).name
+  const spouseName = (application.answers.spouse as any)?.name ?? ''
 
   return (
     <Box>
+      <Text variant="default" marginBottom={2}>
+        Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn
+        maka.
+      </Text>
       <Text variant="h3" marginBottom={2}>
         Næstu skref
       </Text>
       <BulletList type={'ul'} space={2}>
+        <Bullet>{spouseName} þarf að fylla út sinn hluta umsóknarinnar.</Bullet>
         <Bullet>
-          {spouseName} þarf nú að samþykkja og fylla út sinn hluta
-          umsóknarinnar.
+          Ef maki þinn tekur ekki afstöðu til samningsins innan 60 daga þarf að
+          hefja umsóknarferlið að nýju á Ísland.is.
         </Bullet>
         <Bullet>
-          Ef hitt hjónaefnið tekur ekki afstöðu til samningsins innan 60 daga
-          þarf að hefja umsóknarferlið að nýju á Ísland.is
+          Könnunarvottorð frá sýslumanni gildir í 30 daga frá útgáfudegi.
         </Bullet>
         <Bullet>
-          Uppfyllið þið skilyrði til þess að ganga í hjónaband fáið þið
-          könnunarvottorð með áritun á
+          Könnunarvottorð verður sent í pósthólf ykkar beggja á island.is og þið
+          berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir
+          hjónavígsluna.
         </Bullet>
       </BulletList>
 
@@ -39,7 +44,7 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
         <Box marginTop={2}>
           <CopyLink
             linkUrl={
-              `${document.location.origin}/hjonavigsla/` + 'application id hér'
+              `${document.location.origin}/hjonavigsla/` + application.id
             }
             buttonTitle={'Afrita hlekk'}
           />

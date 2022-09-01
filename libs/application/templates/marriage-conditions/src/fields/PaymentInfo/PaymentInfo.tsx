@@ -16,12 +16,16 @@ export const PaymentInfo: FC<FieldBaseProps> = () => {
         {'Greiðsla'}
       </Text>
       <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
-        <Text variant="h5">Veðbókarvottorð</Text>
-        <Text variant="h5">2.000kr</Text>
+        <Text variant="h5">Tvö hjúskaparstöðuvottorð</Text>
+        <Text variant="h5">5.500 kr.</Text>
       </Box>
       <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
-        <Text variant="h5">Veðbókarvottorð</Text>
-        <Text variant="h5">2.000kr</Text>
+        <Text variant="h5">Tvö fæðingarvottorð</Text>
+        <Text variant="h5">5.500 kr.</Text>
+      </Box>
+      <Box display="flex" marginBottom={3} justifyContent="spaceBetween">
+        <Text variant="h5">Könnunarvottorð</Text>
+        <Text variant="h5">4.500 kr.</Text>
       </Box>
       <Divider />
       <Box display="flex" paddingTop={3} justifyContent="spaceBetween">
@@ -29,7 +33,7 @@ export const PaymentInfo: FC<FieldBaseProps> = () => {
           Samtals
         </Text>
         <Text variant="h3" color="blue400">
-          2.000kr
+          15.500 kr.
         </Text>
       </Box>
     </Box>

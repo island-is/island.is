@@ -23,8 +23,6 @@ export const PaymentPending: FC<Props> = (props) => {
     'createCharge.data.paymentUrl',
   )
 
-  console.log(paymentUrl)
-
   const [submitBack, { error: backError }] = useSubmitApplication({
     application,
     refetch,

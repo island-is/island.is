@@ -12,7 +12,7 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import { assign } from 'xstate'
 
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -96,6 +96,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         },
       },
       [States.SPOUSE_CONFIRM]: {
+        entry: 'assignToSpouse',
         meta: {
           name: 'Done',
           progress: 1,
@@ -139,21 +140,44 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },
+            {
+              id: Roles.ASSIGNED_SPOUSE,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: {
+                answers: ['spouse'],
+              },
+            },
           ],
         },
         type: 'final' as const,
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToSpouse: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            // Assigning Gervimaður Útlönd for testing
+            assignees: ['0101307789'],
+          },
+        }
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === States.SPOUSE_CONFIRM) {
+    if (application.assignees.includes(nationalId)) {
       return Roles.ASSIGNED_SPOUSE
-    } else if (application.applicant === nationalId) {
+    }
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+    return undefined
   },
 }
 

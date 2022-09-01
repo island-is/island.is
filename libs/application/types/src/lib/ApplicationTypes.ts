@@ -133,7 +133,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MARRIAGE_CONDITIONS]: {
     slug: 'hjonavigsla',
-    translation: 'mc.application',
+    translation: 'mac.application',
   },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',

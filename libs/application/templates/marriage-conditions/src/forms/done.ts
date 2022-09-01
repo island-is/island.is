@@ -9,7 +9,9 @@ export const done: Form = buildForm({
     buildCustomField({
       id: 'congrats',
       component: 'Congratulations',
-      title: 'Umsókn móttekin',
+      title: 'Umsókn send áfram á þinn maka',
+      description:
+        'Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
     }),
   ],
 })
