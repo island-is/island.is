@@ -23,10 +23,7 @@ export class IslykillApiModule {
       if (!config.cert) {
         throw Error('IslykillApiModule certificate not provided')
       }
-      const data = fs.readFileSync(config.cert)
-      const data64 = data.toString('base64')
-
-      pfx = Buffer.from(data64, 'base64')
+      pfx = fs.readFileSync(config.cert)
     } catch (err) {
       lykillError(err)
     }
