@@ -17,7 +17,7 @@ describe('Defender case overview', () => {
       state: CaseState.ACCEPTED,
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
-      policeCaseNumber: '007-2021-202000',
+      policeCaseNumbers: ['007-2021-202000'],
     }
 
     cy.stubAPIResponses()

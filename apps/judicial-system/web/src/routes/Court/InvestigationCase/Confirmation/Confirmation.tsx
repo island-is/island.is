@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -13,7 +13,7 @@ import {
   RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import SigningModal, {
@@ -31,7 +31,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
-  CaseState,
   CaseTransition,
   completedCaseStates,
   isAcceptingCaseDecision,
@@ -85,7 +84,7 @@ const Confirmation = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.CONFIRMATION}
+      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -100,9 +99,7 @@ const Confirmation = () => {
                 Yfirlit úrskurðar
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box marginBottom={9}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />

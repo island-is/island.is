@@ -87,6 +87,27 @@ export class VehiclesVehicle {
 }
 
 @ObjectType()
+export class VehiclesHistory {
+  @Field({ nullable: true })
+  persidno?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  postStation?: string
+
+  @Field(() => [VehiclesVehicle], { nullable: true })
+  vehicleList?: VehiclesVehicle[]
+
+  @Field({ nullable: true })
+  createdTimestamp?: string
+}
+
+@ObjectType()
 export class VehiclesList {
   @Field({ nullable: true })
   persidno?: string
@@ -105,4 +126,7 @@ export class VehiclesList {
 
   @Field({ nullable: true })
   createdTimestamp?: string
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }

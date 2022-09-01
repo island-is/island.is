@@ -1,4 +1,4 @@
-import { Case, CaseDecision } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
   RESTRICTION_CASE_RULING_ROUTE,

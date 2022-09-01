@@ -576,7 +576,7 @@ export const SignedVerdictOverview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               {
                 title: formatMessage(core.courtCaseNumber),
@@ -678,7 +678,7 @@ export const SignedVerdictOverview: React.FC = () => {
                   </Box>
                 </Box>
                 <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase?.judge?.name}</Text>
+                  <Text variant="h4">{workingCase.judge?.name}</Text>
                 </Box>
               </BlueBox>
             </Box>
@@ -716,26 +716,29 @@ export const SignedVerdictOverview: React.FC = () => {
                 title={formatMessage(core.pdfButtonRulingShortVersion)}
                 pdfType={'courtRecord'}
               >
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR ? (
-                  <Button
-                    variant="ghost"
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role === UserRole.JUDGE ||
+                    user?.role === UserRole.REGISTRAR ? (
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton
@@ -744,40 +747,46 @@ export const SignedVerdictOverview: React.FC = () => {
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType={'ruling'}
                 >
-                  {workingCase.rulingDate ? (
-                    <SignedDocument
-                      signatory={workingCase.judge?.name}
-                      signingDate={workingCase.rulingDate}
-                    />
-                  ) : user?.id === workingCase.judge?.id ? (
-                    <Button
-                      loading={isRequestingRulingSignature}
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        requestRulingSignature()
-                      }}
-                    >
-                      {formatMessage(m.signButton)}
-                    </Button>
-                  ) : (
-                    <Text>{formatMessage(m.unsignedDocument)}</Text>
-                  )}
-                  {user?.role === UserRole.JUDGE && (
-                    <Button
-                      variant="ghost"
-                      data-testid="modifyRulingButton"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        router.push(
-                          isRestrictionCase(workingCase.type)
-                            ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
-                        )
-                      }}
-                    >
-                      {capitalize(formatMessage(core.modify))}
-                    </Button>
-                  )}
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
+                      <SignedDocument
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
+                      />
+                    ) : user && user.id === workingCase.judge?.id ? (
+                      <Button
+                        size="small"
+                        loading={isRequestingRulingSignature}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          requestRulingSignature()
+                        }}
+                      >
+                        {formatMessage(m.signButton)}
+                      </Button>
+                    ) : (
+                      <Text>{formatMessage(m.unsignedDocument)}</Text>
+                    )}
+                    {user && user.id === workingCase.judge?.id && (
+                      <Box marginLeft={3}>
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          data-testid="modifyRulingButton"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            router.push(
+                              isRestrictionCase(workingCase.type)
+                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            )
+                          }}
+                        >
+                          {capitalize(formatMessage(core.modify))}
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
                 </PdfButton>
               )}
             </Stack>

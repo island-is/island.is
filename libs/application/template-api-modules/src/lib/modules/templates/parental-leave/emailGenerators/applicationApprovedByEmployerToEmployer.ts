@@ -4,13 +4,22 @@ import format from 'date-fns/format'
 import { Message } from '@island.is/email-service'
 
 import type { Period } from '@island.is/application/templates/parental-leave'
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 import { dateFormat } from '@island.is/shared/constants'
+import { isRunningInProduction } from '../constants'
+
+export type EmployerRejectedToEmployerEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
 
 // TODO handle translations
-export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplateGenerator = (
+export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejectedToEmployerEmail = (
   props,
+  senderName,
+  senderEmail,
 ): Message => {
   const {
     application,
@@ -25,8 +34,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
 
   return {
     from: {
-      name: email.sender,
-      address: email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {
