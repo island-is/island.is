@@ -41,6 +41,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   ParentalRelations,
+  PARENTAL_LEAVE,
   StartDateOptions,
   YES,
 } from '../constants'
@@ -78,7 +79,7 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildAsyncSelectField({
               title: 'Veldu umsókn',
-              id: 'applicant.applicationType',
+              id: 'leaveType.applicationType',
               // loadingError: parentalLeaveFormMessages.errors.loading,
               isSearchable: true,
               placeholder:
@@ -223,6 +224,12 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'payments',
               children: [
                 buildTextField({
+                  condition: (answers) =>
+                  (answers as {
+                  leaveType: {
+                    applicationType: string
+                  }
+                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   title:
                     parentalLeaveFormMessages.shared.paymentInformationBank,
                   id: 'payments.bank',
