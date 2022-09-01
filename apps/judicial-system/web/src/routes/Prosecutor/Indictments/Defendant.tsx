@@ -27,6 +27,7 @@ import {
   Case,
   CaseType,
   Defendant as TDefendant,
+  Gender,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -250,7 +251,11 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {capitalize(formatMessage(core.indictmentDefendant))}
+              {capitalize(
+                formatMessage(core.indictmentDefendant, {
+                  gender: Gender.MALE,
+                }),
+              )}
             </Text>
           </Box>
           <AnimatePresence>

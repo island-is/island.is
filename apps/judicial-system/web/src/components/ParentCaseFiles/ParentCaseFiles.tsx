@@ -7,20 +7,15 @@ import {
   UploadedFile,
   Accordion,
 } from '@island.is/island-ui/core'
-import { rcCaseFiles } from '@island.is/judicial-system-web/messages'
-import { icCaseFiles } from '@island.is/judicial-system-web/messages'
-import {
-  CaseFile,
-  CaseType,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { CaseFile } from '@island.is/judicial-system/types'
+
+import { parentCaseFiles as m } from './ParentCaseFiles.strings'
 
 interface Props {
   files?: CaseFile[]
-  caseType: CaseType
 }
 
-const ParentCaseFiles: React.FC<Props> = ({ files, caseType }) => {
+const ParentCaseFiles: React.FC<Props> = ({ files }) => {
   const { formatMessage } = useIntl()
 
   if (!files || files.length < 1) {
@@ -33,11 +28,7 @@ const ParentCaseFiles: React.FC<Props> = ({ files, caseType }) => {
         <AccordionItem
           id="parentCaseFiles"
           labelVariant="h3"
-          label={`${formatMessage(
-            isRestrictionCase(caseType)
-              ? rcCaseFiles.sections.parentCaseFiles.heading
-              : icCaseFiles.sections.policeCaseFiles.heading,
-          )} (${files.length})`}
+          label={`${formatMessage(m.heading)} (${files.length})`}
         >
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>

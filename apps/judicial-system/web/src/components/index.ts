@@ -1,5 +1,5 @@
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
-export { default as CaseInfo } from './CaseInfo/CaseInfo'
+export { CourtCaseInfo, ProsecutorCaseInfo } from './CaseInfo/CaseInfo'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as MultipleValueList } from './MultipleValueList/MultipleValueList'
 export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecordAccordionItem/CourtRecordAccordionItem'

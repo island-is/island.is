@@ -437,7 +437,7 @@ export class Client extends Model {
   @ApiProperty({
     example: true,
   })
-  supportsDelegation!: boolean
+  supportsCustomDelegation!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

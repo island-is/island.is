@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -103,5 +104,26 @@ export class FinancialStatementsInaoClientService {
     })
 
     return elections
+  }
+
+  async getClientFinancialLimit(
+    clientType: string,
+    year: string,
+  ): Promise<number | null> {
+    const select = '$select=star_value,star_years'
+    const filter = `$filter=star_client_type eq ${clientType}`
+    const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data || !data.value) return null
+
+    const found = data.value.find((x: any) => x.star_years.includes(year))
+
+    if (found) {
+      return found.star_value
+    }
+
+    return null
   }
 }

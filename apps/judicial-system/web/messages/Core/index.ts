@@ -96,9 +96,15 @@ export const core = defineMessages({
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
   indictmentDefendant: {
-    id: 'judicial.system.core:indictment_defendant',
-    defaultMessage: 'ákærði',
+    id: 'judicial.system.core:indictment_defendant_v2',
+    defaultMessage:
+      '{gender, select, MALE {ákærði} FEMALE {ákærða} other {ákærða}}',
     description: 'Notað fyrir orðið ákærði í öllum flæðum.',
+  },
+  indictmentDefendants: {
+    id: 'judicial.system.core:indictment_defendants',
+    defaultMessage: 'ákærðu',
+    description: 'Notað fyrir orðið ákærðu í öllum flæðum.',
   },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',

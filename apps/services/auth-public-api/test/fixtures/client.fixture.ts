@@ -6,7 +6,7 @@ export type CreateClient = Pick<
   | 'clientId'
   | 'nationalId'
   | 'clientType'
-  | 'supportsDelegation'
+  | 'supportsCustomDelegation'
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
@@ -17,7 +17,7 @@ const createRandomClient = (): CreateClient => {
     clientId: faker.random.word(),
     nationalId: faker.datatype.string(10),
     clientType: 'web',
-    supportsDelegation: false,
+    supportsCustomDelegation: false,
     supportsLegalGuardians: false,
     supportsProcuringHolders: false,
     supportsPersonalRepresentatives: false,

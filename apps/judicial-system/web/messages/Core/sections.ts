@@ -115,6 +115,13 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Málsmeðferð skref í hliðarstiku í ákærum hjá sækjendum',
     },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.case_files',
+      defaultMessage: 'Dómskjöl',
+      description:
+        'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
+    },
   }),
   investigationCaseCourtSection: defineMessages({
     title: {
