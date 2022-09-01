@@ -6,6 +6,7 @@ import {
   FormContentContainer,
   InfoCard,
   PageLayout,
+  PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -20,14 +21,17 @@ import {
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as strings from './Overview.strings'
+import * as styles from './Overview.css'
 
 const Overview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
   const { formatMessage } = useIntl()
+  const { onOpen } = useFileList({ caseId: workingCase.id })
 
   return (
     <PageLayout
@@ -89,6 +93,18 @@ const Overview: React.FC = () => {
             }
           />
         </Box>
+        {workingCase.caseFiles?.map((caseFile, index) => {
+          return (
+            <Box key={index} className={styles.caseFileContainer}>
+              <PdfButton
+                renderAs="row"
+                caseId={workingCase.id}
+                title={caseFile.name}
+                handleClick={() => onOpen(caseFile.id)}
+              />
+            </Box>
+          )
+        })}
       </FormContentContainer>
     </PageLayout>
   )
