@@ -1,13 +1,13 @@
-import Receipt from "../../components/AnimatedIcon/Receipt"
-import Home from "../../components/AnimatedIcon/Home"
-import Car from "../../components/AnimatedIcon/Car"
-import FileTrayFull from "../../components/AnimatedIcon/FileTrayFull"
-import Reader from "../../components/AnimatedIcon/Reader"
-import School from "../../components/AnimatedIcon/School"
-import LockClosed from "../../components/AnimatedIcon/LockClosed"
-import Wallet from "../../components/AnimatedIcon/Wallet"
-import Cellular from "../../components/AnimatedIcon/Cellular"
-import Person from "../../components/AnimatedIcon/Person"
+import Receipt from '../../components/AnimatedIcon/Receipt'
+import Home from '../../components/AnimatedIcon/Home'
+import Car from '../../components/AnimatedIcon/Car'
+import FileTrayFull from '../../components/AnimatedIcon/FileTrayFull'
+import Reader from '../../components/AnimatedIcon/Reader'
+import School from '../../components/AnimatedIcon/School'
+import LockClosed from '../../components/AnimatedIcon/LockClosed'
+import Wallet from '../../components/AnimatedIcon/Wallet'
+import Cellular from '../../components/AnimatedIcon/Cellular'
+import Person from '../../components/AnimatedIcon/Person'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -15,18 +15,18 @@ export const iconIdMapper = (iconType: string) => {
     case 'receipt':
       return 'ewgOroGbfLV1'
       break
-     // Ökutæki
-     case 'car':
+    // Ökutæki
+    case 'car':
       return 'eduo83RxKIs1'
       break
     // Umsóknir
     case 'fileTrayFull':
-    return 'e3ZnzYAx2SK1'
-    break
+      return 'e3ZnzYAx2SK1'
+      break
     // Pósthólf
     case 'reader':
-    return 'eMqxBJgT6pi1'
-    break
+      return 'eMqxBJgT6pi1'
+      break
     // Fjármál
     case 'cellular':
       return 'eD0ZSxAV3eT1'
@@ -71,52 +71,52 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     case 'receipt':
       return <Receipt />
       break
-     // Ökutæki
-     case 'car':
-      return <Car/>
+    // Ökutæki
+    case 'car':
+      return <Car />
       break
     // Umsóknir
     case 'fileTrayFull':
-    return <FileTrayFull/>
-    break
+      return <FileTrayFull />
+      break
     // Pósthólf
     case 'reader':
-    return <Reader/>
-    break
+      return <Reader />
+      break
     // Fjármál
     case 'cellular':
-      return <Cellular/>
+      return <Cellular />
       break
     // Fasteignir
     case 'home':
-      return <Home/>
+      return <Home />
       break
     // Aðgangsstýringar
     case 'lockClosed':
-      return <LockClosed/>
+      return <LockClosed />
       break
     // Menntun
     case 'school':
-      return <School/>
+      return <School />
       break
     // Útskrá
     case 'logOut':
-      return <Reader/>
+      return <Reader />
       break
     // Fyrirtæki
     case 'business':
-      return <Reader/>
+      return <Reader />
       break
     // Person ?
     case 'person':
-      return <Person/>
+      return <Person />
       break
     // Skírteini
     case 'wallet':
-      return <Wallet/>
+      return <Wallet />
       break
     default:
-      return <Reader/>
+      return <Reader />
       break
   }
 }

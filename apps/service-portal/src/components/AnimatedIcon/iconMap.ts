@@ -1,56 +1,55 @@
-
 export const iconMap = (iconType: string) => {
   switch (iconType) {
     // Starfsleyfi
     case 'receipt':
       return 'Receipt'
       break
-     // Ökutæki
-     case 'car':
+    // Ökutæki
+    case 'car':
       return 'Car'
       break
     // Umsóknir
     case 'fileTrayFull':
-    return "FileTrayFull"
-    break
+      return 'FileTrayFull'
+      break
     // Pósthólf
     case 'reader':
-    return "Reader"
-    break
+      return 'Reader'
+      break
     // Fjármál
     case 'cellular':
-      return "Cellular"
+      return 'Cellular'
       break
     // Fasteignir
     case 'home':
-      return "Home"
+      return 'Home'
       break
     // Aðgangsstýringar
     case 'lockClosed':
-      return "LockClosed"
+      return 'LockClosed'
       break
     // Menntun
     case 'school':
-      return "School"
+      return 'School'
       break
     // Útskrá
     case 'logOut':
-      return "Reader"
+      return 'Reader'
       break
     // Fyrirtæki
     case 'business':
-      return "Reader"
+      return 'Reader'
       break
     // Person ?
     case 'person':
-      return "Person"
+      return 'Person'
       break
     // Skírteini
     case 'wallet':
-      return "Wallet"
+      return 'Wallet'
       break
     default:
-      return "Reader"
+      return 'Reader'
       break
   }
 }

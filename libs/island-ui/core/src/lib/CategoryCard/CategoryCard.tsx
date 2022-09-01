@@ -141,12 +141,21 @@ const Component = forwardRef<
           width="full"
         >
           <Box display="flex" height="full" width="full" flexDirection="column">
-            <Box display="flex" flexDirection="row" alignItems={icon ? 'center': 'flexEnd'}>
-              {icon && 
-              <Box paddingRight={1} display="flex" alignItems="center" className={styles.icon} >
-                {icon}
-              </Box>
-              }
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems={icon ? 'center' : 'flexEnd'}
+            >
+              {icon && (
+                <Box
+                  paddingRight={1}
+                  display="flex"
+                  alignItems="center"
+                  className={styles.icon}
+                >
+                  {icon}
+                </Box>
+              )}
               <Text
                 as={headingAs}
                 variant={headingVariant}
