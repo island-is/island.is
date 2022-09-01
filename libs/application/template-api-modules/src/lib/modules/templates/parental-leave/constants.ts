@@ -16,4 +16,4 @@ export const apiConstants = {
   },
 }
 
-export const isRunningInDevelopment = process.env.NODE_ENV !== 'production'
+export const isRunningInProduction = process.env.NODE_ENV === 'production'

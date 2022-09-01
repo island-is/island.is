@@ -21,6 +21,7 @@ import {
   CourtModule,
   AwsS3Module,
   EventModule,
+  policeModuleConfig,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
@@ -51,6 +52,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         courtClientModuleConfig,
         caseModuleConfig,
         notificationModuleConfig,
+        policeModuleConfig,
       ],
     }),
   ],
