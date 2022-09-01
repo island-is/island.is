@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/api",
         "main": "apps/air-discount-scheme/api/src/main.ts",

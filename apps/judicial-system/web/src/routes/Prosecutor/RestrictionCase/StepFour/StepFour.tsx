@@ -7,7 +7,7 @@ import {
   FormFooter,
   PageLayout,
   FormContentContainer,
-  CaseInfo,
+  ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -19,7 +19,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -33,7 +32,6 @@ export const StepFour: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -68,13 +66,7 @@ export const StepFour: React.FC = () => {
             {formatMessage(rcReportForm.heading)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={7}>
           <Box marginBottom={4}>
             <Text as="h3" variant="h3">

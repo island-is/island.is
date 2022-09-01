@@ -38,7 +38,7 @@ import { ResponseSimple } from '@island.is/clients/rsk/procuring'
 const today = new Date('2021-11-12')
 const client = createClient({
   clientId: '@island.is/webapp',
-  supportsDelegation: true,
+  supportsCustomDelegation: true,
   supportsLegalGuardians: true,
   supportsProcuringHolders: true,
   supportsPersonalRepresentatives: true,
@@ -85,7 +85,7 @@ describe('ActorDelegationsController', () => {
     beforeEach(() => {
       return clientModel.update(
         {
-          supportsDelegation: true,
+          supportsCustomDelegation: true,
           supportsLegalGuardians: true,
           supportsProcuringHolders: true,
           supportsPersonalRepresentatives: true,
@@ -353,7 +353,7 @@ describe('ActorDelegationsController', () => {
           },
         )
         await clientModel.update(
-          { supportsDelegation: false },
+          { supportsCustomDelegation: false },
           { where: { clientId: client.clientId } },
         )
         const expectedModels: DelegationDTO[] = []

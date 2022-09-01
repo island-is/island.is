@@ -5,6 +5,7 @@ import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
 
 export let linkOtherParentSMS = ''
 
@@ -39,8 +40,9 @@ export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail =
 
   return {
     from: {
-      name: senderName ?? email.sender,
-      address: senderEmail ?? email.address,
+      name: isRunningInProduction && senderName ? senderName : email.sender,
+      address:
+        isRunningInProduction && senderEmail ? senderEmail : email.address,
     },
     to: [
       {

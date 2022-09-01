@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/financial-aid/api",
         "main": "apps/financial-aid/api/src/main.ts",
