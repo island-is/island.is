@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { useEffect } from 'react'
-import { ReactComponent as Svg } from '../../assets/icons/sidebar/Home.svg'
+import { ReactComponent as Svg } from '../../assets/icons/sidebar/home.svg'
 
 export default function Home() {
   useEffect(() => {
