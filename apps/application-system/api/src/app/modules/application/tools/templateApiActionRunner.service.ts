@@ -103,6 +103,7 @@ export class TemplateApiActionRunner {
     const actionResult = await this.templateAPIService.performAction({
       templateId: this.application.typeId,
       actionId,
+      action,
       props: {
         application: this.application,
         auth: this.auth,
@@ -126,7 +127,7 @@ export class TemplateApiActionRunner {
         date: new Date(),
         data: (actionResult.success
           ? actionResult.response
-          : actionResult.error) as ExternalData['data'],
+          : actionResult.error.problem) as ExternalData['data'],
       },
     }
   }

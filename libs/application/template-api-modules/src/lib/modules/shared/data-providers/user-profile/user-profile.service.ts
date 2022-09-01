@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import { UserProfileApi } from '@island.is/clients/user-profile'
-import { ProblemError } from '@island.is/nest/problem'
-import { ProblemType } from '@island.is/shared/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
 @Injectable()
-export class UserProfileService {
+export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: UserProfileApi,
     private readonly islyklarApi: IslyklarApi,
-  ) {}
+  ) {
+    super('UserProfile')
+  }
 
   userProfileApiWithAuth(auth: Auth): UserProfileApi {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))

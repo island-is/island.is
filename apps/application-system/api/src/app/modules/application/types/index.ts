@@ -1,4 +1,5 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export interface DecodedAssignmentToken {
   applicationId: string
@@ -18,5 +19,5 @@ export interface StateChangeResult {
 export interface TemplateAPIModuleActionResult {
   updatedApplication: Application
   hasError: boolean
-  error?: string
+  error?: TemplateApiError
 }

@@ -7,9 +7,9 @@ import {
   BasicDataProvider,
   CustomTemplateFindQuery,
   DataProviderResult,
-  ProviderErrorReason,
   Application,
 } from '@island.is/application/types'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 
 export const isTranslationObject = (text?: StaticText) => {
   if (!isObject(text)) {

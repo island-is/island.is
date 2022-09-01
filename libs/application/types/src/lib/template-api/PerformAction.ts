@@ -1,4 +1,4 @@
-import { ProblemType } from '@island.is/shared/problem'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export type PerformActionResult =
   | {
@@ -7,6 +7,5 @@ export type PerformActionResult =
     }
   | {
       success: false
-      error: string
-      problemType?: ProblemType
+      error: TemplateApiError
     }

@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { ProblemType } from '@island.is/shared/problem'
-import { ProblemError } from '@island.is/nest/problem'
 import {
   generateApplicationApprovedEmail,
   generateAssignApplicationEmail,
 } from './emailGenerators'
+import { ApplicationTypes } from '@island.is/application/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 export interface ReferenceParams {
   id: number
@@ -16,10 +16,12 @@ export interface ReferenceParams {
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
-export class ReferenceTemplateService {
+export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.EXAMPLE)
+  }
 
   async getReferenceData({
     application,
@@ -33,15 +35,7 @@ export class ReferenceTemplateService {
     ) as string
 
     const id = params as ReferenceParams
-    console.log('------------------------')
-    console.log('id is ', id.id)
-    console.log('------------------------')
-    /*
-    throw new ProblemError({
-      type: ProblemType.HTTP_NOT_FOUND,
-      title: 'Bad Request',
-    })
-    */
+
     return {
       referenceData: {
         name,

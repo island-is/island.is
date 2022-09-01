@@ -9,7 +9,6 @@ import {
   Application,
   BasicDataProvider,
   FailedDataProviderResult,
-  ProviderErrorReason,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
 import {
@@ -22,6 +21,7 @@ import { errorModal } from '../lib/messages'
 import { NO, YES } from '../shared/constants'
 import { mockData } from './mockData'
 import * as Sentry from '@sentry/react'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 
 interface PaymentPlanPrerequisitesProps {
   conditions: PaymentScheduleConditions

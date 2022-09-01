@@ -3,6 +3,7 @@ import {
   HttpProblem,
   ValidationFailedProblem,
   BadSubjectProblem,
+  TemplateApiErrorProblem,
 } from './problems'
 
 export type Problem =
@@ -10,3 +11,4 @@ export type Problem =
   | HttpInternalServerErrorProblem
   | ValidationFailedProblem
   | BadSubjectProblem
+  | TemplateApiErrorProblem

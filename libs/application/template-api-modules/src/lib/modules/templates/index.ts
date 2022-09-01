@@ -22,10 +22,35 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
+import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { NationalRegistryService } from '../shared/data-providers/national-registry/national-registry.service'
+import { ParentalLeaveService } from './parental-leave/parental-leave.service'
+import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
+import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
+import { HealthInsuranceService } from './health-insurance/health-insurance.service'
+import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+import { LoginServiceService } from './login-service/login-service.service'
+import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
+import { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
+import { AccidentNotificationService } from './accident-notification/accident-notification.service'
+import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
+import { GeneralPetitionService } from './general-petition/general-petition.service'
+import { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
+import { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
+import { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
+import { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
+import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
+import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
+import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
+import { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+import { FinancialAidService } from './financial-aid/financial-aid.service'
+import { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
+import { PassportService } from './passport/passport.service'
+import { OperatingLicenseService } from './operating-license/operatingLicense.service'
 
 export const modules = [
   ReferenceTemplateModule,
-  ParentalLeaveModule,
+  /*ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
@@ -47,30 +72,32 @@ export const modules = [
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
   PassportModule,
-  OperatingLicenseModule,
+  OperatingLicenseModule,*/
 ]
 
-export { ReferenceTemplateService } from './reference-template/reference-template.service'
-export { ParentalLeaveService } from './parental-leave/parental-leave.service'
-export { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
-export { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
-export { HealthInsuranceService } from './health-insurance/health-insurance.service'
-export { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
-export { LoginServiceService } from './login-service/login-service.service'
-export { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
-export { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
-export { AccidentNotificationService } from './accident-notification/accident-notification.service'
-export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
-export { GeneralPetitionService } from './general-petition/general-petition.service'
-export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
-export { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
-export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
-export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
-export { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
-export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
-export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
-export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
-export { FinancialAidService } from './financial-aid/financial-aid.service'
-export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
-export { PassportService } from './passport/passport.service'
-export { OperatingLicenseService } from './operating-license/operatingLicense.service'
+export const services = [
+  ReferenceTemplateService,
+  /*ParentalLeaveService,
+  DocumentProviderOnboardingService,
+  InstitutionCollaborationService,
+  HealthInsuranceService,
+  ChildrenResidenceChangeService,
+  LoginServiceService,
+  FundingGovernmentProjectsService,
+  DrivingLicenseSubmissionService,
+  AccidentNotificationService,
+  PublicDebtPaymentPlanTemplateService,
+  GeneralPetitionService,
+  CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
+  DataProtectionComplaintService,
+  PSignSubmissionService,
+  AnnouncementOfDeathService,
+  ExamplePaymentActionsService,
+  ComplaintsToAlthingiOmbudsmanTemplateService,
+  MortgageCertificateSubmissionService,
+  FinancialAidService,
+  DrivingSchoolConfirmationService,
+  PassportService,
+  OperatingLicenseService,*/
+]

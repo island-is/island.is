@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import * as kennitala from 'kennitala'
 
-import { ProblemError } from '@island.is/nest/problem'
-import { ProblemType } from '@island.is/shared/problem'
 import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryUser } from '@island.is/application/types'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 export enum FamilyRelation {
   CHILD = 'child',
@@ -23,18 +22,17 @@ export interface FamilyMember {
 }
 
 @Injectable()
-export class NationalRegistryService {
-  constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly nationalRegistryApi: NationalRegistryApi,
-  ) {}
+export class NationalRegistryService extends BaseTemplateApiService {
+  constructor(private readonly nationalRegistryApi: NationalRegistryApi) {
+    super('NationalRegistry')
+  }
 
   async getUser({
     auth,
   }: TemplateApiModuleActionProps): Promise<NationalRegistryUser> {
     const user = await this.nationalRegistryApi.getUser(auth.nationalId)
 
-    return {
+    const result = {
       nationalId: user.Kennitala,
       fullName: user.Fulltnafn,
       age: kennitala.info(auth.nationalId).age,
@@ -50,6 +48,18 @@ export class NationalRegistryService {
         postalCode: user.Postnr,
       },
     }
+
+    //if(true) {
+    throw new TemplateApiError(
+      {
+        title: 'This be an error',
+        summary: 'Error from nationalRegistry',
+      },
+      400,
+    )
+    //}
+
+    return result
   }
 
   async getFamily({ auth }: TemplateApiModuleActionProps) {

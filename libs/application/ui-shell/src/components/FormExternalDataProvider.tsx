@@ -155,7 +155,6 @@ const FormExternalDataProvider: FC<{
   } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.action)
 
-  console.log('relevenat data provider ', relevantDataProviders)
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
   // If id is undefined then the error won't be attached to the field with id

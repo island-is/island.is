@@ -2,8 +2,8 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  ProviderErrorReason,
 } from '@island.is/application/types'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 import { m } from '../lib/messages'
 import { DebtLessCertificateModel } from '../types/schema'
 export class NoDebtCertificateProvider extends BasicDataProvider {

@@ -28,13 +28,11 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  callDataProviders,
   ApplicationTemplateHelper,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
   ApplicationWithAttachments as BaseApplication,
-  CustomTemplateFindQuery,
   DefaultEvents,
   ApplicationTypes,
   FormValue,
@@ -721,6 +719,7 @@ export class ApplicationController {
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
       actionId: action,
+      action,
       props: {
         application,
         auth,
@@ -799,7 +798,7 @@ export class ApplicationController {
         return {
           hasChanged: false,
           application: updatedApplication,
-          error,
+          error: error?.message,
           hasError: true,
         }
       }
@@ -849,7 +848,7 @@ export class ApplicationController {
         return {
           hasError: true,
           hasChanged: false,
-          error,
+          error: error?.message,
           application,
         }
       }

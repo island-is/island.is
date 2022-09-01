@@ -3,10 +3,13 @@ import { PaymentCatalogItem } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { Injectable } from '@nestjs/common'
+import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 @Injectable()
-export class PaymentCatalogService {
-  constructor(private paymentClientApi: PaymentAPI) {}
+export class PaymentCatalogService extends BaseTemplateApiService {
+  constructor(private paymentClientApi: PaymentAPI) {
+    super('PaymentCatalog')
+  }
 
   async paymentCatalog({
     params,

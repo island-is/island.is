@@ -1,5 +1,4 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../..'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { UserProfileService } from './user-profile.service'
 
@@ -10,7 +9,6 @@ export class UserProfileModule {
     return {
       module: UserProfileModule,
       imports: [
-        SharedTemplateAPIModule.register(config),
         IslykillApiModule.register({
           cert: config.islykill.cert,
           passphrase: config.islykill.passphrase,
