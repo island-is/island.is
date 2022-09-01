@@ -40,7 +40,7 @@ export class NationalRegistryXRoadResolver {
   @Audit()
   async nationalRegistryPersons(
     @CurrentUser() user: User,
-  ): Promise<NationalRegistryPerson | undefined> {
+  ): Promise<NationalRegistryPerson | null> {
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
       user.nationalId,
     )
@@ -52,9 +52,11 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
+    if (person.nationalId !== user.nationalId) {
+      return undefined
+    }
     return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
       user,
-      person.nationalId,
     )
   }
 
@@ -67,7 +69,6 @@ export class NationalRegistryXRoadResolver {
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
     return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      user,
       person.nationalId,
     )
   }
@@ -77,10 +78,7 @@ export class NationalRegistryXRoadResolver {
   async resolveSpouse(
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
-  ): Promise<NationalRegistrySpouse | undefined> {
-    return await this.nationalRegistryXRoadService.getSpouse(
-      user,
-      person.nationalId,
-    )
+  ): Promise<NationalRegistrySpouse | null> {
+    return await this.nationalRegistryXRoadService.getSpouse(person.nationalId)
   }
 }

@@ -3,4 +3,3 @@ export { NationalRegistryClientConfig } from './lib/nationalRegistryClient.confi
 export { NationalRegistryClientService } from './lib/nationalRegistryClient.service'
 export { IndividualDto } from './lib/types/individual.dto'
 export { AddressDto } from './lib/types/address.dto'
-export * from '../gen/fetch'
