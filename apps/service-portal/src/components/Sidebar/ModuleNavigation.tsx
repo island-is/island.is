@@ -23,7 +23,6 @@ interface Props {
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
-  const [clicked, setClicked] = useState(false)
   const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -56,20 +55,16 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   return (
     <Box
       position="relative"
+      className={styles.itemWrapper}
       onMouseOver={() => {
         setHover(true)
       }}
       onMouseLeave={() => {
         setHover(false)
       }}
-      onClick={() => {
-        setClicked(true)
-        setTimeout(() => {
-          setClicked(false)
-        }, 1000)
-      }}
+     
     >
-      {navArray && nav.enabled !== false && collapsed && (
+      {/* {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
           <SubNav
             collapsed
@@ -78,12 +73,11 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
             pathname={pathname}
           />
         </SubNavModal>
-      )}
+      )} */}
       <NavItem
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
-        clicked={clicked}
         expanded={expand}
         hasArray={navArray}
         enabled={nav.enabled}

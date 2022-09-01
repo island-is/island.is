@@ -1,8 +1,15 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import React, { FC, Suspense, useEffect, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import {  useLocation } from 'react-router-dom'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  CategoryCard,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   PlausiblePageviewDetail,
@@ -11,12 +18,16 @@ import {
   ServicePortalWidget,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
-
 import Greeting from '../../components/Greeting/Greeting'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
+import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { AuthDelegationType } from '@island.is/service-portal/graphql'
+import * as styles from './Dashboard.css'
+import { useHistory } from 'react-router-dom'
+import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -46,6 +57,7 @@ const WidgetLoader: FC<{
   client: ApolloClient<NormalizedCacheObject>
 }> = ({ modules, userInfo, client }) => {
   const { formatMessage } = useLocale()
+
   const widgets = useMemo(
     () =>
       modules
@@ -88,14 +100,79 @@ export const Dashboard: FC<{}> = () => {
   const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
   const location = useLocation()
+  const navigation = useNavigation()
+  const { formatMessage } = useLocale()
+  const history = useHistory()
 
+  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
+
+  const delegationTypes = userInfo?.profile?.delegationType ?? []
+
+  const isLegalGuardian = delegationTypes.includes(
+    AuthDelegationType.LegalGuardian,
+  )
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
   }, [location])
 
+  const origin = window.location.origin
+  const baseUrl = `${origin}/minarsidur`
+
+  const onHover = (id: string) => {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const a: any = id && document.getElementById(iconIdMapper(id))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //const b: any = a.querySelector('svg')
+    a && a.dispatchEvent(new Event('click'))
+  }
+
   return (
     <Box>
       <Greeting />
+      <GridContainer className={styles.relative}>
+        {!isLegalGuardian && 
+        <Box className={styles.imageAbsolute}>
+          <img
+            src={`./assets/images/${
+              IS_COMPANY ? 'coffee.svg' : 'dashboard.svg'
+            }`}
+            alt=""
+            />
+        </Box>
+          }
+        <GridRow>
+          {navigation.map((rootItem, rootIndex) => {
+            return rootItem.children?.map(
+              (navRoot, index) =>
+                navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+                !navRoot.navHide && (
+                  <GridColumn
+                  key={rootItem.name + '-' + rootIndex}
+                    span={['12/12', '12/12', '6/12', '4/12']}
+                    paddingBottom={3}
+                  >
+                    <div
+                      onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
+                    >
+                      {navRoot.path && (
+                        <CategoryCard
+                        truncateHeading
+                          onClick={() =>
+                            navRoot.path && history.push(navRoot.path)
+                          }
+                          icon={iconTypeToSVG(navRoot.icon?.icon ?? '', '')}
+                          heading={formatMessage(navRoot.name)}
+                          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+                        />
+                      )}
+                    </div>
+                  </GridColumn>
+                ),
+            )
+          })}
+        </GridRow>
+      </GridContainer>
+
       {userInfo !== null && !modulesPending && (
         <WidgetLoader
           modules={Object.values(modules)}
