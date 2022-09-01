@@ -141,13 +141,13 @@ export const Dashboard: FC<{}> = () => {
           </Box>
         )}
         <GridRow data-testid={'service-portal-dashboard'}>
-          {navigation.map((rootItem, rootIndex) => {
+          {navigation.map((rootItem) => {
             return rootItem.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPath.MinarSidurRoot &&
                 !navRoot.navHide && (
                   <GridColumn
-                    key={rootItem.name + '-' + rootIndex}
+                    key={formatMessage(navRoot.name) + '-' + index}
                     span={['12/12', '12/12', '6/12', '4/12']}
                     paddingBottom={3}
                   >

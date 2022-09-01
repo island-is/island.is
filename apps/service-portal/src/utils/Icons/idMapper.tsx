@@ -8,6 +8,7 @@ import LockClosed from '../../components/AnimatedIcon/LockClosed'
 import Wallet from '../../components/AnimatedIcon/Wallet'
 import Cellular from '../../components/AnimatedIcon/Cellular'
 import Person from '../../components/AnimatedIcon/Person'
+import Business from '../../components/AnimatedIcon/Business'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -103,10 +104,6 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     case 'logOut':
       return <Reader />
       break
-    // Fyrirtæki
-    case 'business':
-      return <Reader />
-      break
     // Person ?
     case 'person':
       return <Person />
@@ -114,6 +111,10 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     // Skírteini
     case 'wallet':
       return <Wallet />
+      break
+    // Fyrirtæki
+    case 'business':
+      return <Business />
       break
     default:
       return <Reader />
