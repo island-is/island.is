@@ -84,18 +84,10 @@ export const ParentalLeaveForm: Form = buildForm({
               placeholder:
                 parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
               loadOptions: async ({ apolloClient }) => {
-                const { data } = await apolloClient.query<GetUnionsQuery>({
-                  query: GetUnions,
-                })
-
-                return (
-                  data?.getUnions
-                    ?.filter(({ id }) => id !== NO_UNION)
-                    .map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    })) ?? []
-                )
+                return await Promise.resolve([
+                  { label: 'Fæðingarorlof', value: 'parentalLeave' },
+                  { label: 'Fæðingarstyrkur', value: 'parentalGrant' },
+                ])
               },
             }),
           ]
