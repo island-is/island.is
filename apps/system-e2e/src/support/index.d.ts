@@ -29,7 +29,7 @@ declare namespace Cypress {
      * @example cy.login()
      */
     idsLogin(params: IDSLogin): Chainable<void>
-    cognitoLogin(params: CognitoCreds): Chainable<void>
+    cognitoLogin(params?: CognitoCreds): Chainable<void>
     getEnvironmentUrls(authUrl: AuthUrl)
     patchSameSiteCookie(
       interceptUrl: string,

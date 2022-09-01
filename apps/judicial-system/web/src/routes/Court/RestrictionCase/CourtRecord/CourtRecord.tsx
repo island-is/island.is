@@ -15,7 +15,7 @@ import {
 import {
   FormFooter,
   PageLayout,
-  CaseInfo,
+  CourtCaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
@@ -47,7 +47,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -64,7 +63,6 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
     '',
@@ -282,9 +280,7 @@ export const CourtRecord: React.FC = () => {
             {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
