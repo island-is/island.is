@@ -245,6 +245,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         img={
           <img
             src={`assets/images/settings.svg`}
+            alt={'globe'}
             style={{ float: 'right' }}
             width="80%"
           />

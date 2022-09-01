@@ -39,7 +39,7 @@ export abstract class ClientBaseDTO {
     this.protocolType = ''
     this.requireClientSecret = true
     this.contactEmail = ''
-    this.supportsDelegation = false
+    this.supportsCustomDelegation = false
     this.promptDelegations = false
     this.supportsLegalGuardians = false
     this.supportsProcuringHolders = false
@@ -85,7 +85,7 @@ export abstract class ClientBaseDTO {
   protocolType: string
   requireClientSecret: boolean
   contactEmail: string
-  supportsDelegation!: boolean
+  supportsCustomDelegation!: boolean
   supportsLegalGuardians!: boolean
   supportsProcuringHolders!: boolean
   supportsPersonalRepresentatives!: boolean
