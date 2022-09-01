@@ -8,7 +8,7 @@ describe.skip('Skilavottorð', () => {
 
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: Cypress.env('baseUrl'),
       urlPath: '/app/skilavottord/my-cars',
     })
