@@ -1,19 +1,29 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { Configuration, StadaSkipsApi } from '../../gen/fetch'
+import {
+  Configuration,
+  StadaSkipsApi,
+  V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+} from '../../gen/fetch'
 import { FiskistofaClientConfig } from './fiskistofaClient.config'
 import type { ConfigType } from '@island.is/nest/config'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, FetchError } from '@island.is/clients/middlewares'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { mapAllowedCatchForShip } from './fiskiStofaClient.utils'
 
 @Injectable()
 export class FiskistofaClientService {
+  private api: StadaSkipsApi | null = null
+
   constructor(
     @Inject(FiskistofaClientConfig.KEY)
     private clientConfig: ConfigType<typeof FiskistofaClientConfig>,
   ) {}
 
-  private async createApi() {
+  private async createApi(ignoreCache: boolean = false) {
+    if (this.api && !ignoreCache) {
+      return this.api
+    }
+
     const api = new StadaSkipsApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
@@ -51,18 +61,42 @@ export class FiskistofaClientService {
       throw new Error('Fiskistofa client configuration and login went wrong')
     }
 
-    return api.withMiddleware(
+    this.api = api.withMiddleware(
       new AuthHeaderMiddleware(`Bearer ${access_token}`),
     )
+
+    return this.api
   }
 
   async getShipStatusInformation(shipNumber: number, timePeriod: string) {
     const api = await this.createApi()
+    const params = {
+      skipnumer: shipNumber,
+      timabil: timePeriod,
+    }
+    try {
+      return this.getShipStatusInformationInternal(api, params)
+    } catch (error) {
+      if (error instanceof FetchError) {
+        const tokenExpired = error.status === 401
+        if (tokenExpired) {
+          const apiWithUpdatedToken = await this.createApi(true)
+          return this.getShipStatusInformationInternal(
+            apiWithUpdatedToken,
+            params,
+          )
+        }
+      }
+      throw error
+    }
+  }
+
+  private async getShipStatusInformationInternal(
+    api: StadaSkipsApi,
+    params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+  ) {
     const allowedCatchForShip = await api.v1StadaskipsSkipnumerFiskveidiarTimabilGet(
-      {
-        skipnumer: shipNumber,
-        timabil: timePeriod,
-      },
+      params,
     )
     return mapAllowedCatchForShip(allowedCatchForShip)
   }
