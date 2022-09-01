@@ -75,7 +75,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
+    pkpass: true,
     pkpassVerify: false,
     timeout: 100,
   },
@@ -84,7 +84,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
-    pkpass: false,
+    pkpass: true,
     pkpassVerify: false,
     timeout: 100,
   },
