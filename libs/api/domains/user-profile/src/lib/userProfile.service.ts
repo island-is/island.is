@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import { ApolloError } from 'apollo-server-express'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'

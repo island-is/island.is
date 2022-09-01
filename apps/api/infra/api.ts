@@ -177,8 +177,6 @@ export const serviceSetup = (services: {
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
-      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
-      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
@@ -206,7 +204,6 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
     )
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       primary: {
         host: {
