@@ -36,7 +36,13 @@ export const spouseConfirmation: Form = buildForm({
         buildMultiField({
           id: 'spouse',
           title: m.introSectionTitle,
-          description: m.spouseIntroDescription,
+          description: (application: Application) => ({
+            ...m.spouseIntroDescription,
+            values: {
+              applicantsName: (application.answers.applicant as Individual)
+                ?.person.name,
+            },
+          }),
           children: [
             buildCheckboxField({
               id: 'spouseApprove',

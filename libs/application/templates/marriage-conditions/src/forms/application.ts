@@ -24,7 +24,13 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { Individual } from '../types'
 import { m } from '../lib/messages'
-import { MarriageTermination, NO, YES } from '../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  MarriageTermination,
+  NO,
+  YES,
+  ReligiousLifeViewingSocieties,
+} from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { MaritalStatus } from '../types/schema'
 
@@ -166,6 +172,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 type: 'NationalRegistryMaritalStatusProvider',
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
+              }),
+              buildDataProviderItem({
+                id: 'districtCommissioners',
+                type: 'DistrictsProvider',
+                title: '',
               }),
             ],
           }),
@@ -378,41 +389,46 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'ceremony.ceremonyPlace',
                     title: m.ceremonyPlace,
                     options: [
-                      { value: 'office', label: 'Embætti sýslumanns' },
+                      { value: 'office', label: m.ceremonyAtDistrictsOffice },
                       {
-                        value: 'religious',
-                        label: 'Trú- eða lífsskoðunarfélagi',
+                        value: 'society',
+                        label: m.ceremonyAtReligiousLifeViewingSociety,
                       },
                     ],
                     largeButtons: false,
                     width: 'half',
                   }),
                   buildSelectField({
-                    id: 'office',
-                    title: 'Embætti sýslumanns',
-                    placeholder: 'Veldu embætti sýslumanns úr lista',
-                    options: [
-                      { value: '1', label: '1' },
-                      { value: '2', label: '2' },
-                      { value: '3', label: '3' },
-                      { value: '4', label: '4' },
-                      { value: '5', label: '5' },
-                    ],
+                    id: 'ceremony.office',
+                    title: m.ceremonyAtDistrictsOffice,
+                    placeholder: m.ceremonyChooseDistrict,
+                    options: ({
+                      externalData: {
+                        districtCommissioners: { data },
+                      },
+                    }) => {
+                      return (data as DistrictCommissionerAgencies[])?.map(
+                        ({ id, name, place, address }) => ({
+                          value: id,
+                          label: `${name}, ${place}`,
+                          tooltip: `${address}`,
+                        }),
+                      )
+                    },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
                       'office',
                   }),
                   buildSelectField({
-                    id: 'religious',
-                    title: 'Trú- eða lífsskoðunarfélag',
-                    placeholder: 'Veldu trú- eða lífsskoðunarfélag úr lista',
-                    options: [
-                      { value: '1', label: '1' },
-                      { value: '2', label: '2' },
-                      { value: '3', label: '3' },
-                      { value: '4', label: '4' },
-                      { value: '5', label: '5' },
-                    ],
+                    id: 'ceremony.society',
+                    title: m.ceremonyAtReligiousLifeViewingSociety,
+                    placeholder: m.ceremonyChooseSociety,
+                    options: () => {
+                      return ReligiousLifeViewingSocieties.map((society) => ({
+                        value: society,
+                        label: society,
+                      }))
+                    },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
                       'religious',

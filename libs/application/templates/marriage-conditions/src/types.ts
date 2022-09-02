@@ -1,3 +1,5 @@
+import { MarriageTermination } from './lib/constants'
+
 export type Individual = {
   person: {
     name: string
@@ -15,4 +17,18 @@ type YesOrNo = 'yes' | 'no'
 export interface MarriageConditionsFakeData {
   useFakeData?: YesOrNo
   maritalStatus?: string
+}
+
+export type PersonalInfo = {
+  address: string
+  citizenship: string
+  maritalStatus: string
+  previousMarriageTermination: MarriageTermination
+}
+
+export type Ceremony = {
+  date: string
+  ceremonyPlace: string
+  office: string
+  society: string
 }

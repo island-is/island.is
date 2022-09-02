@@ -13,6 +13,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
+import { Features } from '@island.is/feature-flags'
 
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -23,6 +24,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: true,
+  featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -171,7 +173,10 @@ const MarriageConditionsTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.assignees.includes(nationalId)) {
+    if (
+      application.assignees.includes(nationalId) &&
+      nationalId !== application.applicant
+    ) {
       return Roles.ASSIGNED_SPOUSE
     }
     if (nationalId === application.applicant) {

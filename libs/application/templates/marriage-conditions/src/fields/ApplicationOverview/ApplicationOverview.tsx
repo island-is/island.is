@@ -3,10 +3,8 @@ import { Box, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Individual } from '../../types'
+import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
-import type { User } from '@island.is/api/domains/national-registry'
-
 type InfoProps = {
   side: Individual
 }
@@ -16,8 +14,6 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const applicant = answers.applicant as Individual
   const spouse = answers.spouse as Individual
-  const nationalRegistry = application.externalData.nationalRegistry
-    .data as User
 
   const InfoSection: FC<InfoProps> = ({ side }) => {
     return (
@@ -75,25 +71,32 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
         <Box>
           <Box display="flex" marginBottom={3}>
             <Box width="half">
-              <Text variant="h4">{'Lögheimili'}</Text>
-              <Text>{(answers.personalInfo as any).address}</Text>
+              <Text variant="h4">{formatMessage(m.address)}</Text>
+              <Text>{(answers.personalInfo as PersonalInfo).address}</Text>
             </Box>
             <Box width="half">
-              <Text variant="h4">{'Ríkisfang'}</Text>
-              <Text>{(answers.personalInfo as any).citizenship}</Text>
+              <Text variant="h4">{formatMessage(m.citizenship)}</Text>
+              <Text>{(answers.personalInfo as PersonalInfo).citizenship}</Text>
             </Box>
           </Box>
           <Box display="flex">
             <Box width="half">
-              <Text variant="h4">{'Hjúskaparstaða fyrir vígslu'}</Text>
-              <Text>{(answers.personalInfo as any).maritalStatus}</Text>
+              <Text variant="h4">{formatMessage(m.maritalStatus)}</Text>
+              <Text>
+                {(answers.personalInfo as PersonalInfo).maritalStatus}
+              </Text>
             </Box>
             {answers.maritalStatus === 'DIVORCED' ||
-              ((answers.fakeData as any).maritalStatus === '6' && (
+              ((answers.fakeData as PersonalInfo).maritalStatus === '6' && (
                 <Box width="half">
-                  <Text variant="h4">{'Hvernig lauk síðasta hjúskap?'}</Text>
+                  <Text variant="h4">
+                    {formatMessage(m.previousMarriageTermination)}
+                  </Text>
                   <Text>
-                    {(answers.personalInfo as any).previousMarriageTermination}
+                    {
+                      (answers.personalInfo as PersonalInfo)
+                        .previousMarriageTermination
+                    }
                   </Text>
                 </Box>
               ))}
@@ -107,25 +110,23 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box>
         <Text variant="h3" marginBottom={3}>
-          {'Vígsla'}
+          {formatMessage(m.ceremony)}
         </Text>
         <Box>
           <Box display="flex" marginBottom={3}>
             <Box width="half">
-              <Text variant="h4">{'Áætlaður vígsludagur eða tímabil'}</Text>
-              <Text>{(answers.ceremony as any).date}</Text>
+              <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
+              <Text>{(answers.ceremony as Ceremony).date}</Text>
             </Box>
           </Box>
           <Box display="flex">
             <Box width="half">
-              <Text variant="h4">{'Hvar er vígsla áformuð?'}</Text>
-              <Text>{(answers.ceremony as any).ceremonyPlace}</Text>
-            </Box>
-            <Box width="half">
-              <Text variant="h4">{'Embætti sýslumanns'}</Text>
-              <Text>
-                {(answers.personalInfo as any).previousMarriageTermination}
-              </Text>
+              <Text variant="h4">{formatMessage(m.ceremonyPlace)}</Text>
+              {(answers.ceremony as Ceremony).ceremonyPlace === 'office' ? (
+                <Text>{(answers.ceremony as Ceremony).office}</Text>
+              ) : (
+                <Text>{(answers.ceremony as Ceremony).society}</Text>
+              )}
             </Box>
           </Box>
         </Box>

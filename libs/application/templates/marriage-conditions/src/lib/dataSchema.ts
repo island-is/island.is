@@ -42,6 +42,8 @@ export const dataSchema = z.object({
   ceremony: z.object({
     date: z.string().refine((v) => v),
     ceremonyPlace: z.string(),
+    office: z.string().optional(),
+    society: z.string().optional(),
   }),
 
   //spouse's part of the application

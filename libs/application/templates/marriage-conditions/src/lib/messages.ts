@@ -238,6 +238,26 @@ export const m = defineMessages({
     defaultMessage: 'Hvar er vígsla áformuð?',
     description: '',
   },
+  ceremonyAtDistrictsOffice: {
+    id: 'mac.application:ceremonyAtDistrictsOffice',
+    defaultMessage: 'Embætti sýslumanns',
+    description: '',
+  },
+  ceremonyAtReligiousLifeViewingSociety: {
+    id: 'mac.application:ceremonyAtReligiousLifeViewingSociety',
+    defaultMessage: 'Trú- eða lífsskoðunarfélagi',
+    description: '',
+  },
+  ceremonyChooseDistrict: {
+    id: 'mac.application:ceremonyChooseDistrict',
+    defaultMessage: 'Veldu embætti sýslumanns úr lista',
+    description: '',
+  },
+  ceremonyChooseSociety: {
+    id: 'mac.application:ceremonyChooseSociety',
+    defaultMessage: 'Veldu trú- eða lífsskoðunarfélag úr lista',
+    description: '',
+  },
 
   /* Spouse confirmation screens */
   entrance: {
@@ -248,7 +268,7 @@ export const m = defineMessages({
   spouseIntroDescription: {
     id: 'mac.application:spouseIntroDescription',
     defaultMessage:
-      'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
     description: '',
   },
   spouseContinue: {
@@ -399,5 +419,10 @@ export const m = defineMessages({
     id: 'mac.application:shareLink',
     defaultMessage: 'Deila hlekk',
     description: '',
+  },
+  errorDataProvider: {
+    id: 'pa.application:error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
+    description: 'Oops! Something went wrong when fetching your data',
   },
 })
