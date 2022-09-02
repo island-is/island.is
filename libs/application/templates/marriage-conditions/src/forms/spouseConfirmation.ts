@@ -12,7 +12,7 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
+import { NO, YES, MarriageTermination } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
@@ -31,20 +31,19 @@ export const spouseConfirmation: Form = buildForm({
   children: [
     buildSection({
       id: 'spouse',
-      title: 'Inngangur',
+      title: m.entrance,
       children: [
         buildMultiField({
           id: 'spouse',
-          title: 'Könnun hjónavígsluskilyrða',
-          description:
-            'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+          title: m.introSectionTitle,
+          description: m.spouseIntroDescription,
           children: [
             buildCheckboxField({
               id: 'spouseApprove',
               title: '',
               options: [
-                { value: YES, label: 'Ég vil halda áfram' },
-                { value: NO, label: 'Ég vil hafna þessari beiðni' },
+                { value: YES, label: m.spouseContinue },
+                { value: NO, label: m.spouseDecline },
               ],
               defaultValue: [YES],
             }),
@@ -97,7 +96,7 @@ export const spouseConfirmation: Form = buildForm({
       children: [
         buildSubSection({
           id: 'sides',
-          title: 'Hjónaefni',
+          title: m.informationMaritalSides,
           children: [
             buildMultiField({
               id: 'sides',
@@ -105,7 +104,7 @@ export const spouseConfirmation: Form = buildForm({
               children: [
                 buildDescriptionField({
                   id: 'header1',
-                  title: 'Hjónaefni 1',
+                  title: m.informationWitness1,
                   titleVariant: 'h4',
                 }),
                 buildTextField({
@@ -158,7 +157,7 @@ export const spouseConfirmation: Form = buildForm({
                 }),
                 buildDescriptionField({
                   id: 'header2',
-                  title: 'Hjónaefni 2',
+                  title: m.informationWitness2,
                   titleVariant: 'h4',
                   space: 'gutter',
                 }),
@@ -194,17 +193,16 @@ export const spouseConfirmation: Form = buildForm({
         }),
         buildSubSection({
           id: 'info',
-          title: 'Persónuupplýsingar',
+          title: m.dataCollectionNationalRegistryTitle,
           children: [
             buildMultiField({
               id: 'personalInfo',
-              title: 'Persónuupplýsingar',
-              description:
-                'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+              title: m.dataCollectionNationalRegistryTitle,
+              description: m.personalInformationDescription,
               children: [
                 buildTextField({
                   id: 'personalInfo.address',
-                  title: 'Lögheimili',
+                  title: m.address,
                   backgroundColor: 'white',
                   readOnly: true,
                   defaultValue: (application: Application) => {
@@ -215,7 +213,7 @@ export const spouseConfirmation: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalInfo.citizenship',
-                  title: 'IS',
+                  title: m.citizenship,
                   backgroundColor: 'white',
                   width: 'half',
                   readOnly: true,
@@ -227,7 +225,7 @@ export const spouseConfirmation: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'personalInfo.maritalStatus',
-                  title: 'Hjúskaparstaða fyrir vígslu',
+                  title: m.maritalStatus,
                   backgroundColor: 'white',
                   width: 'half',
                   readOnly: true,
@@ -244,11 +242,20 @@ export const spouseConfirmation: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'personalInfo.previousMarriageTermination',
-                  title: 'Hvernig lauk síðasta hjúskap?',
+                  title: m.previousMarriageTermination,
                   options: [
-                    { value: 'divorce', label: 'Með lögskilnaði' },
-                    { value: 'lostSpouse', label: 'Með láti maka' },
-                    { value: 'annulment', label: 'Með ógildingu' },
+                    {
+                      value: MarriageTermination.divorce,
+                      label: m.terminationByDivorce,
+                    },
+                    {
+                      value: MarriageTermination.lostSpouse,
+                      label: m.terminationByLosingSpouse,
+                    },
+                    {
+                      value: MarriageTermination.annulment,
+                      label: m.terminationByAnnulment,
+                    },
                   ],
                   largeButtons: false,
                 }),
@@ -260,13 +267,11 @@ export const spouseConfirmation: Form = buildForm({
     }),
     buildSection({
       id: 'spouseConfirmationOverview',
-      title: 'Yfirlit',
+      title: m.overview,
       children: [
         buildMultiField({
           id: 'applicationOverview',
-          title: 'Yfirlit umsóknar',
-          description:
-            'Vinsamlegast farðu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar upp. ',
+          title: m.applicationOverview,
           children: [
             buildCustomField({
               id: 'spouseOverview',
@@ -285,23 +290,6 @@ export const spouseConfirmation: Form = buildForm({
                   type: 'primary',
                 },
               ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'spouseConfirmationOverview',
-      title: '',
-      children: [
-        buildMultiField({
-          id: 'done',
-          title: 'Komið',
-          children: [
-            buildDescriptionField({
-              id: 'applicationOverview',
-              title: 'næsnæs',
-              description: 'helloooo vel gert',
             }),
           ],
         }),

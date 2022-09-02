@@ -240,6 +240,27 @@ export const m = defineMessages({
   },
 
   /* Spouse confirmation screens */
+  entrance: {
+    id: 'mac.application:entrance',
+    defaultMessage: 'Inngangur',
+    description: '',
+  },
+  spouseIntroDescription: {
+    id: 'mac.application:spouseIntroDescription',
+    defaultMessage:
+      'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+    description: '',
+  },
+  spouseContinue: {
+    id: 'mac.application:spouseContinue',
+    defaultMessage: 'Ég vil halda áfram',
+    description: '',
+  },
+  spouseDecline: {
+    id: 'mac.application:spouseDecline',
+    defaultMessage: 'Ég vil hafna þessari beiðni',
+    description: '',
+  },
 
   /* Payment */
   payment: {
