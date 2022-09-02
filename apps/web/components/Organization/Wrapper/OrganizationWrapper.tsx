@@ -5,7 +5,6 @@ import NextLink from 'next/link'
 import { theme } from '@island.is/island-ui/theme'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import {
-  GetNamespaceQuery,
   Image,
   Organization,
   OrganizationPage,
@@ -29,7 +28,6 @@ import {
 import {
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
-  MailingListSignup,
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -474,34 +472,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                           <LatestNewsCardConnectedComponent
                             key={card.id}
                             {...card.json}
-                          />
-                        )
-                      }
-
-                      if (card.__typename === 'MailingListSignupSlice') {
-                        return (
-                          <MailingListSignup
-                            id={'mailingListSignupForm-' + card.id}
-                            title={card.title}
-                            description={card.description}
-                            inputLabel={card.inputLabel}
-                            buttonText={card.buttonText}
-                            signupID={card.id}
-                            boxProps={{
-                              padding: 3,
-                              border: 'standard',
-                              borderRadius: 'standard',
-                            }}
-                            inputAndButtonContainerBoxProps={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'flexStart',
-                            }}
-                            buttonBoxProps={{
-                              marginTop: 3,
-                            }}
-                            variant="white"
-                            namespace={namespace ?? {}}
                           />
                         )
                       }

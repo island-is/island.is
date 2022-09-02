@@ -91,9 +91,7 @@ export const LatestNewsCardConnectedComponent = ({
           <ul>
             {headings.map((heading, index) => (
               <li key={index} className={styles.list}>
-                <Text lineHeight="sm" variant="small">
-                  {heading}
-                </Text>
+                <Text variant="small">{heading}</Text>
               </li>
             ))}
           </ul>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import { Box, BoxProps, NewsletterSignup } from '@island.is/island-ui/core'
+import { Box, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import {
   MailchimpSubscribeMutation,
@@ -28,10 +28,6 @@ interface MailingListSignupProps {
   placeholder?: string
   buttonText: string
   signupID: string
-  boxProps?: BoxProps
-  inputAndButtonContainerBoxProps?: BoxProps
-  buttonBoxProps?: BoxProps
-  variant?: 'blue' | 'white'
 }
 
 export const MailingListSignup: React.FC<MailingListSignupProps> = ({
@@ -43,14 +39,6 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   placeholder,
   buttonText,
   signupID,
-  boxProps = {
-    paddingX: [2, 2, 8],
-    paddingY: [2, 2, 8],
-    background: 'blue100',
-  },
-  inputAndButtonContainerBoxProps,
-  buttonBoxProps,
-  variant = 'blue',
 }) => {
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
@@ -121,7 +109,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   }, [status.type, formik.values.email])
 
   return (
-    <Box {...boxProps}>
+    <Box background="blue100" paddingX={[2, 2, 8]} paddingY={[2, 2, 6]}>
       <NewsletterSignup
         id={id}
         name="email"
@@ -130,7 +118,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
         placeholder={placeholder}
         label={inputLabel}
         buttonText={buttonText}
-        variant={variant}
+        variant="blue"
         onChange={formik.handleChange}
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
@@ -138,8 +126,6 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
         successTitle={n('formSuccessTitle', 'Skráning tókst')}
         successMessage={status.type === 'success' ? status.message : ''}
         state={status.type}
-        inputAndButtonContainerBoxProps={inputAndButtonContainerBoxProps}
-        buttonBoxProps={buttonBoxProps}
       />
     </Box>
   )

@@ -2131,9 +2131,7 @@ export interface IOrganizationPageFields {
   featuredImage?: Asset | undefined
 
   /** Sidebar Cards */
-  sidebarCards?:
-    | (IMailingListSignup | ISidebarCard | ISliceConnectedComponent)[]
-    | undefined
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
