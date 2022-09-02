@@ -22,7 +22,7 @@ describe('Front page', () => {
       })
   })
 
-  it.only('should navigate to featured link', () => {
+  it('should navigate to featured link', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
       .should('have.length.at.least', 3)
