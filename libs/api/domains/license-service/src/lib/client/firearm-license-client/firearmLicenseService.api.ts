@@ -16,6 +16,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   CreatePkPassDataInput,
+  PkPassIssuer,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import {
@@ -33,6 +34,7 @@ export class GenericFirearmLicenseApi
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
     private smartApi: SmartSolutionsApi,
+    private issuer: PkPassIssuer,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
@@ -93,14 +95,14 @@ export class GenericFirearmLicenseApi
     if (!inputValues) return null
     //Fetch template from api?
     const payload: CreatePkPassDataInput = {
-      passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
+      passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       //thumbnail: {
       //imageBase64String: license.licenseImgBase64 ?? '',
       //},
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(payload)
+    const pass = await this.smartApi.generatePkPassUrl(payload, this.issuer)
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -110,13 +112,13 @@ export class GenericFirearmLicenseApi
     if (!inputValues) return null
     //Fetch template from api?
     const payload: CreatePkPassDataInput = {
-      passTemplateId: '61f74977-0e81-4786-94df-6b8470013f09',
+      passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       //thumbnail: {
       //imageBase64String: license.licenseImgBase64 ?? '',
       //},
     }
-    const pass = await this.smartApi.generatePkPassQrCode(payload)
+    const pass = await this.smartApi.generatePkPassQrCode(payload, this.issuer)
     return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

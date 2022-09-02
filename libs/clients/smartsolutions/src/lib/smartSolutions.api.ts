@@ -5,6 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CreatePkPassDataInput,
   PassTemplatesResponse,
+  PkPassIssuer,
   PkPassServiceErrorResponse,
   UpsertPkPassResponse,
 } from './smartSolutions.types'
@@ -21,11 +22,31 @@ export class SmartSolutionsApi {
     private config: ConfigType<typeof SmartSolutionsClientConfig>,
   ) {}
 
-  private fetchUrl(payload: string): Promise<Response> {
-    return fetch(`https://smartpages-api.smartsolutions.is/graphql`, {
+  private getApiKey(issuer: PkPassIssuer) {
+    if (process.env.NODE_ENV === 'development')
+      return this.config.pkPassApiKeys.veApiKey
+
+    switch (issuer) {
+      case PkPassIssuer.RIKISLOGREGLUSTJORI:
+        return this.config.pkPassApiKeys.rlsApiKey
+      case PkPassIssuer.VINNUEFTIRLITID:
+        return this.config.pkPassApiKeys.veApiKey
+      default:
+        return
+    }
+  }
+
+  private fetchUrl(payload: string, issuer: PkPassIssuer): Promise<Response> {
+    const apiKey = this.getApiKey(issuer)
+
+    if (!apiKey) {
+      throw new Error('Invalid Apikey')
+    }
+
+    return fetch(this.config.pkPassApiUrl, {
       method: 'POST',
       headers: {
-        'X-API-KEY': this.config.pkPassApiKey,
+        'X-API-KEY': apiKey,
         'Content-Type': 'application/json',
       },
       body: payload,
@@ -34,6 +55,7 @@ export class SmartSolutionsApi {
 
   async upsertPkPass(
     payload: CreatePkPassDataInput,
+    issuer: PkPassIssuer,
   ): Promise<UpsertPkPassResponse | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
@@ -55,7 +77,7 @@ export class SmartSolutionsApi {
     let res: Response | null = null
 
     try {
-      res = await this.fetchUrl(JSON.stringify(body))
+      res = await this.fetchUrl(JSON.stringify(body), issuer)
     } catch (e) {
       this.logger.warn('Unable to upsert pkpass', {
         exception: e,
@@ -111,17 +133,25 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassQrCode(payload: CreatePkPassDataInput) {
-    const pass = await this.upsertPkPass(payload)
+  async generatePkPassQrCode(
+    payload: CreatePkPassDataInput,
+    issuer: PkPassIssuer,
+  ) {
+    const pass = await this.upsertPkPass(payload, issuer)
     return pass?.data?.upsertPass?.distributionQRCode ?? null
   }
 
-  async generatePkPassUrl(payload: CreatePkPassDataInput) {
-    const pass = await this.upsertPkPass(payload)
+  async generatePkPassUrl(
+    payload: CreatePkPassDataInput,
+    issuer: PkPassIssuer,
+  ) {
+    const pass = await this.upsertPkPass(payload, issuer)
     return pass?.data?.upsertPass?.distributionUrl ?? null
   }
 
-  async listTemplates(): Promise<PassTemplatesResponse | null> {
+  async listTemplates(
+    issuer: PkPassIssuer,
+  ): Promise<PassTemplatesResponse | null> {
     const listTemplatesQuery = {
       query: `
         query passTemplateQuery {
@@ -138,7 +168,7 @@ export class SmartSolutionsApi {
     let res: Response | null = null
 
     try {
-      res = await this.fetchUrl(JSON.stringify(listTemplatesQuery))
+      res = await this.fetchUrl(JSON.stringify(listTemplatesQuery), issuer)
     } catch (e) {
       this.logger.warn('Unable to retreive pk pass templates', {
         exception: e,

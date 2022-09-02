@@ -15,6 +15,7 @@ import {
   FirearmLicenseClientModule,
 } from '@island.is/clients/firearm-license'
 import {
+  PkPassIssuer,
   SmartSolutionsApi,
   SmartSolutionsClientModule,
 } from '@island.is/clients/smartsolutions'
@@ -137,6 +138,7 @@ export class LicenseServiceModule {
                   logger,
                   firearmApi,
                   smartApi,
+                  PkPassIssuer.RIKISLOGREGLUSTJORI,
                 )
               default:
                 return null

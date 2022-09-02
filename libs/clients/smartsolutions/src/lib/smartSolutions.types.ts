@@ -9,6 +9,11 @@ export interface CreatePkPassDataInput {
   }
 }
 
+export enum PkPassIssuer {
+  VINNUEFTIRLITID = 'vinnueftirlitid',
+  RIKISLOGREGLUSTJORI = 'rikislogreglustjori',
+}
+
 export interface CreatePkPassDTO {
   distributionUrl?: string
   deliveryPageUrl?: string
