@@ -23,6 +23,7 @@ export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   MachineLicense = 'MachineLicense',
   AdrLicense = 'AdrLicense',
+  FirearmLicense = 'FirearmLicense',
   HuntingLicense = 'HuntingLicense',
 }
 

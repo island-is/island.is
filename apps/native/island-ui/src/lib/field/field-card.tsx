@@ -39,6 +39,7 @@ const Header = styled.View<{ hideBorder: boolean}>`
   padding: ${({ theme }) => theme.spacing[2]}px;
 `
 const HeaderTextBold = styled.Text`
+  align-self: flex-start;
   padding-right: ${({ theme }) => theme.spacing[1]}px;
   ${font({
     fontWeight: '700',

@@ -197,10 +197,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           mutation: GENERATE_PKPASS_MUTATION,
           variables: {
             input: {
-              licenseType: GenericLicenseType.DriversLicense,
+              licenseType: item.license.type,
             },
           },
         })
+
         if (Platform.OS === 'android') {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -224,7 +225,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           setAddingToWallet(false)
           return
         }
-        const res = await fetch(data.generatePkPass.pkpassUrl)
+        const res = await fetch(data.generatePkPass.pkpassUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1' }})
         const blob = await res.blob()
         const reader = new FileReader()
         reader.readAsDataURL(blob)
@@ -256,8 +257,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const fields = data?.payload?.data ?? []
   const hasPkpass = data?.license?.pkpass || false
-  const hasValidPkpass =
-    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
+  const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
+    || data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Unknown;
 
   return (
     <View style={{ flex: 1 }}>

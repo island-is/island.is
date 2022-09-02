@@ -12,6 +12,7 @@ import BackgroundADR from '../../assets/card/adr-bg.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import BackgroundPassport from '../../assets/card/passport-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
+import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
 import LogoEnvironmentAgency from '../../assets/card/ust.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
@@ -140,9 +141,9 @@ const LicenseCardPresets = {
     backgroundImage: BackgroundPassport,
     backgroundColor: '#CDD1E6',
   },
-  WeaponLicense: {
+  FirearmLicense: {
     title: 'Skotvopnaleyfi',
-    logo: LogoCoatOfArms,
+    logo: CoatOfArms,
     backgroundImage: BackgroundWeaponLicense,
     backgroundColor: '#EBEBF2',
   },
