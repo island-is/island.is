@@ -40,12 +40,7 @@ import {
     UserProfileInfraController,
     UserTokenController,
   ],
-  providers: [
-    UserProfileService,
-    VerificationService,
-    SequelizeConfigService,
-    IslykillService,
-  ],
+  providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
 })
 export class UserProfileModule {}
