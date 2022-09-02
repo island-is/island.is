@@ -157,15 +157,13 @@ export const Dashboard: FC<{}> = () => {
                       onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
                       height="full"
                       flexGrow={1}
+                      onClick={() => navRoot.path && history.push(navRoot.path)}
                     >
                       {navRoot.path && (
                         <CategoryCard
                           autoStack
                           hyphenate
                           truncateHeading
-                          onClick={() =>
-                            navRoot.path && history.push(navRoot.path)
-                          }
                           icon={
                             isMobile && navRoot.icon ? (
                               <Icon

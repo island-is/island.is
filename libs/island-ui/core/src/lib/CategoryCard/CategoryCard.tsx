@@ -42,8 +42,6 @@ export type CategoryCardProps = {
   stackWidth?: number
   /** Hyphenate the heading */
   hyphenate?: boolean
-  /** On click event (link sometimes doesnt work) */
-  onClick?: () => void
 }
 
 const colorSchemes = {
@@ -102,7 +100,6 @@ const Component = forwardRef<
       hyphenate = false,
       tagOptions,
       autoStack,
-      onClick,
     },
     ref,
   ) => {
@@ -128,7 +125,6 @@ const Component = forwardRef<
         width="full"
         background="white"
         color={colorScheme}
-        onClick={onClick}
       >
         <Box
           ref={ref}
