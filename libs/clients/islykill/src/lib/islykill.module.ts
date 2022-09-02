@@ -1,62 +1,8 @@
-import fs from 'fs'
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { IslykillApiModule } from './islykill.provider'
 
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { logger } from '@island.is/logging'
-
-import { Configuration, IslyklarApi } from '../../gen/fetch'
-
-export interface IslykillApiModuleConfig {
-  cert: string
-  passphrase: string
-  basePath: string
-}
-
-export class IslykillApiModule {
-  static register(config: IslykillApiModuleConfig): DynamicModule {
-    function lykillError(errorMsg: any) {
-      logger.error(errorMsg)
-    }
-
-    let pfx: Buffer | undefined
-    try {
-      if (!config.cert) {
-        throw Error('IslykillApiModule certificate not provided')
-      }
-      pfx = fs.readFileSync(config.cert)
-    } catch (err) {
-      lykillError(err)
-    }
-
-    console.log('PFX: PFX: ', pfx?.toString('base64').substr(0, 40))
-    if (!config.passphrase) {
-      logger.error('IslykillApiModule secret not provided.')
-    }
-    const passphrase = config.passphrase
-
-    return {
-      module: IslykillApiModule,
-      providers: [
-        {
-          provide: IslyklarApi,
-          useFactory: () =>
-            new IslyklarApi(
-              new Configuration({
-                basePath: config.basePath,
-                fetchApi: createEnhancedFetch({
-                  name: 'clients-islykill',
-                  logErrorResponseBody: true,
-                  timeout: 20000,
-                  clientCertificate: pfx && {
-                    pfx,
-                    passphrase,
-                  },
-                }),
-              }),
-            ),
-        },
-      ],
-      exports: [IslyklarApi],
-    }
-  }
-}
+@Module({
+  providers: [IslykillApiModule],
+  exports: [IslykillApiModule],
+})
+export class IslykillClientModule {}
