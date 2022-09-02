@@ -75,6 +75,10 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
+const LifeEventPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -135,6 +139,8 @@ const renderSlice = (
       )
     case 'MailingListSignupSlice':
       return <MailingListSignupSlice slice={slice} namespace={namespace} />
+    case 'LifeEventPageListSlice':
+      return <LifeEventPageListSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

@@ -280,6 +280,13 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  if (!getOrganizationPage) {
+    throw new CustomNextError(
+      404,
+      `Organization page with slug: ${slug} was not found`,
+    )
+  }
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
