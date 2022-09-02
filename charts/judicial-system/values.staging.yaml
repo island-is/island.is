@@ -102,6 +102,7 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    BLOCKED_API_INTEGRATION: 'COURT,POLICE_DOCUMENT,POLICE_CASE'
     COMPLETED_CASE_OVERVIEW_URL: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'

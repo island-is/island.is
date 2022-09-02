@@ -1522,10 +1522,10 @@ skilavottord-web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
     NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
+    SKILAVOTTORD_WEB_IDS_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

@@ -26,6 +26,7 @@ const postgresInfo: PostgresInfo = {
   name: 'application_system_api',
   username: 'application_system_api',
 }
+export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
 
 const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
@@ -149,7 +150,8 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]:
+        'http://web-api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',

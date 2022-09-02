@@ -2,12 +2,13 @@ import {
   aliasQuery,
   getFakeUser,
   getDiscountData,
+  getEnvironmentBaseUrl,
 } from '../../../support/utils'
-import { FixtureUser, BaseUrl } from '../../../lib/types'
+import { FixtureUser, BaseAuthority } from '../../../lib/types'
 
 import fakeUsers from '../../../fixtures/air-discount-scheme/users.json'
 
-describe('Air discount scheme', () => {
+describe.skip('Air discount scheme', () => {
   const testEnvironment = Cypress.env('testEnvironment')
 
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'gervimaður afríka')
@@ -15,7 +16,7 @@ describe('Air discount scheme', () => {
   beforeEach(() => {
     // FIXME: https://github.com/island-is/island.is/issues/7906
     if (testEnvironment !== 'local') {
-      const baseUrl = BaseUrl.ads
+      const baseUrl = getEnvironmentBaseUrl(BaseAuthority.ads)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       Cypress.config('baseUrl', baseUrl)
@@ -24,7 +25,7 @@ describe('Air discount scheme', () => {
     const baseUrl = Cypress.config('baseUrl')
 
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: baseUrl,
       urlPath: '/min-rettindi',
     })

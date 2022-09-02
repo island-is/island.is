@@ -348,10 +348,10 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     className={styles.fitBorder}
                     marginLeft={4}
                     marginBottom={1}
-                    key={o.slug}
+                    key={o.value}
                   >
                     <Field name="Label" value={o.label} />
-                    <Field name="Slug" value={o.slug} />
+                    <Field name="Slug" value={o.value} />
                     <Field
                       name="Transition"
                       value={o.transition}
@@ -607,7 +607,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           id={id}
                         >
                           <Field name="Label" value={o.label} />
-                          <Field name="Slug" value={o.slug} />
+                          <Field name="Slug" value={o.value} />
                           <Field
                             name="Transition"
                             value={o.transition}

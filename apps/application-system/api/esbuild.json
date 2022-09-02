@@ -56,7 +56,8 @@
     "lowercase-keys",
     "mimic-response",
     "to-readable-stream",
-    "url-parse-lax"
+    "url-parse-lax",
+    "safer-buffer"
   ],
   "keepNames": true
 }

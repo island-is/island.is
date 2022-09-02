@@ -1708,10 +1708,10 @@ skilavottord-web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
     NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
+    SKILAVOTTORD_WEB_IDS_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1722,7 +1722,7 @@ skilavottord-ws:
     DB_NAME: 'skilavottord'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'skilavottord'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
