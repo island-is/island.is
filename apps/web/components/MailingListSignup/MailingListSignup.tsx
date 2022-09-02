@@ -3,7 +3,6 @@ import { useFormik } from 'formik'
 import { Box, BoxProps, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import {
-  GetNamespaceQuery,
   MailchimpSubscribeMutation,
   MailchimpSubscribeMutationVariables,
 } from '@island.is/web/graphql/schema'
@@ -21,7 +20,7 @@ interface FormProps {
 }
 
 interface MailingListSignupProps {
-  namespace: GetNamespaceQuery['getNamespace']['fields']
+  namespace: Record<string, string>
   id: string
   title: string
   description: string

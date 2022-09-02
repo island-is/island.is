@@ -77,7 +77,7 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
-  namespace?: GetNamespaceQuery['getNamespace']['fields']
+  namespace?: Record<string, string>
 }
 
 interface HeaderProps {
@@ -501,7 +501,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                               marginTop: 3,
                             }}
                             variant="white"
-                            namespace={namespace ?? (({} as unknown) as any)}
+                            namespace={namespace ?? {}}
                           />
                         )
                       }
