@@ -17,10 +17,7 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
-import {
-  IslykillClientConfig,
-  IslykillClientModule,
-} from '@island.is/clients/islykill'
+import { IslykillClientModule } from '@island.is/clients/islykill'
 
 @Module({
   imports: [
@@ -35,10 +32,6 @@ import {
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
     IslykillClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [IslykillClientConfig],
-    }),
   ],
   controllers: [
     UserProfileController,
