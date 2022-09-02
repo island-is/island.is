@@ -146,7 +146,7 @@ export const m = defineMessages({
     description: 'Phone number',
   },
   editDigitalIslandData: {
-    id: 'hi.application:digitalIslandData.edit',
+    id: 'hi.application:digitalIslandData.edit#markdown',
     defaultMessage:
       'Vinsamlegast uppfærið netfang og símanúmer á [Mínum síðum](https://island.is/minarsidur/stillingar/minar-stillingar/) ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
     description:
@@ -439,7 +439,7 @@ export const m = defineMessages({
     description: 'Waiting period',
   },
   waitingPeriodDescription: {
-    id: 'hi.application:waitingPeriod.description',
+    id: 'hi.application:waitingPeriod.description#markdown',
     defaultMessage:
       'Þegar flutt er til Íslands frá landi utan  [EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/), Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan [EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/), Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n \n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar [læknisfræðilegar undanþágur](https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur) eru frá sex mánaða biðtímanum.',
     description:
