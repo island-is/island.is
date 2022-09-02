@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const imageContainerHidden = style({
@@ -24,4 +24,8 @@ export const icon = style({
       minWidth: 40,
     },
   }),
+})
+
+globalStyle(`${icon} svg`, {
+  height: '100%',
 })

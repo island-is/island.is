@@ -108,7 +108,7 @@ const NavItemContent: FC<Props> = ({
               )}
             ></Box>
 
-            {!isDashboard ? (
+            {!isDashboard && !isMobile ? (
               <Box
                 className={styles.animatedIcon}
                 display="flex"

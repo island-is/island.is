@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -28,6 +29,8 @@ import { AuthDelegationType } from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
 import { useHistory } from 'react-router-dom'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -103,6 +106,8 @@ export const Dashboard: FC<{}> = () => {
   const navigation = useNavigation()
   const { formatMessage } = useLocale()
   const history = useHistory()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
@@ -114,9 +119,6 @@ export const Dashboard: FC<{}> = () => {
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
   }, [location])
-
-  const origin = window.location.origin
-  const baseUrl = `${origin}/minarsidur`
 
   const onHover = (id: string) => {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,22 +150,43 @@ export const Dashboard: FC<{}> = () => {
                 !navRoot.navHide && (
                   <GridColumn
                     key={formatMessage(navRoot.name) + '-' + index}
-                    span={['12/12', '12/12', '6/12', '4/12']}
+                    span={['12/12', '12/12', '12/12', '6/12', '4/12']}
                     paddingBottom={3}
                   >
-                    <div onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}>
+                    <Box
+                      onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
+                      height="full"
+                      flexGrow={1}
+                    >
                       {navRoot.path && (
                         <CategoryCard
+                          autoStack
+                          hyphenate
                           truncateHeading
                           onClick={() =>
                             navRoot.path && history.push(navRoot.path)
                           }
-                          icon={iconTypeToSVG(navRoot.icon?.icon ?? '', '')}
+                          //href={navRoot.path}
+                          icon={
+                            isMobile && navRoot.icon ? (
+                              <Icon
+                                icon={navRoot.icon.icon}
+                                type="outline"
+                                color="blue400"
+                              />
+                            ) : (
+                              iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                            )
+                          }
                           heading={formatMessage(navRoot.name)}
-                          text="Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður."
+                          text={
+                            navRoot.description
+                              ? formatMessage(navRoot.description)
+                              : formatMessage(navRoot.name)
+                          }
                         />
                       )}
-                    </div>
+                    </Box>
                   </GridColumn>
                 ),
             )

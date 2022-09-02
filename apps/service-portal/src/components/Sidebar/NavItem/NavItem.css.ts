@@ -121,11 +121,16 @@ export const badge = styleVariants({
   active: {
     position: 'absolute',
     top: 9,
-    left: 28,
+    left: 44,
     height: theme.spacing[1],
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
+    ...themeUtils.responsiveStyle({
+      md: {
+        left: 28,
+      },
+    }),
   },
   inactive: {
     display: 'none',

@@ -8,12 +8,18 @@ export const relative = style({
 export const imageAbsolute = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
-    lg: {
+    md: {
+      top: -252,
       display: 'block',
       position: 'absolute',
-      top: -252,
-      right: 0,
+      right: -55,
       height: 'auto',
+    },
+    lg: {
+      right: -45,
+    },
+    xl: {
+      right: 0,
     },
   }),
 })
