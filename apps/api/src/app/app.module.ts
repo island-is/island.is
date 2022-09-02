@@ -66,6 +66,7 @@ import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { IslykillClientConfig } from '@island.is/clients/islykill'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -266,6 +267,7 @@ const autoSchemaFile = environment.production
         DrivingLicenseApiConfig,
         PassportsClientConfig,
         FileStorageConfig,
+        IslykillClientConfig,
       ],
     }),
   ],
