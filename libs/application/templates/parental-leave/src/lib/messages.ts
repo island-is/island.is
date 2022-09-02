@@ -1190,8 +1190,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
-      defaultMessage: 'Umsókn þín er samþykkt',
-      description: 'Your application is in approved',
+      defaultMessage: 'Umsókn þín er móttekið',
+      description: 'Your application is received',
     },
     estimatedBirthDate: {
       id: 'pl.application:review.estimatedBirthDate',
@@ -1293,8 +1293,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     deptTitle: {
       id: 'pl.application:review.dept.title',
-      defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
-      description: 'Vinnumálastofnun approves application',
+      defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
+      description: 'Vinnumálastofnun has received your application',
     },
     deptDesc: {
       id: 'pl.application:review.dept.description',

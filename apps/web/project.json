@@ -77,6 +77,30 @@
         "command": "graphql-codegen --config apps/web/codegen.yml"
       }
     },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets api web",
+          "echo '#############'",
+          "echo '# ATTENTION #'",
+          "echo '#############'",
+          "echo ''",
+          "echo 'You must manually add these to your .env.secrets file:'",
+          "echo '  CONTENTFUL_HOST '",
+          "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
+          "echo ''"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": ["yarn start api", "yarn start web"],
+        "parallel": true
+      }
+    },
     "docker-next": {}
   },
   "tags": []
