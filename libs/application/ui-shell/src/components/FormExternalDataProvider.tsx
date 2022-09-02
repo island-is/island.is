@@ -33,7 +33,6 @@ import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
-import { ActionMenuItem } from '@island.is/service-portal/core'
 
 const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   title,

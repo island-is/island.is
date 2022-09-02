@@ -4,7 +4,7 @@ import { modules, services } from './templates'
 import {
   modules as sharedModules,
   services as sharedServices,
-} from './shared/data-providers'
+} from './shared/api'
 import { BaseTemplateAPIModuleConfig } from '../types'
 import { TemplateAPIService } from './template-api.service'
 import { TEMPLATE_API_SERVICES } from './template-api.constants'

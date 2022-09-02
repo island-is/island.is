@@ -6,7 +6,10 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
-import { NationalRegistryUser } from '@island.is/application/types'
+import {
+  NationalRegistryParameters,
+  NationalRegistryUser,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 
@@ -29,7 +32,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getUser({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistryUser> {
+    params,
+  }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryUser> {
     const user = await this.nationalRegistryApi.getUser(auth.nationalId)
 
     const result = {
@@ -48,16 +52,16 @@ export class NationalRegistryService extends BaseTemplateApiService {
         postalCode: user.Postnr,
       },
     }
-
-    //if(true) {
-    throw new TemplateApiError(
-      {
-        title: 'This be an error',
-        summary: 'Error from nationalRegistry',
-      },
-      400,
-    )
-    //}
+    if (params?.ageToValidate) {
+      if (params.ageToValidate < result.age)
+        throw new TemplateApiError(
+          {
+            title: 'This be an error',
+            summary: 'Error from nationalRegistry',
+          },
+          400,
+        )
+    }
 
     return result
   }

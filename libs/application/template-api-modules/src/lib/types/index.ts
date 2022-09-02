@@ -56,10 +56,10 @@ export interface BaseTemplateAPIModuleConfig {
   islykill: IslykillApiModuleConfig
 }
 
-export interface TemplateApiModuleActionProps {
+export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
   auth: User
-  params?: { [key: string]: unknown } | unknown
+  params?: Params
 }
 
 export interface EmailTemplateGeneratorProps {

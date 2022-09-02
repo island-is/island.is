@@ -1,7 +1,10 @@
 import { PerformActionResult } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
+
 import { TemplateApiModuleActionProps } from '../types'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 export interface ApplicationApiAction {
   templateId: string
   actionId: string
@@ -33,11 +36,21 @@ export class BaseTemplateApiService {
           response,
         }
       } catch (e) {
-        console.log(e) // CHange
-
+        if (e.problem) {
+          return {
+            success: false,
+            error: e as TemplateApiError,
+          }
+        }
         return {
           success: false,
-          error: e as TemplateApiError,
+          error: new TemplateApiError(
+            {
+              title: 'Villa kom upp!',
+              summary: e.response.message,
+            },
+            e.response.statusCode,
+          ),
         }
       }
     }

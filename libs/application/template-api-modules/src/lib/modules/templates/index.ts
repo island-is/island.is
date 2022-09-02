@@ -23,7 +23,7 @@ import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/d
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
-import { NationalRegistryService } from '../shared/data-providers/national-registry/national-registry.service'
+import { NationalRegistryService } from '../shared/api/national-registry/national-registry.service'
 import { ParentalLeaveService } from './parental-leave/parental-leave.service'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
 import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'

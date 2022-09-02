@@ -1,9 +1,14 @@
 import { defineTemplateApi } from '../../TemplateApi'
 
-export const NationalRegistryUserApi = defineTemplateApi({
-  action: 'getUser',
-  namespace: 'NationalRegistry',
-})
+export interface NationalRegistryParameters {
+  ageToValidate?: number
+}
+export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParameters>(
+  {
+    action: 'getUser',
+    namespace: 'NationalRegistry',
+  },
+)
 
 export const NationalRegistryFamilyApi = defineTemplateApi({
   action: 'getFamily',

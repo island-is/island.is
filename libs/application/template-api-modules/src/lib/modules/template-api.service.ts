@@ -7,11 +7,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { TEMPLATE_API_SERVICES } from './template-api.constants'
 import { BaseTemplateApiService } from './base-template-api.service'
 
-interface ApplicationApiAction {
+interface ApplicationApiAction<Params = unknown> {
   templateId: string
   actionId: string
   action: string
-  props: TemplateApiModuleActionProps
+  props: TemplateApiModuleActionProps<Params>
 }
 
 @Injectable()

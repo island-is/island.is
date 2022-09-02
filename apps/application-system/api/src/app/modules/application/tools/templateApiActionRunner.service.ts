@@ -8,6 +8,7 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { TemplateApiErrorProblem } from '@island.is/shared/problem'
 @Injectable()
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
@@ -121,13 +122,24 @@ export class TemplateApiActionRunner {
     action: string,
     externalDataId?: string,
   ): ExternalData {
+    if (actionResult.success) {
+      return {
+        [externalDataId || action]: {
+          status: 'success',
+          date: new Date(),
+          data: actionResult.response as ExternalData['data'],
+        },
+      }
+    }
+
+    const problem = actionResult.error.problem as TemplateApiErrorProblem
     return {
       [externalDataId || action]: {
-        status: actionResult.success ? 'success' : 'failure',
+        status: 'failure',
         date: new Date(),
-        data: (actionResult.success
-          ? actionResult.response
-          : actionResult.error.problem) as ExternalData['data'],
+        reason: problem.errorReason,
+        statusCode: problem.status,
+        data: {},
       },
     }
   }

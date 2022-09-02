@@ -127,7 +127,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                     id: 1986,
                   },
                 }),
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    ageToValidate: 60,
+                  },
+                }),
                 UserProfileApi,
                 NationalRegistryFamilyApi,
               ],
