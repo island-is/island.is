@@ -166,7 +166,6 @@ export const Dashboard: FC<{}> = () => {
                           onClick={() =>
                             navRoot.path && history.push(navRoot.path)
                           }
-                          //href={navRoot.path}
                           icon={
                             isMobile && navRoot.icon ? (
                               <Icon
