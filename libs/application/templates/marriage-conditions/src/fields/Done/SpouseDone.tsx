@@ -4,20 +4,15 @@ import { useLocale } from '@island.is/localization'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { CopyLink } from '@island.is/application/ui-components'
 import { formatText } from '@island.is/application/core'
-import { Individual } from '../../types'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-export const NextSteps = ({ application }: PropTypes): JSX.Element => {
+export const SpouseDone = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const spouseName =
-    (application.answers.spouse as Individual).person.name ?? ''
-
-  const bullets = [m.bullet2, m.bullet3, m.bullet4]
+  const bullets = [m.spouseBullet1, m.spouseBullet2, m.spouseBullet3]
 
   return (
     <Box>
@@ -25,27 +20,12 @@ export const NextSteps = ({ application }: PropTypes): JSX.Element => {
         {formatMessage(m.nextSteps)}
       </Text>
       <BulletList type={'ul'} space={2}>
-        <Bullet>
-          {spouseName} {formatText(m.bullet1, application, formatMessage)}
-        </Bullet>
         {bullets.map((bullet, i) => (
           <Bullet key={i}>
             {formatText(bullet, application, formatMessage)}
           </Bullet>
         ))}
       </BulletList>
-
-      <Box marginTop={3}>
-        <Text variant="h4">{formatMessage(m.shareLink)}</Text>
-        <Box marginTop={2}>
-          <CopyLink
-            linkUrl={
-              `${document.location.origin}/hjonavigsla/` + application.id
-            }
-            buttonTitle={formatMessage(m.copyLink)}
-          />
-        </Box>
-      </Box>
     </Box>
   )
 }

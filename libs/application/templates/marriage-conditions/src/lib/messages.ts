@@ -423,7 +423,7 @@ export const m = defineMessages({
   submitApplication: {
     id: 'mac.application:actionCard.submitApplication',
     defaultMessage: 'Senda inn umsókn',
-    description: 'Some description',
+    description: '',
   },
   errorDataProvider: {
     id: 'mac.application:error.dataProvider',
@@ -433,6 +433,34 @@ export const m = defineMessages({
   actionCardDoneTag: {
     id: 'mac.application:actionCard.done',
     defaultMessage: 'Móttekin',
-    description: 'Some description',
+    description: '',
+  },
+  applicationComplete: {
+    id: 'mac.application:actionCard.applicationComplete',
+    defaultMessage: 'Umsókn móttekin',
+    description: '',
+  },
+  spouseDoneDescription: {
+    id: 'mac.application:actionCard.spouseDoneDescription',
+    defaultMessage:
+      'Umsókn ykkar um könnun hjónavígsluskilyrða hefur verið send til rafrænnar undirritunar. Þegar bæði hjónaefni og svaramenn hafa undirritað rafrænt berst umsókn til sýslumanns. Sýslumaður gefur út í kjölfarið könnunarvottorð. Þið eruð nú einu skrefi nær því að ganga í hjónaband.',
+    description: '',
+  },
+  spouseBullet1: {
+    id: 'mac.application:spouseBullet1',
+    defaultMessage:
+      'Þú og þinn maki ásamt svaramönnum þurfið að undirrita umsóknina rafrænt.',
+    description: '',
+  },
+  spouseBullet2: {
+    id: 'mac.application:spouseBullet2',
+    defaultMessage:
+      'Uppfyllið þið skilyrði til þess að ganga í hjónaband fáið þið könnunarvottorð frá sýslumanni í pósthólf ykkar á Ísland.is sem skal afhenda vígsluaðila fyrir athöfnina.',
+    description: '',
+  },
+  spouseBullet3: {
+    id: 'mac.application:spouseBullet3',
+    defaultMessage: 'Könnunarvottorð gildir í 30 daga frá útgáfu þess.',
+    description: '',
   },
 })

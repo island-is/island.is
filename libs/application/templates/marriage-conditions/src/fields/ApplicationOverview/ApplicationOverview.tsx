@@ -10,6 +10,7 @@ type InfoProps = {
 }
 
 export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
+  console.log(application)
   const { formatMessage } = useLocale()
   const { answers } = application
   const applicant = answers.applicant as Individual

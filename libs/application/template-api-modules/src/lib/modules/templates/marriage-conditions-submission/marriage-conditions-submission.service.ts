@@ -3,7 +3,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class MarriageConditionsSubmissionService {
@@ -31,6 +30,7 @@ export class MarriageConditionsSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    // TODO: complete this action
     /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,

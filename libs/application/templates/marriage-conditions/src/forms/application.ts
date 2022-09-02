@@ -22,7 +22,7 @@ import {
 } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { Individual } from '../types'
+import { Individual, PersonalInfo } from '../types'
 import { m } from '../lib/messages'
 import {
   DistrictCommissionerAgencies,
@@ -32,7 +32,7 @@ import {
   ReligiousLifeViewingSocieties,
 } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
-import { MaritalStatus } from '../types/schema'
+import { MaritalStatus, UserProfile } from '../types/schema'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -229,7 +229,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     backgroundColor: 'blue',
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
-                        .data as any
+                        .data as UserProfile
                       return data.mobilePhoneNumber ?? ''
                     },
                   }),
@@ -241,7 +241,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     backgroundColor: 'blue',
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
-                        .data as any
+                        .data as UserProfile
                       return data.email ?? ''
                     },
                   }),
@@ -355,9 +355,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     largeButtons: false,
                     condition: (answers) => {
                       return (
-                        (answers.personalInfo as any)?.maritalStatus ===
-                          'DIVORCED' ||
-                        (answers.fakeData as any)?.maritalStatus === '6'
+                        (answers.personalInfo as PersonalInfo)
+                          ?.maritalStatus === 'DIVORCED' ||
+                        (answers.fakeData as PersonalInfo)?.maritalStatus ===
+                          '6'
                       )
                     },
                   }),
@@ -431,7 +432,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     },
                     condition: (answers) =>
                       getValueViaPath(answers, 'ceremony.ceremonyPlace') ===
-                      'religious',
+                      'society',
                   }),
                 ],
               }),

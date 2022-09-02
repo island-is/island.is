@@ -23,6 +23,7 @@ import {
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
+import { UserProfile } from '../types/schema'
 
 export const spouseConfirmation: Form = buildForm({
   id: 'spouseConfirmation',
@@ -146,7 +147,7 @@ export const spouseConfirmation: Form = buildForm({
                   readOnly: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile
-                      .data as any
+                      .data as UserProfile
                     return data.mobilePhoneNumber ?? ''
                   },
                 }),
@@ -159,7 +160,7 @@ export const spouseConfirmation: Form = buildForm({
                   readOnly: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile
-                      .data as any
+                      .data as UserProfile
                     return data.email ?? ''
                   },
                 }),
@@ -204,12 +205,12 @@ export const spouseConfirmation: Form = buildForm({
           title: m.dataCollectionNationalRegistryTitle,
           children: [
             buildMultiField({
-              id: 'personalInfo',
+              id: 'spousePersonalInfo',
               title: m.dataCollectionNationalRegistryTitle,
               description: m.personalInformationDescription,
               children: [
                 buildTextField({
-                  id: 'personalInfo.address',
+                  id: 'spousePersonalInfo.address',
                   title: m.address,
                   backgroundColor: 'white',
                   readOnly: true,
@@ -220,7 +221,7 @@ export const spouseConfirmation: Form = buildForm({
                   },
                 }),
                 buildTextField({
-                  id: 'personalInfo.citizenship',
+                  id: 'spousePersonalInfo.citizenship',
                   title: m.citizenship,
                   backgroundColor: 'white',
                   width: 'half',
@@ -232,7 +233,7 @@ export const spouseConfirmation: Form = buildForm({
                   },
                 }),
                 buildTextField({
-                  id: 'personalInfo.maritalStatus',
+                  id: 'spousePersonalInfo.maritalStatus',
                   title: m.maritalStatus,
                   backgroundColor: 'white',
                   width: 'half',
@@ -249,7 +250,7 @@ export const spouseConfirmation: Form = buildForm({
                   title: '',
                 }),
                 buildRadioField({
-                  id: 'personalInfo.previousMarriageTermination',
+                  id: 'spousePersonalInfo.previousMarriageTermination',
                   title: m.previousMarriageTermination,
                   options: [
                     {
