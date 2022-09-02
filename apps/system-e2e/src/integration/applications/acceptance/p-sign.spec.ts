@@ -9,7 +9,7 @@ describe('P-sign', function () {
   beforeEach(() => {
     cy.idsLogin({
       phoneNumber: fakeUser.phoneNumber,
-      baseUrl: BaseAuthority.applications,
+      baseUrl: BaseAuthority.applicationSystem,
       urlPath: '/umsoknir/p-merki',
       setBaseUrl: true,
     })
@@ -30,8 +30,8 @@ describe('P-sign', function () {
 
     // Information
     cy.contains('Símanúmer')
-    cy.get('input[name="phone"]').type('7654321')
-    cy.get('input[name="email"]').type('secret@island.is')
+    cy.get('input[name="phone"]').type('{selectAll}{backspace}7654321')
+    cy.get('input[name="email"]').type('{selectAll}{backspace}secret@island.is')
 
     cy.get('button[type="submit"]').click()
   })

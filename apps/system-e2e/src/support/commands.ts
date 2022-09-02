@@ -1,5 +1,6 @@
-import { IDSLogin, CognitoCreds } from '../lib/types'
+import { IDSLogin, CognitoCreds, BaseAuthority } from '../lib/types'
 import '@testing-library/cypress/add-commands'
+import { getEnvironmentBaseUrl } from './utils'
 
 const testEnvironment = Cypress.env('testEnvironment')
 
@@ -27,17 +28,11 @@ const idsLogin = ({
   authUrl = Cypress.env('authUrl'),
   baseUrl = Cypress.config('baseUrl'),
   urlPath = '/',
-  setBaseUrl = false,
 }: IDSLogin) => {
   const sentArgs = {
     args: {
       phoneNumber: phoneNumber,
     },
-  }
-  if (setBaseUrl) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    Cypress.config('baseUrl', baseUrl)
   }
 
   cy.patchSameSiteCookie(`${baseUrl}/api/auth/signin/identity-server?`, 'POST')
@@ -84,7 +79,16 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'idsLogin',
-  ({ phoneNumber, authUrl, baseUrl, urlPath = '/' }) => {
+  ({ phoneNumber, authUrl, baseUrl, urlPath = '/', setBaseUrl = true }) => {
+    if (setBaseUrl) {
+      // FIXME: https://github.com/island-is/island.is/issues/8261
+      if (Cypress.env().testEnvironment == 'local') {
+        const newBaseUrl = getEnvironmentBaseUrl(baseUrl)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        Cypress.config('baseUrl', newBaseUrl)
+      }
+    }
     cy.session('idsLogin', () => {
       if (testEnvironment !== 'local') {
         const { username, password } = Cypress.env('cognito')
