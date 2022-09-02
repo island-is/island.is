@@ -274,7 +274,7 @@ export class CourtService {
     caseId: string,
     courtId: string,
     type: CaseType,
-    policeCaseNumber: string,
+    policeCaseNumbers: string[],
     isExtension: boolean,
   ): Promise<string> {
     let subType = subTypes[type]
@@ -287,11 +287,12 @@ export class CourtService {
     return this.courtClientService
       .createCase(courtId, {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
-        subtype: subType,
+        subtype: subType as string,
         status: 'Skráð',
         receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
+        // TODO: pass in all policeCaseNumbers when CourtService supports it
+        sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
@@ -302,7 +303,7 @@ export class CourtService {
             institution: user.institution?.name,
             courtId,
             type,
-            policeCaseNumber,
+            policeCaseNumbers: policeCaseNumbers.join(', '),
             isExtension,
           },
           reason,

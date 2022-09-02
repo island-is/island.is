@@ -76,9 +76,9 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'idsLogin',
   ({ phoneNumber, authUrl, baseUrl, urlPath = '/' }) => {
-    const { username, password } = Cypress.env('cognito')
     cy.session('idsLogin', () => {
       if (testEnvironment !== 'local') {
+        const { username, password } = Cypress.env('cognito')
         cy.session('cognitoLogin', () => cognitoLogin({ username, password }))
       }
       idsLogin({ phoneNumber, authUrl, baseUrl, urlPath })
@@ -86,10 +86,10 @@ Cypress.Commands.add(
   },
 )
 
-Cypress.Commands.add('cognitoLogin', ({ username, password }) => {
+Cypress.Commands.add('cognitoLogin', (credentials = Cypress.env('cognito')) => {
   if (testEnvironment !== 'local') {
     cy.session('cognitoLogin', () => {
-      cognitoLogin({ username, password })
+      cognitoLogin(credentials)
     })
   } else {
     cy.log('skipLogin', 'On localhost, skip Cognito login')

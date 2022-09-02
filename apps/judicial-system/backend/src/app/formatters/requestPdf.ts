@@ -91,9 +91,10 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 8)
   addMediumPlusHeading(
     doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
+    `${formatDate(
+      theCase.created,
+      'PPP',
+    )} - Mál nr: ${theCase.policeCaseNumbers.join(', ')}`,
   )
   setLineGap(doc, 40)
   addMediumPlusHeading(
@@ -258,9 +259,10 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 8)
   addMediumPlusHeading(
     doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
+    `${formatDate(
+      theCase.created,
+      'PPP',
+    )} - Mál nr: ${theCase.policeCaseNumbers.join(', ')}`,
   )
   setLineGap(doc, 40)
   addMediumPlusHeading(

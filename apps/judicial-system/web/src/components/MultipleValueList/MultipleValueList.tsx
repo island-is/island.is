@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react'
 import InputMask from 'react-input-mask'
-import { useKey } from 'react-use'
 
 import { Button, Input } from '@island.is/island-ui/core'
 
@@ -13,6 +12,13 @@ interface MultipleValueListProps {
   inputPlaceholder: string
   inputMask?: string
   buttonText: string
+  name: string
+  isDisabled: (value?: string) => boolean
+  hasError?: boolean
+  errorMessage?: string
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
 }
 
 const MultipleValueList: React.FC<MultipleValueListProps> = ({
@@ -21,26 +27,31 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
   inputLabel,
   inputPlaceholder,
   inputMask,
+  name,
   buttonText,
+  isDisabled,
+  hasError,
+  errorMessage,
+  onBlur,
 }) => {
-  const [nextValue, setNextValue] = useState<string>('')
+  // State needed since InputMask dose not clear input if invalid value is entered
+  const [value, setValue] = useState('')
   const valueRef = useRef<HTMLInputElement>(null)
-
-  // Add document on enter press
-  useKey(
-    'Enter',
-    () => {
-      onAddValue(nextValue)
-      clearInput()
-    },
-    undefined,
-    [nextValue],
-  )
 
   const clearInput = () => {
     if (valueRef.current) {
       valueRef.current.value = ''
       valueRef.current.focus()
+      setValue('')
+    }
+  }
+
+  const handleEnter = (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (event.key === 'Enter' && !isDisabled(value)) {
+      onAddValue(value)
+      clearInput()
     }
   }
 
@@ -51,34 +62,42 @@ const MultipleValueList: React.FC<MultipleValueListProps> = ({
           <InputMask
             mask={inputMask}
             maskPlaceholder={null}
-            onChange={(evt) => setNextValue(evt.target.value)}
+            onChange={(event) => setValue(event.target.value)}
+            onBlur={onBlur}
           >
             <Input
-              name="value-input"
+              name={name}
               label={inputLabel}
               placeholder={inputPlaceholder}
               size="sm"
               autoComplete="off"
               ref={valueRef}
+              onKeyDown={handleEnter}
+              hasError={hasError}
+              errorMessage={errorMessage}
             />
           </InputMask>
         ) : (
           <Input
-            name="value-input"
+            name={name}
             label={inputLabel}
             placeholder={inputPlaceholder}
             size="sm"
             autoComplete="off"
-            onChange={(evt) => setNextValue(evt.target.value)}
+            onChange={(event) => setValue(event.target.value)}
             ref={valueRef}
+            onKeyDown={handleEnter}
+            onBlur={onBlur}
+            hasError={hasError}
+            errorMessage={errorMessage}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={!nextValue}
+          disabled={isDisabled(value)}
           onClick={() => {
-            onAddValue(nextValue)
+            onAddValue(value)
             clearInput()
           }}
           fluid
