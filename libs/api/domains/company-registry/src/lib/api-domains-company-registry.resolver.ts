@@ -30,35 +30,18 @@ export class CompanyRegistryResolver {
   ) {}
 
   @Query(() => RskCompany, {
-    name: 'companyRegistryCurrentCompany',
+    name: 'companyRegistryCompany',
     nullable: true,
   })
-  async companyInformationFromClaims(
+  async companyInformation(
+    @Args('input', { nullable: true, type: () => RskCompanyInfoInput })
+    input: RskCompanyInfoInput,
     @CurrentUser()
     user: AuthUser,
   ): Promise<RskCompany | null> {
     this.logger.debug(`Getting company information`)
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      user.nationalId,
-    )
-    this.logger.debug(`Company in resolver ${company}`)
-    if (!company) {
-      return null
-    }
-    return company
-  }
-
-  @Query(() => RskCompany, {
-    name: 'companyRegistryCompany',
-    nullable: true,
-  })
-  async companyInformation(
-    @Args('input', { type: () => RskCompanyInfoInput })
-    input: RskCompanyInfoInput,
-  ): Promise<RskCompany | null> {
-    this.logger.debug(`Getting company information`)
-    const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      input.nationalId,
+      input ? input.nationalId : user.nationalId,
     )
     this.logger.debug(`Company in resolver ${company}`)
     if (!company) {

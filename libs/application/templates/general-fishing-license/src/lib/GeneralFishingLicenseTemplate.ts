@@ -40,10 +40,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [
-    AuthDelegationType.PersonalRepresentative,
-    AuthDelegationType.ProcurationHolder,
-  ],
+  allowedDelegations: [AuthDelegationType.ProcurationHolder],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

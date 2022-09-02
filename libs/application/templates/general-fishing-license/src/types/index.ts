@@ -1,8 +1,7 @@
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
-  CompanyRegistry = 'CompanyRegistryProvider',
-  CompanyNationalRegistry = 'CompanyNationalRegistryProvider',
+  IdentityRegistry = 'IdentityProvider',
 }
 
 export enum FishingLicenseEnum {

@@ -5,18 +5,25 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/types'
-import { RskCompany } from '@island.is/api/schema'
+import { NationalRegistryUser, RskCompany } from '@island.is/api/schema'
 
-export class CompanyRegistryProvider extends BasicDataProvider {
-  type = 'CompanyRegistryProvider'
+export class IdentityProvider extends BasicDataProvider {
+  type = 'IdentityProvider'
 
-  async provide(_application: Application): Promise<RskCompany> {
+  async provide(
+    _application: Application,
+  ): Promise<RskCompany | NationalRegistryUser> {
     const query = `
-      query CompanyRegistryQuery {
-        companyRegistryCurrentCompany{
-          nationalId,
-          name
-        }
+      query IdentityQuery {
+        identity {
+          nationalId, 
+          name, 
+          address {
+            streetAddress, 
+            city, 
+            postalCode
+          }
+        }  
       }
     `
     return this.useGraphqlGateway(query).then(async (res: Response) => {
@@ -27,7 +34,7 @@ export class CompanyRegistryProvider extends BasicDataProvider {
         )
         return Promise.reject({})
       }
-      return Promise.resolve(response.data.companyRegistryCurrentCompany)
+      return Promise.resolve(response.data.identity)
     })
   }
 
