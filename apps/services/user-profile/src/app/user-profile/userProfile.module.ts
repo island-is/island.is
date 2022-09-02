@@ -8,7 +8,6 @@ import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'
 import environment from '../../environments/environment'
 import { EmailModule } from '@island.is/email-service'
-import { IslykillService } from './islykill.service'
 import { SmsVerification } from './smsVerification.model'
 import { EmailVerification } from './emailVerification.model'
 import { VerificationService } from './verification.service'
@@ -17,7 +16,10 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
-import { IslykillClientModule } from '@island.is/clients/islykill'
+import {
+  IslykillClientModule,
+  IslykillService,
+} from '@island.is/clients/islykill'
 
 @Module({
   imports: [

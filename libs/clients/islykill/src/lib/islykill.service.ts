@@ -1,4 +1,4 @@
-import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { IslyklarApi, PublicUser } from '../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'

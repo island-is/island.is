@@ -45,7 +45,7 @@ import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
-import { IslykillService } from './islykill.service'
+import { IslykillService } from '@island.is/clients/islykill'
 import { DataStatus } from './types/dataStatusTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
