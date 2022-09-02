@@ -37,12 +37,19 @@ export const exportVehicleOwnedDocument = async (
         : '',
       nationalId,
       name,
-      item.ownerPersidno === nationalId ? 'Já' : 'Nei',
+      item.ownerSsid === nationalId ? 'Já' : 'Nei',
       item.otherOwners ? 'Já' : 'Nei',
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 
@@ -59,16 +66,22 @@ export const exportVehicleOwnedDocument = async (
         : '',
       nationalId,
       name,
-      item.ownerPersidno === nationalId ? 'Já' : 'Nei',
+      item.ownerSsid === nationalId ? 'Já' : 'Nei',
       item.otherOwners ? 'Já' : 'Nei',
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 
-  // TODO: Get correct data from service to match these columns.
   const operatorsData = operatorVehicles.map((item: VehiclesVehicle) => {
     return [
       item.permno,
@@ -80,14 +93,21 @@ export const exportVehicleOwnedDocument = async (
       item.operatorStartDate
         ? new Date(item.operatorStartDate).toLocaleDateString()
         : '',
-      item.ownerPersidno,
-      '?',
-      '? Aðal umr.',
-      '? Nr. umr.',
+      item.ownerSsid,
+      item.ownerName,
+      item.primaryOperator ? 'Já' : 'Nei',
+      item.operatorNumber,
       item.termination,
       item.vehicleStatus,
       item.useGroup,
-      item.nextInspection?.nextInspectionDate,
+      item.lastInspectionResult,
+      item.lastInspectionDate
+        ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
+        : '',
+      item.lastInspectionType,
+      item.nextInspectionDate
+        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+        : '',
     ]
   })
 
