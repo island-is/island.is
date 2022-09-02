@@ -54,7 +54,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Áfram í greiðslu',
+                  name: '',
                   type: 'primary',
                 },
               ],
@@ -82,7 +82,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(val.getPayment()),
                 ),
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
                 {
                   event: DefaultEvents.ABORT,
                   name: 'Hætta við',
@@ -94,7 +94,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRM },
+          [DefaultEvents.ASSIGN]: { target: States.SPOUSE_CONFIRM },
         },
       },
       [States.SPOUSE_CONFIRM]: {
@@ -103,27 +103,28 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          /*onEntry: {
+            apiModuleAction: ApiActions.assignSpouse,
+          },*/
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () => import('../forms/done').then((val) => val.done),
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
               read: 'all',
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
               formLoader: () =>
-                import('../forms/spouseConfirmation').then(
-                  (val) => val.spouseConfirmation,
+                import('../forms/spouseConfirmation').then((val) =>
+                  Promise.resolve(val.spouseConfirmation),
                 ),
-              read: 'all',
-              write: 'all',
               actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
-                  type: 'primary',
-                },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
+              write: 'all',
             },
           ],
         },
@@ -136,15 +137,26 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: m.actionCardDoneTag,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () => import('../forms/done').then((val) => val.done),
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
               read: 'all',
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
-              formLoader: () => import('../forms/done').then((val) => val.done),
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
               read: {
                 answers: ['spouse'],
               },

@@ -28,6 +28,8 @@ export const spouseConfirmation: Form = buildForm({
   id: 'spouseConfirmation',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'spouse',
@@ -285,14 +287,14 @@ export const spouseConfirmation: Form = buildForm({
               component: 'ApplicationOverview',
             }),
             buildSubmitField({
-              id: 'spouseSubmitApplication',
+              id: 'submitApplication',
               title: '',
               placement: 'footer',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
+                  name: m.submitApplication,
                   type: 'primary',
                 },
               ],

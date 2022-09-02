@@ -19,9 +19,6 @@ export const NextSteps = ({ application }: PropTypes): JSX.Element => {
 
   return (
     <Box>
-      <Text variant="default" marginBottom={2}>
-        {formatMessage(m.nextStepsDescription)}
-      </Text>
       <Text variant="h3" marginBottom={2}>
         {formatMessage(m.nextSteps)}
       </Text>

@@ -420,9 +420,19 @@ export const m = defineMessages({
     defaultMessage: 'Deila hlekk',
     description: '',
   },
+  submitApplication: {
+    id: 'mac.application:actionCard.submitApplication',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Some description',
+  },
   errorDataProvider: {
-    id: 'pa.application:error.dataProvider',
+    id: 'mac.application:error.dataProvider',
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
+  },
+  actionCardDoneTag: {
+    id: 'mac.application:actionCard.done',
+    defaultMessage: 'Móttekin',
+    description: 'Some description',
   },
 })

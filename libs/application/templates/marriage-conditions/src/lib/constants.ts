@@ -3,6 +3,7 @@ import { DefaultEvents } from '@island.is/application/types'
 export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.ASSIGN }
 
 export enum States {
   DRAFT = 'draft',
@@ -21,6 +22,7 @@ export const NO = 'no'
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
+  assignSpouse = 'assignSpouse',
 }
 
 export enum MarriageTermination {
