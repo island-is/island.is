@@ -37,6 +37,7 @@ export const slices = gql`
       tags
       link
     }
+    hasBorderAbove
   }
 
   fragment MailingListSignupFields on MailingListSignupSlice {

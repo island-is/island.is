@@ -1722,9 +1722,9 @@
           "label": "Require consent",
           "helpText": "Specifies whether a consent screen is required"
         },
-        "supportsDelegation": {
-          "label": "Supports Delegation",
-          "helpText": "Specifies if the client supports delegation"
+        "supportsCustomDelegation": {
+          "label": "Supports Custom Delegation",
+          "helpText": "Specifies if the client supports custom delegation"
         },
         "supportsLegalGuardians": {
           "label": "Supports Legal Guardians Delegation",

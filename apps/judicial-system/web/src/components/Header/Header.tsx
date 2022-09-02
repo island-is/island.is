@@ -19,7 +19,7 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { core } from './Header.strings'
+import { header } from './Header.strings'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -74,7 +74,7 @@ const HeaderContainer: React.FC = () => {
                         window.open(constants.FEEDBACK_FORM_URL, '_blank')
                       }
                     >
-                      {formatMessage(core.headerFeedbackButtonLabel)}
+                      {formatMessage(header.headerFeedbackButtonLabel)}
                     </Button>
                     <UserMenu
                       language="is"
@@ -95,7 +95,7 @@ const HeaderContainer: React.FC = () => {
                                 <Text>
                                   {capitalize(
                                     user.role === UserRole.DEFENDER
-                                      ? formatMessage(core.defender)
+                                      ? formatMessage(header.defender)
                                       : user.title,
                                   )}
                                 </Text>
@@ -139,13 +139,13 @@ const HeaderContainer: React.FC = () => {
                               {user.role === UserRole.DEFENDER ? (
                                 <Text>
                                   {formatMessage(
-                                    core.headerTipDisclaimerDefenders,
+                                    header.headerTipDisclaimerDefenders,
                                   )}
                                 </Text>
                               ) : (
                                 <MarkdownWrapper
                                   markdown={formatMessage(
-                                    core.headerTipDisclaimer,
+                                    header.headerTipDisclaimer,
                                     {
                                       linkStart:
                                         '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',

@@ -643,24 +643,29 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       <div className="client__container__checkbox__field">
                         <label
                           className="client__label"
-                          htmlFor="supportsDelegation"
+                          htmlFor="supportsCustomDelegation"
                         >
-                          {localization.fields['supportsDelegation'].label}
+                          {
+                            localization.fields['supportsCustomDelegation']
+                              .label
+                          }
                         </label>
                         <input
-                          id="supportsDelegation"
+                          id="supportsCustomDelegation"
                           type="checkbox"
-                          name="client.supportsDelegation"
-                          defaultChecked={client.supportsDelegation}
+                          name="client.supportsCustomDelegation"
+                          defaultChecked={client.supportsCustomDelegation}
                           className="client__input"
                           ref={register}
                           title={
-                            localization.fields['supportsDelegation'].helpText
+                            localization.fields['supportsCustomDelegation']
+                              .helpText
                           }
                         />
                         <HelpBox
                           helpText={
-                            localization.fields['supportsDelegation'].helpText
+                            localization.fields['supportsCustomDelegation']
+                              .helpText
                           }
                         />
                       </div>

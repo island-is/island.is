@@ -12,13 +12,12 @@ import {
   Defendant,
   Gender,
   isAcceptingCaseDecision,
-  User,
   Case,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
-  CaseInfo,
+  ProsecutorCaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -89,11 +88,10 @@ export const getDemandsAutofill = (
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  user?: User
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, user } = props
+  const { workingCase, setWorkingCase } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
@@ -145,13 +143,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             {formatMessage(rcDemands.heading)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">

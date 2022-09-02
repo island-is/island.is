@@ -25,7 +25,7 @@ import cn from 'classnames'
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  useNamespaces('service.portal')
+  useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()
