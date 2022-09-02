@@ -28,6 +28,7 @@ export class IslykillApiModule {
       lykillError(err)
     }
 
+    console.log('PFX: PFX: ', pfx?.toString('base64').substr(0, 40))
     if (!config.passphrase) {
       logger.error('IslykillApiModule secret not provided.')
     }
