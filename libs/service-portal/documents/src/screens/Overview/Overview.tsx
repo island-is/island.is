@@ -40,6 +40,17 @@ import {
 } from '../../utils/types'
 import TableHeading from '../../components/TableHeading/TableHeading'
 
+const GET_DOCUMENT_BY_ID = gql`
+  query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
+    getDocument(input: $input) {
+      fileType
+      content
+      html
+      url
+    }
+  }
+`
+
 const GET_DOCUMENT_CATEGORIES = gql`
   query documentCategories {
     getDocumentCategories {
@@ -110,6 +121,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
     GET_DOCUMENT_CATEGORIES,
   )
+
+  const {
+    data: getFileByIdData,
+    loading: getFileByIdLoading,
+  } = useQuery<Query>(GET_DOCUMENT_BY_ID, {
+    variables: {
+      input: {
+        id: '2745e795-6a99-40c5-b188-f306ee673b4a',
+      },
+    },
+  })
   const { data: typesData, loading: typesLoading } = useQuery<Query>(
     GET_DOCUMENT_TYPES,
   )
@@ -125,7 +147,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [sendersAvailable, setSendersAvailable] = useState<DocumentSender[]>([])
 
   const [typesAvailable, setTypesAvailable] = useState<DocumentType[]>([])
-
+  console.log('file', getFileByIdData)
   useEffect(() => {
     if (
       !sendersLoading &&
