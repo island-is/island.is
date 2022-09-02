@@ -65,34 +65,35 @@ const FormMultiField: FC<{
           FieldDescription already has a mb of 1 so set it to 3(+1) else 4.
       */}
       <Box width="full" marginTop={description ? 3 : 4} />
+      <Box component="section" width="full" aria-labelledby={multiField.id}>
+        {children.map((field, index) => {
+          const isHalfColumn =
+            !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
+          const span = isHalfColumn ? '1/2' : '1/1'
 
-      {children.map((field, index) => {
-        const isHalfColumn =
-          !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
-        const span = isHalfColumn ? '1/2' : '1/1'
-
-        return (
-          <GridColumn
-            key={field.id || index}
-            span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', span]}
-            paddingBottom={index === children.length - 1 ? 0 : space}
-          >
-            <Box>
-              <FormField
-                application={application}
-                showFieldName
-                field={field as FieldDef}
-                key={field.id}
-                errors={errors}
-                goToScreen={goToScreen}
-                refetch={refetch}
-                setBeforeSubmitCallback={setBeforeSubmitCallback}
-                setFieldLoadingState={setFieldLoadingState}
-              />
-            </Box>
-          </GridColumn>
-        )
-      })}
+          return (
+            <GridColumn
+              key={field.id || index}
+              span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', span]}
+              paddingBottom={index === children.length - 1 ? 0 : space}
+            >
+              <Box>
+                <FormField
+                  application={application}
+                  showFieldName
+                  field={field as FieldDef}
+                  key={field.id}
+                  errors={errors}
+                  goToScreen={goToScreen}
+                  refetch={refetch}
+                  setBeforeSubmitCallback={setBeforeSubmitCallback}
+                  setFieldLoadingState={setFieldLoadingState}
+                />
+              </Box>
+            </GridColumn>
+          )
+        })}
+      </Box>
     </GridRow>
   )
 }

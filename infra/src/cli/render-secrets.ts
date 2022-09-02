@@ -66,7 +66,10 @@ export const renderSecrets = async (service: string) => {
   const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
 
   secretRequests.forEach(([envName, ssmName]) => {
-    console.log(`export ${envName}=${values[ssmName]}`)
+    const escapedValue = values[ssmName]
+      .replace(/\s+/g, ' ')
+      .replace(/'/g, "'\\''")
+    console.log(`export ${envName}='${escapedValue}'`)
   })
 }
 

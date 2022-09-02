@@ -1,12 +1,12 @@
-import { Case, CaseDecision } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
-  COURT_RECORD_ROUTE,
-  RULING_ROUTE,
+  RESTRICTION_CASE_COURT_RECORD_ROUTE,
+  RESTRICTION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, intercept } from '../../../utils'
 
-describe(`${RULING_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
@@ -20,7 +20,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RESTRICTION_CASE_RULING_ROUTE}/test_id_stadfest`)
   })
 
   it('should autofill prosecutor demands', () => {
@@ -87,6 +87,6 @@ describe(`${RULING_ROUTE}/:id`, () => {
 
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').should('not.be.disabled').click()
-    cy.url().should('include', COURT_RECORD_ROUTE)
+    cy.url().should('include', RESTRICTION_CASE_COURT_RECORD_ROUTE)
   })
 })

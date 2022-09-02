@@ -8,6 +8,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { ICalendar } from 'datebook'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -19,13 +20,11 @@ import {
   CaseType,
   NotificationType,
   isRestrictionCase,
-  isInvestigationCase,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../../../environments'
 import { nowFactory } from '../../factories'
 import {
   formatProsecutorCourtDateEmailNotification,
@@ -51,10 +50,12 @@ import {
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
+import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { notificationModuleConfig } from './notification.config'
 
 interface Recipient {
   address?: string
@@ -72,7 +73,10 @@ export class NotificationService {
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    @Inject(notificationModuleConfig.KEY)
+    private readonly config: ConfigType<typeof notificationModuleConfig>,
     private readonly courtService: CourtService,
+    private readonly awsS3Service: AwsS3Service,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
@@ -137,8 +141,7 @@ export class NotificationService {
 
   private getCourtMobileNumbers(courtId?: string) {
     return (
-      (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
-      undefined
+      (courtId && this.config.sms.courtsMobileNumbers[courtId]) ?? undefined
     )
   }
 
@@ -146,7 +149,7 @@ export class NotificationService {
     smsText: string,
     mobileNumbers?: string,
   ): Promise<Recipient> {
-    if (!environment.production && !mobileNumbers) {
+    if (!this.config.production && !mobileNumbers) {
       return { address: mobileNumbers, success: true }
     }
 
@@ -176,12 +179,12 @@ export class NotificationService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: environment.email.fromName,
-          address: environment.email.fromEmail,
+          name: this.config.email.fromName,
+          address: this.config.email.fromEmail,
         },
         replyTo: {
-          name: environment.email.replyToName,
-          address: environment.email.replyToEmail,
+          name: this.config.email.replyToName,
+          address: this.config.email.replyToEmail,
         },
         to: [
           {
@@ -263,7 +266,7 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}-${format(
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}-${format(
           nowFactory(),
           'yyyy-MM-dd-HH:mm',
         )}`,
@@ -373,8 +376,8 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.policeCaseNumber || '',
-      `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.policeCaseNumbers,
+      `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
     )
 
@@ -389,19 +392,19 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
-    const { type, court, policeCaseNumber } = theCase
+    const { type, court, policeCaseNumbers } = theCase
 
     const overviewUrl = `${
       isRestrictionCase(theCase.type)
-        ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
-        : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
+        ? this.config.deepLinks.prosecutorRestrictionCaseOverviewUrl
+        : this.config.deepLinks.prosecutorInvestigationCaseOverviewUrl
     }${theCase.id}`
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
+      policeCaseNumbers,
       type,
       court?.name,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -415,8 +418,14 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for ready for court notifications',
+      )
+    }
+
     // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
       where: {
@@ -513,8 +522,8 @@ export class NotificationService {
         subject,
         body,
         recipients ?? '',
-        environment.email.fromEmail,
-        environment.email.fromName,
+        this.config.email.fromEmail,
+        this.config.email.fromName,
       )
     } catch (error) {
       // Tolerate failure, but log error
@@ -529,7 +538,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const subject = `Fyrirtaka í máli ${theCase.policeCaseNumber}`
+    const subject = `Fyrirtaka í máli: ${theCase.policeCaseNumbers.join(', ')}`
     const html = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
@@ -600,7 +609,7 @@ export class NotificationService {
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
+      this.config.email.prisonEmail,
     )
   }
 
@@ -625,7 +634,7 @@ export class NotificationService {
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
       this.formatMessage,
       theCase.defenderNationalId &&
-        `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+        `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
       theCase.courtCaseNumber,
     )
@@ -669,9 +678,15 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
     eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for court date notifications',
+      )
+    }
+
     this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
 
     if (eventOnly) {
@@ -714,9 +729,52 @@ export class NotificationService {
 
   /* RULING notifications */
 
+  private sendRunlingEmailNotificationToProsecutor(
+    theCase: Case,
+  ): Promise<Recipient> {
+    return this.sendEmail(
+      this.formatMessage(notifications.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
+      this.formatMessage(notifications.signedRuling.prosecutorBodyS3V2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
+    )
+  }
+
+  private async sendRulingEmailNotificationToDefender(theCase: Case) {
+    const rulingUploadedToS3 = await this.awsS3Service.objectExists(
+      `generated/${theCase.id}/ruling.pdf`,
+    )
+
+    return this.sendEmail(
+      this.formatMessage(notifications.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+      }),
+      this.formatMessage(notifications.signedRuling.defenderBodyV2, {
+        isModifyingRuling: Boolean(theCase.rulingModifiedHistory),
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+        linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        signedVerdictAvailableInS3: rulingUploadedToS3,
+      }),
+      theCase.defenderName ?? '',
+      theCase.defenderEmail ?? '',
+    )
+  }
+
   private async sendRulingEmailNotificationToPrison(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
@@ -730,6 +788,10 @@ export class NotificationService {
       theCase.rulingDate,
     )
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
+    )
+    const courtRecordPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
     )
@@ -754,7 +816,7 @@ export class NotificationService {
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
+      this.config.email.prisonEmail,
       attachments,
     )
   }
@@ -766,44 +828,48 @@ export class NotificationService {
       this.formatMessage,
       theCase.courtCaseNumber,
       theCase.court?.name,
-      `${environment.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
+      `${this.config.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
     )
+
     return this.sendEmail(
       subject,
       body,
       'Fangelsismálastofnun',
-      environment.notifications.prisonAdminEmail,
+      this.config.email.prisonAdminEmail,
     )
   }
 
   private async sendRulingNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (isInvestigationCase(theCase.type)) {
-      return {
-        notificationSent: false,
+    const promises = [this.sendRunlingEmailNotificationToProsecutor(theCase)]
+
+    if (
+      theCase.defenderEmail &&
+      (isRestrictionCase(theCase.type) ||
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
+    ) {
+      this.sendRulingEmailNotificationToDefender(theCase)
+    }
+
+    if (isRestrictionCase(theCase.type)) {
+      promises.push(
+        this.sendRulingEmailNotificationToPrisonAdministration(theCase),
+      )
+
+      if (
+        (theCase.type === CaseType.CUSTODY ||
+          theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        (theCase.decision === CaseDecision.ACCEPTING ||
+          theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+      ) {
+        promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       }
     }
 
-    const courtRecordPdf = await getCourtRecordPdfAsString(
-      theCase,
-      this.formatMessage,
-    )
-
-    const recipients = [
-      await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
-    ]
-
-    if (
-      (theCase.type === CaseType.CUSTODY ||
-        theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
-      (theCase.decision === CaseDecision.ACCEPTING ||
-        theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
-    ) {
-      recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(theCase, courtRecordPdf),
-      )
-    }
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       theCase.id,
@@ -816,8 +882,14 @@ export class NotificationService {
 
   private async sendModifiedNotifications(
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
+    if (!user) {
+      throw new InternalServerErrorException(
+        'User is required for modified notifications',
+      )
+    }
+
     const subject = this.formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
@@ -829,7 +901,7 @@ export class NotificationService {
           actorName: user.name,
           actorTitle: user.title,
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
           isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
@@ -840,7 +912,7 @@ export class NotificationService {
           actorName: user.name,
           actorTitle: user.title,
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
           linkEnd: '</a>',
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
         })
@@ -863,13 +935,13 @@ export class NotificationService {
         subject,
         html,
         'Fangelsismálastofnun',
-        environment.notifications.prisonAdminEmail,
+        this.config.email.prisonAdminEmail,
       ),
       await this.sendEmail(
         subject,
         html,
         'Gæsluvarðhaldsfangelsi',
-        environment.notifications.prisonEmail,
+        this.config.email.prisonEmail,
         attachments,
       ),
     ]
@@ -955,7 +1027,7 @@ export class NotificationService {
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
+      this.config.email.prisonEmail,
     )
   }
 
@@ -1013,7 +1085,7 @@ export class NotificationService {
         theCase.type === CaseType.ADMISSION_TO_FACILITY) &&
       (await this.existsRevokableNotification(
         theCase.id,
-        environment.notifications.prisonEmail,
+        this.config.email.prisonEmail,
       ))
 
     if (prisonWasNotified) {
@@ -1056,7 +1128,7 @@ export class NotificationService {
   async sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
-    user: User,
+    user?: User,
   ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 

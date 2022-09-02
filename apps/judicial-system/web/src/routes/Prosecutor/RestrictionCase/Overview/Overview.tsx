@@ -25,11 +25,11 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
-  CaseInfo,
+  ProsecutorCaseInfo,
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -118,7 +118,9 @@ export const Overview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.PROSECUTOR_OVERVIEW}
+      activeSubSection={
+        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -158,19 +160,13 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -388,7 +384,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -424,20 +420,15 @@ export const Overview: React.FC = () => {
               caseType: workingCase.type,
             })}
             text={modalText}
-            handleClose={() => router.push(constants.CASE_LIST_ROUTE)}
-            handlePrimaryButtonClick={() => {
-              window.open(constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(constants.CASE_LIST_ROUTE)
-            }}
+            handleClose={() => router.push(constants.CASES_ROUTE)}
             handleSecondaryButtonClick={() => {
-              router.push(constants.CASE_LIST_ROUTE)
+              router.push(constants.CASES_ROUTE)
             }}
             errorMessage={
               sendNotificationError
                 ? formatMessage(errors.sendNotification)
                 : undefined
             }
-            primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
           />
         )}

@@ -154,7 +154,13 @@
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
+      "@island.is/application/api/files": [
+        "libs/application/api/files/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/messages": [
+        "libs/application/core/src/lib/messages.ts"
+      ],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
@@ -251,11 +257,17 @@
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
       ],
+      "@island.is/application/templates/operating-license/types": [
+        "libs/application/templates/operating-license/src/types.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
+      ],
+      "@island.is/application/templates/parental-leave/messages": [
+        "libs/application/templates/parental-leave/src/lib/messages.ts"
       ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
@@ -311,6 +323,9 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/financial-statements-inao": [
+        "libs/clients/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],

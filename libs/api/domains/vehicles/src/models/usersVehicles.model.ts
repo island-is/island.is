@@ -84,6 +84,51 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   deregistrationDate?: string
+
+  @Field({ nullable: true })
+  operatorNumber?: number
+
+  @Field({ nullable: true })
+  primaryOperator?: boolean
+
+  @Field({ nullable: true })
+  ownerSsid?: string
+
+  @Field({ nullable: true })
+  ownerName?: string
+
+  @Field({ nullable: true })
+  lastInspectionResult?: string
+
+  @Field({ nullable: true })
+  lastInspectionDate?: string
+
+  @Field({ nullable: true })
+  lastInspectionType?: string
+
+  @Field({ nullable: true })
+  nextInspectionDate?: string
+}
+
+@ObjectType()
+export class VehiclesHistory {
+  @Field({ nullable: true })
+  persidno?: string
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  address?: string
+
+  @Field({ nullable: true })
+  postStation?: string
+
+  @Field(() => [VehiclesVehicle], { nullable: true })
+  vehicleList?: VehiclesVehicle[]
+
+  @Field({ nullable: true })
+  createdTimestamp?: string
 }
 
 @ObjectType()
@@ -105,4 +150,7 @@ export class VehiclesList {
 
   @Field({ nullable: true })
   createdTimestamp?: string
+
+  @Field(() => String, { nullable: true })
+  downloadServiceURL?: string
 }

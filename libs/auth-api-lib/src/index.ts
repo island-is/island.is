@@ -91,3 +91,6 @@ export * from './lib/modules/translation.module'
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
 export * from './lib/config/DelegationConfig'
+
+// Utils
+export * from './lib/utils/compareScopes'

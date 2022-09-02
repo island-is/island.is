@@ -11,20 +11,27 @@ import {
 import {
   CaseState,
   CaseTransition,
-  completedCaseStates,
   InstitutionType,
   NotificationType,
   isRestrictionCase,
   UserRole,
+  Feature,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  requests as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -56,12 +63,14 @@ export const Cases: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -106,16 +115,16 @@ export const Cases: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast
-            : !completedCaseStates.includes(c.state)
+            ? !c.isValidToDateInThePast && c.rulingDate
+            : !c.rulingDate
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast
-            : completedCaseStates.includes(c.state)
+            ? c.isValidToDateInThePast && c.rulingDate
+            : c.rulingDate
         }),
       )
     }
@@ -155,7 +164,7 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
+      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
@@ -171,9 +180,13 @@ export const Cases: React.FC = () => {
         routeTo = findLastValidStep(
           getRestrictionCaseProsecutorSection(caseToOpen, user),
         ).href
-      } else {
+      } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseProsecutorSection(caseToOpen, user),
+        ).href
+      } else {
+        routeTo = findLastValidStep(
+          getIndictmentCaseProsecutorSection(caseToOpen),
         ).href
       }
     }
@@ -200,20 +213,49 @@ export const Cases: React.FC = () => {
                   <DropdownMenu
                     menuLabel="Tegund kröfu"
                     icon="add"
-                    items={[
-                      {
-                        href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                        title: 'Gæsluvarðhald',
-                      },
-                      {
-                        href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                        title: 'Farbann',
-                      },
-                      {
-                        href: constants.NEW_IC_ROUTE,
-                        title: 'Rannsóknarheimild',
-                      },
-                    ]}
+                    items={
+                      features.includes(Feature.INDICTMENTS)
+                        ? [
+                            {
+                              href: constants.CREATE_INDICTMENT_ROUTE,
+                              title: capitalize(formatMessage(core.indictment)),
+                            },
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                        : [
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                    }
                     title="Stofna nýja kröfu"
                   />
                 </Box>

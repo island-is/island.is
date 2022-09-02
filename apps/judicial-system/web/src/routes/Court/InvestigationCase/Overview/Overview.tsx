@@ -12,7 +12,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -95,7 +95,7 @@ const Overview = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.JUDGE_OVERVIEW}
+      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -146,7 +146,7 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.join(', '),
               },
               {
                 title: formatMessage(core.prosecutor),
@@ -280,9 +280,9 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />

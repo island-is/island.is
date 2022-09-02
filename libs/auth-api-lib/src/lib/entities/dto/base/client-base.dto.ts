@@ -285,7 +285,7 @@ export abstract class ClientBaseDTO {
   @ApiProperty({
     example: true,
   })
-  readonly supportsDelegation!: boolean
+  readonly supportsCustomDelegation!: boolean
 
   @IsBoolean()
   @IsNotEmpty()

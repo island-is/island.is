@@ -11,8 +11,8 @@ export const icCourtRecord = {
       dateLabel: {
         id:
           'judicial.system.investigation_cases:court_record.court_start_date.date_label',
-        defaultMessage: 'Dagsetning þinghalds',
-        description: 'Notaður sem skýritexti fyrir dagsetning þinghalds',
+        defaultMessage: 'Dagsetning þingfestingar',
+        description: 'Notaður sem skýritexti fyrir dagsetning þingfestingar',
       },
       timeLabel: {
         id:
@@ -163,29 +163,6 @@ export const icCourtRecord = {
           'Sláðu inn staðsetningu dómþings í þágufalli með forskeyti sem hefst á litlum staf. Dæmi "í Héraðsdómi Reykjavíkur". Staðsetning mun birtast með þeim hætti í upphafi þingbókar.',
         description:
           'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-    }),
-    courtDocuments: defineMessages({
-      header: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.header',
-        defaultMessage: 'Dómskjöl',
-        description:
-          'Notað sem fyrirsögn í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-      tag: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.tag',
-        defaultMessage: 'Þingmerkt nr. 1',
-        description:
-          'Notað sem tagg í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-      text: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.text',
-        defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
-        description:
-          'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
     conclusion: {
@@ -374,15 +351,15 @@ export const icCourtRecord = {
       dateLabel: {
         id:
           'judicial.system.investigation_cases:court_record.court_end_time.date_label',
-        defaultMessage: 'Dagsetning þingfestingar',
-        description: 'Notaður sem skýritexti fyrir dagsetningu þingfestingar.',
+        defaultMessage: 'Dagsetning uppkvaðningar',
+        description: 'Notaður sem skýritexti fyrir dagsetningu uppkvaðningar.',
       },
       timeLabel: {
         id:
           'judicial.system.investigation_cases:court_record.court_end_time.time_label',
         defaultMessage: 'Þinghaldi lauk (kk:mm)',
         description:
-          'Notaður sem skýritexti fyrir á tímasetningu þingfestingar.',
+          'Notaður sem skýritexti fyrir á tímasetningu uppkvaðningar.',
       },
     }),
     nextButtonInfo: defineMessages({

@@ -30,5 +30,4 @@ export enum Features {
 export enum ServerSideFeature {
   testing = 'do-not-remove-for-testing-only',
   drivingLicense = 'driving-license-use-v1-endpoint-for-v2-comms',
-  inaoClient = 'INAO_Client',
 }

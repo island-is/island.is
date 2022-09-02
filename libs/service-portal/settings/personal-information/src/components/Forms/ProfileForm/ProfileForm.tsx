@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
-import { parseNumber } from '../../../utils/phoneHelper'
+import { parseNumber } from '@island.is/service-portal/core'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,

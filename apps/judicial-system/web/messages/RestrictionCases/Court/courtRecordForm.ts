@@ -11,8 +11,8 @@ export const rcCourtRecord = {
       dateLabel: {
         id:
           'judicial.system.restriction_cases:court_record.court_start_date.date_label',
-        defaultMessage: 'Dagsetning þinghalds',
-        description: 'Notaður sem skýritexti fyrir dagsetning þinghalds',
+        defaultMessage: 'Dagsetning þingfestingar',
+        description: 'Notaður sem skýritexti fyrir dagsetning þingfestingar',
       },
       timeLabel: {
         id:
@@ -21,29 +21,6 @@ export const rcCourtRecord = {
         description: 'Notaður sem skýritexti fyrir Þinghalds hófst (kk:mm)',
       },
     }),
-    courtDocuments: {
-      title: {
-        id:
-          'judicial.system.restriction_cases:court_record.court_documents.title',
-        defaultMessage: 'Dómskjöl',
-        description: 'Notaður sem titill fyrir "Dómskjöl" hlutan',
-      },
-      firstDocument: {
-        title: {
-          id:
-            'judicial.system.restriction_cases:court_record.court_documents.firstDocument.title',
-          defaultMessage: 'Krafa um {caseType}',
-          description:
-            'Notaður sem titill fyrir fyrsta dómskjal í dómskjala hlutaunum',
-        },
-        label: {
-          id:
-            'judicial.system.restriction_cases.court_record.court_documents.firstDocument.label',
-          defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
-          description: 'Notaður sem text fyrir afan fyrsta þingskjal',
-        },
-      },
-    },
     sessionBookings: defineMessages({
       title: {
         id:
@@ -322,15 +299,15 @@ export const rcCourtRecord = {
       dateLabel: {
         id:
           'judicial.system.restriction_cases:court_record.court_end_time.date_label',
-        defaultMessage: 'Dagsetning þingfestingar',
-        description: 'Notaður sem skýritexti fyrir dagsetningu þingfestingar.',
+        defaultMessage: 'Dagsetning uppkvaðningar',
+        description: 'Notaður sem skýritexti fyrir dagsetningu uppkvaðningar.',
       },
       timeLabel: {
         id:
           'judicial.system.restriction_cases:court_record.court_end_time.time_label',
         defaultMessage: 'Þinghaldi lauk (kk:mm)',
         description:
-          'Notaður sem skýritexti fyrir á tímasetningu þingfestingar.',
+          'Notaður sem skýritexti fyrir á tímasetningu uppkvaðningar.',
       },
     }),
     nextButtonInfo: defineMessages({

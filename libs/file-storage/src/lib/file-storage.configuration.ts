@@ -1,5 +1,17 @@
-export interface FileStorageConfig {
-  uploadBucket?: string
-}
+import { defineConfig } from '@island.is/nest/config'
+import * as z from 'zod'
 
-export const FILE_STORAGE_CONFIG = 'FILE_STORAGE_CONFIG'
+const FileStorageModule = z.object({
+  uploadBucket: z.string(),
+})
+
+export const FileStorageConfig = defineConfig({
+  name: 'FileStorageModule',
+  schema: FileStorageModule,
+  load: (env) => ({
+    uploadBucket: env.optional(
+      'FILE_STORAGE_UPLOAD_BUCKET',
+      'island-is-dev-upload-api',
+    ),
+  }),
+})

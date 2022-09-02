@@ -11,6 +11,9 @@ module.exports = (config) => {
 
   return {
     ...config,
+    ...(process.env.PORT
+      ? { devServer: { ...config.devServer, port: process.env.PORT } }
+      : {}),
     node: {
       global: true,
     },

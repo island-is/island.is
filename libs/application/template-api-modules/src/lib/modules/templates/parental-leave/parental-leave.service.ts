@@ -31,6 +31,7 @@ import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
+  generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
   assignLinkEmployerSMS,
@@ -44,7 +45,6 @@ import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
-import { generateEmployerRejected } from './emailGenerators/employerRejectedEmail'
 
 interface VMSTError {
   type: string
@@ -291,7 +291,6 @@ export class ParentalLeaveService {
         numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
-
       if (
         !isUsingTransferredRights &&
         !willStartToUseTransferredRightsWithPeriod
@@ -427,6 +426,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
+        false, // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -463,6 +463,37 @@ export class ParentalLeaveService {
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
+    }
+  }
+
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
+    const nationalRegistryId = application.applicant
+    const attachments = await this.getAttachments(application)
+
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
+        nationalRegistryId,
+      )
+
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        true,
+      )
+
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request
+      // for validation purposes
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
+
+      return
+    } catch (e) {
+      this.logger.error('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 }
