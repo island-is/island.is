@@ -18,7 +18,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import {
   IslykillClientModule,
-  IslykillService,
+  IslykillClientConfig,
 } from '@island.is/clients/islykill'
 
 @Module({
@@ -34,6 +34,10 @@ import {
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
     IslykillClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [IslykillClientConfig],
+    }),
   ],
   controllers: [
     UserProfileController,
