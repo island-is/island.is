@@ -80,27 +80,27 @@ const parseProperties = (
   const mappedProperty = [
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Tegund',
+      label: 'Tegund',
       value: property.typeOfFirearm ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Númer',
+      label: 'Númer',
       value: property.serialNumber ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Hlaupvídd',
+      label: 'Hlaupvídd',
       value: property.caliber ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Heiti',
+      label: 'Heiti',
       value: property.name ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Landsnúmer',
+      label: 'Landsnúmer',
       value: property.landsnumer ?? '',
     },
   ]
