@@ -22,10 +22,8 @@ export const applicantInformationSection = buildSection({
           backgroundColor: 'white',
           disabled: true,
           required: true,
-          defaultValue: (application: GeneralFishingLicense) => {
-            console.log(application)
-            return application.externalData.identityRegistry.data.name
-          },
+          defaultValue: (application: GeneralFishingLicense) =>
+            application.externalData.identityRegistry.data.name,
         }),
         buildTextField({
           id: 'applicant.nationalId',
