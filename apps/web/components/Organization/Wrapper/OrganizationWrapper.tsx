@@ -75,7 +75,6 @@ interface WrapperProps {
   minimal?: boolean
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
-  namespace?: Record<string, string>
 }
 
 interface HeaderProps {
@@ -371,7 +370,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
   showSecondaryMenu = true,
   showExternalLinks = false,
-  namespace,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()

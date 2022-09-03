@@ -249,7 +249,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     <OrganizationWrapper
       pageTitle={pageTitle}
       organizationPage={organizationPage}
-      namespace={namespace}
       breadcrumbItems={[
         {
           title: 'Ísland.is',

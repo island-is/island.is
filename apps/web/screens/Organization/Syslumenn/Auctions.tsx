@@ -638,7 +638,6 @@ const Auctions: Screen<AuctionsProps> = ({
     <OrganizationWrapper
       pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
       organizationPage={organizationPage}
-      namespace={namespace}
       breadcrumbItems={[
         {
           title: 'Ísland.is',

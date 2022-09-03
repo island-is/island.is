@@ -81,8 +81,10 @@ export const mapOrganizationPage = ({
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
   themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
-  bottomSlices: (fields.bottomSlices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  bottomSlices: (fields.bottomSlices ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
@@ -93,7 +95,9 @@ export const mapOrganizationPage = ({
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
-  sidebarCards: (fields.sidebarCards ?? []).map(safelyMapSliceUnion),
+  sidebarCards: (fields.sidebarCards ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
   externalLinks: (fields.externalLinks ?? []).map(mapLink),
   alertBanner: fields.alertBanner
     ? mapAlertBanner(fields.alertBanner)

@@ -320,7 +320,6 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     <OrganizationWrapper
       pageTitle={subpage.title}
       organizationPage={organizationPage}
-      namespace={namespace}
       pageFeaturedImage={subpage.featuredImage}
       breadcrumbItems={[
         {

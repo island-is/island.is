@@ -128,7 +128,6 @@ const NewsItem: Screen<NewsItemProps> = ({
         pageTitle={organizationPage.title}
         organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
-        namespace={namespace}
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,

@@ -225,7 +225,6 @@ const NewsList: Screen<NewsListProps> = ({
       organizationPage={organizationPage}
       breadcrumbItems={breadCrumbs}
       sidebarContent={sidebar}
-      namespace={namespace}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,

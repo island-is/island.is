@@ -64,7 +64,6 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      namespace={namespace}
       mainContent={organizationPage.slices.map((slice, index) => (
         <OrganizationSlice
           key={slice.id}
