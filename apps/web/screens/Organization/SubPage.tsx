@@ -41,7 +41,6 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
-import { BLOCKS } from '@contentful/rich-text-types'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 interface SubPageProps {
@@ -218,7 +217,7 @@ const renderSlices = (
     default:
       return slices.map((slice, index) => (
         <OrganizationSlice
-          key={slice.id}
+          key={slice?.['id'] ?? `${slice?.__typename}-${index}`}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}
