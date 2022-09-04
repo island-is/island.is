@@ -14,7 +14,8 @@ import type {
   ExtendedShipStatusInformation,
 } from '@island.is/web/graphql/schema'
 import { GET_AFLAMARK_INFORMATION_FOR_SHIP } from './queries'
-import { generateTimePeriods, TimePeriodOption } from './utils'
+import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
+import { FishSelect } from '../FishSelect'
 
 import * as styles from './AflamarkCalculator.css'
 
@@ -29,7 +30,7 @@ type GetAflamarkInformationForShipQueryArgs = {
 export const AflamarkCalculator = () => {
   const shipNumber = 1281
 
-  const timePeriodOptions = useMemo(() => generateTimePeriods(), [])
+  const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
 
   const [
     selectedTimePeriod,
@@ -55,8 +56,8 @@ export const AflamarkCalculator = () => {
 
   return (
     <Box margin={6}>
-      <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-        <Inline alignY="center" space={3}>
+      <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
+        <Inline space={3} flexWrap="wrap">
           <Box className={styles.selectBox}>
             <Select
               size="sm"
@@ -69,31 +70,16 @@ export const AflamarkCalculator = () => {
               }}
             />
           </Box>
-          <Box className={styles.selectBox}>
-            <Select
-              size="sm"
-              label="Bæta við tegund"
-              name="tegund-fiskur-select"
-              options={[]}
-            />
-          </Box>
+          <FishSelect />
         </Inline>
-        <Inline alignY="center" space={3}>
-          <Button
-            onClick={() =>
-              setSearchInput((prev) => ({
-                ...prev,
-                shipNumber: shipNumber,
-                timePeriod: selectedTimePeriod.value,
-              }))
-            }
-            variant="ghost"
-            size="small"
-          >
-            Frumstilla
-          </Button>
-          <Button size="small">Reikna</Button>
-        </Inline>
+        <Box marginTop={[3, 3, 0]}>
+          <Inline alignY="center" space={3}>
+            <Button variant="ghost" size="small">
+              Frumstilla
+            </Button>
+            <Button size="small">Reikna</Button>
+          </Inline>
+        </Box>
       </Box>
 
       <Box
