@@ -1,4 +1,5 @@
-export { Congratulations } from './Done'
+export { NextSteps } from './Done'
+export { SpouseDone } from './Done'
 export { InfoAlert } from './InfoAlert'
 export { ApplicationOverview } from './ApplicationOverview'
 export { PaymentInfo } from './PaymentInfo'

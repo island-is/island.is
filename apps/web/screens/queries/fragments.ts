@@ -37,6 +37,7 @@ export const slices = gql`
       tags
       link
     }
+    hasBorderAbove
   }
 
   fragment MailingListSignupFields on MailingListSignupSlice {
@@ -501,6 +502,8 @@ export const slices = gql`
       options
     }
     successText
+    aboutYouHeadingText
+    questionsHeadingText
   }
 
   fragment StepperFields on Stepper {

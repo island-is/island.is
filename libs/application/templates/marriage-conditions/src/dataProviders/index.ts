@@ -1,2 +1,4 @@
 export { UserProfileProvider } from '@island.is/application/data-providers'
-export { NationalRegistryProvider } from './NationalRegistryProvider'
+export { NationalRegistryMarriageStatusProvider } from './NationalRegistryMarriageStatusProvider'
+export { DistrictsProvider } from './DistrictsProvider'
+export { NationalRegistryProvider } from '@island.is/application/data-providers'

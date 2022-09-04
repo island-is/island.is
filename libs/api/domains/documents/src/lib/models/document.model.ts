@@ -2,6 +2,14 @@ import { DocumentInfoDTO } from '@island.is/clients/documents'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
+export class DocumentListResponse {
+  @Field(() => Number, { nullable: true })
+  totalCount?: number
+
+  @Field(() => [Document])
+  data!: Document[]
+}
+@ObjectType()
 export class Document {
   @Field(() => ID)
   id!: string

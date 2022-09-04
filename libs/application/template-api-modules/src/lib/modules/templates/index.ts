@@ -23,6 +23,7 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
+import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -50,6 +51,7 @@ export const modules = [
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
+  FinancialStatementsInaoTemplateModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -77,3 +79,4 @@ export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 export { PassportService } from './passport/passport.service'
 export { OperatingLicenseService } from './operating-license/operatingLicense.service'
+export { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'

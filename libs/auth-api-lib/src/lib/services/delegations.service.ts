@@ -46,7 +46,7 @@ import { ResourcesService } from './resources.service'
 
 type ClientDelegationInfo = Pick<
   Client,
-  | 'supportsDelegation'
+  | 'supportsCustomDelegation'
   | 'supportsLegalGuardians'
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
@@ -163,13 +163,7 @@ export class DelegationsService {
       )
     }
 
-    const delegation = await this.findById(user, delegationId)
-    if (!delegation) {
-      this.logger.debug('Delegation does not exists for user')
-      throw new NotFoundException()
-    }
-
-    this.logger.debug(`Updating delegation ${delegation.id}`)
+    this.logger.debug(`Updating delegation ${delegationId}`)
 
     await this.delegationScopeService.createOrUpdate(
       delegationId,
@@ -351,7 +345,7 @@ export class DelegationsService {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
     if (
-      (!client || client.supportsDelegation) &&
+      (!client || client.supportsCustomDelegation) &&
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.Custom))
     ) {
@@ -688,7 +682,7 @@ export class DelegationsService {
       attributes: [
         'supportsLegalGuardians',
         'supportsProcuringHolders',
-        'supportsDelegation',
+        'supportsCustomDelegation',
         'supportsPersonalRepresentatives',
       ],
     })

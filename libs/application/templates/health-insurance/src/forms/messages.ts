@@ -22,9 +22,9 @@ export const m = defineMessages({
     description: 'Registers Iceland',
   },
   nationalRegistrySubTitle: {
-    id: 'hi.application:externalData.nationalRegistry.subtitle',
+    id: 'hi.application:externalData.nationalRegistry.subtitle#markdown',
     defaultMessage:
-      'Upplýsingar um nafn, kennitölu og heimilisfang <br>Upplýsingar um börn og maka <br>Upplýsingar um síðasta búsetuland <br>Upplýsingar um hvernær viðkomandi var skráður í landið',
+      'Upplýsingar um nafn, kennitölu og heimilisfang \n \n Upplýsingar um börn og maka \n \nUpplýsingar um síðasta búsetuland \n \nUpplýsingar um hvernær viðkomandi var skráður í landið',
     description:
       'Info about name, national id and address <br>Information about children and spouse <br>Information about the last country of residence <br>Information on when the person was registered in the country.',
   },
@@ -34,9 +34,9 @@ export const m = defineMessages({
     description: 'Directorate of Labor',
   },
   directorateOfLaborSubTitle: {
-    id: 'hi.application:externalData.directorateOfLabor.subtitle',
+    id: 'hi.application:externalData.directorateOfLabor.subtitle#markdown',
     defaultMessage:
-      'Upplýsingar um atvinnuleysisbætur <br>Upplýsingar um atvinnuleysisbætur erlendis (U2 vottorð) <br>Upplýsingar um brottför frá öðru landi til Íslands: Réttur til atvinnuleysisbóta (U1 vottorð)',
+      'Upplýsingar um atvinnuleysisbætur \n \nUpplýsingar um atvinnuleysisbætur erlendis (U2 vottorð) \n \nUpplýsingar um brottför frá öðru landi til Íslands: Réttur til atvinnuleysisbóta (U1 vottorð)',
     description:
       'Information on unemployment benefits <br>Information on unemployment benefits abroad (U2 certificate) <br>Information on departure from another country to Iceland: Entitlement to unemployment benefits (U1 certificate)',
   },
@@ -46,9 +46,9 @@ export const m = defineMessages({
     description: 'Directorate of Internal Revenue',
   },
   internalRevenueSubTitle: {
-    id: 'hi.application:externalData.internalRevenue.subtitle',
+    id: 'hi.application:externalData.internalRevenue.subtitle#markdown',
     defaultMessage:
-      'Upplýsingar um skattgreiðslur (mán/ár)<br>Nafn atvinnurekanda',
+      'Upplýsingar um skattgreiðslur (mán/ár)\n \nNafn atvinnurekanda',
     description:
       'Information on tax payments (month/year) <br> Name of employer',
   },
@@ -63,16 +63,16 @@ export const m = defineMessages({
     description: 'Insurance administration',
   },
   socialInsuranceAdministrationSubtitle: {
-    id: 'hi.application:externalData.insuranceAdministration.subTitle',
+    id: 'hi.application:externalData.insuranceAdministration.subTitle#markdown',
     defaultMessage:
-      'Upplýsingar um örorkumat (stöðu) <br>Upplýsingar um greiðslur vegna örorku (stöðu)',
+      'Upplýsingar um örorkumat (stöðu) \n \nUpplýsingar um greiðslur vegna örorku (stöðu)',
     description:
       'Information on disability assessment (status) <br> Information on disability payments (status)',
   },
   dataProvidersMoreInfo: {
-    id: 'hi.application:externalData.moreInfo',
+    id: 'hi.application:externalData.moreInfo#markdown',
     defaultMessage:
-      'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
+      'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands [Persónuverndarsíðu SÍ](https://www.sjukra.is/personuvernd)',
     description:
       'Further information on the processing of personal information by Sjúkratryggingar Íslands <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff"> SÍ Privacy Page </a>',
   },
@@ -129,9 +129,9 @@ export const m = defineMessages({
     description: 'Nationality',
   },
   editNationalRegistryData: {
-    id: 'hi.application:nationalRegistryData.edit',
+    id: 'hi.application:nationalRegistryData.edit#markdown',
     defaultMessage:
-      'Tilkynna <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">flutning lögheimilis</a>',
+      'Tilkynna [flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/).',
     description:
       'Need to update your address? Go to <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">Change of Address</a>',
   },
@@ -146,9 +146,9 @@ export const m = defineMessages({
     description: 'Phone number',
   },
   editDigitalIslandData: {
-    id: 'hi.application:digitalIslandData.edit',
+    id: 'hi.application:digitalIslandData.edit#markdown',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar/minar-stillingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
+      'Vinsamlegast uppfærið netfang og símanúmer á [Mínum síðum](https://island.is/minarsidur/stillingar/minar-stillingar/) ef með þarf. Eftir að búið er að skrá inn nýjar upplýsingar, uppfærið þessa síðu.',
     description:
       'Update your e-mail and phone number on <a href="https://island.is/minarsidur/stillingar/minar-stillingar" target="_blank" style="color:#0061ff">My Pages</a> if incorrect. Refresh this page once updated.',
   },
@@ -439,9 +439,9 @@ export const m = defineMessages({
     description: 'Waiting period',
   },
   waitingPeriodDescription: {
-    id: 'hi.application:waitingPeriod.description',
+    id: 'hi.application:waitingPeriod.description#markdown',
     defaultMessage:
-      'Þegar flutt er til Íslands frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.<br/><br/> Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar <a href="https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur" target="_blank" style="color:#0061ff">læknisfræðilegar undanþágur</a> eru frá sex mánaða biðtímanum.',
+      'Þegar flutt er til Íslands frá landi utan  [EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/), Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan [EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/), Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n \n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar [læknisfræðilegar undanþágur](https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur) eru frá sex mánaða biðtímanum.',
     description:
       'When moving to Iceland or being a citizen from a country outside the <a href="https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/" target="_blank" style="color:#0061ff">EU/EEA</a>, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait.<br/><br/> You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some <a href="https://island.is/en/apply-for-health-insurance#waiting-period" target="_blank" style="color:#0061ff">medical exceptions</a> to the waiting period.',
   },

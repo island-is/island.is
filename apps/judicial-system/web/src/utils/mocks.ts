@@ -57,8 +57,8 @@ export const mockHighCourtUser = {
 export const mockPrisonUser = {
   id: 'hc_1',
   role: UserRole.STAFF,
-  name: 'Lalli Landsréttardómari',
-  title: 'dómari',
+  name: 'Finnur fangavörður',
+  title: 'fangavörður',
   institution: mockPrison,
 } as User
 
@@ -122,7 +122,7 @@ export const makeRestrictionCase = (): Case => {
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type: CaseType.CUSTODY,
-    policeCaseNumber: '007-2021-202000',
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
         id: 'test_defendant_id',

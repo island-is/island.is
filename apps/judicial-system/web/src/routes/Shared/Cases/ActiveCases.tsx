@@ -26,14 +26,14 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
-  caseTypes,
+  displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { mapCaseStateToTagVariant } from './utils'
+import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 
@@ -135,9 +135,8 @@ const ActiveCases: React.FC<Props> = (props) => {
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: Case) => (
-        <Box marginTop={2}>
+        <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            key={theCase.id}
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
             isCourtRole={isCourtRole}
@@ -272,12 +271,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
                       </Box>
-                      <Text as="span" variant="small" color="dark400">
-                        {c.policeCaseNumber}
+                      <Text
+                        as="span"
+                        variant="small"
+                        color="dark400"
+                        title={c.policeCaseNumbers.join(', ')}
+                      >
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                      {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
+                    </Text>
                   )}
                 </td>
                 <td className={cn(styles.td, styles.largeColumn)}>
@@ -312,7 +318,9 @@ const ActiveCases: React.FC<Props> = (props) => {
                 </td>
                 <td className={styles.td}>
                   <Box component="span" display="flex" flexDirection="column">
-                    <Text as="span">{capitalize(caseTypes[c.type])}</Text>
+                    <Text as="span">
+                      {displayCaseType(formatMessage, c.type, c.decision)}
+                    </Text>
                     {c.parentCase && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
@@ -324,6 +332,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   <Tag
                     variant={
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),
@@ -336,6 +345,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                   >
                     {
                       mapCaseStateToTagVariant(
+                        formatMessage,
                         c.state,
                         isCourtRole,
                         isInvestigationCase(c.type),

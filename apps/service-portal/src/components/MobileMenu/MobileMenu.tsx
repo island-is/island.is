@@ -17,7 +17,7 @@ const MobileMenu = (): ReactElement | null => {
   const [{ mobileMenuState }, dispatch] = useStore()
   const { signOut } = useAuth()
   const navigation = useNavigation()
-  const { unreadCounter } = useListDocuments('')
+  const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
   const handleLinkClick = () =>

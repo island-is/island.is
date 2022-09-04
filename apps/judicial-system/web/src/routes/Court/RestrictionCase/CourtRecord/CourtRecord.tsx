@@ -14,16 +14,16 @@ import {
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
-  CourtDocuments,
   PageLayout,
-  CaseInfo,
+  CourtCaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
   HideableText,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -32,7 +32,7 @@ import {
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -42,13 +42,11 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
-  courtDocuments,
   closedCourt,
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
@@ -65,7 +63,6 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
     '',
@@ -270,7 +267,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.COURT_RECORD}
+      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -283,9 +280,7 @@ export const CourtRecord: React.FC = () => {
             {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
@@ -394,26 +389,9 @@ export const CourtRecord: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.title)}
-            </Text>
-          </Box>
           <CourtDocuments
-            title={formatMessage(
-              m.sections.courtDocuments.firstDocument.title,
-              {
-                caseType: caseTypes[workingCase.type],
-              },
-            )}
-            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -957,8 +935,8 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

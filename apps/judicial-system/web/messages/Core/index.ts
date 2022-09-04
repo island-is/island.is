@@ -95,6 +95,17 @@ export const core = defineMessages({
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  indictmentDefendant: {
+    id: 'judicial.system.core:indictment_defendant_v2',
+    defaultMessage:
+      '{gender, select, MALE {ákærði} FEMALE {ákærða} other {ákærða}}',
+    description: 'Notað fyrir orðið ákærði í öllum flæðum.',
+  },
+  indictmentDefendants: {
+    id: 'judicial.system.core:indictment_defendants',
+    defaultMessage: 'ákærðu',
+    description: 'Notað fyrir orðið ákærðu í öllum flæðum.',
+  },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',
     defaultMessage: 'Krafa um {caseType}',
@@ -192,24 +203,6 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
-  headerTipDisclaimer: {
-    id: 'judicial.system.core:header_tip_disclaimer',
-    defaultMessage:
-      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
-    description:
-      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
-  },
-  headerTipDisclaimerDefenders: {
-    id: 'judicial.system.core:header_tip_disclaimer_defenders',
-    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
-    description:
-      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
-  },
-  defender: {
-    id: 'judicial.system.core:defender',
-    defaultMessage: 'lögmaður',
-    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
-  },
   linkCopied: {
     id: 'judicial.system.core:link_copied',
     defaultMessage: 'Hlekkur afritaður',
@@ -226,5 +219,25 @@ export const core = defineMessages({
     defaultMessage: 'NONE',
     description:
       'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  restrictionCase: {
+    id: 'judicial.system.core:restriction_case',
+    defaultMessage: 'gæsluvarðhald',
+    description: 'Notaður fyrir orðið Gæsluvarðhald.',
+  },
+  travelBan: {
+    id: 'judicial.system.core:travel_ban',
+    defaultMessage: 'farbann',
+    description: 'Notaður fyrir orðið Farbann.',
+  },
+  investigationCase: {
+    id: 'judicial.system.core:investigation_case',
+    defaultMessage: 'rannsóknarheimild',
+    description: 'Notaður fyrir orðið Rannsóknarheimild.',
+  },
+  indictment: {
+    id: 'judicial.system.core:indictment',
+    defaultMessage: 'ákæra',
+    description: 'Notaður fyrir orðið Ákæra.',
   },
 })

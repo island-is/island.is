@@ -30,11 +30,12 @@ export const vehiclesModule: ServicePortalModule = {
       render: () =>
         lazy(() => import('./screens/VehicleHistory/VehicleHistory')),
     },
-    // {
-    //   name: m.vehiclesLookup,
-    //   path: ServicePortalPath.AssetsVehiclesLookup,
-    //   enabled: userInfo.scopes.includes(ApiScope.vehicles),
-    //   render: () => lazy(() => import('./screens/Lookup/Lookup')),
-    // },
+    {
+      name: m.vehiclesLookup,
+      path: ServicePortalPath.AssetsVehiclesLookup,
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      key: 'VehicleLookup',
+      render: () => lazy(() => import('./screens/Lookup/Lookup')),
+    },
   ],
 }

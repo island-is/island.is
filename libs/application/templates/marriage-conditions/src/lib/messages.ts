@@ -2,89 +2,89 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   applicationTitle: {
-    id: 'mc.application:applicationTitle',
+    id: 'mac.application:applicationTitle',
     defaultMessage: 'Umsókn um könnun hjónavígsluskilyrða',
     description: 'Application for Marriage Conditions',
   },
 
   /* Intro section */
   introTitle: {
-    id: 'mc.application:intro.title',
+    id: 'mac.application:intro.title',
     defaultMessage: 'Inngangur',
     description: 'Some description',
   },
   introSectionTitle: {
-    id: 'mc.application:introSection.title',
+    id: 'mac.application:introSection.title',
     defaultMessage: 'Könnun hjónavígsluskilyrða',
     description: 'Some description',
   },
   introSectionDescription: {
-    id: 'mc.application:intro.introSection.description#markdown',
-    defaultMessage: `Í þessu ferli verður kannað hvort að þú og þitt hjónaefni uppfyllið öll skilyrði til hjónavígslu. Eftir að þú hefur fyllt út þessa könnun verður hún send áfram á þitt hjónaefni og þá svaramenn sem þið tilgreinið í ferlinu. Ef þið uppfyllið öll skilyrði verður ykkur veitt heimild af sýslumanni til þess að ganga í hjónaband. Sú heimild gildir í 30 daga frá samþykkt og skal berast til vígsluaðila áður en athöfn fer fram.Þetta ferli vistast sjálfkrafa á meðan það er fyllt út og hægt er að opna það aftur undir umsóknum inni á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu mála eftir að öll gögn hafa verið send inn. 
-    Meðhöndlun umsóknar kostar 15.500 kr og greiðist áður en könnun er send áfram á þitt hjónaefni.`,
+    id: 'mac.application:intro.introSection.description#markdown',
+    defaultMessage: `Í þessu ferli fer fram könnun á hvort öll skilyrði eru uppfyllt til að hjónavígsla megi fara fram. Eftir að þú hefur fyllt út þessa umsókn verður hún send áfram á þinn 
+    maka og á þá svaramenn sem tilgreindir eru í ferlinu. Ef þið uppfyllið öll skilyrði til að ganga í hjónaband gefur sýslumaður út svokallað könnunarvottorð sem vígsluaðili notar til að tilkynna Þjóðskrá Íslands um að hjónavígsla hafi farið fram. Könnunarvottorð gildir í 30 daga og þarf hjónavígsla því að fara fram innan þess gildistíma. Þetta ferli vistast sjálfkrafa á meðan það er fyllt út og hægt er að opna það aftur undir umsóknum inni á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu mála eftir að öll gögn hafa verið send inn. Meðhöndlun umsóknar kostar 15.500kr og greiðist áður en könnun er send áfram á þinn maka.`,
     description: 'Some description',
   },
 
   /* Data Collection Section */
   dataCollectionTitle: {
-    id: 'mc.application:applicationDataCollectionTitle',
+    id: 'mac.application:applicationDataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
     description: 'Title for data collection section',
   },
   dataCollectionSubtitle: {
-    id: 'mc.application:dataCollectionSubtitle',
+    id: 'mac.application:dataCollectionSubtitle',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
-    id: 'mc.application:dataCollectionDescription',
+    id: 'mac.application:dataCollectionDescription',
     defaultMessage:
       'Til þess að uppfylla skilyrði til hjónavígslu þurfa bæði hjónaefni að skila inn fæðingar- og hjúskaparvottorði frá Þjóðskrá Íslands.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
-    id: 'mc.application:dataCollectionCheckboxLabel',
+    id: 'mac.application:dataCollectionCheckboxLabel',
     defaultMessage: 'Ég samþykki gagnaöflun',
     description: 'Checkbox label for data collection section',
   },
   dataCollectionBirthCertificateTitle: {
-    id: 'mc.application:dataCollectionBirthCertificateTitle',
+    id: 'mac.application:dataCollectionBirthCertificateTitle',
     defaultMessage: 'Fæðingarvottorð',
     description: 'Birth certificate',
   },
   dataCollectionBirthCertificateDescription: {
-    id: 'mc.application:dataCollectionBirthCertificateDescription',
+    id: 'mac.application:dataCollectionBirthCertificateDescription',
     defaultMessage:
       'Vottorð um fæðingardag/kennitölu, kyn, fæðingarstað og nöfn foreldra.',
     description: 'Birth certificate',
   },
   dataCollectionMaritalStatusTitle: {
-    id: 'mc.application:dataCollectionMaritalStatusTitle',
+    id: 'mac.application:dataCollectionMaritalStatusTitle',
     defaultMessage: 'Hjúskaparvottorð',
     description: 'Marital Status',
   },
   dataCollectionMaritalStatusDescription: {
-    id: 'mc.application:dataCollectionMaritalStatusDescription',
+    id: 'mac.application:dataCollectionMaritalStatusDescription',
     defaultMessage: 'Vottorð um núverandi hjúskaparstöðu.',
     description: 'Marital Status',
   },
   dataCollectionNationalRegistryTitle: {
-    id: 'mc.application:dataCollectionNationalRegistryTitle',
+    id: 'mac.application:dataCollectionNationalRegistryTitle',
     defaultMessage: 'Persónuupplýsingar',
     description: 'National registry title',
   },
   dataCollectionNationalRegistrySubtitle: {
-    id: 'mc.application:dataCollectionNationalRegistrySubtitle',
+    id: 'mac.application:dataCollectionNationalRegistrySubtitle',
     defaultMessage: 'Fullt nafn, kennitala, heimilisfang.',
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'mc.application:dataCollectionUserProfileTitle',
+    id: 'mac.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
   dataCollectionUserProfileSubtitle: {
-    id: 'mc.application:dataCollectionUserProfileSubtitle',
+    id: 'mac.application:dataCollectionUserProfileSubtitle',
     defaultMessage:
       'Ef þú ert með skráðar upplýsingar um síma og netfang inni á Mínar síður á Ísland.is þá verða þær sjálfkrafa settar inn í umsóknina.',
     description:
@@ -93,151 +93,374 @@ export const m = defineMessages({
 
   /* Information Section Marital Sides */
   informationTitle: {
-    id: 'mc.application:informationSectionTitle',
+    id: 'mac.application:informationSectionTitle',
     defaultMessage: 'Upplýsingar um hjónaefni',
     description: 'Information section title',
   },
   informationSectionTitle: {
-    id: 'mc.application:informationTitle',
+    id: 'mac.application:informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
   },
   informationSubtitle: {
-    id: 'mc.application:informationSectionSubtitle',
+    id: 'mac.application:informationSectionSubtitle',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: 'Information section title',
   },
   informationSpouse1: {
-    id: 'mc.application:informationSpouse1',
+    id: 'mac.application:informationSpouse1',
     defaultMessage: 'Hjónaefni 1',
     description: 'Information title spouse 1',
   },
   informationSpouse2: {
-    id: 'mc.application:informationSpouse2',
+    id: 'mac.application:informationSpouse2',
     defaultMessage: 'Hjónaefni 2',
     description: 'Information title spouse 2',
   },
   informationMaritalSides: {
-    id: 'mc.application:maritalSides',
+    id: 'mac.application:maritalSides',
     defaultMessage: 'Hjónaefni',
     description: 'marital sides',
   },
   informationMaritalSidesDescription: {
-    id: 'mc.application:maritalSidesDescription',
+    id: 'mac.application:maritalSidesDescription',
     defaultMessage:
-      'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
+      'Undirritaðir svaramenn hjónaefna ábyrgjast að enginn lagatálmi sbr. II. og III. kafla laga nr. 31/1993 sé á fyrirhuguðum hjúskap þeirra.',
     description: 'marital sides',
   },
   informationWitnessTitle: {
-    id: 'mc.application:',
+    id: 'mac.application:',
     defaultMessage: 'Svaramenn',
     description: 'screen title',
   },
-  informationWitnessSubtitle: {
-    id: 'mc.application:informationWitnessSubtitle',
-    defaultMessage:
-      'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
-    description: 'screen subtitle',
-  },
   informationWitness1: {
-    id: 'mc.application:informationWitness1',
+    id: 'mac.application:informationWitness1',
     defaultMessage: 'Svaramaður 1',
     description: 'Information title witness 1',
   },
   informationWitness2: {
-    id: 'mc.application:informationWitness2',
+    id: 'mac.application:informationWitness2',
     defaultMessage: 'Svaramaður 2',
     description: 'Information title witness 2',
   },
 
   /* Individuals info headers */
   nationalId: {
-    id: 'mc.application:nationalId',
+    id: 'mac.application:nationalId',
     defaultMessage: 'Kennitala',
     description: 'national id',
   },
   name: {
-    id: 'mc.application:name',
+    id: 'mac.application:name',
     defaultMessage: 'Nafn',
     description: 'name',
   },
   phone: {
-    id: 'mc.application:phone',
+    id: 'mac.application:phone',
     defaultMessage: 'Símanúmer',
     description: 'phone',
   },
   email: {
-    id: 'mc.application:email',
+    id: 'mac.application:email',
     defaultMessage: 'Netfang',
     description: 'email',
   },
+  address: {
+    id: 'mac.application:address',
+    defaultMessage: 'Lögheimili',
+    description: 'address',
+  },
+  citizenship: {
+    id: 'mac.application:citizenship',
+    defaultMessage: 'Ríkisfang',
+    description: 'citizenship',
+  },
+  maritalStatus: {
+    id: 'mac.application:maritalStatus',
+    defaultMessage: 'Hjúskaparstaða fyrir vígslu',
+    description: 'marital status',
+  },
+  previousMarriageTermination: {
+    id: 'mac.application:previousMarriageTermination',
+    defaultMessage: 'Hvernig lauk síðasta hjúskap',
+    description: 'previous marriage',
+  },
+  terminationByDivorce: {
+    id: 'mac.application:terminationByDivorce',
+    defaultMessage: 'Með lögskilnaði',
+    description: '',
+  },
+  terminationByLosingSpouse: {
+    id: 'mac.application:terminationByLosingSpouse',
+    defaultMessage: 'Með láti maka',
+    description: '',
+  },
+  terminationByAnnulment: {
+    id: 'mac.application:terminationByAnnulment',
+    defaultMessage: 'Með ógildingu',
+    description: '',
+  },
+  personalInformationTitle: {
+    id: 'mac.application:personalInformationTitle',
+    defaultMessage: 'Persónuuplýsingar',
+    description: 'personal info',
+  },
+  personalInformationDescription: {
+    id: 'mac.application:personalInformationDescription',
+    defaultMessage:
+      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+    description: 'personal info',
+  },
+  ceremony: {
+    id: 'mac.application:ceremony',
+    defaultMessage: 'Vígsla',
+    description: '',
+  },
+  ceremonyDescription: {
+    id: 'mac.application:ceremonyDescription',
+    defaultMessage:
+      'Veita þarf nánari persónuupplýsingar auk upplýsinga um hjúskaparstöðu fyrir vígslu. Hjónaefni ábyrgjast að þær upplýsingar sem eru gefnar séu réttar.',
+    description: '',
+  },
+  ceremonyDate: {
+    id: 'mac.application:ceremonyDate',
+    defaultMessage: 'Áætlaður vígsludagur',
+    description: '',
+  },
+  ceremonyDatePlaceholder: {
+    id: 'mac.application:ceremonyDatePlaceholder',
+    defaultMessage: 'Skráðu inn dag',
+    description: '',
+  },
+  ceremonyPlace: {
+    id: 'mac.application:ceremonyPlace',
+    defaultMessage: 'Hvar er vígsla áformuð?',
+    description: '',
+  },
+  ceremonyAtDistrictsOffice: {
+    id: 'mac.application:ceremonyAtDistrictsOffice',
+    defaultMessage: 'Embætti sýslumanns',
+    description: '',
+  },
+  ceremonyAtReligiousLifeViewingSociety: {
+    id: 'mac.application:ceremonyAtReligiousLifeViewingSociety',
+    defaultMessage: 'Trú- eða lífsskoðunarfélagi',
+    description: '',
+  },
+  ceremonyChooseDistrict: {
+    id: 'mac.application:ceremonyChooseDistrict',
+    defaultMessage: 'Veldu embætti sýslumanns úr lista',
+    description: '',
+  },
+  ceremonyChooseSociety: {
+    id: 'mac.application:ceremonyChooseSociety',
+    defaultMessage: 'Veldu trú- eða lífsskoðunarfélag úr lista',
+    description: '',
+  },
 
   /* Spouse confirmation screens */
+  entrance: {
+    id: 'mac.application:entrance',
+    defaultMessage: 'Inngangur',
+    description: '',
+  },
+  spouseIntroDescription: {
+    id: 'mac.application:spouseIntroDescription',
+    defaultMessage:
+      '**{applicantsName}** sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+    description: '',
+  },
+  spouseContinue: {
+    id: 'mac.application:spouseContinue',
+    defaultMessage: 'Ég vil halda áfram',
+    description: '',
+  },
+  spouseDecline: {
+    id: 'mac.application:spouseDecline',
+    defaultMessage: 'Ég vil hafna þessari beiðni',
+    description: '',
+  },
 
   /* Payment */
+  payment: {
+    id: 'mac.application:payment',
+    defaultMessage: 'Greiðsla',
+    description: '',
+  },
+  proceedToPayment: {
+    id: 'mac.application:proceedToPayment',
+    defaultMessage: 'Áfram í greiðslu',
+    description: '',
+  },
   paymentPendingDescription: {
-    id: 'mc.application:paymentPendingDescription',
+    id: 'mac.application:paymentPendingDescription',
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
     description: 'Please wait until the payment is confirmed',
   },
   paymentSuccessExtraDocuments: {
-    id: 'mc.application:paymentSuccessExtraDocuments',
+    id: 'mac.application:paymentSuccessExtraDocuments',
     defaultMessage:
       'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
     description:
       'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
   },
   paymentSuccessIfNotReadyFewWeeks: {
-    id: 'mc.application:paymentSuccessIfNotReadyFewWeeks',
+    id: 'mac.application:paymentSuccessIfNotReadyFewWeeks',
     defaultMessage:
       'Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.',
     description:
       'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
   },
   paymentApprovedContinue: {
-    id: 'mc.application:paymentApprovedContinue',
+    id: 'mac.application:paymentApprovedContinue',
     defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
     description:
       'The payment has been confirmed, choose "Continue" to finish the application.',
   },
   paymentImage: {
-    id: 'mc.application:paymentImage',
+    id: 'mac.application:paymentImage',
     defaultMessage: `Skrautmynd`,
     description: 'Company Image',
   },
   examplePaymentPendingField: {
-    id: 'mc.application:example.waitingForPayment',
+    id: 'mac.application:example.waitingForPayment',
     defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
     description: 'One moment while we wait for payment confirmation.',
   },
   examplePaymentPendingFieldError: {
-    id: 'mc.application:example.waitingForPaymentError',
+    id: 'mac.application:example.waitingForPaymentError',
     defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
     description: 'An error came up while getting payment information',
   },
   submitErrorButtonCaption: {
-    id: 'mc.application:submitErrorButtonCaption',
+    id: 'mac.application:submitErrorButtonCaption',
     defaultMessage: 'Reyna aftur',
     description:
       'Button that shows up when submitting the application fails, allowing you to retry',
   },
   submitErrorTitle: {
-    id: 'mc.application:submitErrorTitle',
+    id: 'mac.application:submitErrorTitle',
     defaultMessage: 'Móttaka umsóknar tókst ekki',
     description:
       'title that shows up when an error occurs while submitting the application',
   },
   submitErrorMessage: {
-    id: 'mc.application:submitErrorMessage',
+    id: 'mac.application:submitErrorMessage',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
   forwardingToPayment: {
-    id: 'mc.application:forwardingToPayment',
+    id: 'mac.application:forwardingToPayment',
     defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
     description: 'Forwarding you to payment handler...',
+  },
+
+  /* Overview */
+  overview: {
+    id: 'mac.application:overview',
+    defaultMessage: 'Yfirlit',
+    description: '',
+  },
+  applicationOverview: {
+    id: 'mac.application:applicationOverview',
+    defaultMessage: 'Yfirlit umsóknar',
+    description: '',
+  },
+
+  /* Next steps for spouse 1 */
+  nextStepsTitle: {
+    id: 'mac.application:nextStepsTitle',
+    defaultMessage: 'Umsókn send áfram á þinn maka',
+    description: '',
+  },
+  nextStepsDescription: {
+    id: 'mac.application:nextStepsDescription',
+    defaultMessage:
+      'Umsókn þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
+    description: '',
+  },
+  nextSteps: {
+    id: 'mac.application:nextSteps',
+    defaultMessage: 'Next steps',
+    description: '',
+  },
+  bullet1: {
+    id: 'mac.application:bullet1',
+    defaultMessage: ' þarf að fylla út sinn hluta umsóknarinnar.',
+    description: '',
+  },
+  bullet2: {
+    id: 'mac.application:bullet2',
+    defaultMessage:
+      'Ef maki þinn tekur ekki afstöðu til samningsins innan 60 daga þarf að hefja umsóknarferlið að nýju á Ísland.is.',
+    description: '',
+  },
+  bullet3: {
+    id: 'mac.application:bullet3',
+    defaultMessage:
+      'Könnunarvottorð frá sýslumanni gildir í 30 daga frá útgáfudegi.',
+    description: '',
+  },
+  bullet4: {
+    id: 'mac.application:bullet4',
+    defaultMessage:
+      'Könnunarvottorð verður sent í pósthólf ykkar beggja á island.is og þið berið ábyrgð á því að afhenda vígsluaðila vottorðið fyrir hjónavígsluna.',
+    description: '',
+  },
+  copyLink: {
+    id: 'mac.application:copyLink',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+  shareLink: {
+    id: 'mac.application:shareLink',
+    defaultMessage: 'Deila hlekk',
+    description: '',
+  },
+  submitApplication: {
+    id: 'mac.application:actionCard.submitApplication',
+    defaultMessage: 'Senda inn umsókn',
+    description: '',
+  },
+  errorDataProvider: {
+    id: 'mac.application:error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
+  actionCardDoneTag: {
+    id: 'mac.application:actionCard.done',
+    defaultMessage: 'Móttekin',
+    description: '',
+  },
+  applicationComplete: {
+    id: 'mac.application:actionCard.applicationComplete',
+    defaultMessage: 'Umsókn móttekin',
+    description: '',
+  },
+  spouseDoneDescription: {
+    id: 'mac.application:actionCard.spouseDoneDescription',
+    defaultMessage:
+      'Umsókn ykkar um könnun hjónavígsluskilyrða hefur verið send til rafrænnar undirritunar. Þegar bæði hjónaefni og svaramenn hafa undirritað rafrænt berst umsókn til sýslumanns. Sýslumaður gefur út í kjölfarið könnunarvottorð. Þið eruð nú einu skrefi nær því að ganga í hjónaband.',
+    description: '',
+  },
+  spouseBullet1: {
+    id: 'mac.application:spouseBullet1',
+    defaultMessage:
+      'Þú og þinn maki ásamt svaramönnum þurfið að undirrita umsóknina rafrænt.',
+    description: '',
+  },
+  spouseBullet2: {
+    id: 'mac.application:spouseBullet2',
+    defaultMessage:
+      'Uppfyllið þið skilyrði til þess að ganga í hjónaband fáið þið könnunarvottorð frá sýslumanni í pósthólf ykkar á Ísland.is sem skal afhenda vígsluaðila fyrir athöfnina.',
+    description: '',
+  },
+  spouseBullet3: {
+    id: 'mac.application:spouseBullet3',
+    defaultMessage: 'Könnunarvottorð gildir í 30 daga frá útgáfu þess.',
+    description: '',
   },
 })

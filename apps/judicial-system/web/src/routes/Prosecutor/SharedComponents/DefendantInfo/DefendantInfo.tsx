@@ -4,8 +4,10 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import {
+  Case,
   Defendant,
   Gender,
+  isIndictmentCase,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
@@ -33,8 +35,11 @@ import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
+import * as strings from './DefendantInfo.strings'
+
 interface Props {
   defendant: Defendant
+  workingCase: Case
   onChange: (
     defendantId: string,
     updatedDefendant: UpdateDefendant,
@@ -44,7 +49,13 @@ interface Props {
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { defendant, onDelete, onChange, updateDefendantState } = props
+  const {
+    defendant,
+    workingCase,
+    onDelete,
+    onChange,
+    updateDefendantState,
+  } = props
   const { formatMessage } = useIntl()
   const {
     personData,
@@ -149,8 +160,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <Checkbox
           name={`noNationalId-${Math.random()}`}
           label={formatMessage(
-            defendantMessages.sections.defendantInfo
-              .doesNotHaveIcelandicNationalId,
+            strings.defendantInfo.doesNotHaveIcelandicNationalId,
+            {
+              isIndictment: isIndictmentCase(workingCase.type),
+            },
           )}
           checked={defendant.noNationalId}
           onChange={() => {

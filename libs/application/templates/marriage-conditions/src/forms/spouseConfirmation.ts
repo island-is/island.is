@@ -8,32 +8,51 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildSubmitField,
+  buildTextField,
+  buildRadioField,
+  buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES } from '../lib/constants'
+import { NO, YES, MarriageTermination } from '../lib/constants'
 import { m } from '../lib/messages'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import {
+  Form,
+  FormModes,
+  DefaultEvents,
+  Application,
+} from '@island.is/application/types'
+import { Individual } from '../types'
+import { format as formatNationalId } from 'kennitala'
+import type { User } from '@island.is/api/domains/national-registry'
+import { UserProfile } from '../types/schema'
 
 export const spouseConfirmation: Form = buildForm({
   id: 'spouseConfirmation',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'spouse',
-      title: 'Inngangur',
+      title: m.entrance,
       children: [
         buildMultiField({
           id: 'spouse',
-          title: 'Könnun hjónavígsluskilyrða',
-          description:
-            'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+          title: m.introSectionTitle,
+          description: (application: Application) => ({
+            ...m.spouseIntroDescription,
+            values: {
+              applicantsName: (application.answers.applicant as Individual)
+                ?.person.name,
+            },
+          }),
           children: [
             buildCheckboxField({
               id: 'spouseApprove',
               title: '',
               options: [
-                { value: YES, label: 'Ég samþykki umsókn' },
-                { value: NO, label: 'Ég samþykki ekki umsókn' },
+                { value: YES, label: m.spouseContinue },
+                { value: NO, label: m.spouseDecline },
               ],
               defaultValue: [YES],
             }),
@@ -81,31 +100,174 @@ export const spouseConfirmation: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'spouseConfirmationOverview',
-      title: 'Yfirlit',
+      id: 'marriageSides',
+      title: m.informationSectionTitle,
       children: [
-        buildMultiField({
-          id: 'applicationOverview',
-          title: 'Yfirlit umsóknar',
-          description:
-            'Vinsamlegast farðu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar upp. ',
+        buildSubSection({
+          id: 'sides',
+          title: m.informationMaritalSides,
           children: [
-            buildCustomField({
-              id: 'spouseOverview',
-              title: '',
-              component: 'ApplicationOverview',
+            buildMultiField({
+              id: 'sides',
+              title: m.informationTitle,
+              children: [
+                buildDescriptionField({
+                  id: 'header1',
+                  title: m.informationWitness1,
+                  titleVariant: 'h4',
+                }),
+                buildTextField({
+                  id: 'applicant.person.nationalId',
+                  title: m.nationalId,
+                  width: 'half',
+                  backgroundColor: 'white',
+                  readOnly: true,
+                  format: '######-####',
+                  defaultValue: (application: Application) => {
+                    return formatNationalId(application.applicant) ?? ''
+                  },
+                }),
+                buildTextField({
+                  id: 'applicant.person.name',
+                  title: 'Nafn',
+                  width: 'half',
+                  backgroundColor: 'white',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as User
+                    return nationalRegistry.fullName ?? ''
+                  },
+                }),
+                buildTextField({
+                  id: 'applicant.phone',
+                  title: m.phone,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData.userProfile
+                      .data as UserProfile
+                    return data.mobilePhoneNumber ?? ''
+                  },
+                }),
+                buildTextField({
+                  id: 'applicant.email',
+                  title: m.email,
+                  variant: 'email',
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const data = application.externalData.userProfile
+                      .data as UserProfile
+                    return data.email ?? ''
+                  },
+                }),
+                buildDescriptionField({
+                  id: 'header2',
+                  title: m.informationWitness2,
+                  titleVariant: 'h4',
+                  space: 'gutter',
+                }),
+                buildCustomField({
+                  id: 'spouse.person',
+                  title: '',
+                  component: 'NationalIdWithName',
+                }),
+                buildTextField({
+                  id: 'spouse.phone',
+                  title: m.phone,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  defaultValue: (application: Application) => {
+                    const info = application.answers.spouse as Individual
+                    return info?.phone ?? ''
+                  },
+                }),
+                buildTextField({
+                  id: 'spouse.email',
+                  title: m.email,
+                  variant: 'email',
+                  width: 'half',
+                  backgroundColor: 'blue',
+                  defaultValue: (application: Application) => {
+                    const info = application.answers.spouse as Individual
+                    return info?.email ?? ''
+                  },
+                }),
+              ],
             }),
-            buildSubmitField({
-              id: 'spouseSubmitApplication',
-              title: '',
-              placement: 'footer',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
-                  type: 'primary',
-                },
+          ],
+        }),
+        buildSubSection({
+          id: 'info',
+          title: m.dataCollectionNationalRegistryTitle,
+          children: [
+            buildMultiField({
+              id: 'spousePersonalInfo',
+              title: m.dataCollectionNationalRegistryTitle,
+              description: m.personalInformationDescription,
+              children: [
+                buildTextField({
+                  id: 'spousePersonalInfo.address',
+                  title: m.address,
+                  backgroundColor: 'white',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as User
+                    return nationalRegistry.address.streetAddress
+                  },
+                }),
+                buildTextField({
+                  id: 'spousePersonalInfo.citizenship',
+                  title: m.citizenship,
+                  backgroundColor: 'white',
+                  width: 'half',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const nationalRegistry = application.externalData
+                      .nationalRegistry.data as User
+                    return nationalRegistry.citizenship.code
+                  },
+                }),
+                buildTextField({
+                  id: 'spousePersonalInfo.maritalStatus',
+                  title: m.maritalStatus,
+                  backgroundColor: 'white',
+                  width: 'half',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    const status = application.externalData.maritalStatus
+                      .data as any
+                    return status.maritalStatus
+                  },
+                }),
+                buildDescriptionField({
+                  id: 'space',
+                  space: 'containerGutter',
+                  title: '',
+                }),
+                buildRadioField({
+                  id: 'spousePersonalInfo.previousMarriageTermination',
+                  title: m.previousMarriageTermination,
+                  options: [
+                    {
+                      value: MarriageTermination.divorce,
+                      label: m.terminationByDivorce,
+                    },
+                    {
+                      value: MarriageTermination.lostSpouse,
+                      label: m.terminationByLosingSpouse,
+                    },
+                    {
+                      value: MarriageTermination.annulment,
+                      label: m.terminationByAnnulment,
+                    },
+                  ],
+                  largeButtons: false,
+                }),
               ],
             }),
           ],
@@ -114,16 +276,29 @@ export const spouseConfirmation: Form = buildForm({
     }),
     buildSection({
       id: 'spouseConfirmationOverview',
-      title: '',
+      title: m.overview,
       children: [
         buildMultiField({
-          id: 'done',
-          title: 'Komið',
+          id: 'applicationOverview',
+          title: m.applicationOverview,
           children: [
-            buildDescriptionField({
-              id: 'applicationOverview',
-              title: 'næsnæs',
-              description: 'helloooo vel gert',
+            buildCustomField({
+              id: 'spouseOverview',
+              title: '',
+              component: 'ApplicationOverview',
+            }),
+            buildSubmitField({
+              id: 'submitApplication',
+              title: '',
+              placement: 'footer',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.submitApplication,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),

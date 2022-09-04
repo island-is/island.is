@@ -1,1 +1,2 @@
-export { Congratulations } from './Congratulations'
+export { NextSteps } from './NextSteps'
+export { SpouseDone } from './SpouseDone'

@@ -1,5 +1,5 @@
 import { DefaultStateLifeCycle } from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, twoDays, sixtyDays } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
@@ -12,7 +12,16 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/types'
-import { FeatureFlagClient } from '@island.is/feature-flags'
+import { assign } from 'xstate'
+import { Features } from '@island.is/feature-flags'
+
+const pruneAfter = (time: number) => {
+  return {
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: time,
+  }
+}
 
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -23,6 +32,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: true,
+  featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -33,11 +43,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             title: m.applicationTitle,
           },
           progress: 0.33,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfter(twoDays),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -52,7 +58,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Áfram í greiðslu',
+                  name: '',
                   type: 'primary',
                 },
               ],
@@ -68,7 +74,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         meta: {
           name: 'Payment state',
           progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(sixtyDays),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -80,7 +86,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(val.getPayment()),
                 ),
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
                 {
                   event: DefaultEvents.ABORT,
                   name: 'Hætta við',
@@ -92,35 +98,38 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRM },
+          [DefaultEvents.ASSIGN]: { target: States.SPOUSE_CONFIRM },
         },
       },
       [States.SPOUSE_CONFIRM]: {
+        entry: 'assignToSpouse',
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(sixtyDays),
+          // TODO:
+          onEntry: {
+            apiModuleAction: ApiActions.assignSpouse,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () => import('../forms/done').then((val) => val.done),
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
               read: 'all',
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
               formLoader: () =>
-                import('../forms/spouseConfirmation').then(
-                  (val) => val.spouseConfirmation,
+                import('../forms/spouseConfirmation').then((val) =>
+                  Promise.resolve(val.spouseConfirmation),
                 ),
-              read: 'all',
-              write: 'all',
               actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn umsókn',
-                  type: 'primary',
-                },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
+              write: 'all',
             },
           ],
         },
@@ -132,12 +141,30 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(sixtyDays),
+          actionCard: {
+            tag: {
+              label: m.actionCardDoneTag,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () => import('../forms/done').then((val) => val.done),
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
               read: 'all',
+            },
+            {
+              id: Roles.ASSIGNED_SPOUSE,
+              formLoader: () =>
+                import('../forms/spouseDone').then((val) =>
+                  Promise.resolve(val.spouseDone),
+                ),
+              read: {
+                answers: ['spouse'],
+              },
             },
           ],
         },
@@ -145,15 +172,34 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToSpouse: assign((context) => {
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            // Assigning Gervimaður Útlönd for testing
+            assignees: ['0101307789'],
+          },
+        }
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === States.SPOUSE_CONFIRM) {
+    if (
+      application.assignees.includes(nationalId) &&
+      nationalId !== application.applicant
+    ) {
       return Roles.ASSIGNED_SPOUSE
-    } else if (application.applicant === nationalId) {
+    }
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+    return undefined
   },
 }
 

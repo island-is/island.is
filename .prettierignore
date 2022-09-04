@@ -7,4 +7,5 @@
 /tmp
 /cache
 /.cache
+/tools/**/*.js
 **/*.hbs

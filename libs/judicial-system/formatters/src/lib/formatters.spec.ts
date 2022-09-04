@@ -10,6 +10,7 @@ import {
   formatNationalId,
   formatDOB,
   formatPhoneNumber,
+  displayFirstPlusRemaining,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -245,5 +246,25 @@ describe('formatDOB', () => {
 
     // Assert
     expect(res).toBe('-')
+  })
+})
+
+describe('displayFirstPlusRemaining', () => {
+  test('should handle undefined', () => {
+    expect(displayFirstPlusRemaining(undefined)).toBe('')
+  })
+
+  test('should handle empty list', () => {
+    expect(displayFirstPlusRemaining([])).toBe('')
+  })
+
+  test('should handle list with single entry', () => {
+    expect(displayFirstPlusRemaining(['apple'])).toBe('apple')
+  })
+
+  test('should return first element plus how many are left in the list', () => {
+    expect(displayFirstPlusRemaining(['apple', 'pear', 'orange'])).toBe(
+      'apple +2',
+    )
   })
 })

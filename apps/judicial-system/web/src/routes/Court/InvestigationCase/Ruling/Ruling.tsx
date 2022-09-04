@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   CaseFileList,
-  CaseInfo,
+  CourtCaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -14,7 +14,7 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -82,7 +82,7 @@ const Ruling = () => {
     setModalVisible('SigningModal'),
   )
   const isModifyingRuling = router.pathname.includes(
-    constants.IC_MODIFY_RULING_ROUTE,
+    constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   )
 
   useDeb(workingCase, 'prosecutorDemands')
@@ -135,7 +135,7 @@ const Ruling = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -158,9 +158,7 @@ const Ruling = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -459,8 +457,8 @@ const Ruling = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
+              : `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             isModifyingRuling
@@ -472,14 +470,14 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isRulingValidIC(workingCase)}
           onNextButtonClick={() => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
               router.push(
-                `${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+                `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
               )
             }
           }}
@@ -488,7 +486,7 @@ const Ruling = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

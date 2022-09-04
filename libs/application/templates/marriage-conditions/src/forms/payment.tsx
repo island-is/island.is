@@ -4,6 +4,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const getPayment = (): Form => {
   return buildForm({
@@ -14,7 +15,7 @@ export const getPayment = (): Form => {
     children: [
       buildSection({
         id: 'awaitingPayment',
-        title: 'test',
+        title: m.payment,
         children: [
           buildCustomField({
             component: 'PaymentPending',

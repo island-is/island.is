@@ -17,7 +17,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   capitalize,
-  caseTypes,
+  displayFirstPlusRemaining,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
@@ -25,7 +25,11 @@ import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
-import { getAppealDate, mapCaseStateToTagVariant } from './utils'
+import {
+  displayCaseType,
+  getAppealDate,
+  mapCaseStateToTagVariant,
+} from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 
@@ -37,11 +41,11 @@ interface Props {
 
 export function getDurationDate(
   state: Case['state'],
-  validToDate: Case['validToDate'],
+  validToDate?: Case['validToDate'],
   initialRulingDate?: Case['initialRulingDate'],
   rulingDate?: Case['rulingDate'],
   courtEndTime?: Case['courtEndTime'],
-) {
+): string | null {
   if (
     [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
     !validToDate
@@ -62,9 +66,25 @@ export function getDurationDate(
       parseISO(validToDate),
       'd.M.y',
     )}`
-  } else {
-    return formatDate(parseISO(validToDate), 'd.M.y')
+  } else if (validToDate) {
+    return formatDate(parseISO(validToDate), 'd.M.y') || null
   }
+  return null
+}
+
+const DurationDate = ({ date }: { date: string | null }) => {
+  const { formatMessage } = useIntl()
+  if (!date) {
+    return null
+  }
+
+  return (
+    <Text fontWeight={'medium'} variant="small">
+      {`${formatMessage(
+        requests.sections.pastRequests.table.headers.duration,
+      )} ${date}`}
+    </Text>
+  )
 }
 
 const PastCases: React.FC<Props> = (props) => {
@@ -84,7 +104,7 @@ const PastCases: React.FC<Props> = (props) => {
         accessor: 'courtCaseNumber' as keyof Case,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string; policeCaseNumber: string }
+            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
           }
         }) => {
           return (
@@ -92,8 +112,12 @@ const PastCases: React.FC<Props> = (props) => {
               <Box component="span" display="block">
                 {row.row.original.courtCaseNumber}
               </Box>
-              <Text as="span" variant="small">
-                {row.row.original.policeCaseNumber}
+              <Text
+                as="span"
+                variant="small"
+                title={row.row.original.policeCaseNumbers.join(', ')}
+              >
+                {displayFirstPlusRemaining(row.row.original.policeCaseNumbers)}
               </Text>
             </>
           )
@@ -146,10 +170,7 @@ const PastCases: React.FC<Props> = (props) => {
           return (
             <>
               <Box component="span" display="block">
-                {thisRow.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? capitalize(caseTypes['TRAVEL_BAN'])
-                  : capitalize(caseTypes[thisRow.type])}
+                {displayCaseType(formatMessage, thisRow.type, thisRow.decision)}
               </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">
@@ -177,6 +198,7 @@ const PastCases: React.FC<Props> = (props) => {
           }
         }) => {
           const tagVariant = mapCaseStateToTagVariant(
+            formatMessage,
             row.row.original.state,
             user?.role ? isCourtRole(user.role) : false,
             isInvestigationCase(row.row.original.type),
@@ -280,24 +302,22 @@ const PastCases: React.FC<Props> = (props) => {
   return width < theme.breakpoints.md ? (
     <>
       {pastCasesData.map((theCase) => (
-        <Box marginTop={2}>
+        <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            key={theCase.id}
             theCase={theCase}
             onClick={() => onRowClick(theCase.id)}
             isCourtRole={false}
           >
-            <Text fontWeight={'medium'} variant="small">
-              {`${formatMessage(
-                requests.sections.pastRequests.table.headers.duration,
-              )} ${getDurationDate(
+            <DurationDate
+              key={`${theCase.id}-duration-date`}
+              date={getDurationDate(
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
                 theCase.rulingDate,
                 theCase.courtEndTime,
-              )}`}
-            </Text>
+              )}
+            />
           </MobileCase>
         </Box>
       ))}

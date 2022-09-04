@@ -8,6 +8,7 @@ import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
@@ -75,7 +76,7 @@ export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
 
-export interface FormItem {
+export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string

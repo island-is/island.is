@@ -3,7 +3,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
-import { getValueViaPath } from '@island.is/application/core'
+import { generateAssignOtherSpouseApplicationEmail } from './emailGenerators/assignOtherSpouseEmail'
 
 @Injectable()
 export class MarriageConditionsSubmissionService {
@@ -30,8 +30,10 @@ export class MarriageConditionsSubmissionService {
     return response
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+  async assignSpouse({application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+  /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
@@ -41,6 +43,20 @@ export class MarriageConditionsSubmissionService {
         success: false,
       }
     }*/
+ 
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateAssignOtherSpouseApplicationEmail,
+      application,
+    )
+  }
+
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+
+  
+    console.log(application)
+    // SUBMIT
+
 
     return { success: true }
   }
