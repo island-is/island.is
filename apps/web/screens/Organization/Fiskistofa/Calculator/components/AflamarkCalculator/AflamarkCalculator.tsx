@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
   Inline,
-  Input,
   LoadingDots,
   Select,
   Table as T,
@@ -15,6 +14,9 @@ import type {
   ExtendedShipStatusInformation,
 } from '@island.is/web/graphql/schema'
 import { GET_AFLAMARK_INFORMATION_FOR_SHIP } from './queries'
+import { generateTimePeriods, TimePeriodOption } from './utils'
+
+import * as styles from './AflamarkCalculator.css'
 
 type GetAflamarkInformationForShipQuery = {
   getAflamarkInformationForShip: ExtendedShipStatusInformation
@@ -24,22 +26,15 @@ type GetAflamarkInformationForShipQueryArgs = {
   input: GetAflamarkInformationForShipInput
 }
 
-import * as styles from './AflamarkCalculator.css'
-
 export const AflamarkCalculator = () => {
-  const shipNumberRef = useRef(1281)
-  const timePeriodRef = useRef<{ label: string; value: string }>({
-    label: '19/20',
-    value: '1920',
-  })
+  const shipNumber = 1281
+
+  const timePeriodOptions = useMemo(() => generateTimePeriods(), [])
 
   const [
-    searchInput,
-    setSearchInput,
-  ] = useState<GetAflamarkInformationForShipInput>({
-    shipNumber: shipNumberRef.current,
-    timePeriod: timePeriodRef.current.value,
-  })
+    selectedTimePeriod,
+    setSelectedTimePeriod,
+  ] = useState<TimePeriodOption>(timePeriodOptions[0])
 
   const {
     data: shipInformationResponse,
@@ -48,53 +43,59 @@ export const AflamarkCalculator = () => {
     GetAflamarkInformationForShipQuery,
     GetAflamarkInformationForShipQueryArgs
   >(GET_AFLAMARK_INFORMATION_FOR_SHIP, {
-    variables: { input: searchInput },
+    variables: {
+      input: {
+        shipNumber,
+        timePeriod: selectedTimePeriod.value,
+      },
+    },
   })
 
   const shipInformation = shipInformationResponse?.getAflamarkInformationForShip
 
   return (
     <Box margin={6}>
-      <Inline alignY="center" space={3}>
-        <Box width="full">
-          <Input
-            name="shipnumber-input"
-            onChange={(ev) => (shipNumberRef.current = Number(ev.target.value))}
-            type="number"
-            label="Skipsnúmer"
-          />
-        </Box>
-        <Box className={styles.selectBox}>
-          <Select
-            label="Tímabil"
-            name="timabil-select"
-            options={[
-              { label: '18/19', value: '1819' },
-              { label: '19/20', value: '1920' },
-              { label: '20/21', value: '2021' },
-            ]}
-          />
-        </Box>
-        <Box className={styles.selectBox}>
-          <Select
-            label="Bæta við tegund"
-            name="tegund-fiskur-select"
-            options={[]}
-          />
-        </Box>
-        <Button
-          onClick={() =>
-            setSearchInput((prev) => ({
-              ...prev,
-              shipNumber: shipNumberRef.current,
-              timePeriod: timePeriodRef.current?.value,
-            }))
-          }
-          size="default"
-        >
-          Go
-        </Button>
-      </Inline>
+      <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+        <Inline alignY="center" space={3}>
+          <Box className={styles.selectBox}>
+            <Select
+              size="sm"
+              label="Tímabil"
+              name="timabil-select"
+              options={timePeriodOptions}
+              value={selectedTimePeriod}
+              onChange={(timePeriod) => {
+                setSelectedTimePeriod(timePeriod as TimePeriodOption)
+              }}
+            />
+          </Box>
+          <Box className={styles.selectBox}>
+            <Select
+              size="sm"
+              label="Bæta við tegund"
+              name="tegund-fiskur-select"
+              options={[]}
+            />
+          </Box>
+        </Inline>
+        <Inline alignY="center" space={3}>
+          <Button
+            onClick={() =>
+              setSearchInput((prev) => ({
+                ...prev,
+                shipNumber: shipNumber,
+                timePeriod: selectedTimePeriod.value,
+              }))
+            }
+            variant="ghost"
+            size="small"
+          >
+            Frumstilla
+          </Button>
+          <Button size="small">Reikna</Button>
+        </Inline>
+      </Box>
+
       <Box
         width="full"
         textAlign="center"
