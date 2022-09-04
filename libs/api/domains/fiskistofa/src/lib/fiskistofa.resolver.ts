@@ -1,6 +1,7 @@
 import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GetShipStatusInformationInput } from './dto/getShipStatusInformatio.input'
+import { GetShipStatusInformationInput } from './dto/getShipStatusInformation.input'
+import { GetUpdatedShipStatusInformationInput } from './dto/getUpdatedShipStatusInformation.input'
 import { ShipStatusInformation } from './models/shipStatusInformation'
 
 const cacheTime = process.env.CACHE_TIME || 300
@@ -17,9 +18,14 @@ export class FiskistofaResolver {
   getShipStatusInformation(
     @Args('input') input: GetShipStatusInformationInput,
   ) {
-    return this.fiskistofaClientService.getShipStatusInformation(
-      input.shipNumber,
-      input.timePeriod,
-    )
+    return this.fiskistofaClientService.getShipStatusInformation(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ShipStatusInformation)
+  getUpdatedShipStatusInformation(
+    @Args('input') input: GetUpdatedShipStatusInformationInput,
+  ) {
+    return this.fiskistofaClientService.getUpdatedShipStatusInformation(input)
   }
 }

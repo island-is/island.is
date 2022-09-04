@@ -14,13 +14,11 @@ import type {
   GetShipStatusInformationInput,
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
-import { GET_SHIP_STATUS_INFORMATION } from '../queries'
+import { GET_SHIP_STATUS_INFORMATION } from './queries'
 
 import * as styles from './AflamarkCalculator.css'
 
-interface AflamarkCalculatorProps {}
-
-export const AflamarkCalculator = ({}: AflamarkCalculatorProps) => {
+export const AflamarkCalculator = () => {
   const shipNumberRef = useRef<number>(1281)
   const timePeriodRef = useRef<{ label: string; value: string }>({
     label: '19/20',
@@ -235,5 +233,3 @@ export const AflamarkCalculator = ({}: AflamarkCalculatorProps) => {
     </Box>
   )
 }
-
-export default AflamarkCalculator
