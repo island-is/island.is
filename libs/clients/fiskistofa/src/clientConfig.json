@@ -1125,6 +1125,153 @@
         }
       }
     },
+    "/v1/stadaskips/{skipnumer}/almannaksar/{ar}/deilistofnar": {
+      "get": {
+        "tags": ["StadaSkips"],
+        "summary": "Sækir gögn um deilistofna skips og ýmsum tilfærslum út frá skipaskrárnúmeri og ártali.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "ar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/almannaksar/{ar}/deilistofnar/breytt": {
+      "post": {
+        "tags": ["StadaSkips"],
+        "summary": "Skilar breyttum gögnum um deilistofna skips og ýmsum tilfærslum út frá breytingum, skipaskrárnúmeri og ártali.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "ar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/v1/stodtoflur/astond": {
       "get": {
         "tags": ["Stodtoflur"],
@@ -1916,7 +2063,7 @@
       "AflamarkSkipsUpplDTO": {
         "type": "object",
         "properties": {
-          "skipNr": {
+          "skipaskrarNumer": {
             "type": "integer",
             "description": "Skipaskrárnúmer.",
             "format": "int32"
@@ -2031,6 +2178,16 @@
             "type": "integer",
             "description": "Magn sem skip tekur af næsta ári af fisktegund fyrir tímabil út frá kvóta.",
             "format": "int32"
+          },
+          "prosentaANaestaArKvoti": {
+            "type": "integer",
+            "description": "Föst prósenta sem skip þarf að setja á næsta ár af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
+          },
+          "prosentaAfNaestaAriKvoti": {
+            "type": "integer",
+            "description": "Föst prósenta sem skip þarf að setja af næsta ári af fisktegund fyrir tímabil út frá kvóta.",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2116,26 +2273,6 @@
           "onotad": {
             "type": "integer",
             "description": "Magn fisktegundar sem er ónotuð eftir útreikninga á tímabilinu.",
-            "format": "int32"
-          },
-          "heildarAflaMark": {
-            "type": "integer",
-            "description": "Magn heildaraflamarks tiltekinnar fsktegundar á tímabilinu.",
-            "format": "int32"
-          },
-          "hlutdeild": {
-            "type": "number",
-            "description": "hlutfall hlutdeildar sem skip á í fisktegund á tímabilinu. (0,5 => 0,5%).",
-            "format": "float"
-          },
-          "aNaestaArKvoti": {
-            "type": "integer",
-            "description": "Magn sem skip setur yfir á næsta ár af fisktegund fyrir tímabil út frá kvóta.",
-            "format": "int32"
-          },
-          "afNaestaAriKvoti": {
-            "type": "integer",
-            "description": "Magn sem skip tekur af næsta ári af fisktegund fyrir tímabil út frá kvóta.",
             "format": "int32"
           }
         },
