@@ -11,38 +11,47 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import type {
-  GetShipStatusInformationInput,
-  ShipStatusInformation,
+  GetAflamarkInformationForShipInput,
+  ExtendedShipStatusInformation,
 } from '@island.is/web/graphql/schema'
-import { GET_SHIP_STATUS_INFORMATION } from './queries'
+import { GET_AFLAMARK_INFORMATION_FOR_SHIP } from './queries'
+
+type GetAflamarkInformationForShipQuery = {
+  getAflamarkInformationForShip: ExtendedShipStatusInformation
+}
+
+type GetAflamarkInformationForShipQueryArgs = {
+  input: GetAflamarkInformationForShipInput
+}
 
 import * as styles from './AflamarkCalculator.css'
 
 export const AflamarkCalculator = () => {
-  const shipNumberRef = useRef<number>(1281)
+  const shipNumberRef = useRef(1281)
   const timePeriodRef = useRef<{ label: string; value: string }>({
     label: '19/20',
     value: '1920',
   })
 
-  const [searchInput, setSearchInput] = useState<GetShipStatusInformationInput>(
-    {
-      shipNumber: shipNumberRef.current,
-      timePeriod: timePeriodRef.current.value,
-    },
-  )
+  const [
+    searchInput,
+    setSearchInput,
+  ] = useState<GetAflamarkInformationForShipInput>({
+    shipNumber: shipNumberRef.current,
+    timePeriod: timePeriodRef.current.value,
+  })
 
   const {
     data: shipInformationResponse,
     loading: loadingShipInformation,
   } = useQuery<
-    { getShipStatusInformation: ShipStatusInformation },
-    { input: GetShipStatusInformationInput }
-  >(GET_SHIP_STATUS_INFORMATION, {
+    GetAflamarkInformationForShipQuery,
+    GetAflamarkInformationForShipQueryArgs
+  >(GET_AFLAMARK_INFORMATION_FOR_SHIP, {
     variables: { input: searchInput },
   })
 
-  const shipInformation = shipInformationResponse?.getShipStatusInformation
+  const shipInformation = shipInformationResponse?.getAflamarkInformationForShip
 
   return (
     <Box margin={6}>

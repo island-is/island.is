@@ -56,10 +56,31 @@ class AllowedCatchCategory {
 }
 
 @ObjectType()
+class ExtendedAllowedCatchCategory extends AllowedCatchCategory {
+  @Field()
+  totalAllowedCatch?: number
+  @Field()
+  rateOfShare?: number
+  @Field()
+  nextYearQuota?: number
+  @Field()
+  nextYearFromQuota?: number
+}
+
+@ObjectType()
 export class ShipStatusInformation {
   @Field(() => Ship, { nullable: true })
   shipInformation?: Ship
 
   @Field(() => [AllowedCatchCategory], { nullable: true })
   allowedCatchCategories?: AllowedCatchCategory[]
+}
+
+@ObjectType()
+export class ExtendedShipStatusInformation {
+  @Field(() => Ship, { nullable: true })
+  shipInformation?: Ship
+
+  @Field(() => [ExtendedAllowedCatchCategory], { nullable: true })
+  allowedCatchCategories?: ExtendedAllowedCatchCategory[]
 }

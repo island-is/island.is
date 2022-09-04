@@ -16,13 +16,13 @@ class CategoryChange {
 }
 
 @InputType()
-class CategoryChanges {
+export class CategoryChanges {
   @Field(() => [CategoryChange])
   categoryChanges!: CategoryChange[]
 }
 
 @InputType()
-export class GetUpdatedShipStatusInformationInput {
+export class GetUpdatedAflamarkInformationForShipInput {
   @Field()
   shipNumber!: number
 

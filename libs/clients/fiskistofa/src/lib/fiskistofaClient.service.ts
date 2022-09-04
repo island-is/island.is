@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  GetShipStatusInformationInput,
-  GetUpdatedShipStatusInformationInput,
+  GetAflamarkInformationForShipInput,
+  GetDeilistofnaInformationForShipInput,
+  GetUpdatedAflamarkInformationForShipInput,
+  GetUpdatedDeilistofnaInformationForShipInput,
 } from '@island.is/api/domains/fiskistofa'
 import {
   Configuration,
   StadaSkipsApi,
+  V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest,
+  V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest,
   V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
   V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
 } from '../../gen/fetch'
@@ -95,8 +99,8 @@ export class FiskistofaClientService {
     }
   }
 
-  async getUpdatedShipStatusInformation(
-    input: GetUpdatedShipStatusInformationInput,
+  async getUpdatedAflamarkInformationForShip(
+    input: GetUpdatedAflamarkInformationForShipInput,
   ) {
     const params: V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest = {
       skipnumer: input.shipNumber,
@@ -113,11 +117,11 @@ export class FiskistofaClientService {
     }
     return this.fetchWithTokenRefresh(
       params,
-      this.getUpdatedShipStatusInformationInternal,
+      this.getUpdatedAflamarkInformationForShipInternal,
     )
   }
 
-  private async getUpdatedShipStatusInformationInternal(
+  private async getUpdatedAflamarkInformationForShipInternal(
     api: StadaSkipsApi,
     params: V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
   ) {
@@ -127,18 +131,20 @@ export class FiskistofaClientService {
     return mapChangedAllowedCatchForShip(response)
   }
 
-  async getShipStatusInformation(input: GetShipStatusInformationInput) {
+  async getAflamarkInformationForShip(
+    input: GetAflamarkInformationForShipInput,
+  ) {
     const params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest = {
       skipnumer: input.shipNumber,
       timabil: input.timePeriod,
     }
     return this.fetchWithTokenRefresh(
       params,
-      this.getShipStatusInformationInternal,
+      this.getAflamarkInformationForShipInternal,
     )
   }
 
-  private async getShipStatusInformationInternal(
+  private async getAflamarkInformationForShipInternal(
     api: StadaSkipsApi,
     params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
   ) {
@@ -146,5 +152,61 @@ export class FiskistofaClientService {
       params,
     )
     return mapAllowedCatchForShip(response)
+  }
+
+  async getDeilistofnaInformationForShip(
+    input: GetDeilistofnaInformationForShipInput,
+  ) {
+    const params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest = {
+      ar: input.year,
+      skipnumer: input.shipNumber,
+    }
+
+    return this.fetchWithTokenRefresh(
+      params,
+      this.getDeilistofnaInformationForShipInternal,
+    )
+  }
+
+  private async getDeilistofnaInformationForShipInternal(
+    api: StadaSkipsApi,
+    params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest,
+  ) {
+    const response = await api.v1StadaskipsSkipnumerAlmannaksarArDeilistofnarGet(
+      params,
+    )
+    return mapChangedAllowedCatchForShip(response)
+  }
+
+  async getUpdatedDeilistofnaInformationForShip(
+    input: GetUpdatedDeilistofnaInformationForShipInput,
+  ) {
+    const params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest = {
+      ar: input.year,
+      skipnumer: input.shipNumber,
+      aflamarkSkipsBreytingarDTO: {
+        breytingarFisktegundar: input.changes.categoryChanges.map(
+          ({ catchChange, allowedCatchChange, id }) => ({
+            aflabreyting: catchChange,
+            aflamarksbreyting: allowedCatchChange,
+            kvotategund: id,
+          }),
+        ),
+      },
+    }
+    return this.fetchWithTokenRefresh(
+      params,
+      this.getUpdatedDeilistofnaInformationForShipInternal,
+    )
+  }
+
+  private async getUpdatedDeilistofnaInformationForShipInternal(
+    api: StadaSkipsApi,
+    params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest,
+  ) {
+    const response = await api.v1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPost(
+      params,
+    )
+    return mapChangedAllowedCatchForShip(response)
   }
 }
