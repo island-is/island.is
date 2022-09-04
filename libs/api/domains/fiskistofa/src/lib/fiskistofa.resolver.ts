@@ -20,7 +20,7 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => ExtendedShipStatusInformation)
-  getShipStatusInformation(
+  getAflamarkInformationForShip(
     @Args('input') input: GetAflamarkInformationForShipInput,
   ) {
     return this.fiskistofaClientService.getAflamarkInformationForShip(input)
@@ -28,7 +28,7 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => ExtendedShipStatusInformation)
-  getUpdatedShipStatusInformation(
+  getUpdatedAflamarkInformationForShip(
     @Args('input') input: GetUpdatedAflamarkInformationForShipInput,
   ) {
     return this.fiskistofaClientService.getUpdatedAflamarkInformationForShip(
