@@ -4,6 +4,7 @@ import { GetAflamarkInformationForShipInput } from './dto/getAflamarkInformation
 import { GetDeilistofnaInformationForShipInput } from './dto/getDeilistofnaInformationForShip.input'
 import { GetUpdatedAflamarkInformationForShipInput } from './dto/getUpdatedAflamarkInformationForShip.input'
 import { GetUpdatedDeilistofnaInformationForShipInput } from './dto/getUpdatedDeilistofnaInformationForShip.input'
+import { Fish } from './models/fish'
 import {
   ExtendedShipStatusInformation,
   ShipStatusInformation,
@@ -50,5 +51,11 @@ export class FiskistofaResolver {
     @Args('input') input: GetUpdatedDeilistofnaInformationForShipInput,
   ) {
     return this.fiskistofaClientService.getDeilistofnaInformationForShip(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Fish])
+  getAllFishes() {
+    return this.fiskistofaClientService.getAllFishes()
   }
 }
