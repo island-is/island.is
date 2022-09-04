@@ -1,4 +1,5 @@
 import type {
+  AflamarkSkipsBreyttDTO,
   AflamarkSkipsUpphafDTO,
   AflamarkSkipsUpplDTO,
   AflamarkstegundirDTO,
@@ -11,7 +12,7 @@ import type {
 
 const mapShipInformation = (info?: AflamarkSkipsUpplDTO): ShipInformation => ({
   id: info?.einkenni ?? '',
-  shipNumber: info?.skipNr,
+  shipNumber: info?.skipaskrarNumer,
   name: info?.heitiSkips ?? '',
   timePeriod: info?.timabil ?? '',
 })
@@ -43,6 +44,15 @@ export const mapAllowedCatchForShip = (
   info: AflamarkSkipsUpphafDTO,
 ): AllowedCatchForShip => ({
   shipInformation: mapShipInformation(info.skipUpplysingar),
+  allowedCatchCategories: (info.aflamarkstegundir ?? []).map(
+    mapAllowedCatchCategory,
+  ),
+})
+
+export const mapChangedAllowedCatchForShip = (
+  info: AflamarkSkipsBreyttDTO,
+): AllowedCatchForShip => ({
+  shipInformation: mapShipInformation(info.skipUppl),
   allowedCatchCategories: (info.aflamarkstegundir ?? []).map(
     mapAllowedCatchCategory,
   ),

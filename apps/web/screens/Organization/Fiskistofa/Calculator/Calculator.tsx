@@ -1,12 +1,15 @@
 import { Breadcrumbs, GridContainer, Tabs } from '@island.is/island-ui/core'
 import { linkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import AflamarkCalculator from './components/AflamarkCalculator'
+import { AflamarkCalculator } from './components/AflamarkCalculator'
+import { Dashboard } from './components/Dashboard'
+import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
 
+// TODO: stop using tabs component
 const tabs = [
-  { label: 'Mælaborð', content: () => null },
+  { label: 'Mælaborð', content: <Dashboard /> },
   { label: 'Reiknivél aflamarks', content: <AflamarkCalculator /> },
-  { label: 'Reiknivél deilistofna', content: () => null },
+  { label: 'Reiknivél deilistofna', content: <DeilistofnaCalculator /> },
 ]
 
 const breadcrumbItems = [
@@ -27,11 +30,7 @@ const Calculator = () => {
         <Breadcrumbs items={breadcrumbItems} />
       </GridContainer>
 
-      <Tabs
-        contentBackground="white"
-        label="fiskistofa-calculator-tabs"
-        tabs={tabs}
-      />
+      <Tabs contentBackground="white" label="Valin sýn" tabs={tabs} />
     </>
   )
 }
