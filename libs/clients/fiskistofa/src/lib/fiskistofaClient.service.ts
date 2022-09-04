@@ -8,6 +8,7 @@ import {
 import {
   Configuration,
   StadaSkipsApi,
+  StodtoflurApi,
   V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest,
   V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest,
   V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
@@ -20,26 +21,43 @@ import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import {
   mapAllowedCatchForShip,
   mapChangedAllowedCatchForShip,
+  mapFishes,
 } from './fiskistofaClient.utils'
 
 @Injectable()
 export class FiskistofaClientService {
-  private api: StadaSkipsApi | null = null
+  private shipApi: StadaSkipsApi | null = null
+  private fishApi: StodtoflurApi | null = null
 
   constructor(
     @Inject(FiskistofaClientConfig.KEY)
     private clientConfig: ConfigType<typeof FiskistofaClientConfig>,
   ) {}
 
-  private async createApi(ignoreCache: boolean = false) {
-    if (this.api && !ignoreCache) {
-      return this.api
+  private async initialize(ignoreCache: boolean = false) {
+    if (this.shipApi && this.fishApi && !ignoreCache) {
+      return
     }
 
-    const api = new StadaSkipsApi(
+    const shipApi = new StadaSkipsApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-fiskistofa',
+          treat400ResponsesAsErrors: true,
+          ...this.clientConfig.fetch,
+        }),
+        basePath: this.clientConfig.url,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }),
+    )
+    const fishApi = new StodtoflurApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-fiskistofa',
+          treat400ResponsesAsErrors: true,
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
@@ -73,30 +91,12 @@ export class FiskistofaClientService {
       throw new Error('Fiskistofa client configuration and login went wrong')
     }
 
-    this.api = api.withMiddleware(
+    this.shipApi = shipApi.withMiddleware(
       new AuthHeaderMiddleware(`Bearer ${access_token}`),
     )
-
-    return this.api
-  }
-
-  private async fetchWithTokenRefresh(
-    params: Record<string, any>,
-    fetchFunction: (api: StadaSkipsApi, params: any) => any,
-  ) {
-    const api = await this.createApi()
-    try {
-      return fetchFunction(api, params)
-    } catch (error) {
-      if (error instanceof FetchError) {
-        const tokenExpired = error.status === 401
-        if (tokenExpired) {
-          const apiWithUpdatedToken = await this.createApi(true)
-          return fetchFunction(apiWithUpdatedToken, params)
-        }
-      }
-      throw error
-    }
+    this.fishApi = fishApi.withMiddleware(
+      new AuthHeaderMiddleware(`Bearer ${access_token}`),
+    )
   }
 
   async getUpdatedAflamarkInformationForShip(
@@ -115,10 +115,25 @@ export class FiskistofaClientService {
         ),
       },
     }
-    return this.fetchWithTokenRefresh(
-      params,
-      this.getUpdatedAflamarkInformationForShipInternal,
-    )
+
+    this.initialize()
+
+    try {
+      const response = await this.getUpdatedAflamarkInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    } catch (error) {
+      if (error instanceof FetchError) {
+        await this.initialize(true)
+        const response = await this.getUpdatedAflamarkInformationForShipInternal(
+          this.shipApi as StadaSkipsApi,
+          params,
+        )
+        return response
+      }
+    }
   }
 
   private async getUpdatedAflamarkInformationForShipInternal(
@@ -138,10 +153,22 @@ export class FiskistofaClientService {
       skipnumer: input.shipNumber,
       timabil: input.timePeriod,
     }
-    return this.fetchWithTokenRefresh(
-      params,
-      this.getAflamarkInformationForShipInternal,
-    )
+    await this.initialize()
+
+    try {
+      const response = await this.getAflamarkInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    } catch (error) {
+      await this.initialize(true)
+      const response = this.getAflamarkInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    }
   }
 
   private async getAflamarkInformationForShipInternal(
@@ -162,10 +189,22 @@ export class FiskistofaClientService {
       skipnumer: input.shipNumber,
     }
 
-    return this.fetchWithTokenRefresh(
-      params,
-      this.getDeilistofnaInformationForShipInternal,
-    )
+    await this.initialize()
+
+    try {
+      const response = await this.getDeilistofnaInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    } catch (error) {
+      await this.initialize(true)
+      const response = this.getDeilistofnaInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    }
   }
 
   private async getDeilistofnaInformationForShipInternal(
@@ -194,10 +233,22 @@ export class FiskistofaClientService {
         ),
       },
     }
-    return this.fetchWithTokenRefresh(
-      params,
-      this.getUpdatedDeilistofnaInformationForShipInternal,
-    )
+    await this.initialize()
+
+    try {
+      const response = await this.getUpdatedDeilistofnaInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    } catch (error) {
+      await this.initialize(true)
+      const response = this.getUpdatedDeilistofnaInformationForShipInternal(
+        this.shipApi as StadaSkipsApi,
+        params,
+      )
+      return response
+    }
   }
 
   private async getUpdatedDeilistofnaInformationForShipInternal(
@@ -208,5 +259,26 @@ export class FiskistofaClientService {
       params,
     )
     return mapChangedAllowedCatchForShip(response)
+  }
+
+  async getAllFishes() {
+    await this.initialize()
+    try {
+      const response = await this.getAllFishesInternal(
+        this.fishApi as StodtoflurApi,
+      )
+      return response
+    } catch (error) {
+      await this.initialize(true)
+      const response = await this.getAllFishesInternal(
+        this.fishApi as StodtoflurApi,
+      )
+      return response
+    }
+  }
+
+  private async getAllFishesInternal(api: StodtoflurApi) {
+    const response = await api.v1StodtoflurFisktegundirGet()
+    return mapFishes(response)
   }
 }
