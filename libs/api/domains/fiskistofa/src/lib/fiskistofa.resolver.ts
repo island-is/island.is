@@ -1,8 +1,13 @@
 import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GetShipStatusInformationInput } from './dto/getShipStatusInformation.input'
-import { GetUpdatedShipStatusInformationInput } from './dto/getUpdatedShipStatusInformation.input'
-import { ShipStatusInformation } from './models/shipStatusInformation'
+import { GetAflamarkInformationForShipInput } from './dto/getAflamarkInformationForShip.input'
+import { GetDeilistofnaInformationForShipInput } from './dto/getDeilistofnaInformationForShip.input'
+import { GetUpdatedAflamarkInformationForShipInput } from './dto/getUpdatedAflamarkInformationForShip.input'
+import { GetUpdatedDeilistofnaInformationForShipInput } from './dto/getUpdatedDeilistofnaInformationForShip.input'
+import {
+  ExtendedShipStatusInformation,
+  ShipStatusInformation,
+} from './models/shipStatusInformation'
 
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
@@ -14,18 +19,36 @@ export class FiskistofaResolver {
   ) {}
 
   @Directive(cacheControlDirective())
-  @Query(() => ShipStatusInformation)
+  @Query(() => ExtendedShipStatusInformation)
   getShipStatusInformation(
-    @Args('input') input: GetShipStatusInformationInput,
+    @Args('input') input: GetAflamarkInformationForShipInput,
   ) {
-    return this.fiskistofaClientService.getShipStatusInformation(input)
+    return this.fiskistofaClientService.getAflamarkInformationForShip(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ExtendedShipStatusInformation)
+  getUpdatedShipStatusInformation(
+    @Args('input') input: GetUpdatedAflamarkInformationForShipInput,
+  ) {
+    return this.fiskistofaClientService.getUpdatedAflamarkInformationForShip(
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())
   @Query(() => ShipStatusInformation)
-  getUpdatedShipStatusInformation(
-    @Args('input') input: GetUpdatedShipStatusInformationInput,
+  getDeilistofnaInformationForShip(
+    @Args('input') input: GetDeilistofnaInformationForShipInput,
   ) {
-    return this.fiskistofaClientService.getUpdatedShipStatusInformation(input)
+    return this.fiskistofaClientService.getDeilistofnaInformationForShip(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ShipStatusInformation)
+  getUpdatedDeilistofnaInformationForShip(
+    @Args('input') input: GetUpdatedDeilistofnaInformationForShipInput,
+  ) {
+    return this.fiskistofaClientService.getDeilistofnaInformationForShip(input)
   }
 }

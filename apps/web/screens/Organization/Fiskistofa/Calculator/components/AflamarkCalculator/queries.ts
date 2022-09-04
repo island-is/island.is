@@ -1,8 +1,10 @@
 import gql from 'graphql-tag'
 
-export const GET_SHIP_STATUS_INFORMATION = gql`
-  query GetShipStatusInformation($input: GetShipStatusInformationInput!) {
-    getShipStatusInformation(input: $input) {
+export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
+  query GetAflamarkInformationForShip(
+    $input: GetAflamarkInformationForShipInput!
+  ) {
+    getAflamarkInformationForShip(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -33,11 +35,11 @@ export const GET_SHIP_STATUS_INFORMATION = gql`
   }
 `
 
-export const GET_UPDATED_SHIP_STATUS_INFORMATION = gql`
-  query GetUpdatedShipStatusInformation(
-    $input: GetShipStatusInformationInput!
+export const GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP = gql`
+  query GetUpdatedAflamarkInformationForShip(
+    $input: GetUpdatedAflamarkInformationForShipInput!
   ) {
-    getUpdatedShipStatusInformation(input: $input) {
+    getUpdatedAflamarkInformationForShip(input: $input) {
       shipInformation {
         id
         shipNumber
