@@ -3,6 +3,7 @@ import type {
   AflamarkSkipsUpphafDTO,
   AflamarkSkipsUpplDTO,
   AflamarkstegundirDTO,
+  FisktegundDTO,
 } from '../../gen/fetch'
 import type {
   AllowedCatchCategory,
@@ -57,3 +58,10 @@ export const mapChangedAllowedCatchForShip = (
     mapAllowedCatchCategory,
   ),
 })
+
+export const mapFishes = (fishes: FisktegundDTO[]) => {
+  return fishes.map((fish) => ({
+    id: fish?.fisktegundKodi,
+    name: fish?.heiti ?? '',
+  }))
+}

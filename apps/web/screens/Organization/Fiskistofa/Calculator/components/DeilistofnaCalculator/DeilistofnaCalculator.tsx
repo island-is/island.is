@@ -13,10 +13,13 @@ import {
   GetDeilistofnaInformationForShipInput,
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
-import { useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { GET_DEILISTOFNA_INFORMATION_FOR_SHIP } from './queries'
 
+import { getYearOptions, YearOption } from '../../utils'
+
 import * as styles from './DeilistofnaCalculator.css'
+import { FishSelect } from '../FishSelect'
 
 type GetDeilistofnaInformationForShipQuery = {
   getDeilistofnaInformationForShip: ShipStatusInformation
@@ -27,23 +30,18 @@ type GetDeilistofnaInformationForShipQueryArgs = {
 }
 
 export const DeilistofnaCalculator = () => {
-  const shipNumberRef = useRef(1281)
-  const yearRef = useRef('2019')
+  const shipNumber = 1281
 
-  const [
-    searchInput,
-    setSearchInput,
-  ] = useState<GetDeilistofnaInformationForShipInput>({
-    shipNumber: shipNumberRef.current,
-    year: yearRef.current,
-  })
+  const yearOptions = useMemo(() => getYearOptions(), [])
+
+  const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
 
   const { data, loading } = useQuery<
     GetDeilistofnaInformationForShipQuery,
     GetDeilistofnaInformationForShipQueryArgs
   >(GET_DEILISTOFNA_INFORMATION_FOR_SHIP, {
     variables: {
-      input: { shipNumber: shipNumberRef.current, year: yearRef.current },
+      input: { shipNumber: shipNumber, year: selectedYear.value },
     },
   })
 
@@ -51,46 +49,33 @@ export const DeilistofnaCalculator = () => {
 
   return (
     <Box margin={6}>
-      <Inline alignY="center" space={3}>
-        <Box width="full">
-          <Input
-            name="shipnumber-input"
-            onChange={(ev) => (shipNumberRef.current = Number(ev.target.value))}
-            type="number"
-            label="Skipsnúmer"
-          />
+      <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
+        <Inline space={3}>
+          <Box className={styles.selectBox}>
+            <Select
+              size="sm"
+              label="Ár"
+              name="timabil-select"
+              options={yearOptions}
+              value={selectedYear}
+              onChange={(newYear) => {
+                setSelectedYear(newYear as YearOption)
+              }}
+            />
+          </Box>
+          <FishSelect />
+        </Inline>
+
+        <Box marginTop={[3, 3, 0]}>
+          <Inline alignY="center" space={3}>
+            <Button variant="ghost" size="small">
+              Frumstilla
+            </Button>
+            <Button size="small">Reikna</Button>
+          </Inline>
         </Box>
-        <Box className={styles.selectBox}>
-          <Select
-            label="Tímabil"
-            name="timabil-select"
-            options={[
-              { label: '18/19', value: '1819' },
-              { label: '19/20', value: '1920' },
-              { label: '20/21', value: '2021' },
-            ]}
-          />
-        </Box>
-        <Box className={styles.selectBox}>
-          <Select
-            label="Bæta við tegund"
-            name="tegund-fiskur-select"
-            options={[]}
-          />
-        </Box>
-        <Button
-          onClick={() =>
-            setSearchInput((prev) => ({
-              ...prev,
-              shipNumber: shipNumberRef.current,
-              year: yearRef.current,
-            }))
-          }
-          size="default"
-        >
-          Go
-        </Button>
-      </Inline>
+      </Box>
+
       <Box
         width="full"
         textAlign="center"
