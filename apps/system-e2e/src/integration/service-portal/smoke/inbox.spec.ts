@@ -13,9 +13,8 @@ describe('Service Portal', () => {
     cy.visit('/minarsidur/')
     cy.contains(fakeUsers[0].name)
   })
-
-  it('should have Dashboard', () => {
+  it('should have Pósthólf', () => {
     cy.visit('/minarsidur/')
-    cy.get('[data-testid="service-portal-dashboard"]').should('exist')
+    cy.contains('Pósthólf')
   })
 })
