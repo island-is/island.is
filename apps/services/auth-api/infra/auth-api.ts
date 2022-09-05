@@ -15,7 +15,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://audkenniv3-identity-server.dev01.devland.is',
+        dev: 'https://ids-audkenni-test-v3-identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
