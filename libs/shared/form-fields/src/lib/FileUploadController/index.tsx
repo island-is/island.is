@@ -239,14 +239,16 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
       }
 
       // Check whether the file is of the correct type and display an error to the user if not
-      const acceptedTypes = accept?.split(',')
-      const fileType = file.file.type
-      if (acceptedTypes && !acceptedTypes.includes(fileType)) {
-        return setUploadError(
-          formatMessage(coreErrorMessages.fileInvalidExtension, {
-            accept,
-          }),
-        )
+      if (accept) {
+        const acceptedExtensions = accept.split(',')
+        const fileType = file.file.type
+        if (!acceptedExtensions.includes(fileType)) {
+          return setUploadError(
+            formatMessage(coreErrorMessages.fileInvalidExtension, {
+              accept,
+            }),
+          )
+        }
       }
     })
   }
