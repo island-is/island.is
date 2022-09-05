@@ -97,9 +97,6 @@ export class GenericFirearmLicenseApi
     const payload: CreatePkPassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      //thumbnail: {
-      //imageBase64String: license.licenseImgBase64 ?? '',
-      //},
     }
 
     const pass = await this.smartApi.generatePkPassUrl(payload, this.issuer)

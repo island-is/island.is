@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import {
-  FirearmApplicationApi,
-  FirearmPropertyList,
-  LicenseInfo,
-} from '../../gen/fetch'
-import { LicenseAndPropertyInfo } from './firearmApi.types'
+import { FirearmApplicationApi, FirearmPropertyList } from '../../gen/fetch'
+import { LicenseAndPropertyInfo, OmittedLicenseInfo } from './firearmApi.types'
 
 @Injectable()
 export class FirearmApi {
@@ -30,7 +26,7 @@ export class FirearmApi {
     return license
   }
 
-  public async getLicenseInfo(ssn: string): Promise<LicenseInfo> {
+  public async getLicenseInfo(ssn: string): Promise<OmittedLicenseInfo> {
     const licenseInfo = await this.api.apiFirearmApplicationLicenseInfoSsnGet({
       ssn,
     })
