@@ -34,7 +34,7 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
           offset={['1/12', '1/12', '0']}
           span={['8/12', '8/12', '12/12']}
         >
-          <Text variant="small">{sidebarCard.content}</Text>
+          <Text variant="small">{sidebarCard.contentString}</Text>
           <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
             <Link href={sidebarCard.link.url}>
               <Button
