@@ -9,7 +9,6 @@ describe('P-sign', function () {
   beforeEach(() => {
     cy.idsLogin({
       phoneNumber: fakeUser.phoneNumber,
-      baseUrl: BaseAuthority.applicationSystem,
       urlPath: '/umsoknir/p-merki',
       setBaseUrl: true,
     })
