@@ -1,9 +1,9 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Document, DocumentCategory } from '@island.is/api/schema'
+import { Document, DocumentCategory, Query } from '@island.is/api/schema'
 import { getAccessToken } from '@island.is/auth/react'
 import {
   Box,
@@ -17,6 +17,9 @@ import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
 
 import * as styles from './DocumentLine.css'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
+
+import AnimateHeight from 'react-animate-height'
 
 interface Props {
   documentLine: Document
@@ -24,41 +27,73 @@ interface Props {
   documentCategories?: DocumentCategory[]
 }
 
+const GET_DOCUMENT_BY_ID = gql`
+  query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
+    getDocument(input: $input) {
+      fileType
+      content
+      html
+      url
+    }
+  }
+`
 const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
+  const [expanded, toggleExpand] = useState<boolean>(false)
 
+  const {
+    data: getFileByIdData,
+    loading: getFileByIdLoading,
+  } = useQuery<Query>(GET_DOCUMENT_BY_ID, {
+    variables: {
+      input: {
+        id: documentLine.id,
+      },
+    },
+  })
+
+  console.log(getFileByIdData?.getDocument?.html)
   const onClickHandler = async () => {
-    // Create form elements
-    const form = document.createElement('form')
-    const documentIdInput = document.createElement('input')
-    const tokenInput = document.createElement('input')
+    if (
+      getFileByIdData?.getDocument &&
+      getFileByIdData.getDocument.html.length > 0
+    ) {
+      toggleExpand(true)
+    } else {
+      if (!getFileByIdLoading) {
+        // Create form elements
+        const form = document.createElement('form')
+        const documentIdInput = document.createElement('input')
+        const tokenInput = document.createElement('input')
 
-    const token = await getAccessToken()
-    if (!token) return
+        const token = await getAccessToken()
+        if (!token) return
 
-    form.appendChild(documentIdInput)
-    form.appendChild(tokenInput)
+        form.appendChild(documentIdInput)
+        form.appendChild(tokenInput)
 
-    // Form values
-    form.method = 'post'
-    // TODO: Use correct url
-    form.action = documentLine.url
-    form.target = '_blank'
+        // Form values
+        form.method = 'post'
+        // TODO: Use correct url
+        form.action = documentLine.url
+        form.target = '_blank'
 
-    // Document Id values
-    documentIdInput.type = 'hidden'
-    documentIdInput.name = 'documentId'
-    documentIdInput.value = documentLine.id
+        // Document Id values
+        documentIdInput.type = 'hidden'
+        documentIdInput.name = 'documentId'
+        documentIdInput.value = documentLine.id
 
-    // National Id values
-    tokenInput.type = 'hidden'
-    tokenInput.name = '__accessToken'
-    tokenInput.value = token
+        // National Id values
+        tokenInput.type = 'hidden'
+        tokenInput.name = '__accessToken'
+        tokenInput.value = token
 
-    document.body.appendChild(form)
-    form.submit()
-    document.body.removeChild(form)
+        document.body.appendChild(form)
+        form.submit()
+        document.body.removeChild(form)
+      }
+    }
   }
 
   const date = (variant: 'small' | 'medium') => (
@@ -201,6 +236,17 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
           </GridColumn>
         </GridRow>
       )}
+      <AnimateHeight
+        className={expanded ? styles.animatedContent : undefined}
+        duration={300}
+        height={expanded ? 'auto' : 0}
+      >
+        <Box
+          dangerouslySetInnerHTML={{
+            __html: getFileByIdData?.getDocument?.html ?? '',
+          }}
+        ></Box>
+      </AnimateHeight>
     </Box>
   )
 }
