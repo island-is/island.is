@@ -1,4 +1,4 @@
-import {  NationalRegistryPerson } from '../types/schema'
+import { NationalRegistryPerson } from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,

@@ -103,7 +103,7 @@ const married = {
 }
 
 export const genderedMaritalStatuses: {
-  [key: string]: {[key: string]: string}
+  [key: string]: { [key: string]: string }
 } = {
   '1': {
     '1': 'Ógiftur',

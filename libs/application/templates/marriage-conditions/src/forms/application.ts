@@ -125,8 +125,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       options: [
                         { value: '1', label: 'Karl' },
                         { value: '2', label: 'Kona' },
-                        { value: '7', label:  'Kynsegin/annað' },
-                        
+                        { value: '7', label: 'Kynsegin/annað' },
                       ],
                     }),
                   ],
