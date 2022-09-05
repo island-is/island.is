@@ -92,14 +92,18 @@ export class GenericFirearmLicenseApi
     const { licenseInfo } = await this.fetchLicenseData(user)
     const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
 
+    //slice out headers from base64 image string
+    const image = licenseInfo?.licenseImgBase64
+    const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
+
     if (!inputValues) return null
     //Fetch template from api?
     const payload: CreatePkPassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      //thumbnail: {
-      //imageBase64String: parsedImage,
-      //},
+      thumbnail: {
+        imageBase64String: parsedImage,
+      },
     }
 
     const pass = await this.smartApi.generatePkPassUrl(payload, this.issuer)
@@ -110,15 +114,20 @@ export class GenericFirearmLicenseApi
 
     const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
 
+    //slice out headers from base64 image string
+    const image = licenseInfo?.licenseImgBase64
+    const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
+
     if (!inputValues) return null
     //Fetch template from api?
     const payload: CreatePkPassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      //thumbnail: {
-      //imageBase64String: license.licenseImgBase64 ?? '',
-      //},
+      thumbnail: {
+        imageBase64String: parsedImage,
+      },
     }
+
     const pass = await this.smartApi.generatePkPassQrCode(payload, this.issuer)
     return pass ?? null
   }
