@@ -10,7 +10,7 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { PersonTypes } from './types'
-import { MarriageConditionsAnswers } from '../../../../../../templates/marriage-conditions/src/types'
+import { MarriageConditionsAnswers } from '@island.is/application/templates/marriage-conditions/types'
 
 @Injectable()
 export class MarriageConditionsSubmissionService {
@@ -57,8 +57,6 @@ export class MarriageConditionsSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    console.log(application)
-    // SUBMIT
     const {
       applicant,
       spouse,
@@ -68,7 +66,6 @@ export class MarriageConditionsSubmissionService {
       spousePersonalInfo,
       ceremony,
     } = application.answers as MarriageConditionsAnswers
-    // Map persons
     const personMapper = [
       {
         type: PersonTypes.APPLICANT,

@@ -5,7 +5,6 @@ import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from './utils'
-
 export let linkOtherSpouseSMS = ''
 
 export type AssignOtherSpuseEmail = (
@@ -32,8 +31,6 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
   const subject = 'Umsókn vegna hjónavígslu'
   const link = `${clientLocationOrigin}/${ApplicationConfigurations.MarriageConditions.slug}/${application.id}`
 
-  linkOtherSpouseSMS = link
-
   return {
     from: {
       name: email.sender,
@@ -45,6 +42,10 @@ export const generateAssignOtherSpouseApplicationEmail: AssignOtherSpuseEmail = 
         address: otherSpouseEmail as string,
       },
     ],
+    replyTo: {
+      name: 'island.is',
+      address: 'umsoknir@island.is',
+    },
     subject,
     template: {
       title: subject,
