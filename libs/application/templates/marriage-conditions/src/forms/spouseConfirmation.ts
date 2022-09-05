@@ -52,9 +52,8 @@ export const spouseConfirmation: Form = buildForm({
               title: '',
               options: [
                 { value: YES, label: m.spouseContinue },
-                { value: NO, label: m.spouseDecline },
+                //followup: { value: NO, label: m.spouseDecline },
               ],
-              defaultValue: [YES],
             }),
           ],
         }),
