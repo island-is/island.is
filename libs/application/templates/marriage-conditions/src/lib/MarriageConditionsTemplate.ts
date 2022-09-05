@@ -1,4 +1,3 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { Events, States, Roles, twoDays, sixtyDays } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
@@ -14,8 +13,8 @@ import {
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
-import * as NationalId from 'kennitala'
-import { getSpuseNationalId } from './utils'
+import { getSpouseNationalId } from './utils'
+
 
 const pruneAfter = (time: number) => {
   return {
@@ -177,12 +176,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
+<<<<<<< HEAD
         const spouse: string = getSpuseNationalId(context.application.answers)
+=======
+        const spouse: string = getSpouseNationalId(context.application.answers)
+>>>>>>> bf097a45715df43983ff6eb9a0356481e4e4d498
         return {
           ...context,
           application: {
             ...context.application,
+<<<<<<< HEAD
             // Assigning Gervimaður Útlönd for testing
+=======
+>>>>>>> bf097a45715df43983ff6eb9a0356481e4e4d498
             assignees: spouse ? [spouse] : [],
           },
         }

@@ -7,12 +7,9 @@ import { generateAssignOtherSpouseApplicationEmail } from './emailGenerators/ass
 import {
   SyslumennService,
   Person,
-  Attachment,
-  PersonType,
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
-import { Individual, PersonTypes } from './types'
-import { getValueViaPath } from '@island.is/application/core'
+import { PersonTypes } from './types'
 import { MarriageConditionsAnswers } from '../../../../../../templates/marriage-conditions/src/types'
 
 @Injectable()
@@ -42,7 +39,7 @@ export class MarriageConditionsSubmissionService {
   }
 
   async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
-    /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
@@ -51,7 +48,7 @@ export class MarriageConditionsSubmissionService {
       return {
         success: false,
       }
-    }*/
+    }
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherSpouseApplicationEmail,

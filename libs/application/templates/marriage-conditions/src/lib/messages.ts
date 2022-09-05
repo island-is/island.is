@@ -294,6 +294,26 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: '',
   },
+  maritalStatusCertificates: {
+    id: 'mac.application:maritalStatusCertificates',
+    defaultMessage: 'Tvö hjúskaparstöðuvottorð',
+    description: '',
+  },
+  birthCertificates: {
+    id: 'mac.application:birthCertificates',
+    defaultMessage: 'Tvö fæðingarvottorð',
+    description: '',
+  },
+  surveyCertificate: {
+    id: 'mac.application:surveyCertificate',
+    defaultMessage: 'Könnunarvottorð',
+    description: '',
+  },
+  total: {
+    id: 'mac.application:total',
+    defaultMessage: 'Samtals',
+    description: '',
+  },
   proceedToPayment: {
     id: 'mac.application:proceedToPayment',
     defaultMessage: 'Áfram í greiðslu',
@@ -467,6 +487,11 @@ export const m = defineMessages({
   spouseBullet3: {
     id: 'mac.application:spouseBullet3',
     defaultMessage: 'Könnunarvottorð gildir í 30 daga frá útgáfu þess.',
+    description: '',
+  },
+  nameError: {
+    id: 'mac.application:nameError',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
     description: '',
   },
 })

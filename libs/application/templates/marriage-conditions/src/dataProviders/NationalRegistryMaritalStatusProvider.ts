@@ -73,6 +73,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
             maritalStatus: this.formatMaritalStatus(
               fakeData?.maritalStatus || '',
             ),
+
           })
         }
         return Promise.reject({})
