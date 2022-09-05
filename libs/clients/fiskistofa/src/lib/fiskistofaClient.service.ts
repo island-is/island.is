@@ -106,7 +106,7 @@ export class FiskistofaClientService {
       skipnumer: input.shipNumber,
       timabil: input.timePeriod,
       aflamarkSkipsBreytingarDTO: {
-        breytingarFisktegundar: input.changes.categoryChanges.map(
+        breytingarFisktegundar: input.changes.map(
           ({ catchChange, allowedCatchChange, id }) => ({
             aflabreyting: catchChange,
             aflamarksbreyting: allowedCatchChange,
@@ -116,7 +116,7 @@ export class FiskistofaClientService {
       },
     }
 
-    this.initialize()
+    await this.initialize()
 
     try {
       const response = await this.getUpdatedAflamarkInformationForShipInternal(
@@ -224,7 +224,7 @@ export class FiskistofaClientService {
       ar: input.year,
       skipnumer: input.shipNumber,
       aflamarkSkipsBreytingarDTO: {
-        breytingarFisktegundar: input.changes.categoryChanges.map(
+        breytingarFisktegundar: input.changes.map(
           ({ catchChange, allowedCatchChange, id }) => ({
             aflabreyting: catchChange,
             aflamarksbreyting: allowedCatchChange,

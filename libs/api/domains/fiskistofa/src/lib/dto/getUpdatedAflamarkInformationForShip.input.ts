@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-class CategoryChange {
+export class CategoryChange {
   // kvotategund (Auðkenni fisktegundar)
   @Field()
   id!: number
@@ -16,12 +16,6 @@ class CategoryChange {
 }
 
 @InputType()
-export class CategoryChanges {
-  @Field(() => [CategoryChange])
-  categoryChanges!: CategoryChange[]
-}
-
-@InputType()
 export class GetUpdatedAflamarkInformationForShipInput {
   @Field()
   shipNumber!: number
@@ -29,6 +23,6 @@ export class GetUpdatedAflamarkInformationForShipInput {
   @Field()
   timePeriod!: string
 
-  @Field(() => CategoryChanges)
-  changes!: CategoryChanges
+  @Field(() => [CategoryChange])
+  changes!: CategoryChange[]
 }

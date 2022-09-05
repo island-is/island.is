@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { CategoryChanges } from './getUpdatedAflamarkInformationForShip.input'
+import { CategoryChange } from './getUpdatedAflamarkInformationForShip.input'
 
 @InputType()
 export class GetUpdatedDeilistofnaInformationForShipInput {
@@ -9,6 +9,6 @@ export class GetUpdatedDeilistofnaInformationForShipInput {
   @Field()
   year!: string
 
-  @Field()
-  changes!: CategoryChanges
+  @Field(() => [CategoryChange])
+  changes!: CategoryChange[]
 }

@@ -36,7 +36,7 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
 `
 
 export const GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP = gql`
-  query GetUpdatedAflamarkInformationForShip(
+  mutation GetUpdatedAflamarkInformationForShip(
     $input: GetUpdatedAflamarkInformationForShipInput!
   ) {
     getUpdatedAflamarkInformationForShip(input: $input) {
@@ -61,10 +61,6 @@ export const GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP = gql`
         nextYear
         excessCatch
         unused
-        totalAllowedCatch
-        rateOfShare
-        nextYearQuota
-        nextYearFromQuota
       }
     }
   }
