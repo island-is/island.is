@@ -541,6 +541,7 @@ export const slices = gql`
     }
   }
 
+
   fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
     id
     title
@@ -553,6 +554,20 @@ export const slices = gql`
         url
         title
       }
+
+  fragment SidebarCardFields on SidebarCard {
+    title
+    contentString
+    type
+    image {
+      url
+      title
+      width
+      height
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -589,6 +604,7 @@ export const slices = gql`
     ...StepperFields
     ...GraphCardFields
     ...LifeEventPageListSliceFields
+    ...SidebarCardFields
   }
 
   fragment AllSlices on Slice {

@@ -1,6 +1,4 @@
-import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 import {
   Box,
@@ -81,7 +79,7 @@ const LifeEventPageListSlice = dynamic(() =>
 
 interface OrganizationSliceProps {
   slice: Slice
-  namespace?: Namespace
+  namespace?: Record<string, string>
   fullWidth?: boolean
   organizationPageSlug?: string
   renderedOnOrganizationSubpage?: boolean
