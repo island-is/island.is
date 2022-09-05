@@ -73,9 +73,7 @@ const NavItemContent: FC<Props> = ({
       position="relative"
       onClick={() => {
         const id = icon && iconIdMapper(icon.icon)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const a: any = id && document.getElementById(id)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const a: HTMLElement | null = id ? document.getElementById(id) : null
         a && a.dispatchEvent(new Event('click'))
         if (!hasArray && onClick) onClick()
       }}

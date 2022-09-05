@@ -121,10 +121,8 @@ export const Dashboard: FC<{}> = () => {
   }, [location])
 
   const onHover = (id: string) => {
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const a: any = id && document.getElementById(iconIdMapper(id))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //const b: any = a.querySelector('svg')
+    const a: HTMLElement | null | '' =
+      id && document.getElementById(iconIdMapper(id))
     a && a.dispatchEvent(new Event('click'))
   }
 
