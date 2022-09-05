@@ -5,7 +5,6 @@ import { Message } from '@island.is/email-service'
 
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from './utils'
-export let linkOtherSpouseSMS = ''
 
 export type AssignOtherSpuseEmail = (
   props: EmailTemplateGeneratorProps,
