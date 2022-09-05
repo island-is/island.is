@@ -52,6 +52,7 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -434,18 +435,48 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         items={secondaryNavList}
                       />
                     )}
-                  {organizationPage.sidebarCards.map((card) => (
-                    <ProfileCard
-                      title={card.title}
-                      description={card.content}
-                      link={card.link}
-                      image={
-                        card.image?.url ||
-                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                  <Box
+                    marginY={
+                      organizationPage.secondaryMenu &&
+                      secondaryNavList.length > 0
+                        ? 0
+                        : 3
+                    }
+                    className={styles.sidebarCardContainer}
+                  >
+                    {organizationPage.sidebarCards.map((card) => {
+                      if (card.__typename === 'SidebarCard') {
+                        return (
+                          <ProfileCard
+                            key={card.id}
+                            title={card.title}
+                            description={card.contentString}
+                            link={card.link}
+                            image={
+                              card.image?.url ||
+                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                            }
+                            size="small"
+                          />
+                        )
                       }
-                      size="small"
-                    />
-                  ))}
+
+                      if (
+                        card.__typename === 'ConnectedComponent' &&
+                        (card.type === 'LatestNewsCard' ||
+                          card['componentType'] === 'LatestNewsCard')
+                      ) {
+                        return (
+                          <LatestNewsCardConnectedComponent
+                            key={card.id}
+                            {...card.json}
+                          />
+                        )
+                      }
+
+                      return null
+                    })}
+                  </Box>
                 </>
               )}
               {sidebarContent}

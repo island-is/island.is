@@ -164,10 +164,9 @@ describe('Parental leave', () => {
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.employer.title),
     })
-      .findByRole('textbox', {
-        name: label(parentalLeaveFormMessages.employer.email),
-      })
-      .type(employerEmail)
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.employer.email),
+    }).type(employerEmail)
     proceed()
 
     cy.findByRole('heading', {
