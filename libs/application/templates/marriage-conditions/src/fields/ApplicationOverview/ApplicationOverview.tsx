@@ -5,6 +5,9 @@ import { m } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
+import format from 'date-fns/format'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+
 type InfoProps = {
   side: Individual
 }
@@ -31,7 +34,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
         <Box display="flex">
           <Box width="half">
             <Text variant="h4">{formatMessage(m.phone)}</Text>
-            <Text>{side.phone}</Text>
+            <Text>{formatPhoneNumber(side.phone)}</Text>
           </Box>
           <Box width="half">
             <Text variant="h4">{formatMessage(m.email)}</Text>
@@ -116,7 +119,12 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
           <Box display="flex" marginBottom={3}>
             <Box width="half">
               <Text variant="h4">{formatMessage(m.ceremonyDate)}</Text>
-              <Text>{(answers.ceremony as Ceremony).date}</Text>
+              <Text>
+                {format(
+                  new Date((answers.ceremony as Ceremony).date),
+                  'dd/MM/yyyy',
+                )}
+              </Text>
             </Box>
           </Box>
           <Box display="flex">

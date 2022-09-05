@@ -24,6 +24,7 @@ import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
+import { removeCountryCode } from '../lib/utils'
 
 export const spouseConfirmation: Form = buildForm({
   id: 'spouseConfirmation',
@@ -147,7 +148,7 @@ export const spouseConfirmation: Form = buildForm({
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile
                       .data as UserProfile
-                    return data.mobilePhoneNumber ?? ''
+                    return removeCountryCode(data.mobilePhoneNumber ?? '')
                   },
                 }),
                 buildTextField({
@@ -181,7 +182,7 @@ export const spouseConfirmation: Form = buildForm({
                   backgroundColor: 'blue',
                   defaultValue: (application: Application) => {
                     const info = application.answers.spouse as Individual
-                    return info?.phone ?? ''
+                    return removeCountryCode(info?.phone ?? '')
                   },
                 }),
                 buildTextField({
