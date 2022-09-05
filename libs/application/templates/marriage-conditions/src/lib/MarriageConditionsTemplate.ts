@@ -180,7 +180,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            // Assigning Gervimaður Útlönd for testing
             assignees: spouse ? [spouse] : [],
           },
         }

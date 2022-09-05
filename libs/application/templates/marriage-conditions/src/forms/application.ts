@@ -415,8 +415,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       },
                     }) => {
                       return (data as DistrictCommissionerAgencies[])?.map(
-                        ({ id, name, place, address }) => ({
-                          value: id,
+                        ({ name, place, address }) => ({
+                          value: `${name}, ${place}`,
                           label: `${name}, ${place}`,
                           tooltip: `${address}`,
                         }),
