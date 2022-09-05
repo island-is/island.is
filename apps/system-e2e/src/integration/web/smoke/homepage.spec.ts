@@ -1,7 +1,8 @@
+import { Timeout } from '../../../lib/types'
+
 describe('Front page', () => {
   beforeEach(() => {
-    const { username, password } = Cypress.env('cognito')
-    cy.cognitoLogin({ username, password })
+    cy.cognitoLogin()
   })
 
   it('has expected sections', () => {
@@ -11,7 +12,7 @@ describe('Front page', () => {
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
-  // dummy change
+
   it('should have life events', () => {
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
@@ -25,7 +26,7 @@ describe('Front page', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
       .should('have.length.at.least', 3)
-      .each((link) => cy.visit(link.prop('href')))
+      .each((link) => cy.visit(link.prop('href'), { timeout: Timeout.long }))
   })
 
   it('should have link on life events pages to navigate back to the main page', () => {
