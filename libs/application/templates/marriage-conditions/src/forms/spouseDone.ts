@@ -1,7 +1,7 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -17,10 +17,16 @@ export const spouseDone: Form = buildForm({
       title: m.applicationComplete,
       description: m.spouseDoneDescription,
       children: [
-        buildCustomField({
-          id: 'spouseCongrats',
-          component: 'SpouseDone',
-          title: m.applicationComplete,
+        buildDescriptionField({
+          id: 'spouseNextStepsTitle',
+          title: m.nextSteps,
+          titleVariant: 'h3',
+        }),
+        buildDescriptionField({
+          id: 'spouseNextStepsBullets',
+          title: '',
+          description: m.spouseNextSteps,
+          space: 'gutter',
         }),
       ],
     }),
