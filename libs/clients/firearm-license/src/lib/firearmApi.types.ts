@@ -1,7 +1,5 @@
 import { FirearmPropertyList, LicenseInfo } from '../../gen/fetch'
 
-export interface LicenseAndPropertyInfo extends OmittedLicenseInfo {
+export interface LicenseAndPropertyInfo extends LicenseInfo {
   properties?: FirearmPropertyList | null
 }
-
-export type OmittedLicenseInfo = Omit<LicenseInfo, 'licenseImgBase64'>
