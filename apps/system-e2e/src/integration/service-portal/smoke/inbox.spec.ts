@@ -13,6 +13,7 @@ describe('Service Portal', () => {
     cy.visit('/minarsidur/')
     cy.contains(fakeUsers[0].name)
   })
+
   it('should have Pósthólf', () => {
     cy.visit('/minarsidur/')
     cy.contains('Pósthólf')
