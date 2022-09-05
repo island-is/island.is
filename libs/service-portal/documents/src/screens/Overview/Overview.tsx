@@ -261,7 +261,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }
 
   return (
-    <Box marginBottom={[4, 4, 6, 10]}>
+    <Box className={undefined} marginBottom={[4, 4, 6, 10]}>
       <IntroHeader title={messages.title} intro={messages.intro} />
       <Stack space={3}>
         <Box marginTop={[1, 1, 2, 2, 6]}>

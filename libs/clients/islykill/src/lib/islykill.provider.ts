@@ -25,6 +25,7 @@ export const IslykillApiModule: Provider<IslyklarApi> = {
       lykillError(err)
     }
 
+    console.log('CF CRT ', config.cert?.substr(0, 40))
     console.log('PFX: PFX: ', pfx?.toString('base64').substr(0, 40))
     console.log('THH THH BASE ', config.basePath.substr(0, 10))
     if (!config.passphrase) {
