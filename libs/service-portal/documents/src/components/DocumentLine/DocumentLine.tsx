@@ -3,7 +3,12 @@ import format from 'date-fns/format'
 import React, { FC, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Document, DocumentCategory, Query } from '@island.is/api/schema'
+import {
+  Document,
+  DocumentCategory,
+  DocumentDetails,
+  Query,
+} from '@island.is/api/schema'
 import { getAccessToken } from '@island.is/auth/react'
 import {
   Box,
@@ -40,12 +45,8 @@ const GET_DOCUMENT_BY_ID = gql`
 const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
-  const [expanded, toggleExpand] = useState<boolean>(false)
 
-  const {
-    data: getFileByIdData,
-    loading: getFileByIdLoading,
-  } = useQuery<Query>(GET_DOCUMENT_BY_ID, {
+  const { data: getFileByIdData } = useQuery<Query>(GET_DOCUMENT_BY_ID, {
     variables: {
       input: {
         id: documentLine.id,
@@ -53,46 +54,45 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
     },
   })
 
-  console.log(getFileByIdData?.getDocument?.html)
+  const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
+
   const onClickHandler = async () => {
-    if (
-      getFileByIdData?.getDocument &&
-      getFileByIdData.getDocument.html.length > 0
-    ) {
-      toggleExpand(true)
+    const html =
+      singleDocument.html.length > 0 ? singleDocument.html : undefined
+    if (html) {
+      const win = window.open('', '_blank')
+      win && win.document.write(html)
     } else {
-      if (!getFileByIdLoading) {
-        // Create form elements
-        const form = document.createElement('form')
-        const documentIdInput = document.createElement('input')
-        const tokenInput = document.createElement('input')
+      // Create form elements
+      const form = document.createElement('form')
+      const documentIdInput = document.createElement('input')
+      const tokenInput = document.createElement('input')
 
-        const token = await getAccessToken()
-        if (!token) return
+      const token = await getAccessToken()
+      if (!token) return
 
-        form.appendChild(documentIdInput)
-        form.appendChild(tokenInput)
+      form.appendChild(documentIdInput)
+      form.appendChild(tokenInput)
 
-        // Form values
-        form.method = 'post'
-        // TODO: Use correct url
-        form.action = documentLine.url
-        form.target = '_blank'
+      // Form values
+      form.method = 'post'
+      // TODO: Use correct url
+      form.action = documentLine.url
+      form.target = '_blank'
 
-        // Document Id values
-        documentIdInput.type = 'hidden'
-        documentIdInput.name = 'documentId'
-        documentIdInput.value = documentLine.id
+      // Document Id values
+      documentIdInput.type = 'hidden'
+      documentIdInput.name = 'documentId'
+      documentIdInput.value = documentLine.id
 
-        // National Id values
-        tokenInput.type = 'hidden'
-        tokenInput.name = '__accessToken'
-        tokenInput.value = token
+      // National Id values
+      tokenInput.type = 'hidden'
+      tokenInput.name = '__accessToken'
+      tokenInput.value = token
 
-        document.body.appendChild(form)
-        form.submit()
-        document.body.removeChild(form)
-      }
+      document.body.appendChild(form)
+      form.submit()
+      document.body.removeChild(form)
     }
   }
 
@@ -236,17 +236,6 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
           </GridColumn>
         </GridRow>
       )}
-      <AnimateHeight
-        className={expanded ? styles.animatedContent : undefined}
-        duration={300}
-        height={expanded ? 'auto' : 0}
-      >
-        <Box
-          dangerouslySetInnerHTML={{
-            __html: getFileByIdData?.getDocument?.html ?? '',
-          }}
-        ></Box>
-      </AnimateHeight>
     </Box>
   )
 }
