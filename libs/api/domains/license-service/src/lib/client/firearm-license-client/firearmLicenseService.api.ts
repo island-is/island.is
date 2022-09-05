@@ -22,7 +22,7 @@ import {
 import {
   LicenseInfo,
   FirearmApi,
-  LicenseAndPropertyInfo,
+  LicenseData,
 } from '@island.is/clients/firearm-license'
 
 /** Category to attach each log message to */
@@ -56,26 +56,26 @@ export class GenericFirearmLicenseApi
     return null
   }
 
-  async fetchLicense(user: User) {
-    let license: unknown
+  async fetchLicenseData(user: User) {
+    let licenseData: unknown
 
     try {
-      license = await this.firearmApi.getLicenseAndPropertyInfo(user.nationalId)
+      licenseData = await this.firearmApi.getLicenseData(user.nationalId)
     } catch (e) {
       this.handleError(e)
     }
 
-    return license as LicenseAndPropertyInfo
+    return licenseData as LicenseData
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
-    const license = await this.fetchLicense(user)
+    const licenseData = await this.fetchLicenseData(user)
 
-    if (!license) {
+    if (!licenseData) {
       return null
     }
 
-    const payload = parseFirearmLicensePayload(license)
+    const payload = parseFirearmLicensePayload(licenseData)
 
     return {
       status: GenericUserLicenseStatus.HasLicense,
@@ -89,22 +89,26 @@ export class GenericFirearmLicenseApi
     return this.getLicense(user)
   }
   async getPkPassUrl(user: User): Promise<string | null> {
-    const license = await this.fetchLicense(user)
-    const inputValues = createPkPassDataInput(license, user.nationalId)
+    const { licenseInfo } = await this.fetchLicenseData(user)
+    const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
 
     if (!inputValues) return null
     //Fetch template from api?
     const payload: CreatePkPassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
+      //thumbnail: {
+      //imageBase64String: parsedImage,
+      //},
     }
 
     const pass = await this.smartApi.generatePkPassUrl(payload, this.issuer)
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
-    const license = await this.fetchLicense(user)
-    const inputValues = createPkPassDataInput(license, user.nationalId)
+    const { licenseInfo } = await this.fetchLicenseData(user)
+
+    const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
 
     if (!inputValues) return null
     //Fetch template from api?

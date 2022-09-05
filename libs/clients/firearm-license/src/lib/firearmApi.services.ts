@@ -4,15 +4,13 @@ import {
   FirearmPropertyList,
   LicenseInfo,
 } from '../../gen/fetch'
-import { LicenseAndPropertyInfo } from './firearmApi.types'
+import { LicenseData } from './firearmApi.types'
 
 @Injectable()
 export class FirearmApi {
   constructor(private readonly api: FirearmApplicationApi) {}
 
-  public async getLicenseAndPropertyInfo(
-    ssn: string,
-  ): Promise<LicenseAndPropertyInfo> {
+  public async getLicenseData(ssn: string): Promise<LicenseData> {
     const data = await Promise.all([
       this.api.apiFirearmApplicationLicenseInfoSsnGet({
         ssn,
@@ -20,11 +18,13 @@ export class FirearmApi {
       this.api.apiFirearmApplicationPropertyInfoSsnGet({
         ssn,
       }),
+      this.api.apiFirearmApplicationCategoriesGet(),
     ])
 
-    const license: LicenseAndPropertyInfo = {
-      ...data[0],
+    const license: LicenseData = {
+      licenseInfo: data[0],
       properties: data[1],
+      categories: data[2],
     }
 
     return license
@@ -44,5 +44,9 @@ export class FirearmApi {
       },
     )
     return propertyInfo
+  }
+  public async getCategories(): Promise<{ [key: string]: string }> {
+    const categories = await this.api.apiFirearmApplicationCategoriesGet()
+    return categories
   }
 }

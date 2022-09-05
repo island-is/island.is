@@ -1,6 +1,7 @@
 import {
   FirearmProperty,
-  LicenseAndPropertyInfo,
+  LicenseData,
+  LicenseInfo,
 } from '@island.is/clients/firearm-license'
 import {
   GenericLicenseDataField,
@@ -9,76 +10,87 @@ import {
 } from '../../licenceService.type'
 
 export const parseFirearmLicensePayload = (
-  license: LicenseAndPropertyInfo,
+  licenseData: LicenseData,
 ): GenericUserLicensePayload | null => {
-  if (!license) return null
+  const { licenseInfo, properties, categories } = licenseData
+
+  if (!licenseInfo) return null
 
   const data: Array<GenericLicenseDataField> = [
-    license.name && {
+    licenseInfo.name && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Nafn einstaklings',
-      value: license.name,
+      value: licenseInfo.name,
     },
-    license.ssn && {
+    licenseInfo.ssn && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Kennitala',
-      value: license.ssn,
+      value: licenseInfo.ssn,
     },
-    license.expirationDate && {
+    licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími',
-      value: license.expirationDate,
+      value: licenseInfo.expirationDate,
     },
-    license.issueDate && {
+    licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
-      value: license.issueDate,
+      value: licenseInfo.issueDate,
     },
-    license.licenseNumber && {
+    licenseInfo.licenseNumber && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Númer skírteinis',
-      value: license.licenseNumber,
+      value: licenseInfo.licenseNumber,
     },
-    license.collectorLicenseExpirationDate && {
+    licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
     },
-    license.address && {
+    licenseInfo.address && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Heimilisfang',
-      value: license.address,
+      value: licenseInfo.address,
     },
-    license.qualifications && {
+    licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
       label: 'Réttindaflokkar',
-      fields: license.qualifications.split('').map((qualification) => ({
+      fields: licenseInfo.qualifications.split('').map((qualification) => ({
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
-        label: 'placeholder text',
+        label: categories?.[`Flokkur ${qualification}`] ?? '',
       })),
     },
-    license.properties && {
+    properties && {
       type: GenericLicenseDataFieldType.Group,
       label: 'Skotvopn í eigu leyfishafa',
-      fields: (license.properties.properties ?? []).map((property) => ({
+      fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
-        fields: parseProperties(property),
+        fields: parseProperties(property)?.filter(
+          (Boolean as unknown) as ExcludesFalse,
+        ),
       })),
     },
   ].filter((Boolean as unknown) as ExcludesFalse)
 
   return {
     data,
-    rawData: JSON.stringify(license),
+    rawData: JSON.stringify(licenseData),
   }
 }
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 const parseProperties = (
-  property: FirearmProperty,
-): Array<GenericLicenseDataField> | undefined => {
+  property?: FirearmProperty,
+): Array<GenericLicenseDataField> | null => {
+  if (!property) return null
+
   const mappedProperty = [
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Staða skotvopns',
+      value: property.category ?? '',
+    },
     {
       type: GenericLicenseDataFieldType.Value,
       label: 'Tegund',
@@ -104,19 +116,19 @@ const parseProperties = (
 }
 
 export const createPkPassDataInput = (
-  license: LicenseAndPropertyInfo,
-  nationalId: string,
+  licenseInfo?: LicenseInfo | null,
+  nationalId?: string,
 ) => {
-  if (!license || !nationalId) return null
+  if (!licenseInfo || !nationalId) return null
 
   return [
     {
       identifier: 'gildir',
-      value: license.expirationDate ?? '',
+      value: licenseInfo.expirationDate ?? '',
     },
     {
       identifier: 'nafn',
-      value: license.name ?? '',
+      value: licenseInfo.name ?? '',
     },
     {
       identifier: 'kt',
@@ -124,7 +136,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'heimilisfang',
-      value: license.address ?? '',
+      value: licenseInfo.address ?? '',
     },
     {
       identifier: 'postnr.',
@@ -132,11 +144,11 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'numer',
-      value: license.licenseNumber ?? '',
+      value: licenseInfo.licenseNumber ?? '',
     },
     {
       identifier: 'rettindi',
-      value: license.qualifications ?? '',
+      value: licenseInfo.qualifications ?? '',
     },
     {
       identifier: 'skotvopn',
