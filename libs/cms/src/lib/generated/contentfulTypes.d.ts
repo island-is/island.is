@@ -2069,7 +2069,6 @@ export interface IOrganizationPageFields {
   /** Theme */
   theme:
     | 'default'
-    | 'default_with_image'
     | 'utlendingastofnun'
     | 'sjukratryggingar'
     | 'syslumenn'
@@ -2132,7 +2131,7 @@ export interface IOrganizationPageFields {
   featuredImage?: Asset | undefined
 
   /** Sidebar Cards */
-  sidebarCards?: ISidebarCard[] | undefined
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2608,6 +2607,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'LatestNewsCard'
     | undefined
 
   /** JSON */
