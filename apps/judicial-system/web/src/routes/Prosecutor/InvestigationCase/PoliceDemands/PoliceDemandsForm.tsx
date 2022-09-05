@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -18,7 +18,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands, core } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 
@@ -103,7 +102,6 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, setAndSendToServer } = useCase()
-  const { user } = useContext(UserContext)
 
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
@@ -181,13 +179,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             {formatMessage(icDemands.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">

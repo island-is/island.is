@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -99,9 +99,7 @@ const Confirmation = () => {
                 Yfirlit úrskurðar
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box marginBottom={9}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
