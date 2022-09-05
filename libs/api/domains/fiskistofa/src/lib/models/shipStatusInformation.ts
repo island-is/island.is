@@ -84,3 +84,12 @@ export class ExtendedShipStatusInformation {
   @Field(() => [ExtendedAllowedCatchCategory], { nullable: true })
   allowedCatchCategories?: ExtendedAllowedCatchCategory[]
 }
+
+@ObjectType()
+export class ExtendedShipStatusInformationUpdate {
+  @Field(() => Ship, { nullable: true })
+  shipInformation?: Ship
+
+  @Field(() => [AllowedCatchCategory], { nullable: true })
+  allowedCatchCategories?: AllowedCatchCategory[]
+}

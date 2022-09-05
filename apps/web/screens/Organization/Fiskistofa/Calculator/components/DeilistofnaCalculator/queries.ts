@@ -30,3 +30,5 @@ export const GET_DEILISTOFNA_INFORMATION_FOR_SHIP = gql`
     }
   }
 `
+
+// TODO: add mutation

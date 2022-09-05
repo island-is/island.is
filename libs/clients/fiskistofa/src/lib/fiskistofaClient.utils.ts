@@ -50,12 +50,31 @@ export const mapAllowedCatchForShip = (
   ),
 })
 
+const mapChangedAllowedCatchCategory = (
+  category: AflamarkstegundirDTO,
+): AllowedCatchCategory => ({
+  id: category?.kvotategund,
+  name: category?.kvotategundHeiti ?? '',
+  allocation: category?.uthlutun,
+  specialAlloction: category?.serstokUthlutun,
+  betweenYears: category?.milliAra,
+  betweenShips: category?.milliSkipa,
+  allowedCatch: category?.aflamark,
+  catch: category?.afli,
+  status: category?.stada,
+  displacement: category?.tilfaersla,
+  newStatus: category?.nyStada,
+  nextYear: category?.aNaestaAr,
+  excessCatch: category?.umframafli,
+  unused: category?.onotad,
+})
+
 export const mapChangedAllowedCatchForShip = (
   info: AflamarkSkipsBreyttDTO,
 ): AllowedCatchForShip => ({
   shipInformation: mapShipInformation(info.skipUppl),
   allowedCatchCategories: (info.aflamarkstegundir ?? []).map(
-    mapAllowedCatchCategory,
+    mapChangedAllowedCatchCategory,
   ),
 })
 
