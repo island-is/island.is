@@ -118,6 +118,12 @@ export const m = defineMessages({
     defaultMessage: 'Hjónaefni 2',
     description: 'Information title spouse 2',
   },
+  informationAlertMessage: {
+    id: 'mac.application:informationAlertMessage',
+    defaultMessage:
+      'Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn.',
+    description: '',
+  },
   informationMaritalSides: {
     id: 'mac.application:maritalSides',
     defaultMessage: 'Hjónaefni',
