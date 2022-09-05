@@ -26,6 +26,7 @@ export const IslykillApiModule: Provider<IslyklarApi> = {
     }
 
     console.log('PFX: PFX: ', pfx?.toString('base64').substr(0, 40))
+    console.log('THH THH BASE ', config.basePath.substr(0, 10))
     if (!config.passphrase) {
       logger.error('IslykillApiModule secret not provided.')
     }

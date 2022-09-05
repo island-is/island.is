@@ -1,7 +1,7 @@
 import { defineConfig } from '@island.is/nest/config'
 
 export const IslykillClientConfig = defineConfig({
-  name: 'IslykillClient',
+  name: 'IslykillClientModule',
   load: (env) => ({
     cert: env.required('ISLYKILL_CERT', ''),
     passphrase: env.required('ISLYKILL_SERVICE_PASSPHRASE', ''),

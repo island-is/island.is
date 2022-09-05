@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@island.is/nest/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UserProfileController } from './userProfile.controller'
 import { UserTokenController } from './userToken.controller'
