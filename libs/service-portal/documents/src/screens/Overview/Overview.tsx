@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
-import { useQuery, gql, useLazyQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import {
   Box,
   Stack,
@@ -106,8 +106,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     page: page,
     pageSize: pageSize,
   })
-
-  console.log(data)
 
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
     GET_DOCUMENT_CATEGORIES,

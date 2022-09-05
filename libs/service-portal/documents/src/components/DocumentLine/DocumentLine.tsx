@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useWindowSize } from 'react-use'
 
 import {
@@ -22,9 +22,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
 
 import * as styles from './DocumentLine.css'
-import { gql, useLazyQuery, useQuery } from '@apollo/client'
-
-import AnimateHeight from 'react-animate-height'
+import { gql, useQuery } from '@apollo/client'
 
 interface Props {
   documentLine: Document
@@ -35,10 +33,7 @@ interface Props {
 const GET_DOCUMENT_BY_ID = gql`
   query getAnnualStatusDocumentQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
-      fileType
-      content
       html
-      url
     }
   }
 `
@@ -60,8 +55,11 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
     const html =
       singleDocument.html.length > 0 ? singleDocument.html : undefined
     if (html) {
-      const win = window.open('', '_blank')
-      win && win.document.write(html)
+      setTimeout(() => {
+        const win = window.open('', '_blank')
+        win && win.document.write(html)
+        win?.focus()
+      }, 250)
     } else {
       // Create form elements
       const form = document.createElement('form')

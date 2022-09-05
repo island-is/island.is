@@ -67,7 +67,3 @@ export const linkWrapper = style({
     },
   }),
 })
-
-export const animatedContent = style({
-  paddingTop: theme.spacing[1],
-})
