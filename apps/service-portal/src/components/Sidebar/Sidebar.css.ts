@@ -19,10 +19,17 @@ export const sidebar = style({
   display: 'flex',
   justifyContent: 'flex-start',
   flexDirection: 'column',
-})
-
-export const sidebarScroll = style({
   overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.color.blue300} ${theme.color.blue100}`,
+  '::-webkit-scrollbar': {
+    width: 6,
+    backgroundColor: theme.color.blue100,
+  },
+  '::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.blue300,
+    borderRadius: theme.border.radius.large,
+  },
 })
 
 export const collapsed = style({

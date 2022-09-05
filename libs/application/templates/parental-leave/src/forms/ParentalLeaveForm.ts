@@ -84,6 +84,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.email,
+                  dataTestId: 'email',
                   id: 'applicant.email',
                   variant: 'email',
                   defaultValue: (application: Application) =>
@@ -97,6 +98,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   defaultValue: (application: Application) =>
                     removeCountryCode(application),
                   id: 'applicant.phoneNumber',
+                  dataTestId: 'phone',
                   variant: 'tel',
                   format: '###-####',
                   placeholder: '000-0000',
@@ -133,6 +135,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',
+                  dataTestId: 'other-parent-name',
                   condition: (answers) =>
                     (answers as {
                       otherParentObj: {
@@ -144,6 +147,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentId',
+                  dataTestId: 'other-parent-kennitala',
                   condition: (answers) =>
                     (answers as {
                       otherParentObj: {
@@ -170,10 +174,12 @@ export const ParentalLeaveForm: Form = buildForm({
               options: [
                 {
                   label: parentalLeaveFormMessages.rightOfAccess.yesOption,
+                  dataTestId: 'yes-option',
                   value: YES,
                 },
                 {
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  dataTestId: 'no-option',
                   value: NO,
                 },
               ],
@@ -192,6 +198,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title:
                     parentalLeaveFormMessages.shared.paymentInformationBank,
                   id: 'payments.bank',
+                  dataTestId: 'bank-account-number',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                 }),
@@ -200,6 +207,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
+                  dataTestId: `pension-fund`,
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
@@ -212,6 +220,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     return (
                       data?.getPensionFunds?.map(({ id, name }) => ({
                         label: name,
+                        dataTestId: 'pension-fund-item',
                         value: id,
                       })) ?? []
                     )
@@ -229,6 +238,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  dataTestId: 'payments-union',
                   isSearchable: true,
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
@@ -261,6 +271,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  dataTestId: 'private-pension-fund',
                   isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
                     const {
@@ -282,6 +293,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFundPercentage',
+                  dataTestId: 'private-pension-fund-ratio',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundRatio,
                   options: [
@@ -304,10 +316,12 @@ export const ParentalLeaveForm: Form = buildForm({
               options: [
                 {
                   label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  dataTestId: 'use-personal-finance',
                   value: YES,
                 },
                 {
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  dataTestId: 'dont-use-personal-finance',
                   value: NO,
                 },
               ],

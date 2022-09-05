@@ -122,7 +122,7 @@ export const makeRestrictionCase = (): Case => {
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
     type: CaseType.CUSTODY,
-    policeCaseNumber: '007-2021-202000',
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
         id: 'test_defendant_id',
@@ -155,7 +155,7 @@ export const makeInvestigationCase = (): Case => {
       name: 'Héraðsdómur Reykjavíkur',
       active: true,
     },
-    policeCaseNumber: '007-2021-202000',
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
         id: 'test_defendant_id',
@@ -194,6 +194,7 @@ export const makeJudge = (): User => {
     },
   }
 }
+
 export const makeProsecutor = (): User => {
   return {
     id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',

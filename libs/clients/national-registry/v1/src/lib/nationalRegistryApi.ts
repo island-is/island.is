@@ -1,8 +1,4 @@
-import {
-  InternalServerErrorException,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common'
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import Soap from 'soap'
 
 import isEmpty from 'lodash/isEmpty'
@@ -130,8 +126,8 @@ export class NationalRegistryApi {
       'CreateAndUpdateMS_Leidretting',
       {
         S5RequestID: '',
-        Kennitala: values.ssn,
-        Barn: values.ssnChild,
+        Kennitala: values.nationalId,
+        Barn: values.nationalIdChild,
         Nafn: values.name,
         Simanumer: values.phonenumber,
         Netfang: values.email,
@@ -142,7 +138,9 @@ export class NationalRegistryApi {
     )
 
     if (!response) {
-      throw new ForbiddenException(`User correction not sent. Unknown error`)
+      throw new InternalServerErrorException(
+        'User correction not sent. Unknown error',
+      )
     }
     return {
       success: response?.success,

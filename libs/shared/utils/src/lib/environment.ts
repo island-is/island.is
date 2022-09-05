@@ -30,8 +30,12 @@ if (isServer) {
   }
 }
 
+/**
+ * This function should be really last resort. We are aiming to remove it altogether.
+ * Any decisions based on the environment name should be rather based on feature flags and/or configuration.
+ * @deprecated
+ * @param environment
+ */
 export const isRunningOnEnvironment = (environment: ActiveEnvironment) => {
   return environment === activeEnvironment
 }
-
-export const getActiveEnvironment = () => activeEnvironment

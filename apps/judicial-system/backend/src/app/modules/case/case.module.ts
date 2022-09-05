@@ -14,6 +14,7 @@ import {
   CourtModule,
   AwsS3Module,
   EventModule,
+  PoliceModule,
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
@@ -48,6 +49,7 @@ const config = caseModuleConfig()
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
+    forwardRef(() => PoliceModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [CaseService, LimitedAccessCaseService],

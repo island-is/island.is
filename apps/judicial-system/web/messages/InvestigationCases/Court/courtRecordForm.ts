@@ -165,29 +165,6 @@ export const icCourtRecord = {
           'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
-    courtDocuments: defineMessages({
-      header: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.header',
-        defaultMessage: 'Dómskjöl',
-        description:
-          'Notað sem fyrirsögn í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-      tag: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.tag',
-        defaultMessage: 'Þingmerkt nr. 1',
-        description:
-          'Notað sem tagg í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-      text: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_documents.text',
-        defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
-        description:
-          'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
-      },
-    }),
     conclusion: {
       id: 'judicial.system.investigation_cases:court_record.conclusion.title',
       defaultMessage: 'Úrskurðarorð',

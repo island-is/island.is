@@ -86,15 +86,19 @@ export type ServicePortalRoute = {
    * Dynamic routes that might have a slow response time will be loaded after inital routes.
    */
   dynamic?: boolean
-  /**
-   * The render value of this component
-   */
 
   /**
    * The key for the route. Used to filter feature flagged pages.
+   *
+   * To feature flag a route:
+   * create a feature flag in ConfigCat called `isServicePortalVehicleHistoryPageEnabled`
+   * In which case your route key would be `VehicleHistory`.
    */
   key?: string
 
+  /**
+   * The render value of this component
+   */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }
 

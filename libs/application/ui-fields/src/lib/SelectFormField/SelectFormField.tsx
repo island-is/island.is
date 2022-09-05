@@ -51,6 +51,7 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
           disabled={disabled}
           error={error}
           id={id}
+          dataTestId={field.dataTestId}
           backgroundColor={backgroundColor}
           options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,

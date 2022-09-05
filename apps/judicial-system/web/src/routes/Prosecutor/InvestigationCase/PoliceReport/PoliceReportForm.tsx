@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,8 +15,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -32,7 +32,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendToServer } = useCase()
-  const { user } = useContext(UserContext)
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -40,7 +39,6 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'prosecutorOnlySessionRequest')
-  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     if (
@@ -69,13 +67,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             {formatMessage(icReportForm.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <BlueBox>
             <Text>{workingCase.demands}</Text>
@@ -234,42 +226,9 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(icReportForm.comments.heading)}{' '}
-                <Tooltip
-                  placement="right"
-                  as="span"
-                  text={formatMessage(icReportForm.comments.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              name="comments"
-              label={formatMessage(icReportForm.comments.label)}
-              placeholder={formatMessage(icReportForm.comments.placeholder)}
-              value={workingCase.comments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+            <CommentsInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
             />
           </Box>
         </Box>

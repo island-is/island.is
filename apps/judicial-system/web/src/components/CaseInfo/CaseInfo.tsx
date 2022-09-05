@@ -1,69 +1,121 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
+import flatMap from 'lodash/flatMap'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { Case, courtRoles, UserRole } from '@island.is/judicial-system/types'
+import { capitalize, enumerate } from '@island.is/judicial-system/formatters'
+import {
+  Case,
+  CaseType,
+  Defendant,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 
-interface Props {
-  workingCase: Case
-  userRole?: UserRole
-  showAdditionalInfo?: boolean
-}
-
-const CaseInfo: React.FC<Props> = ({
-  workingCase,
-  userRole,
-  showAdditionalInfo,
-}: Props) => {
-  const { formatMessage } = useIntl()
-
-  const renderDefendants = () =>
-    workingCase.defendants &&
-    workingCase.defendants.length > 0 && (
-      <Text fontWeight="semiBold">{`${capitalize(
-        formatMessage(core.defendant, {
-          suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-        }),
-      )}:${workingCase.defendants
-        .map((defendant) => ` ${defendant.name}`)
-        .toString()
-        .replace(/,\s*$/, '')}`}</Text>
-    )
-
-  return (
-    <>
-      <Box marginBottom={1}>
-        <Text variant="h2" as="h2">
-          {formatMessage(core.caseNumber, {
-            caseNumber: userRole
-              ? courtRoles.includes(userRole)
-                ? workingCase.courtCaseNumber
-                : workingCase.policeCaseNumber
-              : '',
-          })}
-        </Text>
+const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
+  policeCaseNumbers,
+}) => (
+  <Box display="flex" flexWrap="wrap">
+    {policeCaseNumbers.map((policeCaseNumber, index) => (
+      <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
+        <Tag disabled>{policeCaseNumber}</Tag>
       </Box>
-      {userRole ? (
-        courtRoles.includes(userRole) ? (
-          <>
-            <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
-              workingCase.creatingProsecutor?.institution?.name
-            }`}</Text>
-            {renderDefendants()}
-          </>
-        ) : userRole === UserRole.PROSECUTOR && showAdditionalInfo ? (
-          <>
-            <Text fontWeight="semiBold">{`${formatMessage(core.court)}: ${
-              workingCase.court?.name
-            }`}</Text>
-            {renderDefendants()}
-          </>
-        ) : null
-      ) : null}
-    </>
+    ))}
+  </Box>
+)
+
+const Entry: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => {
+  return (
+    <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
+      {`${label}: ${value}`}
+    </Text>
   )
 }
 
-export default CaseInfo
+export const getDefentantLabel = (
+  formatMessage: IntlShape['formatMessage'],
+  defentants: Defendant[],
+  type: CaseType,
+) => {
+  if (!isIndictmentCase(type)) {
+    return formatMessage(core.defendant, {
+      suffix: defentants.length > 1 ? 'ar' : 'i',
+    })
+  }
+
+  if (defentants.length === 1) {
+    return formatMessage(core.indictmentDefendant, {
+      gender: defentants[0].gender,
+    })
+  }
+
+  return formatMessage(core.indictmentDefendants)
+}
+
+interface Props {
+  workingCase: Case
+}
+
+const Defendants: React.FC<Props> = ({ workingCase }) => {
+  const { defendants, type } = workingCase
+  const { formatMessage } = useIntl()
+
+  if (!defendants) return null
+
+  return (
+    <Entry
+      label={capitalize(getDefentantLabel(formatMessage, defendants, type))}
+      value={enumerate(
+        flatMap(defendants, (d) => (d.name ? [d.name] : [])),
+        formatMessage(core.and),
+      )}
+    />
+  )
+}
+
+export const ProsecutorCaseInfo: React.FC<Props & { hideCourt?: boolean }> = ({
+  workingCase,
+  hideCourt = false,
+}) => {
+  const { policeCaseNumbers, court } = workingCase
+  const { formatMessage } = useIntl()
+
+  return (
+    <Box component="section" marginBottom={5}>
+      <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
+      {!hideCourt && court?.name && (
+        <Entry label={formatMessage(core.court)} value={court?.name} />
+      )}
+      <Defendants workingCase={workingCase} />
+    </Box>
+  )
+}
+
+export const CourtCaseInfo: React.FC<Props> = ({ workingCase }) => {
+  const { courtCaseNumber, prosecutor } = workingCase
+  const { formatMessage } = useIntl()
+
+  return (
+    <Box component="section" marginBottom={5}>
+      {courtCaseNumber && (
+        <Box marginBottom={1}>
+          <Text variant="h2" as="h2">
+            {formatMessage(core.caseNumber, {
+              caseNumber: courtCaseNumber,
+            })}
+          </Text>
+        </Box>
+      )}
+      {prosecutor?.institution?.name && (
+        <Entry
+          label={formatMessage(core.prosecutor)}
+          value={prosecutor.institution.name}
+        />
+      )}
+      <Defendants workingCase={workingCase} />
+    </Box>
+  )
+}

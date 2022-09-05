@@ -6,7 +6,7 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
@@ -97,6 +97,26 @@
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/user-profile/"
+      }
+    },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-user-profile:dev-services",
+          "yarn nx run services-user-profile:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn start services-user-profile",
+          "scripts/run-xroad-proxy.sh"
+        ],
+        "parallel": true
       }
     },
     "docker-express": {}

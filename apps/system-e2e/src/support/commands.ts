@@ -1,6 +1,7 @@
 import { IDSLogin, CognitoCreds } from '../lib/types'
+import '@testing-library/cypress/add-commands'
+
 const testEnvironment = Cypress.env('testEnvironment')
-const authUrl = Cypress.env('authUrl')
 
 const cognitoLogin = ({ username, password }: CognitoCreds) => {
   const baseUrl = Cypress.config('baseUrl')
@@ -23,6 +24,7 @@ const cognitoLogin = ({ username, password }: CognitoCreds) => {
 
 const idsLogin = ({
   phoneNumber,
+  authUrl = Cypress.env('authUrl'),
   baseUrl = Cypress.config('baseUrl'),
   urlPath = '/',
 }: IDSLogin) => {
@@ -71,25 +73,23 @@ Cypress.Commands.add(
   },
 )
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber, baseUrl, urlPath = '/' }) => {
-  if (testEnvironment !== 'local') {
-    const { username, password } = Cypress.env('cognito')
-
+Cypress.Commands.add(
+  'idsLogin',
+  ({ phoneNumber, authUrl, baseUrl, urlPath = '/' }) => {
     cy.session('idsLogin', () => {
-      cy.session('cognitoLogin', () => cognitoLogin({ username, password }))
-      idsLogin({ phoneNumber, baseUrl, urlPath })
+      if (testEnvironment !== 'local') {
+        const { username, password } = Cypress.env('cognito')
+        cy.session('cognitoLogin', () => cognitoLogin({ username, password }))
+      }
+      idsLogin({ phoneNumber, authUrl, baseUrl, urlPath })
     })
-  } else {
-    cy.session('idsLogin', () => {
-      idsLogin({ phoneNumber, baseUrl, urlPath })
-    })
-  }
-})
+  },
+)
 
-Cypress.Commands.add('cognitoLogin', ({ username, password }) => {
+Cypress.Commands.add('cognitoLogin', (credentials = Cypress.env('cognito')) => {
   if (testEnvironment !== 'local') {
     cy.session('cognitoLogin', () => {
-      cognitoLogin({ username, password })
+      cognitoLogin(credentials)
     })
   } else {
     cy.log('skipLogin', 'On localhost, skip Cognito login')
