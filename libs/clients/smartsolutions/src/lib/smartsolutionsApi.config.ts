@@ -14,9 +14,9 @@ export const SmartSolutionsClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load: (env) => ({
     pkPassApiKeys: {
-      veApiKey: env.required('VE_PKPASS_API_KEY'),
-      rlsApiKey: env.required('RLS_PKPASS_API_KEY'),
+      veApiKey: env.required('VE_PKPASS_API_KEY', ''),
+      rlsApiKey: env.required('RLS_PKPASS_API_KEY', ''),
     },
-    pkPassApiUrl: env.required('SMART_SOLUTIONS_API_URL'),
+    pkPassApiUrl: env.required('SMART_SOLUTIONS_API_URL', ''),
   }),
 })
