@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Inline,
+  Input,
   LoadingDots,
   Select,
   Table as T,
@@ -100,132 +101,135 @@ export const AflamarkCalculator = () => {
         <Text>Engar niðurstöður fundust</Text>
       </Box>
 
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>Kvótategund</T.HeadData>
+      <table>
+        <thead>
+          <tr>
+            <th>Kvótategund</th>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.HeadData key={category.name}>{category.name}</T.HeadData>
+              <th key={category.name}>{category.name}</th>
             ))}
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          <T.Row>
-            <T.Data>Úthlutun</T.Data>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Úthlutun</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.allocation}</T.Data>
+              <td key={category.name}>{category.allocation}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Sérst. úthl.</T.Data>
+          </tr>
+          <tr>
+            <td>Sérst. úthl.</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.specialAlloction}</T.Data>
+              <td key={category.name}>{category.specialAlloction}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Milli ára</T.Data>
+          </tr>
+          <tr>
+            <td>Milli ára</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.betweenYears}</T.Data>
+              <td key={category.name}>{category.betweenYears}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Milli skipa</T.Data>
+          </tr>
+          <tr>
+            <td>Milli skipa</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.betweenShips}</T.Data>
+              <td key={category.name}>{category.betweenShips}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Aflamarksbr.</T.Data>
+          </tr>
+          <tr>
+            <td>Aflamarksbr.</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>
+              <td key={category.name}>
                 <input type="text" />
-              </T.Data>
+              </td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Aflamark</T.Data>
+          </tr>
+          <tr>
+            <td>Aflamark</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.allowedCatch}</T.Data>
+              <td key={category.name}>{category.allowedCatch}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Afli</T.Data>
+          </tr>
+          <tr>
+            <td>Afli</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.catch}</T.Data>
+              <td key={category.name}>{category.catch}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Aflabreyting</T.Data>
+          </tr>
+          <tr>
+            <td>Aflabreyting</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>
+              <td key={category.name}>
                 <input type="text" />
-              </T.Data>
+              </td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Staða</T.Data>
+          </tr>
+          <tr>
+            <td>Staða</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.status}</T.Data>
+              <td key={category.name}>{category.status}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Tilfærsla</T.Data>
+          </tr>
+          <tr>
+            <td>Tilfærsla</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.displacement}</T.Data>
+              <td key={category.name}>{category.displacement}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Ný staða</T.Data>
+          </tr>
+          <tr>
+            <td>Ný staða</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.newStatus}</T.Data>
+              <td key={category.name}>{category.newStatus}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Á næsta ár</T.Data>
+          </tr>
+          <tr>
+            <td>Á næsta ár</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.nextYear}</T.Data>
+              <td key={category.name}>{category.nextYear}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Umframafli</T.Data>
+          </tr>
+          <tr>
+            <td>Umframafli</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.excessCatch}</T.Data>
+              <td key={category.name}>{category.excessCatch}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Ónotað</T.Data>
+          </tr>
+          <tr>
+            <td>Ónotað</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.unused}</T.Data>
+              <td key={category.name}>{category.unused}</td>
             ))}
-          </T.Row>
+          </tr>
+          <tr>
+            <td>Heildaraflamark</td>
+            {shipInformation?.allowedCatchCategories?.map((category) => (
+              <td key={category.name}>
+                <Text>{category.totalAllowedCatch}</Text>
+              </td>
+            ))}
+          </tr>
 
-          <T.Row>
-            <T.Data>Heildaraflamark</T.Data>
+          <tr>
+            <td>Hlutdeild</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.totalAllowedCatch}</T.Data>
+              <td key={category.name}>{category.rateOfShare}</td>
             ))}
-          </T.Row>
-
-          <T.Row>
-            <T.Data>Hlutdeild</T.Data>
+          </tr>
+          <tr>
+            <td>Á næsta ár kvóti</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.rateOfShare}</T.Data>
+              <td key={category.name}>{category.nextYearQuota}</td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Á næsta ár kvóti</T.Data>
+          </tr>
+          <tr>
+            <td>Af næsta ár kvóti</td>
             {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.nextYearQuota}</T.Data>
+              <td key={category.name}>
+                <Input size="xs" name="a" />
+              </td>
             ))}
-          </T.Row>
-          <T.Row>
-            <T.Data>Af næsta ár kvóti</T.Data>
-            {shipInformation?.allowedCatchCategories?.map((category) => (
-              <T.Data key={category.name}>{category.nextYearFromQuota}</T.Data>
-            ))}
-          </T.Row>
-        </T.Body>
-      </T.Table>
+          </tr>
+        </tbody>
+      </table>
     </Box>
   )
 }
