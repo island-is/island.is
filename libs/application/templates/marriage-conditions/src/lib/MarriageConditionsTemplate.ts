@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
-import * as NationalId from 'kennitala';
+import * as NationalId from 'kennitala'
 import { getSpuseNationalId } from './utils'
 
 const pruneAfter = (time: number) => {
@@ -177,13 +177,13 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const spouse:string = getSpuseNationalId(context.application.answers)
+        const spouse: string = getSpuseNationalId(context.application.answers)
         return {
           ...context,
           application: {
             ...context.application,
             // Assigning Gervimaður Útlönd for testing
-            assignees: spouse ? [spouse ] : [],
+            assignees: spouse ? [spouse] : [],
           },
         }
       }),

@@ -1,6 +1,8 @@
-import { MarriageTermination } from './lib/constants'
-import { dataSchema } from './lib/dataSchema'
-import * as z from 'zod'
+export enum MarriageTermination {
+  divorce = 'divorce',
+  lostSpouse = 'lostSpouse',
+  annulment = 'annulment',
+}
 
 export type Individual = {
   person: {
@@ -35,4 +37,20 @@ export type Ceremony = {
   society: string
 }
 
-export type MarriageConditionsAnswers = z.infer<typeof dataSchema>
+export enum PersonTypes {
+  APPLICANT = 0,
+  SPOUSE = 1,
+  WITNESS = 2,
+}
+
+export type Person = {
+  name: string
+  ssn: string
+  phoneNumber?: string
+  email?: string
+  homeAddress: string
+  postalCode: string
+  city: string
+  signed: boolean
+  type: number
+}

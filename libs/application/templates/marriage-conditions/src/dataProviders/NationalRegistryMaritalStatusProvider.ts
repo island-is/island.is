@@ -1,8 +1,4 @@
-import {
-  MaritalStatus,
-  NationalRegistryPerson,
-  NationalRegistryBirthplace,
-} from '../types/schema'
+import { MaritalStatus, NationalRegistryPerson } from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
@@ -12,10 +8,14 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
 
+export interface MaritalStatusProvider {
+  maritalStatus: MaritalStatus
+}
+
 export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   type = 'NationalRegistryMaritalStatusProvider'
 
-  async provide(application: Application): Promise<any> {
+  async provide(application: Application): Promise<MaritalStatusProvider> {
     const fakeData = getValueViaPath<MarriageConditionsFakeData>(
       application.answers,
       'fakeData',
@@ -48,11 +48,12 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           console.error(
             `graphql error in ${this.type}: ${response.errors[0].message}`,
           )
-          return Promise.reject({reason: `graphql error in ${this.type}: ${response.errors[0].message}`,})
+          return Promise.reject({
+            reason: `graphql error in ${this.type}: ${response.errors[0].message}`,
+          })
         }
         const nationalRegistryUser: NationalRegistryPerson =
           response.data.nationalRegistryUser
-        console.log("HALLOOO",JSON.stringify(nationalRegistryUser), "use fake", useFakeData)
         const maritalStatus: MaritalStatus = this.formatMaritalStatus(
           useFakeData
             ? nationalRegistryUser.spouse?.maritalStatus || ''
@@ -60,25 +61,19 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
         )
 
         if (ALLOWED_MARITAL_STATUSES.includes(maritalStatus)) {
-          console.log("YES")
-          return Promise.resolve(
-           
-            {maritalStatus: maritalStatus}
-          )
+          return Promise.resolve({ maritalStatus: maritalStatus })
         }
-        console.log("NO?")
         return Promise.reject({
           reason: `Applicant marital status ${maritalStatus} not applicable`,
         })
       })
       .catch(() => {
-        console.log("WHY")
-        if(useFakeData){
-          console.log("WHY 2")
-          return Promise.resolve(
-           
-            {maritalStatus: fakeData?.maritalStatus || ''}
-          )
+        if (useFakeData) {
+          return Promise.resolve({
+            maritalStatus: this.formatMaritalStatus(
+              fakeData?.maritalStatus || '',
+            ),
+          })
         }
         return Promise.reject({})
       })
@@ -122,23 +117,5 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       default:
         return MaritalStatus.Unmarried
     }
-  }
-
-  private handleMaritalStatus(maritalCode: string): Promise<any> {
-    const maritalStatus = this.formatMaritalStatus(maritalCode)
-    if (
-      [
-        MaritalStatus.Unmarried,
-        MaritalStatus.Divorced,
-        MaritalStatus.Widowed,
-      ].includes(maritalStatus)
-    ) {
-      return Promise.resolve({
-        maritalStatus,
-      })
-    }
-    return Promise.reject({
-      reason: `Applicant marital status ${maritalStatus} not applicable`,
-    })
   }
 }

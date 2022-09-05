@@ -59,6 +59,7 @@
 /libs/air-discount-scheme/                                                                          @island-is/juni
 /libs/application/templates/p-sign/                                                                 @island-is/juni
 /libs/application/templates/marriage-conditions/                                                    @island-is/juni
+/libs/application/template-api-modules/marriage-conditions-submission/                              @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                  @island-is/juni
 /libs/message-queue/                                                                                @island-is/juni
 /libs/application/templates/example-payment/                                                        @island-is/juni
