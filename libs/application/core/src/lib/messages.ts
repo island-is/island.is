@@ -296,6 +296,20 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
     description: 'Error Message when no company search result is found',
   },
+  nationalRegistryAgeLimitNotMetTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetTitle',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
+    description:
+      'Error Title when age restriciton from national registry is not met',
+  },
+  nationalRegistryAgeLimitNotMetSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryAgeLimitNotMetSummary',
+    defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn ',
+    description:
+      'Error message when age restriciton from national registry is not met',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

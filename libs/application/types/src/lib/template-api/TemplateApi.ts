@@ -1,8 +1,4 @@
-export interface AnyParamsObject {
-  [key: string]: any
-}
-
-export class TemplateApi<TParams = AnyParamsObject> {
+export class TemplateApi<TParams = unknown> {
   // Name of the action that will be run on the API
   // these actions are exported are found in:
   // /libs/application/template-api-modules
@@ -68,13 +64,13 @@ export class TemplateApi<TParams = AnyParamsObject> {
   }
 }
 
-interface DefineTemplateApi<TParams = AnyParamsObject>
+interface DefineTemplateApi<TParams = unknown>
   extends Omit<TemplateApi, 'configure' | 'actionId'> {
   namespace?: string
   params?: TParams
 }
 
-interface ConfigureTemplateApi<TParams = AnyParamsObject>
+interface ConfigureTemplateApi<TParams = unknown>
   extends Pick<
     TemplateApi,
     'shouldPersistToExternalData' | 'order' | 'throwOnError' | 'externalDataId'
@@ -82,25 +78,8 @@ interface ConfigureTemplateApi<TParams = AnyParamsObject>
   params?: Partial<TParams>
 }
 
-export const defineTemplateApi = <TParams = AnyParamsObject>(
+export const defineTemplateApi = <TParams = unknown>(
   definition: DefineTemplateApi<TParams>,
 ): TemplateApi<TParams> => {
   return new TemplateApi<TParams>(definition)
 }
-
-/**
- * - Vinna beint með providers. defineProvider + configure, eða eitthvað.
- * - Getum smíðað "actionId" til að tengja saman form builder og api.
- * - Pæla í naming...
- * -
- *
- *
- * Naming?
- * ++ TemplateApi, api.
- *
- * namespace -
- * action - Mætti vera styttra, action?
- * actionId -
- * provider - Meikar sense í external data provider samhengi, en mætti kannski vera almennara til að covera fleiri use case. Api?
- * externalDataId -
- */

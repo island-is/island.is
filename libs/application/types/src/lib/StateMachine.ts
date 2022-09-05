@@ -10,7 +10,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
-import { AnyParamsObject, TemplateApi } from './template-api/TemplateApi'
+import { TemplateApi } from './template-api/TemplateApi'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -32,7 +32,7 @@ export type ReadWriteValues =
     }
 export interface RoleInState<
   T extends EventObject = AnyEventObject,
-  R = AnyParamsObject
+  R = unknown
 > {
   id: ApplicationRole
   read?: ReadWriteValues
@@ -70,7 +70,7 @@ export type StateLifeCycle =
 
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
-  R = AnyParamsObject
+  R = unknown
 > {
   name: string
   lifecycle: StateLifeCycle

@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { coreErrorMessages } from '@island.is/application/core'
 
 export enum FamilyRelation {
   CHILD = 'child',
@@ -52,12 +53,14 @@ export class NationalRegistryService extends BaseTemplateApiService {
         postalCode: user.Postnr,
       },
     }
+
     if (params?.ageToValidate) {
       if (params.ageToValidate < result.age)
         throw new TemplateApiError(
           {
-            title: 'This be an error',
-            summary: 'Error from nationalRegistry',
+            title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+            summary:
+              coreErrorMessages.couldNotAssignApplicationErrorDescription,
           },
           400,
         )

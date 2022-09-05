@@ -9,12 +9,15 @@ import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { TemplateApiErrorProblem } from '@island.is/shared/problem'
+import type { FormatMessage } from '@island.is/cms-translations'
+import { isTranslationObject } from '@island.is/application/core'
 @Injectable()
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
   private auth: User = {} as User
   private oldExternalData: ExternalData = {}
   private newExternalData: ExternalData = {}
+  private formatMessage!: FormatMessage
 
   constructor(
     private readonly applicationService: ApplicationService,
@@ -37,11 +40,12 @@ export class TemplateApiActionRunner {
     application: ApplicationWithAttachments,
     actions: TemplateApi[],
     auth: User,
+    formatMessage: FormatMessage,
   ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
-
+    this.formatMessage = formatMessage
     const groupedActions = this.groupByOrder(this.sortActions(actions))
     await this.runActions(groupedActions)
 
@@ -133,11 +137,17 @@ export class TemplateApiActionRunner {
     }
 
     const problem = actionResult.error.problem as TemplateApiErrorProblem
+    const { summary, title } = problem.errorReason
     return {
       [externalDataId || action]: {
         status: 'failure',
         date: new Date(),
-        reason: problem.errorReason,
+        reason: {
+          summary: isTranslationObject(summary)
+            ? this.formatMessage(summary)
+            : summary,
+          title: isTranslationObject(title) ? this.formatMessage(title) : title,
+        },
         statusCode: problem.status,
         data: {},
       },

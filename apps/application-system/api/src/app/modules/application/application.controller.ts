@@ -567,6 +567,12 @@ export class ApplicationController {
       ? helper.getApisFromRoleInState(userRole)
       : []
 
+    const namespaces = await getApplicationTranslationNamespaces(
+      existingApplication as BaseApplication,
+    )
+    const intl = await this.intlService.useIntl(namespaces, locale)
+
+    intl.formatMessage
     const templateApis: TemplateApi[] = []
 
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
@@ -588,6 +594,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       templateApis,
       user,
+      intl.formatMessage,
     )
 
     if (!updatedApplication) {

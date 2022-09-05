@@ -247,32 +247,28 @@ const FormExternalDataProvider: FC<{
         rules={{ required: true }}
         render={({ value, onChange }) => {
           return (
-            <>
-              <Checkbox
-                large={true}
-                onChange={(e) => {
-                  const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
-                  onChange(isChecked)
-                  activateBeforeSubmitCallback(isChecked)
-                }}
-                checked={value}
-                hasError={error !== undefined}
-                backgroundColor="blue"
-                name={`${id}`}
-                label={
-                  <Markdown>
-                    {checkboxLabel
-                      ? formatMessage(checkboxLabel)
-                      : formatMessage(coreMessages.externalDataAgreement)}
-                  </Markdown>
-                }
-                value={id}
-              />
-
-              {error !== undefined && <InputError errorMessage={error} />}
-            </>
+            <Checkbox
+              large={true}
+              onChange={(e) => {
+                const isChecked = e.target.checked
+                clearErrors(id)
+                setValue(id as string, isChecked)
+                onChange(isChecked)
+                activateBeforeSubmitCallback(isChecked)
+              }}
+              checked={value}
+              hasError={error !== undefined}
+              backgroundColor="blue"
+              name={`${id}`}
+              label={
+                <Markdown>
+                  {checkboxLabel
+                    ? formatMessage(checkboxLabel)
+                    : formatMessage(coreMessages.externalDataAgreement)}
+                </Markdown>
+              }
+              value={id}
+            />
           )
         }}
       />

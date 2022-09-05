@@ -10,10 +10,6 @@ import {
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 
-export interface ReferenceParams {
-  id: number
-}
-
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
 export class ReferenceTemplateService extends BaseTemplateApiService {
@@ -23,18 +19,13 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.EXAMPLE)
   }
 
-  async getReferenceData({
-    application,
-    params,
-  }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     const name = getValueViaPath(
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
-
-    const id = params as ReferenceParams
 
     return {
       referenceData: {
