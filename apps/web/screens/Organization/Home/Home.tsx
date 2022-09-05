@@ -66,7 +66,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       }}
       mainContent={organizationPage.slices.map((slice, index) => (
         <OrganizationSlice
-          key={slice?.['id'] ?? `${slice?.__typename}-${index}`}
+          key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
@@ -93,7 +93,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
     >
       {organizationPage.bottomSlices.map((slice, index) => (
         <OrganizationSlice
-          key={slice?.['id'] ?? `${slice?.__typename}-${index}`}
+          key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPage.slug}
