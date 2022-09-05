@@ -1,5 +1,5 @@
 import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
-import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetAflamarkInformationForShipInput } from './dto/getAflamarkInformationForShip.input'
 import { GetDeilistofnaInformationForShipInput } from './dto/getDeilistofnaInformationForShip.input'
 import { GetUpdatedAflamarkInformationForShipInput } from './dto/getUpdatedAflamarkInformationForShip.input'
@@ -7,6 +7,7 @@ import { GetUpdatedDeilistofnaInformationForShipInput } from './dto/getUpdatedDe
 import { Fish } from './models/fish'
 import {
   ExtendedShipStatusInformation,
+  ExtendedShipStatusInformationUpdate,
   ShipStatusInformation,
 } from './models/shipStatusInformation'
 
@@ -28,7 +29,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => ExtendedShipStatusInformation)
+  @Mutation(() => ExtendedShipStatusInformationUpdate)
   getUpdatedAflamarkInformationForShip(
     @Args('input') input: GetUpdatedAflamarkInformationForShipInput,
   ) {
@@ -46,7 +47,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => ShipStatusInformation)
+  @Mutation(() => ShipStatusInformation)
   getUpdatedDeilistofnaInformationForShip(
     @Args('input') input: GetUpdatedDeilistofnaInformationForShipInput,
   ) {
