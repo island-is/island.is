@@ -226,13 +226,29 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   }
 
   const onFileRejection = (files: FileRejection[]) => {
-    if (maxSize && maxSizeErrorText) {
-      files.forEach((file: FileRejection) => {
-        if (file.file.size > maxSize) {
-          return setUploadError(maxSizeErrorText)
-        }
-      })
-    }
+    // Check maxsize and display custom error if supplied otnerwise use default
+    files.forEach((file: FileRejection) => {
+      if (maxSize && file.file.size > maxSize) {
+        const maxSizeInMb = maxSize / 1000000
+        return setUploadError(
+          maxSizeErrorText ??
+            formatMessage(coreErrorMessages.fileMaxSizeLimitExceeded, {
+              maxSizeInMb,
+            }),
+        )
+      }
+
+      // Check whether the file is of the correct type and display an error to the user if not
+      const acceptedTypes = accept?.split(',')
+      const fileType = file.file.type
+      if (acceptedTypes && !acceptedTypes.includes(fileType)) {
+        return setUploadError(
+          formatMessage(coreErrorMessages.fileInvalidExtension, {
+            accept,
+          }),
+        )
+      }
+    })
   }
 
   const FileUploadComponent = forImageUpload
