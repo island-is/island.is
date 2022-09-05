@@ -3,14 +3,15 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  CreatePkPassDataInput,
-  PassTemplatesResponse,
   PkPassIssuer,
+  PassTemplatesResponse,
   PkPassServiceErrorResponse,
   UpsertPkPassResponse,
+  PassTemplatesDTO,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
 import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
+import { Pass, PassDataInput } from '../../gen/schema'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -54,9 +55,9 @@ export class SmartSolutionsApi {
   }
 
   async upsertPkPass(
-    payload: CreatePkPassDataInput,
+    payload: PassDataInput,
     issuer: PkPassIssuer,
-  ): Promise<UpsertPkPassResponse | null> {
+  ): Promise<Pass | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
@@ -126,32 +127,24 @@ export class SmartSolutionsApi {
 
     const response = json as UpsertPkPassResponse
 
-    if (response.data) {
-      return response as UpsertPkPassResponse
+    if (response.data?.upsertPass) {
+      return response.data.upsertPass
     }
 
     return null
   }
 
-  async generatePkPassQrCode(
-    payload: CreatePkPassDataInput,
-    issuer: PkPassIssuer,
-  ) {
+  async generatePkPassQrCode(payload: PassDataInput, issuer: PkPassIssuer) {
     const pass = await this.upsertPkPass(payload, issuer)
-    return pass?.data?.upsertPass?.distributionQRCode ?? null
+    return pass?.distributionQRCode
   }
 
-  async generatePkPassUrl(
-    payload: CreatePkPassDataInput,
-    issuer: PkPassIssuer,
-  ) {
+  async generatePkPassUrl(payload: PassDataInput, issuer: PkPassIssuer) {
     const pass = await this.upsertPkPass(payload, issuer)
-    return pass?.data?.upsertPass?.distributionUrl ?? null
+    return pass?.deliveryPageUrl
   }
 
-  async listTemplates(
-    issuer: PkPassIssuer,
-  ): Promise<PassTemplatesResponse | null> {
+  async listTemplates(issuer: PkPassIssuer): Promise<PassTemplatesDTO | null> {
     const listTemplatesQuery = {
       query: `
         query passTemplateQuery {
@@ -217,8 +210,11 @@ export class SmartSolutionsApi {
 
     const response = json as PassTemplatesResponse
 
-    if (response.data) {
-      return response as PassTemplatesResponse
+    if (response?.data?.passTemplates?.data) {
+      const passTemplatesDto: PassTemplatesDTO = {
+        passTemplates: response.data.passTemplates.data,
+      }
+      return passTemplatesDto
     }
 
     return null

@@ -1,3 +1,5 @@
+import { Pass, PassTemplate } from '../../gen/schema'
+
 export interface CreatePkPassDataInput {
   passTemplateId?: string
   inputFieldValues?: {
@@ -33,18 +35,18 @@ export interface PassTemplateDTO {
 export interface PassTemplatesResponse {
   data?: {
     passTemplates?: {
-      data?: PassTemplateDTO[]
+      data?: PassTemplate[]
     }
   }
 }
 
+export interface PassTemplatesDTO {
+  passTemplates?: Array<PassTemplate>
+}
+
 export interface UpsertPkPassResponse {
   data?: {
-    upsertPass?: {
-      distributionUrl?: string
-      deliveryPageUrl?: string
-      distributionQRCode?: string
-    }
+    upsertPass?: Pass
   }
 }
 
