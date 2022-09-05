@@ -16,7 +16,7 @@ export const parseFirearmLicensePayload = (
   const data: Array<GenericLicenseDataField> = [
     license.name && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Nafn',
+      label: 'Nafn einstaklings',
       value: license.name,
     },
     license.ssn && {
@@ -24,20 +24,24 @@ export const parseFirearmLicensePayload = (
       label: 'Kennitala',
       value: license.ssn,
     },
+    license.expirationDate && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Gildistími',
+      value: license.expirationDate,
+    },
     license.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
       value: license.issueDate,
     },
-    license.expirationDate && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Gildir til',
-      value: license.expirationDate,
-    },
     license.licenseNumber && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skotvopnaleyfis',
+      label: 'Númer skírteinis',
       value: license.licenseNumber,
+    },
+    license.collectorLicenseExpirationDate && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Gildistími safnaraskírteinis',
     },
     license.address && {
       type: GenericLicenseDataFieldType.Value,
@@ -45,17 +49,19 @@ export const parseFirearmLicensePayload = (
       value: license.address,
     },
     license.qualifications && {
-      type: GenericLicenseDataFieldType.Value,
+      type: GenericLicenseDataFieldType.Group,
       label: 'Réttindaflokkar',
-      value: license.qualifications,
+      fields: license.qualifications.split('').map((qualification) => ({
+        type: GenericLicenseDataFieldType.Category,
+        name: qualification,
+        label: 'placeholder text',
+      })),
     },
     license.properties && {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Skotvopn',
+      label: 'Skotvopn í eigu leyfishafa',
       fields: (license.properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
-        name: 'Staða skotvopns',
-        label: property.category ?? '',
         fields: parseProperties(property),
       })),
     },
@@ -80,6 +86,11 @@ const parseProperties = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      label: 'Heiti',
+      value: property.name ?? '',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
       label: 'Númer',
       value: property.serialNumber ?? '',
     },
@@ -87,16 +98,6 @@ const parseProperties = (
       type: GenericLicenseDataFieldType.Value,
       label: 'Hlaupvídd',
       value: property.caliber ?? '',
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Heiti',
-      value: property.name ?? '',
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Landsnúmer',
-      value: property.landsnumer ?? '',
     },
   ]
   return mappedProperty
