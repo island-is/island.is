@@ -50,6 +50,6 @@ export const dataSchema = z.object({
   }),
 
   //spouse's part of the application
-  spouseApprove: z.enum([YES, NO]),
+  spouseApprove: z.array(z.enum([YES, NO])).nonempty(),
   spouseApproveExternalData: z.boolean().refine((v) => v),
 })
