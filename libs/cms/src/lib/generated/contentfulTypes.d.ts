@@ -1314,6 +1314,32 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
   }
 }
 
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Life Event Page List */
+  lifeEventPageList?: ILifeEventPage[] | undefined
+}
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILinkFields {
   /** Text */
   text: string
@@ -2087,6 +2113,7 @@ export interface IOrganizationPageFields {
         | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
+        | ILifeEventPageListSlice
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -3677,6 +3704,7 @@ export type CONTENT_TYPE =
   | 'introLinkImage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
