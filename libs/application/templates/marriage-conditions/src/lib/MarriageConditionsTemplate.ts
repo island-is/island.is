@@ -15,7 +15,6 @@ import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
 import { getSpouseNationalId } from './utils'
 
-
 const pruneAfter = (time: number) => {
   return {
     shouldBeListed: true,
