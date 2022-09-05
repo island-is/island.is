@@ -12,7 +12,7 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES, MarriageTermination } from '../lib/constants'
+import { YES, MarriageTermination } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
@@ -129,7 +129,7 @@ export const spouseConfirmation: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicant.person.name',
-                  title: 'Nafn',
+                  title: m.name,
                   width: 'half',
                   backgroundColor: 'white',
                   readOnly: true,
