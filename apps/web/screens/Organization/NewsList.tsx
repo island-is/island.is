@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import { Screen } from '../../types'
@@ -41,16 +40,23 @@ import {
   GetNamespaceQuery,
   Query,
   QueryGetOrganizationPageArgs,
+  QueryGetProjectPageArgs,
+  OrganizationPage,
+  ProjectPage,
 } from '../../graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { ProjectWrapper } from '../Project/components/ProjectWrapper'
 
 const PERPAGE = 10
 
 interface NewsListProps {
-  organizationPage: Query['getOrganizationPage']
+  parentPage: OrganizationPage | ProjectPage
   newsList: GetNewsQuery['getNews']['items']
   total: number
   datesMap: { [year: string]: number[] }
@@ -62,7 +68,7 @@ interface NewsListProps {
 }
 
 const NewsList: Screen<NewsListProps> = ({
-  organizationPage,
+  parentPage,
   newsList,
   total,
   datesMap,
@@ -76,16 +82,13 @@ const NewsList: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
-  useContentfulId(organizationPage.id)
+  useContentfulId(parentPage.id)
   useLocalLinkTypeResolver()
 
-  const currentNavItem =
-    organizationPage.menuLinks.find(
-      ({ primaryLink }) => primaryLink.url === Router.asPath,
-    )?.primaryLink ??
-    organizationPage.secondaryMenu?.childrenLinks.find(
-      ({ url }) => url === Router.asPath,
-    )
+  const typename =
+    (parentPage.__typename?.toLowerCase() as LinkType) ?? 'organizationpage'
+
+  const currentNavItem = getCurrentNavItem(parentPage, Router.asPath)
 
   const newsTitle =
     currentNavItem?.text ??
@@ -131,10 +134,15 @@ const NewsList: Screen<NewsListProps> = ({
       return queryObject
     }, {})
 
+    if (parentPage.__typename === 'ProjectPage') {
+      return {
+        pathname: linkResolver('projectnewsoverview', [parentPage.slug]).href,
+        query,
+      }
+    }
     return {
-      pathname: linkResolver('organizationnewsoverview', [
-        organizationPage.slug,
-      ]).href,
+      pathname: linkResolver('organizationnewsoverview', [parentPage.slug])
+        .href,
       query,
     }
   }
@@ -146,9 +154,9 @@ const NewsList: Screen<NewsListProps> = ({
       typename: 'homepage',
     },
     {
-      title: organizationPage.title,
-      href: linkResolver('organizationpage', [organizationPage.slug]).href,
-      typename: 'organizationpage',
+      title: parentPage.title,
+      href: linkResolver(typename, [parentPage.slug]).href,
+      typename: typename,
     },
   ]
 
@@ -205,12 +213,12 @@ const NewsList: Screen<NewsListProps> = ({
     </Hidden>
   )
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  const navList: NavigationItem[] = getSidebarLinks(parentPage).map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        organizationPage.newsTag?.slug === selectedTag &&
+        parentPage.newsTag?.slug === selectedTag &&
         primaryLink.url === Router.asPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
@@ -219,10 +227,100 @@ const NewsList: Screen<NewsListProps> = ({
     }),
   )
 
+  const content = (
+    <Stack space={[3, 3, 4]}>
+      <Text variant="h1" as="h1" marginBottom={2}>
+        {newsTitle}
+      </Text>
+      {selectedYear && (
+        <Hidden below="lg">
+          <Text variant="h2" as="h2">
+            {selectedYear}
+          </Text>
+        </Hidden>
+      )}
+      <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
+        <Select
+          label={yearString}
+          placeholder={yearString}
+          isSearchable={false}
+          value={yearOptions.find(
+            (option) =>
+              option.value ===
+              (selectedYear ? selectedYear.toString() : allYearsString),
+          )}
+          options={yearOptions}
+          onChange={({ value }: Option) => {
+            Router.push(makeHref(value === allYearsString ? null : value))
+          }}
+          name="year"
+        />
+      </GridColumn>
+      {selectedYear && (
+        <GridColumn hiddenAbove="sm">
+          <Select
+            label={monthString}
+            placeholder={monthString}
+            value={monthOptions.find((o) => o.value === selectedMonth)}
+            options={monthOptions}
+            onChange={({ value }: Option) =>
+              Router.push(makeHref(selectedYear, value))
+            }
+            name="month"
+          />
+        </GridColumn>
+      )}
+      {!newsList.length && (
+        <Text variant="h4">
+          {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
+        </Text>
+      )}
+      {newsList.map((newsItem, index) => (
+        <NewsCard
+          key={index}
+          title={newsItem.title}
+          introduction={newsItem.intro}
+          image={newsItem.image}
+          titleAs="h2"
+          href={
+            linkResolver('organizationnews', [parentPage.slug, newsItem.slug])
+              .href
+          }
+          date={newsItem.date}
+          readMoreText={n('readMore', 'Lesa nánar')}
+        />
+      ))}
+      {newsList.length > 0 && (
+        <Box paddingTop={[4, 4, 8]}>
+          <Pagination
+            totalPages={Math.ceil(total / PERPAGE)}
+            page={selectedPage}
+            renderLink={(page, className, children) => (
+              <Link
+                href={{
+                  pathname: linkResolver('organizationnewsoverview', [
+                    parentPage.slug,
+                  ]).href,
+                  query: { ...Router.query, page },
+                }}
+              >
+                <span className={className}>{children}</span>
+              </Link>
+            )}
+          />
+        </Box>
+      )}
+    </Stack>
+  )
+
+  if (parentPage.__typename === 'ProjectPage') {
+    return <ProjectWrapper></ProjectWrapper>
+  }
+
   return (
     <OrganizationWrapper
       pageTitle={newsTitle}
-      organizationPage={organizationPage}
+      organizationPage={parentPage}
       breadcrumbItems={breadCrumbs}
       sidebarContent={sidebar}
       navigationData={{
@@ -230,92 +328,31 @@ const NewsList: Screen<NewsListProps> = ({
         items: navList,
       }}
     >
-      <Stack space={[3, 3, 4]}>
-        <Text variant="h1" as="h1" marginBottom={2}>
-          {newsTitle}
-        </Text>
-        {selectedYear && (
-          <Hidden below="lg">
-            <Text variant="h2" as="h2">
-              {selectedYear}
-            </Text>
-          </Hidden>
-        )}
-        <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
-          <Select
-            label={yearString}
-            placeholder={yearString}
-            isSearchable={false}
-            value={yearOptions.find(
-              (option) =>
-                option.value ===
-                (selectedYear ? selectedYear.toString() : allYearsString),
-            )}
-            options={yearOptions}
-            onChange={({ value }: Option) => {
-              Router.push(makeHref(value === allYearsString ? null : value))
-            }}
-            name="year"
-          />
-        </GridColumn>
-        {selectedYear && (
-          <GridColumn hiddenAbove="sm">
-            <Select
-              label={monthString}
-              placeholder={monthString}
-              value={monthOptions.find((o) => o.value === selectedMonth)}
-              options={monthOptions}
-              onChange={({ value }: Option) =>
-                Router.push(makeHref(selectedYear, value))
-              }
-              name="month"
-            />
-          </GridColumn>
-        )}
-        {!newsList.length && (
-          <Text variant="h4">
-            {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
-          </Text>
-        )}
-        {newsList.map((newsItem, index) => (
-          <NewsCard
-            key={index}
-            title={newsItem.title}
-            introduction={newsItem.intro}
-            image={newsItem.image}
-            titleAs="h2"
-            href={
-              linkResolver('organizationnews', [
-                organizationPage.slug,
-                newsItem.slug,
-              ]).href
-            }
-            date={newsItem.date}
-            readMoreText={n('readMore', 'Lesa nánar')}
-          />
-        ))}
-        {newsList.length > 0 && (
-          <Box paddingTop={[4, 4, 8]}>
-            <Pagination
-              totalPages={Math.ceil(total / PERPAGE)}
-              page={selectedPage}
-              renderLink={(page, className, children) => (
-                <Link
-                  href={{
-                    pathname: linkResolver('organizationnewsoverview', [
-                      organizationPage.slug,
-                    ]).href,
-                    query: { ...Router.query, page },
-                  }}
-                >
-                  <span className={className}>{children}</span>
-                </Link>
-              )}
-            />
-          </Box>
-        )}
-      </Stack>
+      {content}
     </OrganizationWrapper>
+  )
+}
+
+const getSidebarLinks = (parentPage: OrganizationPage | ProjectPage) => {
+  if ('menuLinks' in parentPage) {
+    return parentPage.menuLinks
+  }
+  return parentPage.sidebarLinks
+}
+
+const getCurrentNavItem = (
+  parentPage: OrganizationPage | ProjectPage,
+  path: string,
+) => {
+  if (parentPage.__typename === 'ProjectPage') {
+    return parentPage.sidebarLinks.find(
+      ({ primaryLink }) => primaryLink.url === path,
+    )?.primaryLink
+  }
+  return (
+    parentPage.menuLinks.find(({ primaryLink }) => primaryLink.url === path)
+      ?.primaryLink ??
+    parentPage.secondaryMenu?.childrenLinks.find(({ url }) => url === path)
   )
 }
 
@@ -336,24 +373,74 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const year = getIntParam(query.y)
-  const month = year && getIntParam(query.m)
-  const selectedPage = getIntParam(query.page) ?? 1
+const getParentPage = async (
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  pathname: string,
+  locale: string,
+  slug: string,
+) => {
+  const pathnameIsForProjectPage =
+    (locale === 'is' && pathname.startsWith('/v/')) ||
+    (locale === 'en' && pathname.startsWith('/en/p/'))
+
+  if (pathnameIsForProjectPage) {
+    const projectPage = (
+      await Promise.resolve(
+        apolloClient.query<Query, QueryGetProjectPageArgs>({
+          query: GET_PROJECT_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: slug,
+              lang: locale as ContentLanguage,
+            },
+          },
+        }),
+      )
+    ).data?.getProjectPage
+    return projectPage
+  }
+
   const organizationPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug: query.slug as string,
+            slug: slug,
             lang: locale as ContentLanguage,
           },
         },
       }),
     )
-  ).data.getOrganizationPage
-  const tag = (query.tag as string) ?? organizationPage.newsTag?.slug ?? ''
+  ).data?.getOrganizationPage
+  return organizationPage
+}
+
+NewsList.getInitialProps = async ({
+  apolloClient,
+  locale,
+  query,
+  pathname,
+}) => {
+  const year = getIntParam(query.y)
+  const month = year && getIntParam(query.m)
+  const selectedPage = getIntParam(query.page) ?? 1
+
+  const parentPage = await getParentPage(
+    apolloClient,
+    pathname,
+    locale,
+    query.slug as string,
+  )
+
+  if (!parentPage) {
+    throw new CustomNextError(
+      404,
+      `Could not find parent page with slug: ${query.slug}`,
+    )
+  }
+
+  const tag = (query.tag as string) ?? parentPage?.newsTag?.slug ?? ''
 
   const [
     {
@@ -405,8 +492,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    organizationPage: organizationPage,
-    newsList: organizationPage.newsTag ? newsList : [],
+    parentPage: parentPage,
+    newsList: parentPage?.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,
@@ -414,7 +501,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
+    ...getThemeConfig(parentPage?.theme, parentPage?.slug),
   }
 }
 

@@ -145,7 +145,7 @@ const NewsItem: Screen<NewsItemProps> = ({
     </>
   )
 }
-
+// TODO: add project page support
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {

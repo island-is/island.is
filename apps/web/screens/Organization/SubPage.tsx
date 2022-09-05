@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -36,7 +36,6 @@ import {
   Form,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
@@ -46,7 +45,7 @@ import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
 }
 
 const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
@@ -208,8 +207,8 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
-  namespace: Namespace,
-  organizationPageSlug: string,
+  namespace: Record<string, string>,
+  slug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
@@ -220,7 +219,7 @@ const renderSlices = (
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPageSlug}
+          slug={slug}
           renderedOnOrganizationSubpage={true}
           marginBottom={index === slices.length - 1 ? 5 : 0}
         />

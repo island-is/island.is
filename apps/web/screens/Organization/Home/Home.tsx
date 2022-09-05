@@ -69,7 +69,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPage.slug}
+          slug={organizationPage.slug}
           marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
         />
       ))}
@@ -96,7 +96,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPage.slug}
+          slug={organizationPage.slug}
           fullWidth={true}
         />
       ))}

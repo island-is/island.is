@@ -81,9 +81,10 @@ interface OrganizationSliceProps {
   slice: Slice
   namespace?: Record<string, string>
   fullWidth?: boolean
-  organizationPageSlug?: string
+  slug?: string
   renderedOnOrganizationSubpage?: boolean
   marginBottom?: ResponsiveSpace
+  params?: Record<string, any>
 }
 
 const fullWidthSlices = [
@@ -95,8 +96,9 @@ const fullWidthSlices = [
 const renderSlice = (
   slice,
   namespace,
-  organizationPageSlug,
+  slug,
   renderedOnOrganizationSubpage = false,
+  params,
 ) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
@@ -131,8 +133,9 @@ const renderSlice = (
       return (
         <LatestNewsSlice
           slice={slice}
-          organizationPageSlug={organizationPageSlug}
+          slug={slug}
           renderedOnOrganizationSubpage={renderedOnOrganizationSubpage}
+          {...params}
         />
       )
     case 'MailingListSignupSlice':
@@ -148,9 +151,10 @@ export const OrganizationSlice = ({
   slice,
   namespace,
   fullWidth = false,
-  organizationPageSlug = '',
+  slug = '',
   renderedOnOrganizationSubpage = false,
   marginBottom = 0,
+  params,
 }: OrganizationSliceProps) => {
   return !fullWidth ? (
     <GridContainer>
@@ -171,8 +175,9 @@ export const OrganizationSlice = ({
           {renderSlice(
             slice,
             namespace,
-            organizationPageSlug,
+            slug,
             renderedOnOrganizationSubpage,
+            params,
           )}
         </GridColumn>
       </GridRow>
@@ -182,8 +187,9 @@ export const OrganizationSlice = ({
       {renderSlice(
         slice,
         namespace,
-        organizationPageSlug,
+        slug,
         renderedOnOrganizationSubpage,
+        params,
       )}
     </Box>
   )

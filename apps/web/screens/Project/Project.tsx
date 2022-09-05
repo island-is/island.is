@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -16,11 +16,10 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
   OrganizationSlice,
-  Section,
   HeadWithSocialSharing,
-  NewsItems,
   Stepper,
   stepperUtils,
+  Form,
 } from '@island.is/web/components'
 import {
   Box,
@@ -47,10 +46,10 @@ import { ProjectChatPanel } from './components/ProjectChatPanel'
 interface PageProps {
   projectPage: Query['getProjectPage']
   news: GetNewsQuery['getNews']['items']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
-  stepperNamespace: Query['getNamespace']
+  stepperNamespace: Record<string, string>
 }
 
 const ProjectPage: Screen<PageProps> = ({
@@ -177,7 +176,12 @@ const ProjectPage: Screen<PageProps> = ({
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {subpage.content && richText(subpage.content as SliceType[])}
+            {subpage.content &&
+              richText(subpage.content as SliceType[], {
+                renderComponent: {
+                  Form: (slice) => <Form form={slice} namespace={namespace} />,
+                },
+              })}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
@@ -228,7 +232,7 @@ const ProjectPage: Screen<PageProps> = ({
                   slice={slice}
                   namespace={namespace}
                   fullWidth={true}
-                  organizationPageSlug={projectPage.slug}
+                  slug={projectPage.slug}
                 />
               </Box>
             ) : (
@@ -237,28 +241,26 @@ const ProjectPage: Screen<PageProps> = ({
                 slice={slice}
                 namespace={namespace}
                 fullWidth={true}
-                organizationPageSlug={projectPage.slug}
+                slug={projectPage.slug}
               />
             ),
           )}
       </ProjectWrapper>
-      {!subpage && !!projectPage.newsTag && (
-        <div style={{ overflow: 'hidden' }}>
-          <Section
-            paddingTop={[8, 8, 6]}
-            paddingBottom={[8, 8, 6]}
-            background="purple100"
-            aria-labelledby="latestNewsTitle"
-          >
-            <NewsItems
-              heading={n('newsAndAnnouncements')}
-              headingTitle="news-items-title"
-              seeMoreText={n('seeMore')}
-              items={news}
+      {!subpage &&
+        projectPage.bottomSlices.map((slice) => {
+          return (
+            <OrganizationSlice
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={projectPage.slug}
+              fullWidth={true}
+              params={{
+                linkType: 'projectPage',
+              }}
             />
-          </Section>
-        </div>
-      )}
+          )
+        })}
     </>
   )
 }
