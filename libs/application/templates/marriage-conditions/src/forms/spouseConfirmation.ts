@@ -145,6 +145,7 @@ export const spouseConfirmation: Form = buildForm({
                   width: 'half',
                   backgroundColor: 'blue',
                   readOnly: true,
+                  format: '###-####',
                   defaultValue: (application: Application) => {
                     const data = application.externalData.userProfile
                       .data as UserProfile
@@ -180,6 +181,7 @@ export const spouseConfirmation: Form = buildForm({
                   title: m.phone,
                   width: 'half',
                   backgroundColor: 'blue',
+                  format: '###-####',
                   defaultValue: (application: Application) => {
                     const info = application.answers.spouse as Individual
                     return removeCountryCode(info?.phone ?? '')
