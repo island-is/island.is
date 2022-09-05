@@ -1,8 +1,4 @@
-export type JwtDelegationType =
-  | 'ProcurationHolder'
-  | 'LegalGuardian'
-  | 'PersonalRepresentative'
-  | 'Custom'
+export type JwtDelegationType = 'ProcurationHolder' | 'LegalGuardian' | 'Custom'
 
 export interface JwtAct {
   client_id: string
