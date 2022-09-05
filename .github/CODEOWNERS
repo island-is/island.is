@@ -70,6 +70,7 @@
 /libs/application/templates/passport/                                                               @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 /libs/application/templates/operating-license/                                                      @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/operating-license/                 @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -151,6 +152,11 @@
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
+/apps/web/components/ChatPanel/                                                                     @island-is/stefna
+/apps/web/components/Form/                                                                          @island-is/stefna
+/apps/web/components/Stepper/                                                                       @island-is/stefna
+/apps/web/hooks/useFeatureFlag.ts                                                                   @island-is/stefna
+/apps/web/utils/featureFlag/                                                                        @island-is/stefna
 /libs/content-search-toolkit/                                                                       @island-is/stefna @island-is/juni
 /libs/content-search-index-manager/                                                                 @island-is/stefna @island-is/juni
 /libs/content-search-metrics/                                                                       @island-is/stefna @island-is/juni
@@ -178,7 +184,9 @@
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
+/libs/clients/financial-statements-inao                                                             @island-is/programm
 /libs/application/templates/financial-statements-inao/                                              @island-is/programm
+/libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao          @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo

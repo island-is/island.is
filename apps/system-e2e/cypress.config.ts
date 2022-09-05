@@ -1,26 +1,17 @@
 import { defineConfig } from 'cypress'
-import { getCognitoCredentials } from './src/support/utils'
-import { TestEnvironment, BaseUrl, AuthUrl } from './src/lib/types'
+import { getCognitoCredentials, getEnvironmentUrls } from './src/support/utils'
+import { emailTask } from './src/support/tasks/email'
 
-const getEnvironmentUrls = (env: TestEnvironment) => {
-  return env === 'dev'
-    ? { authUrl: AuthUrl.dev, baseUrl: BaseUrl.dev }
-    : env === 'prod'
-    ? { authUrl: AuthUrl.prod, baseUrl: BaseUrl.prod }
-    : env === 'staging'
-    ? { authUrl: AuthUrl.staging, baseUrl: BaseUrl.staging }
-    : { authUrl: AuthUrl.local, baseUrl: BaseUrl.local }
-}
+import type { TestEnvironment } from './src/lib/types'
+import { Timeout } from './src/lib/types'
 
 export default defineConfig({
   fileServerFolder: '.',
   fixturesFolder: './src/fixtures',
   video: false,
-  defaultCommandTimeout: 60000,
-  pageLoadTimeout: 60000,
-  responseTimeout: 12000,
-  videosFolder: '../../dist/cypress/apps/web-e2e/videos',
-  screenshotsFolder: '../../dist/cypress/apps/web-e2e/screenshots',
+  defaultCommandTimeout: Timeout.long,
+  pageLoadTimeout: Timeout.medium,
+  responseTimeout: Timeout.short,
   viewportWidth: 1024,
   viewportHeight: 768,
   projectId: 'xw5cuj',
@@ -29,16 +20,17 @@ export default defineConfig({
     openMode: 0,
   },
   e2e: {
-    chromeWebSecurity: false,
-    specPattern: './src/integration/**/*.ts',
+    specPattern: '**/*.spec.{js,ts}',
     experimentalSessionAndOrigin: true,
-    supportFile: './src/support/index.ts',
+    supportFile: '**/support/index.{js,ts}',
     setupNodeEvents(on, config) {
+      on('task', { ...emailTask })
       const testEnvironment: TestEnvironment =
         process.env.TEST_ENVIRONMENT || 'local'
       if (testEnvironment !== 'local') {
         config.env.cognito = getCognitoCredentials()
       }
+      config.env.basePrefix = process.env.BASE_URL_PREFIX
       const { baseUrl, authUrl } = getEnvironmentUrls(testEnvironment)
       config.env.testEnvironment = testEnvironment
       config.env.authUrl = authUrl

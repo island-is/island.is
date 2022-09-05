@@ -18,7 +18,7 @@ import {
   PageLayout,
   PoliceRequestAccordionItem,
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   CaseFileList,
   Decision,
@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -244,7 +244,7 @@ export const Ruling: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -265,9 +265,7 @@ export const Ruling: React.FC = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -280,10 +278,9 @@ export const Ruling: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
+                  user &&
+                  (user.id === workingCase.judge?.id ||
+                    user.id === workingCase.registrar?.id)
                 }
                 isCaseCompleted={completedCaseStates.includes(
                   workingCase.state,
@@ -854,7 +851,7 @@ export const Ruling: React.FC = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

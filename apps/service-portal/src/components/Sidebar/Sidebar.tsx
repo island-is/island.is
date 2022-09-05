@@ -24,7 +24,7 @@ export const Sidebar: FC<{}> = () => {
   const { signOut } = useAuth()
   // const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   // const isMobile = width < theme.breakpoints.md
-  const { unreadCounter } = useListDocuments('')
+  const { unreadCounter } = useListDocuments()
   const { formatMessage } = useLocale()
 
   /* This is commented out because this will be revisited next fall (2022) */
@@ -98,7 +98,6 @@ export const Sidebar: FC<{}> = () => {
         paddingBottom={4}
         paddingTop={5}
         height="full"
-        className={!collapsed && styles.sidebarScroll}
       >
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>

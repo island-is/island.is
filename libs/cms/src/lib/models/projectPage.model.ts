@@ -79,7 +79,7 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
-  slices: (fields.slices ?? []).map(safelyMapSliceUnion),
+  slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
   projectSubpages: (fields.projectSubpages ?? [])
     .filter((p) => p.fields?.title)

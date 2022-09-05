@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -13,6 +13,7 @@ import {
 import { FinancialStatementsInaoService } from './financialStatementsInao.service'
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
+import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -37,5 +38,15 @@ export class FinancialStatementsInaoResolver {
   @Query(() => [Election], { nullable: true })
   async financialStatementsInaoElections() {
     return this.financialStatementsService.getElections()
+  }
+
+  @Query(() => Number, { nullable: true })
+  async financialStatementsInaoClientFinancialLimit(
+    @Args('input') input: InaoClientFinancialLimitInput,
+  ) {
+    return this.financialStatementsService.getClientFinancialLimit(
+      input.clientType,
+      input.year,
+    )
   }
 }

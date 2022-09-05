@@ -34,7 +34,16 @@ export const GET_USERS_VEHICLES = gql`
           nextInspectionDate
           nextInspectionDateIfPassedInspectionToday
         }
+        operatorNumber
+        primaryOperator
+        ownerSsid
+        ownerName
+        lastInspectionResult
+        lastInspectionDate
+        lastInspectionType
+        nextInspectionDate
       }
+      downloadServiceURL
       createdTimestamp
     }
   }

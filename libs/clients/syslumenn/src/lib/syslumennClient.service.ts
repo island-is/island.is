@@ -167,7 +167,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment | undefined,
+    attachments: Attachment[] | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -177,7 +177,7 @@ export class SyslumennService {
     const payload = constructUploadDataObject(
       id,
       persons,
-      attachment,
+      attachments,
       extraData,
       uploadDataName,
       uploadDataId,

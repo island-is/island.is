@@ -1,5 +1,6 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
+import { checkDelegation } from '@island.is/shared/utils'
 
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -36,10 +37,14 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
+  const isDelegation = userInfo && checkDelegation(userInfo)
 
   // User's Family members
   const { data: famData, loading: familyLoading } = useQuery<Query>(
     NATIONAL_REGISTRY_FAMILY,
+    {
+      skip: isDelegation,
+    },
   )
   const { nationalRegistryFamily } = famData || {}
   return (
@@ -195,27 +200,31 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
-        <Divider />
-        <Box marginY={3} />
-        <UserInfoLine
-          title={formatMessage(spmm.userFamilyMembersOnNumber)}
-          label={userInfo.profile.name}
-          content={formatNationalId(userInfo.profile.nationalId)}
-          loading={loading || familyLoading}
-        />
-        <Divider />
-        {nationalRegistryFamily && nationalRegistryFamily.length > 0
-          ? nationalRegistryFamily?.map((item) => (
-              <React.Fragment key={item.nationalId}>
-                <UserInfoLine
-                  label={item.fullName}
-                  content={formatNationalId(item.nationalId)}
-                  loading={loading}
-                />
-                <Divider />
-              </React.Fragment>
-            ))
-          : null}
+        {!isDelegation && (
+          <>
+            <Divider />
+            <Box marginY={3} />
+            <UserInfoLine
+              title={formatMessage(spmm.userFamilyMembersOnNumber)}
+              label={userInfo.profile.name}
+              content={formatNationalId(userInfo.profile.nationalId)}
+              loading={loading || familyLoading}
+            />
+            <Divider />
+            {nationalRegistryFamily && nationalRegistryFamily.length > 0
+              ? nationalRegistryFamily?.map((item) => (
+                  <React.Fragment key={item.nationalId}>
+                    <UserInfoLine
+                      label={item.fullName}
+                      content={formatNationalId(item.nationalId)}
+                      loading={loading}
+                    />
+                    <Divider />
+                  </React.Fragment>
+                ))
+              : null}
+          </>
+        )}
       </Stack>
     </>
   )

@@ -61,9 +61,9 @@ describe('CaseController - Create court case', () => {
     const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
-    const policeCaseNumber = uuid()
+    const policeCaseNumbers = [uuid()]
     const courtId = uuid()
-    const theCase = { id: caseId, type, policeCaseNumber, courtId } as Case
+    const theCase = { id: caseId, type, policeCaseNumbers, courtId } as Case
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase)
@@ -75,7 +75,7 @@ describe('CaseController - Create court case', () => {
         caseId,
         courtId,
         type,
-        policeCaseNumber,
+        policeCaseNumbers,
         false,
       )
     })

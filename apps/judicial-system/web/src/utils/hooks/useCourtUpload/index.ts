@@ -7,6 +7,16 @@ import {
 } from '@island.is/judicial-system/types'
 import { useCallback, useEffect, useState } from 'react'
 
+export enum UploadState {
+  ALL_UPLOADED = 'ALL_UPLOADED',
+  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
+  NONE_AVAILABLE = 'NONE_AVAILABLE',
+  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
+  SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
+  UPLOAD_ERROR = 'UPLOAD_ERROR',
+  UPLOADING = 'UPLOADING',
+}
+
 export type CaseFileStatus =
   | 'done'
   | 'done-broken'
@@ -19,16 +29,6 @@ export type CaseFileStatus =
 
 export interface CaseFile extends TCaseFile {
   status: CaseFileStatus
-}
-
-export enum UploadState {
-  ALL_UPLOADED = 'ALL_UPLOADED',
-  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
-  NONE_AVAILABLE = 'NONE_AVAILABLE',
-  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
-  SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
-  UPLOAD_ERROR = 'UPLOAD_ERROR',
-  UPLOADING = 'UPLOADING',
 }
 
 export const useCourtUpload = (

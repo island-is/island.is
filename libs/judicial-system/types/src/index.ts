@@ -18,7 +18,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState } from './lib/file'
+export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
   PresignedPost,
@@ -48,6 +48,8 @@ export {
   SessionArrangements,
   restrictionCases,
   investigationCases,
+  indictmentCases,
+  isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,

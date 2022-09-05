@@ -776,6 +776,12 @@ export interface IFormFields {
 
   /** Success Text */
   successText?: string | undefined
+
+  /** About You Heading Text */
+  aboutYouHeadingText?: string | undefined
+
+  /** Questions Heading text */
+  questionsHeadingText?: string | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -1301,6 +1307,32 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Life Event Page List */
+  lifeEventPageList?: ILifeEventPage[] | undefined
+}
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2063,7 +2095,6 @@ export interface IOrganizationPageFields {
   /** Theme */
   theme:
     | 'default'
-    | 'default_with_image'
     | 'utlendingastofnun'
     | 'sjukratryggingar'
     | 'syslumenn'
@@ -2082,6 +2113,7 @@ export interface IOrganizationPageFields {
         | IEventSlice
         | IFeaturedArticles
         | ISectionHeading
+        | ILifeEventPageListSlice
         | ILogoListSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2126,7 +2158,7 @@ export interface IOrganizationPageFields {
   featuredImage?: Asset | undefined
 
   /** Sidebar Cards */
-  sidebarCards?: ISidebarCard[] | undefined
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2602,6 +2634,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'LatestNewsCard'
     | undefined
 
   /** JSON */
@@ -3279,6 +3312,9 @@ export interface ITimelineFields {
 
   /** Events */
   events: ITimelineEvent[]
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** Timeline section with a collection of timeline events */
@@ -3668,6 +3704,7 @@ export type CONTENT_TYPE =
   | 'introLinkImage'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
