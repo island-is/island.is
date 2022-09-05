@@ -358,7 +358,7 @@ export class NationalRegistryService {
         nafn: '',
         adsetur: {
           heiti: '',
-          postnumer: '100',
+          postnumer: '-100',
         },
       }
     }
