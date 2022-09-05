@@ -217,7 +217,7 @@ const renderSlices = (
     default:
       return slices.map((slice, index) => (
         <OrganizationSlice
-          key={slice?.['id'] ?? `${slice?.__typename}-${index}`}
+          key={slice.id}
           slice={slice}
           namespace={namespace}
           organizationPageSlug={organizationPageSlug}

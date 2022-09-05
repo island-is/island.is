@@ -91,7 +91,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         )
       }
     >
-      {organizationPage.bottomSlices.map((slice, index) => (
+      {organizationPage.bottomSlices.map((slice) => (
         <OrganizationSlice
           key={slice.id}
           slice={slice}
