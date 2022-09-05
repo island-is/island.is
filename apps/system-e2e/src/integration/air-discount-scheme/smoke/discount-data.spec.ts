@@ -8,7 +8,7 @@ import { FixtureUser, BaseAuthority } from '../../../lib/types'
 
 import fakeUsers from '../../../fixtures/air-discount-scheme/users.json'
 
-describe('Air discount scheme', () => {
+describe.skip('Air discount scheme', () => {
   const testEnvironment = Cypress.env('testEnvironment')
 
   const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'gervimaður afríka')
@@ -25,7 +25,7 @@ describe('Air discount scheme', () => {
     const baseUrl = Cypress.config('baseUrl')
 
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: baseUrl,
       urlPath: '/min-rettindi',
     })

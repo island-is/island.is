@@ -126,18 +126,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
         <Box marginBottom={3} display="flex" flexDirection="row">
           {modalFlagEnabled && !loading && ownershipPdf && (
             <Box marginRight={2}>
-              <Button
-                colorScheme="default"
-                icon="reader"
-                iconType="outline"
-                size="default"
-                type="button"
-                variant="utility"
-                onClick={() => formSubmit(`${ownershipPdf}`)}
-              >
-                {formatMessage(messages.myCarsFiles)}
-              </Button>
-              {/* <DropdownExport
+              <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() =>
                   exportVehicleOwnedDocument(
@@ -147,7 +136,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
                     data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
                   )
                 }
-              /> */}
+              />
             </Box>
           )}
           <Box>
