@@ -48,11 +48,18 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
           console.error(
             `graphql error in ${this.type}: ${response.errors[0].message}`,
           )
-          return Promise.reject({reason: `graphql error in ${this.type}: ${response.errors[0].message}`,})
+          return Promise.reject({
+            reason: `graphql error in ${this.type}: ${response.errors[0].message}`,
+          })
         }
         const nationalRegistryUser: NationalRegistryPerson =
           response.data.nationalRegistryUser
-        console.log("HALLOOO",JSON.stringify(nationalRegistryUser), "use fake", useFakeData)
+        console.log(
+          'HALLOOO',
+          JSON.stringify(nationalRegistryUser),
+          'use fake',
+          useFakeData,
+        )
         const maritalStatus: MaritalStatus = this.formatMaritalStatus(
           useFakeData
             ? nationalRegistryUser.spouse?.maritalStatus || ''
@@ -60,25 +67,21 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
         )
 
         if (ALLOWED_MARITAL_STATUSES.includes(maritalStatus)) {
-          console.log("YES")
-          return Promise.resolve(
-           
-            {maritalStatus: maritalStatus}
-          )
+          console.log('YES')
+          return Promise.resolve({ maritalStatus: maritalStatus })
         }
-        console.log("NO?")
+        console.log('NO?')
         return Promise.reject({
           reason: `Applicant marital status ${maritalStatus} not applicable`,
         })
       })
       .catch(() => {
-        console.log("WHY")
-        if(useFakeData){
-          console.log("WHY 2")
-          return Promise.resolve(
-           
-            {maritalStatus: fakeData?.maritalStatus || ''}
-          )
+        console.log('WHY')
+        if (useFakeData) {
+          console.log('WHY 2')
+          return Promise.resolve({
+            maritalStatus: fakeData?.maritalStatus || '',
+          })
         }
         return Promise.reject({})
       })

@@ -30,10 +30,8 @@ export class MarriageConditionsSubmissionService {
     return response
   }
 
-  async assignSpouse({application,
-    auth,
-  }: TemplateApiModuleActionProps) {
-  /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+  async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
+    /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
@@ -43,7 +41,7 @@ export class MarriageConditionsSubmissionService {
         success: false,
       }
     }*/
-    console.log("ASSIGN!!!")
+    console.log('ASSIGN!!!')
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherSpouseApplicationEmail,
@@ -52,11 +50,8 @@ export class MarriageConditionsSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-
-  
     console.log(application)
     // SUBMIT
-
 
     return { success: true }
   }

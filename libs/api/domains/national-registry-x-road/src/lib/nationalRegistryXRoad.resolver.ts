@@ -86,7 +86,9 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('birthplace', () => NationalRegistryBirthplace, { nullable: true })
+  @ResolveField('birthplace', () => NationalRegistryBirthplace, {
+    nullable: true,
+  })
   @Audit()
   async resolveBirthPlace(
     @Context('req') { user }: { user: User },
@@ -98,7 +100,9 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @ResolveField('citizenship', () => NationalRegistryCitizenship, { nullable: true })
+  @ResolveField('citizenship', () => NationalRegistryCitizenship, {
+    nullable: true,
+  })
   @Audit()
   async resolveCitizenship(
     @Context('req') { user }: { user: User },

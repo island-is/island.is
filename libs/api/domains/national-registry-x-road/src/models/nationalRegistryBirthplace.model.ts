@@ -7,7 +7,7 @@ export class NationalRegistryBirthplace {
 
   @Field(() => String, { nullable: true })
   municipalityCode?: string | null
-  
+
   @Field(() => Date)
   dateOfBirth!: Date
 }

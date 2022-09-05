@@ -8,6 +8,7 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
+import { m } from '../../lib/messages'
 
 const IdentityQuery = gql`
   query IdentityQuery($input: IdentityInput!) {
@@ -58,7 +59,7 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/2']} paddingTop={2} paddingBottom={2}>
           <InputController
             id={nationaIdField}
-            label="Kennitala"
+            label={formatMessage(m.nationalId)}
             defaultValue={(application.answers[id] as any)?.nationalId ?? ''}
             format="######-####"
             required
@@ -74,10 +75,10 @@ export const NationalIdWithName: FC<FieldBaseProps> = ({
           <InputController
             id={nameField}
             defaultValue={(application.answers[id] as any)?.name ?? ''}
-            label="Nafn"
+            label={formatMessage(m.name)}
             error={
               queryError || data?.identity === null
-                ? 'Tókst ekki að sækja nafn út frá þessari kennitölu.'
+                ? formatMessage(m.nameError)
                 : nameFieldErrors && !data
                 ? nameFieldErrors
                 : undefined
