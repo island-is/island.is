@@ -107,7 +107,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          // TODO:
           onEntry: {
             apiModuleAction: ApiActions.assignSpouse,
           },
