@@ -32,6 +32,7 @@ import {
   IForm,
   IStepper,
   IGraphCard,
+  ILifeEventPageListSlice,
   ISidebarCard,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
@@ -90,6 +91,10 @@ import { EventSlice, mapEventSlice } from '../models/eventSlice.model'
 import { Form, mapForm } from '../models/form.model'
 import { mapStepper, Stepper } from '../models/stepper.model'
 import { GraphCard, mapGraphCard } from '../models/graphCard.model'
+import {
+  LifeEventPageListSlice,
+  mapLifeEventPageListSlice,
+} from '../models/lifeEventPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 
 type SliceTypes =
@@ -122,6 +127,7 @@ type SliceTypes =
   | IForm
   | IStepper
   | IGraphCard
+  | ILifeEventPageListSlice
   | ISidebarCard
 
 export const SliceUnion = createUnionType({
@@ -159,6 +165,7 @@ export const SliceUnion = createUnionType({
     Form,
     Stepper,
     GraphCard,
+    LifeEventPageListSlice,
     SidebarCard,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
@@ -225,6 +232,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapStepper(slice as IStepper)
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
+    case 'lifeEventPageListSlice':
+      return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
     case 'sidebarCard':
       return mapSidebarCard(slice as ISidebarCard)
     default:
