@@ -10,7 +10,7 @@ export const InfoAlert = () => {
     <Box marginY={2}>
       <AlertMessage
         type="info"
-        message="Tilvonandi hjónaefni fær sendan tölvupóst til þess að samþykkja umsókn."
+        message={formatMessage(m.informationAlertMessage)}
       />
     </Box>
   )

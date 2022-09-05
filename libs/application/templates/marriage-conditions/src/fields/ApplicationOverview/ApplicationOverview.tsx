@@ -10,7 +10,6 @@ type InfoProps = {
 }
 
 export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
-  console.log(application)
   const { formatMessage } = useLocale()
   const { answers } = application
   const applicant = answers.applicant as Individual
@@ -67,7 +66,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box>
         <Text variant="h3" marginBottom={3}>
-          {'Persónuuplýsingar'}
+          {formatMessage(m.personalInformationTitle)}
         </Text>
         <Box>
           <Box display="flex" marginBottom={3}>
