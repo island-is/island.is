@@ -5,9 +5,9 @@ export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
     return join(
       __dirname,
-      `../../../../../../../../../libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets/${file}`,
+      `../../../../../../../../../libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission/emailGenerators/assets/${file}`,
     ).replace(/^\/+/, '')
   }
 
-  return join(__dirname, `./driving-license-assets/${file}`)
+  return join(__dirname, `./marriage-conditions-assets/${file}`)
 }

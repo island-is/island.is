@@ -174,8 +174,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),
               buildDataProviderItem({
-                id: 'nationalRegistryMarriageStatus',
-                type: 'NationalRegistryMarriageStatusProvider',
+                id: 'maritalStatus',
+                type: 'NationalRegistryMaritalStatusProvider',
                 title: m.dataCollectionMaritalStatusTitle,
                 subTitle: m.dataCollectionMaritalStatusDescription,
               }),

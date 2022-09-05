@@ -43,7 +43,7 @@ export class MarriageConditionsSubmissionService {
         success: false,
       }
     }*/
- 
+    console.log("ASSIGN!!!")
 
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherSpouseApplicationEmail,

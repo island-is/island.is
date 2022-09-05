@@ -12,8 +12,8 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
 
-export class NationalRegistryMarriageStatusProvider extends BasicDataProvider {
-  type = 'NationalRegistryMarriageStatusProvider'
+export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
+  type = 'NationalRegistryMaritalStatusProvider'
 
   async provide(application: Application): Promise<any> {
     const fakeData = getValueViaPath<MarriageConditionsFakeData>(
@@ -30,28 +30,13 @@ export class NationalRegistryMarriageStatusProvider extends BasicDataProvider {
     const query = `
     query NationalRegistryUserQuery {
       nationalRegistryUserV2 {
-        nationalId
-        fullName
-        citizenship {
-          code
-          name
-        }
-        address {
-          postalCode
-          city
-          streetName
-          municipalityCode
-        }
+     
         spouse {
           name
           nationalId
           maritalStatus
         }
-        birthplace {
-          dateOfBirth
-          municipalityCode
-          location
-        }
+      
       }
     }
     `
@@ -59,7 +44,7 @@ export class NationalRegistryMarriageStatusProvider extends BasicDataProvider {
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
-        if (response.errors) {
+        if (response.errors && !useFakeData) {
           console.error(
             `graphql error in ${this.type}: ${response.errors[0].message}`,
           )
@@ -75,16 +60,26 @@ export class NationalRegistryMarriageStatusProvider extends BasicDataProvider {
         )
 
         if (ALLOWED_MARITAL_STATUSES.includes(maritalStatus)) {
+          console.log("YES")
           return Promise.resolve(
            
-            maritalStatus
+            {maritalStatus: maritalStatus}
           )
         }
+        console.log("NO?")
         return Promise.reject({
           reason: `Applicant marital status ${maritalStatus} not applicable`,
         })
       })
       .catch(() => {
+        console.log("WHY")
+        if(useFakeData){
+          console.log("WHY 2")
+          return Promise.resolve(
+           
+            {maritalStatus: fakeData?.maritalStatus || ''}
+          )
+        }
         return Promise.reject({})
       })
   }
