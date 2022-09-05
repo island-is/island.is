@@ -410,7 +410,7 @@ export const m = defineMessages({
   },
   nextSteps: {
     id: 'mac.application:nextSteps',
-    defaultMessage: 'Next steps',
+    defaultMessage: 'Næstu skref',
     description: '',
   },
   bullet1: {
