@@ -1,6 +1,6 @@
 import {
-  STEP_THREE_ROUTE,
-  STEP_TWO_ROUTE,
+  RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
+  RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Case, CaseState } from '@island.is/judicial-system/types'
 
@@ -12,7 +12,7 @@ import {
   Operation,
 } from '../../../utils'
 
-describe(`${STEP_TWO_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const caseData = makeRestrictionCase()
   const caseDataAddition: Case = {
     ...caseData,
@@ -25,7 +25,7 @@ describe(`${STEP_TWO_ROUTE}/:id`, () => {
     beforeEach(() => {
       cy.stubAPIResponses()
       intercept(caseDataAddition)
-      cy.visit(`${STEP_TWO_ROUTE}/test_id`)
+      cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
     })
 
     it('should validate input', () => {
@@ -79,7 +79,7 @@ describe(`${STEP_TWO_ROUTE}/:id`, () => {
       cy.contains('15').click()
       cy.getByTestid('reqCourtDate-time').clear().type('1333')
       cy.getByTestid('continueButton').click()
-      cy.url().should('include', STEP_THREE_ROUTE)
+      cy.url().should('include', RESTRICTION_CASE_POLICE_DEMANDS_ROUTE)
     })
   })
 
@@ -88,7 +88,7 @@ describe(`${STEP_TWO_ROUTE}/:id`, () => {
       const shouldFail = Operation.SendNotificationMutation
       cy.stubAPIResponses()
       intercept({ ...caseDataAddition, state: CaseState.DRAFT }, shouldFail)
-      cy.visit(`${STEP_TWO_ROUTE}/test_id`)
+      cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
     })
 
     it('should show an error message', () => {

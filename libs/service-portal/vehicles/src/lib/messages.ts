@@ -27,7 +27,7 @@ export const messages = defineMessages({
   },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
-    defaultMessage: 'Hreinsa filter',
+    defaultMessage: 'Hreinsa síu',
   },
   notFound: {
     id: 'sp.vehicles:not-found',
@@ -144,7 +144,7 @@ export const messages = defineMessages({
   },
   passengers: {
     id: 'sp.vehicles:passengers',
-    defaultMessage: 'Farþegar',
+    defaultMessage: 'Farþegar án ökumanns',
   },
   specialName: {
     id: 'sp.vehicles:special-name',
@@ -477,5 +477,28 @@ export const messages = defineMessages({
   recycleCar: {
     id: 'sp.vehicles:recycle-car',
     defaultMessage: 'Skilavottorð',
+  },
+  myCarsFiles: {
+    id: 'sp.vehicles:my-cars-files',
+    defaultMessage: 'Eignastöðuvottorð',
+  },
+
+  myCarsFilesPDF: {
+    id: 'sp.vehicles:my-cars-files-pdf',
+    defaultMessage: 'Sækja PDF',
+  },
+
+  myCarsFilesCSV: {
+    id: 'sp.vehicles:my-cars-files-csv',
+    defaultMessage: 'Sækja CSV',
+  },
+
+  myCarsFilesExcel: {
+    id: 'sp.vehicles:my-cars-files-excel',
+    defaultMessage: 'Sækja Excel',
+  },
+  vehicleHistoryReport: {
+    id: 'sp.vehicles:vehicle-history-report',
+    defaultMessage: 'Ferilskýrsla',
   },
 })

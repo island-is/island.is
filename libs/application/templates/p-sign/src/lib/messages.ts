@@ -121,6 +121,16 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'Phone number label',
   },
+  applicantsActorEmail: {
+    id: 'ps.application:applicantsEmail',
+    defaultMessage: 'Netfang forráðamanns',
+    description: 'Email label',
+  },
+  applicantsActorPhoneNumber: {
+    id: 'ps.application:applicantsPhoneNumber',
+    defaultMessage: 'Símanúmer forráðamanns',
+    description: 'Phone number label',
+  },
   cardValidityPeriod: {
     id: 'ps.application:cardValidityPeriod',
     defaultMessage: 'Gildistími',

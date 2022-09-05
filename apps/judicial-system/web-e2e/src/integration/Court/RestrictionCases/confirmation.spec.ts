@@ -1,9 +1,9 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
-import { CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { makeRestrictionCase, intercept } from '../../../utils'
 
-describe(`${CONFIRMATION_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   const caseData = makeRestrictionCase()
   const caseDataAddition: Case = {
     ...caseData,
@@ -14,14 +14,14 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   }
   const interceptByDecision = (decision: CaseDecision) => {
     intercept({ ...caseDataAddition, decision })
-    cy.visit(`${CONFIRMATION_ROUTE}/test_id_stadfesting`)
+    cy.visit(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)
   }
 
   describe('Displaying elements', () => {
     beforeEach(() => {
       cy.stubAPIResponses()
       intercept(caseDataAddition)
-      cy.visit(`${CONFIRMATION_ROUTE}/test_id_stadfesting`)
+      cy.visit(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)
     })
 
     it('should display the ruling statement and ruling', () => {

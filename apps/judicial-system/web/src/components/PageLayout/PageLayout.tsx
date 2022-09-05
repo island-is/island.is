@@ -9,7 +9,11 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import { UserRole, Case } from '@island.is/judicial-system/types'
+import {
+  UserRole,
+  Case,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
@@ -73,8 +77,8 @@ const PageLayout: React.FC<PageProps> = ({
           : {
               href:
                 user?.role === UserRole.ADMIN
-                  ? constants.USER_LIST_ROUTE
-                  : constants.CASE_LIST_ROUTE,
+                  ? constants.USERS_ROUTE
+                  : constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
@@ -117,9 +121,14 @@ const PageLayout: React.FC<PageProps> = ({
                             user,
                           ).filter((_, index) => index <= 2)
                     }
-                    formName={formatMessage(sections.title, {
-                      caseType: workingCase?.type,
-                    })}
+                    formName={formatMessage(
+                      isIndictmentCase(workingCase?.type)
+                        ? sections.indictmentTitle
+                        : sections.title,
+                      {
+                        caseType: workingCase?.type,
+                      },
+                    )}
                     activeSection={activeSection}
                     activeSubSection={activeSubSection}
                   />

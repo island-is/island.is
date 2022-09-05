@@ -14,21 +14,16 @@ import {
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
-  CourtDocuments,
   PageLayout,
-  CaseInfo,
+  CourtCaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
   HideableText,
-  TimeInputField,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -37,29 +32,24 @@ import {
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
-  setAndSendDateToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
-  courtDocuments,
   closedCourt,
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -73,7 +63,6 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
     '',
@@ -82,14 +71,10 @@ export const CourtRecord: React.FC = () => {
     sessionBookingsErrorMessage,
     setSessionBookingsErrorMessage,
   ] = useState<string>('')
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -236,39 +221,26 @@ export const CourtRecord: React.FC = () => {
         }
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'courtStartDate',
-            value: workingCase.courtDate,
-          },
-          {
-            key: 'courtLocation',
-            value:
+            courtStartDate: workingCase.courtDate,
+            courtLocation:
               workingCase.court &&
               `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')
                   : workingCase.court.name
               }`,
-          },
-          {
-            key: 'courtAttendees',
-            value:
+            courtAttendees:
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-          },
-          {
-            key: 'sessionBookings',
-            value:
+            sessionBookings:
               autofillSessionBookings.length > 0
                 ? autofillSessionBookings.join('')
                 : undefined,
-          },
-          {
-            key: 'endOfSessionBookings',
-            value:
+            endOfSessionBookings:
               endOfSessionBookings.length > 0
                 ? endOfSessionBookings.join('')
                 : undefined,
@@ -281,7 +253,7 @@ export const CourtRecord: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -295,7 +267,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.COURT_RECORD}
+      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -305,30 +277,34 @@ export const CourtRecord: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Þingbók
+            {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel="Dagsetning þinghalds"
-                timeLabel="Þinghald hófst (kk:mm)"
+                datepickerLabel={formatMessage(
+                  m.sections.courtStartDate.dateLabel,
+                )}
+                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'courtStartDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtStartDate: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 blueBox={false}
                 required
@@ -376,11 +352,14 @@ export const CourtRecord: React.FC = () => {
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                  [
+                    {
+                      isClosedCourtHidden: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
@@ -410,26 +389,9 @@ export const CourtRecord: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.title)}
-            </Text>
-          </Box>
           <CourtDocuments
-            title={formatMessage(
-              m.sections.courtDocuments.firstDocument.title,
-              {
-                caseType: caseTypes[workingCase.type],
-              },
-            )}
-            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -922,52 +884,43 @@ export const CourtRecord: React.FC = () => {
         <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Þinghald
+              {formatMessage(m.sections.endOfSessionTitle)}
             </Text>
           </Box>
           <GridContainer>
             <GridRow>
               <GridColumn>
-                <TimeInputField
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
+                <DateTime
+                  name="courtEndTime"
+                  datepickerLabel={formatMessage(
+                    m.sections.courtEndTime.dateLabel,
+                  )}
+                  timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                  minDate={
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
+                      : undefined
+                  }
+                  maxDate={new Date()}
+                  selectedDate={workingCase.courtEndTime}
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtEndTime:
+                            date && valid
+                              ? formatDateForServer(date)
+                              : undefined,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      courtDocumentEndErrorMessage,
-                      setCourtDocumentEndErrorMessage,
                     )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setCourtDocumentEndErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="courtEndTime"
-                    name="courtEndTime"
-                    label="Þinghaldi lauk (kk:mm)"
-                    placeholder="Veldu tíma"
-                    autoComplete="off"
-                    defaultValue={formatDate(
-                      workingCase.courtEndTime,
-                      constants.TIME_FORMAT,
-                    )}
-                    errorMessage={courtDocumentEndErrorMessage}
-                    hasError={courtDocumentEndErrorMessage !== ''}
-                    required
-                  />
-                </TimeInputField>
+                  }}
+                  blueBox={false}
+                  required
+                />
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -982,8 +935,8 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

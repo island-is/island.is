@@ -1,23 +1,26 @@
 import React from 'react'
+
+import { gql, useQuery } from '@apollo/client'
+import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
+  AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  IntroHeader,
   NoDataScreen,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { useQuery, gql } from '@apollo/client'
-import { PaymentSchedule, Query } from '@island.is/api/schema'
-import {
-  Box,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-  SkeletonLoader,
-  AlertBanner,
-  Button,
-} from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 import { checkDelegation } from '@island.is/shared/utils'
+
+import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
@@ -80,10 +83,11 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
           defaultMessage: 'Greiðsluáætlanir',
         })}
         button={{
-          internal: false,
+          type: 'external',
           text: applicationButtonText,
           variant: 'primary',
           link: '/umsoknir/greidsluaaetlun/',
+          icon: { icon: 'receipt', type: 'outline' },
         }}
       >
         <Text>
@@ -99,28 +103,22 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <Box marginBottom={[6, 6, 10]}>
+      <IntroHeader
+        title={{
+          id: 'sp.finance-schedule:title',
+          defaultMessage: 'Greiðsluáætlanir',
+        }}
+        intro={{
+          id: 'sp.finance-schedule:intro-text',
+          defaultMessage:
+            'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
+        }}
+      />
       <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.finance-schedule:title',
-            defaultMessage: 'Greiðsluáætlanir',
-          })}
-        </Text>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.finance-schedule:intro-text',
-                defaultMessage:
-                  'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
-              })}
-            </Text>
-          </GridColumn>
-        </GridRow>
         {!isDelegation && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box paddingTop={5} display="flex" height="full">
+              <Box display="flex" height="full">
                 <a
                   href="/umsoknir/greidsluaaetlun/"
                   target="_blank"

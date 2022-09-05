@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -15,7 +15,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -38,6 +38,7 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import CourtArrangements, {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components/CourtArrangements'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
@@ -50,7 +51,11 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { autofill, sendNotification, isSendingNotification } = useCase()
+  const {
+    setAndSendToServer,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const {
     courtDate,
     setCourtDate,
@@ -69,11 +74,10 @@ const HearingArrangements = () => {
         setInitialAutoFillDone(true)
       }
 
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'sessionArrangements',
-            value: workingCase.defenderName
+            sessionArrangements: workingCase.defenderName
               ? SessionArrangements.ALL_PRESENT
               : undefined,
           },
@@ -85,7 +89,7 @@ const HearingArrangements = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     initialAutoFillDone,
     isCaseUpToDate,
     setCourtDate,
@@ -98,18 +102,33 @@ const HearingArrangements = () => {
       (notification) => notification.type === NotificationType.COURT_DATE,
     )
 
-    autofill(
-      [{ key: 'courtDate', value: courtDate, force: true }],
+    setAndSendToServer(
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
       workingCase,
       setWorkingCase,
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
-  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout
@@ -117,7 +136,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -153,9 +172,7 @@ const HearingArrangements = () => {
                 {formatMessage(m.title)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
@@ -181,11 +198,11 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT,
                             force: true,
                           },
                         ],
@@ -210,11 +227,11 @@ const HearingArrangements = () => {
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
                     }
                     onChange={() => {
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'sessionArrangements',
-                            value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
                             force: true,
                           },
                         ],
@@ -237,11 +254,11 @@ const HearingArrangements = () => {
                     SessionArrangements.PROSECUTOR_PRESENT
                   }
                   onChange={() => {
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
-                          key: 'sessionArrangements',
-                          value: SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements:
+                            SessionArrangements.PROSECUTOR_PRESENT,
                           force: true,
                         },
                       ],
@@ -283,7 +300,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
@@ -311,7 +328,9 @@ const HearingArrangements = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                  router.push(
+                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                  )
                 }
               }}
               handleSecondaryButtonClick={() => {
@@ -321,7 +340,9 @@ const HearingArrangements = () => {
                   true,
                 )
 
-                router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                router.push(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                )
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

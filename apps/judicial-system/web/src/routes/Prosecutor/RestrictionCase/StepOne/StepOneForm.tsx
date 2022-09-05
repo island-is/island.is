@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Input, Box, Tooltip } from '@island.is/island-ui/core'
@@ -19,7 +19,9 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import PoliceCaseNumbers, {
+  usePoliceCaseNumbers,
+} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
@@ -49,16 +51,19 @@ export const StepOneForm: React.FC<Props> = (props) => {
   const { updateDefendant } = useDefendants()
   const { updateCase } = useCase()
 
-  const handleUpdateDefendant = async (
-    defendantId: string,
-    updatedDefendant: UpdateDefendant,
-  ) => {
-    updateDefendantState(defendantId, updatedDefendant)
+  const handleUpdateDefendant = useCallback(
+    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
+      updateDefendantState(defendantId, updatedDefendant)
 
-    if (defendantId) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
-    }
-  }
+      if (defendantId) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      }
+    },
+    [workingCase.id, updateDefendantState, updateDefendant],
+  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   return (
     <>
@@ -69,9 +74,11 @@ export const StepOneForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
-          <LokeCaseNumber
+          <PoliceCaseNumbers
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            clientPoliceNumbers={clientPoliceNumbers}
+            setClientPoliceNumbers={setClientPoliceNumbers}
           />
         </Box>
         {workingCase.defendants && (
@@ -83,6 +90,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             </Box>
             <DefendantInfo
               defendant={workingCase.defendants[0]}
+              workingCase={workingCase}
               onChange={handleUpdateDefendant}
               updateDefendantState={updateDefendantState}
             />
@@ -150,10 +158,12 @@ export const StepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
-          nextIsDisabled={!isDefendantStepValidRC(workingCase)}
+          nextIsDisabled={
+            !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
+          }
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }

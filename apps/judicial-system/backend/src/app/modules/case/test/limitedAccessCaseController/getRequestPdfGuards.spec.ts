@@ -2,7 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
@@ -47,15 +47,15 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('LimitedAccessCaseExistsGuard', () => {
+  describe('CaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have LimitedAccessCaseExistsGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
+    it('should have CaseExistsGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
 

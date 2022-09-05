@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -32,6 +32,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  ChartsCard,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -61,6 +62,8 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 
 import { ArticleChatPanel } from './components/ArticleChatPanel'
+
+import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -531,7 +534,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -539,19 +542,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
               className="rs_read"
             >
               <ProcessEntry {...processEntry} />
-            </Box>
-          )}
-          {article.stepper?.title && !inStepperView && (
-            <Box marginTop={3} printHidden className="rs_read">
-              <ProcessEntry
-                buttonText={n(
-                  article.processEntryButtonText || 'application',
-                  '',
-                )}
-                processLink={asPath.split('?')[0].concat('?stepper=true')}
-                processTitle={article.stepper.title}
-                newTab={false}
-              />
             </Box>
           )}
           {(subArticle
@@ -579,7 +569,26 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Box className="rs_read">
               {richText(
                 (subArticle ?? article).body as SliceType[],
-                undefined,
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                    GraphCard: (chart) => <ChartsCard chart={chart} />,
+                  },
+                },
                 activeLocale,
               )}
               <AppendedArticleComponents article={article} />
@@ -592,7 +601,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -636,7 +645,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(

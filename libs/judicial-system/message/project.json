@@ -1,0 +1,24 @@
+{
+  "root": "libs/judicial-system/message",
+  "sourceRoot": "libs/judicial-system/message/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/judicial-system/message/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/judicial-system/message"],
+      "options": {
+        "jestConfig": "libs/judicial-system/message/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -65,7 +65,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents, stepper } = fields
+            const { title, url, content, showTableOfContents } = fields
             return {
               sys,
               fields: {
@@ -73,7 +73,6 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 slug: url,
                 content,
                 showTableOfContents,
-                stepper,
               },
             }
           })
@@ -171,6 +170,11 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 key: entry.fields?.group?.fields?.slug ?? '',
                 value: entry.fields?.group?.fields?.title,
                 type: 'group',
+              },
+              {
+                key: entry.fields?.subgroup?.fields?.slug ?? '',
+                value: entry.fields?.subgroup?.fields?.title,
+                type: 'subgroup',
               },
               {
                 key: entry.fields?.category?.fields?.slug ?? '',

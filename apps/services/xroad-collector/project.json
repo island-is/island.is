@@ -1,0 +1,51 @@
+{
+  "root": "apps/services/xroad-collector",
+  "sourceRoot": "apps/services/xroad-collector/src",
+  "projectType": "application",
+  "prefix": "services-xroad-collector",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/services/xroad-collector",
+        "main": "apps/services/xroad-collector/src/main.ts",
+        "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
+        "assets": ["apps/services/xroad-collector/src/assets"],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-xroad-collector:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/xroad-collector/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/services/xroad-collector/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/services/xroad-collector"]
+    },
+    "docker-express": {}
+  },
+  "tags": ["api-catalogue-services"]
+}

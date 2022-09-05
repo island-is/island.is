@@ -40,5 +40,6 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
         },
       }),
     ),
+
   inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY, IdsClientConfig.KEY],
 }

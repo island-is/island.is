@@ -119,9 +119,6 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
-  /** Contains application form? (Deprecated) */
-  containsApplicationForm?: boolean | undefined
-
   /** Category (Main) */
   category: IArticleCategory
 
@@ -694,8 +691,23 @@ export interface IFeaturedArticlesFields {
   /** Application Label */
   applicationLabel: string
 
+  /** Automatically Fetch Articles */
+  automaticallyFetchArticles: boolean
+
+  /** Sort By */
+  sortBy?: 'popularity' | 'importance' | undefined
+
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
+  /** Group */
+  group?: IArticleGroup | undefined
+
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
 
   /** Article Count */
   articleCount?: number | undefined
@@ -742,6 +754,80 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
     contentType: {
       sys: {
         id: 'footerItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Recipient */
+  recipient: string
+
+  /** Fields */
+  fields?: IFormField[] | undefined
+
+  /** Success Text */
+  successText?: string | undefined
+
+  /** About You Heading Text */
+  aboutYouHeadingText?: string | undefined
+
+  /** Questions Heading text */
+  questionsHeadingText?: string | undefined
+}
+
+export interface IForm extends Entry<IFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'form'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFieldFields {
+  /** Title */
+  title: string
+
+  /** Placeholder */
+  placeholder?: string | undefined
+
+  /** Type */
+  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+
+  /** Required */
+  required?: boolean | undefined
+
+  /** Options */
+  options?: string[] | undefined
+}
+
+export interface IFormField extends Entry<IFormFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'formField'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1127,6 +1213,9 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+
+  /** Open Link in New Tab */
+  openLinkInNewTab: boolean
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -1434,7 +1523,7 @@ export interface IMailingListSignupFields {
   title: string
 
   /** Variant */
-  variant: 'default' | 'conference'
+  variant: 'default' | 'conference' | 'categories'
 
   /** Description */
   description?: string | undefined
@@ -1456,6 +1545,12 @@ export interface IMailingListSignupFields {
 
   /** Disclaimer Label */
   disclaimerLabel?: string | undefined
+
+  /** Category Label */
+  categoryLabel?: string | undefined
+
+  /** Categories */
+  categories?: Record<string, any> | undefined
 
   /** Submit button text */
   buttonText: string
@@ -1974,11 +2069,13 @@ export interface IOrganizationPageFields {
   /** Theme */
   theme:
     | 'default'
-    | 'default_with_image'
     | 'utlendingastofnun'
     | 'sjukratryggingar'
     | 'syslumenn'
     | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
 
   /** Slices */
   slices?:
@@ -2003,7 +2100,13 @@ export interface IOrganizationPageFields {
 
   /** Bottom slices */
   bottomSlices?:
-    | (ILatestNewsSlice | ILogoListSlice | IOneColumnText | ITwoColumnText)[]
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
     | undefined
 
   /** News tag */
@@ -2028,7 +2131,7 @@ export interface IOrganizationPageFields {
   featuredImage?: Asset | undefined
 
   /** Sidebar Cards */
-  sidebarCards?: ISidebarCard[] | undefined
+  sidebarCards?: (ISidebarCard | ISliceConnectedComponent)[] | undefined
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
@@ -2088,6 +2191,7 @@ export interface IOrganizationSubpageFields {
         | IDistricts
         | IMailingListSignup
         | IEventSlice
+        | IFeaturedArticles
         | ILatestNewsSlice
         | IMultipleStatistics
         | IOneColumnText
@@ -2098,6 +2202,9 @@ export interface IOrganizationSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Show Table of Contents */
+  showTableOfContents?: boolean | undefined
 
   /** Slice Custom Renderer */
   sliceCustomRenderer?: 'SliceDropdown' | undefined
@@ -2228,7 +2335,10 @@ export interface IProcessEntryFields {
   processTitle: string
 
   /** Process link */
-  processLink: string
+  processLink?: string | undefined
+
+  /** Process asset */
+  processAsset?: Asset | undefined
 
   /** Open link in modal */
   openLinkInModal?: boolean | undefined
@@ -2497,6 +2607,7 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+    | 'LatestNewsCard'
     | undefined
 
   /** JSON */
@@ -2613,12 +2724,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Text */
-  text?: Document | undefined
-
-  /** Is Answer */
-  isAnswer?: boolean | undefined
 
   /** Options */
   options?: Record<string, any> | undefined
@@ -2771,9 +2876,6 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
-
-  /** Stepper */
-  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -3183,6 +3285,9 @@ export interface ITimelineFields {
 
   /** Events */
   events: ITimelineEvent[]
+
+  /** Has Border Above */
+  hasBorderAbove?: boolean | undefined
 }
 
 /** Timeline section with a collection of timeline events */
@@ -3558,6 +3663,8 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'footerItem'
+  | 'form'
+  | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
   | 'genericOverviewPage'

@@ -25,13 +25,6 @@ export const informationModule: ServicePortalModule = {
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
     },
     {
-      name: m.family,
-      path: ServicePortalPath.FamilyRoot,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      render: () =>
-        lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
-    },
-    {
       name: 'Family Member',
       path: ServicePortalPath.FamilyMember,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),

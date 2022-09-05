@@ -8,7 +8,6 @@ import juice from 'juice'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { ImageComponent, Template } from '../types'
 import registerHelpers from './helpers'

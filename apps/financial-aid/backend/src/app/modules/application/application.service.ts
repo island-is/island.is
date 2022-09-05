@@ -575,7 +575,7 @@ export class ApplicationService {
           },
           body: JSON.stringify({
             type: 'FJST',
-            status: 'Umsókn',
+            status: 'Application',
             id: application.nationalId,
             phoneNo: application.phoneNumber,
             email: application.email,
