@@ -354,7 +354,7 @@ export class NationalRegistryService {
         bannmerking: false,
         faedingardagur: new Date(),
         kennitala: '0000000000',
-        kynkodi: '1',
+        kynkodi: '-1',
         nafn: '',
         adsetur: {
           heiti: '',
