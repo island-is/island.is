@@ -115,6 +115,19 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         },
                       ],
                     }),
+                    buildSelectField({
+                      id: 'fakeData.genderCode',
+                      title: 'Kynkóði',
+                      description: 'Kynkóði umsækjanda',
+                      width: 'half',
+                      condition: allowFakeCondition(YES),
+                      options: [
+                        { value: '1', label: 'Karl' },
+                        { value: '2', label: 'Kona' },
+                        { value: '7', label:  'Kynsegin/annað' },
+                        
+                      ],
+                    }),
                   ],
                 }),
               ],

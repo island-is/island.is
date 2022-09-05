@@ -1,4 +1,4 @@
-import { MaritalStatus, NationalRegistryPerson } from '../types/schema'
+import {  NationalRegistryPerson } from '../types/schema'
 import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
@@ -7,11 +7,13 @@ import {
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
+import { genderedMaritalStatuses } from '../lib/constants'
 
 export interface MaritalStatusProvider {
-  maritalStatus: MaritalStatus
+  maritalStatus: string
 }
-
+const ALLOWED_MARITAL_STATUSES = ['1', '5', '4']
+const ALLOWED_GENDER_CODE = ['1', '2', '7']
 export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   type = 'NationalRegistryMaritalStatusProvider'
 
@@ -22,24 +24,21 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     )
     const useFakeData = fakeData?.useFakeData === YES
 
-    const ALLOWED_MARITAL_STATUSES = [
-      MaritalStatus.Unmarried,
-      MaritalStatus.Divorced,
-      MaritalStatus.Widowed,
-    ]
     const query = `
     query NationalRegistryUserQuery {
       nationalRegistryUserV2 {
-     
+        genderCode
         spouse {
           name
           nationalId
           maritalStatus
         }
-      
       }
     }
     `
+    if (useFakeData) {
+      return this.handleFakeData(fakeData)
+    }
 
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
@@ -54,14 +53,15 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
         }
         const nationalRegistryUser: NationalRegistryPerson =
           response.data.nationalRegistryUser
-        const maritalStatus: MaritalStatus = this.formatMaritalStatus(
-          useFakeData
-            ? nationalRegistryUser.spouse?.maritalStatus || ''
-            : fakeData?.maritalStatus || '',
-        )
 
-        if (ALLOWED_MARITAL_STATUSES.includes(maritalStatus)) {
-          return Promise.resolve({ maritalStatus: maritalStatus })
+        const maritalStatus: string =
+          nationalRegistryUser.spouse?.maritalStatus || ''
+        const genderCode = nationalRegistryUser.genderCode || ''
+
+        if (this.allowedCodes(maritalStatus, genderCode)) {
+          return Promise.resolve({
+            maritalStatus: this.formatMaritalStatus(maritalStatus, genderCode),
+          })
         }
         return Promise.reject({
           reason: `Applicant marital status ${maritalStatus} not applicable`,
@@ -69,12 +69,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       })
       .catch(() => {
         if (useFakeData) {
-          return Promise.resolve({
-            maritalStatus: this.formatMaritalStatus(
-              fakeData?.maritalStatus || '',
-            ),
-
-          })
+          return this.handleFakeData(fakeData)
         }
         return Promise.reject({})
       })
@@ -93,30 +88,28 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     return { date: new Date(), status: 'success', data: result }
   }
 
-  private formatMaritalStatus(maritalCode: string): MaritalStatus {
-    switch (maritalCode) {
-      case '1':
-        return MaritalStatus.Unmarried
-      case '3':
-        return MaritalStatus.Married
-      case '4':
-        return MaritalStatus.Widowed
-      case '5':
-        return MaritalStatus.Separated
-      case '6':
-        return MaritalStatus.Divorced
-      case '7':
-        return MaritalStatus.MarriedLivingSeparately
-      case '8':
-        return MaritalStatus.MarriedToForeignLawPerson
-      case '9':
-        return MaritalStatus.Unknown
-      case '0':
-        return MaritalStatus.ForeignResidenceMarriedToUnregisteredPerson
-      case 'L':
-        return MaritalStatus.IcelandicResidenceMarriedToUnregisteredPerson
-      default:
-        return MaritalStatus.Unmarried
+  private formatMaritalStatus(maritalCode: string, genderCode: string): string {
+    return genderedMaritalStatuses[maritalCode][genderCode]
+  }
+
+  private allowedCodes(maritalCode: string, genderCode: string): boolean {
+    return (
+      ALLOWED_MARITAL_STATUSES.includes(maritalCode) &&
+      ALLOWED_GENDER_CODE.includes(genderCode)
+    )
+  }
+
+  private handleFakeData(fakeData?: MarriageConditionsFakeData) {
+    const maritalStatus: string = fakeData?.maritalStatus || ''
+    const genderCode = fakeData?.genderCode || ''
+    if (this.allowedCodes(maritalStatus, genderCode)) {
+      return Promise.resolve({
+        maritalStatus: this.formatMaritalStatus(maritalStatus, genderCode),
+      })
+    } else {
+      return Promise.reject({
+        reason: `Applicant marital status ${maritalStatus} not applicable`,
+      })
     }
   }
 }

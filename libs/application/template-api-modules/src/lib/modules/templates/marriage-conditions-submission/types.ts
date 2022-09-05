@@ -54,3 +54,4 @@ export type Person = {
   signed: boolean
   type: number
 }
+
