@@ -33,6 +33,7 @@ import {
 } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { MaritalStatus, UserProfile } from '../types/schema'
+import { removeCountryCode } from '../lib/utils'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -246,10 +247,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    format: '###-####',
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
-                      return data.mobilePhoneNumber ?? ''
+                      return removeCountryCode(data?.mobilePhoneNumber ?? '')
                     },
                   }),
                   buildTextField({
@@ -285,9 +287,10 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    format: '###-####',
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
-                      return info?.phone ?? ''
+                      return removeCountryCode(info?.phone ?? '')
                     },
                   }),
                   buildTextField({
@@ -481,6 +484,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    format: '###-####',
                   }),
                   buildTextField({
                     id: 'witness1.email',
@@ -505,6 +509,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    format: '###-####',
                   }),
                   buildTextField({
                     id: 'witness2.email',

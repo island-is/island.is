@@ -10,6 +10,7 @@ export const spouseDone: Form = buildForm({
   id: 'spouseDone',
   title: m.applicationComplete,
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildMultiField({
       id: 'spouseDone',
