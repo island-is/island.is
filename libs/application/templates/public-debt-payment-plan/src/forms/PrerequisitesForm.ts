@@ -142,7 +142,7 @@ export const PrerequisitesForm: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               required: true,
-              disabled: false,
+              disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.address?.postalCode,
