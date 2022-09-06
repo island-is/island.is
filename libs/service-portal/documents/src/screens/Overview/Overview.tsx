@@ -110,6 +110,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
     GET_DOCUMENT_CATEGORIES,
   )
+
   const { data: typesData, loading: typesLoading } = useQuery<Query>(
     GET_DOCUMENT_TYPES,
   )
@@ -125,7 +126,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [sendersAvailable, setSendersAvailable] = useState<DocumentSender[]>([])
 
   const [typesAvailable, setTypesAvailable] = useState<DocumentType[]>([])
-
   useEffect(() => {
     if (
       !sendersLoading &&
