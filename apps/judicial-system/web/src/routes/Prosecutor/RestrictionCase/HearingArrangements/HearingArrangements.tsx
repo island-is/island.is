@@ -56,7 +56,6 @@ export const HearingArrangements: React.FC = () => {
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const { user } = useContext(UserContext)
   const {
     sendNotification,
     isSendingNotification,

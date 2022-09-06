@@ -1,13 +1,11 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 
 import * as styles from './InfoCard.css'
 
@@ -25,7 +23,6 @@ interface Props {
 
 const InfoCard: React.FC<Props> = (props) => {
   const { data, defendants, defender } = props
-  const { formatMessage } = useIntl()
 
   return (
     <Box

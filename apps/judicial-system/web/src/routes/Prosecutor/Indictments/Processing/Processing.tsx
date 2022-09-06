@@ -19,11 +19,7 @@ import {
   processing as m,
 } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  CaseTransition,
-  Institution,
-} from '@island.is/judicial-system/types'
+import { CaseTransition, Institution } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
