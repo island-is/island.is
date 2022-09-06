@@ -63,9 +63,6 @@ const Processing: React.FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
 
     await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
 
