@@ -38,8 +38,8 @@ globalStyle(`${printable} p`, {
   '@media': {
     print: {
       lineHeight: 1,
-      fontSize: '8px',
-      paddingBottom: '2px',
+      fontSize: '12px',
+      paddingBottom: '8px',
     },
   },
 })
@@ -47,7 +47,7 @@ globalStyle(`${printable} p`, {
 globalStyle(`${printable} span`, {
   '@media': {
     print: {
-      fontSize: '8px',
+      fontSize: '12px',
       color: 'black',
     },
   },
