@@ -17,5 +17,6 @@ describe('Service Portal', () => {
   it('should have Pósthólf', () => {
     cy.visit('/minarsidur/')
     cy.contains('Pósthólf')
+    cy.contains('deleteme')
   })
 })
