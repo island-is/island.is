@@ -34,6 +34,7 @@ import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNum
 import * as constants from '@island.is/judicial-system/consts'
 
 import { rcReceptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
@@ -99,34 +100,6 @@ const ReceptionAndAssignment = () => {
     }
   }
 
-  const judges = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.JUDGE &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((judge: User) => {
-      return { label: judge.name, value: judge.id, judge }
-    })
-
-  const registrars = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.REGISTRAR &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id, registrar }
-    })
-
-  const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
-  )
-
-  const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
-  )
-
   const setJudge = (judge: User) => {
     if (workingCase) {
       setAndSendToServer(
@@ -183,48 +156,18 @@ const ReceptionAndAssignment = () => {
             receiveCase={receiveCase}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(strings.setJudgeTitle)} `}
-              <Tooltip text={formatMessage(strings.setJudgeTooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="judge"
-            label="Veldu dómara"
-            placeholder="Velja héraðsdómara"
-            value={defaultJudge}
-            options={judges}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+        <Box component="section" marginBottom={10}>
+          <SelectCourtOfficials
+            workingCase={workingCase}
+            handleJudgeChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as JudgeSelectOption).judge)
             }
-            required
-          />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(strings.setRegistrarTitle)} `}
-              <Tooltip text={formatMessage(strings.setRegistrarTooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="registrar"
-            label="Veldu dómritara"
-            placeholder="Velja dómritara"
-            value={defaultRegistrar}
-            options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-              if (selectedOption) {
-                setRegistrar(
-                  (selectedOption as RegistrarSelectOption).registrar,
-                )
-              } else {
-                setRegistrar(undefined)
-              }
-            }}
-            isClearable
+            handleRegistrarChange={(
+              selectedOption: ValueType<ReactSelectOption>,
+            ) =>
+              setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
+            }
+            users={userData?.users}
           />
         </Box>
       </FormContentContainer>
