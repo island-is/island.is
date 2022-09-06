@@ -333,9 +333,9 @@ const HearingArrangements = () => {
                   )
                 }
               }}
-              handleSecondaryButtonClick={() => {
+              onSecondaryButtonClick={() => {
                 sendNotification(
-              onSecondaryButtonClick
+                  workingCase.id,
                   NotificationType.COURT_DATE,
                   true,
                 )
