@@ -4,10 +4,8 @@ import {
   Box,
   Button,
   Inline,
-  Input,
   LoadingDots,
   Select,
-  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import type {
@@ -71,27 +69,45 @@ export const AflamarkCalculator = () => {
         timePeriod: selectedTimePeriod.value,
       },
     },
+    onCompleted(response) {
+      const initialData = response?.getAflamarkInformationForShip
+      if (initialData) setData(initialData)
+    },
   })
 
   const [mutate, mutationResponse] = useMutation<
     GetUpdatedAflamarkInformationForShipQuery,
     GetUpdatedAflamarkInformationForShipQueryArgs
-  >(GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP)
+  >(GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP, {
+    onCompleted(response) {
+      const mutationData = response?.getUpdatedAflamarkInformationForShip
+      if (mutationData) {
+        const categories = []
+        for (const category of data?.allowedCatchCategories ?? []) {
+          const extendedCategory = {
+            ...category,
+            ...mutationData.allowedCatchCategories?.find(
+              (c) => c.id === category.id,
+            ),
+          }
+          // Make sure that category with id 0 stays at the front
+          if (extendedCategory.id === 0) {
+            categories.unshift(extendedCategory)
+          } else {
+            categories.push(extendedCategory)
+          }
+        }
+        setData({
+          shipInformation: mutationData.shipInformation,
+          allowedCatchCategories: categories,
+        })
+      }
+    },
+  })
 
   const loading = initialResponse.loading || mutationResponse.loading
 
   const [changes, setChanges] = useState<Changes>({})
-
-  useEffect(() => {
-    if (mutationResponse?.data?.getUpdatedAflamarkInformationForShip) {
-      setData((prev) => ({
-        ...prev,
-        ...mutationResponse.data.getUpdatedAflamarkInformationForShip,
-      }))
-    } else if (initialResponse?.data?.getAflamarkInformationForShip) {
-      setData(initialResponse.data.getAflamarkInformationForShip)
-    }
-  }, [initialResponse, mutationResponse])
 
   return (
     <Box margin={6}>
@@ -124,7 +140,7 @@ export const AflamarkCalculator = () => {
             </Button>
             <Button
               onClick={() => {
-                const variables = {
+                mutate({
                   variables: {
                     input: {
                       shipNumber,
@@ -136,9 +152,7 @@ export const AflamarkCalculator = () => {
                       })),
                     },
                   },
-                }
-
-                mutate(variables)
+                })
               }}
               size="small"
             >
@@ -201,25 +215,29 @@ export const AflamarkCalculator = () => {
           </tr>
           <tr>
             <td>Aflamarksbr.</td>
-            {/* TODO: don't have a input box for þorskígildi */}
+            {/* TODO: keep track of difference from initial aflamark to what it is now */}
             {data?.allowedCatchCategories?.map((category) => (
               <td key={category.name}>
-                <input
-                  value={changes?.[category.id]?.allowedCatchChange}
-                  onChange={(ev) => {
-                    setChanges((prevChanges) => {
-                      return {
-                        ...prevChanges,
-                        [category.id]: {
-                          id: category.id,
-                          allowedCatchChange: Number(ev.target.value),
-                          catchChange: prevChanges[category.id]?.catchChange,
-                        },
-                      }
-                    })
-                  }}
-                  type="text"
-                />
+                {category.id === 0 ? (
+                  initialResponse.data.getAflamarkInformationForShip.allowedCatchCategories.find(c => c.id === category.id).
+                ) : (
+                  <input
+                    value={changes?.[category.id]?.allowedCatchChange ?? ''}
+                    onChange={(ev) => {
+                      setChanges((prevChanges) => {
+                        return {
+                          ...prevChanges,
+                          [category.id]: {
+                            id: category.id,
+                            allowedCatchChange: Number(ev.target.value),
+                            catchChange: prevChanges[category.id]?.catchChange,
+                          },
+                        }
+                      })
+                    }}
+                    type="text"
+                  />
+                )}
               </td>
             ))}
           </tr>
@@ -238,28 +256,34 @@ export const AflamarkCalculator = () => {
           <tr>
             <td>Aflabreyting</td>
 
-            {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>
-                {/* TODO: don't have a input box for þorskígildi */}
-                <input
-                  type="text"
-                  value={changes?.[category.id]?.catchChange}
-                  onChange={(ev) => {
-                    setChanges((prevChanges) => {
-                      return {
-                        ...prevChanges,
-                        [category.id]: {
-                          id: category.id,
-                          catchChange: Number(ev.target.value),
-                          allowedCatchChange:
-                            prevChanges[category.id]?.allowedCatchChange,
-                        },
-                      }
-                    })
-                  }}
-                />
-              </td>
-            ))}
+            {data?.allowedCatchCategories?.map((category) => {
+              return (
+                <td key={category.name}>
+                  {/* TODO: keep track of difference from initial afli to what it is now */}
+                  {category.id === 0 ? (
+                    0
+                  ) : (
+                    <input
+                      type="text"
+                      value={changes?.[category.id]?.catchChange ?? ''}
+                      onChange={(ev) => {
+                        setChanges((prevChanges) => {
+                          return {
+                            ...prevChanges,
+                            [category.id]: {
+                              id: category.id,
+                              catchChange: Number(ev.target.value),
+                              allowedCatchChange:
+                                prevChanges[category.id]?.allowedCatchChange,
+                            },
+                          }
+                        })
+                      }}
+                    />
+                  )}
+                </td>
+              )
+            })}
           </tr>
           <tr>
             <td>Staða</td>
@@ -298,34 +322,68 @@ export const AflamarkCalculator = () => {
             ))}
           </tr>
           {/* TODO: add separator */}
-          <tr className={styles.visualSeparationLine}>
+          <tr>
             <td>Heildaraflamark</td>
             {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>
-                <Text>{category.totalAllowedCatch}</Text>
-              </td>
+              <td key={category.name}>{category.totalAllowedCatch}</td>
             ))}
           </tr>
 
           <tr>
             <td>Hlutdeild</td>
-            {/* TODO: add input box */}
+
             {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>{category.rateOfShare}</td>
+              <td key={category.name}>
+                {category.id === 0 ? (
+                  category.rateOfShare
+                ) : (
+                  <input
+                    type="text"
+                    value={category.rateOfShare}
+                    onChange={(ev) => {
+                      // TODO: store changes in state
+                    }}
+                  />
+                )}
+              </td>
             ))}
           </tr>
           <tr>
             <td>Á næsta ár kvóti</td>
             {/* TODO: add input box */}
             {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>{category.nextYearQuota}</td>
+              <td key={category.name}>
+                {category.id === 0 ? (
+                  category.nextYearQuota
+                ) : (
+                  <input
+                    type="text"
+                    value={category.nextYearQuota}
+                    onChange={(ev) => {
+                      // TODO: store changes in state
+                    }}
+                  />
+                )}
+              </td>
             ))}
           </tr>
           <tr>
             <td>Af næsta ár kvóti</td>
-            {/* TODO: add input box */}
+
             {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>{category.nextYearFromQuota}</td>
+              <td key={category.name}>
+                {category.id === 0 ? (
+                  category.nextYearFromQuota
+                ) : (
+                  <input
+                    type="text"
+                    value={category.nextYearFromQuota}
+                    onChange={(ev) => {
+                      // TODO: store changes in state
+                    }}
+                  />
+                )}
+              </td>
             ))}
           </tr>
         </tbody>
