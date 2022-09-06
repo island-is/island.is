@@ -267,7 +267,11 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.unionDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.useUnion === YES,
+                  condition: (answers) => answers.useUnion === YES && (answers as {
+                    leaveType: {
+                      applicationType: string
+                    }
+                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -306,7 +310,11 @@ export const ParentalLeaveForm: Form = buildForm({
                       .privatePensionFundDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES,
+                  condition: (answers) => answers.usePrivatePensionFund === YES && (answers as {
+                    leaveType: {
+                      applicationType: string
+                    }
+                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -330,7 +338,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES,
+                  condition: (answers) => answers.usePrivatePensionFund === YES && (answers as {
+                    leaveType: {
+                      applicationType: string
+                    }
+                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFundPercentage',
                   dataTestId: 'private-pension-fund-ratio',
                   title:

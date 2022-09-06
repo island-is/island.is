@@ -20,6 +20,7 @@ import {
   YES,
   StartDateOptions,
   getApplicationExternalData,
+  PARENTAL_LEAVE,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -222,9 +223,9 @@ export class ParentalLeaveService {
 
   async getAttachments(application: Application): Promise<Attachment[]> {
     const attachments: Attachment[] = []
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed, applicationType } = getApplicationAnswers(application.answers)
 
-    if (isSelfEmployed === YES) {
+    if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
       const pdf = await this.getSelfEmployedPdf(application)
 
       attachments.push({
@@ -492,7 +493,7 @@ export class ParentalLeaveService {
   async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
-
+   
     try {
       const periods = await this.createPeriodsDTO(
         application,

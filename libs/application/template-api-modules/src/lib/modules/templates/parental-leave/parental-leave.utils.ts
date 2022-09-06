@@ -65,6 +65,7 @@ export const getPersonalAllowance = (
 
 export const getEmployer = (
   application: Application,
+  applicationType: string,
   isSelfEmployed = false,
 ): Employer => {
   const {
@@ -74,10 +75,18 @@ export const getEmployer = (
   } = getApplicationAnswers(application.answers)
 
   return {
-    email: isSelfEmployed ? applicantEmail : employerEmail,
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : employerNationalRegistryId,
+    email:
+      applicationType === PARENTAL_LEAVE
+        ? isSelfEmployed
+          ? applicantEmail
+          : employerEmail
+        : '',
+    nationalRegistryId:
+      applicationType === PARENTAL_LEAVE
+        ? isSelfEmployed
+          ? application.applicant
+          : employerNationalRegistryId
+        : '',
   }
 }
 
@@ -90,14 +99,19 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-  const value = get(application.answers, getter, isPrivate ? null : undefined)
+  const value =
+    applicationType === PARENTAL_LEAVE
+      ? get(application.answers, getter, isPrivate ? null : undefined)
+      : apiConstants.pensionFunds.noPensionFundId
 
   if (isPrivate) {
     return {
       id:
-      applicationType === PARENTAL_LEAVE ? (typeof value === 'string'
-          ? value
-          : apiConstants.pensionFunds.noPrivatePensionFundId) : apiConstants.pensionFunds.noPrivatePensionFundId,
+        applicationType === PARENTAL_LEAVE
+          ? typeof value === 'string'
+            ? value
+            : apiConstants.pensionFunds.noPrivatePensionFundId
+          : apiConstants.pensionFunds.noPrivatePensionFundId,
       name: '',
     }
   }
@@ -114,12 +128,17 @@ export const getPensionFund = (
   }
 }
 
-export const getPrivatePensionFundRatio = (application: Application) => {
+export const getPrivatePensionFundRatio = (
+  application: Application,
+  applicationType: string,
+) => {
   const { privatePensionFundPercentage } = getApplicationAnswers(
     application.answers,
   )
   const privatePensionFundRatio: number =
-    Number(privatePensionFundPercentage) || 0
+    applicationType === PARENTAL_LEAVE
+      ? Number(privatePensionFundPercentage) || 0
+      : 0
 
   return privatePensionFundRatio
 }
@@ -167,7 +186,7 @@ export const getRightsCode = (application: Application): string => {
     if (isSelfEmployed) {
       return 'M-S-GR'
     } else if (isUnemployed) {
-      return 'M-FS'  
+      return 'M-FS'
     } else {
       return 'M-L-GR'
     }
@@ -185,7 +204,7 @@ export const getRightsCode = (application: Application): string => {
     if (isSelfEmployed) {
       return `${parentPrefix}-S-GR`
     } else if (isUnemployed) {
-      return `${parentPrefix}-FS`  
+      return `${parentPrefix}-FS`
     } else {
       return `${parentPrefix}-L-GR`
     }
@@ -194,7 +213,7 @@ export const getRightsCode = (application: Application): string => {
   if (isSelfEmployed) {
     return `${parentPrefix}-FL-S-GR`
   } else if (isUnemployed) {
-    return `${parentPrefix}-FL-FS`  
+    return `${parentPrefix}-FL-FS`
   } else {
     return `${parentPrefix}-FL-L-GR`
   }
@@ -232,9 +251,12 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const { isSelfEmployed, union, bank, applicationType } = getApplicationAnswers(
-    application.answers,
-  )
+  const {
+    isSelfEmployed,
+    union,
+    bank,
+    applicationType,
+  } = getApplicationAnswers(application.answers)
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
 
@@ -256,15 +278,21 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
         // If a union is not selected then use the default 'no union' value
-        id: union ?? apiConstants.unions.noUnion,
+        id:
+          applicationType === PARENTAL_LEAVE
+            ? union ?? apiConstants.unions.noUnion
+            : apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application, applicationType),
       privatePensionFund: getPensionFund(application, applicationType, true),
-      privatePensionFundRatio: getPrivatePensionFundRatio(application),
+      privatePensionFundRatio: getPrivatePensionFundRatio(
+        application,
+        applicationType,
+      ),
     },
     periods,
-    employers: [getEmployer(application, selfEmployed)],
+    employers: [getEmployer(application, applicationType, selfEmployed)],
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
