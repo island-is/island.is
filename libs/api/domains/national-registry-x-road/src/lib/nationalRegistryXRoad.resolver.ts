@@ -54,7 +54,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryPerson[] | undefined> {
-    return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
+    return this.nationalRegistryXRoadService.getChildrenCustodyInformation(
       user,
       person.nationalId,
     )
@@ -68,7 +68,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
-    return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+    return this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
       user,
       person.nationalId,
     )
@@ -80,7 +80,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistrySpouse | undefined> {
-    return await this.nationalRegistryXRoadService.getSpouse(
+    return this.nationalRegistryXRoadService.getSpouse(
       user,
       person.nationalId,
     )
@@ -94,7 +94,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryBirthplace | undefined> {
-    return await this.nationalRegistryXRoadService.getBirthplace(
+    return this.nationalRegistryXRoadService.getBirthplace(
       user,
       person.nationalId,
     )
@@ -108,7 +108,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryCitizenship | undefined> {
-    return await this.nationalRegistryXRoadService.getCitizenship(
+    return this.nationalRegistryXRoadService.getCitizenship(
       user,
       person.nationalId,
     )
