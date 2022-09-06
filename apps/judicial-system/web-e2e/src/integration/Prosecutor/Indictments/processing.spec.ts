@@ -8,7 +8,7 @@ import { makeCourt, mockCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${INDICTMENTS_PROCESSING_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.MURDER)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
