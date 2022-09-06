@@ -1,17 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const selectCourtOfficials = defineMessages({
-  setJudgeTitle: {
-    id:
-      'judicial.system.restriction_cases:select_court_officials.set_judge_title',
-    defaultMessage: 'Dómari',
+  title: {
+    id: 'judicial.system.select_court_officials:title',
+    defaultMessage: 'Hver tekur við málinu?',
     description:
-      'Notaður sem titill fyrir "dómari" hlutann á Móttaka og úthlutun skrefi öllum málategundum',
+      'Notaður sem titill á Hver tekur við málinu? hlutanum á Móttaka og úthlutun skrefi öllum málategundum.',
   },
   setJudgeLabel: {
     id:
       'judicial.system.restriction_cases:select_court_officials.set_judge_label',
-    defaultMessage: 'Veldu dómara',
+    defaultMessage: 'Veldu dómara/aðstoðarmann',
     description:
       'Notaður sem titill á innsláttarsvæði fyrir "Veldu dómara" hlutann á Móttaka og úthlutun skrefi öllum málategundum',
   },
@@ -29,13 +28,6 @@ export const selectCourtOfficials = defineMessages({
       'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
     description:
       'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á Móttaka og úthlutun skrefi öllum málategundum',
-  },
-  setRegistrarTitle: {
-    id:
-      'judicial.system.restriction_cases:select_court_officials.set_registrar_title',
-    defaultMessage: 'Dómritari',
-    description:
-      'Notaður sem titill fyrir "Dómritari" hlutann á Móttaka og úthlutun skrefi öllum málategundum',
   },
   setRegistrarLabel: {
     id:

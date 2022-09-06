@@ -7,6 +7,7 @@ import { Case, User, UserRole } from '@island.is/judicial-system/types'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
+import BlueBox from '../BlueBox/BlueBox'
 
 interface Props {
   workingCase: Case
@@ -49,46 +50,41 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box marginBottom={2}>
-        <Box marginBottom={3}>
-          <Text as="h3" variant="h3">
-            {`${formatMessage(strings.setJudgeTitle)} `}
-            <Tooltip text={formatMessage(strings.setJudgeTooltip)} />
-          </Text>
-        </Box>
-        <Select
-          name="judge"
-          label={formatMessage(strings.setJudgeLabel)}
-          placeholder={formatMessage(strings.setJudgePlaceholder)}
-          value={defaultJudge}
-          options={judges}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-            handleJudgeChange(selectedOption)
-          }
-          required
-        />
-      </Box>
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
-          {`${formatMessage(strings.setRegistrarTitle)} `}
-          <Tooltip text={formatMessage(strings.setRegistrarTooltip)} />
+          {formatMessage(strings.title)}
         </Text>
       </Box>
-      <Select
-        name="registrar"
-        label={formatMessage(strings.setRegistrarLabel)}
-        placeholder={formatMessage(strings.setRegistrarPlaceholder)}
-        value={defaultRegistrar}
-        options={registrars}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-          if (selectedOption) {
-            handleRegistrarChange(selectedOption)
-          } else {
-            handleRegistrarChange(undefined)
-          }
-        }}
-        isClearable
-      />
+      <BlueBox>
+        <Box marginBottom={2}>
+          <Select
+            name="judge"
+            label={formatMessage(strings.setJudgeLabel)}
+            placeholder={formatMessage(strings.setJudgePlaceholder)}
+            value={defaultJudge}
+            options={judges}
+            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              handleJudgeChange(selectedOption)
+            }
+            required
+          />
+        </Box>
+        <Select
+          name="registrar"
+          label={formatMessage(strings.setRegistrarLabel)}
+          placeholder={formatMessage(strings.setRegistrarPlaceholder)}
+          value={defaultRegistrar}
+          options={registrars}
+          onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+            if (selectedOption) {
+              handleRegistrarChange(selectedOption)
+            } else {
+              handleRegistrarChange(undefined)
+            }
+          }}
+          isClearable
+        />
+      </BlueBox>
     </>
   )
 }
