@@ -21,4 +21,8 @@ export class FinancialStatementsInaoService {
   async getElections() {
     return this.dataverseClient.getElections()
   }
+
+  async getClientFinancialLimit(clientType: string, year: string) {
+    return this.dataverseClient.getClientFinancialLimit(clientType, year)
+  }
 }

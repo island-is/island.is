@@ -18,6 +18,7 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
+import { MarriageConditionsSubmissionModule } from './marriage-conditions-submission/marriage-conditions-submission.module'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
@@ -45,6 +46,7 @@ export const modules = [
   ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
+  MarriageConditionsSubmissionModule,
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
   PassportModule,
@@ -72,6 +74,7 @@ export { AnnouncementOfDeathService } from './announcement-of-death/announcement
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+export { MarriageConditionsSubmissionService } from './marriage-conditions-submission/marriage-conditions-submission.service'
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 export { PassportService } from './passport/passport.service'
