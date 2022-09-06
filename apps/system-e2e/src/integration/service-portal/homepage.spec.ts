@@ -1,11 +1,11 @@
-import {getFakeUser} from "../../support/utils"
+import { getFakeUser } from '../../support/utils'
 import fakeUsers from '../../fixtures/service-portal/users.json'
 
 describe('Home page', () => {
   const fakeUser = getFakeUser(fakeUsers, 'María Sól Þí Torp')
   beforeEach(() => {
     cy.log('the fake user:', fakeUser)
-    cy.idsLogin(fakeUser.phoneNumber)
+    cy.idsLogin({ phoneNumber: fakeUser.phoneNumber })
   })
 
   it.skip('have clickable navigation bar', () => {
