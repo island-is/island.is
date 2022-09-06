@@ -226,7 +226,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   }
 
   const onFileRejection = (files: FileRejection[]) => {
-    // Check maxsize and display custom error if supplied otnerwise use default
+    // Check maxsize and display custom error if supplied otherwise use default
     files.forEach((file: FileRejection) => {
       if (maxSize && file.file.size > maxSize) {
         const maxSizeInMb = maxSize / 1000000
