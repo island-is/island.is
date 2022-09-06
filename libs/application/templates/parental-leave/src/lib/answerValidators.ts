@@ -34,6 +34,7 @@ import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
+const FILEUPLOAD = 'fileUpload'
 const PAYMENTS = 'payments'
 const OTHER_PARENT = 'otherParentObj'
 // When attempting to continue from the periods repeater main screen
@@ -63,19 +64,32 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
-    if (
-      isSelfEmployed === YES &&
-      isEmpty((obj.selfEmployed as { file: unknown[] }).file)
-    ) {
-      return buildError(errorMessages.requiredAttachment, 'selfEmployed.file')
-    }
-
     if (isSelfEmployed === NO && isEmpty(obj?.email)) {
       return buildError(errorMessages.employerEmail, 'email')
     }
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError(errorMessages.email, 'email')
+    }
+
+    return undefined
+  },
+  [FILEUPLOAD]: (newAnswer: unknown, application: Application) => {
+    const obj = newAnswer as Record<string, Answer>
+
+    const buildError = (message: StaticText, path: string) =>
+    buildValidationError(`${FILEUPLOAD}.${path}`)(message)
+
+    const isSelfEmployed = getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    )
+
+    if (
+      isSelfEmployed === YES &&
+      isEmpty((obj.attachment as { file: unknown[] }).file)
+    ) {
+      return buildError(errorMessages.requiredAttachment, 'attachment.file')
     }
 
     return undefined
