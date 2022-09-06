@@ -1,6 +1,5 @@
-import { IDSLogin, CognitoCreds, BaseAuthority } from '../lib/types'
+import { IDSLogin, CognitoCreds } from '../lib/types'
 import '@testing-library/cypress/add-commands'
-import { getEnvironmentBaseUrl } from './utils'
 
 const testEnvironment = Cypress.env('testEnvironment')
 
@@ -79,16 +78,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'idsLogin',
-  ({ phoneNumber, authUrl, baseUrl, urlPath = '/', setBaseUrl = true }) => {
-    if (setBaseUrl) {
-      // FIXME: https://github.com/island-is/island.is/issues/8261
-      if (Cypress.env().testEnvironment == 'local') {
-        const newBaseUrl = getEnvironmentBaseUrl(baseUrl)
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        Cypress.config('baseUrl', newBaseUrl)
-      }
-    }
+  ({ phoneNumber, authUrl, baseUrl, urlPath = '/' }) => {
     cy.session('idsLogin', () => {
       if (testEnvironment !== 'local') {
         const { username, password } = Cypress.env('cognito')

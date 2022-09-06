@@ -34,7 +34,7 @@ enum BaseAuthority {
   staging = 'beta.staging01.devland.is',
   ads = 'loftbru.dev01.devland.is',
   prod = 'island.is',
-  local = 'localhost:4200',
+  local = 'localhost:4242',
 }
 
 type ADSUserWithDiscount = ADSDiscount & {
@@ -68,7 +68,6 @@ interface IDSLogin {
   authUrl?: AuthUrl
   baseUrl?: BaseAuthority
   urlPath?: string
-  setBaseUrl?: boolean
 }
 
 export type {
