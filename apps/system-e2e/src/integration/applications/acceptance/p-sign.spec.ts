@@ -1,6 +1,6 @@
 import { regex as uuidRegex } from 'uuidv4'
 import { getFakeUser } from '../../../support/utils'
-import { BaseAuthority, FixtureUser, Timeout } from '../../../lib/types'
+import { FixtureUser, Timeout } from '../../../lib/types'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
 
 const fakeUser: FixtureUser = getFakeUser(fakeUsers, 'Gervimaður Afríka')
