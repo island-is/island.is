@@ -13,6 +13,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
+  isIndictmentCase,
   isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -165,18 +166,20 @@ export function formatDefenderResubmittedToCourtEmailNotification(
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   policeCaseNumbers: string[],
-  caseType?: CaseType,
+  caseType: CaseType,
   courtName?: string,
   overviewUrl?: string,
 ) {
   const subject = formatMessage(notifications.readyForCourt.subject, {
-    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
+    isIndictmentCase: isIndictmentCase(caseType),
+    caseType: caseTypes[caseType],
   })
 
-  const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
-    caseType,
+  const body = formatMessage(notifications.readyForCourt.prosecutorHtml, {
+    isIndictmentCase: isIndictmentCase(caseType),
     courtName: courtName?.replace('dómur', 'dóm'),
-    policeCaseNumber: policeCaseNumbers?.join(', ') || '',
+    policeCaseNumbersCount: policeCaseNumbers.length,
+    policeCaseNumbers: policeCaseNumbers.join(', ') || '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
@@ -208,6 +211,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
 export function formatProsecutorCourtDateEmailNotification(
   formatMessage: FormatMessage,
   type: CaseType,
+  courtCaseNumber?: string,
   court?: string,
   courtDate?: Date,
   courtRoom?: string,
@@ -215,7 +219,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): string {
+): { subject: string; body: string } {
   const cf = notifications.prosecutorCourtDateEmail
   const scheduledCaseText = formatMessage(cf.scheduledCase, {
     court,
@@ -246,7 +250,7 @@ export function formatProsecutorCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(cf.body, {
+  const body = formatMessage(cf.body, {
     scheduledCaseText,
     courtDateText,
     courtRoomText,
@@ -255,6 +259,12 @@ export function formatProsecutorCourtDateEmailNotification(
     defenderText,
     sessionArrangements,
   })
+
+  const subject = formatMessage(cf.subject, {
+    courtCaseNumber: courtCaseNumber || '',
+  })
+
+  return { body, subject }
 }
 
 export function formatPrisonCourtDateEmailNotification(
