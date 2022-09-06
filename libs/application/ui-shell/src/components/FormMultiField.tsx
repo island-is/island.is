@@ -65,7 +65,13 @@ const FormMultiField: FC<{
           FieldDescription already has a mb of 1 so set it to 3(+1) else 4.
       */}
       <Box width="full" marginTop={description ? 3 : 4} />
-
+      {/*
+        Todo:
+        The following "section" is for accessibility scoping of controls. Due to CSS configuration I am unable to make this work
+        with having the controls nested in the section so I am just interleaving the elements with section "separators" but would be great
+        if someone could jump in and fix this.
+      */}
+      <Box component="section" width="full" aria-labelledby={multiField.id} />
       {children.map((field, index) => {
         const isHalfColumn =
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'

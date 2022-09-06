@@ -25,7 +25,7 @@ import cn from 'classnames'
 const Layout: FC = ({ children }) => {
   useRoutes()
   useModules()
-  useNamespaces('service.portal')
+  useNamespaces(['service.portal', 'global'])
   const { pathname } = useLocation()
   useScrollTopOnUpdate([pathname])
   const [{ mobileMenuState, sidebarState }] = useStore()
@@ -57,7 +57,7 @@ const Layout: FC = ({ children }) => {
         <Box as="main" component="main">
           <GridContainer className={styles.layoutContainer}>
             <GridRow>
-              <GridColumn span={'12/12'} className={styles.layoutGrid}>
+              <GridColumn span={'11/12'} className={styles.layoutGrid}>
                 <Hidden print>
                   <ContentBreadcrumbs />
                 </Hidden>

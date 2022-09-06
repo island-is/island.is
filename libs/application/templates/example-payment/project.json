@@ -1,0 +1,36 @@
+{
+  "root": "libs/application/templates/example-payment",
+  "sourceRoot": "libs/application/templates/example-payment/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/example-payment/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/templates/example-payment"],
+      "options": {
+        "jestConfig": "libs/application/templates/example-payment/jest.config.js",
+        "passWithNoTests": false
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/example-payment/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/example-payment/codegen.yml"
+      }
+    }
+  },
+  "tags": []
+}

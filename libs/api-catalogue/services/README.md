@@ -26,7 +26,7 @@ The variable are named:
 ### Codegen
 
 We use codegen to generate clients from the OpenAPI documents for the
-two REST services X-Road provides for this metadata. In `workspace.json`
+two REST services X-Road provides for this metadata. In `project.json`
 we have setup a `codegen` command:
 
 ```

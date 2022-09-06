@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { defineMessage, FormattedMessage } from 'react-intl'
 
 import {
@@ -13,7 +13,6 @@ import {
   GridRow,
   LoadingDots,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import {
   formatNationalId,
@@ -22,8 +21,12 @@ import {
   m,
   IntroHeader,
 } from '@island.is/service-portal/core'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
+import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import { ApolloError } from '@apollo/client/errors'
 
 const dataNotFoundMessage = defineMessage({
@@ -49,6 +52,8 @@ export function getLivesWithParent(
 
 interface Props {
   nationalId?: string
+  userNationalId?: string
+  userName?: string
   error?: ApolloError
   person?: NationalRegistryChild | null
   loading?: boolean
@@ -65,6 +70,8 @@ const ChildView: FC<Props> = ({
   isChild,
   hasDetails,
   guardianship,
+  userNationalId,
+  userName,
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -77,6 +84,23 @@ const ChildView: FC<Props> = ({
       ? formatMessage(m.yes)
       : formatMessage(m.no)
   }
+
+  /**
+   * The ChildRegistration module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `servicePortalChildrenFamilyNotification`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -108,30 +132,6 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
-
-      <Box>
-        <GridRow>
-          <GridColumn paddingBottom={4} span="12/12">
-            <Box
-              display="flex"
-              justifyContent="flexStart"
-              flexDirection={['column', 'row']}
-            >
-              <Box>
-                <Button
-                  variant="utility"
-                  size="small"
-                  onClick={() => window.print()}
-                  icon="print"
-                  iconType="outline"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </Box>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </Box>
 
       <Stack space={2}>
         <UserInfoLine

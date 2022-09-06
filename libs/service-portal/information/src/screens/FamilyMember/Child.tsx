@@ -47,9 +47,19 @@ const ChildrenQuery = gql`
   }
 `
 
+export const NATIONAL_REGISTRY_USER_NAME = gql`
+  query NationalRegistryUserNameQuery {
+    nationalRegistryUser {
+      nationalId
+      fullName
+    }
+  }
+`
+
 const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
+  const { data: userData } = useQuery<Query>(NATIONAL_REGISTRY_USER_NAME)
   const { data, loading, error } = useQuery<Query>(ChildrenQuery)
   const { nationalRegistryChildren } = data || {}
 
@@ -77,6 +87,8 @@ const Child: ServicePortalModuleComponent = ({ userInfo }) => {
           ? guardianship
           : null
       }
+      userName={userData?.nationalRegistryUser?.fullName}
+      userNationalId={userInfo.profile.nationalId}
       hasDetails
     />
   )

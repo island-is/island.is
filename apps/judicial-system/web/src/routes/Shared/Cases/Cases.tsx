@@ -11,20 +11,27 @@ import {
 import {
   CaseState,
   CaseTransition,
-  completedCaseStates,
   InstitutionType,
   NotificationType,
   isRestrictionCase,
   UserRole,
+  Feature,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  requests as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -33,18 +40,37 @@ import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import * as styles from './Cases.css'
 
+const SectionTitle: React.FC = ({ children }) => {
+  return (
+    <>
+      <Box marginBottom={3} display={['block', 'block', 'none']}>
+        <Text variant="h2" as="h2">
+          {children}
+        </Text>
+      </Box>
+      <Box marginBottom={3} display={['none', 'none', 'block']}>
+        <Text variant="h3" as="h3">
+          {children}
+        </Text>
+      </Box>
+    </>
+  )
+}
+
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Cases: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const {
     findLastValidStep,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
+    getIndictmentCaseProsecutorSection,
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -89,16 +115,16 @@ export const Cases: React.FC = () => {
       setActiveCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast
-            : !completedCaseStates.includes(c.state)
+            ? !c.isValidToDateInThePast && c.rulingDate
+            : !c.rulingDate
         }),
       )
 
       setPastCases(
         casesWithoutDeleted.filter((c: Case) => {
           return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast
-            : completedCaseStates.includes(c.state)
+            ? c.isValidToDateInThePast && c.rulingDate
+            : c.rulingDate
         }),
       )
     }
@@ -138,7 +164,7 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
+      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
@@ -154,9 +180,13 @@ export const Cases: React.FC = () => {
         routeTo = findLastValidStep(
           getRestrictionCaseProsecutorSection(caseToOpen, user),
         ).href
-      } else {
+      } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseProsecutorSection(caseToOpen, user),
+        ).href
+      } else {
+        routeTo = findLastValidStep(
+          getIndictmentCaseProsecutorSection(caseToOpen),
         ).href
       }
     }
@@ -165,8 +195,12 @@ export const Cases: React.FC = () => {
   }
 
   return (
-    <Box paddingX={[0, 0, 4]}>
-      <Box className={styles.casesContainer}>
+    <Box paddingX={[2, 2, 4]}>
+      <Box
+        className={styles.casesContainer}
+        marginX={'auto'}
+        marginY={[4, 4, 12]}
+      >
         <PageHeader title={formatMessage(titles.shared.cases)} />
         {loading ? (
           <TableSkeleton />
@@ -175,25 +209,56 @@ export const Cases: React.FC = () => {
             <div className={styles.logoContainer}>
               <Logo />
               {isProsecutor && (
-                <DropdownMenu
-                  menuLabel="Tegund kröfu"
-                  icon="add"
-                  items={[
-                    {
-                      href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                      title: 'Gæsluvarðhald',
-                    },
-                    {
-                      href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                      title: 'Farbann',
-                    },
-                    {
-                      href: constants.NEW_IC_ROUTE,
-                      title: 'Rannsóknarheimild',
-                    },
-                  ]}
-                  title="Stofna nýja kröfu"
-                />
+                <Box display={['none', 'none', 'block']}>
+                  <DropdownMenu
+                    menuLabel="Tegund kröfu"
+                    icon="add"
+                    items={
+                      features.includes(Feature.INDICTMENTS)
+                        ? [
+                            {
+                              href: constants.CREATE_INDICTMENT_ROUTE,
+                              title: capitalize(formatMessage(core.indictment)),
+                            },
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                        : [
+                            {
+                              href: constants.CREATE_RESTRICTION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.restrictionCase),
+                              ),
+                            },
+                            {
+                              href: constants.CREATE_TRAVEL_BAN_ROUTE,
+                              title: capitalize(formatMessage(core.travelBan)),
+                            },
+                            {
+                              href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
+                              title: capitalize(
+                                formatMessage(core.investigationCase),
+                              ),
+                            },
+                          ]
+                    }
+                    title="Stofna nýja kröfu"
+                  />
+                </Box>
               )}
             </div>
           )
@@ -202,24 +267,22 @@ export const Cases: React.FC = () => {
           <>
             {!isHighCourtUser && (
               <>
-                <Box marginBottom={3}>
-                  {/**
-                   * This should be a <caption> tag inside the table but
-                   * Safari has a bug that doesn't allow that. See more
-                   * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                   */}
-                  <Text variant="h3" id="activeCasesTableCaption">
-                    {formatMessage(
-                      isPrisonUser
-                        ? m.sections.activeRequests.prisonStaffUsers.title
-                        : isPrisonAdminUser
-                        ? m.sections.activeRequests.prisonStaffUsers
-                            .prisonAdminTitle
-                        : m.sections.activeRequests.title,
-                    )}
-                  </Text>
-                </Box>
-                <Box marginBottom={15}>
+                {/**
+                 * This should be a <caption> tag inside the table but
+                 * Safari has a bug that doesn't allow that. See more
+                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+                 */}
+                <SectionTitle>
+                  {formatMessage(
+                    isPrisonUser
+                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      : isPrisonAdminUser
+                      ? m.sections.activeRequests.prisonStaffUsers
+                          .prisonAdminTitle
+                      : m.sections.activeRequests.title,
+                  )}
+                </SectionTitle>
+                <Box marginBottom={[5, 5, 12]}>
                   {activeCases && activeCases.length > 0 ? (
                     isPrisonUser || isPrisonAdminUser ? (
                       <PastCases
@@ -260,24 +323,22 @@ export const Cases: React.FC = () => {
                 </Box>
               </>
             )}
-            <Box marginBottom={3}>
-              {/**
-               * This should be a <caption> tag inside the table but
-               * Safari has a bug that doesn't allow that. See more
-               * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-               */}
-              <Text variant="h3" id="activeCasesTableCaption">
-                {formatMessage(
-                  isHighCourtUser
-                    ? m.sections.pastRequests.highCourtUsers.title
-                    : isPrisonUser
-                    ? m.sections.pastRequests.prisonStaffUsers.title
-                    : isPrisonAdminUser
-                    ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                    : m.sections.pastRequests.title,
-                )}
-              </Text>
-            </Box>
+            {/**
+             * This should be a <caption> tag inside the table but
+             * Safari has a bug that doesn't allow that. See more
+             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+             */}
+            <SectionTitle>
+              {formatMessage(
+                isHighCourtUser
+                  ? m.sections.pastRequests.highCourtUsers.title
+                  : isPrisonUser
+                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  : isPrisonAdminUser
+                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.sections.pastRequests.title,
+              )}
+            </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
               <PastCases
                 cases={pastCases}

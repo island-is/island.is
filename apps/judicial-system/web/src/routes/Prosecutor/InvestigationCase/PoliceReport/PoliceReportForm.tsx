@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseInfo,
+  ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -15,8 +15,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -31,8 +31,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
 
   const { formatMessage } = useIntl()
-  const { updateCase, autofill } = useCase()
-  const { user } = useContext(UserContext)
+  const { updateCase, setAndSendToServer } = useCase()
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -40,18 +39,16 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'prosecutorOnlySessionRequest')
-  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     if (
       !workingCase.prosecutorOnlySessionRequest &&
       workingCase.requestProsecutorOnlySession
     ) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'prosecutorOnlySessionRequest',
-            value: formatMessage(
+            prosecutorOnlySessionRequest: formatMessage(
               icReportForm.prosecutorOnly.input.defaultValue,
             ),
           },
@@ -60,7 +57,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
+  }, [setAndSendToServer, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>
@@ -70,13 +67,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             {formatMessage(icReportForm.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box marginBottom={5}>
           <BlueBox>
             <Text>{workingCase.demands}</Text>
@@ -235,50 +226,17 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(icReportForm.comments.heading)}{' '}
-                <Tooltip
-                  placement="right"
-                  as="span"
-                  text={formatMessage(icReportForm.comments.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              name="comments"
-              label={formatMessage(icReportForm.comments.label)}
-              placeholder={formatMessage(icReportForm.comments.placeholder)}
-              value={workingCase.comments || ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'comments',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
+            <CommentsInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
             />
           </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

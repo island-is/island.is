@@ -3,6 +3,7 @@ import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
+import { GRAPHQL_API_URL_ENV_VAR_NAME } from '../../../apps/application-system/api/infra/application-system-api'
 
 const MAX_LEVEL_DEPENDENCIES = 20
 const dumpOpts = {
@@ -145,6 +146,19 @@ export function featureSpecificServiceDef(
       )
     }
   })
+  const hackForThatOneCircularDependency = () => {
+    const isApiServicePresent = featureSpecificServices.some(
+      (s) => s.serviceDef.name === 'api',
+    )
+    const applicationSystemAPI = featureSpecificServices.find(
+      (s) => s.serviceDef.name === 'application-system-api',
+    )
+    if (isApiServicePresent && applicationSystemAPI) {
+      applicationSystemAPI.serviceDef.env[GRAPHQL_API_URL_ENV_VAR_NAME] =
+        'http://web-api'
+    }
+  }
+  hackForThatOneCircularDependency()
 }
 
 function featureSpecificServicesPrepare(
