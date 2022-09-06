@@ -50,11 +50,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const obj = newAnswer as Record<string, Answer>
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${EMPLOYER}.${path}`)(message)
-      const isSelfEmployed = getValueViaPath(
+    const isSelfEmployed = getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
     )
-    
+
     if (obj.isSelfEmployed === '') {
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
@@ -103,7 +103,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       application.answers,
       'leaveType.applicationType',
     )
-    
+
     if (applicationType === PARENTAL_LEAVE) {
       const privatePensionFund = getValueViaPath(
         application.answers,
@@ -120,7 +120,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       )
 
       const buildError = (message: StaticText, path: string) =>
-      buildValidationError(`${PAYMENTS}.${path}`)(message)
+        buildValidationError(`${PAYMENTS}.${path}`)(message)
 
       if (!payments.pensionFund) {
         return buildError(coreErrorMessages.defaultError, 'pensionFund')

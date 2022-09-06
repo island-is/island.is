@@ -391,7 +391,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicationType = getValueViaPath(answers, 'leaveType.applicationType') as string
+  const applicationType = getValueViaPath(
+    answers,
+    'leaveType.applicationType',
+  ) as string
 
   const otherParent = (getValueViaPath(
     answers,

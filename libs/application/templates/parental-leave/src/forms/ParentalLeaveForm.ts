@@ -87,7 +87,10 @@ export const ParentalLeaveForm: Form = buildForm({
               loadOptions: async ({ apolloClient }) => {
                 return await Promise.resolve([
                   { label: 'Fæðingarorlof', value: PARENTAL_LEAVE },
-                  { label: 'Fæðingarstyrkur - utan vinnumarkaðar', value: PARENTAL_GRANT },
+                  {
+                    label: 'Fæðingarstyrkur - utan vinnumarkaðar',
+                    value: PARENTAL_GRANT,
+                  },
                 ])
               },
             }),
@@ -267,11 +270,13 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.unionDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.useUnion === YES && (answers as {
-                    leaveType: {
-                      applicationType: string
-                    }
-                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                  condition: (answers) =>
+                    answers.useUnion === YES &&
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -310,11 +315,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       .privatePensionFundDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES && (answers as {
-                    leaveType: {
-                      applicationType: string
-                    }
-                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                  condition: (answers) =>
+                    answers.usePrivatePensionFund === YES &&
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -338,11 +345,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES && (answers as {
-                    leaveType: {
-                      applicationType: string
-                    }
-                  })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                  condition: (answers) =>
+                    answers.usePrivatePensionFund === YES &&
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFundPercentage',
                   dataTestId: 'private-pension-fund-ratio',
                   title:
@@ -416,7 +425,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   selectedChild?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary && allowOtherParent(answers)
                 )
               },
               width: 'half',
@@ -597,7 +606,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary && allowOtherParent(answers)
 
                 return canTransferRights
               },
@@ -617,7 +626,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&
@@ -636,7 +645,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                  ParentalRelations.primary && allowOtherParent(answers)
+                    ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&

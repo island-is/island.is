@@ -905,40 +905,42 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
 
       {applicationType === PARENTAL_LEAVE && (
-      <ReviewGroup
-        isEditable={editable}
-        editAction={() => goToScreen?.('employer.isSelfEmployed')}
-      >
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.selfEmployed.title,
+        <ReviewGroup
+          isEditable={editable}
+          editAction={() => goToScreen?.('employer.isSelfEmployed')}
+        >
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.selfEmployed.title,
+                )}
+                value={isSelfEmployed}
+              />
+              {isSelfEmployed === NO && employerPhoneNumber && (
+                <Box paddingTop={2}>
+                  <DataValue
+                    label={formatMessage(
+                      parentalLeaveFormMessages.employer.phoneNumber,
+                    )}
+                    value={formatPhoneNumber(employerPhoneNumber)}
+                  />
+                </Box>
               )}
-              value={isSelfEmployed}
-            />
-            {isSelfEmployed === NO && employerPhoneNumber && (
-              <Box paddingTop={2}>
+            </GridColumn>
+
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              {isSelfEmployed === NO && (
                 <DataValue
                   label={formatMessage(
-                    parentalLeaveFormMessages.employer.phoneNumber,
+                    parentalLeaveFormMessages.employer.email,
                   )}
-                  value={formatPhoneNumber(employerPhoneNumber)}
+                  value={employerEmail}
                 />
-              </Box>
-            )}
-          </GridColumn>
-
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            {isSelfEmployed === NO && (
-              <DataValue
-                label={formatMessage(parentalLeaveFormMessages.employer.email)}
-                value={employerEmail}
-              />
-            )}
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+              )}
+            </GridColumn>
+          </GridRow>
+        </ReviewGroup>
       )}
 
       <ReviewGroup>
