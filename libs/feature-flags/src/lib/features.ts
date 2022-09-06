@@ -23,6 +23,9 @@ export enum Features {
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
 
+  // Application delegation flags
+  noDebtCertificateCompanyDelegations = 'applicationNoDebtCertificateCompanyDelegations',
+
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 }
