@@ -53,9 +53,8 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
         }
         const nationalRegistryUser: NationalRegistryPerson =
           response.data.nationalRegistryUser
-
         const maritalStatus: string =
-          nationalRegistryUser.spouse?.maritalStatus || ''
+          nationalRegistryUser.spouse?.maritalStatus || '1'
         const genderCode = nationalRegistryUser.genderCode || ''
 
         if (this.allowedCodes(maritalStatus, genderCode)) {
