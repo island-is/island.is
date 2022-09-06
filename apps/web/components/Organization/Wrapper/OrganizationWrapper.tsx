@@ -65,25 +65,7 @@ interface WrapperProps {
   pageTitle: string
   pageDescription?: string
   pageFeaturedImage?: Image
-  organizationPage: {
-    title: Scalars['String']
-    slug: Scalars['String']
-    description: Scalars['String']
-    theme: Scalars['String']
-    themeProperties: OrganizationTheme
-    slices: Array<Slice>
-    bottomSlices: Array<Slice>
-    newsTag?: Maybe<GenericTag>
-    menuLinks: Array<LinkGroup>
-    secondaryMenu?: Maybe<LinkGroup>
-    organization: Organization
-    featuredImage?: Maybe<Image>
-    footerItems: Array<FooterItem>
-    sidebarCards?: Maybe<Array<Slice>>
-    externalLinks?: Maybe<Array<Link>>
-    alertBanner?: Maybe<AlertBanner>
-    defaultHeaderImage?: Maybe<Image>
-  }
+  organizationPage: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
   sidebarContent?: ReactNode

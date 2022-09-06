@@ -30,7 +30,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
-  OrganizationSlice,
+  SliceMachine,
   OrganizationWrapper,
   SliceDropdown,
   Form,
@@ -215,7 +215,7 @@ const renderSlices = (
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => (
-        <OrganizationSlice
+        <SliceMachine
           key={slice.id}
           slice={slice}
           namespace={namespace}

@@ -2,20 +2,19 @@ import { useMemo, useState, useEffect } from 'react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
-  GetNewsQuery,
   OneColumnText,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_NEWS_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
-  OrganizationSlice,
+  SliceMachine,
   HeadWithSocialSharing,
   Stepper,
   stepperUtils,
@@ -23,29 +22,22 @@ import {
 } from '@island.is/web/components'
 import {
   Box,
+  BreadCrumbItem,
+  Breadcrumbs,
   Hidden,
-  Navigation,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { QueryGetNewsArgs } from '@island.is/api/schema'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import {
-  assignNavigationActive,
-  convertLinkGroupsToNavigationItems,
-  getActiveNavigationItemTitle,
-  getThemeConfig,
-} from './utils'
+import { getSidebarNavigationComponent, getThemeConfig } from './utils'
 import { ProjectHeader } from './components/ProjectHeader'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { ProjectChatPanel } from './components/ProjectChatPanel'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
-  news: GetNewsQuery['getNews']['items']
   namespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
@@ -54,7 +46,6 @@ interface PageProps {
 
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
-  news,
   namespace,
   stepperNamespace,
   stepOptionsFromNamespace,
@@ -74,21 +65,17 @@ const ProjectPage: Screen<PageProps> = ({
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
-  const navigationList = useMemo(
-    () =>
-      assignNavigationActive(
-        convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-        baseRouterPath,
-      ),
-    [baseRouterPath, projectPage.sidebarLinks],
-  )
-
-  const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationList, baseRouterPath),
-    [baseRouterPath, navigationList],
-  )
-
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
+
+  const sidebarNavigationComponent = useMemo(
+    () =>
+      getSidebarNavigationComponent(
+        projectPage,
+        baseRouterPath,
+        navigationTitle,
+      ),
+    [projectPage, baseRouterPath, navigationTitle],
+  )
 
   const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
 
@@ -119,6 +106,19 @@ const ProjectPage: Screen<PageProps> = ({
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
 
+  const breadCrumbs: BreadCrumbItem[] = [
+    {
+      title: 'Ísland.is',
+      href: linkResolver('homepage').href,
+      typename: 'homepage',
+    },
+    {
+      title: projectPage.title,
+      href: linkResolver('projectpage', [projectPage.slug]).href,
+      typename: 'projectpage',
+    },
+  ]
+
   return (
     <>
       <ProjectChatPanel projectPage={projectPage} />
@@ -133,46 +133,21 @@ const ProjectPage: Screen<PageProps> = ({
       <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
         withSidebar={projectPage.sidebar}
-        sidebarContent={
-          <Navigation
-            baseId="pageNav"
-            items={navigationList}
-            activeItemTitle={activeNavigationItemTitle}
-            title={navigationTitle}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item?.href}>{link}</NextLink>
-              ) : (
-                link
-              )
-            }}
-          />
-        }
+        sidebarContent={sidebarNavigationComponent()}
       >
         {projectPage.sidebar && (
           <Hidden above="sm">
             <Box>
-              <Box marginY={2}>
-                <Navigation
-                  isMenuDialog
-                  baseId="pageNav"
-                  items={navigationList}
-                  activeItemTitle={activeNavigationItemTitle}
-                  title={navigationTitle}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
+              <Box marginY={2}>{sidebarNavigationComponent(true)}</Box>
             </Box>
           </Hidden>
         )}
+
         {!!subpage && (
           <Box marginBottom={1}>
+            <Box marginBottom={3}>
+              <Breadcrumbs items={breadCrumbs} />
+            </Box>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
@@ -227,7 +202,7 @@ const ProjectPage: Screen<PageProps> = ({
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
               <Box marginTop={6}>
-                <OrganizationSlice
+                <SliceMachine
                   key={slice.id}
                   slice={slice}
                   namespace={namespace}
@@ -236,7 +211,7 @@ const ProjectPage: Screen<PageProps> = ({
                 />
               </Box>
             ) : (
-              <OrganizationSlice
+              <SliceMachine
                 key={slice.id}
                 slice={slice}
                 namespace={namespace}
@@ -249,14 +224,15 @@ const ProjectPage: Screen<PageProps> = ({
       {!subpage &&
         projectPage.bottomSlices.map((slice) => {
           return (
-            <OrganizationSlice
+            <SliceMachine
               key={slice.id}
               slice={slice}
               namespace={namespace}
               slug={projectPage.slug}
               fullWidth={true}
               params={{
-                linkType: 'projectPage',
+                linkType: 'projectnews',
+                overview: 'projectnewsoverview',
               }}
             />
           )
@@ -314,19 +290,6 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  const getNewsQuery = getProjectPage?.newsTag
-    ? await apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
-        query: GET_NEWS_QUERY,
-        variables: {
-          input: {
-            size: 3,
-            lang: locale as ContentLanguage,
-            tags: [getProjectPage?.newsTag.slug],
-          },
-        },
-      })
-    : null
-
   const subpage = getProjectPage?.projectSubpages.find(
     (x) => x.slug === query.subSlug,
   )
@@ -349,7 +312,6 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     stepOptionsFromNamespace,
     namespace,
     stepperNamespace,
-    news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,
     ...getThemeConfig(getProjectPage.theme),
   }

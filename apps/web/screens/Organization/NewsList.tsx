@@ -22,6 +22,7 @@ import {
   Link,
   GridColumn,
   NavigationItem,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -52,6 +53,9 @@ import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { ProjectWrapper } from '../Project/components/ProjectWrapper'
+import { ProjectHeader } from '../Project/components/ProjectHeader'
+import { ProjectChatPanel } from '../Project/components/ProjectChatPanel'
+import { getSidebarNavigationComponent } from '../Project/utils'
 
 const PERPAGE = 10
 
@@ -283,8 +287,12 @@ const NewsList: Screen<NewsListProps> = ({
           image={newsItem.image}
           titleAs="h2"
           href={
-            linkResolver('organizationnews', [parentPage.slug, newsItem.slug])
-              .href
+            linkResolver(
+              parentPage.__typename === 'ProjectPage'
+                ? 'projectnews'
+                : 'organizationnews',
+              [parentPage.slug, newsItem.slug],
+            ).href
           }
           date={newsItem.date}
           readMoreText={n('readMore', 'Lesa nánar')}
@@ -298,9 +306,12 @@ const NewsList: Screen<NewsListProps> = ({
             renderLink={(page, className, children) => (
               <Link
                 href={{
-                  pathname: linkResolver('organizationnewsoverview', [
-                    parentPage.slug,
-                  ]).href,
+                  pathname: linkResolver(
+                    parentPage.__typename === 'ProjectPage'
+                      ? 'projectnewsoverview'
+                      : 'organizationnewsoverview',
+                    [parentPage.slug],
+                  ).href,
                   query: { ...Router.query, page },
                 }}
               >
@@ -313,8 +324,41 @@ const NewsList: Screen<NewsListProps> = ({
     </Stack>
   )
 
+  const baseRouterPath = Router.asPath.split('?')[0].split('#')[0]
+
   if (parentPage.__typename === 'ProjectPage') {
-    return <ProjectWrapper></ProjectWrapper>
+    const projectPageSidebarNavigationComponent = getSidebarNavigationComponent(
+      parentPage,
+      baseRouterPath,
+      n('navigationTitle', 'Efnisyfirlit'),
+    )
+    return (
+      <>
+        <ProjectChatPanel projectPage={parentPage} />
+        <ProjectHeader projectPage={parentPage} />
+        <ProjectWrapper
+          withSidebar={true}
+          sidebarContent={
+            <>
+              {projectPageSidebarNavigationComponent()}
+              {sidebar}
+            </>
+          }
+        >
+          <Hidden above="sm">
+            <Box>
+              <Box marginY={2}>
+                {projectPageSidebarNavigationComponent(true)}
+              </Box>
+            </Box>
+          </Hidden>
+          <Box marginBottom={3}>
+            <Breadcrumbs items={breadCrumbs} />
+          </Box>
+          {content}
+        </ProjectWrapper>
+      </>
+    )
   }
 
   return (
@@ -373,7 +417,7 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-const getParentPage = async (
+export const getParentPage = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
   pathname: string,
   locale: string,

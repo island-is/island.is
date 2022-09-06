@@ -77,7 +77,7 @@ const LifeEventPageListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
 )
 
-interface OrganizationSliceProps {
+interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
   fullWidth?: boolean
@@ -147,7 +147,7 @@ const renderSlice = (
   }
 }
 
-export const OrganizationSlice = ({
+export const SliceMachine = ({
   slice,
   namespace,
   fullWidth = false,
@@ -155,7 +155,7 @@ export const OrganizationSlice = ({
   renderedOnOrganizationSubpage = false,
   marginBottom = 0,
   params,
-}: OrganizationSliceProps) => {
+}: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>

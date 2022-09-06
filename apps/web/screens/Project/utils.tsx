@@ -1,6 +1,11 @@
-import { Link, LinkGroup } from '@island.is/web/graphql/schema'
-import { NavigationItem } from '@island.is/island-ui/core'
+import {
+  Link as LinkSchema,
+  LinkGroup,
+  ProjectPage,
+} from '@island.is/web/graphql/schema'
+import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
+import Link from 'next/link'
 
 const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
 
@@ -19,7 +24,7 @@ export const getThemeConfig = (
   return { themeConfig: {} }
 }
 
-export const convertLinksToNavigationItem = (links: Link[]) =>
+export const convertLinksToNavigationItem = (links: LinkSchema[]) =>
   links.map(({ text, url }) => {
     return {
       title: text,
@@ -77,3 +82,32 @@ export const assignNavigationActive = (
       items: childItems,
     }
   })
+
+export const getSidebarNavigationComponent = (
+  projectPage: ProjectPage,
+  baseRouterPath: string,
+  navigationTitle: string,
+) => {
+  const navigationList = assignNavigationActive(
+    convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
+    baseRouterPath,
+  )
+
+  const activeNavigationItemTitle = getActiveNavigationItemTitle(
+    navigationList,
+    baseRouterPath,
+  )
+
+  return (isMenuDialog = false) => (
+    <Navigation
+      isMenuDialog={isMenuDialog}
+      baseId="pageNav"
+      items={navigationList}
+      activeItemTitle={activeNavigationItemTitle}
+      title={navigationTitle}
+      renderLink={(link, item) => {
+        return item?.href ? <Link href={item?.href}>{link}</Link> : link
+      }}
+    />
+  )
+}

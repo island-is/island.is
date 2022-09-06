@@ -106,10 +106,11 @@ export const routesTemplate = {
     en: '/en/gagnatorg/[slug]',
   },
   projectnews: {
-    is: '/v/[slug]/',
+    is: '/v/[slug]/frett/[subSlug]',
+    en: '/en/o/[slug]/news/[subSlug]',
   },
   projectnewsoverview: {
-    is: '/v/[slug]/frett/[subSlug]',
+    is: '/v/[slug]/frett',
     en: '/en/o/[slug]/news',
   },
   projectsubpage: {
