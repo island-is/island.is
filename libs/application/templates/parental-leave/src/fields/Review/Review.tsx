@@ -96,7 +96,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const { locale, formatMessage } = useLocale()
   const [
     {
-      leaveType,
+      applicationType,
       applicantEmail,
       applicantPhoneNumber,
       otherParent,
@@ -439,7 +439,7 @@ export const Review: FC<ReviewScreenProps> = ({
               }
               error={hasError('payments.bank')}
             />
-            {leaveType === PARENTAL_LEAVE && (
+            {applicationType === PARENTAL_LEAVE && (
               <>
                 <SelectController
                   label={formatMessage(
@@ -629,7 +629,7 @@ export const Review: FC<ReviewScreenProps> = ({
               />
             </GridColumn>
           </GridRow>
-          {leaveType === PARENTAL_LEAVE && (
+          {applicationType === PARENTAL_LEAVE && (
             <>
               <GridRow>
                 <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -904,7 +904,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </ReviewGroup>
       )}
 
-      {leaveType === PARENTAL_LEAVE && (
+      {applicationType === PARENTAL_LEAVE && (
       <ReviewGroup
         isEditable={editable}
         editAction={() => goToScreen?.('employer.isSelfEmployed')}

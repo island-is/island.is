@@ -99,12 +99,12 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [PAYMENTS]: (newAnswer: unknown, application: Application) => {
     const payments = newAnswer as Payments
 
-    const leaveType = getValueViaPath(
+    const applicationType = getValueViaPath(
       application.answers,
       'leaveType.applicationType',
     )
     
-    if (leaveType === PARENTAL_LEAVE) {
+    if (applicationType === PARENTAL_LEAVE) {
       const privatePensionFund = getValueViaPath(
         application.answers,
         'payments.privatePensionFund',

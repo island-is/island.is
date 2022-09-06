@@ -83,7 +83,7 @@ export const getEmployer = (
 
 export const getPensionFund = (
   application: Application,
-  leaveType: string,
+  applicationType: string,
   isPrivate = false,
 ): PensionFund => {
   const getter = isPrivate
@@ -95,7 +95,7 @@ export const getPensionFund = (
   if (isPrivate) {
     return {
       id:
-        leaveType === PARENTAL_LEAVE ? (typeof value === 'string'
+      applicationType === PARENTAL_LEAVE ? (typeof value === 'string'
           ? value
           : apiConstants.pensionFunds.noPrivatePensionFundId) : apiConstants.pensionFunds.noPrivatePensionFundId,
       name: '',
@@ -232,7 +232,7 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const { isSelfEmployed, union, bank, leaveType } = getApplicationAnswers(
+  const { isSelfEmployed, union, bank, applicationType } = getApplicationAnswers(
     application.answers,
   )
   const { email, phoneNumber } = getApplicantContactInfo(application)
@@ -259,8 +259,8 @@ export const transformApplicationToParentalLeaveDTO = (
         id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
-      pensionFund: getPensionFund(application, leaveType),
-      privatePensionFund: getPensionFund(application, leaveType, true),
+      pensionFund: getPensionFund(application, applicationType),
+      privatePensionFund: getPensionFund(application, applicationType, true),
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
