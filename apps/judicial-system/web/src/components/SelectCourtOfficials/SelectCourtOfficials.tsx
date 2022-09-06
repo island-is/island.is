@@ -49,23 +49,25 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {`${formatMessage(strings.setJudgeTitle)} `}
-          <Tooltip text={formatMessage(strings.setJudgeTooltip)} />
-        </Text>
+      <Box marginBottom={2}>
+        <Box marginBottom={3}>
+          <Text as="h3" variant="h3">
+            {`${formatMessage(strings.setJudgeTitle)} `}
+            <Tooltip text={formatMessage(strings.setJudgeTooltip)} />
+          </Text>
+        </Box>
+        <Select
+          name="judge"
+          label={formatMessage(strings.setJudgeLabel)}
+          placeholder={formatMessage(strings.setJudgePlaceholder)}
+          value={defaultJudge}
+          options={judges}
+          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            handleJudgeChange(selectedOption)
+          }
+          required
+        />
       </Box>
-      <Select
-        name="judge"
-        label="Veldu dómara"
-        placeholder="Velja héraðsdómara"
-        value={defaultJudge}
-        options={judges}
-        onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-          handleJudgeChange(selectedOption)
-        }
-        required
-      />
       <Box marginBottom={3}>
         <Text as="h3" variant="h3">
           {`${formatMessage(strings.setRegistrarTitle)} `}
@@ -74,8 +76,8 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
       </Box>
       <Select
         name="registrar"
-        label="Veldu dómritara"
-        placeholder="Velja dómritara"
+        label={formatMessage(strings.setRegistrarLabel)}
+        placeholder={formatMessage(strings.setRegistrarPlaceholder)}
         value={defaultRegistrar}
         options={registrars}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
