@@ -21,6 +21,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
   applicantIsMale,
+  PARENTAL_LEAVE,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -82,6 +83,7 @@ export const getEmployer = (
 
 export const getPensionFund = (
   application: Application,
+  leaveType: string,
   isPrivate = false,
 ): PensionFund => {
   const getter = isPrivate
@@ -93,9 +95,9 @@ export const getPensionFund = (
   if (isPrivate) {
     return {
       id:
-        typeof value === 'string'
+        leaveType === PARENTAL_LEAVE ? (typeof value === 'string'
           ? value
-          : apiConstants.pensionFunds.noPrivatePensionFundId,
+          : apiConstants.pensionFunds.noPrivatePensionFundId) : apiConstants.pensionFunds.noPrivatePensionFundId,
       name: '',
     }
   }
@@ -230,7 +232,7 @@ export const transformApplicationToParentalLeaveDTO = (
     throw new Error('Missing selected child')
   }
 
-  const { isSelfEmployed, union, bank } = getApplicationAnswers(
+  const { isSelfEmployed, union, bank, leaveType } = getApplicationAnswers(
     application.answers,
   )
   const { email, phoneNumber } = getApplicantContactInfo(application)
@@ -257,8 +259,8 @@ export const transformApplicationToParentalLeaveDTO = (
         id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
-      pensionFund: getPensionFund(application),
-      privatePensionFund: getPensionFund(application, true),
+      pensionFund: getPensionFund(application, leaveType),
+      privatePensionFund: getPensionFund(application, leaveType, true),
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,

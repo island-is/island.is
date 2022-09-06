@@ -44,7 +44,7 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.bank },
     ),
-    pensionFund: z.string(),
+    pensionFund: z.string().optional(),
     privatePensionFund: z.string().optional(),
     privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
     union: z.string().optional(),

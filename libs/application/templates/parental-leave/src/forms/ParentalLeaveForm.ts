@@ -41,6 +41,8 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   ParentalRelations,
+  PARENTAL_GRANT,
+  PARENTAL_LEAVE,
   StartDateOptions,
   YES,
 } from '../constants'
@@ -79,14 +81,13 @@ export const ParentalLeaveForm: Form = buildForm({
             buildAsyncSelectField({
               title: 'Veldu umsókn',
               id: 'leaveType.applicationType',
-              // loadingError: parentalLeaveFormMessages.errors.loading,
               isSearchable: true,
               placeholder:
                 parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
               loadOptions: async ({ apolloClient }) => {
                 return await Promise.resolve([
-                  { label: 'Fæðingarorlof', value: 'parentalLeave' },
-                  { label: 'Fæðingarstyrkur', value: 'parentalGrant' },
+                  { label: 'Fæðingarorlof', value: PARENTAL_LEAVE },
+                  { label: 'Fæðingarstyrkur - utan vinnumarkaðar', value: PARENTAL_GRANT },
                 ])
               },
             }),
@@ -223,6 +224,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0000-00-000000',
                 }),
                 buildAsyncSelectField({
+                  condition: (answers) =>
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -247,6 +254,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildCustomField({
+                  condition: (answers) =>
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   component: 'UseUnion',
                   id: 'useUnion',
                   title: parentalLeaveFormMessages.shared.unionName,
@@ -278,6 +291,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildCustomField({
+                  condition: (answers) =>
+                    (answers as {
+                      leaveType: {
+                        applicationType: string
+                      }
+                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
                   component: 'UsePrivatePensionFund',
                   id: 'usePrivatePensionFund',
                   title:
@@ -438,6 +457,12 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          condition: (answers) =>
+            (answers as {
+              leaveType: {
+                applicationType: string
+              }
+            })?.leaveType?.applicationType === PARENTAL_LEAVE,
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
