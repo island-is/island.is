@@ -1,17 +1,18 @@
 import fetch, { Response } from 'node-fetch'
-import { Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   PkPassIssuer,
   PassTemplatesResponse,
-  PkPassServiceErrorResponse,
   UpsertPkPassResponse,
   PassTemplatesDTO,
+  PkPassServiceErrorResponse,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
 import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
-import { Pass, PassDataInput } from '../../gen/schema'
+import { PassDataInput } from '../../gen/schema'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -41,7 +42,7 @@ export class SmartSolutionsApi {
     const apiKey = this.getApiKey(issuer)
 
     if (!apiKey) {
-      throw new Error('Invalid Apikey')
+      throw new ForbiddenException('Missing apikey')
     }
 
     return fetch(this.config.pkPassApiUrl, {
@@ -50,6 +51,7 @@ export class SmartSolutionsApi {
         'X-API-KEY': apiKey,
         'Content-Type': 'application/json',
       },
+      timeout: this.config.timeout,
       body: payload,
     })
   }
@@ -57,7 +59,7 @@ export class SmartSolutionsApi {
   async upsertPkPass(
     payload: PassDataInput,
     issuer: PkPassIssuer,
-  ): Promise<Pass | null> {
+  ): Promise<UpsertPkPassResponse | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
         upsertPass(data: $inputData) {
@@ -127,21 +129,49 @@ export class SmartSolutionsApi {
 
     const response = json as UpsertPkPassResponse
 
-    if (response.data?.upsertPass) {
-      return response.data.upsertPass
+    if (response) {
+      return response
     }
 
     return null
   }
 
   async generatePkPassQrCode(payload: PassDataInput, issuer: PkPassIssuer) {
-    const pass = await this.upsertPkPass(payload, issuer)
-    return pass?.distributionQRCode
+    const response = await this.upsertPkPass(payload, issuer)
+
+    if (response?.data?.upsertPass?.distributionQRCode) {
+      return response?.data?.upsertPass?.distributionQRCode
+    }
+
+    this.logger.warn(
+      'the pkpass service response does not include distributionQrCode',
+      {
+        serviceStatus: response?.status,
+        serviceMessage: response?.message,
+        category: LOG_CATEGORY,
+      },
+    )
+
+    return null
   }
 
   async generatePkPassUrl(payload: PassDataInput, issuer: PkPassIssuer) {
-    const pass = await this.upsertPkPass(payload, issuer)
-    return pass?.deliveryPageUrl
+    const response = await this.upsertPkPass(payload, issuer)
+
+    if (response?.data?.upsertPass?.distributionUrl) {
+      return response?.data?.upsertPass?.distributionUrl
+    }
+
+    this.logger.warn(
+      'the pkpass service response does not include distributionUrl',
+      {
+        serviceStatus: response?.status,
+        serviceMessage: response?.message,
+        category: LOG_CATEGORY,
+      },
+    )
+
+    return null
   }
 
   async listTemplates(issuer: PkPassIssuer): Promise<PassTemplatesDTO | null> {
@@ -163,11 +193,10 @@ export class SmartSolutionsApi {
     try {
       res = await this.fetchUrl(JSON.stringify(listTemplatesQuery), issuer)
     } catch (e) {
-      this.logger.warn('Unable to retreive pk pass templates', {
+      this.logger.warn('Unable to retrieve pk pass templates', {
         exception: e,
         category: LOG_CATEGORY,
       })
-      return null
     }
 
     if (!res) {

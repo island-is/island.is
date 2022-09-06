@@ -7,6 +7,7 @@ const schema = z.object({
     rlsApiKey: z.string(),
   }),
   pkPassApiUrl: z.string(),
+  timeout: z.number(),
 })
 
 export const SmartSolutionsClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -18,5 +19,6 @@ export const SmartSolutionsClientConfig = defineConfig<z.infer<typeof schema>>({
       rlsApiKey: env.required('RLS_PKPASS_API_KEY', ''),
     },
     pkPassApiUrl: env.required('SMART_SOLUTIONS_API_URL', ''),
+    timeout: 50000,
   }),
 })
