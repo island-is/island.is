@@ -1,13 +1,14 @@
 import {getFakeUser} from "../../support/utils"
-import * as fakeUsers from "../../fixtures/service-portal/users.json"
+import fakeUsers from '../../fixtures/service-portal/users.json'
 
 describe('Home page', () => {
   const fakeUser = getFakeUser(fakeUsers, 'María Sól Þí Torp')
   beforeEach(() => {
+    cy.log('the fake user:', fakeUser)
     cy.idsLogin(fakeUser.phoneNumber)
   })
 
-  it.only('should have clickable navigation bar', () => {
+  it.skip('have clickable navigation bar', () => {
     cy.get('a:has(div[data-testid^="nav-"])').each((el) => {
       cy.wrap(el).click()
       cy.location('pathname').should('eq', el.attr('href'))
