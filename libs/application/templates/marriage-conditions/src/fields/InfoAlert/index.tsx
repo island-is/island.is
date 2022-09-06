@@ -1,0 +1,1 @@
+export { InfoAlert } from './InfoAlert'

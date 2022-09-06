@@ -31,9 +31,8 @@ export const generateApplicationApprovedByEmployerEmail: ApplicationApprovedByEm
 
   return {
     from: {
-      name: isRunningInProduction && senderName ? senderName : email.sender,
-      address:
-        isRunningInProduction && senderEmail ? senderEmail : email.address,
+      name: email.sender,
+      address: email.address,
     },
     to: [
       {

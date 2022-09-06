@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dotState = styleVariants({
@@ -120,11 +120,17 @@ export const dot = style({
 export const badge = styleVariants({
   active: {
     position: 'absolute',
-    top: 6,
+    top: 9,
+    left: 44,
     height: theme.spacing[1],
     width: theme.spacing[1],
     borderRadius: '50%',
     backgroundColor: theme.color.red400,
+    ...themeUtils.responsiveStyle({
+      md: {
+        left: 28,
+      },
+    }),
   },
   inactive: {
     display: 'none',
@@ -179,4 +185,17 @@ export const subLinkActive = style({
   fontSize: 14,
   color: theme.color.blue400,
   fontWeight: theme.typography.semiBold,
+})
+
+export const animatedIcon = style({
+  height: 32,
+  width: 32,
+})
+
+globalStyle(`${animatedIcon} svg`, {
+  height: 32,
+})
+
+export const dashboard = style({
+  borderLeft: `4px solid ${theme.color.white}`,
 })
