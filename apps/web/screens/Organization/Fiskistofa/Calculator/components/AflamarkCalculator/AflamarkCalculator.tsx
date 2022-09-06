@@ -219,7 +219,9 @@ export const AflamarkCalculator = () => {
             {data?.allowedCatchCategories?.map((category) => (
               <td key={category.name}>
                 {category.id === 0 ? (
-                  initialResponse.data.getAflamarkInformationForShip.allowedCatchCategories.find(c => c.id === category.id).
+                  initialResponse.data.getAflamarkInformationForShip.allowedCatchCategories.find(
+                    (c) => c.id === category.id,
+                  )
                 ) : (
                   <input
                     value={changes?.[category.id]?.allowedCatchChange ?? ''}
