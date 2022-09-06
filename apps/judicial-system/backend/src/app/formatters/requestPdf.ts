@@ -96,7 +96,7 @@ function constructRestrictionRequestPdf(
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
-  addMediumText(doc, 'LÖKE málsnúmer', 'Times-Bold')
+  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
     addNormalText(doc, policeCaseNumber, 'Times-Roman')
   })
@@ -263,7 +263,7 @@ function constructInvestigationRequestPdf(
     `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
   )
   setLineGap(doc, 4)
-  addMediumText(doc, 'LÖKE málsnúmer', 'Times-Bold')
+  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
     addNormalText(doc, policeCaseNumber, 'Times-Roman')
   })
