@@ -28,6 +28,7 @@ export enum ApplicationTypes {
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   OPERATING_LCENSE = 'OperatingLicense',
+  ESTATE = 'Estate',
 }
 
 export const ApplicationConfigurations = {
@@ -122,6 +123,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.ESTATE]: {
+    slug: 'danarbu',
+    translation: 'es.application',
   },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',
