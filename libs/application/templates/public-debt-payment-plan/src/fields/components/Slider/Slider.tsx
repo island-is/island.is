@@ -162,10 +162,18 @@ const Slider = ({
     },
   })
 
-  const formatTooltip = (count: number) =>
-    count <= 1
-      ? `${(count * labelMultiplier).toLocaleString('is-IS')} ${label.singular}`
-      : `${(count * labelMultiplier).toLocaleString('is-IS')} ${label.plural}`
+  const formatTooltip = (count: number, max?: number) => {
+    let selectedAmount = count * labelMultiplier
+    if (max) {
+      const maxValue = max * labelMultiplier
+      if (selectedAmount > maxValue) {
+        selectedAmount = maxValue
+      }
+    }
+    return count <= 1
+      ? `${selectedAmount.toLocaleString('is-IS')} ${label.singular}`
+      : `${selectedAmount.toLocaleString('is-IS')} ${label.plural}`
+  }
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (onChange == null) {
@@ -236,7 +244,7 @@ const Slider = ({
         })}
         {showToolTip && (
           <Tooltip style={tooltipStyle} atEnd={currentIndex === max}>
-            {formatTooltip(currentIndex)}
+            {formatTooltip(currentIndex, max)}
           </Tooltip>
         )}
         <Box
