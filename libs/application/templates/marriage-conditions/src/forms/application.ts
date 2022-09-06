@@ -163,8 +163,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
-                id: '',
-                type: '',
+                id: 'nationalRegistry',
+                type: 'NationalRegistryProvider',
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
@@ -179,12 +179,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 type: '',
                 title: m.dataCollectionBirthCertificateTitle,
                 subTitle: m.dataCollectionBirthCertificateDescription,
-              }),
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionMaritalStatusTitle,
-                subTitle: m.dataCollectionMaritalStatusDescription,
               }),
               buildDataProviderItem({
                 id: 'maritalStatus',

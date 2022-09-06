@@ -91,7 +91,7 @@ export const spouseConfirmation: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'maritalStatus',
-              type: '',
+              type: 'NationalRegistryMaritalStatusProvider',
               title: m.dataCollectionMaritalStatusTitle,
               subTitle: m.dataCollectionMaritalStatusDescription,
             }),
