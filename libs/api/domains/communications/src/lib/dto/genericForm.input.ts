@@ -18,4 +18,7 @@ export class GenericFormInput {
   @Field()
   @IsString()
   message!: string
+
+  @Field({ nullable: true })
+  recipientDeciderValue?: string
 }

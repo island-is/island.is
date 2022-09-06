@@ -135,6 +135,19 @@ export class CommunicationsService {
       return false
     }
 
+    let recipient = form.recipient
+
+    // The CMS might have a form field which decides who the recipient is
+    if (input.recipientDeciderValue && form.recipientFormFieldDecider) {
+      const recipientAccordingToCMS =
+        form.recipientFormFieldDecider.recipientDecider?.[
+          input.recipientDeciderValue
+        ]
+      if (recipientAccordingToCMS) {
+        recipient = recipientAccordingToCMS
+      }
+    }
+
     const emailOptions = {
       from: {
         name: input.name,
@@ -144,7 +157,7 @@ export class CommunicationsService {
         name: input.name,
         address: input.email,
       },
-      to: form.recipient,
+      to: recipient,
       subject: `Island.is form: ${form.title}`,
       text: input.message,
     }

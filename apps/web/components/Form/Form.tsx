@@ -234,6 +234,11 @@ export const Form = ({ form, namespace }: FormProps) => {
     )
   }
 
+  const getRecipientFormFieldDeciderValue = () => {
+    if (!form?.recipientFormFieldDecider?.title) return undefined
+    return data[slugify(form.recipientFormFieldDecider.title)]
+  }
+
   const onSubmit = () => {
     const valid = validate()
 
@@ -245,6 +250,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             name: data['name'],
             email: data['email'],
             message: formatBody(),
+            recipientDeciderValue: getRecipientFormFieldDeciderValue(),
           },
         },
       })
@@ -318,6 +324,7 @@ export const Form = ({ form, namespace }: FormProps) => {
           <Stack space={4}>
             {form.fields.map((field) => {
               const slug = slugify(field.title)
+
               return (
                 <FormField
                   key={field.id}
