@@ -60,8 +60,3 @@ export const generateTimePeriodOptions = () => {
 
   return timePeriods.reverse()
 }
-
-export interface TimePeriodOption {
-  label: string
-  value: string
-}
