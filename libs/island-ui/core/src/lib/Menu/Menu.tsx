@@ -463,7 +463,7 @@ export const Menu = ({
                             }),
                             styles.asideLink,
                           ),
-                          ...{ ...link, dataTestId: 'foobar' },
+                          ...link,
                         },
                         closeModal,
                       )}
