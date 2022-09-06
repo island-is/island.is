@@ -391,6 +391,8 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
+  const applicationType = getValueViaPath(answers, 'leaveType.applicationType') as string
+
   const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
@@ -545,6 +547,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods.length > 0 ? periods[0].firstPeriodStart : undefined
 
   return {
+    applicationType,
     otherParent,
     otherParentRightOfAccess,
     pensionFund,

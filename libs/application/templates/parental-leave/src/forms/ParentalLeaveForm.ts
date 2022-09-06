@@ -78,7 +78,7 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildAsyncSelectField({
               title: 'Veldu umsókn',
-              id: 'applicant.applicationType',
+              id: 'leaveType.applicationType',
               // loadingError: parentalLeaveFormMessages.errors.loading,
               isSearchable: true,
               placeholder:
@@ -90,7 +90,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 ])
               },
             }),
-          ]
+          ],
         }),
         buildSubSection({
           id: 'emailAndPhoneNumber',
@@ -385,7 +385,7 @@ export const ParentalLeaveForm: Form = buildForm({
 
                 return (
                   selectedChild?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
                 )
               },
               width: 'half',
@@ -560,7 +560,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return canTransferRights
               },
@@ -580,7 +580,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&
@@ -599,7 +599,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&

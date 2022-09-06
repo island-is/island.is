@@ -159,9 +159,13 @@ export const getRightsCode = (application: Application): string => {
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === YES
 
+  const isUnemployed = answers.applicationType === 'parentalGrant'
+
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
     if (isSelfEmployed) {
       return 'M-S-GR'
+    } else if (isUnemployed) {
+      return 'M-FS'  
     } else {
       return 'M-L-GR'
     }
@@ -178,6 +182,8 @@ export const getRightsCode = (application: Application): string => {
     // then they will automatically be granted custody
     if (isSelfEmployed) {
       return `${parentPrefix}-S-GR`
+    } else if (isUnemployed) {
+      return `${parentPrefix}-FS`  
     } else {
       return `${parentPrefix}-L-GR`
     }
@@ -185,6 +191,8 @@ export const getRightsCode = (application: Application): string => {
 
   if (isSelfEmployed) {
     return `${parentPrefix}-FL-S-GR`
+  } else if (isUnemployed) {
+    return `${parentPrefix}-FL-FS`  
   } else {
     return `${parentPrefix}-FL-L-GR`
   }
