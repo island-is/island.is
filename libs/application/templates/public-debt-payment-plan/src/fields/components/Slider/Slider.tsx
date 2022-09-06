@@ -106,7 +106,7 @@ const Slider = ({
     }
   }, [isDragging, x])
 
-  const tooltipStyle = { transform: `translateX(${x}px)` }
+  const tooltipStyle = { transform: `translateX(${x}px)`, marginBottom: '30px' }
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
