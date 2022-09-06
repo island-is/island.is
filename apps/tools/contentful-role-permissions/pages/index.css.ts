@@ -20,3 +20,8 @@ export const checkboxContainer = style({
   alignItems: 'center',
   justifyContent: 'space-between',
 })
+
+export const menuContainer = style({
+  overflowY: 'scroll',
+  height: '400px',
+})

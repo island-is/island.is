@@ -137,7 +137,7 @@ const Home = ({
                 <DropdownMenu
                   title="Read only entries"
                   icon="caretDown"
-                  hasScroll={true}
+                  menuClassName={styles.menuContainer}
                   items={contentTypes.map((contentType) => ({
                     title: contentType.name,
                     render: () => {
@@ -268,7 +268,7 @@ const Home = ({
                 <DropdownMenu
                   title="Editable entries"
                   icon="caretDown"
-                  hasScroll={true}
+                  menuClassName={styles.menuContainer}
                   items={contentTypes.map((contentType) => ({
                     title: contentType.name,
                     render: () => {
