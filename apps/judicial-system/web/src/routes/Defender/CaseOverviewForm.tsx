@@ -150,7 +150,9 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
           data={[
             {
               title: formatMessage(core.policeCaseNumber),
-              value: workingCase.policeCaseNumbers.join(', '),
+              value: workingCase.policeCaseNumbers.map((n) => (
+                <Text key={n}>{n}</Text>
+              )),
             },
             {
               title: formatMessage(core.courtCaseNumber),

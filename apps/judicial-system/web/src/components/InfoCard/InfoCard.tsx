@@ -10,7 +10,7 @@ import { formatDOB } from '@island.is/judicial-system/formatters'
 import * as styles from './InfoCard.css'
 
 interface Props {
-  data: Array<{ title: string; value?: string }>
+  data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: { title: string; items: Defendant[] }
   defender?: {
     name: string
@@ -108,7 +108,11 @@ const InfoCard: React.FC<Props> = (props) => {
               key={index}
             >
               <Text variant="h4">{dataItem.title}</Text>
-              <Text>{dataItem.value}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
             </Box>
           )
         })}
