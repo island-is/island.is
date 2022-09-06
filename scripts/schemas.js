@@ -39,14 +39,11 @@ const main = async () => {
     console.log(`--> Running command for ${target}\n`)
 
     try {
-      await exec(
-        `nx run-many --target=${target} --all --parallel --maxParallel=6 $NX_OPTIONS`,
-        {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
-        },
-      )
+      await exec(`nx affected --target=${target} --parallel=6 $NX_OPTIONS`, {
+        env: skipCache
+          ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+          : process.env,
+      })
     } catch (err) {
       console.error(`Error running command: ${err.message}`)
       process.exit(err.code || 1)
