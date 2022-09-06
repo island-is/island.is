@@ -23,7 +23,7 @@ describe(`${RESTRICTION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
 
       it('should autofill relevant fields', () => {
         cy.getByTestid('courtAttendees').contains(
-          'Áki Ákærandi aðstoðarsaksóknari Donald Duck kærði',
+          `Áki Ákærandi aðstoðarsaksóknari ${caseData.defendants[0].name} kærði`,
         )
         cy.getByTestid('sessionBookings').should('not.match', ':empty')
         cy.getByTestid('endOfSessionBookings').should('not.match', ':empty')

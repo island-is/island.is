@@ -16,6 +16,7 @@ import {
 import { makeProsecutor, intercept, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
+  const caseData = mockCase(CaseType.CUSTODY)
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
@@ -24,7 +25,6 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -58,7 +58,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
-      'Donald Duck, kt. 000000-0000, Batcave 1337',
+      `${caseData.defendants[0].name}, kt. ${caseData.defendants[0].nationalId}, ${caseData.defendants[0].address}`,
     )
 
     cy.getByTestid('infoCard').contains('Talsmaður')
