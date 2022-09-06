@@ -147,7 +147,7 @@ This describes how you can add a shared and custom dataproviders to your applica
 
 ## 1. Add your action to your template api
 
-See documentation on how to add a new template api [obove](#getting-started)
+See documentation on how to add a new template api [above](#getting-started)
 
 ## 2. Set up your dataprovider definitions
 
@@ -316,7 +316,7 @@ extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
-    super('SharedApi') // <----
+    super('SharedApi') // <---- namespace
   }
 ```
 
