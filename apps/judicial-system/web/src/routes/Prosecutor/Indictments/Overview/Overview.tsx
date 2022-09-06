@@ -116,6 +116,11 @@ const Overview: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={10}>
+          <Box marginBottom={2}>
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.overview.caseFilesHeading)}
+            </Text>
+          </Box>
           {workingCase.caseFiles?.map((caseFile, index) => {
             return (
               <Box key={index} className={styles.caseFileContainer}>
