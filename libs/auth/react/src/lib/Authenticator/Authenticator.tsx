@@ -82,7 +82,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
               prompt: 'none',
             }
           : {
-              login_hint: 'delegations',
+              prompt: 'select_account',
             }
 
       dispatch({
@@ -190,12 +190,14 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       <Switch>
         <Route
           exact
-          path={authSettings.redirectPath}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          path={authSettings.redirectPath!}
           render={() => <OidcSignIn authDispatch={dispatch} />}
         />
         <Route
           exact
-          path={authSettings.redirectPathSilent}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          path={authSettings.redirectPathSilent!}
           component={OidcSilentSignIn}
         />
         <Route>

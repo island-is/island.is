@@ -8,10 +8,13 @@ import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
 
 import { shouldShowFormItem } from './conditionUtils'
-import { Field, RecordObject } from '../types/Fields'
-import { Application, ExternalData, FormValue } from '../types/Application'
 import {
+  Application,
+  ExternalData,
+  FormValue,
   Form,
+  Field,
+  RecordObject,
   FormItemTypes,
   FormLeaf,
   FormNode,
@@ -21,8 +24,7 @@ import {
   StaticText,
   StaticTextObject,
   SubSection,
-} from '../types/Form'
-import { FormatMessage } from '../types/external'
+} from '@island.is/application/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -208,9 +210,14 @@ export function mergeAnswers(
   })
 }
 
+export type MessageFormatter = (
+  descriptor: StaticText,
+  values?: StaticTextObject['values'],
+) => string
+
 const handleMessageFormatting = (
   message: StaticText,
-  formatMessage: FormatMessage,
+  formatMessage: MessageFormatter,
 ) => {
   if (typeof message === 'string' || !message) {
     return formatMessage(message)
@@ -221,46 +228,46 @@ const handleMessageFormatting = (
   return formatMessage(descriptor, values)
 }
 
-export function formatText(
-  text: FormText,
+export function formatText<T extends FormTextArray | FormText>(
+  text: T,
   application: Application,
-  formatMessage: FormatMessage,
-): string
-export function formatText(
-  text: FormTextArray,
-  application: Application,
-  formatMessage: FormatMessage,
-): string[]
-export function formatText(
-  text: FormText | FormTextArray,
-  application: Application,
-  formatMessage: FormatMessage,
-): string | string[] {
+  formatMessage: MessageFormatter,
+): T extends FormTextArray ? string[] : string {
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
     )
     if (Array.isArray(message)) {
-      return message.map((m) => handleMessageFormatting(m, formatMessage))
+      return message.map((m) =>
+        handleMessageFormatting(m, formatMessage),
+      ) as T extends FormTextArray ? string[] : string
     }
-    return handleMessageFormatting(message, formatMessage)
+    return handleMessageFormatting(
+      message,
+      formatMessage,
+    ) as T extends FormTextArray ? string[] : string
   } else if (Array.isArray(text)) {
     const texts = text as StaticText[]
-    return texts.map((m) => handleMessageFormatting(m, formatMessage))
+    return texts.map((m) =>
+      handleMessageFormatting(m, formatMessage),
+    ) as T extends FormTextArray ? string[] : string
   } else if (typeof text === 'object') {
     const staticTextObject = text as StaticTextObject
     if (staticTextObject.values) {
-      return formatMessage(staticTextObject, staticTextObject.values)
+      return formatMessage(
+        staticTextObject,
+        staticTextObject.values,
+      ) as T extends FormTextArray ? string[] : string
     }
   }
 
-  return formatMessage(text)
+  return formatMessage(text) as T extends FormTextArray ? string[] : string
 }
 
 export function formatAndParseAsHTML(
   text: FormText,
   application: Application,
-  formatMessage: FormatMessage,
+  formatMessage: MessageFormatter,
 ): React.ReactElement[] {
   return HtmlParser(formatText(text, application, formatMessage))
 }

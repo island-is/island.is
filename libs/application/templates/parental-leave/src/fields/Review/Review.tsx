@@ -5,12 +5,8 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 
 import { format as formatKennitala } from 'kennitala'
-import {
-  Application,
-  RecordObject,
-  Field,
-  coreErrorMessages,
-} from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
+import { Application, RecordObject, Field } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -103,6 +99,7 @@ export const Review: FC<ReviewScreenProps> = ({
       applicantPhoneNumber,
       otherParent,
       otherParentEmail,
+      otherParentPhoneNumber,
       pensionFund,
       useUnion,
       union,
@@ -326,7 +323,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
-        editAction={() => goToScreen?.('otherParent')}
+        editAction={() => goToScreen?.('otherParentObj')}
       >
         {otherParent === NO && (
           <RadioValue
@@ -383,7 +380,7 @@ export const Review: FC<ReviewScreenProps> = ({
         )}
         {otherParentWillApprove && (
           <GridRow marginTop={3}>
-            <GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentEmailSubSection,
@@ -391,6 +388,17 @@ export const Review: FC<ReviewScreenProps> = ({
                 value={otherParentEmail}
               />
             </GridColumn>
+            {otherParentPhoneNumber && (
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared
+                      .otherParentPhoneNumberSubSection,
+                  )}
+                  value={formatPhoneNumber(otherParentPhoneNumber)}
+                />
+              </GridColumn>
+            )}
           </GridRow>
         )}
       </ReviewGroup>
@@ -899,7 +907,7 @@ export const Review: FC<ReviewScreenProps> = ({
                   label={formatMessage(
                     parentalLeaveFormMessages.employer.phoneNumber,
                   )}
-                  value={employerPhoneNumber}
+                  value={formatPhoneNumber(employerPhoneNumber)}
                 />
               </Box>
             )}

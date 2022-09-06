@@ -10,11 +10,11 @@ import {
 import {
   OnBehalf,
   SubjectOfComplaint,
-  DataProtectionComplaint,
+  DataProtectionComplaintAnswers,
   yesNoValueLabelMapper,
   messages,
 } from '@island.is/application/templates/data-protection-complaint'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import {
   CreateCaseRequest,
@@ -39,13 +39,15 @@ const extractAnswer = <T>(
 }
 
 export const getComplaintTargets = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): TargetOfComplaint[] => {
   const targets = extractAnswer<TargetOfComplaint[]>(answers, 'complainees', [])
   return targets
 }
 
-export const getAgencies = (answers: DataProtectionComplaint): Agency[] => {
+export const getAgencies = (
+  answers: DataProtectionComplaintAnswers,
+): Agency[] => {
   return extractAnswer<Agency[]>(answers, 'commissions.persons', [])
 }
 
@@ -54,7 +56,7 @@ export const getAndFormatOnBehalf = (application: Application): OnBehalf => {
 }
 
 export const getAndFormatSubjectsOfComplaint = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): string[] => {
   const values = extractAnswer<SubjectOfComplaint[]>(
     answers,
@@ -74,7 +76,7 @@ export const getAndFormatSubjectsOfComplaint = (
 }
 
 export const getAndFormatSubjectsOfComplaintForPdf = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): string[] => {
   const values = extractAnswer<SubjectOfComplaint[]>(
     answers,
@@ -88,7 +90,7 @@ export const getAndFormatSubjectsOfComplaintForPdf = (
 }
 
 export const gatherContacts = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): LinkedContact[] => {
   const contact = getContactInfo(answers)
   //Kvartandi - main contact
@@ -143,7 +145,7 @@ export const getContactType = (nationalId: string): string => {
 export const applicationToQuickCaseRequest = (
   application: Application,
 ): CreateQuickCaseRequest => {
-  const answers = application.answers as DataProtectionComplaint
+  const answers = application.answers as DataProtectionComplaintAnswers
 
   return {
     category: 'Kvörtun',
@@ -158,7 +160,7 @@ export const applicationToCaseRequest = async (
   application: Application,
   attachments: DocumentInfo[],
 ): Promise<CreateCaseRequest> => {
-  const answers = application.answers as DataProtectionComplaint
+  const answers = application.answers as DataProtectionComplaintAnswers
 
   return {
     category: 'Kvörtun',
@@ -172,7 +174,7 @@ export const applicationToCaseRequest = async (
 }
 
 export const toRequestMetadata = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): Metadata[] => {
   const onBehalf = extractAnswer<OnBehalf>(answers, 'info.onBehalf')
 
@@ -203,7 +205,7 @@ export const applicationToComplaintPDF = (
   application: Application,
   attachedFiles: DocumentInfo[],
 ): ComplaintPDF => {
-  const answers = application.answers as DataProtectionComplaint
+  const answers = application.answers as DataProtectionComplaintAnswers
   const timestamp = new Date()
 
   return {
@@ -229,7 +231,7 @@ export const applicationToComplaintPDF = (
 }
 
 export const getMessages = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): ApplicationMessages => {
   return {
     externalData: {
@@ -253,7 +255,7 @@ export const getMessages = (
 }
 
 export const getContactInfo = (
-  answers: DataProtectionComplaint,
+  answers: DataProtectionComplaintAnswers,
 ): ContactInfo => {
   const onBehalf = extractAnswer<OnBehalf>(answers, 'info.onBehalf')
   const contact =

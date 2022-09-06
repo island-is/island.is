@@ -1,27 +1,34 @@
-import React, { useCallback, useState } from 'react'
-import {
-  ServicePortalModuleComponent,
-  m,
-  CardLoader,
-  EmptyState,
-} from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
+import React, { useCallback, useEffect, useState } from 'react'
+
+import { gql, useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
-  Stack,
-  Text,
+  Button,
   GridColumn,
   GridRow,
   Input,
-  Button,
-  AlertBanner,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import isEqual from 'lodash/isEqual'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  CardLoader,
+  EmptyState,
+  formSubmit,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
 import { VehicleCard } from '../../components/VehicleCard'
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES } from '../../queries/getUsersVehicles'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -47,7 +54,9 @@ const getFilteredVehicles = (
   return vehicles
 }
 
-export const VehiclesOverview: ServicePortalModuleComponent = () => {
+export const VehiclesOverview: ServicePortalModuleComponent = ({
+  userInfo,
+}) => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
@@ -57,10 +66,10 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
-  const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
+  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES)
+  const ownershipPdf = data?.vehiclesList?.downloadServiceURL
   const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
-
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
@@ -81,22 +90,27 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
+  /**
+   * The PDF functionality module is feature flagged
+   * Please remove all code when fully released.
+   */
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehiclesPdfEnabled`,
+        false,
+      )
+      setModalFlagEnabled(ffEnabled as boolean)
+    }
+    isFlagEnabled()
+  }, [])
+
   return (
     <>
-      <Box marginBottom={[2, 3, 5]}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h3" as="h1">
-                {formatMessage(messages.title)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(messages.intro)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={messages.title} intro={messages.intro} />
+
       {error && (
         <Box>
           <EmptyState description={m.errorFetch} />
@@ -107,29 +121,65 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
           <EmptyState />
         </Box>
       )}
+
+      {!loading && !error && filteredVehicles.length > 0 && (
+        <Box marginBottom={3} display="flex" flexDirection="row">
+          {modalFlagEnabled && !loading && ownershipPdf && (
+            <Box marginRight={2}>
+              <DropdownExport
+                onGetPDF={() => formSubmit(`${ownershipPdf}`)}
+                onGetExcel={() =>
+                  exportVehicleOwnedDocument(
+                    filteredVehicles,
+                    formatMessage(messages.myCarsFiles),
+                    data?.vehiclesList?.name ?? userInfo.profile.name,
+                    data?.vehiclesList?.persidno ?? userInfo.profile.nationalId,
+                  )
+                }
+              />
+            </Box>
+          )}
+          <Box>
+            <a
+              href="/app/skilavottord/my-cars"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="reader"
+                iconType="outline"
+              >
+                {formatMessage(messages.recycleCar)}
+              </Button>
+            </a>
+          </Box>
+        </Box>
+      )}
       <Stack space={2}>
         {!loading && !error && vehicles.length > 4 && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
-              <Stack space={2}>
+              <Box marginBottom={1}>
                 <Input
                   icon="search"
                   backgroundColor="blue"
                   size="xs"
                   value={filterValue.searchQuery}
                   onChange={(ev) => handleSearchChange(ev.target.value)}
-                  name="rafraen-skjol-leit"
+                  name="okutaeki-leit"
                   label={formatMessage(m.searchLabel)}
                   placeholder={formatMessage(m.searchPlaceholder)}
                 />
-              </Stack>
+              </Box>
             </GridColumn>
           </GridRow>
         )}
         {hasActiveFilters() && (
           <GridRow>
             <GridColumn span={['12/12', '12/12']}>
-              <Box marginTop={4}>
+              <Box>
                 <Box
                   display="flex"
                   alignItems="center"
@@ -163,5 +213,4 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     </>
   )
 }
-
 export default VehiclesOverview

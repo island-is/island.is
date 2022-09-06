@@ -8,10 +8,17 @@ import {
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
   PersidnoLookup,
+  VehicleSearch,
+  PdfApi,
+  VehicleReportPdfGetRequest,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
-import { FetchError } from '@island.is/clients/middlewares'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'vehicles-service'
 
 // 1kW equals 1.359622 metric horsepower.
 const KW_TO_METRIC_HP = 1.359622
@@ -21,41 +28,86 @@ export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(VehicleSearchApi)
+    @Inject(PdfApi)
     private vehiclesApi: VehicleSearchApi,
+    private vehiclesPDFApi: PdfApi,
   ) {}
 
-  private handle4xx(error: FetchError): ApolloError | null {
+  handleError(error: any, detail?: string): ApolloError | null {
+    this.logger.error(detail || 'Vehicles error', {
+      error: JSON.stringify(error),
+      category: LOG_CATEGORY,
+    })
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
+
+  private handle4xx(error: any, detail?: string): ApolloError | null {
     if (error.status === 403 || error.status === 404) {
       return null
     }
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message || error?.status.toString(),
-    )
+    return this.handleError(error, detail)
   }
 
+  private getVehiclesWithAuth(auth: Auth) {
+    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private getPdfWithAuth(auth: Auth) {
+    return this.vehiclesPDFApi.withMiddleware(new AuthMiddleware(auth))
+  }
   async getVehiclesForUser(
-    nationalId: string,
+    auth: User,
+    showDeregistered: boolean,
+    showHistory: boolean,
   ): Promise<PersidnoLookup | null | ApolloError> {
     try {
-      const res = await this.vehiclesApi.vehicleHistoryGet({
-        requestedPersidno: nationalId,
+      const res = await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+        requestedPersidno: auth.nationalId,
+        showDeregistered: showDeregistered,
+        showHistory: showHistory,
       })
       const { data } = res
       if (!data) return {}
       return data
     } catch (e) {
-      const errMsg = 'Failed to get vehicle list'
-      this.logger.error(errMsg, { e })
-      return this.handle4xx(e)
+      return this.handle4xx(e, 'Failed to get vehicle list')
+    }
+  }
+
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearch | null | ApolloError> {
+    try {
+      const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+        search,
+      })
+      const { data } = res
+      if (!data) return null
+      return data[0]
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle search')
+    }
+  }
+
+  async getSearchLimit(auth: User): Promise<number | null | ApolloError> {
+    try {
+      const res = await this.getVehiclesWithAuth(auth).searchesRemainingGet()
+      if (!res) return null
+      return res
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle search limit')
     }
   }
 
   async getVehicleDetail(
+    auth: User,
     input: BasicVehicleInformationGetRequest,
   ): Promise<VehiclesDetail | null | ApolloError> {
     try {
-      const res = await this.vehiclesApi.basicVehicleInformationGet({
+      const res = await this.getVehiclesWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
         clientPersidno: input.clientPersidno,
         permno: input.permno,
         regno: input.regno,
@@ -165,7 +217,7 @@ export class VehiclesService {
           newRegistrationDate: data.newregdate ?? data.firstregdate,
           vehicleGroup: data.techincal?.vehgroup,
           color: data.color,
-          reggroup: data.plates?.[0].reggroup ?? null,
+          reggroup: data.plates?.[0]?.reggroup ?? null,
           reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
@@ -257,9 +309,7 @@ export class VehiclesService {
       }
       return response
     } catch (e) {
-      const errMsg = 'Failed to get vehicle details'
-      this.logger.error(errMsg, { e })
-      return this.handle4xx(e)
+      return this.handle4xx(e, 'Failed to get vehicle details')
     }
   }
 }

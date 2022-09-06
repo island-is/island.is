@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   CaseFileList,
-  CaseInfo,
+  CourtCaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -14,7 +14,7 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -47,15 +47,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  SIGNED_VERDICT_OVERVIEW,
-  IC_MODIFY_RULING_ROUTE,
-  IC_COURT_RECORD_ROUTE,
-  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-} from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as constants from '@island.is/judicial-system/consts'
 
 const Ruling = () => {
   const {
@@ -66,7 +61,7 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { autofill, updateCase } = useCase()
+  const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -86,7 +81,9 @@ const Ruling = () => {
   } = useRequestRulingSignature(workingCase.id, () =>
     setModalVisible('SigningModal'),
   )
-  const isModifyingRuling = router.pathname.includes(IC_MODIFY_RULING_ROUTE)
+  const isModifyingRuling = router.pathname.includes(
+    constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  )
 
   useDeb(workingCase, 'prosecutorDemands')
   useDeb(workingCase, 'courtCaseFacts')
@@ -95,39 +92,23 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value: isAcceptingCaseDecision(workingCase.decision)
+            conclusion: isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.demands
               : undefined,
           },
@@ -140,7 +121,7 @@ const Ruling = () => {
     }
   }, [
     isCaseUpToDate,
-    autofill,
+    setAndSendToServer,
     workingCase,
     formatMessage,
     setWorkingCase,
@@ -154,7 +135,7 @@ const Ruling = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -168,6 +149,7 @@ const Ruling = () => {
               type="warning"
               title={formatMessage(m.sections.alertMessage.title)}
               message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
             />
           </Box>
         )}
@@ -176,9 +158,7 @@ const Ruling = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -409,19 +389,16 @@ const Ruling = () => {
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
               disabled={isModifyingRuling}
               onChange={(decision) => {
-                autofill(
+                setAndSendToServer(
                   [
                     {
-                      key: 'conclusion',
-                      value:
+                      conclusion:
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
-                          : '',
-                      force: true,
+                          : workingCase.conclusion,
                     },
                     {
-                      key: 'decision',
-                      value: decision,
+                      decision,
                       force: true,
                     },
                   ],
@@ -480,8 +457,8 @@ const Ruling = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
+              : `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             isModifyingRuling
@@ -493,13 +470,15 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isRulingValidIC(workingCase)}
           onNextButtonClick={() => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
         />
@@ -507,7 +486,7 @@ const Ruling = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

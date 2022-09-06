@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -32,6 +32,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  ChartsCard,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -61,6 +62,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 
 import { ArticleChatPanel } from './components/ArticleChatPanel'
+
 import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -321,7 +323,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     setMounted(true)
   }, [])
   const n = useNamespace(namespace)
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -383,6 +385,39 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
+  const inStepperView = useMemo(
+    () => query.stepper === 'true' && !!article.stepper,
+    [query.stepper, article.stepper],
+  )
+
+  const breadcrumbItems = useMemo(
+    () =>
+      inStepperView
+        ? []
+        : [
+            {
+              title: 'Ísland.is',
+              typename: 'homepage',
+              href: '/',
+            },
+            !!article.category && {
+              title: article.category.title,
+              typename: 'articlecategory',
+              slug: [article.category.slug],
+            },
+            !!article.group && {
+              isTag: true,
+              title: article.group.title,
+              typename: 'articlecategory',
+              slug: [
+                article.category.slug +
+                  (article.group?.slug ? `#${article.group.slug}` : ''),
+              ],
+            },
+          ],
+    [article.category, article.group, inStepperView],
+  )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -405,46 +440,36 @@ const ArticleScreen: Screen<ArticleProps> = ({
         }
       >
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['none', 'none', 'block']}
-          printHidden
+          printHidden={!inStepperView}
         >
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                typename: 'homepage',
-                href: '/',
-              },
-              !!article.category && {
-                title: article.category.title,
-                typename: 'articlecategory',
-                slug: [article.category.slug],
-              },
-              !!article.group && {
-                isTag: true,
-                title: article.group.title,
-                typename: 'articlecategory',
-                slug: [
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                ],
-              },
-            ]}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
+          {inStepperView && (
+            <Text color="blueberry600" variant="eyebrow" as="h2">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          )}
+
+          {!inStepperView && (
+            <Breadcrumbs
+              items={breadcrumbItems}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          )}
         </Box>
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['flex', 'flex', 'none']}
           justifyContent="spaceBetween"
           alignItems="center"
@@ -483,12 +508,24 @@ const ArticleScreen: Screen<ArticleProps> = ({
           )}
         </Box>
         <Box>
-          <Text variant="h1" as="h1">
-            <span id={slugify(article.title)} className="rs_read">
-              {article.title}
-            </span>
-          </Text>
-          <Webreader readId={null} readClass="rs_read" />
+          {!inStepperView && (
+            <Text variant="h1" as="h1">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          )}
+
+          {inStepperView && (
+            <Stepper
+              namespace={stepperNamespace}
+              optionsFromNamespace={stepOptionsFromNamespace}
+              stepper={article.stepper}
+              showWebReader={true}
+              webReaderClassName="rs_read"
+            />
+          )}
+          {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -497,7 +534,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               isMenuDialog
             />
           </Box>
-          {!!processEntry && (
+          {processEntry?.processLink && (
             <Box
               marginTop={3}
               display={['none', 'none', 'block']}
@@ -519,53 +556,52 @@ const ArticleScreen: Screen<ArticleProps> = ({
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && !subArticle.stepper && (
+          {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
               </span>
             </Text>
           )}
-          {subArticle && subArticle.stepper && (
-            <Box className={styles.stepperSubArticleTitle}>
-              <Text
-                color="blueberry600"
-                variant="eyebrow"
-                as="h2"
-                paddingTop={3}
-              >
-                <span id={slugify(subArticle.title)} className="rs_read">
-                  {subArticle.title}
-                </span>
-              </Text>
+        </Box>
+        <Box paddingTop={subArticle ? 2 : 4}>
+          {!inStepperView && (
+            <Box className="rs_read">
+              {richText(
+                (subArticle ?? article).body as SliceType[],
+                {
+                  renderComponent: {
+                    Stepper: () => (
+                      <Box marginY={3} printHidden className="rs_read">
+                        <ProcessEntry
+                          buttonText={n(
+                            article.processEntryButtonText || 'application',
+                            '',
+                          )}
+                          processLink={asPath
+                            .split('?')[0]
+                            .concat('?stepper=true')}
+                          processTitle={article.stepper.title}
+                          newTab={false}
+                        />
+                      </Box>
+                    ),
+                    GraphCard: (chart) => <ChartsCard chart={chart} />,
+                  },
+                },
+                activeLocale,
+              )}
+              <AppendedArticleComponents article={article} />
             </Box>
           )}
-        </Box>
-        <Box
-          paddingTop={subArticle && subArticle.stepper ? 0 : subArticle ? 2 : 4}
-        >
-          <Box className="rs_read">
-            {richText(
-              (subArticle ?? article).body as SliceType[],
-              undefined,
-              activeLocale,
-            )}
-            {subArticle && subArticle.stepper && (
-              <Stepper
-                stepper={subArticle.stepper}
-                optionsFromNamespace={stepOptionsFromNamespace}
-                namespace={stepperNamespace}
-              />
-            )}
-            <AppendedArticleComponents article={article} />
-          </Box>
+
           <Box
             id="processRef"
             display={['block', 'block', 'none']}
             marginTop={7}
             printHidden
           >
-            {!!processEntry && <ProcessEntry {...processEntry} />}
+            {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
             <Box
@@ -609,7 +645,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             )}
           </Box>
         </Box>
-        {!!processEntry &&
+        {processEntry?.processLink &&
           mounted &&
           isVisible &&
           createPortal(
@@ -661,7 +697,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'StepperFSM',
+            namespace: 'Stepper',
             lang: locale,
           },
         },
@@ -683,9 +719,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   // The stepper in the subArticle can have steps that need data from a namespace (UI configuration)
   let stepOptionsFromNamespace = []
 
-  if (subArticle && subArticle.stepper)
+  if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      subArticle.stepper,
+      article.stepper,
       apolloClient,
     )
 

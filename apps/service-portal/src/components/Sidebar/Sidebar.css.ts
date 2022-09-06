@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_SIDEBAR_WIDTH,
@@ -16,7 +16,22 @@ export const sidebar = style({
   background: theme.color.white,
   transition: 'all 250ms ease-in-out',
   width: SERVICE_PORTAL_SIDEBAR_WIDTH,
+  display: 'flex',
+  justifyContent: 'flex-start',
+  flexDirection: 'column',
+  overflowY: 'auto',
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.color.blue300} ${theme.color.blue100}`,
+  '::-webkit-scrollbar': {
+    width: 6,
+    backgroundColor: theme.color.blue100,
+  },
+  '::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.blue300,
+    borderRadius: theme.border.radius.large,
+  },
 })
+
 export const collapsed = style({
   width: SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
 })
@@ -50,4 +65,25 @@ export const navIcon = style({
   ':hover': {
     cursor: 'pointer',
   },
+})
+
+export const itemWrapper = style({})
+
+globalStyle(`${itemWrapper}:hover svg`, {
+  color: theme.color.blue400,
+})
+
+globalStyle(`${itemWrapper}:hover .navitem`, {
+  backgroundColor: theme.color.blue100,
+  color: theme.color.blue400,
+})
+
+globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
+  display: 'flex',
+  position: 'absolute',
+  top: 0,
+  left: 28,
+  width: 220,
+  height: 'max-content',
+  zIndex: 14,
 })

@@ -34,7 +34,7 @@ import { Defendant } from '../../defendant'
   tableName: 'case',
   timestamps: true,
 })
-export class Case extends Model<Case> {
+export class Case extends Model {
   /**********
    * A surrogate key assigned by the database
    **********/
@@ -107,11 +107,11 @@ export class Case extends Model<Case> {
    * A case number in LÖKE (police information system) connected to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  policeCaseNumber!: string
+  policeCaseNumbers!: string[]
 
   /**********
    * The case's defendants
@@ -883,4 +883,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   isArchived?: boolean
+
+  /**********
+   * The date and time of when when the defender in a case opened the case
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  seenByDefender?: Date
 }

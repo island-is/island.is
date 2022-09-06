@@ -2,13 +2,12 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { getErrorViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -21,8 +20,8 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title, description } = field
 
   return (
-    <Box paddingTop={6}>
-      <Text variant="h4" as="h4">
+    <Box paddingTop={6} aria-labelledby={id} role="region">
+      <Text variant="h4" as="h4" id={id}>
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
@@ -39,10 +38,12 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,
+              dataTestId: 'use-union',
               value: YES,
             },
             {
               label: parentalLeaveFormMessages.shared.noOptionLabel,
+              dataTestId: 'dont-use-union',
               value: NO,
             },
           ],

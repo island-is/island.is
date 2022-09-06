@@ -92,6 +92,12 @@ export const filesText = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp gögnum',
     description: 'Error message when user has to upload files',
   },
+  sizeErrorMessage: {
+    id: 'fa.application:section.filesText.sizeErrorMessage',
+    defaultMessage: 'Hámark 10 MB á skrá',
+    description:
+      'Error message when user uploads files exceeding the allowed size',
+  },
 })
 
 export const familystatus = defineMessages({
@@ -121,5 +127,23 @@ export const familystatus = defineMessages({
     id: 'fa.application:section.familystatus.notCohabitation',
     defaultMessage: 'Ekki í sambúð',
     description: 'Family status when applicant is in not cohabitation',
+  },
+})
+
+export const stateDescriptions = defineMessages({
+  draft: {
+    id: 'fa.application:stateDescriptions.draft',
+    defaultMessage: 'Drög að umsókn',
+    description: 'Description for the draft state',
+  },
+  spouse: {
+    id: 'fa.application:stateDescriptions.spouse',
+    defaultMessage: 'Umsókn hjá maka',
+    description: 'Description for the spouse state',
+  },
+  submitted: {
+    id: 'fa.application:stateDescriptions.submitted',
+    defaultMessage: 'Umsókn móttekin hjá sveitarfélagi',
+    description: 'Description for the submitted state',
   },
 })

@@ -12,7 +12,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import * as styles from './InfoCard.css'
 
 interface Props {
-  data: Array<{ title: string; value?: string }>
+  data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: Defendant[]
   defender?: {
     name: string
@@ -51,10 +51,12 @@ const InfoCard: React.FC<Props> = (props) => {
                     fontWeight="semiBold"
                   >{`${defendant.name}, `}</Text>
                   <Text as="span" fontWeight="semiBold">
-                    {`${formatDOB(
-                      defendant.nationalId,
-                      defendant.noNationalId,
-                    )}, `}
+                    {defendant.nationalId
+                      ? `${formatDOB(
+                          defendant.nationalId,
+                          defendant.noNationalId,
+                        )}, `
+                      : ''}
                   </Text>
                   <Text as="span">
                     {defendant.citizenship && ` (${defendant.citizenship}), `}
@@ -108,7 +110,11 @@ const InfoCard: React.FC<Props> = (props) => {
               key={index}
             >
               <Text variant="h4">{dataItem.title}</Text>
-              <Text>{dataItem.value}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
             </Box>
           )
         })}

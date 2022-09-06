@@ -1,7 +1,6 @@
 import addDays from 'date-fns/addDays'
 
 import {
-  Application,
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
@@ -15,10 +14,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Form,
-  FormModes,
   NO_ANSWER,
 } from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
@@ -29,6 +27,7 @@ import {
   getApplicationAnswers,
   allowOtherParent,
   getLastValidPeriodEndDate,
+  removeCountryCode,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -85,6 +84,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.email,
+                  dataTestId: 'email',
                   id: 'applicant.email',
                   variant: 'email',
                   defaultValue: (application: Application) =>
@@ -96,10 +96,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
                   defaultValue: (application: Application) =>
-                    (application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    })?.mobilePhoneNumber,
+                    removeCountryCode(application),
                   id: 'applicant.phoneNumber',
+                  dataTestId: 'phone',
                   variant: 'tel',
                   format: '###-####',
                   placeholder: '000-0000',
@@ -109,7 +108,7 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'otherParent',
+          id: 'otherParentObj',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
           condition: (answers, externalData) => {
             const selectedChild = getSelectedChild(answers, externalData)
@@ -124,35 +123,37 @@ export const ParentalLeaveForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              id: 'otherParent',
+              id: 'otherParentObj',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
                 buildCustomField({
                   component: 'OtherParent',
-                  id: 'otherParent.chooseOtherParent',
+                  id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
-                  id: 'otherParent.otherParentName',
+                  id: 'otherParentObj.otherParentName',
+                  dataTestId: 'other-parent-name',
                   condition: (answers) =>
                     (answers as {
-                      otherParent: {
+                      otherParentObj: {
                         chooseOtherParent: string
                       }
-                    })?.otherParent?.chooseOtherParent === MANUAL,
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'otherParent.otherParentId',
+                  id: 'otherParentObj.otherParentId',
+                  dataTestId: 'other-parent-kennitala',
                   condition: (answers) =>
                     (answers as {
-                      otherParent: {
+                      otherParentObj: {
                         chooseOtherParent: string
                       }
-                    })?.otherParent?.chooseOtherParent === MANUAL,
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -164,19 +165,21 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'otherParentRightOfAccess',
               condition: (answers) =>
                 (answers as {
-                  otherParent: {
+                  otherParentObj: {
                     chooseOtherParent: string
                   }
-                })?.otherParent?.chooseOtherParent === MANUAL,
+                })?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
                 {
                   label: parentalLeaveFormMessages.rightOfAccess.yesOption,
+                  dataTestId: 'yes-option',
                   value: YES,
                 },
                 {
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  dataTestId: 'no-option',
                   value: NO,
                 },
               ],
@@ -195,6 +198,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title:
                     parentalLeaveFormMessages.shared.paymentInformationBank,
                   id: 'payments.bank',
+                  dataTestId: 'bank-account-number',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                 }),
@@ -203,6 +207,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
+                  dataTestId: `pension-fund`,
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
@@ -215,6 +220,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     return (
                       data?.getPensionFunds?.map(({ id, name }) => ({
                         label: name,
+                        dataTestId: 'pension-fund-item',
                         value: id,
                       })) ?? []
                     )
@@ -232,6 +238,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  dataTestId: 'payments-union',
                   isSearchable: true,
                   placeholder:
                     parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
@@ -264,6 +271,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
+                  dataTestId: 'private-pension-fund',
                   isSearchable: true,
                   loadOptions: async ({ apolloClient }) => {
                     const {
@@ -285,6 +293,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFundPercentage',
+                  dataTestId: 'private-pension-fund-ratio',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundRatio,
                   options: [
@@ -307,10 +316,12 @@ export const ParentalLeaveForm: Form = buildForm({
               options: [
                 {
                   label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                  dataTestId: 'use-personal-finance',
                   value: YES,
                 },
                 {
                   label: parentalLeaveFormMessages.shared.noOptionLabel,
+                  dataTestId: 'dont-use-personal-finance',
                   value: NO,
                 },
               ],
@@ -433,6 +444,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentMaxSizeError,
                   uploadAccept: '.pdf',
                   uploadHeader: '',
                   uploadDescription: '',
@@ -461,6 +475,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.employer.phoneNumber,
                   width: 'full',
                   id: 'employerPhoneNumber',
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
                 }),
               ],
             }),
@@ -579,11 +596,25 @@ export const ParentalLeaveForm: Form = buildForm({
           condition: (answers, externalData) =>
             requiresOtherParentApproval(answers, externalData),
           children: [
-            buildTextField({
-              id: 'otherParentEmail',
+            buildMultiField({
+              id: 'otherParentContactInfo',
               title: parentalLeaveFormMessages.shared.otherParentEmailTitle,
-              description:
-                parentalLeaveFormMessages.shared.otherParentEmailDescription,
+              children: [
+                buildTextField({
+                  id: 'otherParentEmail',
+                  title: parentalLeaveFormMessages.applicant.email,
+                  description:
+                    parentalLeaveFormMessages.shared
+                      .otherParentEmailDescription,
+                }),
+                buildTextField({
+                  id: 'otherParentPhoneNumber',
+                  title: parentalLeaveFormMessages.applicant.phoneNumber,
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                }),
+              ],
             }),
           ],
         }),
@@ -811,11 +842,6 @@ export const ParentalLeaveForm: Form = buildForm({
       children: [
         buildSubSection({
           title: '',
-          condition: (answers) =>
-            getApplicationAnswers(answers).periods.length > 0 &&
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() >= currentDateStartTime(),
           children: [
             buildMultiField({
               id: 'confirmation',
@@ -841,41 +867,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.confirmation.title,
                       type: 'primary',
+                      condition: (answers) =>
+                        getApplicationAnswers(answers).periods.length > 0 &&
+                        new Date(
+                          getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() >= currentDateStartTime(),
                     },
                   ],
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          title: '',
-          condition: (answers) =>
-            getApplicationAnswers(answers).periods.length > 0 &&
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() < currentDateStartTime(),
-          children: [
-            buildMultiField({
-              id: 'confirmation',
-              title: parentalLeaveFormMessages.confirmation.title,
-              description: parentalLeaveFormMessages.confirmation.description,
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmationScreen',
-                    title: '',
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [],
                 }),
               ],
             }),

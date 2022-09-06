@@ -1,12 +1,12 @@
 import {
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
   DefaultEvents,
-  ApplicationConfigurations,
   Application,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { assign } from 'xstate'
 
@@ -18,7 +18,7 @@ import {
   ApiActions,
 } from './constants'
 
-import { application } from './messages'
+import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
 import {
   isMuncipalityNotRegistered,
@@ -90,6 +90,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.draft,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -133,6 +136,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.spouse,
+          },
           roles: [
             {
               id: Roles.SPOUSE,
@@ -170,6 +176,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.spouse,
+          },
           roles: [
             {
               id: Roles.SPOUSE,
@@ -207,6 +216,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          actionCard: {
+            description: stateDescriptions.submitted,
+          },
           onEntry: {
             apiModuleAction: ApiActions.CREATEAPPLICATION,
             shouldPersistToExternalData: true,

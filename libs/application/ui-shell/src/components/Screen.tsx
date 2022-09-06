@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
+import { formatText, mergeAnswers } from '@island.is/application/core'
 import {
   Application,
   Answer,
@@ -16,10 +17,8 @@ import {
   FormModes,
   FormValue,
   Schema,
-  formatText,
-  mergeAnswers,
   BeforeSubmitCallback,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -291,7 +290,10 @@ const Screen: FC<ScreenProps> = ({
 
   const isLoadingOrPending =
     fieldLoadingState || loading || loadingSubmit || isSubmitting
-
+  const shouldCreateTopLevelRegion = !(
+    screen.type === FormItemTypes.REPEATER ||
+    screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
+  )
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -307,7 +309,12 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '10/12', '7/9']}
           offset={['0', '0', '1/12', '1/9']}
         >
-          <Text variant="h2" as="h2" marginBottom={1}>
+          <Text
+            variant="h2"
+            as="h2"
+            marginBottom={1}
+            {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
+          >
             {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
@@ -343,16 +350,18 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
               />
             ) : (
-              <FormField
-                autoFocus
-                setBeforeSubmitCallback={setBeforeSubmitCallback}
-                setFieldLoadingState={setFieldLoadingState}
-                errors={dataSchemaOrApiErrors}
-                field={screen}
-                application={application}
-                goToScreen={goToScreen}
-                refetch={refetch}
-              />
+              <Box component="section" aria-labelledby={screen.id}>
+                <FormField
+                  autoFocus
+                  setBeforeSubmitCallback={setBeforeSubmitCallback}
+                  setFieldLoadingState={setFieldLoadingState}
+                  errors={dataSchemaOrApiErrors}
+                  field={screen}
+                  application={application}
+                  goToScreen={goToScreen}
+                  refetch={refetch}
+                />
+              </Box>
             )}
           </Box>
         </GridColumn>

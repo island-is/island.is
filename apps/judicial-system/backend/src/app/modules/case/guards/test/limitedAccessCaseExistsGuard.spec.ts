@@ -61,7 +61,7 @@ describe('Restricted Case Exists Guard', () => {
       'origin',
       'type',
       'state',
-      'policeCaseNumber',
+      'policeCaseNumbers',
       'defenderName',
       'defenderNationalId',
       'defenderEmail',
@@ -86,6 +86,7 @@ describe('Restricted Case Exists Guard', () => {
       'courtRecordSignatureDate',
       'parentCaseId',
       'caseModifiedExplanation',
+      'seenByDefender',
     ]
 
     beforeEach(async () => {

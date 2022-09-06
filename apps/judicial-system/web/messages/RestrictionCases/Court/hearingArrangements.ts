@@ -107,9 +107,9 @@ export const rcHearingArrangements = {
       },
       text: {
         id:
-          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.text',
+          'judicial.system.restriction_cases:hearing_arrangements.modal.custody_cases.text_v2',
         defaultMessage:
-          'Tilkynning hafi verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður.',
+          '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.',
         description:
           'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í gæsluvarðhaldsmálum.',
       },
@@ -124,9 +124,9 @@ export const rcHearingArrangements = {
       },
       text: {
         id:
-          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.text',
+          'judicial.system.restriction_cases:hearing_arrangements.modal.travel_ban_cases.text_v2',
         defaultMessage:
-          'Tilkynning hefur verið send á ákæranda og verjanda hafi verjandi verið skráður.',
+          '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning verður send á sækjanda, fangelsi og verjanda hafi verjandi verið skráður.',
         description:
           'Notaður sem texti í "tilkynning um fyrirtökutíma hefur verið send" tilkynningaglugganum á fyrirtöku skrefi í farbannsmálum.',
       },

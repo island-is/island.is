@@ -42,23 +42,16 @@ export const notifications = {
   },
   readyForCourt: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.ready_for_court.subject',
-      defaultMessage: 'Krafa í máli {policeCaseNumber}',
+      id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',
+      defaultMessage:
+        '{isIndictmentCase, select, true {Ákæra} other {Krafa um {caseType}}} send',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
     prosecutorHtml: {
       id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v1',
+        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v3',
       defaultMessage:
-        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
-    },
-    prosecutorHtmlV2: {
-      id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v2',
-      defaultMessage:
-        'Þú hefur sent kröfu um {caseType, select, CUSTODY {gæsluvarðhald} TRAVEL_BAN {farbann} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {rannsóknarheimild}} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
+        'Þú hefur sent {isIndictmentCase, select, true {ákæru} other {kröfu}} á {courtName} vegna LÖKE {policeCaseNumbersCount, plural, zero {máls} one {máls {policeCaseNumbers}} other {mála: {policeCaseNumbers}}}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
     },
@@ -141,6 +134,23 @@ export const notifications = {
     description:
       'Notaður sem texti í sms-i þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
   },
+  defenderResubmittedToCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject',
+      defaultMessage: 'Krafa í máli {policeCaseNumber} send aftur',
+      description:
+        'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body',
+      defaultMessage:
+        'Sækjandi í máli {policeCaseNumber} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+    },
+  }),
   prosecutorReceivedByCourt: {
     id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
     defaultMessage:
@@ -163,6 +173,13 @@ export const notifications = {
         'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
+    },
+    subject: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
+      defaultMessage: 'Fyrirtaka í máli: {courtCaseNumber}',
+      description:
+        'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
     body: {
       id:
@@ -217,37 +234,12 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
     },
-    // TODO: remove this unused contentful string
-    prosecutorBodyAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_attachment_v1',
-      defaultMessage:
-        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef ekki tókst að vista úrskurð í AWS S3',
-    },
     courtBody: {
       id: 'judicial.system.backend:notifications.signed_ruling.court_body',
       defaultMessage:
         'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskurðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
-    },
-    defenderBodyAttachment: {
-      // TODO: Remove this message
-      id:
-        'judicial.system.backend:notifications.signed_ruling.defender_body_attachment',
-      defaultMessage:
-        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
-      description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
-    },
-    defenderBody: {
-      id: 'judicial.system.backend:notifications.signed_ruling.defender_body',
-      defaultMessage:
-        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, FALSE {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {{signedVerdictAvailableInS3, select, FALSE {Þú getur nálgast undirritaðan úrskurð hjá {courtName} ef upp koma vandamál við að sækja hann í {linkStart}Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}}}.',
-      description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
     defenderBodyV2: {
       id:
@@ -267,11 +259,11 @@ export const notifications = {
     },
   }),
   prisonCourtDateEmail: defineMessages({
-    isolationText: {
+    isolationTextV2: {
       id:
-        'judicial.system.backend:notifications.prison_court_date_email.isolation_text',
+        'judicial.system.backend:notifications.prison_court_date_email.isolation_text_v2',
       defaultMessage:
-        '{isolation, select, FALSE {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
+        '{isolation, select, false {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
       description:
         'Texti í pósti til fangeslis sem tilgreinir hvort farið er fram á einangrun',
     },
@@ -307,10 +299,18 @@ export const notifications = {
       description:
         'Texti í pósti til fangeslis sem tilgreinir hversu lengi gæsluvarðhandls er krafist',
     },
+    // TODO: remove body
     body: {
       id: 'judicial.system.backend:notifications.prison_court_date_email.body',
       defaultMessage:
         '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, yes {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
+      description: 'Notaður sem beinagrind á í pósti til fangelsis',
+    },
+    bodyV2: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.body_v2',
+      defaultMessage:
+        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistunar á viðeignadi stofnun} other {gæsluvarðhald}} til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
       description: 'Notaður sem beinagrind á í pósti til fangelsis',
     },
     subject: {
@@ -344,11 +344,20 @@ export const notifications = {
         '{caseType, select, ADMISSION_TO_FACILITY {Krafa um vistun á viðeignadi stofnun} other {Gæsluvarðhaldskrafa}} afturkölluð',
       description: 'Fyrirsögn í pósti til fangeslis þegar krafa er afturkölluð',
     },
+    // TODO: remove revokedCase
     revokedCase: {
       id:
         'judicial.system.backend:notifications.prison_revoked_email.revoked_case',
       defaultMessage:
         '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur afturkallað kröfu um {isExtension, select, yes {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} sem send var til {courtText} og taka átti fyrir {courtDateText}.',
+      description:
+        'Texti í pósti til fangelsis þegar sækjandi afturkallar kröfu',
+    },
+    revokedCaseV2: {
+      id:
+        'judicial.system.backend:notifications.prison_revoked_email.revoked_case_v2',
+      defaultMessage:
+        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur afturkallað kröfu um {isExtension, select, true {áframhaldandi } other {}}{caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhald}} sem send var til {courtText} og taka átti fyrir {courtDateText}.',
       description:
         'Texti í pósti til fangelsis þegar sækjandi afturkallar kröfu',
     },
@@ -418,6 +427,14 @@ export const notifications = {
         'judicial.system.backend:notifications.defender_court_date_email.body',
       defaultMessage:
         '{sessionArrangementsText}<br /><br />{courtDateText}<br /><br />{courtCaseNumberText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}<br /><br />{prosecutorText}',
+      description:
+        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    linkBody: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_body',
+      defaultMessage:
+        'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli {courtCaseNumber}.',
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },

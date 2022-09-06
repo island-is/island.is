@@ -11,10 +11,9 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  Form,
-  FormModes,
   getValueViaPath,
 } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -51,11 +50,13 @@ export const PrerequisitesForm: Form = buildForm({
                         options: [
                           {
                             value: YES,
+                            dataTestId: 'mockdata-yes',
                             label:
                               parentalLeaveFormMessages.shared.yesOptionLabel,
                           },
                           {
                             value: NO,
+                            dataTestId: 'mockdata-no',
                             label:
                               parentalLeaveFormMessages.shared.noOptionLabel,
                           },
@@ -302,8 +303,6 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'selectedChildScreen',
               title: parentalLeaveFormMessages.selectChild.screenTitle,
-              description:
-                parentalLeaveFormMessages.selectChild.screenDescription,
               condition: (_, externalData) =>
                 isEligibleForParentalLeave(externalData),
               children: [
@@ -319,6 +318,7 @@ export const PrerequisitesForm: Form = buildForm({
                   actions: [
                     {
                       event: 'SUBMIT',
+                      dataTestId: 'select-child',
                       name: parentalLeaveFormMessages.selectChild.choose,
                       type: ParentalRelations.primary,
                     },

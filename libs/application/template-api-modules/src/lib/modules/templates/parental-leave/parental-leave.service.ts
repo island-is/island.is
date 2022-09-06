@@ -8,7 +8,11 @@ import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationConfigurations,
+  Application,
+} from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getAvailableRightsInDays,
@@ -27,13 +31,15 @@ import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
+  generateEmployerRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  assignLinkEmployerSMS,
+  linkOtherParentSMS,
 } from './emailGenerators'
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
-  createAssignTokenWithoutNonce,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
@@ -77,19 +83,81 @@ export class ParentalLeaveService {
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
+    const { otherParentPhoneNumber } = getApplicationAnswers(
+      application.answers,
+    )
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
+
     await this.sharedTemplateAPIService.sendEmail(
       generateAssignOtherParentApplicationEmail,
       application,
     )
+
+    if (otherParentPhoneNumber) {
+      await this.smsService.sendSms(
+        otherParentPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem maka í umsókn sinni um fæðingarorlof og er að óska eftir réttindum frá þér.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${linkOtherParentSMS}`,
+      )
+    }
   }
 
   async notifyApplicantOfRejectionFromOtherParent({
     application,
   }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.sendEmail(
       generateOtherParentRejected,
       application,
     )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
+        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
+  }
+
+  async notifyApplicantOfRejectionFromEmployer({
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
+    await this.sharedTemplateAPIService.sendEmail(
+      generateEmployerRejected,
+      application,
+    )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
+        Your employer has denied your request. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
@@ -105,26 +173,13 @@ export class ParentalLeaveService {
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
 
-    const token = createAssignTokenWithoutNonce(
-      application,
-      getConfigValue(this.configService, 'jwtSecret'),
-      SIX_MONTHS_IN_SECONDS_EXPIRES,
-    )
-
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
-
-    const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
-
     // send confirmation sms to employer
     if (employerPhoneNumber) {
       await this.smsService.sendSms(
         employerPhoneNumber,
         `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
         Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
-        ${assignLink}`,
+        ${assignLinkEmployerSMS}`,
       )
     }
   }
@@ -233,10 +288,9 @@ export class ParentalLeaveService {
       }
 
       const isUsingTransferredRights =
-        numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
+        numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
-
       if (
         !isUsingTransferredRights &&
         !willStartToUseTransferredRightsWithPeriod
@@ -372,6 +426,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
+        false, // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -408,6 +463,37 @@ export class ParentalLeaveService {
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
+    }
+  }
+
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
+    const nationalRegistryId = application.applicant
+    const attachments = await this.getAttachments(application)
+
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
+        nationalRegistryId,
+      )
+
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        true,
+      )
+
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request
+      // for validation purposes
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
+
+      return
+    } catch (e) {
+      this.logger.error('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 }

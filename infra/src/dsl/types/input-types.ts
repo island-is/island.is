@@ -8,7 +8,7 @@ export interface Service {
   serviceDef: ServiceDefinition
 }
 // Input types
-export type Hash = { [name: string]: Hash | string }
+export type Hash = { [name: string]: Hash | string | number }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 

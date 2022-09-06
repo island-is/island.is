@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+  ArrayMinSize,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -16,9 +23,11 @@ export class CreateCaseDto {
   readonly description?: string
 
   @IsNotEmpty()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiProperty()
-  readonly policeCaseNumber!: string
+  readonly policeCaseNumbers!: string[]
 
   @IsOptional()
   @IsString()

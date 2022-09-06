@@ -31,6 +31,7 @@
     "form-data",
     "sequelize-replace-enum-postgres",
     "sequelize",
+    "swagger-ui-dist",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -40,7 +41,8 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "safer-buffer"
   ],
   "keepNames": true
 }

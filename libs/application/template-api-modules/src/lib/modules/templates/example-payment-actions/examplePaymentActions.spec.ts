@@ -8,7 +8,7 @@ import {
 import {
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../shared'
 import { ExamplePaymentActionsService } from './examplePaymentActions.service'

@@ -9,7 +9,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
@@ -25,7 +25,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
 
@@ -95,7 +95,9 @@ const ReceptionAndAssignment = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RECEPTION_AND_ASSIGNMENT}
+      activeSubSection={
+        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
+      }
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
@@ -118,8 +120,8 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.CASE_LIST_ROUTE}
-          nextUrl={`${Constants.OVERVIEW_ROUTE}/${id}`}
+          previousUrl={constants.CASES_ROUTE}
+          nextUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`}
           nextIsDisabled={!isReceptionAndAssignmentStepValidRC(workingCase)}
         />
       </FormContentContainer>

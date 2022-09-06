@@ -1,34 +1,35 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery } from '@apollo/client'
-import { spmm } from '../../lib/messages'
+import { checkDelegation } from '@island.is/shared/utils'
 
+import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-  Divider,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
+  IntroHeader,
+  m,
   ServicePortalModuleComponent,
   UserInfoLine,
-  m,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
+})
+
+const changeInNationalReg = defineMessage({
+  id: 'sp.family:change-in-national-registry',
+  defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -36,39 +37,28 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
+  const isDelegation = userInfo && checkDelegation(userInfo)
 
   // User's Family members
   const { data: famData, loading: familyLoading } = useQuery<Query>(
     NATIONAL_REGISTRY_FAMILY,
+    {
+      skip: isDelegation,
+    },
   )
   const { nationalRegistryFamily } = famData || {}
   return (
     <>
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {userInfo.profile.name}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(spmm.family.userInfoDesc)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader title={userInfo.profile.name} intro={spmm.userInfoDesc} />
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
-          content={userInfo.profile.name}
+          loading={loading}
+          content={nationalRegistryUser?.fullName}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
@@ -76,6 +66,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <UserInfoLine
           label={m.natreg}
+          loading={loading}
           content={formatNationalId(userInfo.profile.nationalId)}
         />
         <Divider />
@@ -90,10 +81,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
           }}
@@ -119,6 +107,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               : nationalRegistryUser?.familyNr || ''
           }
           loading={loading}
+          tooltip={formatMessage({
+            id: 'sp.family:family-number-tooltip',
+            defaultMessage:
+              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+          })}
         />
         <Divider />
         <UserInfoLine
@@ -148,10 +141,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
@@ -178,6 +168,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
           })}
           loading={loading}
+          editLink={{
+            external: true,
+            title: changeInNationalReg,
+            url: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+          }}
         />
         <Divider />
         <UserInfoLine
@@ -205,27 +200,31 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
-        <Divider />
-        <Box marginY={3} />
-        <UserInfoLine
-          title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
-          label={userInfo.profile.name}
-          content={formatNationalId(userInfo.profile.nationalId)}
-          loading={loading || familyLoading}
-        />
-        <Divider />
-        {nationalRegistryFamily && nationalRegistryFamily.length > 0
-          ? nationalRegistryFamily?.map((item) => (
-              <React.Fragment key={item.nationalId}>
-                <UserInfoLine
-                  label={item.fullName}
-                  content={formatNationalId(item.nationalId)}
-                  loading={loading}
-                />
-                <Divider />
-              </React.Fragment>
-            ))
-          : null}
+        {!isDelegation && (
+          <>
+            <Divider />
+            <Box marginY={3} />
+            <UserInfoLine
+              title={formatMessage(spmm.userFamilyMembersOnNumber)}
+              label={userInfo.profile.name}
+              content={formatNationalId(userInfo.profile.nationalId)}
+              loading={loading || familyLoading}
+            />
+            <Divider />
+            {nationalRegistryFamily && nationalRegistryFamily.length > 0
+              ? nationalRegistryFamily?.map((item) => (
+                  <React.Fragment key={item.nationalId}>
+                    <UserInfoLine
+                      label={item.fullName}
+                      content={formatNationalId(item.nationalId)}
+                      loading={loading}
+                    />
+                    <Divider />
+                  </React.Fragment>
+                ))
+              : null}
+          </>
+        )}
       </Stack>
     </>
   )

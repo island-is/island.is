@@ -3,9 +3,8 @@ import React, { FC, useEffect } from 'react'
 import {
   RedirectToServicePortalField,
   FieldBaseProps,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
 
 interface Props extends FieldBaseProps {
   field: RedirectToServicePortalField
@@ -14,18 +13,17 @@ interface Props extends FieldBaseProps {
 export const RedirectToServicePortalFormField: FC<Props> = ({
   application,
 }) => {
-  const history = useHistory()
-
   useEffect(() => {
     const applicationId = application.id
-
-    process.env.NODE_ENV === 'development'
-      ? window.open(
-          `http://localhost:4200/minarsidur/umsoknir#${applicationId}`,
-          '_self',
-        )
-      : history.push(`/minarsidur/umsoknir#${applicationId}`)
-  }, [history, application])
+    const path = window.location.origin
+    const isLocalhost = path.includes('localhost')
+    window.open(
+      isLocalhost
+        ? `http://localhost:4200/minarsidur/umsoknir#${applicationId}`
+        : `${path}/minarsidur/umsoknir#${applicationId}`,
+      '_self',
+    )
+  }, [application])
 
   return (
     <Box

@@ -5,6 +5,8 @@ import {
   IsUUID,
   IsBoolean,
   IsObject,
+  ArrayMinSize,
+  IsArray,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -31,9 +33,11 @@ export class UpdateCaseDto {
   readonly description?: string
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiPropertyOptional()
-  readonly policeCaseNumber?: string
+  readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
@@ -329,4 +333,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly caseResentExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly seenByDefender?: Date
 }

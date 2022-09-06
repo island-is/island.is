@@ -1,18 +1,19 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useNamespaces, useLocale } from '@island.is/localization'
+
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box, AlertBanner } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ServicePortalModuleComponent,
+  EmptyState,
   IntroHeader,
   m,
-  EmptyState,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import AssetListCards from '../../components/AssetListCards'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
+
 import { AssetCardLoader } from '../../components/AssetCardLoader'
+import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`
@@ -73,8 +74,8 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
             prevResult.assetsOverview?.properties
           ) {
             fetchMoreResult.assetsOverview.properties = [
-              ...prevResult.assetsOverview?.properties,
-              ...fetchMoreResult.assetsOverview?.properties,
+              ...(prevResult.assetsOverview?.properties ?? []),
+              ...(fetchMoreResult.assetsOverview?.properties ?? []),
             ]
           }
           return fetchMoreResult
@@ -85,22 +86,51 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.assets:title',
-            defaultMessage: 'Fasteignir',
-          })}
-          intro={defineMessage({
-            id: 'sp.assets:intro',
-            defaultMessage:
-              'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-          })}
-        />
-      </Box>
+      <IntroHeader
+        title={{
+          id: 'sp.assets:title',
+          defaultMessage: 'Fasteignir',
+        }}
+        intro={{
+          id: 'sp.assets:intro',
+          defaultMessage:
+            'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+        }}
+      />
+
       {loading && <AssetCardLoader />}
-      {data && (
-        <AssetListCards paginateCallback={paginate} assets={assetData} />
+      {assetData?.properties && assetData?.properties?.length > 0 && (
+        <>
+          <GridRow>
+            <GridColumn span="1/1">
+              <Box
+                display="flex"
+                justifyContent="flexStart"
+                printHidden
+                height="full"
+                marginBottom={4}
+              >
+                <a
+                  href="/umsoknir/vedbokarvottord/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button
+                    colorScheme="default"
+                    icon="document"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.mortageCertificate)}
+                  </Button>
+                </a>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <AssetListCards paginateCallback={paginate} assets={assetData} />
+        </>
       )}
 
       {!loading &&

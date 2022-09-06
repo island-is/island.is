@@ -19,7 +19,9 @@ export interface ServicePortalNavigationItem {
   icon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
-  // Hides the child item from the navigation bar, displays the breadcrumb.
+  /**
+   * Hides the child item from the navigation bar, displays the breadcrumb.
+   */
   navHide?: boolean
 
   // These two fields are used for the MVP version of the service portal where
@@ -36,6 +38,10 @@ export interface ServicePortalNavigationItem {
    * Subscribes to - get updates from badge context
    */
   subscribesTo?: 'documents'
+  /**
+   * Description for module
+   */
+  description?: MessageDescriptor
 }
 
 /**
@@ -84,6 +90,16 @@ export type ServicePortalRoute = {
    * Dynamic routes that might have a slow response time will be loaded after inital routes.
    */
   dynamic?: boolean
+
+  /**
+   * The key for the route. Used to filter feature flagged pages.
+   *
+   * To feature flag a route:
+   * create a feature flag in ConfigCat called `isServicePortalVehicleHistoryPageEnabled`
+   * In which case your route key would be `VehicleHistory`.
+   */
+  key?: string
+
   /**
    * The render value of this component
    */

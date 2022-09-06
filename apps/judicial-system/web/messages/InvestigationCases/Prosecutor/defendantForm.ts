@@ -57,12 +57,12 @@ export const defendant = {
         description:
           'Notaður sem titill fyrir "upplýsingar um varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
       }),
-      doesNotHaveIcelandicNationalId: defineMessage({
+      delete: defineMessage({
         id:
-          'judicial.system.investigation_cases:defendant.defendant_info.does_not_have_icelandic_national_id',
-        defaultMessage: 'Varnaraðili er ekki með íslenska kennitölu',
+          'judicial.system.investigation_cases:defendant.defendant_info.delete',
+        defaultMessage: 'Eyða varnaraðila',
         description:
-          'Notaður sem texti í "Varnaraðili er ekki með íslenska kennitölu" hak í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í rannsóknarheimildum.',
+          'Notaður sem texti á eyða varnaraðila hnappinn í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í rannsóknarheimildum',
       }),
       addDefendantButtonText: defineMessage({
         id:

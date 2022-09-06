@@ -4,21 +4,6 @@ const devConfig = {
     jwtSecret: 'jwt-secret',
     secretToken: 'secret-backend-api-token',
   },
-  notifications: {
-    prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
-    courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
-    ) as {
-      [key: string]: string
-    },
-  },
-  email: {
-    fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Réttarvörslugátt',
-    replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Réttarvörslugátt',
-  },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
@@ -32,7 +17,7 @@ const devConfig = {
   },
   admin: {
     users:
-      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla"}]',
+      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin","title":"notendaumsjón"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla","title":"notendaumsjón"}]',
   },
   files: {
     region: 'eu-west-1',
@@ -40,28 +25,9 @@ const devConfig = {
     timeToLivePost: '15',
     timeToLiveGet: '5',
   },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  policeServiceOptions: {
-    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
-    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
-  },
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
-  },
-  deepLinks: {
-    completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
-    prosecutorRestrictionCaseOverviewUrl:
-      'http://localhost:4200/krafa/stadfesta/',
-    prosecutorInvestigationCaseOverviewUrl:
-      'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
-    defenderCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -162,21 +128,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
-  notifications: {
-    courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
-    ) as {
-      [key: string]: string
-    },
-    prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
-  },
-  email: {
-    fromEmail: process.env.EMAIL_FROM ?? '',
-    fromName: process.env.EMAIL_FROM_NAME ?? '',
-    replyToEmail: process.env.EMAIL_REPLY_TO ?? '',
-    replyToName: process.env.EMAIL_REPLY_TO_NAME ?? '',
-  },
   smsOptions: {
     url: process.env.NOVA_URL ?? '',
     username: process.env.NOVA_USERNAME ?? '',
@@ -197,28 +148,9 @@ const prodConfig = {
     timeToLivePost: process.env.S3_TIME_TO_LIVE_POST ?? '',
     timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET ?? '',
   },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  policeServiceOptions: {
-    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
-    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
-  },
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
-  },
-  deepLinks: {
-    completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,
-    prosecutorRestrictionCaseOverviewUrl:
-      process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
-    prosecutorInvestigationCaseOverviewUrl:
-      process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
-    defenderCaseOverviewUrl: process.env.DEFENDER_CASE_OVERVIEW_URL,
   },
 }
 

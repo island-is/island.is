@@ -1,9 +1,7 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import {
-  ApplicationContext,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
 
 import {
   FamilyStatus,
@@ -61,7 +59,7 @@ export function isMuncipalityNotRegistered(context: ApplicationContext) {
     externalData,
     `nationalRegistry.data.municipality.`,
   ) as Municipality | null
-  return municipality == null
+  return municipality == null || !municipality.active
 }
 
 export const encodeFilenames = (filename: string) =>

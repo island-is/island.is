@@ -20,6 +20,7 @@ import {
 } from '@island.is/air-discount-scheme-web/components'
 import { Screen } from '../../types'
 import { Benefits, Usage } from './components'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 interface PropTypes {
   page?: GenericPage
@@ -76,8 +77,12 @@ const GetGenericPageQuery = gql`
     }
   }
 `
+interface InitialProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
 
-Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
+Subsidy.getInitialProps = async ({ apolloClient, locale }: InitialProps) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({

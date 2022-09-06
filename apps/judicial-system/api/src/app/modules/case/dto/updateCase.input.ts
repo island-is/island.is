@@ -29,8 +29,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly description?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly policeCaseNumber?: string
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
 
   @Allow()
   @Field({ nullable: true })
@@ -267,4 +267,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly caseResentExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly seenByDefender?: string
 }

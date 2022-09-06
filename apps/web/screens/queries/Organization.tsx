@@ -143,19 +143,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         height
       }
       sidebarCards {
-        title
-        content
-        type
-        image {
-          url
-          title
-          width
-          height
-        }
-        link {
-          text
-          url
-        }
+        ...SidebarCardFields
+        ...ConnectedComponentFields
       }
       theme
       themeProperties {
@@ -189,6 +178,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      showTableOfContents
       sliceCustomRenderer
       sliceExtraText
       featuredImage {
@@ -207,6 +197,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }
@@ -305,6 +296,14 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
         maximumNumberOfGuests
         numberOfDiningGuests
       }
+    }
+  }
+`
+
+export const MAILING_LIST_SIGNUP_MUTATION = gql`
+  mutation MailchimpSubscribe($input: MailchimpSubscribeInput!) {
+    mailchimpSubscribe(input: $input) {
+      subscribed
     }
   }
 `

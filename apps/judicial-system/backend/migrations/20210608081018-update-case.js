@@ -61,7 +61,7 @@ function formatProsecutorDemands(
 }
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface
@@ -131,8 +131,8 @@ module.exports = {
                        c.isolation,
                        c.isExtension,
                        c.previousDecision,
-                     ).replace(/\'/g, "''")}${
-                      c.demands ? `\n\n${c.demands.replace(/\'/g, "''")}` : ''
+                     ).replace(/'/g, "''")}${
+                      c.demands ? `\n\n${c.demands.replace(/'/g, "''")}` : ''
                     }' \
                      WHERE "id" = '${c.id}'`,
                     { transaction: t },
@@ -151,7 +151,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface
@@ -177,7 +177,7 @@ module.exports = {
                        idx >= 0
                          ? `'${c.other_demands
                              .slice(idx + 2)
-                             .replace(/\'/g, "''")}'`
+                             .replace(/'/g, "''")}'`
                          : 'NULL'
                      } \
                      WHERE "id" = '${c.id}'`,

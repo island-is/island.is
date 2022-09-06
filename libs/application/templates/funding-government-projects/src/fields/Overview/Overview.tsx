@@ -1,13 +1,9 @@
 import { MessageDescriptor } from '@formatjs/intl'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Application, FieldBaseProps } from '@island.is/application/types'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
-import {
-  definitionOfApplicant,
-  project,
-  informationAboutInstitution,
-} from '../../lib/messages'
+import { project, informationAboutInstitution } from '../../lib/messages'
 import { FundingGovernmentProjects } from '../../lib/dataSchema'
 
 interface ValueLineProps {
@@ -35,9 +31,10 @@ const ValueLine = ({ title, value, hasDivider = true }: ValueLineProps) => {
   )
 }
 
-export const Overview = ({ application, field }: FieldBaseProps) => {
+export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const answers = (application as any).answers as FundingGovernmentProjects
+  const answers = (application as Application)
+    .answers as FundingGovernmentProjects
   const contactAnswer = answers.contacts
   const projectAnswer = answers.project
   return (

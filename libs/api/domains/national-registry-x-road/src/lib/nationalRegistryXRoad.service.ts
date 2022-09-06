@@ -1,15 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common'
-
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
+import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -25,6 +27,13 @@ export class NationalRegistryXRoadService {
 
   private handle404(error: FetchError) {
     if (error.status === 404) {
+      return undefined
+    }
+    throw error
+  }
+
+  private handle400(error: FetchError) {
+    if (error.status === 400) {
       return undefined
     }
     throw error
@@ -53,7 +62,6 @@ export class NationalRegistryXRoadService {
   }
 
   async getNationalRegistryPerson(
-    user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
     const response = await this.nationalRegistryApi
@@ -113,7 +121,7 @@ export class NationalRegistryXRoadService {
 
         const parentBNationalId = parents.find((id) => id !== parentNationalId)
         const parentB = parentBNationalId
-          ? await this.getNationalRegistryPerson(user, parentBNationalId)
+          ? await this.getNationalRegistryPerson(parentBNationalId)
           : undefined
 
         const livesWithApplicant = parentAFamily.einstaklingar?.some(
@@ -143,6 +151,7 @@ export class NationalRegistryXRoadService {
   ): Promise<NationalRegistrySpouse | undefined> {
     const spouse = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetHjuskapur({ id: nationalId })
+      .catch(this.handle400)
       .catch(this.handle404)
 
     return (
@@ -150,6 +159,62 @@ export class NationalRegistryXRoadService {
         nationalId: spouse.kennitalaMaka,
         name: spouse.nafnMaka,
         maritalStatus: spouse.hjuskaparkodi,
+      }
+    )
+  }
+
+  async getFamily(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryFamilyMemberInfo[]> {
+    const family = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
+      .catch(this.handle404)
+
+    return (family?.einstaklingar || []).map((member) => ({
+      nationalId: member.kennitala,
+      fullName: member.fulltNafn ?? '',
+      genderCode: member.kynkodi.toString(),
+      address: {
+        streetName: member.adsetur?.heiti ?? '',
+        postalCode: member.adsetur?.postnumer ?? '',
+        city: member.adsetur?.stadur ?? '',
+        municipalityCode: null,
+      },
+    }))
+  }
+
+  async getBirthplace(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryBirthplace | undefined> {
+    const birthplace = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFaedingarstadur({ id: nationalId })
+      .catch(this.handle400)
+      .catch(this.handle404)
+
+    return (
+      birthplace && {
+        dateOfBirth: birthplace.faedingardagur,
+        location: birthplace.stadur,
+        municipalityCode: birthplace.sveitarfelagsnumer,
+      }
+    )
+  }
+
+  async getCitizenship(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryCitizenship | undefined> {
+    const citizenship = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetRikisfang({ id: nationalId })
+      .catch(this.handle400)
+      .catch(this.handle404)
+
+    return (
+      citizenship && {
+        code: citizenship.kodi,
+        name: citizenship.land,
       }
     )
   }

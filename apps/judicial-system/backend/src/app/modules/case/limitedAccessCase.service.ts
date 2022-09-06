@@ -18,7 +18,7 @@ const attributes: (keyof Case)[] = [
   'origin',
   'type',
   'state',
-  'policeCaseNumber',
+  'policeCaseNumbers',
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
@@ -43,6 +43,7 @@ const attributes: (keyof Case)[] = [
   'courtRecordSignatureDate',
   'parentCaseId',
   'caseModifiedExplanation',
+  'seenByDefender',
 ]
 
 @Injectable()
@@ -93,6 +94,13 @@ export class LimitedAccessCaseService {
 
     if (!theCase) {
       throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    if (!theCase.seenByDefender) {
+      await this.caseModel.update(
+        { ...theCase, seenByDefender: nowFactory() },
+        { where: { id: caseId } },
+      )
     }
 
     return theCase

@@ -5,6 +5,7 @@ import { News } from './news.model'
 import { SystemMetadata } from '@island.is/shared/types'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { mapGenericTag } from './genericTag.model'
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class LatestNewsSlice {
@@ -22,6 +23,9 @@ export class LatestNewsSlice {
 
   @Field(() => [News])
   news!: GetNewsInput
+
+  @Field(() => Link, { nullable: true })
+  readMoreLink?: Link | null
 }
 
 export const mapLatestNewsSlice = ({
@@ -34,10 +38,11 @@ export const mapLatestNewsSlice = ({
   tag: fields.newsTag?.fields.slug ?? '',
   readMoreText: fields.readMoreText ?? '',
   news: {
-    tag: fields.newsTag ? mapGenericTag(fields.newsTag).slug : '',
+    tags: fields.newsTag ? [mapGenericTag(fields.newsTag).slug] : [],
     lang:
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
     size: 4,
     order: 'desc',
   },
+  readMoreLink: fields.readMoreLink ? mapLink(fields.readMoreLink) : null,
 })

@@ -21,7 +21,7 @@ import { ClientClaim } from './client-claim.model'
 @Table({
   tableName: 'client',
 })
-export class Client extends Model<Client> {
+export class Client extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -437,7 +437,7 @@ export class Client extends Model<Client> {
   @ApiProperty({
     example: true,
   })
-  supportsDelegation!: boolean
+  supportsCustomDelegation!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

@@ -1,30 +1,26 @@
-import { defineMessages } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
   sections: {
-    courtDocuments: {
-      title: {
+    title: defineMessage({
+      id: 'judicial.system.restriction_cases:court_record.title',
+      defaultMessage: 'Þingbók',
+      description: 'Notaður sem titill á síðu þingbókar',
+    }),
+    courtStartDate: defineMessages({
+      dateLabel: {
         id:
-          'judicial.system.restriction_cases:court_record.court_documents.title',
-        defaultMessage: 'Dómskjöl',
-        description: 'Notaður sem titill fyrir "Dómskjöl" hlutan',
+          'judicial.system.restriction_cases:court_record.court_start_date.date_label',
+        defaultMessage: 'Dagsetning þingfestingar',
+        description: 'Notaður sem skýritexti fyrir dagsetning þingfestingar',
       },
-      firstDocument: {
-        title: {
-          id:
-            'judicial.system.restriction_cases:court_record.court_documents.firstDocument.title',
-          defaultMessage: 'Krafa um {caseType}',
-          description:
-            'Notaður sem titill fyrir fyrsta dómskjal í dómskjala hlutaunum',
-        },
-        label: {
-          id:
-            'judicial.system.restriction_cases.court_record.court_documents.firstDocument.label',
-          defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
-          description: 'Notaður sem text fyrir afan fyrsta þingskjal',
-        },
+      timeLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_start_date.time_label',
+        defaultMessage: 'Þinghald hófst (kk:mm)',
+        description: 'Notaður sem skýritexti fyrir Þinghalds hófst (kk:mm)',
       },
-    },
+    }),
     sessionBookings: defineMessages({
       title: {
         id:
@@ -94,14 +90,6 @@ export const rcCourtRecord = {
           '{translator} túlkar fyrir sakborning það sem fram fer í þinghaldinu.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      autofillPresentations: {
-        id:
-          'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations#markdown',
-        defaultMessage:
-          'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
-        description:
-          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
       },
       autofillPresentationsV2: {
         id:
@@ -269,14 +257,6 @@ export const rcCourtRecord = {
       },
     }),
     custodyRestrictions: defineMessages({
-      disclaimer: {
-        id:
-          'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer',
-        defaultMessage:
-          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       disclaimerV2: {
         id:
           'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer_v2',
@@ -307,6 +287,27 @@ export const rcCourtRecord = {
         defaultMessage: 'Hér er hægt að skrá aðrar bókanir',
         description:
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
+    endOfSessionTitle: defineMessage({
+      id: 'judicial.system.restriction_cases:court_record.end_of_session_title',
+      defaultMessage: 'Lok þinghalds eftir uppkvaðningu úrskurðar',
+      description:
+        'Notaður sem titill fyrir lok þinghalds eftir uppkvaðningu úrskurðar.',
+    }),
+    courtEndTime: defineMessages({
+      dateLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_end_time.date_label',
+        defaultMessage: 'Dagsetning uppkvaðningar',
+        description: 'Notaður sem skýritexti fyrir dagsetningu uppkvaðningar.',
+      },
+      timeLabel: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_end_time.time_label',
+        defaultMessage: 'Þinghaldi lauk (kk:mm)',
+        description:
+          'Notaður sem skýritexti fyrir á tímasetningu uppkvaðningar.',
       },
     }),
     nextButtonInfo: defineMessages({

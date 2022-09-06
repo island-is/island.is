@@ -9,7 +9,7 @@ export const CaseQuery = gql`
       type
       description
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId
@@ -123,6 +123,14 @@ export const CaseQuery = gql`
         decision
         courtCaseNumber
         ruling
+        caseFiles {
+          id
+          name
+          size
+          created
+          state
+          key
+        }
       }
       childCase {
         id
@@ -137,6 +145,7 @@ export const CaseQuery = gql`
         created
         state
         key
+        category
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -144,6 +153,7 @@ export const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
+      seenByDefender
     }
   }
 `

@@ -1,4 +1,4 @@
-import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
@@ -37,9 +37,7 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const isValid = !validations.some(
-    (validation) => validate(value, validation).isValid === false,
-  )
+  const isValid = validate([[value, validations]]).isValid
 
   if (errorMessage !== '' && errorMessageSetter && isValid) {
     errorMessageSetter('')
@@ -51,12 +49,10 @@ export const validateAndSetErrorMessage = (
   value: string,
   errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const error = validations
-    .map((v) => validate(value, v))
-    .find((v) => v.isValid === false)
+  const validation = validate([[value, validations]])
 
-  if (error && errorMessageSetter) {
-    errorMessageSetter(error.errorMessage)
+  if (!validation.isValid && errorMessageSetter) {
+    errorMessageSetter(validation.errorMessage)
     return
   }
 }
@@ -76,74 +72,6 @@ export const validateAndSet = (
     ...theCase,
     [field]: value,
   })
-}
-
-export const validateAndSetTime = (
-  field: keyof UpdateCase,
-  currentValue: string | undefined,
-  time: string,
-  validations: Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-  setTime?: (value: React.SetStateAction<string | undefined>) => void,
-) => {
-  if (currentValue) {
-    // remove optional
-    if (setTime) {
-      setTime(time)
-    }
-
-    const paddedTime = padTimeWithZero(time)
-
-    const isValid = !validations.some(
-      (validation) => validate(paddedTime, validation).isValid === false,
-    )
-
-    const arrestDateMinutes = parseTime(currentValue, paddedTime)
-
-    if (errorMessage !== '' && setErrorMessage && isValid) {
-      setErrorMessage('')
-    }
-
-    setCase({
-      ...theCase,
-      [field]: arrestDateMinutes,
-    })
-  }
-}
-
-export const setAndSendDateToServer = (
-  field: keyof UpdateCase,
-  date: Date | undefined,
-  isValid: boolean,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  if (!isValid) {
-    return
-  }
-
-  let formattedDate = null
-
-  if (date !== undefined) {
-    formattedDate = formatISO(date, {
-      representation: 'complete',
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
-    })
-  }
 }
 
 export const validateAndSendToServer = (
@@ -173,12 +101,10 @@ export const validateAndSendTimeToServer = (
   if (currentValue) {
     const paddedTime = padTimeWithZero(time)
 
-    const error = validations
-      .map((v) => validate(paddedTime, v))
-      .find((v) => v.isValid === false)
+    const validation = validate([[paddedTime, validations]])
 
-    if (error && setErrorMessage) {
-      setErrorMessage(error.errorMessage)
+    if (!validation.isValid && setErrorMessage) {
+      setErrorMessage(validation.errorMessage)
       return
     }
 
@@ -186,27 +112,6 @@ export const validateAndSendTimeToServer = (
 
     if (theCase.id !== '') {
       updateCase(theCase.id, { [field]: dateMinutes })
-    }
-  }
-}
-
-export const setAndSendToServer = (
-  field: keyof UpdateCase,
-  value: string | boolean | undefined,
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-) => {
-  const newCase = { ...theCase, [field]: value }
-  setCase(newCase)
-
-  if (theCase.id !== '') {
-    if (typeof value === 'string' || typeof value === 'boolean') {
-      updateCase(theCase.id, { [field]: value })
-      return newCase
-    } else {
-      updateCase(newCase.id, { [field]: null })
-      return newCase
     }
   }
 }
@@ -251,4 +156,16 @@ export const setCheckboxAndSendToServer = (
 
 export const getTimeFromDate = (date: string | undefined) => {
   return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+}
+
+export const hasDateChanged = (
+  currentDate: string | null | undefined,
+  newDate: Date | undefined,
+) => {
+  if (!currentDate && newDate) return true
+
+  if (currentDate && newDate) {
+    return compareAsc(newDate, new Date(currentDate)) !== 0
+  }
+  return false
 }

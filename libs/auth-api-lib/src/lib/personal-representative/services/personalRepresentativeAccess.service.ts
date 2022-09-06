@@ -62,9 +62,9 @@ export class PersonalRepresentativeAccessService {
     // Create new personal representative connection
     try {
       this.logger.info('Creating personal representative access log')
-      return this.personalRepresentativeAccessModel.create(
-        personalRepresentativeAccess,
-      )
+      return this.personalRepresentativeAccessModel.create({
+        ...personalRepresentativeAccess,
+      })
     } catch (err) {
       this.logger.error(
         `Error creating personal representative access log: ${err}`,

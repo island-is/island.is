@@ -1,11 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  NationalRegistry,
-  RskCompanyInfo,
-  RskProcuring,
-} from '../../../../infra/src/dsl/xroad'
+import { json } from '../../../../infra/src/dsl/dsl'
+import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'servicesauth',
@@ -18,6 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
     .image('services-auth-api')
     .postgres(postgresInfo)
     .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -34,8 +30,50 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
+      XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      COMPANY_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+      XROAD_TJODSKRA_MEMBER_CODE: {
+        prod: '6503760649',
+        dev: '10001',
+        staging: '6503760649',
+      },
     })
-    .xroad(Base, Client, RskProcuring, NationalRegistry, RskCompanyInfo)
+    .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+    })
+    .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
     .liveness('/liveness')
     .initContainer({
@@ -55,17 +93,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
     })
     .resources({
       limits: {
-        cpu: '400m',
-        memory: '256Mi',
+        cpu: '800m',
+        memory: '512Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .replicaCount({
       default: 2,
       min: 2,
-      max: 10,
+      max: 15,
     })
 }

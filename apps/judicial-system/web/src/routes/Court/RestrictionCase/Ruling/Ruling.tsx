@@ -18,7 +18,7 @@ import {
   PageLayout,
   PoliceRequestAccordionItem,
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   CaseFileList,
   Decision,
@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -63,7 +63,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -82,20 +82,18 @@ export function getConclusionAutofill(
   const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
 
   return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
+    ? formatMessage(m.sections.conclusion.dismissingAutofillV3, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
         accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision)
-            ? 'yes'
-            : 'no',
+          isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
     : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
+    ? formatMessage(m.sections.conclusion.rejectingAutofillV3, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
@@ -105,12 +103,10 @@ export function getConclusionAutofill(
           : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
         isExtended:
           workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision)
-            ? 'yes'
-            : 'no',
+          isAcceptingCaseDecision(workingCase.parentCase.decision),
         caseType: workingCase.type,
       })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
+    : formatMessage(m.sections.conclusion.acceptingAutofillV3, {
         genderedAccused: capitalize(
           formatMessage(core.accused, {
             suffix: accusedSuffix,
@@ -123,9 +119,7 @@ export function getConclusionAutofill(
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? 'yes'
-            : '',
+          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
@@ -133,13 +127,8 @@ export function getConclusionAutofill(
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
-        hasIsolation:
-          isAcceptingCaseDecision(decision) && isCustodyIsolation
-            ? 'yes'
-            : 'no',
-        isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
-          ? 'yes'
-          : 'no',
+        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
+        isolationEndsBeforeValidToDate,
         isolationToDate: formatDate(isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
@@ -177,13 +166,13 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
 
   const isModifyingRuling = router.pathname.includes(
-    Constants.MODIFY_RULING_ROUTE,
+    constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
   )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'prosecutorDemands')
@@ -201,39 +190,23 @@ export const Ruling: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'introduction',
-            value: formatMessage(m.sections.introduction.autofill, {
+            introduction: formatMessage(m.sections.introduction.autofill, {
               date: formatDate(workingCase.courtDate, 'PPP'),
             }),
-          },
-          {
-            key: 'prosecutorDemands',
-            value: workingCase.demands,
-          },
-          {
-            key: 'courtCaseFacts',
-            value: workingCase.caseFacts,
-          },
-          {
-            key: 'courtLegalArguments',
-            value: workingCase.legalArguments,
-          },
-          {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            prosecutorDemands: workingCase.demands,
+            courtCaseFacts: workingCase.caseFacts,
+            courtLegalArguments: workingCase.legalArguments,
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
               : isAcceptingCaseDecision(workingCase.decision)
               ? workingCase.parentCase.ruling
               : undefined,
-          },
-          {
-            key: 'conclusion',
-            value:
+            conclusion:
               workingCase.decision &&
               workingCase.defendants &&
               workingCase.defendants.length > 0
@@ -256,7 +229,7 @@ export const Ruling: React.FC = () => {
       setInitialAutoFillDone(true)
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -271,7 +244,7 @@ export const Ruling: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING}
+      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -283,6 +256,7 @@ export const Ruling: React.FC = () => {
               type="warning"
               title={formatMessage(m.sections.alertMessage.title)}
               message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
             />
           </Box>
         )}
@@ -291,9 +265,7 @@ export const Ruling: React.FC = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -306,10 +278,9 @@ export const Ruling: React.FC = () => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
+                  user &&
+                  (user.id === workingCase.judge?.id ||
+                    user.id === workingCase.registrar?.id)
                 }
                 isCaseCompleted={completedCaseStates.includes(
                   workingCase.state,
@@ -573,15 +544,8 @@ export const Ruling: React.FC = () => {
                   )
                 }
 
-                autofill(
-                  [
-                    { key: 'conclusion', value: conclusion, force: true },
-                    {
-                      key: 'decision',
-                      value: decision,
-                      force: true,
-                    },
-                  ],
+                setAndSendToServer(
+                  [{ conclusion, decision, force: true }],
                   workingCase,
                   setWorkingCase,
                 )
@@ -661,21 +625,12 @@ export const Ruling: React.FC = () => {
                     )
                   }
 
-                  autofill(
+                  setAndSendToServer(
                     [
                       {
-                        key: 'validToDate',
-                        value: validToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'isolationToDate',
-                        value: isolationToDate,
-                        force: true,
-                      },
-                      {
-                        key: 'conclusion',
-                        value: conclusion,
+                        validToDate,
+                        isolationToDate,
+                        conclusion,
                         force: true,
                       },
                     ],
@@ -737,16 +692,11 @@ export const Ruling: React.FC = () => {
                         )
                       }
 
-                      autofill(
+                      setAndSendToServer(
                         [
                           {
-                            key: 'isCustodyIsolation',
-                            value: !workingCase.isCustodyIsolation,
-                            force: true,
-                          },
-                          {
-                            key: 'conclusion',
-                            value: conclusion,
+                            isCustodyIsolation: !workingCase.isCustodyIsolation,
+                            conclusion,
                             force: true,
                           },
                         ],
@@ -806,16 +756,11 @@ export const Ruling: React.FC = () => {
                       )
                     }
 
-                    autofill(
+                    setAndSendToServer(
                       [
                         {
-                          key: 'isolationToDate',
-                          value: isolationToDate,
-                          force: true,
-                        },
-                        {
-                          key: 'conclusion',
-                          value: conclusion,
+                          isolationToDate,
+                          conclusion,
                           force: true,
                         },
                       ],
@@ -880,8 +825,8 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
+              : `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
@@ -890,7 +835,9 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}
@@ -904,7 +851,7 @@ export const Ruling: React.FC = () => {
       {modalVisible === 'SigningModal' && (
         <SigningModal
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
+          requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
           onClose={() => setModalVisible('NoModal')}
         />

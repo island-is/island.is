@@ -1,5 +1,6 @@
 import { EnvironmentConfig, EnvironmentConfigs } from './dsl/types/charts'
 import { merge } from 'lodash'
+import { FeatureNames } from './dsl/features'
 
 const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
@@ -79,7 +80,7 @@ export let Envs: EnvironmentConfigs = {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
-    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
+    featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
@@ -105,10 +106,10 @@ export let Envs: EnvironmentConfigs = {
     },
   },
   'prod-ids': {
-    auroraHost: 'postgres-applications.internal',
+    auroraHost: 'postgres-ids.internal',
     domain: 'island.is',
     type: 'prod',
-    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
+    featuresOn: [FeatureNames.drivingLicense],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',

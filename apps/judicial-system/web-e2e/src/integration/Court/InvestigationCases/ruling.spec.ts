@@ -1,50 +1,38 @@
 import faker from 'faker'
 
 import {
-  IC_COURT_RECORD_ROUTE,
-  IC_RULING_ROUTE,
+  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+  INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system/types'
 
 import { makeInvestigationCase, intercept } from '../../../utils'
 
-describe(`${IC_RULING_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_RULING_ROUTE}/:id`, () => {
+  const lorem = faker.lorem.sentence()
+
   beforeEach(() => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition = {
+      ...caseData,
+      demands: lorem,
+      caseFacts: lorem,
+      legalArguments: lorem,
+    }
+
     cy.stubAPIResponses()
+    intercept(caseDataAddition)
+    cy.visit(`${INVESTIGATION_CASE_RULING_ROUTE}/test_id_stadfest`)
   })
 
-  it('should autofill conclusion when accepting decision is chosen and clear the conclusion otherwise', () => {
-    const caseData = makeInvestigationCase()
-
-    const caseDataAddition = { ...caseData, demands: faker.lorem.sentence() }
-
-    cy.visit(`${IC_RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
-
+  it('should autofill conclusion when accepting decision is chosen and decision is ACCEPTING', () => {
     cy.get('[name="conclusion"]').should('match', ':empty')
-
     cy.get('#case-decision-accepting').click()
-
-    cy.get('[name="conclusion"]').should('not.match', ':empty')
-
+    cy.get('[name="conclusion"]').contains(lorem)
     cy.get('#case-decision-rejecting').click()
-
-    cy.get('[name="conclusion"]').should('match', ':empty')
+    cy.get('[name="conclusion"]').contains(lorem)
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      caseFacts: 'lorem ipsum',
-      legalArguments: 'lorem ipsum',
-      demands:
-        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    }
-    cy.visit(`${IC_RULING_ROUTE}/test_id_stadfest`)
-
-    intercept(caseDataAddition)
     cy.wait('@gqlCaseQuery')
 
     // Introduction validation
@@ -85,6 +73,6 @@ describe(`${IC_RULING_ROUTE}/:id`, () => {
 
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').should('not.be.disabled').click()
-    cy.url().should('include', IC_COURT_RECORD_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_COURT_RECORD_ROUTE)
   })
 })

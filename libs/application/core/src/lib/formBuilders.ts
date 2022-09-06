@@ -1,5 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
-
 import {
   Form,
   FormItemTypes,
@@ -10,7 +8,7 @@ import {
   SubSection,
   DataProviderItem,
   DataProviderPermissionItem,
-} from '../types/Form'
+} from '@island.is/application/types'
 
 export function buildForm(data: Omit<Form, 'type'>): Form {
   return { ...data, type: FormItemTypes.FORM }

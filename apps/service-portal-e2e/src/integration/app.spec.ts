@@ -1,6 +1,6 @@
 describe('service-portal', () => {
   it('should navigate the homepage', () => {
     cy.visit('/minarsidur')
-    cy.get('#greeting-text')
+    cy.get('[data-testid="greeting"]')
   })
 })

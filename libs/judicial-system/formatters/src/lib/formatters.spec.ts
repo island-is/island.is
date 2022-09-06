@@ -9,6 +9,8 @@ import {
   formatAppeal,
   formatNationalId,
   formatDOB,
+  formatPhoneNumber,
+  displayFirstPlusRemaining,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -46,6 +48,30 @@ describe('formatDate', () => {
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
+  })
+})
+
+describe('formatPhoneNumber', () => {
+  test('should format a phonenumber that does not have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '1234567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
+  })
+
+  test('should format a phonenumber that does have a hyphen', () => {
+    // Arrange
+    const phoneNumber = '123-4567'
+
+    // Act
+    const formattedPhoneNumber = formatPhoneNumber(phoneNumber)
+
+    // Assert
+    expect(formattedPhoneNumber).toEqual('123-4567')
   })
 })
 
@@ -220,5 +246,25 @@ describe('formatDOB', () => {
 
     // Assert
     expect(res).toBe('-')
+  })
+})
+
+describe('displayFirstPlusRemaining', () => {
+  test('should handle undefined', () => {
+    expect(displayFirstPlusRemaining(undefined)).toBe('')
+  })
+
+  test('should handle empty list', () => {
+    expect(displayFirstPlusRemaining([])).toBe('')
+  })
+
+  test('should handle list with single entry', () => {
+    expect(displayFirstPlusRemaining(['apple'])).toBe('apple')
+  })
+
+  test('should return first element plus how many are left in the list', () => {
+    expect(displayFirstPlusRemaining(['apple', 'pear', 'orange'])).toBe(
+      'apple +2',
+    )
   })
 })

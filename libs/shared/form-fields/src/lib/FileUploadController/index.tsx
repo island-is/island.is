@@ -1,12 +1,10 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
+import { FileRejection } from 'react-dropzone'
 
-import {
-  getValueViaPath,
-  Application,
-  coreErrorMessages,
-} from '@island.is/application/core'
+import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   InputFileUpload,
   UploadFile,
@@ -73,6 +71,7 @@ interface FileUploadControllerProps {
   readonly multiple?: boolean
   readonly accept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: string
   readonly forImageUpload?: boolean
 }
 
@@ -86,6 +85,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   multiple,
   accept,
   maxSize,
+  maxSizeErrorText,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -225,6 +225,34 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     setUploadError(undefined)
   }
 
+  const onFileRejection = (files: FileRejection[]) => {
+    // Check maxsize and display custom error if supplied otherwise use default
+    files.forEach((file: FileRejection) => {
+      if (maxSize && file.file.size > maxSize) {
+        const maxSizeInMb = maxSize / 1000000
+        return setUploadError(
+          maxSizeErrorText ??
+            formatMessage(coreErrorMessages.fileMaxSizeLimitExceeded, {
+              maxSizeInMb,
+            }),
+        )
+      }
+
+      // Check whether the file is of the correct type and display an error to the user if not
+      if (accept) {
+        const acceptedExtensions = accept.split(',')
+        const fileType = file.file.type
+        if (!acceptedExtensions.includes(fileType)) {
+          return setUploadError(
+            formatMessage(coreErrorMessages.fileInvalidExtension, {
+              accept,
+            }),
+          )
+        }
+      }
+    })
+  }
+
   const FileUploadComponent = forImageUpload
     ? InputImageUpload
     : InputFileUpload
@@ -242,6 +270,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           buttonLabel={buttonLabel}
           onChange={onFileChange}
           onRemove={onRemoveFile}
+          onUploadRejection={onFileRejection}
           errorMessage={uploadError || error}
           multiple={multiple}
           accept={accept}

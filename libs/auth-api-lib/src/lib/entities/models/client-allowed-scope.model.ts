@@ -14,7 +14,7 @@ import { Client } from './client.model'
 @Table({
   tableName: 'client_allowed_scope',
 })
-export class ClientAllowedScope extends Model<ClientAllowedScope> {
+export class ClientAllowedScope extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

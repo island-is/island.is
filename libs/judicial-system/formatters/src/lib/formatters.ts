@@ -41,7 +41,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text: string): string => {
+export const capitalize = (text?: string): string => {
   if (!text) {
     return ''
   }
@@ -66,6 +66,21 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
+}
+
 export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
   _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
@@ -78,6 +93,26 @@ export const laws = {
 
 type CaseTypes = { [c in CaseType]: string }
 export const caseTypes: CaseTypes = {
+  CHILD_PROTECTION_LAWS: 'barnaverndarlög',
+  PROPERTY_DAMAGE: 'eignaspjöll',
+  NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
+  EMBEZZLEMENT: 'fjárdráttur',
+  FRAUD: 'fjársvik',
+  DOMESTIC_VIOLENCE: 'heimilisofbeldi',
+  ASSAULT_LEADING_TO_DEATH: 'líkamsáras sem leiðir til dauða',
+  MURDER: 'manndráp',
+  MAJOR_ASSAULT: 'meiriháttar líkamsárás',
+  MINOR_ASSAULT: 'minniháttar líkamsárás',
+  RAPE: 'nauðgun',
+  UTILITY_THEFT: 'nytjastuldur',
+  AGGRAVATED_ASSAULT: 'sérlega hættuleg líkamsáras',
+  TAX_VIOLATION: 'skattalagabrot',
+  ATTEMPTED_MURDER: 'tilraun til manndráps',
+  TRAFFIC_VIOLATION: 'umferðarlagabrot',
+  THEFT: 'þjófnaður',
+  OTHER_CRIMINAL_OFFENSES: 'önnur hegningarlagabrot',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE: 'önnur kynferðisbrot en nauðgun',
+  OTHER_OFFENSES: 'önnur sérrefsilagabrot',
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
   ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
@@ -216,4 +251,22 @@ export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
   return noNationalId
     ? `fd. ${nationalId}`
     : `kt. ${formatNationalId(nationalId)}`
+}
+
+/** Displays the first element in a list followed by a number indicating
+ *  how many elements are left
+ *  fx. displayFirstPlusRemaining(['apple', 'pear', 'orange']) => 'apple +2'
+ */
+export const displayFirstPlusRemaining = (
+  list: string[] | undefined | null,
+) => {
+  if (!list || list.length === 0) {
+    return ''
+  }
+
+  if (list.length === 1) {
+    return list[0]
+  }
+
+  return `${list[0]} +${list.length - 1}`
 }

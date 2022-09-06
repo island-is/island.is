@@ -2,13 +2,12 @@ import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { getErrorViaPath, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getErrorViaPath,
-  formatText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
@@ -42,10 +41,12 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
           options: [
             {
               label: parentalLeaveFormMessages.shared.yesOptionLabel,
+              dataTestId: 'use-as-much-as-possible',
               value: YES,
             },
             {
               label: parentalLeaveFormMessages.shared.noOptionLabel,
+              dataTestId: 'dont-use-as-much-as-possible',
               value: NO,
             },
           ],

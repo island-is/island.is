@@ -1,4 +1,5 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { messages } from '@island.is/application/templates/institution-collaboration'
 import { dedent } from 'ts-dedent'
 
@@ -7,7 +8,7 @@ export const applicationOverviewTemplate = (
 ): string => {
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
 
   const contactName = getValueViaPath(application.answers, 'contact.name')

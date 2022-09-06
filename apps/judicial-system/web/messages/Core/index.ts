@@ -95,6 +95,17 @@ export const core = defineMessages({
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  indictmentDefendant: {
+    id: 'judicial.system.core:indictment_defendant_v2',
+    defaultMessage:
+      '{gender, select, MALE {ákærði} FEMALE {ákærða} other {ákærða}}',
+    description: 'Notað fyrir orðið ákærði í öllum flæðum.',
+  },
+  indictmentDefendants: {
+    id: 'judicial.system.core:indictment_defendants',
+    defaultMessage: 'ákærðu',
+    description: 'Notað fyrir orðið ákærðu í öllum flæðum.',
+  },
   requestCaseType: {
     id: 'judicial.system.core:request_case_type',
     defaultMessage: 'Krafa um {caseType}',
@@ -157,17 +168,6 @@ export const core = defineMessages({
       '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
     description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
-  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
-  pastCustody: {
-    id: 'judicial.system.core:past_custody',
-    defaultMessage: 'Fyrri gæsla',
-    description: 'Notað fyrir orðið Fyrri gæsla í öllum flæðum.',
-  },
-  pastTravelBan: {
-    id: 'judicial.system.core:past_travel_ban',
-    defaultMessage: 'Fyrra farbann',
-    description: 'Notað fyrir orðið Fyrra farbann í öllum flæðum.',
-  },
   arrestDate: {
     id: 'judicial.system.core:arrest_date',
     defaultMessage: 'Tími handtöku',
@@ -202,5 +202,42 @@ export const core = defineMessages({
     id: 'judicial.system.core:continue',
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
+  linkCopied: {
+    id: 'judicial.system.core:link_copied',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
+  },
+  serviceInterruptionTitle: {
+    id: 'judicial.system.core:service_interruption_title',
+    defaultMessage: 'Mikilvæg skilaboð',
+    description:
+      'Notaður sem titil á skilboðum í borða sem er sýndur við þjónusturof',
+  },
+  serviceInterruptionText: {
+    id: 'judicial.system.core:service_interruption_text',
+    defaultMessage: 'NONE',
+    description:
+      'Notaður sem texti á skilboðum í borða sem er sýndur við þjónusturof. Stjórnar hvort skilboð eru sýnd eða ekki.',
+  },
+  restrictionCase: {
+    id: 'judicial.system.core:restriction_case',
+    defaultMessage: 'gæsluvarðhald',
+    description: 'Notaður fyrir orðið Gæsluvarðhald.',
+  },
+  travelBan: {
+    id: 'judicial.system.core:travel_ban',
+    defaultMessage: 'farbann',
+    description: 'Notaður fyrir orðið Farbann.',
+  },
+  investigationCase: {
+    id: 'judicial.system.core:investigation_case',
+    defaultMessage: 'rannsóknarheimild',
+    description: 'Notaður fyrir orðið Rannsóknarheimild.',
+  },
+  indictment: {
+    id: 'judicial.system.core:indictment',
+    defaultMessage: 'ákæra',
+    description: 'Notaður fyrir orðið Ákæra.',
   },
 })

@@ -4,17 +4,19 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  DEPRECATED_DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import {
   YES,
@@ -52,6 +54,7 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -123,6 +126,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           progress: 0.25,
+          onExit: {
+            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -163,7 +170,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -226,7 +233,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction:
@@ -257,7 +264,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -289,7 +296,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -347,8 +354,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -367,12 +379,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
+        entry: 'assignToVMST',
+        exit: 'clearAssignees',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
             description: statesMessages.vinnumalastofnunApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -389,11 +403,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
-          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
-          // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
@@ -404,7 +424,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -428,7 +448,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.approvedDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -438,13 +458,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              write: 'all',
             },
           ],
         },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        },
+        // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
+        // on: {
+        //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        // },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -455,7 +475,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.editOrAddPeriodsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -494,7 +514,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -524,7 +544,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -554,7 +574,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -582,7 +602,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -610,7 +630,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -695,7 +715,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           // have already been any applications created by the primary parent
           set(
             application.answers,
-            'otherParentId',
+            'otherParentObj.otherParentId',
             getOtherParentId(application),
           )
         }
@@ -812,6 +832,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignToVMST: assign((context) => {
+        const { application } = context
+        const VMST_ID = process.env.VMST_ID ?? ''
+
+        set(application, 'assignees', [VMST_ID])
+
+        return context
+      }),
       setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
@@ -845,11 +873,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         // Current parent is secondary parent, this will set otherParentId to the id of the primary parent
         set(
           answers,
-          'otherParentId',
+          'otherParentObj.otherParentId',
           selectedChild.primaryParentNationalRegistryId,
         )
 
-        set(answers, 'otherParent', MANUAL)
+        set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
 
         return context
       }),
@@ -943,6 +971,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
+    }
+
+    const VMST_ID = process.env.VMST_ID
+    if (id === VMST_ID) {
+      return Roles.ORGINISATION_REVIEWER
     }
 
     return undefined

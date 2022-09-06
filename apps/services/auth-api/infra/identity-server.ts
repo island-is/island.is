@@ -71,6 +71,7 @@ export const serviceSetup = (services: {
       Application__MinCompletionPortThreads: '10',
     })
     .secrets({
+      IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
       AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId',
       AudkenniSettings__ClientSecret:
         '/k8s/identity-server/AudkenniClientSecret',
@@ -128,4 +129,36 @@ export const serviceSetup = (services: {
     .serviceAccount('identity-server')
     .readiness('/readiness')
     .liveness('/liveness')
+    .extraAttributes({
+      dev: {
+        annotations: {
+          'ad.datadoghq.com/identity-server.logs':
+            '[{"service": "identity-server", "source": "csharp"}]',
+          'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
+          'ad.datadoghq.com/identity-server.init_configs': '[{}]',
+          'ad.datadoghq.com/identity-server.instances':
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+        },
+      },
+      staging: {
+        annotations: {
+          'ad.datadoghq.com/identity-server.logs':
+            '[{"service": "identity-server", "source": "csharp"}]',
+          'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
+          'ad.datadoghq.com/identity-server.init_configs': '[{}]',
+          'ad.datadoghq.com/identity-server.instances':
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+        },
+      },
+      prod: {
+        annotations: {
+          'ad.datadoghq.com/identity-server.logs':
+            '[{"service": "identity-server", "source": "csharp"}]',
+          'ad.datadoghq.com/identity-server.check_names': '["openmetrics"]',
+          'ad.datadoghq.com/identity-server.init_configs': '[{}]',
+          'ad.datadoghq.com/identity-server.instances':
+            '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]',
+        },
+      },
+    })
 }

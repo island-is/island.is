@@ -55,7 +55,33 @@ const setupOneScreenWatsonChatBot = (
   })
 }
 
+export const defaultWatsonConfig: WatsonChatPanelProps = {
+  integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
+  region: 'eu-gb',
+  serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+  showLauncher: false,
+  carbonTheme: 'g10',
+  namespaceKey: 'default',
+}
+
 export const watsonConfig: Record<string, WatsonChatPanelProps> = {
+  // Evrópska sjúkratryggingarkortið
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
+  '1AKWfq2dh9YnEyiG1yNeR8': {
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
+    region: 'eu-gb',
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+    showLauncher: false,
+    carbonTheme: 'g10',
+    namespaceKey: 'default',
+    onLoad: (instance) =>
+      setupOneScreenWatsonChatBot(
+        instance,
+        'eusjukratryggingakort',
+        'b1a80e76-da12-4333-8872-936b08246eaa',
+      ),
+  },
+
   // Rafræn skilríki
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
   '4lkmXszsB5q5kJkXqhW5Ex': {
@@ -266,11 +292,25 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   },
 }
 
-export const defaultWatsonConfig: WatsonChatPanelProps = {
-  integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
-  region: 'eu-gb',
-  serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
-  showLauncher: false,
-  carbonTheme: 'g10',
-  namespaceKey: 'default',
-}
+// If these organizations are not connected to an article then we show the default watson config
+export const excludedOrganizationWatsonConfig: string[] = [
+  // Sjúkratryggingar Íslands
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+  '3pZwAagW0UY26giHaxHthe',
+
+  // Heilbrigðisstofnun Norðurlands
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+  'EM4Y0gF4OoGhH9ZY0Dxl6',
+
+  // Fiskistofa
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6rXUdfbMD515Z7guowj08E
+  '6rXUdfbMD515Z7guowj08E',
+
+  // Landlæknir
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7qgJZc8vO7ZHWmfSrZp9Kn
+  '7qgJZc8vO7ZHWmfSrZp9Kn',
+
+  // Útlendingastofnun
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+  '77rXck3sISbMsUv7BO1PG2',
+]

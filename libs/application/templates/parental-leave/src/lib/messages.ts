@@ -166,9 +166,14 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang hins foreldris',
       description: 'Other parent email',
     },
+    otherParentPhoneNumberSubSection: {
+      id: 'pl.application:otherParentPhoneNumber.subSection',
+      defaultMessage: 'Símanúmer hins foreldris',
+      description: 'Other parent phone number',
+    },
     otherParentEmailTitle: {
       id: 'pl.application:otherParentEmail.title',
-      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      defaultMessage: 'Hvert er netfang og símanúmer hins foreldrisins?',
       description: 'Asking about the email address of the other parent',
     },
     otherParentEmailDescription: {
@@ -216,7 +221,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Note that by choosing no, you will lose your earned rights with your union.',
     },
     asyncSelectSearchableHint: {
-      id: 'application.system:placeholder.searchable.hint',
+      id: 'pl.application:placeholder.searchable.hint',
       defaultMessage: 'Skrifaðu hér til að leita',
       description: 'Let user know they can search by typing',
     },
@@ -1017,11 +1022,12 @@ export const parentalLeaveFormMessages: MessageDir = {
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandinn þinn þarf að samþykkja tilhögun fæðingarorlofsins þíns. ' +
-        'Þegar þú hefur sent umsóknina inn mun verða sendur vefpóstur á þetta netfang hér fyrir neðan. ' +
-        'Viðtakandi vefpóstsins mun fá aðgang að umsókninni, en einungis sjá upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandinn þinn hafnar umsókninni, þá fer umsóknin aftur á ákveðinn byrjunarreit, þar sem þú getur sótt um aftur.',
-      description: 'Add translation',
+        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
+        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
+        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
+        'Ef vinnuveitandi hafnar umsókninni þarft þú að gera viðeigandi breytingar á henni.',
+      description:
+        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
     },
     email: {
       id: 'pl.application:employer.email',
@@ -1067,6 +1073,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:selfEmployed.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
+    },
+    attachmentMaxSizeError: {
+      id: 'pl.application:selfEmployed.attachment.maxSizeError',
+      defaultMessage: 'Hámark 10 MB á skrá',
+      description: 'Max 10 MB per file',
     },
   }),
 
@@ -1179,8 +1190,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
-      defaultMessage: 'Umsókn þín er samþykkt',
-      description: 'Your application is in approved',
+      defaultMessage: 'Umsókn þín er móttekið',
+      description: 'Your application is received',
     },
     estimatedBirthDate: {
       id: 'pl.application:review.estimatedBirthDate',
@@ -1282,8 +1293,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     deptTitle: {
       id: 'pl.application:review.dept.title',
-      defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
-      description: 'Vinnumálastofnun approves application',
+      defaultMessage: 'Vinnumálastofnun hefur móttekið umsókn',
+      description: 'Vinnumálastofnun has received your application',
     },
     deptDesc: {
       id: 'pl.application:review.dept.description',

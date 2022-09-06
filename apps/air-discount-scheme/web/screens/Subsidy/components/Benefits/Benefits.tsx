@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { NoBenefits, CodeCard } from '../'
 
-const TEN_SECONDS = 10000 // milli-seconds
+const ONE_MINUTE = 1000 * 60 // milli-seconds
 
 interface PropTypes {
   misc: string
@@ -52,7 +52,7 @@ const DiscountsQuery = gql`
 function Benefits({ misc }: PropTypes) {
   const { data, loading, called } = useQuery(DiscountsQuery, {
     ssr: false,
-    pollInterval: TEN_SECONDS,
+    pollInterval: ONE_MINUTE,
   })
   const { user: authUser } = useContext(UserContext)
   const { discounts = [] } = data || {}
@@ -92,7 +92,12 @@ function Benefits({ misc }: PropTypes) {
           padding={3}
         >
           <Box marginRight={2}>
-            <Icon type="alert" color="yellow600" width={26} />
+            <Icon
+              aria-hidden="true"
+              type="alert"
+              color="yellow600"
+              width={26}
+            />
           </Box>
           <Box marginRight={2}>
             <Typography variant="p">
@@ -105,8 +110,15 @@ function Benefits({ misc }: PropTypes) {
 
       <Stack space={3}>
         {hasBenefits ? (
-          <>
-            <Typography variant="h3">{myRights}</Typography>
+          <Box component="section" aria-labelledby="benefits-discount-code">
+            <Typography
+              variant="h3"
+              as="h3"
+              id="benefits-discount-code"
+              marginBottom={3}
+            >
+              {myRights}
+            </Typography>
             {(loading && !called) || loading ? (
               <SkeletonLoader height={98} repeat={2} space={3} />
             ) : (
@@ -188,7 +200,7 @@ function Benefits({ misc }: PropTypes) {
                 </Stack>
               </Box>
             )}
-          </>
+          </Box>
         ) : (
           <NoBenefits misc={misc} />
         )}

@@ -10,10 +10,6 @@ import { intercept } from '../../utils'
 
 describe('Defender case overview', () => {
   beforeEach(() => {
-    cy.stubAPIResponses()
-  })
-
-  it('should have a title', () => {
     const theCase: Case = {
       id: 'test_id',
       created: '2020-09-16T19:50:08.033Z',
@@ -21,13 +17,15 @@ describe('Defender case overview', () => {
       state: CaseState.ACCEPTED,
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
-      policeCaseNumber: '007-2021-202000',
+      policeCaseNumbers: ['007-2021-202000'],
     }
 
-    cy.visit(`${DEFENDER_ROUTE}/test_id`)
-
+    cy.stubAPIResponses()
     intercept(theCase)
+    cy.visit(`${DEFENDER_ROUTE}/test_id`)
+  })
 
+  it('should have a title', () => {
     cy.getByTestid('caseTitle').should('contain.text', 'Gæsluvarðhald virkt')
   })
 })

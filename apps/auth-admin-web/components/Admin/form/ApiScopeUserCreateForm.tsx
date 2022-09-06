@@ -182,7 +182,7 @@ const ApiScopeUserCreateForm: React.FC<Props> = (props: Props) => {
 
                 {accessControlledScopes &&
                   accessControlledScopes.map((scope: ApiScope) => {
-                    let checked = activeScopes.some((x) => x === scope.name)
+                    const checked = activeScopes.some((x) => x === scope.name)
 
                     return (
                       <div

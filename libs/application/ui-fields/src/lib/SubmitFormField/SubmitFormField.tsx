@@ -1,10 +1,7 @@
 import React, { FC, useMemo } from 'react'
 
-import {
-  SubmitField,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
+import { SubmitField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -20,6 +17,7 @@ export const SubmitFormField: FC<Props> = ({ application, field, error }) => {
     return actions.map((a) => {
       return {
         label: formatText(a.name, application, formatMessage),
+        dataTestId: a.dataTestId,
         value: a.event as string,
       }
     })

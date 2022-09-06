@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
+import { getErrorViaPath } from '@island.is/application/core'
 import {
   Application,
   Field,
   FieldBaseProps,
-  getErrorViaPath,
   RecordObject,
   SetFieldLoadingState,
   SetBeforeSubmitCallback,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
 import { FieldDef } from '../types'
@@ -55,7 +55,6 @@ const FormField: FC<{
   }
 
   const Component = allFields[field.component]
-
   if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }

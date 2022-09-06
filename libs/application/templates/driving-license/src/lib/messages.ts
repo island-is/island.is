@@ -439,10 +439,23 @@ export const m = defineMessages({
     description:
       'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
   },
+  congratulationsTempHelpText: {
+    id: 'dl.application:congratulationsTempHelpText',
+    defaultMessage:
+      'Umsókn þín um bráðabirgðaskírteini hefur verið móttekin. Áður en hægt er að panta bráðabirgðaskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum.',
+    description:
+      'Your application for a full driving license has been received. Before a full driving license can be applied for, you must bring the following to the district commissioner.',
+  },
   congratulationsTitleSuccess: {
     id: 'dl.application:congratulationsTitleSuccess',
     defaultMessage:
       'Umsókn þín um fullnaðarskírteini tókst og verður tilbúið á afhendingarstað eftir 3 til 4 vikur. Skila þarf inn bráðabirgðaskírteini til sýslumanns við afhendingu fullnaðarskírteinis.',
+    description: 'Your application for full driving license was successful.',
+  },
+  congratulationsTempTitleSuccess: {
+    id: 'dl.application:congratulationsTempTitleSuccess',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. Þegar þú hefur lokið ökunámi og staðist bæði verklegt og bóklegt ökupróf, verður skírteini þitt pantað og tilbúið til afhendingar hjá völdu sýslumannsembætti þremur vikum síðar.',
     description: 'Your application for full driving license was successful.',
   },
   congratulationsTitle: {
@@ -767,6 +780,12 @@ export const requirementsMessages = defineMessages({
     id: 'dl.application:requirementunmet.localResidencyDescription',
     defaultMessage:
       'Þú þarft að hafa búið að minnsta kosti 180 daga af síðustu 365 dögum á Íslandi til að geta sótt um ökuskírteini.',
+    description: 'requirement unmet api returned false',
+  },
+  currentLocalResidencyDescription: {
+    id: 'dl.application:requirementunmet.currentLocalResidencyDescription',
+    defaultMessage:
+      'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
 })

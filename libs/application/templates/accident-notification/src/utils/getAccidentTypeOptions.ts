@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
 import { accidentType } from '../lib/messages'
 import { AccidentTypeEnum } from '../types'
 import { isReportingOnBehalfOfChild } from './isReportingOnBehalfOfChild'

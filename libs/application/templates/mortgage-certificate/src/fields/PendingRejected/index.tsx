@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -93,7 +93,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box display="flex" justifyContent={'flexEnd'}>
         <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
-          <Button variant="primary" icon="arrowForward">
+          <Button variant="primary" icon="arrowForward" as="a">
             {formatMessage(m.mysites)}
           </Button>
         </Link>

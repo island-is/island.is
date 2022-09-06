@@ -95,7 +95,7 @@ export const DrivingLicense = new XroadConf({
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       staging:
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
   },
   secrets: {
@@ -194,6 +194,17 @@ export const Properties = new XroadConf({
   },
 })
 
+export const AdrAndMachine = new XroadConf({
+  env: {
+    XROAD_ADR_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
@@ -233,6 +244,16 @@ export const NationalRegistry = new XroadConf({
       prod: '6503760649',
       dev: '10001',
       staging: '6503760649',
+    },
+  },
+})
+
+export const Passports = new XroadConf({
+  env: {
+    XROAD_PASSPORT_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1',
     },
   },
 })
@@ -352,6 +373,16 @@ export const Vehicles = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
+  },
+})
+
+export const ChargeFjsV2 = new XroadConf({
+  env: {
+    XROAD_CHARGE_FJS_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
     },
   },
 })

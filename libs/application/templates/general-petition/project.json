@@ -1,0 +1,81 @@
+{
+  "root": "libs/application/templates/general-petition",
+  "sourceRoot": "libs/application/templates/general-petition/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/general-petition/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/general-petition/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/libs/application/templates/general-petition"]
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
+      }
+    },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run application-system-api:dev-services",
+          "yarn nx run application-system-api:migrate",
+          "yarn nx run services-endorsements-api:migrate",
+          "yarn nx run application-templates-general-petition:schemas/external-openapi-generator --skip-nx-cache",
+          "yarn nx run application-templates-general-petition:schemas/codegen --skip-nx-cache",
+          "yarn nx run application-system-api:schemas/build-openapi --skip-nx-cache",
+          "yarn nx run api-domains-application:schemas/openapi-generator --skip-nx-cache"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
+          "yarn start application-system-api $NX_OPTIONS &",
+          "yarn start application-system-form $NX_OPTIONS &",
+          "yarn start services-endorsements-api $NX_OPTIONS &",
+          "yarn start api $NX_OPTIONS &"
+        ],
+        "parallel": true
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
+          "nx run application-templates-general-petition:schemas/openapi-generator $NX_OPTIONS"
+        ],
+        "parallel": false
+      }
+    },
+    "schemas/openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      }
+    }
+  },
+  "tags": []
+}

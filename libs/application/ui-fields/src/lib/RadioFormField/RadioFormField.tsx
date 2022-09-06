@@ -2,12 +2,11 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
-  FieldBaseProps,
   formatText,
   getValueViaPath,
-  RadioField,
   buildFieldOptions,
 } from '@island.is/application/core'
+import { FieldBaseProps, RadioField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -44,10 +43,18 @@ export const RadioFormField: FC<Props> = ({
     [options, application],
   )
 
+  console.debug(
+    `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
+      title,
+      application,
+      formatMessage,
+    )}`,
+  )
+
   return (
-    <Box paddingTop={field.space}>
+    <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
       {showFieldName && (
-        <Text variant="h4" as="h4">
+        <Text variant="h4" as="h4" id={id + 'title'}>
           {formatText(title, application, formatMessage)}
         </Text>
       )}

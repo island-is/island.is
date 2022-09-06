@@ -1,0 +1,53 @@
+{
+  "root": "libs/island-ui/storybook",
+  "sourceRoot": "libs/island-ui/storybook/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/island-ui/storybook/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/storybook:storybook",
+      "options": {
+        "uiFramework": "@storybook/react",
+        "port": 4400,
+        "config": {
+          "configFolder": "libs/island-ui/storybook/config"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build": {
+      "executor": "@nrwl/storybook:build",
+      "options": {
+        "uiFramework": "@storybook/react",
+        "outputPath": "dist/storybook/island-ui",
+        "config": {
+          "configFolder": "libs/island-ui/storybook/config"
+        }
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        },
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "docker-static": {}
+  },
+  "tags": [],
+  "implicitDependencies": ["island-ui-core", "application-ui-fields"]
+}

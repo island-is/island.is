@@ -133,7 +133,6 @@ describe('FileController - Upload case file to court', () => {
 
     it('should upload the file to court', () => {
       expect(mockCreateDocument).toHaveBeenCalledWith(
-        user,
         caseId,
         courtId,
         courtCaseNumber,
@@ -141,6 +140,7 @@ describe('FileController - Upload case file to court', () => {
         fileName,
         fileType,
         content,
+        user,
       )
     })
   })
