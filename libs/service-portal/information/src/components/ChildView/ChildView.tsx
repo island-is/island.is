@@ -132,7 +132,16 @@ const ChildView: FC<Props> = ({
           }}
         />
       )}
-
+      {!loading && !isChild && modalFlagEnabled && (
+        <ChildRegistrationModal
+          data={{
+            parentName: userName || '',
+            parentNationalId: userNationalId || '',
+            childName: person?.fullName || '',
+            childNationalId: nationalId,
+          }}
+        />
+      )}
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
