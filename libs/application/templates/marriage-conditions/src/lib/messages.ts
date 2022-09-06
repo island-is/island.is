@@ -189,7 +189,7 @@ export const m = defineMessages({
   },
   previousMarriageTermination: {
     id: 'mac.application:previousMarriageTermination',
-    defaultMessage: 'Hvernig lauk síðasta hjúskap',
+    defaultMessage: 'Hvernig lauk síðasta hjúskap?',
     description: 'previous marriage',
   },
   terminationByDivorce: {

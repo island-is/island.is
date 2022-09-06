@@ -80,10 +80,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistrySpouse | undefined> {
-    return this.nationalRegistryXRoadService.getSpouse(
-      user,
-      person.nationalId,
-    )
+    return this.nationalRegistryXRoadService.getSpouse(user, person.nationalId)
   }
 
   @ResolveField('birthplace', () => NationalRegistryBirthplace, {
