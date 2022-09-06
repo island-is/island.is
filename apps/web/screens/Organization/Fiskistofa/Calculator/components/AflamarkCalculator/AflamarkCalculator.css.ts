@@ -7,8 +7,6 @@ export const selectBox = style({
 export const tableContainer = style({
   border: '1px solid #CCDFFF',
 
-  background: '#FFFFFF',
-
   borderRadius: '8px',
   borderCollapse: 'separate',
   overflowX: 'scroll',
