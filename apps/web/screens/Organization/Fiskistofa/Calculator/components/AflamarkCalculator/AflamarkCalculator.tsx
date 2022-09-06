@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   Box,
@@ -12,6 +12,7 @@ import type {
   GetAflamarkInformationForShipInput,
   ExtendedShipStatusInformation,
   GetUpdatedAflamarkInformationForShipInput,
+  ExtendedAllowedCatchCategory,
 } from '@island.is/web/graphql/schema'
 import {
   GET_AFLAMARK_INFORMATION_FOR_SHIP,
@@ -42,8 +43,8 @@ type Changes = Record<
   number,
   {
     id: number
-    catchChange: number | undefined
-    allowedCatchChange: number | undefined
+    catchChange: string | undefined
+    allowedCatchChange: string | undefined
   }
 >
 
@@ -109,6 +110,22 @@ export const AflamarkCalculator = () => {
 
   const [changes, setChanges] = useState<Changes>({})
 
+  const getFieldDifference = (
+    category: ExtendedAllowedCatchCategory,
+    fieldName: string,
+  ) => {
+    const a = mutationResponse?.data?.getUpdatedAflamarkInformationForShip?.allowedCatchCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+    const b = initialResponse?.data.getAflamarkInformationForShip?.allowedCatchCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+
+    if (!a || !b) return 0
+
+    return a - b
+  }
+
   return (
     <Box margin={6}>
       <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
@@ -139,16 +156,30 @@ export const AflamarkCalculator = () => {
               Frumstilla
             </Button>
             <Button
+              disabled={Object.keys(changes).length === 0}
               onClick={() => {
+                const changeValues = Object.values(changes)
+
+                if (
+                  !changeValues.every((change) => {
+                    !!change.allowedCatchChange &&
+                      !isNaN(Number(change.allowedCatchChange)) &&
+                      !!change.catchChange &&
+                      !isNaN(Number(change.catchChange))
+                  })
+                ) {
+                  return
+                }
+
                 mutate({
                   variables: {
                     input: {
                       shipNumber,
                       timePeriod: selectedTimePeriod.value,
-                      changes: Object.values(changes).map((change) => ({
+                      changes: changeValues.map((change) => ({
                         ...change,
-                        catchChange: change.catchChange ?? 0,
-                        allowedCatchChange: change.allowedCatchChange ?? 0,
+                        catchChange: Number(change.catchChange),
+                        allowedCatchChange: Number(change.allowedCatchChange),
                       })),
                     },
                   },
@@ -219,9 +250,7 @@ export const AflamarkCalculator = () => {
             {data?.allowedCatchCategories?.map((category) => (
               <td key={category.name}>
                 {category.id === 0 ? (
-                  initialResponse.data.getAflamarkInformationForShip.allowedCatchCategories.find(
-                    (c) => c.id === category.id,
-                  )
+                  getFieldDifference(category, 'allowedCatch')
                 ) : (
                   <input
                     value={changes?.[category.id]?.allowedCatchChange ?? ''}
@@ -231,13 +260,12 @@ export const AflamarkCalculator = () => {
                           ...prevChanges,
                           [category.id]: {
                             id: category.id,
-                            allowedCatchChange: Number(ev.target.value),
+                            allowedCatchChange: ev.target.value,
                             catchChange: prevChanges[category.id]?.catchChange,
                           },
                         }
                       })
                     }}
-                    type="text"
                   />
                 )}
               </td>
@@ -263,10 +291,9 @@ export const AflamarkCalculator = () => {
                 <td key={category.name}>
                   {/* TODO: keep track of difference from initial afli to what it is now */}
                   {category.id === 0 ? (
-                    0
+                    getFieldDifference(category, 'catch')
                   ) : (
                     <input
-                      type="text"
                       value={changes?.[category.id]?.catchChange ?? ''}
                       onChange={(ev) => {
                         setChanges((prevChanges) => {
@@ -274,7 +301,7 @@ export const AflamarkCalculator = () => {
                             ...prevChanges,
                             [category.id]: {
                               id: category.id,
-                              catchChange: Number(ev.target.value),
+                              catchChange: ev.target.value,
                               allowedCatchChange:
                                 prevChanges[category.id]?.allowedCatchChange,
                             },
@@ -325,9 +352,11 @@ export const AflamarkCalculator = () => {
           </tr>
           {/* TODO: add separator */}
           <tr>
-            <td>Heildaraflamark</td>
+            <td className={styles.visualSeparationLine}>Heildaraflamark</td>
             {data?.allowedCatchCategories?.map((category) => (
-              <td key={category.name}>{category.totalAllowedCatch}</td>
+              <td className={styles.visualSeparationLine} key={category.name}>
+                {category.totalAllowedCatch}
+              </td>
             ))}
           </tr>
 
@@ -340,7 +369,6 @@ export const AflamarkCalculator = () => {
                   category.rateOfShare
                 ) : (
                   <input
-                    type="text"
                     value={category.rateOfShare}
                     onChange={(ev) => {
                       // TODO: store changes in state
@@ -359,7 +387,6 @@ export const AflamarkCalculator = () => {
                   category.nextYearQuota
                 ) : (
                   <input
-                    type="text"
                     value={category.nextYearQuota}
                     onChange={(ev) => {
                       // TODO: store changes in state
@@ -378,7 +405,6 @@ export const AflamarkCalculator = () => {
                   category.nextYearFromQuota
                 ) : (
                   <input
-                    type="text"
                     value={category.nextYearFromQuota}
                     onChange={(ev) => {
                       // TODO: store changes in state
