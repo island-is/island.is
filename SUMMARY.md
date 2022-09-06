@@ -107,6 +107,7 @@
 - [Services](apps/services/README.md)
   - [Auth Admin API](apps/services/auth-admin-api/README.md)
   - [Auth API](apps/services/auth-api/README.md)
+  - [Auth Public API ](apps/services/auth-public-api/README.md)
   - [Contentful Entry Tagger](apps/services/contentful-entry-tagger/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
