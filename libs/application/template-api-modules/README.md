@@ -57,8 +57,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { generateApplicationApprovedEmail } from './emailGenerators'
 
 @Injectable()
-export class ReferenceTemplateService extends            // (Optional) Id that will store the result inside application.externalData
-            // Defaults to value of apiModuleAction {
+export class ReferenceTemplateService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
