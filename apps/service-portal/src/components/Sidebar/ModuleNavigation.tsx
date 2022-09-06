@@ -52,7 +52,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
 
   return (
     <Box position="relative" className={styles.itemWrapper}>
-      {navArray && nav.enabled !== false && collapsed && (
+      {/* {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
           <SubNav
             collapsed
@@ -61,7 +61,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
             pathname={pathname}
           />
         </SubNavModal>
-      )}
+      )} */}
       <NavItem
         path={nav.path}
         icon={nav.icon}

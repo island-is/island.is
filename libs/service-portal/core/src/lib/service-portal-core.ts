@@ -39,6 +39,10 @@ export interface ServicePortalNavigationItem extends TestSupport {
    * Subscribes to - get updates from badge context
    */
   subscribesTo?: 'documents'
+  /**
+   * Description for module
+   */
+  description?: MessageDescriptor
 }
 
 /**
