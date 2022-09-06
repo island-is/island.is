@@ -50,8 +50,14 @@ const Overview: React.FC = () => {
   const { onOpen } = useFileList({ caseId: workingCase.id })
   const { transitionCase } = useCase()
 
+  const isNewIndictment =
+    workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
+
   const handleNextButtonClick = async () => {
-    await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+    if (isNewIndictment) {
+      await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+    }
+
     setModal('caseSubmittedModal')
   }
 
@@ -139,9 +145,7 @@ const Overview: React.FC = () => {
         <FormFooter
           previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
-            isNewIndictment:
-              workingCase.state === CaseState.NEW ||
-              workingCase.state === CaseState.DRAFT,
+            isNewIndictment,
           })}
           onNextButtonClick={handleNextButtonClick}
         />
