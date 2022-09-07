@@ -98,7 +98,7 @@ export const sixtyDays = 24 * 3600 * 1000 * 60
 
 const married = 'Gift/ur'
 
-export const genderedMaritalStatuses: {
+export const maritalStatuses: {
   [key: string]: string
 } = {
   '1': 'Ógift/ur',

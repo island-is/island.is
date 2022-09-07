@@ -15,7 +15,7 @@ import {
 import {
   YES,
   MarriageTermination,
-  genderedMaritalStatuses,
+  maritalStatuses,
 } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
@@ -279,7 +279,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     condition: (answers) => {
                       return (
                         (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === genderedMaritalStatuses['6']
+                          ?.maritalStatus === maritalStatuses['6']
                       )
                     },
                   }),

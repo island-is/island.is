@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
-import { genderedMaritalStatuses } from '../lib/constants'
+import { maritalStatuses } from '../lib/constants'
 
 export interface MaritalStatusProvider {
   maritalStatus: string
@@ -85,7 +85,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   }
 
   private formatMaritalStatus(maritalCode: string): string {
-    return genderedMaritalStatuses[maritalCode]
+    return maritalStatuses[maritalCode]
   }
 
   private allowedCodes(maritalCode: string): boolean {
@@ -94,7 +94,6 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
 
   private handleFakeData(fakeData?: MarriageConditionsFakeData) {
     const maritalStatus: string = fakeData?.maritalStatus || ''
-    const genderCode = fakeData?.genderCode || ''
     if (this.allowedCodes(maritalStatus)) {
       return Promise.resolve({
         maritalStatus: this.formatMaritalStatus(maritalStatus),

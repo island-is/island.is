@@ -5,9 +5,7 @@ import {
   buildRadioField,
   buildSelectField,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
-
-import { NO, YES, genderedMaritalStatuses } from '../lib/constants'
+import { NO, YES } from '../lib/constants'
 import { allowFakeCondition } from '../lib/utils'
 import { MaritalStatus } from '../types/schema'
 
@@ -81,18 +79,6 @@ export const fakeDataSection = buildSection({
             },
           ],
         }),
-        // buildSelectField({
-        //   id: 'fakeData.maritalStatus',
-        //   title: 'Hjúskaparstaða',
-        //   description: 'Núverandi hjúskaparstaða umsækjanda',
-        //   width: 'half',
-        //   condition: allowFakeCondition(YES),
-        //   options: () =>
-        //     Object.entries(genderedMaritalStatuses).map(([key, value]) => ({
-        //       value: key,
-        //       label: value,
-        //     })),
-        // }),
       ],
     }),
   ],

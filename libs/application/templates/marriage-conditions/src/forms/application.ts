@@ -26,7 +26,7 @@ import { Individual, PersonalInfo } from '../types'
 import { m } from '../lib/messages'
 import {
   DistrictCommissionerAgencies,
-  genderedMaritalStatuses,
+  maritalStatuses,
   MarriageTermination,
   ReligiousLifeViewingSocieties,
 } from '../lib/constants'
@@ -280,7 +280,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     condition: (answers) => {
                       return (
                         (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === genderedMaritalStatuses['6']
+                          ?.maritalStatus === maritalStatuses['6']
                       )
                     },
                   }),
