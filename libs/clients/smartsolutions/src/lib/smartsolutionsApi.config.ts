@@ -18,7 +18,10 @@ export const SmartSolutionsClientConfig = defineConfig<z.infer<typeof schema>>({
       veApiKey: env.required('VE_PKPASS_API_KEY', ''),
       rlsApiKey: env.required('RLS_PKPASS_API_KEY', ''),
     },
-    pkPassApiUrl: env.required('SMART_SOLUTIONS_API_URL', ''),
+    pkPassApiUrl: env.required(
+      'SMART_SOLUTIONS_API_URL',
+      'https://smartpages-api-dev.smartsolutions.is/graphql',
+    ),
     timeout: 50000,
   }),
 })
