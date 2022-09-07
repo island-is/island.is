@@ -291,32 +291,40 @@ export class LocalRunner implements GitActionStatus {
         )
         if (artifactUrls.length === 1) {
           app(`Found an artifact with PR metadata`)
-          const artifact = (await this.octokit.actions.downloadArtifact({
-            owner: owner,
-            repo: repo,
-            artifact_id: artifactUrls[0].id,
-            archive_format: 'zip',
-          })) as any
+          try {
+            const artifact = (await this.octokit.actions.downloadArtifact({
+              owner: owner,
+              repo: repo,
+              artifact_id: artifactUrls[0].id,
+              archive_format: 'zip',
+            })) as any
 
-          const dir = await unzipper.Open.buffer(new Uint8Array(artifact.data))
-          const event = JSON.parse(
-            (await dir.files[0].buffer()).toString('utf-8'),
-          )
-          app(`Got event data from PR ${run.run_number}`)
-          const headSha = event.head_sha as string
-          const baseSha = event.base_sha as string
-          if (
-            commits.includes(headSha.slice(0, 7)) &&
-            commits.includes(baseSha.slice(0, 7))
-          ) {
-            return {
-              head_commit: headSha,
-              run_nr: run.run_number,
-              base_commit: baseSha,
+            const dir = await unzipper.Open.buffer(
+              new Uint8Array(artifact.data),
+            )
+            const event = JSON.parse(
+              (await dir.files[0].buffer()).toString('utf-8'),
+            )
+            app(`Got event data from PR ${run.run_number}`)
+            const headSha = event.head_sha as string
+            const baseSha = event.base_sha as string
+            if (
+              commits.includes(headSha.slice(0, 7)) &&
+              commits.includes(baseSha.slice(0, 7))
+            ) {
+              return {
+                head_commit: headSha,
+                run_nr: run.run_number,
+                base_commit: baseSha,
+              }
+            } else {
+              app(
+                `PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`,
+              )
             }
-          } else {
+          } catch (e) {
             app(
-              `PR base commit ${baseSha} or head commit ${headSha} could not be matched. Most likely PR was rebased`,
+              `Error: failed processing PR metadata artifact: ${e.toString()}`,
             )
           }
         } else {

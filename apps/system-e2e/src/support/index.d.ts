@@ -37,5 +37,7 @@ declare namespace Cypress {
       interceptUrl: string,
       method: 'GET' | 'POST' = 'GET',
     ): void
+    pathUuid()
+    bypassApplicationFluff()
   }
 }

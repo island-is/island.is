@@ -53,4 +53,13 @@ describe('Front page', () => {
       )
     })
   })
+
+  it('should toggle mega-menu', () => {
+    cy.visit('/', visitOptions)
+    cy.get('[data-testid="frontpage-burger-button"]:nth-child(2)').click()
+    cy.get('[data-testid="mega-menu-link"] > a').should(
+      'have.length.at.least',
+      18,
+    )
+  })
 })

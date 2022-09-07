@@ -538,10 +538,10 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const subject = `Fyrirtaka í máli: ${theCase.policeCaseNumbers.join(', ')}`
-    const html = formatProsecutorCourtDateEmailNotification(
+    const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
+      theCase.courtCaseNumber,
       theCase.court?.name,
       theCase.courtDate,
       theCase.courtRoom,
@@ -554,7 +554,7 @@ export class NotificationService {
 
     return this.sendEmail(
       subject,
-      html,
+      body,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
@@ -565,7 +565,7 @@ export class NotificationService {
           theCase,
           user,
           subject,
-          html,
+          body,
           theCase.prosecutor?.email,
         )
       }
