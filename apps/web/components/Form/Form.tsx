@@ -326,7 +326,6 @@ export const Form = ({ form, namespace }: FormProps) => {
           <Stack space={4}>
             {form.fields.map((field) => {
               const slug = slugify(field.title)
-
               return (
                 <FormField
                   key={field.id}

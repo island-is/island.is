@@ -20,6 +20,7 @@ import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsA
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 import { GenericFormInput } from './dto/genericForm.input'
 import { environment } from './environments/environment'
+import { Form } from 'libs/cms/src/lib/models/form.model'
 
 type SendEmailInput =
   | ContactUsInput
@@ -135,18 +136,11 @@ export class CommunicationsService {
       return false
     }
 
-    let recipient = form.recipient
-
     // The CMS might have a form field which decides who the recipient is
-    if (input.recipientDeciderValue && form.recipientFormFieldDecider) {
-      const recipientAccordingToCMS =
-        form.recipientFormFieldDecider.recipientDecider?.[
-          input.recipientDeciderValue
-        ]
-      if (recipientAccordingToCMS) {
-        recipient = recipientAccordingToCMS
-      }
-    }
+    const recipientAccordingToCMS =
+      form.recipientFormFieldDecider?.recipientDecider?.[
+        input?.recipientDeciderValue as string
+      ]
 
     const emailOptions = {
       from: {
@@ -157,7 +151,7 @@ export class CommunicationsService {
         name: input.name,
         address: input.email,
       },
-      to: recipient,
+      to: recipientAccordingToCMS || form.recipient,
       subject: `Island.is form: ${form.title}`,
       text: input.message,
     }
