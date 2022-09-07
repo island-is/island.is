@@ -76,7 +76,7 @@ export class AccidentNotificationService {
       if (utils.shouldRequestReview(answers)) {
         const token = await this.sharedTemplateAPIService.createAssignToken(
           application,
-          SIX_MONTHS_IN_SECONDS_EXPIRES
+          SIX_MONTHS_IN_SECONDS_EXPIRES,
         )
 
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(

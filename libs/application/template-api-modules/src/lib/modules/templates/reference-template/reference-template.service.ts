@@ -29,7 +29,7 @@ export class ReferenceTemplateService {
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
-      TWO_HOURS_IN_SECONDS
+      TWO_HOURS_IN_SECONDS,
     )
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
