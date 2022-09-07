@@ -1,4 +1,4 @@
-import { defineMessage } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const titles = {
   prosecutor: {
@@ -192,6 +192,14 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
     },
+    indictments: defineMessages({
+      overview: {
+        id: 'judicial.system.core:titles.court.indictments.overview',
+        defaultMessage: 'Yfirlit ákæru - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í ákærum',
+      },
+    }),
   },
   defender: {
     caseOverview: defineMessage({
