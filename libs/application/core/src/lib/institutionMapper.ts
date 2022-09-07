@@ -44,4 +44,5 @@ export const institutionMapper = {
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.OPERATING_LCENSE]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.MARRIAGE_CONDITIONS]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.ESTATE]: InstitutionTypes.SYSLUMENN,
 }
