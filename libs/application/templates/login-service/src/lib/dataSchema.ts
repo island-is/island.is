@@ -17,9 +17,10 @@ export const LoginServiceSchema = z.object({
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? isValid(x) : false)),
-    typeOfOperation: z.string().refine((x) => x.slice(0, 2) === '84', {
-      params: errorMessages.invalidIsatNumber,
-    }),
+    typeOfOperation: z.string(),
+    // typeOfOperation: z.string().refine((x) => x.slice(0, 2) === '84', {
+    //   params: errorMessages.invalidIsatNumber,
+    // }),
     responsiblePartyName: z.string().nonempty(),
     responsiblePartyEmail: z.string().nonempty(),
     responsiblePartyTel: z.string().nonempty(),
