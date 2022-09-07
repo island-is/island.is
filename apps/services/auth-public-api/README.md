@@ -1,4 +1,4 @@
-# Auth Public API 
+# Auth Public API
 
 ## Getting started
 
