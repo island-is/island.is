@@ -13,7 +13,14 @@ interface Navigatable {
 }
 
 const isNavigatable = (slice: any): slice is Navigatable => {
-  return typeof slice === 'object' && slice.id && slice.title
+  return (
+    typeof slice === 'object' &&
+    slice.id &&
+    slice.title &&
+    // The FaqList slice has a field which hides or shows the title so we only indicate that it's navigatable
+    // if the field is set to true or isn't there (meaning that we are dealing with another kind of slice)
+    (slice.showTitle === undefined || slice.showTitle === true)
+  )
 }
 
 // hide the implementation rather than have everyone import slugify themselfes
