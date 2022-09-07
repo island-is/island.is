@@ -125,10 +125,10 @@ const ReceptionAndAssignment = () => {
 
   const getNextRoute = () => {
     return isRestrictionCase(workingCase.type)
-      ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
+      ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
       : isInvestigationCase(workingCase.type)
-      ? `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
+      ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
+      : `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
   }
 
   const getActiveSubSection = () => {
