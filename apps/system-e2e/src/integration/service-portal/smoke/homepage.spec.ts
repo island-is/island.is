@@ -26,9 +26,4 @@ describe('Home page', () => {
     cy.visit('/minarsidur/')
     cy.contains(fakeUser.name)
   })
-
-  it('should have Pósthólf', () => {
-    cy.visit('/minarsidur/')
-    cy.contains('Pósthólf')
-  })
 })

@@ -10,11 +10,6 @@ describe('Service Portal', () => {
     })
   })
 
-  it(`should have ${testUser.name} logged in`, () => {
-    cy.visit('/minarsidur/')
-    cy.contains(testUser.name)
-  })
-
   it('should have Pósthólf', () => {
     cy.visit('/minarsidur/')
     cy.contains('Pósthólf')
