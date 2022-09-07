@@ -20,7 +20,6 @@ import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsA
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
 import { GenericFormInput } from './dto/genericForm.input'
 import { environment } from './environments/environment'
-import { Form } from 'libs/cms/src/lib/models/form.model'
 
 type SendEmailInput =
   | ContactUsInput
