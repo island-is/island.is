@@ -10,8 +10,8 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  IndictmentsCourtSubsections,
   ReactSelectOption,
-  RestrictionCaseCourtSubsections,
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
@@ -122,12 +122,8 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={
-        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
-      }
+      activeSection={Sections.JUDGE}
+      activeSubSection={IndictmentsCourtSubsections.RECEPTION_AND_ASSIGNMENT}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >

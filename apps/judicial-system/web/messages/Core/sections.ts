@@ -219,6 +219,15 @@ export const sections = {
         'Notaður sem texti fyrir Yfirlit úrskurðar skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
   }),
+  indictmentsCourtSection: defineMessages({
+    receptionAndAssignment: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.reception_and_assignment',
+      defaultMessage: 'Móttaka',
+      description:
+        'Notaður sem texti fyrir Móttaka skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+  }),
   extensionSection: defineMessages({
     title: {
       id: 'judicial.system.core:sections.extension_section.title',

@@ -462,6 +462,21 @@ const useSections = () => {
     }
   }
 
+  const getIndictmentsCourtSections = (workingCase: Case) => {
+    return {
+      name: formatMessage(sections.courtSection.title),
+      children: [
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(
+            sections.indictmentsCourtSection.receptionAndAssignment,
+          ),
+          href: constants.INDICTMENT_RECEPTION_AND_ASSIGNMENT_ROUTE,
+        },
+      ],
+    }
+  }
+
   const getRestrictionCaseExtenstionSections = (
     workingCase: Case,
     user?: User,
@@ -654,11 +669,13 @@ const useSections = () => {
             user,
             activeSubSection,
           )
-        : getInvestigationCaseCourtSections(
+        : isInvestigationCase(workingCase?.type)
+        ? getInvestigationCaseCourtSections(
             workingCase || ({} as Case),
             user,
             activeSubSection,
-          ),
+          )
+        : getIndictmentsCourtSections(workingCase || ({} as Case)),
       {
         name: caseResult(formatMessage, workingCase),
         children: [],
@@ -694,6 +711,7 @@ const useSections = () => {
     getIndictmentCaseProsecutorSection,
     getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
+    getIndictmentsCourtSections,
     getSections,
     findLastValidStep,
   }
