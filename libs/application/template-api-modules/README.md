@@ -85,9 +85,9 @@ To start using your new module it has to be imported/registered by the central t
 
 - Open `src/lib/modules/templates/index.ts`
 - Import your module `import { YourModule } from './your-module/your-module.module'`
-- Add it to the modules array
-- Import your service `export { YourService } from './your-module/your-module.service'`
-- Add it to the services array
+- Add it to the modules export array
+- Import your service `import { YourService } from './your-module/your-module.service'`
+- Add it to the services export array
 
 Example:
 
@@ -98,9 +98,7 @@ import { ReferenceTemplateModule } from './reference-template/reference-template
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
 
 export const modules = [/* other modules , */ ReferenceTemplateModule]
-export const services = [
-  /* other services , */ ReferenceTemplateModuReferenceTemplateServicele,
-]
+export const services = [/* other services , */ ReferenceTemplateService]
 ```
 
 ### 5. Invoke your new module actions from the template state machine
@@ -114,6 +112,8 @@ enum TEMPLATE_API_ACTIONS {
 }
 
 /* inside state machine ... */
+import { defineTemplateApi } from '@island.is/application/types'
+
   stateMachineConfig: {
     initial: 'draft',
     states: {
@@ -122,7 +122,7 @@ enum TEMPLATE_API_ACTIONS {
       approved: {
         meta: {
           // ...
-          onEntry: {
+          onEntry:  defineTemplateApi({
             action: TEMPLATE_API_ACTIONS.sendApplication,
             // (Optional) Should the response/error be persisted to application.externalData
             // Defaults to true
@@ -134,7 +134,7 @@ enum TEMPLATE_API_ACTIONS {
             // Will revert changes to answers/assignees/state
             // Defaults to true
             throwOnError: false,
-          },
+          }),
         },
       },
     },
@@ -308,11 +308,12 @@ export const NationalRegistryUserApi = defineTemplateApi<SharedApiParameters>({
 
 [See step 2](#2-Create-the-module-and-a-service) identical setup from above exluding.
 
-- Shared data provider modules should be located `/lib/modules/shared/api` and modules and service exported from `/lib/modules/shared/api/index.ts`
-- The namspace from the `defineTemplateApi` above should be passed into the `super` constructor
+- Shared data provider modules should be located in `/lib/modules/shared/api` and modules and service exported from `/lib/modules/shared/api/index.ts`
+- The namspace set in the `defineTemplateApi` in step 1 should be passed into the `super` constructor
 
 ```typescript
-extends BaseTemplateApiService {
+@Injectable()
+export class SomeService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
@@ -365,4 +366,48 @@ export const overriddenApi = newApi.configure({
   shouldPersistToExternalData: true,
   throwOnError: true,
 })
+```
+
+This can be useful when importing Shared Apis and you need to your own configuration of the api.
+
+```typescript
+export interface SharedApiParameters {
+  id?: number
+}
+export const SharedApi = defineTemplateApi<SharedApiParameters>({
+  action: 'getData',
+  namespace: 'SharedApi',
+}) // the parameter Id is not set yet.
+
+/// Your template file
+import { SharedApi } from '@island.is/application/types'
+
+...
+  [States.DRAFT]: {
+    meta: {
+        name: States.DRAFT,
+        ...
+        roles: [
+        ...
+        {
+          id: Roles.APPLICANT,
+          formLoader: () =>
+          import('../forms/Draft').then((val) =>
+              Promise.resolve(val.Draft),
+          ),
+          read: 'all',
+          write: 'all',
+          api: [
+            // The api is now set to be invoked with id parameter with the value of 2
+            SharedApi.configure({
+              params: {
+                id: 2,
+              },
+            })
+         ]
+        },
+        ...
+    ...
+    },
+
 ```
