@@ -75,7 +75,16 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCard data={[]} />
+          <InfoCard
+            data={[]}
+            defender={{
+              name: '',
+              defenderNationalId: '',
+              email: '',
+              phoneNumber: '',
+              sessionArrangement: SessionArrangements.ALL_PRESENT,
+            }}
+          />
         </LocaleProvider>
       </MockedProvider>,
     )
