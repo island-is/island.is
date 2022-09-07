@@ -1,3 +1,4 @@
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   FirearmApplicationApi,
@@ -10,39 +11,31 @@ import { LicenseData } from './firearmApi.types'
 export class FirearmApi {
   constructor(private readonly api: FirearmApplicationApi) {}
 
-  public async getLicenseData(ssn: string): Promise<LicenseData> {
-    const data = await Promise.all([
-      this.api.apiFirearmApplicationLicenseInfoSsnGet({
-        ssn,
-      }),
-      this.api.apiFirearmApplicationPropertyInfoSsnGet({
-        ssn,
-      }),
-      this.api.apiFirearmApplicationCategoriesGet(),
-    ])
+  public async getLicenseData(user: User): Promise<LicenseData> {
+    const licenseInfo = await this.getLicenseInfo(user)
+    const properties = await this.getPropertyInfo(user)
+    const categories = await this.getCategories()
 
-    const license: LicenseData = {
-      licenseInfo: data[0],
-      properties: data[1],
-      categories: data[2],
+    const licenseData: LicenseData = {
+      licenseInfo,
+      properties,
+      categories,
     }
 
-    return license
+    return licenseData
   }
 
-  public async getLicenseInfo(ssn: string): Promise<LicenseInfo> {
-    const licenseInfo = await this.api.apiFirearmApplicationLicenseInfoSsnGet({
-      ssn,
-    })
+  public async getLicenseInfo(user: User): Promise<LicenseInfo> {
+    const licenseInfo = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiFirearmApplicationLicenseInfoGet()
     return licenseInfo
   }
 
-  public async getPropertyInfo(ssn: string): Promise<FirearmPropertyList> {
-    const propertyInfo = await this.api.apiFirearmApplicationPropertyInfoSsnGet(
-      {
-        ssn,
-      },
-    )
+  public async getPropertyInfo(user: User): Promise<FirearmPropertyList> {
+    const propertyInfo = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiFirearmApplicationPropertyInfoGet({ pageNumber: 1, pageSize: 50 })
     return propertyInfo
   }
   public async getCategories(): Promise<{ [key: string]: string }> {

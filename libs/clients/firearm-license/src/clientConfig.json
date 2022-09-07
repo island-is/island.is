@@ -5,20 +5,9 @@
     "version": "v1"
   },
   "paths": {
-    "/api/FirearmApplication/LicenseInfo/{ssn}": {
+    "/api/FirearmApplication/LicenseInfo": {
       "get": {
         "tags": ["FirearmApplication"],
-        "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -43,19 +32,10 @@
         }
       }
     },
-    "/api/FirearmApplication/PropertyInfo/{ssn}": {
+    "/api/FirearmApplication/PropertyInfo": {
       "get": {
         "tags": ["FirearmApplication"],
         "parameters": [
-          {
-            "name": "ssn",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "nullable": true
-            }
-          },
           {
             "name": "PageNumber",
             "in": "query",

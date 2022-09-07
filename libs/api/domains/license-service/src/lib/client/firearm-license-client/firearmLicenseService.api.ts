@@ -60,7 +60,7 @@ export class GenericFirearmLicenseApi
     let licenseData: unknown
 
     try {
-      licenseData = await this.firearmApi.getLicenseData(user.nationalId)
+      licenseData = await this.firearmApi.getLicenseData(user)
     } catch (e) {
       this.handleError(e)
     }
