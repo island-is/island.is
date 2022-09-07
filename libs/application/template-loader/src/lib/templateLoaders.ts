@@ -57,6 +57,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/financial-statements-inao'),
   [ApplicationTypes.OPERATING_LCENSE]: () =>
     import('@island.is/application/templates/operating-license'),
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
+    import('@island.is/application/templates/marriage-conditions'),
 }
 
 export default templates
