@@ -213,6 +213,8 @@ export const Form = ({ form, namespace }: FormProps) => {
             error: n('formInvalidName', 'Þennan reit þarf að fylla út.'),
           }
         }
+
+        return null
       })
       .filter((x) => !!x)
 
