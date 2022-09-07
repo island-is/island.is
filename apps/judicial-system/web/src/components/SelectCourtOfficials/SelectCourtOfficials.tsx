@@ -50,11 +50,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Box marginBottom={3}>
-        <Text as="h3" variant="h3">
-          {formatMessage(strings.title)}
-        </Text>
-      </Box>
+      <SectionHeading title={formatMessage(strings.title)} tooltip={TODO} />
       <BlueBox>
         <Box marginBottom={2}>
           <Select
