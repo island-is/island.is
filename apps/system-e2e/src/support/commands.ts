@@ -33,15 +33,18 @@ const idsLogin = ({
       phoneNumber: phoneNumber,
     },
   }
-  cy.log("Logging in")
-  cy.log(`phoneNumber: ${phoneNumber}, authUrl: ${authUrl}, baseUrl: ${baseUrl}`)
+  cy.log('Logging in')
+  cy.log(
+    `phoneNumber: ${phoneNumber}, authUrl: ${authUrl}, baseUrl: ${baseUrl}`,
+  )
 
   cy.patchSameSiteCookie(`${baseUrl}/api/auth/signin/identity-server?`, 'POST')
   cy.patchSameSiteCookie(`${authUrl}/login/phone?*`)
   cy.visit(`${baseUrl}${urlPath}`)
 
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
-    cy.log("Origin phoneNumber: ", phoneNumber)
+    cy.wait(3000)
+    cy.log('Origin phoneNumber: ', phoneNumber)
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
