@@ -3,11 +3,10 @@ import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcDemands, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -22,7 +21,6 @@ export const StepThree: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
@@ -57,7 +55,7 @@ export const StepThree: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_THREE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_THREE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -67,7 +65,6 @@ export const StepThree: React.FC = () => {
       <StepThreeForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        user={user}
       />
     </PageLayout>
   )

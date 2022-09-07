@@ -357,6 +357,7 @@ export class NationalRegistryService {
         id: nationalId,
       })
       .catch(this.handle404)
+      .catch(this.handleInvalidJson)
 
     if (!response) {
       return null
@@ -369,6 +370,26 @@ export class NationalRegistryService {
   private handle404(error: FetchError) {
     if (error.status === 404) {
       return undefined
+    }
+    throw error
+  }
+
+  private handleInvalidJson(error: { type: string }): Einstaklingsupplysingar {
+    // OpenAPI client fails when national ids do not contain the promised information,
+    // (e.g. kerfiskennitala). The client fails with 'invalid-json'.
+    // Instead of the backend failing we return a null user with no ADS rights.
+    if (error.type === 'invalid-json') {
+      return {
+        bannmerking: false,
+        faedingardagur: new Date(),
+        kennitala: '0000000000',
+        kynkodi: '-1',
+        nafn: '',
+        adsetur: {
+          heiti: '',
+          postnumer: '-100',
+        },
+      }
     }
     throw error
   }

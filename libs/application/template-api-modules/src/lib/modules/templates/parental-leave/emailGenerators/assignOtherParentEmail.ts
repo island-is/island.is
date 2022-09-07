@@ -3,14 +3,23 @@ import get from 'lodash/get'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
 
 export let linkOtherParentSMS = ''
 
+export type AssignOtherParentEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
+
 // TODO handle translations
-export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator = (
+export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail = (
   props,
+  senderName,
+  senderEmail,
 ): Message => {
   const {
     application,

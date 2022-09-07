@@ -9,7 +9,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
@@ -95,7 +95,9 @@ const ReceptionAndAssignment = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RECEPTION_AND_ASSIGNMENT}
+      activeSubSection={
+        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
+      }
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >

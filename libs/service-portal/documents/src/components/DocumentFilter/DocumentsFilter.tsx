@@ -179,16 +179,18 @@ const DocumentsFilter = ({
                 iconVariant="small"
               >
                 <Box display="flex" flexDirection="column">
-                  <DatePicker
-                    label={formatMessage(m.datepickerFromLabel)}
-                    placeholderText={formatMessage(m.datepickLabel)}
-                    locale="is"
-                    backgroundColor="blue"
-                    size="xs"
-                    selected={filterValue.dateFrom}
-                    handleChange={handleDateFromChange}
-                  />
-                  <Box marginTop={3}>
+                  <Box className={styles.firstDatePicker}>
+                    <DatePicker
+                      label={formatMessage(m.datepickerFromLabel)}
+                      placeholderText={formatMessage(m.datepickLabel)}
+                      locale="is"
+                      backgroundColor="blue"
+                      size="xs"
+                      selected={filterValue.dateFrom}
+                      handleChange={handleDateFromChange}
+                    />
+                  </Box>
+                  <Box marginTop={3} className={styles.secondDatePicker}>
                     <DatePicker
                       label={formatMessage(m.datepickerToLabel)}
                       placeholderText={formatMessage(m.datepickLabel)}

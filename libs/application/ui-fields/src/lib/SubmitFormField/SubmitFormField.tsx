@@ -17,6 +17,7 @@ export const SubmitFormField: FC<Props> = ({ application, field, error }) => {
     return actions.map((a) => {
       return {
         label: formatText(a.name, application, formatMessage),
+        dataTestId: a.dataTestId,
         value: a.event as string,
       }
     })

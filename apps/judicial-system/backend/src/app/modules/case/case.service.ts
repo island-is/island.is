@@ -55,6 +55,7 @@ import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
+import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -177,6 +178,7 @@ export class CaseService {
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
+    private readonly policeService: PoliceService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @InjectQueue(caseModuleConfig().sqs.queueName)
     private queueService: QueueService,
@@ -472,6 +474,27 @@ export class CaseService {
       })
   }
 
+  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
+    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+      (ids, defendant) =>
+        !defendant.noNationalId && defendant.nationalId
+          ? [...ids, defendant.nationalId]
+          : ids,
+      [],
+    )
+
+    return this.policeService.updatePoliceCase(
+      theCase.id,
+      theCase.type,
+      theCase.state,
+      pdf,
+      theCase.policeCaseNumbers,
+      defendantNationalIds,
+      theCase.conclusion,
+    )
+  }
+
   private async createCase(
     caseToCreate: CreateCaseDto,
     transaction?: Transaction,
@@ -701,7 +724,7 @@ export class CaseService {
           'Failed to request a court record signature',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: user.name,
             institution: user.institution?.name,
@@ -740,7 +763,7 @@ export class CaseService {
         'Failed to get a court record signature confirmation',
         {
           caseId: theCase.id,
-          policeCaseNumber: theCase.policeCaseNumber,
+          policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
           courtCaseNumber: theCase.courtCaseNumber,
           actor: user.name,
           institution: user.institution?.name,
@@ -791,7 +814,7 @@ export class CaseService {
           'Failed to request a ruling signature',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: theCase.judge?.name,
             institution: theCase.judge?.institution?.name,
@@ -849,7 +872,7 @@ export class CaseService {
           'Failed to get a ruling signature confirmation',
           {
             caseId: theCase.id,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers.join(', '),
             courtCaseNumber: theCase.courtCaseNumber,
             actor: user.name,
             institution: user.institution?.name,
@@ -877,7 +900,7 @@ export class CaseService {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
-            policeCaseNumber: theCase.policeCaseNumber,
+            policeCaseNumbers: theCase.policeCaseNumbers,
             defenderName: theCase.defenderName,
             defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
@@ -936,7 +959,7 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}`,
+        `Krafa ${theCase.policeCaseNumbers.join(', ')}`,
         pdf,
       )
     } catch (error) {
@@ -954,7 +977,7 @@ export class CaseService {
       theCase.id,
       theCase.courtId ?? '',
       theCase.type,
-      theCase.policeCaseNumber,
+      theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
     )
 
@@ -1072,6 +1095,11 @@ export class CaseService {
       Boolean(theCase.rulingModifiedHistory) || // case files did not change
       (await this.deliverCaseFilesToCourt(theCase))
 
+    const caseDeliveredToPolice =
+      Boolean(theCase.rulingModifiedHistory) || // no relevant changes
+      (theCase.origin === CaseOrigin.LOKE &&
+        (await this.deliverCaseToPolice(theCase)))
+
     if (!signedRulingDeliveredToCourt || !courtRecordDeliveredToCourt) {
       this.sendEmailToCourt(
         theCase,
@@ -1091,6 +1119,7 @@ export class CaseService {
       signedRulingDeliveredToCourt,
       courtRecordDeliveredToCourt,
       caseFilesDeliveredToCourt,
+      caseDeliveredToPolice,
     }
   }
 }

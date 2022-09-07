@@ -34,3 +34,10 @@ export enum CATEGORIES {
   HOTEL_FOOD = 'Flokkur III',
   HOTEL_ALCOHOL = 'Flokkur IV',
 }
+
+export type Property = {
+  propertyNumber: string
+  address: string
+  spaceNumber: string
+  customerCount: string
+}

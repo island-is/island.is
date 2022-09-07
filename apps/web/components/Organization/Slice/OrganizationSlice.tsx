@@ -1,6 +1,4 @@
-import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 import {
   Box,
@@ -75,9 +73,13 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
+const LifeEventPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
-  namespace?: Namespace
+  namespace?: Record<string, string>
   fullWidth?: boolean
   organizationPageSlug?: string
   renderedOnOrganizationSubpage?: boolean
@@ -135,6 +137,8 @@ const renderSlice = (
       )
     case 'MailingListSignupSlice':
       return <MailingListSignupSlice slice={slice} namespace={namespace} />
+    case 'LifeEventPageListSlice':
+      return <LifeEventPageListSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

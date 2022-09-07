@@ -179,7 +179,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signingProgress === 'inProgress'
           ? ''
           : signingProgress === 'success'
-          ? 'Senda ábendingu'
+          ? ''
           : 'Undirrita seinna'
       }
       secondaryButtonText={
@@ -190,9 +190,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
           : 'Reyna aftur'
       }
       handlePrimaryButtonClick={() => {
-        if (signingProgress === 'success') {
-          window.open(constants.FEEDBACK_FORM_URL, '_blank')
-        }
         if (navigateOnClose) {
           router.push(
             `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
