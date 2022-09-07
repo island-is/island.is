@@ -96,44 +96,19 @@ export const ReligiousLifeViewingSocieties = [
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
 
-const married = {
-  '1': 'Giftur',
-  '2': 'Gift',
-  '7': 'Gift',
-}
+const married = 'Gift/ur'
 
 export const genderedMaritalStatuses: {
-  [key: string]: { [key: string]: string }
+  [key: string]: string
 } = {
-  '1': {
-    '1': 'Ógiftur',
-    '2': 'Ógift',
-    '7': 'Ógift',
-  },
-
+  '1': 'Ógift/ur',
   '3': married,
-  '4': {
-    '1': 'Ekkill',
-    '2': 'Ekkja',
-    '7': 'Ekkjað',
-  },
-  '5': {
-    '1': 'Skilinn að borði og sæng',
-    '2': 'Skilin að borði og sæng',
-    '7': 'Skilið að borði og sæng',
-  },
-  '6': {
-    '1': 'Fráskilinn',
-    '2': 'Fráskilin',
-    '7': 'Fráskilið',
-  },
+  '4': 'Ekkja/Ekkill',
+  '5': 'Skilin/nn/ð að borði og sæng',
+  '6': 'Fráskilin/nn/ð',
   '7': married,
   '8': married,
-  '9': {
-    '1': 'Óupplýst',
-    '2': 'Óupplýst',
-    '7': 'Óupplýst',
-  },
+  '9': 'Óupplýst',
   '0': married,
   L: married,
 }
