@@ -27,7 +27,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
 import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 import * as constants from '@island.is/judicial-system/consts'
@@ -133,6 +133,11 @@ const ReceptionAndAssignment = () => {
         )}
       />
       <FormContentContainer>
+        {workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage message={workingCase.comments} type="warning" />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.title)}
