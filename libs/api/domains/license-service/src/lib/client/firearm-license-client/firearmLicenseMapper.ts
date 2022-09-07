@@ -45,6 +45,7 @@ export const parseFirearmLicensePayload = (
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
+      value: licenseInfo.collectorLicenseExpirationDate,
     },
     licenseInfo.address && {
       type: GenericLicenseDataFieldType.Value,
