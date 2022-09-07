@@ -13,7 +13,7 @@ export const infoCardActiveIndictment = defineMessages({
     description: 'Notaður sem titill á "ákærandi" hluta af yfirliti ákæru.',
   },
   offence: {
-    id: 'judicial.system.core::info_card_active_indictment.offence',
+    id: 'judicial.system.core:info_card_active_indictment.offence',
     defaultMessage: 'Brot',
     description: 'Notaður sem titill á "brot" hluta af yfirliti ákæru.',
   },
