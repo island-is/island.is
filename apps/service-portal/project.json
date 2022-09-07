@@ -74,6 +74,23 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
+    "dev/init": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "echo hello"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+        ],
+        "parallel": true
+      }
+    },
     "docker-static": {}
   },
   "tags": []
