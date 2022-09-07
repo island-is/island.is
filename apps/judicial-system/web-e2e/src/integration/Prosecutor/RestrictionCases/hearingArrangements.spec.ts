@@ -4,7 +4,13 @@ import {
 } from '@island.is/judicial-system/consts'
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 
-import { makeCourt, makeProsecutor, intercept, Operation, mockCase } from '../../../utils'
+import {
+  makeCourt,
+  makeProsecutor,
+  intercept,
+  Operation,
+  mockCase,
+} from '../../../utils'
 
 describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   const caseData = mockCase(CaseType.CUSTODY)

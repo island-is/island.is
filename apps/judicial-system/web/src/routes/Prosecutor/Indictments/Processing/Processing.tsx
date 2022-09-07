@@ -63,7 +63,6 @@ const Processing: React.FC = () => {
   }
 
   const handleNextButtonClick = async () => {
-
     await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
 
     router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
