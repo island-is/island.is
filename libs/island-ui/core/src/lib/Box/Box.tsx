@@ -61,7 +61,6 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       opacity,
       printHidden,
       className,
-      dataTestId,
       ...restProps
     },
     ref,
@@ -126,7 +125,6 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
 
     return createElement(component, {
       className: boxStyles,
-      'data-testid': dataTestId,
       ...restProps,
       ref,
     })

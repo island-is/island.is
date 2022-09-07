@@ -10,7 +10,7 @@ import cn from 'classnames'
 import Chevron from './Chevron'
 import { iconTypeToSVG, iconIdMapper } from '../../../utils/Icons/idMapper'
 
-interface Props extends TestSupport {
+interface Props {
   path?: ServicePortalPath
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
@@ -34,7 +34,6 @@ const NavItemContent: FC<Props> = ({
   onClick,
   children,
   badge = false,
-  dataTestId,
 }) => {
   const [{ sidebarState }] = useStore()
   const { width } = useWindowSize()
@@ -81,7 +80,6 @@ const NavItemContent: FC<Props> = ({
       paddingY={1}
       paddingLeft={collapsed ? 1 : 3}
       paddingRight={collapsed ? 1 : 2}
-      dataTestId={dataTestId}
     >
       <Box
         display="flex"

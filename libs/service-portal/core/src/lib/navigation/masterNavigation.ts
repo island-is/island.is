@@ -11,17 +11,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       icon: 'home',
     },
     children: [
-      // Yfirlit
-      {
-        name: m.overview,
-        systemRoute: true,
-        path: ServicePortalPath.MinarSidurRoot,
-        icon: {
-          icon: 'home',
-        },
-        dataTestId: 'nav-overview',
-      },
-
       // Rafraen skjol
       {
         name: m.documents,
@@ -143,7 +132,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.ParentalLeave,
           },
         ],
-        dataTestId: 'nav-delegation',
       },
       // Menntun
       {
