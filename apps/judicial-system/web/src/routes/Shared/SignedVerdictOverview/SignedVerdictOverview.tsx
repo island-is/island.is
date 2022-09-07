@@ -749,9 +749,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     >
                       {formatMessage(m.signButton)}
                     </Button>
-                  ) : (
-                    <Text>{formatMessage(m.unsignedDocument)}</Text>
-                  ))}
+                  ) : null)}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton
