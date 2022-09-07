@@ -22,13 +22,12 @@ import {
   CaseTransition,
   NotificationType,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Select, Text, Tooltip, Option } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
 

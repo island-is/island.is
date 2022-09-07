@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
-import { Box, Text, Tooltip, Select, Option } from '@island.is/island-ui/core'
+import { Box, Text, Select, Option } from '@island.is/island-ui/core'
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
