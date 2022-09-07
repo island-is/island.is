@@ -78,7 +78,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const obj = newAnswer as Record<string, Answer>
 
     const buildError = (message: StaticText, path: string) =>
-    buildValidationError(`${FILEUPLOAD}.${path}`)(message)
+      buildValidationError(`${FILEUPLOAD}.${path}`)(message)
 
     const isSelfEmployed = getValueViaPath(
       application.answers,
