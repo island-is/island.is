@@ -154,10 +154,15 @@ export class ParentalLeaveService {
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
     const { employerPhoneNumber } = getApplicationAnswers(application.answers)
 
+    const token = await this.sharedTemplateAPIService.createAssignToken(
+      application,
+      SIX_MONTHS_IN_SECONDS_EXPIRES,
+    )
+
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
-      SIX_MONTHS_IN_SECONDS_EXPIRES,
+      token,
     )
 
     // send confirmation sms to employer
@@ -165,7 +170,7 @@ export class ParentalLeaveService {
       await this.sharedTemplateAPIService.assignApplicationThroughSms(
         generateAssignEmployerApplicationSms,
         application,
-        SIX_MONTHS_IN_SECONDS_EXPIRES,
+        token,
       )
     }
   }
