@@ -25,7 +25,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { isReceptionAndAssignmentStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -169,8 +169,10 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          nextUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`}
-          nextIsDisabled={!isReceptionAndAssignmentStepValidIC(workingCase)}
+          nextUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
+          nextIsDisabled={
+            !isReceptionAndAssignmentStepValidIndictments(workingCase)
+          }
         />
       </FormContentContainer>
     </PageLayout>

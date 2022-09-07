@@ -293,6 +293,16 @@ export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
   )
 }
 
+export const isReceptionAndAssignmentStepValidIndictments = (
+  workingCase: Case,
+) => {
+  return (
+    workingCase.judge &&
+    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
+      .isValid
+  )
+}
+
 export const isCourtHearingArrangemenstStepValidRC = (
   workingCase: Case,
   courtDate?: string,

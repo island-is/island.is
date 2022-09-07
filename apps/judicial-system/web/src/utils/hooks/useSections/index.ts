@@ -33,6 +33,7 @@ import {
   isRulingValidRC,
   isDefendantStepValidForSidebarIndictments,
   isProcessingStepValidIndictments,
+  isReceptionAndAssignmentStepValidIndictments,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -462,7 +463,12 @@ const useSections = () => {
     }
   }
 
-  const getIndictmentsCourtSections = (workingCase: Case) => {
+  const getIndictmentsCourtSections = (
+    workingCase: Case,
+    activeSubSection?: number,
+  ) => {
+    const { id } = workingCase
+
     return {
       name: formatMessage(sections.courtSection.title),
       children: [
@@ -471,7 +477,16 @@ const useSections = () => {
           name: formatMessage(
             sections.indictmentsCourtSection.receptionAndAssignment,
           ),
-          href: constants.INDICTMENT_RECEPTION_AND_ASSIGNMENT_ROUTE,
+          href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(sections.indictmentsCourtSection.overview),
+          href:
+            (activeSubSection && activeSubSection > 1) ||
+            isReceptionAndAssignmentStepValidIndictments(workingCase)
+              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+              : undefined,
         },
       ],
     }
