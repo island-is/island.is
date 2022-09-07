@@ -22,19 +22,18 @@ import {
   CaseTransition,
   NotificationType,
   User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, Select, Text, Tooltip, Option } from '@island.is/island-ui/core'
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import { Box, Text } from '@island.is/island-ui/core'
+import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 import * as constants from '@island.is/judicial-system/consts'
 
+import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import { rcReceptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
-import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }

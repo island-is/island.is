@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
+import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
@@ -9,6 +10,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  ReactSelectOption,
   RestrictionCaseCourtSubsections,
   Sections,
   UserData,
@@ -19,15 +21,23 @@ import {
   CaseState,
   CaseTransition,
   NotificationType,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Box, Select, Text, Tooltip, Option } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
-
 import * as constants from '@island.is/judicial-system/consts'
-import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
+
+import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import { icReceptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
+
+type JudgeSelectOption = ReactSelectOption & { judge: User }
+type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
@@ -51,6 +61,7 @@ const ReceptionAndAssignment = () => {
     transitionCase,
     isTransitioningCase,
     sendNotification,
+    setAndSendToServer,
   } = useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
@@ -89,6 +100,26 @@ const ReceptionAndAssignment = () => {
     }
   }
 
+  const setJudge = (judge: User) => {
+    if (workingCase) {
+      setAndSendToServer(
+        [{ judgeId: judge.id, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }
+
+  const setRegistrar = (registrar?: User) => {
+    if (workingCase) {
+      setAndSendToServer(
+        [{ registrarId: registrar?.id ?? null, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -106,18 +137,40 @@ const ReceptionAndAssignment = () => {
           titles.court.investigationCases.receptionAndAssignment,
         )}
       />
-      <ReceptionAndAssignmentForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        handleCreateCourtCase={handleCreateCourtCase}
-        createCourtCaseSuccess={createCourtCaseSuccess}
-        setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-        courtCaseNumberEM={courtCaseNumberEM}
-        setCourtCaseNumberEM={setCourtCaseNumberEM}
-        isCreatingCourtCase={isCreatingCourtCase}
-        receiveCase={receiveCase}
-        users={userData?.users}
-      />
+      <FormContentContainer>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(strings.title)}
+          </Text>
+        </Box>
+        <Box component="section" marginBottom={6}>
+          <CourtCaseNumber
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            courtCaseNumberEM={courtCaseNumberEM}
+            setCourtCaseNumberEM={setCourtCaseNumberEM}
+            createCourtCaseSuccess={createCourtCaseSuccess}
+            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
+            handleCreateCourtCase={handleCreateCourtCase}
+            isCreatingCourtCase={isCreatingCourtCase}
+            receiveCase={receiveCase}
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <SelectCourtOfficials
+            workingCase={workingCase}
+            handleJudgeChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              setJudge((selectedOption as JudgeSelectOption).judge)
+            }
+            handleRegistrarChange={(
+              selectedOption: ValueType<ReactSelectOption>,
+            ) =>
+              setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
+            }
+            users={userData?.users}
+          />
+        </Box>
+      </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
