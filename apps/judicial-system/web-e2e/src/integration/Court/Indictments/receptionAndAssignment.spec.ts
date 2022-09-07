@@ -15,7 +15,7 @@ import {
 
 describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = mockCase(CaseType.INTERNET_USAGE)
+    const caseData = mockCase(CaseType.MAJOR_ASSAULT)
 
     const caseDataAddition = {
       ...caseData,
