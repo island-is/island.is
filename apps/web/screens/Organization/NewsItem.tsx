@@ -34,8 +34,6 @@ import { useRouter } from 'next/router'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { ProjectWrapper } from '../Project/components/ProjectWrapper'
 import { getParentPage } from './NewsList'
-import { ProjectHeader } from '../Project/components/ProjectHeader'
-import { getSidebarNavigationComponent } from '../Project/utils'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -56,7 +54,7 @@ const NewsItem: Screen<NewsItemProps> = ({
 
   // We only display breadcrumbs and highlighted nav item if the news has the
   // primary news tag of the organization
-  const isOrganizationNews = newsItem.genericTags.some(
+  const isParentPageNews = newsItem.genericTags.some(
     (x) => x.slug === parentPage.newsTag.slug,
   )
 
@@ -69,6 +67,11 @@ const NewsItem: Screen<NewsItemProps> = ({
     parentPage.__typename === 'ProjectPage'
       ? parentPage.sidebarLinks
       : parentPage.menuLinks
+
+  const overviewLinkType: LinkType =
+    parentPage.__typename === 'ProjectPage'
+      ? 'projectnewsoverview'
+      : 'organizationnewsoverview'
 
   const currentNavItem = menuLinks.find(
     ({ primaryLink }) => primaryLink.url === overviewPath,
@@ -99,14 +102,13 @@ const NewsItem: Screen<NewsItemProps> = ({
       ]).href,
       typename: parentPage.__typename.toLowerCase() as LinkType,
     },
-    ...(isOrganizationNews
+    ...(isParentPageNews
       ? [
           {
             isTag: true,
             title: newsOverviewTitle,
-            href: linkResolver('organizationnewsoverview', [parentPage.slug])
-              .href,
-            typename: 'organizationnewsoverview',
+            href: linkResolver(overviewLinkType, [parentPage.slug]).href,
+            typename: overviewLinkType,
           },
         ]
       : []),
@@ -116,9 +118,9 @@ const NewsItem: Screen<NewsItemProps> = ({
             isTag: true,
             title: newsletterTitle,
             href:
-              linkResolver('organizationnewsoverview', [parentPage.slug]).href +
+              linkResolver(overviewLinkType, [parentPage.slug]).href +
               '?tag=frettabref',
-            typename: 'organizationnewsoverview',
+            typename: overviewLinkType,
           },
         ]
       : []),
@@ -128,7 +130,7 @@ const NewsItem: Screen<NewsItemProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: isOrganizationNews && primaryLink.url === overviewPath,
+      active: isParentPageNews && primaryLink.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -148,32 +150,16 @@ const NewsItem: Screen<NewsItemProps> = ({
 
   const content = <NewsArticle newsItem={newsItem} />
 
-  const baseRouterPath = Router.asPath.split('?')[0].split('#')[0]
-
   if (parentPage.__typename === 'ProjectPage') {
-    const projectPageSidebarNavigationComponent = getSidebarNavigationComponent(
-      parentPage,
-      baseRouterPath,
-      n('navigationTitle', 'Efnisyfirlit'),
-    )
     return (
       <>
         {socialHead}
-        <ProjectHeader projectPage={parentPage} />
         <ProjectWrapper
-          withSidebar={menuLinks?.length > 0}
-          sidebarContent={projectPageSidebarNavigationComponent()}
+          withSidebar={true}
+          breadcrumbItems={breadCrumbs}
+          projectPage={parentPage}
+          sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
         >
-          <Hidden above="sm">
-            <Box>
-              <Box marginY={2}>
-                {projectPageSidebarNavigationComponent(true)}
-              </Box>
-            </Box>
-          </Hidden>
-          <Box marginBottom={3}>
-            <Breadcrumbs items={breadCrumbs} />
-          </Box>
           {content}
         </ProjectWrapper>
       </>

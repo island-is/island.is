@@ -24,17 +24,14 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Hidden,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import { getSidebarNavigationComponent, getThemeConfig } from './utils'
-import { ProjectHeader } from './components/ProjectHeader'
+import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { ProjectChatPanel } from './components/ProjectChatPanel'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -67,16 +64,6 @@ const ProjectPage: Screen<PageProps> = ({
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
 
-  const sidebarNavigationComponent = useMemo(
-    () =>
-      getSidebarNavigationComponent(
-        projectPage,
-        baseRouterPath,
-        navigationTitle,
-      ),
-    [projectPage, baseRouterPath, navigationTitle],
-  )
-
   const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
 
   const [selectedSliceTab, setSelectedSliceTab] = useState<
@@ -106,22 +93,23 @@ const ProjectPage: Screen<PageProps> = ({
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
 
-  const breadCrumbs: BreadCrumbItem[] = [
-    {
-      title: 'Ísland.is',
-      href: linkResolver('homepage').href,
-      typename: 'homepage',
-    },
-    {
-      title: projectPage.title,
-      href: linkResolver('projectpage', [projectPage.slug]).href,
-      typename: 'projectpage',
-    },
-  ]
+  const breadCrumbs: BreadCrumbItem[] = !subpage
+    ? []
+    : [
+        {
+          title: 'Ísland.is',
+          href: linkResolver('homepage').href,
+          typename: 'homepage',
+        },
+        {
+          title: projectPage.title,
+          href: linkResolver('projectpage', [projectPage.slug]).href,
+          typename: 'projectpage',
+        },
+      ]
 
   return (
     <>
-      <ProjectChatPanel projectPage={projectPage} />
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
         description={projectPage.featuredDescription || projectPage.intro}
@@ -130,19 +118,12 @@ const ProjectPage: Screen<PageProps> = ({
         imageWidth={projectPage.featuredImage?.width?.toString()}
         imageHeight={projectPage.featuredImage?.height?.toString()}
       />
-      <ProjectHeader projectPage={projectPage} />
       <ProjectWrapper
+        projectPage={projectPage}
+        breadcrumbItems={breadCrumbs}
+        sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage.sidebar}
-        sidebarContent={sidebarNavigationComponent()}
       >
-        {projectPage.sidebar && (
-          <Hidden above="sm">
-            <Box>
-              <Box marginY={2}>{sidebarNavigationComponent(true)}</Box>
-            </Box>
-          </Hidden>
-        )}
-
         {!!subpage && (
           <Box marginBottom={1}>
             <Box marginBottom={3}>

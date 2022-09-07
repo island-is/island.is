@@ -53,9 +53,6 @@ import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { ProjectWrapper } from '../Project/components/ProjectWrapper'
-import { ProjectHeader } from '../Project/components/ProjectHeader'
-import { ProjectChatPanel } from '../Project/components/ProjectChatPanel'
-import { getSidebarNavigationComponent } from '../Project/utils'
 
 const PERPAGE = 10
 
@@ -91,6 +88,14 @@ const NewsList: Screen<NewsListProps> = ({
 
   const typename =
     (parentPage.__typename?.toLowerCase() as LinkType) ?? 'organizationpage'
+
+  const overviewLinkType: LinkType =
+    parentPage.__typename === 'ProjectPage'
+      ? 'projectnewsoverview'
+      : 'organizationnewsoverview'
+
+  const newsItemLinkType: LinkType =
+    parentPage.__typename === 'ProjectPage' ? 'projectnews' : 'organizationnews'
 
   const currentNavItem = getCurrentNavItem(parentPage, Router.asPath)
 
@@ -138,15 +143,8 @@ const NewsList: Screen<NewsListProps> = ({
       return queryObject
     }, {})
 
-    if (parentPage.__typename === 'ProjectPage') {
-      return {
-        pathname: linkResolver('projectnewsoverview', [parentPage.slug]).href,
-        query,
-      }
-    }
     return {
-      pathname: linkResolver('organizationnewsoverview', [parentPage.slug])
-        .href,
+      pathname: linkResolver(overviewLinkType, [parentPage.slug]).href,
       query,
     }
   }
@@ -287,12 +285,8 @@ const NewsList: Screen<NewsListProps> = ({
           image={newsItem.image}
           titleAs="h2"
           href={
-            linkResolver(
-              parentPage.__typename === 'ProjectPage'
-                ? 'projectnews'
-                : 'organizationnews',
-              [parentPage.slug, newsItem.slug],
-            ).href
+            linkResolver(newsItemLinkType, [parentPage.slug, newsItem.slug])
+              .href
           }
           date={newsItem.date}
           readMoreText={n('readMore', 'Lesa nánar')}
@@ -306,12 +300,8 @@ const NewsList: Screen<NewsListProps> = ({
             renderLink={(page, className, children) => (
               <Link
                 href={{
-                  pathname: linkResolver(
-                    parentPage.__typename === 'ProjectPage'
-                      ? 'projectnewsoverview'
-                      : 'organizationnewsoverview',
-                    [parentPage.slug],
-                  ).href,
+                  pathname: linkResolver(overviewLinkType, [parentPage.slug])
+                    .href,
                   query: { ...Router.query, page },
                 }}
               >
@@ -324,37 +314,16 @@ const NewsList: Screen<NewsListProps> = ({
     </Stack>
   )
 
-  const baseRouterPath = Router.asPath.split('?')[0].split('#')[0]
-
   if (parentPage.__typename === 'ProjectPage') {
-    const projectPageSidebarNavigationComponent = getSidebarNavigationComponent(
-      parentPage,
-      baseRouterPath,
-      n('navigationTitle', 'Efnisyfirlit'),
-    )
     return (
       <>
-        <ProjectChatPanel projectPage={parentPage} />
-        <ProjectHeader projectPage={parentPage} />
         <ProjectWrapper
+          projectPage={parentPage}
+          breadcrumbItems={breadCrumbs}
+          sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
           withSidebar={true}
-          sidebarContent={
-            <>
-              {projectPageSidebarNavigationComponent()}
-              {sidebar}
-            </>
-          }
+          sidebarContent={sidebar}
         >
-          <Hidden above="sm">
-            <Box>
-              <Box marginY={2}>
-                {projectPageSidebarNavigationComponent(true)}
-              </Box>
-            </Box>
-          </Hidden>
-          <Box marginBottom={3}>
-            <Breadcrumbs items={breadCrumbs} />
-          </Box>
           {content}
         </ProjectWrapper>
       </>
