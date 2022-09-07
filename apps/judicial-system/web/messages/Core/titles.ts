@@ -117,14 +117,15 @@ export const titles = {
     },
   },
   court: {
-    investigationCases: {
+    shared: {
       receptionAndAssignment: defineMessage({
-        id:
-          'judicial.system.core:titles.court.investigation_cases.reception_and_assignment',
+        id: 'judicial.system.core:titles.court.shared.reception_and_assignment',
         defaultMessage: 'Móttaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í rannsóknarheimildum',
+          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í öllum málategundum',
       }),
+    },
+    investigationCases: {
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.investigation_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
@@ -159,13 +160,6 @@ export const titles = {
       }),
     },
     restrictionCases: {
-      receptionAndAssignment: defineMessage({
-        id:
-          'judicial.system.core:titles.court.restriction_cases.reception_and_assignment',
-        defaultMessage: 'Móttaka - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í gæslu- og farbannsmálum',
-      }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
