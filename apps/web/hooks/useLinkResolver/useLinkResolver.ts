@@ -114,8 +114,8 @@ export const routesTemplate = {
     en: '/en/o/[slug]/news',
   },
   projectsubpage: {
-    is: '/v/[slug]/frett/[subSlug]',
-    en: '/en/p/[slug]/news/[subSlug]',
+    is: '/v/[slug]/[subSlug]',
+    en: '/en/p/[slug]/[subSlug]',
   },
   projectpage: {
     is: '/v/[slug]',
