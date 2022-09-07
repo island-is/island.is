@@ -9,6 +9,7 @@ import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import { string } from 'yargs'
 
 interface Props {
   workingCase: Case
@@ -51,7 +52,10 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
 
   return (
     <>
-      <SectionHeading title={formatMessage(strings.title)} tooltip={''} />
+      <SectionHeading
+        title={formatMessage(strings.title)}
+        tooltip={strings.tooltip}
+      />
       <BlueBox>
         <Box marginBottom={2}>
           <Select

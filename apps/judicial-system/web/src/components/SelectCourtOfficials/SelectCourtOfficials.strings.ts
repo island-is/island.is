@@ -7,6 +7,13 @@ export const selectCourtOfficials = defineMessages({
     description:
       'Notaður sem titill á Hver tekur við málinu? hlutanum á Móttaka og úthlutun skrefi öllum málategundum.',
   },
+  tooltip: {
+    id: 'judicial.system.core:select_court_officials:tooltip',
+    defaultMessage:
+      'Dómari og dómritari sem eru valdir hér eru skráðir á málið og munu fá tilkynningar sendar í tölvupósti. Eingöngu skráður dómari getur undirritað úrskurð.',
+    description:
+      'Notaður sem útskýringartexti við Hver tekur við málinu? hlutanum á Móttaka og úthlutun skrefi öllum málategundum.',
+  },
   setJudgeLabel: {
     id: 'judicial.system.core:select_court_officials.set_judge_label',
     defaultMessage: 'Veldu dómara/aðstoðarmann',
@@ -19,13 +26,6 @@ export const selectCourtOfficials = defineMessages({
     description:
       'Notaður sem upplýsingatexti á innsláttarsvæði fyrir "Veldu dómara" hlutann á Móttaka og úthlutun skrefi öllum málategundum',
   },
-  setJudgeTooltip: {
-    id: 'judicial.system.core:select_court_officials.set_judge_tooltip',
-    defaultMessage:
-      'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
-    description:
-      'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á Móttaka og úthlutun skrefi öllum málategundum',
-  },
   setRegistrarLabel: {
     id: 'judicial.system.core:select_court_officials.set_registrar_label',
     defaultMessage: 'Veldu dómritara',
@@ -37,12 +37,5 @@ export const selectCourtOfficials = defineMessages({
     defaultMessage: 'Veldu dómritara',
     description:
       'Notaður sem upplýsingatexti á innsláttarsvæði fyrir "Veldu dómritara" hlutann á Móttaka og úthlutun skrefi öllum málategundum',
-  },
-  setRegistrarTooltip: {
-    id: 'judicial.system.core:select_court_officials.set_registrar_tooltip',
-    defaultMessage:
-      'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
-    description:
-      'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á Móttaka og úthlutun skrefi öllum málategundum',
   },
 })
