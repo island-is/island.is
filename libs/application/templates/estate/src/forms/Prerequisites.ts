@@ -25,9 +25,9 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'sampleData',
-              type: 'SampleDataProvider',
-              title: 'Staðfesting á ákveðnu atriði',
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: 'Eitthvað',
               subTitle:
                 'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
             }),
@@ -37,16 +37,6 @@ export const Prerequisites: Form = buildForm({
           id: 'externalDataSuccess',
           title: 'Tókst að sækja gögn',
           children: [
-            buildDescriptionField({
-              id: 'externalDataSuccessDescription',
-              title: '',
-              description: (application: Application) =>
-                `Gildið frá data provider: ${get(
-                  application.externalData,
-                  'sampleData.data.value',
-                  'fannst ekki',
-                )}`,
-            }),
             buildSubmitField({
               id: 'toDraft',
               placement: 'footer',

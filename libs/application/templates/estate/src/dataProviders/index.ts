@@ -3,4 +3,4 @@ export {
   ExampleSucceeds,
 } from '@island.is/application/data-providers'
 
-export { SampleDataProvider } from './SampleDataProvider'
+export { NationalRegistryProvider } from './NationalRegistryProvider'
