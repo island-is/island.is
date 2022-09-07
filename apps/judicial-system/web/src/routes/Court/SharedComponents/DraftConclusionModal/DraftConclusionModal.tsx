@@ -36,7 +36,7 @@ const DraftConclusionModal: React.FC<Props> = (props) => {
             />
           }
           primaryButtonText="Loka glugga"
-          handlePrimaryButtonClick={() => setIsDraftingConclusion(false)}
+          onPrimaryButtonClick={() => setIsDraftingConclusion(false)}
         />
       )}
     </AnimatePresence>

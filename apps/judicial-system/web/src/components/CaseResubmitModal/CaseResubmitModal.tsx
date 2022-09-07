@@ -36,11 +36,11 @@ const CaseResubmitModal: React.FC<Props> = ({
     <Modal
       title={formatMessage(m.heading)}
       text={getCaseResubmittedText(formatMessage, workingCase)}
-      handleClose={onClose}
+      onClose={onClose}
       primaryButtonText={formatMessage(m.primaryButtonText)}
       secondaryButtonText={formatMessage(m.secondaryButtonText)}
-      handleSecondaryButtonClick={onClose}
-      handlePrimaryButtonClick={() => {
+      onSecondaryButtonClick={onClose}
+      onPrimaryButtonClick={() => {
         if (explanation) {
           onContinue(explanation)
         }

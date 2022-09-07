@@ -269,6 +269,17 @@ const useSections = () => {
               ? `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`
               : undefined,
         },
+        {
+          type: 'SUB_SECTION',
+          name: capitalize(
+            formatMessage(sections.indictmentCaseProsecutorSection.overview),
+          ),
+          href:
+            isDefendantStepValidForSidebarIndictments(workingCase) &&
+            isProcessingStepValidIndictments(workingCase)
+              ? `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${id}`
+              : undefined,
+        },
       ],
     }
   }
