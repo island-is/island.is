@@ -461,16 +461,9 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'fileUpload.attachment',
-              title: (answers) =>
-                answers.answers.employer && (answers.answers.employer as { isSelfEmployed: string })
-                  .isSelfEmployed === YES
-                  ? parentalLeaveFormMessages.selfEmployed.attachmentTitle
-                  : 'something else',
-              description: (answers) =>
-                answers.answers.employer && (answers.answers.employer as { isSelfEmployed: string })
-                  .isSelfEmployed === YES
-                  ? parentalLeaveFormMessages.selfEmployed.attachmentDescription
-                  : 'something else longer text',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               children: [
                 buildFileUploadField({
                   id: 'fileUpload.attachment.file',
