@@ -41,6 +41,16 @@ export class SharedTemplateApiService {
     private readonly applicationService: BaseTemplateApiApplicationService,
   ) {}
 
+  async createAssignToken(application: Application, expiresIn: number) {
+    const token = await this.applicationService.createAssignToken(
+      application,
+      getConfigValue(this.configService, 'jwtSecret'),
+      expiresIn,
+    )
+
+    return token
+  }
+
   async sendSms(
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
@@ -53,14 +63,8 @@ export class SharedTemplateApiService {
   async assignApplicationThroughSms(
     smsTemplateGenerator: AssignmentSmsTemplateGenerator,
     application: Application,
-    expiresIn: number,
+    token: string,
   ) {
-    const token = await this.applicationService.createAssignToken(
-      application,
-      getConfigValue(this.configService, 'jwtSecret'),
-      expiresIn,
-    )
-
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
@@ -106,15 +110,9 @@ export class SharedTemplateApiService {
   async assignApplicationThroughEmail(
     templateGenerator: AssignmentEmailTemplateGenerator,
     application: Application,
-    expiresIn: number,
+    token: string,
     locale = 'is',
   ) {
-    const token = await this.applicationService.createAssignToken(
-      application,
-      getConfigValue(this.configService, 'jwtSecret'),
-      expiresIn,
-    )
-
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
