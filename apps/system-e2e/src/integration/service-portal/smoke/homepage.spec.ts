@@ -1,5 +1,6 @@
 import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
+import { Timeout } from '../../../lib/types'
 
 describe('Home page', () => {
   const fakeUser = getFakeUser(fakeUsers, 'María Sól Þí Torp')
@@ -7,17 +8,18 @@ describe('Home page', () => {
     cy.log('the fake user:', fakeUser)
     cy.idsLogin({ phoneNumber: fakeUser.phoneNumber })
     cy.visit('/minarsidur')
+    // Workaround for late-loaded service portal
+    cy.wait(Timeout.short)
   })
 
-  it.only('should have clickable navigation bar', () => {
-    cy.get('svg[data-testid^="icon-"]').each((el) => {
-      cy.wrap(el)
-        .parentsUntil('a')
-        .then((a) => {
-          cy.wrap(a).parent().click()
-          cy.location('pathname').should('eq', a.attr('href'))
-        })
-    })
+  it('should have clickable navigation bar', () => {
+    cy.get('a[href^="/minarsidur/"]:has(svg):visible')
+      .should('have.length.gt', 2)
+      .each((el) => {
+        cy.log('Element:', el)
+        cy.wrap(el).click()
+        cy.location('pathname').should('eq', el.attr('href'))
+      })
   })
 
   it(`should have user ${fakeUser.name} logged in`, () => {
