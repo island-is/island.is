@@ -12,11 +12,7 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import {
-  YES,
-  MarriageTermination,
-  maritalStatuses,
-} from '../lib/constants'
+import { YES, MarriageTermination, maritalStatuses } from '../lib/constants'
 import { m } from '../lib/messages'
 import {
   Form,
