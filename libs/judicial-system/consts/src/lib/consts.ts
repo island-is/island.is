@@ -191,10 +191,10 @@ export const INVESTIGATION_CASE_CASE_FILES_ROUTE =
 export const INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE =
   '/krafa/rannsoknarheimild/stadfesta'
 
-export const INDICTMENTS_DEFENDANT_ROUTE = '/akaerur/akaerdi'
-export const INDICTMENTS_PROCESSING_ROUTE = '/akaerur/malsmedferd'
-export const INDICTMENTS_CASE_FILES_ROUTE = '/akaerur/domskjol'
-export const INDICTMENTS_OVERVIEW_ROUTE = '/akaerur/stadfesta'
+export const INDICTMENTS_DEFENDANT_ROUTE = '/krafa/akaera/akaerdi'
+export const INDICTMENTS_PROCESSING_ROUTE = '/krafa/akaera/malsmedferd'
+export const INDICTMENTS_CASE_FILES_ROUTE = '/krafa/akaera/domskjol'
+export const INDICTMENTS_OVERVIEW_ROUTE = '/krafa/akaera/stadfesta'
 /* PROSECUTOR ROUTES END */
 
 /* COURT ROUTES START */
