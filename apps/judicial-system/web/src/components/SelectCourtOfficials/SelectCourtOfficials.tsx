@@ -54,7 +54,7 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
     <>
       <SectionHeading
         title={formatMessage(strings.title)}
-        tooltip={strings.tooltip}
+        tooltip={formatMessage(strings.tooltip)}
       />
       <BlueBox>
         <Box marginBottom={2}>
