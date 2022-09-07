@@ -1,78 +1,87 @@
-import get from 'lodash/get'
 import {
   buildForm,
   buildDescriptionField,
   buildMultiField,
   buildSection,
+  buildKeyValueField,
+  buildRadioField,
   buildSubmitField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
-  title: 'Skilyrði',
+  title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'conditions',
-      title: m.conditionsSection,
+      id: 'selectEstate',
+      title: '',
       children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: 'Utanaðkomandi gögn',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: 'Eitthvað',
-              subTitle:
-                'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
-            }),
-          ],
-        }),
         buildMultiField({
-          id: 'externalDataSuccess',
-          title: 'Tókst að sækja gögn',
+          id: 'estate',
+          title: 'Ákvörðun um skipti bús',
+          description:
+            'Hægt er að fara fjórar leiðir við skipti á búi. Vinsamlega veldu þá leið sem þú og aðrir erfingjar viljið fara.',
           children: [
+            buildKeyValueField({
+              label: 'Nafn',
+              value: 'Jóna Jónsdóttir',
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: 'Kennitala',
+              value: '190841-2409',
+              width: 'half',
+            }),
+            buildDescriptionField({
+              id: 'space',
+              space: 'gutter',
+              title: '',
+            }),
+            buildKeyValueField({
+              label: 'Lögheimili',
+              value: 'lalallala',
+              width: 'half',
+            }),
+            buildKeyValueField({
+              label: 'Dánardagur',
+              value: '05.02.2022',
+              width: 'half',
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              space: 'gutter',
+              title: '',
+            }),
+            buildRadioField({
+              id: 'selectedEstate',
+              title: '',
+              width: 'full',
+              options: [
+                { value: 'Eignalaust dánarbú', label: 'Eignalaust dánarbú' },
+                { value: 'Einkaskipti', label: 'Einkaskipti' },
+                { value: 'Opinber skipti', label: 'Opinber skipti' },
+                { value: 'Búsetuleyfi', label: 'Búsetuleyfi' },
+              ],
+            }),
             buildSubmitField({
-              id: 'toDraft',
-              placement: 'footer',
-              title: 'Hefja umsókn',
+              id: 'overview.submit',
+              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
-                  name: 'Hefja umsókn',
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
                   type: 'primary',
                 },
               ],
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'neverDisplayed',
-          title: '',
-          description: '',
-        }),
       ],
-    }),
-    buildSection({
-      id: 'intro',
-      title: m.introSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'career',
-      title: m.career,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: 'Staðfesta',
-      children: [],
     }),
   ],
 })

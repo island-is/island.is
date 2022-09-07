@@ -22,6 +22,7 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
+  estateApplication = 'isEstateApplicationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

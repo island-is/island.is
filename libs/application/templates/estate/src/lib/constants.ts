@@ -1,0 +1,31 @@
+import { DefaultEvents } from '@island.is/application/types'
+
+export const YES = 'yes'
+export const NO = 'no'
+
+type FakeCurrentLicense = 'none' | 'temp'
+type YesOrNo = 'yes' | 'no'
+
+export interface DrivingLicenseFakeData {
+  useFakeData?: YesOrNo
+  qualityPhoto?: YesOrNo
+  currentLicense?: FakeCurrentLicense
+  healthRemarks?: YesOrNo
+}
+
+export const States = {
+  prerequisites: 'prerequisites',
+  draft: 'draft',
+  done: 'done',
+}
+
+export type EstateEvent =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.EDIT }
+
+export enum Roles {
+  APPLICANT = 'applicant',
+}

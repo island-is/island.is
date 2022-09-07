@@ -1,10 +1,10 @@
 import { buildForm, buildDescriptionField } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 
-export const Approved: Form = buildForm({
-  id: 'ApprovedApplicationForm',
-  title: 'Samþykkt',
-  mode: FormModes.APPROVED,
+export const Done: Form = buildForm({
+  id: 'done',
+  title: '',
+  mode: FormModes.APPLYING,
   children: [
     buildDescriptionField({
       id: 'approved',
