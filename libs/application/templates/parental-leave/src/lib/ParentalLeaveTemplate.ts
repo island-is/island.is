@@ -50,6 +50,8 @@ type Events =
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
   | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
+  | { type: 'ADDITIONALDOCUMENTREQUIRED' } // Ex: VMST ask for more documents
+  | { type: 'CLOSED' } // Ex: Close application
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -415,7 +417,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          ADDITIONALDOCUMENTREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -442,6 +448,64 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
+      [States.ADDITIONAL_DOCUMENT_REQUIRED]: {
+        meta: {
+          name: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          actionCard: {
+            description: statesMessages.additionalDocumentRequiredDescription,
+          },
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          progress: 0.5,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/DraftRequiresAction').then((val) =>
+                  Promise.resolve(val.DraftRequiresAction),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
+      },
+      // [States.RECEIVED]: {
+      //   meta: {
+      //     name: States.RECEIVED,
+      //     actionCard: {
+      //       description: statesMessages.receivedDescription,
+      //     },
+      //     lifecycle: DEPRECATED_DefaultStateLifeCycle,
+      //     progress: 0.8,
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //         import('../forms/InReview').then((val) =>
+      //         Promise.resolve(val.InReview),
+      //         ),
+      //         read: 'all',
+      //       },
+      //       {
+      //         id: Roles.ORGINISATION_REVIEWER,
+      //         formLoader: () =>
+      //         import('../forms/InReview').then((val) =>
+      //         Promise.resolve(val.InReview),
+      //         ),
+      //         write: 'all',
+      //       },
+      //     ],
+      //   },
+      //   on: {
+      //     ADDITIONALDOCUMENTREQUIRED: { target: States.ADDITIONAL_DOCUMENT_REQUIRED },
+      //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
+      //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
+      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+      //   },
+      // },
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
@@ -449,7 +513,39 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.approvedDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 1,
+          progress: 0.9,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          CLOSED: { target: States.CLOSED },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        },
+      },
+      [States.CLOSED]: {
+        meta: {
+          name: States.CLOSED,
+          actionCard: {
+            description: statesMessages.closedDescription,
+          },
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          progress: 0.9,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -460,10 +556,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
-        },
-        // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
-        on: {
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       // Edit Flow States
@@ -476,7 +568,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description: statesMessages.editOrAddPeriodsDescription,
           },
           lifecycle: DEPRECATED_DefaultStateLifeCycle,
-          progress: 1,
+          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -537,7 +629,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
         },
       },
-
       [States.EMPLOYER_APPROVE_EDITS]: {
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -618,6 +709,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          ADDITIONALDOCUMENTREQUIRED: {
+            target: States.ADDITIONAL_DOCUMENT_REQUIRED,
+          },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },

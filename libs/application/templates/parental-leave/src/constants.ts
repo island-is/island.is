@@ -50,7 +50,9 @@ export enum States {
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
+  ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
   APPROVED = 'approved',
+  CLOSED = 'closed',
 
   // Edit Flow
   EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',

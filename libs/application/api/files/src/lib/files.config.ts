@@ -32,7 +32,7 @@ export const ApplicationFilesConfig = defineConfig({
         'localhost:7004',
         'localhost:7005',
       ]),
-      ssl: !isRunningOnEnvironment('local'),
+      ssl: false, //!isRunningOnEnvironment('local'),
     },
   }),
 })
