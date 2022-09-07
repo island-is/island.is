@@ -23,8 +23,6 @@ import {
   isDefendantStepValidForSidebarIC,
   isHearingArrangementsStepValidIC,
   isHearingArrangementsStepValidRC,
-  isReceptionAndAssignmentStepValidRC,
-  isReceptionAndAssignmentStepValidIC,
   isPoliceDemandsStepValidIC,
   isPoliceDemandsStepValidRC,
   isPoliceReportStepValidIC,
@@ -33,7 +31,7 @@ import {
   isRulingValidRC,
   isDefendantStepValidForSidebarIndictments,
   isProcessingStepValidIndictments,
-  isReceptionAndAssignmentStepValidIndictments,
+  isReceptionAndAssignmentStepValid,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -316,7 +314,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 1) ||
-                    isReceptionAndAssignmentStepValidRC(workingCase))
+                    isReceptionAndAssignmentStepValid(workingCase))
                     ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
                     : undefined,
               },
@@ -326,7 +324,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 2) ||
-                    isReceptionAndAssignmentStepValidRC(workingCase))
+                    isReceptionAndAssignmentStepValid(workingCase))
                     ? `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
@@ -336,7 +334,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 3) ||
-                    (isReceptionAndAssignmentStepValidRC(workingCase) &&
+                    (isReceptionAndAssignmentStepValid(workingCase) &&
                       isCourtHearingArrangemenstStepValidRC(workingCase)))
                     ? `${constants.RESTRICTION_CASE_RULING_ROUTE}/${id}`
                     : undefined,
@@ -347,7 +345,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 4) ||
-                    (isReceptionAndAssignmentStepValidRC(workingCase) &&
+                    (isReceptionAndAssignmentStepValid(workingCase) &&
                       isCourtHearingArrangemenstStepValidRC(workingCase) &&
                       isRulingValidRC(workingCase)))
                     ? `${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${id}`
@@ -358,7 +356,7 @@ const useSections = () => {
                 name: formatMessage(sections.courtSection.conclusion),
                 href:
                   !isModifyingRuling &&
-                  isReceptionAndAssignmentStepValidRC(workingCase) &&
+                  isReceptionAndAssignmentStepValid(workingCase) &&
                   isCourtHearingArrangemenstStepValidRC(workingCase) &&
                   isRulingValidRC(workingCase) &&
                   isCourtRecordStepValidRC(workingCase)
@@ -402,7 +400,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 1) ||
-                    isReceptionAndAssignmentStepValidIC(workingCase))
+                    isReceptionAndAssignmentStepValid(workingCase))
                     ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
                     : undefined,
               },
@@ -414,7 +412,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 2) ||
-                    isReceptionAndAssignmentStepValidIC(workingCase))
+                    isReceptionAndAssignmentStepValid(workingCase))
                     ? `${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
@@ -426,7 +424,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 3) ||
-                    (isReceptionAndAssignmentStepValidIC(workingCase) &&
+                    (isReceptionAndAssignmentStepValid(workingCase) &&
                       isCourtHearingArrangementsStepValidIC(workingCase)))
                     ? `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${id}`
                     : undefined,
@@ -439,7 +437,7 @@ const useSections = () => {
                 href:
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 4) ||
-                    (isReceptionAndAssignmentStepValidIC(workingCase) &&
+                    (isReceptionAndAssignmentStepValid(workingCase) &&
                       isCourtHearingArrangementsStepValidIC(workingCase) &&
                       isRulingValidIC(workingCase)))
                     ? `${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${id}`
@@ -452,7 +450,7 @@ const useSections = () => {
                 ),
                 href:
                   !isModifyingRuling &&
-                  isReceptionAndAssignmentStepValidIC(workingCase) &&
+                  isReceptionAndAssignmentStepValid(workingCase) &&
                   isCourtHearingArrangementsStepValidIC(workingCase) &&
                   isRulingValidIC(workingCase) &&
                   isCourtRecordStepValidIC(workingCase)
@@ -484,7 +482,7 @@ const useSections = () => {
           name: formatMessage(sections.indictmentsCourtSection.overview),
           href:
             (activeSubSection && activeSubSection > 1) ||
-            isReceptionAndAssignmentStepValidIndictments(workingCase)
+            isReceptionAndAssignmentStepValid(workingCase)
               ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
               : undefined,
         },

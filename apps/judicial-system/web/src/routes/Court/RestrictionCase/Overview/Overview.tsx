@@ -50,7 +50,7 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
 
 export const JudgeOverview: React.FC = () => {
   const {

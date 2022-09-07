@@ -10,6 +10,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  IndictmentsCourtSubsections,
   ReactSelectOption,
   RestrictionCaseCourtSubsections,
   Sections,
@@ -20,20 +21,23 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  isIndictmentCase,
+  isInvestigationCase,
+  isRestrictionCase,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
+import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
+import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
-import { icReceptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
-import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
+import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
@@ -119,24 +123,38 @@ const ReceptionAndAssignment = () => {
     }
   }
 
+  const getNextRoute = () => {
+    return isRestrictionCase(workingCase.type)
+      ? `${constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
+      : isInvestigationCase(workingCase.type)
+      ? `${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
+      : `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`
+  }
+
+  const getActiveSubSection = () => {
+    return isIndictmentCase(workingCase.type)
+      ? IndictmentsCourtSubsections.RECEPTION_AND_ASSIGNMENT
+      : // Restriction cases and investigation cases have the same subsections
+        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={
-        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
-      }
+      activeSection={Sections.JUDGE}
+      activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
       <PageHeader
-        title={formatMessage(
-          titles.court.investigationCases.receptionAndAssignment,
-        )}
+        title={formatMessage(titles.court.shared.receptionAndAssignment)}
       />
       <FormContentContainer>
+        {isIndictmentCase(workingCase.type) && workingCase.comments && (
+          <Box marginBottom={5}>
+            <AlertMessage message={workingCase.comments} type="warning" />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(strings.title)}
@@ -173,8 +191,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
-          nextUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`}
-          nextIsDisabled={!isReceptionAndAssignmentStepValidIC(workingCase)}
+          nextUrl={getNextRoute()}
+          nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>
