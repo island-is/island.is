@@ -179,16 +179,16 @@ export const getRightsCode = (application: Application): string => {
 
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === YES
-  
+
   const isUnemployed = answers.applicationType === 'parentalGrant'
   const isStudent = answers.applicationType === 'parentalGrantStudents'
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
-    if (isUnemployed){
+    if (isUnemployed) {
       return 'M-FS'
     } else if (isStudent) {
-      return 'M-FSN'    
-    } else if (isSelfEmployed)  {
+      return 'M-FSN'
+    } else if (isSelfEmployed) {
       return 'M-S-GR'
     } else {
       return 'M-L-GR'
@@ -207,7 +207,7 @@ export const getRightsCode = (application: Application): string => {
     if (isUnemployed) {
       return `${parentPrefix}-FS`
     } else if (isStudent) {
-      return `${parentPrefix}-FSN`  
+      return `${parentPrefix}-FSN`
     } else if (isSelfEmployed) {
       return `${parentPrefix}-S-GR`
     } else {
@@ -216,10 +216,10 @@ export const getRightsCode = (application: Application): string => {
   }
 
   if (isUnemployed) {
-    return `${parentPrefix}-FL-FS` 
+    return `${parentPrefix}-FL-FS`
   } else if (isStudent) {
-    return `${parentPrefix}-FL-FSN`  
-  } else if (isSelfEmployed) {  
+    return `${parentPrefix}-FL-FSN`
+  } else if (isSelfEmployed) {
     return `${parentPrefix}-FL-S-GR`
   } else {
     return `${parentPrefix}-FL-L-GR`
