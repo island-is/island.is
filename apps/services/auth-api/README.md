@@ -28,7 +28,7 @@ Then run the migration and seed scripts:
 
 ```bash
 yarn nx run services-auth-api:migrate
-yarn nx run services-auth-api:seed
+yarn nx run services-auth-api:seed-local
 ```
 
 Finally, start the service:

@@ -116,10 +116,7 @@
     "seed": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "sequelize-cli db:seed:all --seeders-path ./seeders/local",
-          "sequelize-cli db:seed:all"
-        ],
+        "command": "sequelize-cli db:seed:all",
         "cwd": "libs/auth-api-lib"
       }
     },
