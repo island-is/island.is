@@ -499,34 +499,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description: parentalLeaveFormMessages.selfEmployed.description,
             }),
             buildMultiField({
-              id: 'employer.selfEmployed.attachment',
-              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
-              condition: (answers) =>
-                (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed === YES,
-              children: [
-                buildFileUploadField({
-                  id: 'employer.selfEmployed.file',
-                  title: '',
-                  introduction: '',
-                  maxSize: FILE_SIZE_LIMIT,
-                  maxSizeErrorText:
-                    parentalLeaveFormMessages.selfEmployed
-                      .attachmentMaxSizeError,
-                  uploadAccept: '.pdf',
-                  uploadHeader: '',
-                  uploadDescription: '',
-                  uploadButtonLabel:
-                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
-                }),
-              ],
-            }),
-            buildMultiField({
               id: 'employer.information',
               title: parentalLeaveFormMessages.employer.title,
               description: parentalLeaveFormMessages.employer.description,
@@ -549,6 +521,34 @@ export const ParentalLeaveForm: Form = buildForm({
                   variant: 'tel',
                   format: '###-####',
                   placeholder: '000-0000',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUpload',
+          title: 'File upload',
+          children: [
+            buildMultiField({
+              id: 'fileUpload.attachment',
+              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+              description:
+                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.attachment.file',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription: '',
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.selfEmployed.attachmentButton,
                 }),
               ],
             }),

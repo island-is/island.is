@@ -229,14 +229,25 @@ export const Overview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {workingCase.description && (
@@ -377,8 +388,8 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handleSecondaryButtonClick={() => {
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             secondaryButtonText="Loka glugga"

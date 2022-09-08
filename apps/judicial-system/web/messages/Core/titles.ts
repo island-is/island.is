@@ -108,6 +108,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Dómskjöl skjá hjá saksóknara í ákærum',
       }),
+      overview: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.overview',
+        defaultMessage: 'Yfirlit ákæru - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Yfirlit ákæru skjá hjá saksóknara í ákærum',
+      }),
     },
   },
   court: {
