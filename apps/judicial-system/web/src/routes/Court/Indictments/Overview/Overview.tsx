@@ -70,7 +70,7 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`} // TODO: add corret url when ready
+          previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`}
           nextIsLoading={isLoadingWorkingCase}
           nextUrl={`${constants.CASES_ROUTE}`} // TODO: add correct url when ready
           nextButtonText={formatMessage(m.continueButtonLabel)}
