@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { RegistrationOfTypeForPeriod } from '@island.is/clients/electronic-registrations'
+import { BrokenDownRegistrationStatistic } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   Box,
   GridColumn,
@@ -17,7 +17,7 @@ import { CustomLegend } from './CustomLegend'
 import * as styles from './MonthlyStatistics.css'
 
 type QueryType = {
-  getBrokenDownElectronicRegistrationStatistics: RegistrationOfTypeForPeriod[]
+  getBrokenDownElectronicRegistrationStatistics: BrokenDownRegistrationStatistic[]
 }
 
 export const MonthlyStatistics = () => {
@@ -26,9 +26,11 @@ export const MonthlyStatistics = () => {
     setSelectedRegistrationTypeOption,
   ] = useState({ label: 'Allt', value: 'Allt' })
 
+  const currentYear = new Date().getFullYear()
+
   const [selectedYear, setSelectedYear] = useState({
-    label: '2022',
-    value: '2022',
+    label: String(currentYear),
+    value: String(currentYear),
   })
 
   const { data: serverData, loading, error } = useQuery<QueryType>(
@@ -37,7 +39,7 @@ export const MonthlyStatistics = () => {
       variables: {
         input: {
           dateFrom: new Date(Number(selectedYear.value), 0, 1),
-          dateTo: new Date(Number(selectedYear.value), 4, 1),
+          dateTo: new Date(Number(selectedYear.value) + 1, 0, 1),
         },
       },
     },
@@ -60,11 +62,16 @@ export const MonthlyStatistics = () => {
   }, [data])
 
   const yearOptions = useMemo(() => {
-    return [
-      { label: '2022', value: '2022' },
-      { label: '2021', value: '2021' },
-      { label: '2020', value: '2020' },
-    ]
+    const options = []
+
+    for (let year = 2019; year <= currentYear; year += 1) {
+      options.push({
+        label: String(year),
+        value: String(year),
+      })
+    }
+
+    return options.reverse()
   }, [])
 
   const paper = 'Pappír'
@@ -93,7 +100,7 @@ export const MonthlyStatistics = () => {
               name="year-select"
               options={yearOptions}
               size="xs"
-              label="Tegund þinglýsinga"
+              label="Tímabil"
               value={selectedYear}
               onChange={(option) =>
                 setSelectedYear(option as { label: string; value: string })
@@ -110,7 +117,7 @@ export const MonthlyStatistics = () => {
             width={600}
             height={400}
             data={data.map((item) => ({
-              name: item.periodIntervalName,
+              name: item.periodIntervalName?.slice(0, 3),
               [paper]:
                 item.registrationTypes?.find(
                   (t) =>
@@ -138,7 +145,7 @@ export const MonthlyStatistics = () => {
               dataKey={electronic}
               fill="#ef8838"
             />
-            <XAxis dataKey="name" height={30} />
+            <XAxis dataKey="name" height={60} />
             <YAxis />
             <Tooltip
               content={<CustomTooltip />}

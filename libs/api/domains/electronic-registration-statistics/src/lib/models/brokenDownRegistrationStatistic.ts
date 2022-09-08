@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-class RegistrationTypeStatistic {
+export class RegistrationTypeStatistic {
   @Field()
   registrationType?: string
 
