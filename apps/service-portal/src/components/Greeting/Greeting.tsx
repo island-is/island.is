@@ -12,7 +12,7 @@ import { m } from '@island.is/service-portal/core'
 import * as styles from './Greeting.css'
 import { AuthDelegationType } from '@island.is/service-portal/graphql'
 
-const Greeting: FC<Record<string,never>> = () => {
+const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()
