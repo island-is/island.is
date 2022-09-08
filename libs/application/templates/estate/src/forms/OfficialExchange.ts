@@ -7,6 +7,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../lib/messages'
 
 export const officialExchange: Form = buildForm({
   id: 'officialExchange',
@@ -17,32 +18,31 @@ export const officialExchange: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: 'Gagnaöflun',
+      title: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Gagnaöflun',
-          subTitle: 'Eftirfarandi gögn verða sótt rafrænt',
+          title: m.dataCollectionTitle,
+          subTitle: m.dataCollectionSubtitle,
           checkboxLabel: '',
           dataProviders: [
             buildDataProviderItem({
               id: '',
               type: '',
-              title: 'Upplýsingar um hinn látna',
-              subTitle:
-                'Upplýsingar frá sýslumanni um fæðingar- og dánardag, lögheimili, erfðir, eignir og hvort arfleifandi hafi skilað inn erfðaskrá eða gert kaupmála.',
+              title: m.deceasedInfoProviderTitle,
+              subTitle: m.deceasedInfoProviderSubtitle,
             }),
             buildDataProviderItem({
               id: '',
               type: '',
-              title: 'Persónuupplýsingar um þig',
-              subTitle: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
+              title: m.personalInfoProviderTitle,
+              subTitle: m.personalInfoProviderSubtitle,
             }),
             buildDataProviderItem({
               id: '',
               type: '',
-              title: 'Stillingar frá Ísland.is',
-              subTitle: 'Persónustillingar þínar frá Ísland.is.',
+              title: m.settingsInfoProviderTitle,
+              subTitle: m.settingsInfoProviderSubtitle,
             }),
           ],
         }),
@@ -50,40 +50,39 @@ export const officialExchange: Form = buildForm({
     }),
     buildSection({
       id: 'information',
-      title: 'Tilkynnandi',
+      title: m.announcer,
       children: [
         buildMultiField({
           id: 'applicant',
-          title: 'Tilkynnandi',
-          description:
-            'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+          title: m.announcer,
+          description: m.applicantsInfoSubtitle,
           children: [
             buildTextField({
               id: 'applicant.name',
-              title: 'Nafn',
+              title: m.name,
               readOnly: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.nationalId',
-              title: 'Kennitala',
+              title: m.nationalId,
               readOnly: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.address',
-              title: 'Lögheimili',
+              title: m.address,
               readOnly: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.phone',
-              title: 'Símanúmer',
+              title: m.phone,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.email',
-              title: 'Netfang',
+              title: m.email,
               width: 'half',
             }),
           ],
@@ -92,17 +91,16 @@ export const officialExchange: Form = buildForm({
     }),
     buildSection({
       id: 'estateMembers',
-      title: 'Erfingjar og erfðaskrá',
+      title: m.estateMembersTitle,
       children: [
         buildMultiField({
           id: 'info',
-          title: 'Erfingjar og erfðaskrá',
-          description:
-            'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+          title: m.estateMembersTitle,
+          description: m.estateMembersSubtitle,
           children: [
             buildTextField({
               id: 'name',
-              title: 'Nafn',
+              title: m.name,
               readOnly: true,
               width: 'half',
             }),
