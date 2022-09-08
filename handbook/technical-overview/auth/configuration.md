@@ -200,3 +200,14 @@ Even though the `name` field of clients, resources and scopes all have the same 
      "amr": ["external"]
    }
    ```
+
+### Example sign-out
+
+1. User is using the site `https://app.myorg.is` which has the `@myorg.is/webapp` client.
+
+2. The user clicks a logout button. The client redirects them to the IAS endsession endpoint: `https://innskra.island.is/connect/endsession` with these query parameters:
+
+   - id_token_hint={YOUR_ID_TOKEN}
+   - post_logout_redirect_uri=https://app.myorg.is
+
+3. If the post_logout_redirect_uri is valid, IAS redirects the user back to the client using that URI where the client can check if the log out was successful.
