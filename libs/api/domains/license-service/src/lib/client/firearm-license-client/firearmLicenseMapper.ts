@@ -9,6 +9,9 @@ import {
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 
+const ExtractDateString = (dateTime: string) =>
+  dateTime ? new Date(dateTime).toISOString().split('T')[0] : null
+
 export const parseFirearmLicensePayload = (
   licenseData: LicenseData,
 ): GenericUserLicensePayload | null => {
@@ -30,12 +33,12 @@ export const parseFirearmLicensePayload = (
     licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími',
-      value: licenseInfo.expirationDate,
+      value: ExtractDateString(licenseInfo.expirationDate) ?? '',
     },
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
-      value: licenseInfo.issueDate,
+      value: ExtractDateString(licenseInfo.issueDate) ?? '',
     },
     licenseInfo.licenseNumber && {
       type: GenericLicenseDataFieldType.Value,
@@ -45,7 +48,8 @@ export const parseFirearmLicensePayload = (
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
-      value: licenseInfo.collectorLicenseExpirationDate,
+      value:
+        ExtractDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
     },
     licenseInfo.address && {
       type: GenericLicenseDataFieldType.Value,
