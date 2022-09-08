@@ -38,9 +38,9 @@ const Header = styled.View<{ hideBorder: boolean}>`
   )};
   padding: ${({ theme }) => theme.spacing[2]}px;
 `
-const HeaderTextBold = styled.Text`
+const HeaderTextBold = styled.Text<{ rightSpacing: boolean }>`
   align-self: flex-start;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  padding-right: ${({ theme, rightSpacing }) => rightSpacing ? theme.spacing[3] : theme.spacing[1]}px;
   ${font({
     fontWeight: '700',
     lineHeight: 24,
@@ -48,6 +48,7 @@ const HeaderTextBold = styled.Text`
 `
 
 const HeaderText = styled.Text`
+flex: 1;
   ${font({
     fontWeight: '300',
     lineHeight: 24,
@@ -69,7 +70,7 @@ const IconImage = styled.Image`
 
 interface FieldCardProps {
   code?: string
-  title: string
+  title?: string
   children: React.ReactNode
   type: LicenseCardType
   hasFields?: boolean
@@ -119,11 +120,13 @@ export function FieldCard(props: FieldCardProps) {
   }
   return (
     <Host>
-      <Header hideBorder={!props.hasFields}>
-        <HeaderTextBold>{props.code}</HeaderTextBold>
-        <HeaderText>{props.title}</HeaderText>
-        {icon && <IconWrap>{icon}</IconWrap>}
-      </Header>
+      {props.title && props.code &&
+        <Header hideBorder={!props.hasFields}>
+          <HeaderTextBold rightSpacing={!props.hasFields}>{props.code}</HeaderTextBold>
+          <HeaderText>{props.title}</HeaderText>
+          {icon && <IconWrap>{icon}</IconWrap>}
+        </Header>
+      }
       {props.hasFields && <ChildrenWrap>{props.children}</ChildrenWrap>}
     </Host>
   )
