@@ -47,8 +47,10 @@ export const exportVehicleOwnedDocument = async (
         ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
         : '',
       item.lastInspectionType,
-      item.nextInspectionDate
-        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+      item.nextInspection?.nextInspectionDate
+        ? new Date(
+            item.nextInspection?.nextInspectionDate?.toString(),
+          ).toLocaleDateString()
         : '',
     ]
   })
@@ -76,8 +78,10 @@ export const exportVehicleOwnedDocument = async (
         ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
         : '',
       item.lastInspectionType,
-      item.nextInspectionDate
-        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+      item.nextInspection?.nextInspectionDate
+        ? new Date(
+            item.nextInspection?.nextInspectionDate?.toString(),
+          ).toLocaleDateString()
         : '',
     ]
   })
@@ -105,8 +109,10 @@ export const exportVehicleOwnedDocument = async (
         ? new Date(item.lastInspectionDate?.toString()).toLocaleDateString()
         : '',
       item.lastInspectionType,
-      item.nextInspectionDate
-        ? new Date(item.nextInspectionDate?.toString()).toLocaleDateString()
+      item.nextInspection?.nextInspectionDate
+        ? new Date(
+            item.nextInspection?.nextInspectionDate?.toString(),
+          ).toLocaleDateString()
         : '',
     ]
   })
