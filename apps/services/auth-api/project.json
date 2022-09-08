@@ -122,6 +122,13 @@
         ],
         "cwd": "libs/auth-api-lib"
       }
+    },
+    "seed-local": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "sequelize-cli db:seed:all --seeders-path ./seeders/local",
+        "cwd": "libs/auth-api-lib"
+      }
     }
   },
   "tags": []
