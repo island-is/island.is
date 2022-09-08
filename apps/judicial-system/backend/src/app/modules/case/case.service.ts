@@ -33,7 +33,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
@@ -961,6 +961,7 @@ export class CaseService {
         theCase.courtCaseNumber ?? '',
         this.formatMessage(courtUpload.requestFileName, {
           caseType: caseTypes[theCase.type],
+          date: '',
         }),
         pdf,
       )

@@ -23,7 +23,7 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
 import {
@@ -47,7 +47,7 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
-import { notifications } from '../../messages'
+import { courtUpload, notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
@@ -266,10 +266,10 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumbers.join(', ')}-${format(
-          nowFactory(),
-          'yyyy-MM-dd-HH:mm',
-        )}`,
+        this.formatMessage(courtUpload.requestFileName, {
+          caseType: caseTypes[theCase.type],
+          date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
+        }),
         requestPdf,
       )
     } catch (error) {
