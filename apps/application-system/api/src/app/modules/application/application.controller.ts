@@ -105,6 +105,7 @@ import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -158,6 +159,7 @@ export class ApplicationController {
 
   @Scopes(ApplicationScope.read)
   @Get('users/:nationalId/applications')
+  @BypassDelegation()
   @ApiParam({
     name: 'nationalId',
     type: String,
