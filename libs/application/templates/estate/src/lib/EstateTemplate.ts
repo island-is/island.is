@@ -4,7 +4,6 @@ import {
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
-  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
@@ -13,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
-import { EstateEvent, Roles, States } from './constants'
+import { EstateEvent, EstateTypes, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
 
 const EstateTemplate: ApplicationTemplate<
@@ -24,7 +23,6 @@ const EstateTemplate: ApplicationTemplate<
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
   institution: m.institutionName,
-  translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: estateSchema,
   featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
@@ -70,14 +68,22 @@ const EstateTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.APPLICANT_NO_PROPERTY,
               formLoader: () =>
-                import('../forms/Draft').then((module) =>
-                  Promise.resolve(module.Draft),
+                import('../forms/EstateWithoutProperty').then((module) =>
+                  Promise.resolve(module.estateWithoutProperty),
                 ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_ESTATE,
+              formLoader: () =>
+                import('../forms/OfficialExchange').then((module) =>
+                  Promise.resolve(module.officialExchange),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
             },
@@ -98,7 +104,15 @@ const EstateTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.APPLICANT_NO_PROPERTY,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.Done),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
                 import('../forms/Done').then((val) =>
                   Promise.resolve(val.Done),
@@ -116,7 +130,13 @@ const EstateTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
-      return Roles.APPLICANT
+      if (application.answers.selectedEstate === EstateTypes.officialEstate) {
+        return Roles.APPLICANT_OFFICIAL_ESTATE
+      } else if (
+        application.answers.selectedEstate === EstateTypes.noPropertyEstate
+      ) {
+        return Roles.APPLICANT_NO_PROPERTY
+      } else return Roles.APPLICANT
     }
   },
 }

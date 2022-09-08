@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
+import { EstateTypes } from './constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -38,10 +39,8 @@ export const estateSchema = z.object({
     .optional(),
 
   selectedEstate: z.enum([
-    'Eignalaust dánarbú',
-    'Einkaskipti',
-    'Opinber skipti',
-    'Búsetuleyfi',
+    EstateTypes.officialEstate,
+    EstateTypes.noPropertyEstate,
   ]),
   assets: asset, // is: fasteignir
   flyers: asset,
