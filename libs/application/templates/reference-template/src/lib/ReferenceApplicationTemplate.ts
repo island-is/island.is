@@ -129,7 +129,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 }),
                 NationalRegistryUserApi.configure({
                   params: {
-                    ageToValidate: 60,
+                    ageToValidate: 18,
                   },
                 }),
                 UserProfileApi,

@@ -11,6 +11,7 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiErrorProblem } from '@island.is/shared/problem'
 import type { FormatMessage } from '@island.is/cms-translations'
 import { isTranslationObject } from '@island.is/application/core'
+
 @Injectable()
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
@@ -90,9 +91,7 @@ export class TemplateApiActionRunner {
   async runActions(actionGroups: TemplateApi[][]) {
     const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
-        const ps = Promise.all(
-          actions.map((action) => this.callProvider(action)),
-        )
+        const ps = Promise.all(actions.map((action) => this.callAction(action)))
         return ps.then(() => {
           return
         })
@@ -102,7 +101,7 @@ export class TemplateApiActionRunner {
     await result
   }
 
-  async callProvider(api: TemplateApi) {
+  async callAction(api: TemplateApi) {
     const { actionId, action, externalDataId, params } = api
 
     const actionResult = await this.templateAPIService.performAction({
@@ -136,18 +135,27 @@ export class TemplateApiActionRunner {
       }
     }
 
-    const problem = actionResult.error.problem as TemplateApiErrorProblem
-    const { summary, title } = problem.errorReason
+    const error = actionResult.error
+
+    const problem = error.problem as TemplateApiErrorProblem
+
+    const reason =
+      typeof problem.errorReason === 'string'
+        ? (problem.errorReason as string)
+        : {
+            summary: isTranslationObject(problem.errorReason.summary)
+              ? this.formatMessage(problem.errorReason.summary)
+              : problem.errorReason.summary,
+            title: isTranslationObject(problem.errorReason.title)
+              ? this.formatMessage(problem.errorReason.title)
+              : problem.errorReason.title,
+          }
+
     return {
       [externalDataId || action]: {
         status: 'failure',
         date: new Date(),
-        reason: {
-          summary: isTranslationObject(summary)
-            ? this.formatMessage(summary)
-            : summary,
-          title: isTranslationObject(title) ? this.formatMessage(title) : title,
-        },
+        reason,
         statusCode: problem.status,
         data: {},
       },

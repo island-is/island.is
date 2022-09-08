@@ -55,7 +55,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
 
     if (params?.ageToValidate) {
-      if (params.ageToValidate < result.age)
+      if (params.ageToValidate > result.age)
         throw new TemplateApiError(
           {
             title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,

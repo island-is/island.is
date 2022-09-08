@@ -58,7 +58,6 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
   async createApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
-
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignApplicationEmail,
       application,

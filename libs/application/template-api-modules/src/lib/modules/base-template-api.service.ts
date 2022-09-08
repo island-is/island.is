@@ -33,22 +33,16 @@ export class BaseTemplateApiService {
           success: true,
           response,
         }
-      } catch (e) {
-        if (e.problem) {
+      } catch (error) {
+        if (error.problem) {
           return {
             success: false,
-            error: e as TemplateApiError,
+            error: error as TemplateApiError,
           }
         }
         return {
           success: false,
-          error: new TemplateApiError(
-            {
-              title: 'Villa kom upp!',
-              summary: e.response.message,
-            },
-            e.response.statusCode,
-          ),
+          error: new TemplateApiError((error as Error).message, 500),
         }
       }
     }

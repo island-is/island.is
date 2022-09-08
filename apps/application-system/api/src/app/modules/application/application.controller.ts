@@ -261,6 +261,7 @@ export class ApplicationController {
     application: CreateApplicationDto,
     @CurrentUser()
     user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
@@ -353,6 +354,7 @@ export class ApplicationController {
         template,
         user,
         onEnterStateAction,
+        locale,
       )
 
       //Programmers responsible for handling failure status
@@ -372,6 +374,7 @@ export class ApplicationController {
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedAssignmentToken>(
       assignApplicationDto.token,
@@ -444,6 +447,7 @@ export class ApplicationController {
       template,
       DefaultEvents.ASSIGN,
       user,
+      locale,
     )
 
     if (hasError) {
@@ -572,7 +576,6 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    intl.formatMessage
     const templateApis: TemplateApi[] = []
 
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
@@ -685,6 +688,7 @@ export class ApplicationController {
       template,
       updateApplicationStateDto.event,
       user,
+      locale,
     )
 
     this.auditService.audit({
@@ -715,59 +719,27 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     auth: User,
     api: TemplateApi,
+    locale: Locale,
   ): Promise<TemplateAPIModuleActionResult> {
-    const {
-      action,
-      shouldPersistToExternalData,
-      externalDataId,
-      throwOnError,
-    } = api
+    const { action, externalDataId, throwOnError } = api
 
-    const actionResult = await this.templateAPIService.performAction({
-      templateId: template.type,
-      actionId: action,
-      action,
-      props: {
-        application,
-        auth,
-      },
-    })
+    const namespaces = await getApplicationTranslationNamespaces(application)
+    const intl = await this.intlService.useIntl(namespaces, locale)
 
-    let updatedApplication: BaseApplication = application
+    const updatedApplication = await this.templateApiActionRunner.run(
+      application,
+      [api],
+      auth,
+      intl.formatMessage,
+    )
 
-    if (shouldPersistToExternalData) {
-      const newExternalDataEntry: ExternalData = {
-        [externalDataId || action]: {
-          status: actionResult.success ? 'success' : 'failure',
-          date: new Date(),
-          data: actionResult.success
-            ? (actionResult.response as ExternalData['data'])
-            : actionResult.error,
-        },
-      }
+    const result = updatedApplication.externalData[externalDataId || action]
 
-      const {
-        updatedApplication: withExternalData,
-      } = await this.applicationService.updateExternalData(
-        updatedApplication.id,
-        updatedApplication.externalData,
-        newExternalDataEntry,
-      )
-
-      updatedApplication = {
-        ...updatedApplication,
-        externalData: {
-          ...updatedApplication.externalData,
-          ...withExternalData.externalData,
-        },
-      }
-    }
-
-    if (!actionResult.success && throwOnError) {
+    if (result.status === 'failure' && throwOnError) {
       return {
         updatedApplication,
         hasError: true,
-        error: actionResult.error,
+        error: result.reason,
       }
     }
 
@@ -782,6 +754,7 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
     auth: User,
+    locale: Locale,
   ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
@@ -798,6 +771,7 @@ export class ApplicationController {
         template,
         auth,
         onExitStateAction,
+        locale,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -805,7 +779,7 @@ export class ApplicationController {
         return {
           hasChanged: false,
           application: updatedApplication,
-          error: error?.message,
+          error,
           hasError: true,
         }
       }
@@ -848,6 +822,7 @@ export class ApplicationController {
         template,
         auth,
         onEnterStateAction,
+        locale,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -855,7 +830,7 @@ export class ApplicationController {
         return {
           hasError: true,
           hasChanged: false,
-          error: error?.message,
+          error: error,
           application,
         }
       }
