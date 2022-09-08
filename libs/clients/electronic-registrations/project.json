@@ -1,0 +1,42 @@
+{
+  "root": "libs/clients/electronic-registrations",
+  "sourceRoot": "libs/clients/electronic-registrations/src",
+  "projectType": "library",
+  "architect": {
+    "lint": {
+      "builder": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/electronic-registrations/**/*.ts"]
+      }
+    },
+    "test": {
+      "builder": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/electronic-registrations"],
+      "options": {
+        "jestConfig": "libs/clients/electronic-registrations/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://gw-api.skra.is/business/tolfraedi/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/electronic-registrations"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/electronic-registrations/gen/fetch -i libs/clients/electronic-registrations/src/clientConfig.json"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}
