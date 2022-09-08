@@ -579,6 +579,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           category: slug,
+          size: 150,
         },
       },
     }),
