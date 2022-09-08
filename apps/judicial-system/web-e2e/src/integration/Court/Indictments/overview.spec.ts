@@ -44,9 +44,4 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
 
     cy.getByTestid('PDFButton').contains('test.pdf')
   })
-
-  // it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-  //   cy.getByTestid('continueButton').click()
-  //   cy.url().should('include', INDICITMENT_COURT_OVERVIEW_ROUTE)
-  // })
 })
