@@ -21,8 +21,8 @@ const EstateTemplate: ApplicationTemplate<
   EstateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: m.name,
-  institution: m.institutionName,
+  name: 'Ákvörðun um skipti bús',
+  institution: 'Sýslumenn',
   dataSchema: estateSchema,
   featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
@@ -61,8 +61,8 @@ const EstateTemplate: ApplicationTemplate<
         meta: {
           name: '',
           actionCard: {
-            title: m.draftTitle,
-            description: m.draftDescription,
+            title: '', //TODO
+            description: '', //TODO
           },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,

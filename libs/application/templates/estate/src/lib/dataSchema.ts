@@ -2,7 +2,7 @@ import * as z from 'zod'
 import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
-import { EstateTypes } from './constants'
+import { EstateTypes, YES, NO } from './constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -19,12 +19,19 @@ const asset = z
 
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicantPhone: z.string().refine((v) => isValidPhoneNumber(v), {
-    params: m.errorPhoneNumber,
-  }),
-  applicantEmail: customZodError(z.string().email(), m.errorEmail),
-  applicantRelation: customZodError(z.string().nonempty(), m.errorRelation),
 
+  //Applicant's info
+  applicant: z.object({
+    name: z.string(),
+    nationalId: z.string(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: m.errorPhoneNumber,
+    }),
+    email: customZodError(z.string().email(), m.errorEmail),
+    address: z.string(),
+  }),
+
+  //Estate members info
   estateMembers: z
     .object({
       initial: z.boolean().optional(),
@@ -86,8 +93,8 @@ export const estateSchema = z.object({
     .optional(),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum(['yes', 'no']),
+  undividedEstateResidencePermission: z.enum([YES, NO]),
 
   // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum(['yes', 'no']),
+  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
 })
