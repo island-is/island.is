@@ -27,8 +27,7 @@ export class SmartSolutionsApi {
   ) {}
 
   private getApiKey(issuer: PkPassIssuer) {
-    if (process.env.NODE_ENV === 'development')
-      return this.config.pkPassApiKeys.veApiKey
+    return this.config.pkPassApiKeys.veApiKey
 
     switch (issuer) {
       case PkPassIssuer.RIKISLOGREGLUSTJORI:
