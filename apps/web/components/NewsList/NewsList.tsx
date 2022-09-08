@@ -19,8 +19,6 @@ import { useRouter } from 'next/router'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { makeHref } from './utils'
 
-const PERPAGE = 10
-
 interface NewsListProps {
   title: string
   namespace: Record<string, string>
@@ -35,6 +33,7 @@ interface NewsListProps {
   parentPageSlug: string
   yearOptions: { label: any; value: any }[]
   monthOptions: { label: any; value: any }[]
+  newsPerPage?: number
 }
 
 export const NewsList = ({
@@ -50,13 +49,13 @@ export const NewsList = ({
   newsItemLinkType,
   parentPageSlug,
   yearOptions,
+  newsPerPage = 10,
   monthOptions,
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespaceStrict(namespace)
 
   const allYearsString = n('allYears', 'Allar fréttir')
-  const allMonthsString = n('allMonths', 'Allt árið')
   const yearString = n('year', 'Ár')
   const monthString = n('month', 'Mánuður')
 
@@ -133,7 +132,7 @@ export const NewsList = ({
       {newsList.length > 0 && (
         <Box paddingTop={[4, 4, 8]}>
           <Pagination
-            totalPages={Math.ceil(total / PERPAGE)}
+            totalPages={Math.ceil(total / newsPerPage)}
             page={selectedPage}
             renderLink={(page, className, children) => (
               <Link

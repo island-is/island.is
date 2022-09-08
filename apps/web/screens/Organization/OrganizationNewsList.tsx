@@ -1,17 +1,21 @@
-import { BreadCrumbItem } from '@island.is/island-ui/core'
-import { NewsList } from '@island.is/web/components'
+import { BreadCrumbItem, NavigationItem } from '@island.is/island-ui/core'
+import {
+  getThemeConfig,
+  NewsList,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
   ContentLanguage,
   GetNamespaceQuery,
   GetNewsDatesQuery,
   GetNewsQuery,
-  ProjectPage,
+  OrganizationPage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetNewsArgs,
   QueryGetNewsDatesArgs,
-  QueryGetProjectPageArgs,
+  QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespaceStrict } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -24,15 +28,13 @@ import {
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
-import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
-import { ProjectWrapper } from './components/ProjectWrapper'
-import { getThemeConfig } from './utils'
 
 const PERPAGE = 10
 
-interface ProjectNewsListProps {
-  projectPage: ProjectPage
+interface OrganizationNewsListProps {
+  organizationPage: OrganizationPage
   newsList: GetNewsQuery['getNews']['items']
   total: number
   datesMap: { [year: string]: number[] }
@@ -43,8 +45,8 @@ interface ProjectNewsListProps {
   namespace: GetNamespaceQuery['getNamespace']
 }
 
-const ProjectNewsList: Screen<ProjectNewsListProps> = ({
-  projectPage,
+const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
+  organizationPage,
   newsList,
   total,
   datesMap,
@@ -59,8 +61,8 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
 
   const n = useNamespaceStrict(namespace)
 
-  const newsOverviewUrl = linkResolver('projectnewsoverview', [
-    projectPage.slug,
+  const newsOverviewUrl = linkResolver('organizationnewsoverview', [
+    organizationPage.slug,
   ]).href
 
   const breadCrumbs: BreadCrumbItem[] = [
@@ -70,13 +72,13 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
       typename: 'homepage',
     },
     {
-      title: projectPage.title,
+      title: organizationPage.title,
       href: newsOverviewUrl,
       typename: 'projectnewsoverview',
     },
   ]
 
-  const currentNavItem = projectPage.sidebarLinks.find(
+  const currentNavItem = organizationPage.menuLinks.find(
     ({ primaryLink }) => primaryLink.url === router.asPath,
   )?.primaryLink
 
@@ -112,12 +114,32 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
     })),
   ]
 
+  const pathWithoutHash = router.asPath.split('#')[0]
+
+  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active:
+        primaryLink.url === pathWithoutHash ||
+        childrenLinks.some((link) => link.url === pathWithoutHash),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+        active: url === pathWithoutHash,
+      })),
+    }),
+  )
+
   return (
-    <ProjectWrapper
-      projectPage={projectPage}
+    <OrganizationWrapper
+      pageTitle={newsTitle}
+      organizationPage={organizationPage}
       breadcrumbItems={breadCrumbs}
-      sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
-      withSidebar={true}
+      navigationData={{
+        title: n('navigationTitle', 'Efnisyfirlit'),
+        items: navList,
+      }}
       sidebarContent={
         <NewsListSidebar
           months={months}
@@ -133,10 +155,10 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
     >
       <NewsList
         namespace={namespace}
-        newsItemLinkType="projectnews"
+        newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
         newsList={newsList}
-        parentPageSlug={projectPage.slug}
+        parentPageSlug={organizationPage.slug}
         selectedMonth={selectedMonth}
         selectedPage={selectedPage}
         selectedTag={selectedTag}
@@ -145,9 +167,9 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
         yearOptions={yearOptions}
         monthOptions={monthOptions}
         title={newsTitle}
-        newsPerPage={10}
+        newsPerPage={PERPAGE}
       />
-    </ProjectWrapper>
+    </OrganizationWrapper>
   )
 }
 
@@ -168,15 +190,19 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 
-ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
+OrganizationNewsList.getInitialProps = async ({
+  apolloClient,
+  query,
+  locale,
+}) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
 
-  const projectPage = (
+  const organizationPage = (
     await Promise.resolve(
-      apolloClient.query<Query, QueryGetProjectPageArgs>({
-        query: GET_PROJECT_PAGE_QUERY,
+      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+        query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
             slug: query.slug as string,
@@ -185,16 +211,16 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         },
       }),
     )
-  ).data?.getProjectPage
+  ).data?.getOrganizationPage
 
-  if (!projectPage) {
+  if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find project page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${query.slug}`,
     )
   }
 
-  const tag = (query.tag as string) ?? projectPage?.newsTag?.slug ?? ''
+  const tag = (query.tag as string) ?? organizationPage?.newsTag?.slug ?? ''
 
   const [
     {
@@ -246,8 +272,8 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   return {
-    projectPage,
-    newsList: projectPage?.newsTag ? newsList : [],
+    organizationPage,
+    newsList: organizationPage?.newsTag ? newsList : [],
     total,
     selectedYear: year,
     selectedMonth: month,
@@ -255,8 +281,8 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...getThemeConfig(projectPage?.theme),
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 
-export default withMainLayout(ProjectNewsList)
+export default withMainLayout(OrganizationNewsList)
