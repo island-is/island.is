@@ -28,4 +28,6 @@ export type EstateEvent =
 
 export enum Roles {
   APPLICANT = 'applicant',
+  APPLICANT_OFFICIAL_ESTATE = 'applicant_official_estate',
+  APPLICANT_NO_PROPERTY = 'applicant_no_property',
 }

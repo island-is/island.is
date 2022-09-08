@@ -61,10 +61,18 @@ export const Prerequisites: Form = buildForm({
               title: '',
               width: 'full',
               options: [
-                { value: 'Eignalaust dánarbú', label: 'Eignalaust dánarbú' },
-                { value: 'Einkaskipti', label: 'Einkaskipti' },
-                { value: 'Opinber skipti', label: 'Opinber skipti' },
-                { value: 'Búsetuleyfi', label: 'Búsetuleyfi' },
+                {
+                  value: 'Eignarlaust dánarbú',
+                  label: 'Eignarlaust dánarbú',
+                  tooltip: 'Sjá nánar linkur hér',
+                },
+                {
+                  value: 'Opinber skipti',
+                  label: 'Opinber skipti',
+                  tooltip: 'Sjá nánar linkur hér',
+                },
+                //{ value: 'Einkaskipti', label: 'Einkaskipti', tooltip: 'Sjá nánar linkur hér' },
+                //{ value: 'Búsetuleyfi', label: 'Búsetuleyfi', tooltip: 'Sjá nánar linkur hér' },
               ],
             }),
             buildSubmitField({
