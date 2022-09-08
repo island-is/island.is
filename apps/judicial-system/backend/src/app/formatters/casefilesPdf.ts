@@ -33,13 +33,7 @@ function constructCasefilesPdf(
   setLineGap(doc, 8)
   addHugeHeading(doc, 'Rannsóknargögn', 'Helvetica-Bold')
   setLineGap(doc, 40)
-  addLargeHeading(
-    doc,
-    `Mál nr. ${
-      theCase.courtCaseNumber
-    } - LÖKE nr: ${theCase.policeCaseNumbers.join(', ')}`,
-    'Helvetica',
-  )
+  addLargeHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`, 'Helvetica')
   setLineGap(doc, 8)
   addNumberedList(doc, theCase.caseFiles?.map((file) => file.name) ?? [])
   addFooter(doc)
