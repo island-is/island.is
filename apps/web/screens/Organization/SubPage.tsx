@@ -41,11 +41,13 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { Locale } from 'locale'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Record<string, string>
+  locale: Locale
 }
 
 const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
@@ -80,6 +82,7 @@ const SubPage: Screen<SubPageProps> = ({
   organizationPage,
   subpage,
   namespace,
+  locale,
 }) => {
   const router = useRouter()
 
@@ -116,11 +119,15 @@ const SubPage: Screen<SubPageProps> = ({
       breadcrumbItems={[
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage').href,
+          href: linkResolver('homepage', [], locale).href,
         },
         {
           title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          href: linkResolver(
+            'organizationpage',
+            [organizationPage.slug],
+            locale,
+          ).href,
         },
       ]}
       navigationData={{
@@ -290,6 +297,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    locale: locale as Locale,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }

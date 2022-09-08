@@ -32,6 +32,7 @@ import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 import { getThemeConfig } from './utils'
 import { ProjectWrapper } from './components/ProjectWrapper'
+import { Locale } from 'locale'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -39,6 +40,7 @@ interface PageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: Record<string, string>
+  locale: Locale
 }
 
 const ProjectPage: Screen<PageProps> = ({
@@ -46,6 +48,7 @@ const ProjectPage: Screen<PageProps> = ({
   namespace,
   stepperNamespace,
   stepOptionsFromNamespace,
+  locale,
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
@@ -98,12 +101,12 @@ const ProjectPage: Screen<PageProps> = ({
     : [
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage').href,
+          href: linkResolver('homepage', [], locale).href,
           typename: 'homepage',
         },
         {
           title: projectPage.title,
-          href: linkResolver('projectpage', [projectPage.slug]).href,
+          href: linkResolver('projectpage', [projectPage.slug], locale).href,
           typename: 'projectpage',
         },
       ]
@@ -294,6 +297,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     stepperNamespace,
     showSearchInHeader: false,
+    locale: locale as Locale,
     ...getThemeConfig(getProjectPage.theme),
   }
 }
