@@ -277,15 +277,7 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   ]).isValid
 }
 
-export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
-  return (
-    workingCase.judge &&
-    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
-      .isValid
-  )
-}
-
-export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+export const isReceptionAndAssignmentStepValid = (workingCase: Case) => {
   return (
     workingCase.judge &&
     validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])

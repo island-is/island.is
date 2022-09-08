@@ -120,7 +120,7 @@ export class PSignSubmissionService {
         ? { Afhentingarmati: 'Sent með pósti' }
         : {
             Afhentingarmati: 'Sótt á næsta afgreiðslustað',
-            StarfsstodID: delivery.district as string,
+            Starfsstod: delivery.district as string,
           }
 
     const uploadDataName = 'pkort1.0'
