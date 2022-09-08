@@ -1,5 +1,4 @@
 import { style, globalStyle } from '@vanilla-extract/css'
-import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const printStyle = style({})
 
