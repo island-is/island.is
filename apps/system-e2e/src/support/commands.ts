@@ -33,10 +33,6 @@ const idsLogin = ({
       phoneNumber: phoneNumber,
     },
   }
-  cy.log('Logging in')
-  cy.log(
-    `phoneNumber: ${phoneNumber}, authUrl: ${authUrl}, baseUrl: ${baseUrl}`,
-  )
 
   cy.patchSameSiteCookie(`${baseUrl}/api/auth/signin/identity-server?`, 'POST')
   cy.patchSameSiteCookie(`${authUrl}/login/phone?*`)
