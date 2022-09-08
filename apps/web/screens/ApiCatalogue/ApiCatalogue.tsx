@@ -104,7 +104,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       return
     }
 
-    const { nextCursor } = data?.getApiCatalogue?.pageInfo
+    const nextCursor = data?.getApiCatalogue?.pageInfo?.nextCursor
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },

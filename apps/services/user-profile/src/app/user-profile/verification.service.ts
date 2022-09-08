@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
@@ -16,6 +17,9 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'verification-service'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
@@ -105,7 +109,8 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, email: confirmEmailDto.email },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -134,14 +139,33 @@ export class VerificationService {
       }
     }
 
-    await this.emailVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.emailVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update email verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update email verification',
+        confirmed: false,
+      }
+    }
 
+    try {
+      await this.removeEmailVerification(nationalId)
+    } catch (e) {
+      this.logger.error('Email verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
     return {
       message: 'Email confirmed',
       confirmed: true,
@@ -152,8 +176,14 @@ export class VerificationService {
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobileNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, mobilePhoneNumber: mobileNumber },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -191,13 +221,34 @@ export class VerificationService {
       }
     }
 
-    await this.smsVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.smsVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update sms verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update sms verification',
+        confirmed: false,
+      }
+    }
+
+    try {
+      await this.removeSmsVerification(nationalId)
+    } catch (e) {
+      this.logger.error('SMS verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
+
     return {
       message: 'SMS confirmed',
       confirmed: true,
@@ -230,11 +281,22 @@ export class VerificationService {
             },
             {
               component: 'Heading',
-              context: { copy: 'Staðfesting á netfangi', small: true },
+              context: {
+                copy: 'Staðfesting á netfangi',
+                small: true,
+              },
+            },
+            {
+              component: 'Heading',
+              context: {
+                copy: '',
+                small: true,
+                eyebrow: 'Email confirmation',
+              },
             },
             {
               component: 'Copy',
-              context: { copy: 'Öryggiskóðinn þinn', small: true },
+              context: { copy: 'Öryggiskóði / Security code', small: true },
             },
             {
               component: 'Heading',
@@ -244,14 +306,15 @@ export class VerificationService {
               component: 'Copy',
               context: {
                 copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+                  'Þetta er öryggiskóði til staðfestingar á netfangi, hann eyðist sjálfkrafa eftir 5 mínútur. Vinsamlegst hunsaðu póstinn ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
               },
             },
             {
               component: 'Copy',
               context: {
+                small: true,
                 copy:
-                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+                  'This is your security code to verify your email address, it will be deleted automatically after 5 minutes. Please ignore this email if you did not enter your email address on My pages.',
               },
             },
           ],

@@ -14,22 +14,16 @@ import {
 } from '@island.is/island-ui/core'
 import {
   FormFooter,
-  CourtDocuments,
   PageLayout,
-  CaseInfo,
+  CourtCaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
   HideableText,
-  TimeInputField,
   PdfButton,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  capitalize,
-  caseTypes,
-  formatCustodyRestrictions,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -38,32 +32,28 @@ import {
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
-  setAndSendDateToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
-  courtDocuments,
   closedCourt,
   core,
+  titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import * as Constants from '@island.is/judicial-system/consts'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
+import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -73,7 +63,6 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState<string>(
     '',
@@ -82,14 +71,10 @@ export const CourtRecord: React.FC = () => {
     sessionBookingsErrorMessage,
     setSessionBookingsErrorMessage,
   ] = useState<string>('')
-  const [
-    courtDocumentEndErrorMessage,
-    setCourtDocumentEndErrorMessage,
-  ] = useState<string>('')
 
   const router = useRouter()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
 
   const id = router.query.id
@@ -102,149 +87,173 @@ export const CourtRecord: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.courtDate) {
-        autofill('courtStartDate', workingCase.courtDate, workingCase)
-      }
-
-      if (workingCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            workingCase.court.name.indexOf('dómur') > -1
-              ? workingCase.court.name.replace('dómur', 'dómi')
-              : workingCase.court.name
-          }`,
-          workingCase,
-        )
-      }
+      const autofillAttendees = []
+      const autofillSessionBookings = []
+      const endOfSessionBookings = []
 
       if (workingCase.courtAttendees !== '') {
-        let autofillAttendees = ''
-
         if (workingCase.prosecutor) {
-          autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
+          autofillAttendees.push(
+            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+          )
         }
 
         if (workingCase.defenderName) {
-          autofillAttendees += `\n${
-            workingCase.defenderName
-          } skipaður verjandi ${formatMessage(core.accused, {
-            suffix:
-              workingCase.defendants &&
-              workingCase.defendants.length > 0 &&
-              workingCase.defendants[0].gender === Gender.FEMALE
-                ? 'u'
-                : 'a',
-          })}`
+          autofillAttendees.push(
+            `\n${workingCase.defenderName} skipaður verjandi ${formatMessage(
+              core.accused,
+              {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              },
+            )}`,
+          )
         }
 
         if (workingCase.translator) {
-          autofillAttendees += `\n${workingCase.translator} túlkur`
+          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
         }
 
         if (workingCase.defendants && workingCase.defendants.length > 0) {
-          autofillAttendees += `\n${
-            workingCase.defendants[0].name
-          } ${formatMessage(core.accused, {
-            suffix:
-              workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-          })}`
+          autofillAttendees.push(
+            `\n${workingCase.defendants[0].name} ${formatMessage(core.accused, {
+              suffix:
+                workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            })}`,
+          )
         }
-
-        autofill('courtAttendees', autofillAttendees, workingCase)
       }
 
-      let autofillSessionBookings = ''
-
       if (workingCase.defenderName) {
-        autofillSessionBookings += `${formatMessage(
-          m.sections.sessionBookings.autofillDefender,
-          {
+        autofillSessionBookings.push(
+          `${formatMessage(m.sections.sessionBookings.autofillDefender, {
             defender: workingCase.defenderName,
-          },
-        )}\n\n`
+          })}\n\n`,
+        )
       }
 
       if (workingCase.translator) {
-        autofillSessionBookings += `${formatMessage(
-          m.sections.sessionBookings.autofillTranslator,
-          {
+        autofillSessionBookings.push(
+          `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
             translator: workingCase.translator,
-          },
-        )}\n\n`
+          })}\n\n`,
+        )
       }
 
-      autofillSessionBookings += `${formatMessage(
-        m.sections.sessionBookings.autofillRightToRemainSilent,
-      )}\n\n${formatMessage(
-        m.sections.sessionBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
+      autofillSessionBookings.push(
+        `${formatMessage(
+          m.sections.sessionBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.sessionBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`,
+      )
 
-      if (workingCase.type === CaseType.CUSTODY) {
-        autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentations,
-          {
-            accused: formatMessage(core.accused, {
-              suffix:
-                workingCase.defendants &&
-                workingCase.defendants.length > 0 &&
-                workingCase.defendants[0].gender === Gender.FEMALE
-                  ? 'u'
-                  : 'a',
-            }),
-          },
-        )}`
+      if (
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+      ) {
+        autofillSessionBookings.push(
+          `\n\n${formatMessage(
+            m.sections.sessionBookings.autofillPresentationsV2,
+            {
+              caseType: workingCase.type,
+              accused: formatMessage(core.accused, {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              }),
+            },
+          )}`,
+        )
 
         if (
           isAcceptingCaseDecision(workingCase.decision) ||
           workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
         ) {
-          autofill(
-            'endOfSessionBookings',
-            `${
-              isAcceptingCaseDecision(workingCase.decision)
-                ? `${formatCustodyRestrictions(
-                    workingCase.requestedCustodyRestrictions,
-                    workingCase.isCustodyIsolation,
-                    true,
-                  )}\n\n`
-                : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+          if (isAcceptingCaseDecision(workingCase.decision)) {
+            const formattedRestrictions = formatCustodyRestrictions(
+              formatMessage,
+              workingCase.type,
+              workingCase.requestedCustodyRestrictions,
+            )
+
+            if (formattedRestrictions) {
+              endOfSessionBookings.push(formattedRestrictions, '\n\n')
+            }
+          }
+
+          endOfSessionBookings.push(
+            formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? 'farbannsins'
-                  : 'gæsluvarðhaldsins',
-            })}`,
-            workingCase,
+                  ? CaseType.TRAVEL_BAN
+                  : workingCase.type,
+            }),
           )
         }
       } else if (workingCase.type === CaseType.TRAVEL_BAN) {
-        autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentationsTravelBan,
-        )}`
+        autofillSessionBookings.push(
+          `\n\n${formatMessage(
+            m.sections.sessionBookings.autofillPresentationsTravelBan,
+          )}`,
+        )
 
-        if (isAcceptingCaseDecision(workingCase.decision)) {
-          autofill(
-            'endOfSessionBookings',
+        if (
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.requestedOtherRestrictions
+        ) {
+          endOfSessionBookings.push(
             `${
               workingCase.requestedOtherRestrictions &&
               `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
-              caseType: 'farbannsins',
+            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+              caseType: workingCase.type,
             })}`,
-            workingCase,
           )
         }
       }
 
-      autofill('sessionBookings', autofillSessionBookings, workingCase)
+      setAndSendToServer(
+        [
+          {
+            courtStartDate: workingCase.courtDate,
+            courtLocation:
+              workingCase.court &&
+              `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`,
+            courtAttendees:
+              autofillAttendees.length > 0
+                ? autofillAttendees.join('')
+                : undefined,
+            sessionBookings:
+              autofillSessionBookings.length > 0
+                ? autofillSessionBookings.join('')
+                : undefined,
+            endOfSessionBookings:
+              endOfSessionBookings.length > 0
+                ? endOfSessionBookings.join('')
+                : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
-    autofill,
+    setAndSendToServer,
     formatMessage,
     initialAutoFillDone,
     isCaseUpToDate,
@@ -258,7 +267,7 @@ export const CourtRecord: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.COURT_RECORD}
+      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -268,30 +277,34 @@ export const CourtRecord: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Þingbók
+            {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel="Dagsetning þinghalds"
-                timeLabel="Þinghald hófst (kk:mm)"
+                datepickerLabel={formatMessage(
+                  m.sections.courtStartDate.dateLabel,
+                )}
+                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'courtStartDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtStartDate: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 blueBox={false}
                 required
@@ -339,11 +352,14 @@ export const CourtRecord: React.FC = () => {
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
                 setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                  [
+                    {
+                      isClosedCourtHidden: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
@@ -373,26 +389,9 @@ export const CourtRecord: React.FC = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.title)}
-            </Text>
-          </Box>
           <CourtDocuments
-            title={formatMessage(
-              m.sections.courtDocuments.firstDocument.title,
-              {
-                caseType: caseTypes[workingCase.type],
-              },
-            )}
-            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -885,52 +884,43 @@ export const CourtRecord: React.FC = () => {
         <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Þinghald
+              {formatMessage(m.sections.endOfSessionTitle)}
             </Text>
           </Box>
           <GridContainer>
             <GridRow>
               <GridColumn>
-                <TimeInputField
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
+                <DateTime
+                  name="courtEndTime"
+                  datepickerLabel={formatMessage(
+                    m.sections.courtEndTime.dateLabel,
+                  )}
+                  timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                  minDate={
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
+                      : undefined
+                  }
+                  maxDate={new Date()}
+                  selectedDate={workingCase.courtEndTime}
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtEndTime:
+                            date && valid
+                              ? formatDateForServer(date)
+                              : undefined,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      courtDocumentEndErrorMessage,
-                      setCourtDocumentEndErrorMessage,
                     )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setCourtDocumentEndErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="courtEndTime"
-                    name="courtEndTime"
-                    label="Þinghaldi lauk (kk:mm)"
-                    placeholder="Veldu tíma"
-                    autoComplete="off"
-                    defaultValue={formatDate(
-                      workingCase.courtEndTime,
-                      Constants.TIME_FORMAT,
-                    )}
-                    errorMessage={courtDocumentEndErrorMessage}
-                    hasError={courtDocumentEndErrorMessage !== ''}
-                    required
-                  />
-                </TimeInputField>
+                  }}
+                  blueBox={false}
+                  required
+                />
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -945,13 +935,19 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
-          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          hideNextButton={
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+          }
           infoBoxText={
-            !workingCase.decision || !workingCase.conclusion
-              ? formatMessage(m.nextButtonInfo)
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+              ? formatMessage(m.sections.nextButtonInfo.text)
               : ''
           }
         />

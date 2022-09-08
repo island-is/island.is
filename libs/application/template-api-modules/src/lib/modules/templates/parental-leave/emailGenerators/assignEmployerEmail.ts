@@ -2,20 +2,36 @@ import get from 'lodash/get'
 
 import { Message } from '@island.is/email-service'
 
-import { AssignmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
+import { logger } from '@island.is/logging'
+
+export let assignLinkEmployerSMS = ''
+
+export type AssignEmployerEmail = (
+  props: EmailTemplateGeneratorProps,
+  assignLink: string,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
 
 // TODO handle translations
-export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGenerator = (
+export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
   props,
   assignLink,
+  senderName,
+  senderEmail,
 ): Message => {
   const {
     application,
     options: { email },
   } = props
 
+  assignLinkEmployerSMS = assignLink
+
   const employerEmail = get(application.answers, 'employer.email')
+  const applicantName = get(application.externalData, 'person.data.fullName')
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
 
   return {
@@ -52,13 +68,13 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+            copy: `${applicantName} Kt:${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+            copy: `Ef þú áttir von á þessum tölvupósti smellir þú á takkan hér fyrir neðan. Ef annar einstaklingur á að samþykkja fæðingarorloftið má áframsenda póstinn á viðkomandi einstakling (passið þó að opna ekki linkinn).`,
           },
         },
         {
@@ -71,13 +87,21 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+            copy: `Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+            small: true,
           },
         },
         {
           component: 'Copy',
           context: {
             copy: assignLink,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið: Ef upp kemur 404 villa hefur umsækjandi breytt umsókninni og sent nýja, þér ætti að hafa borist nýr póstur.`,
             small: true,
           },
         },

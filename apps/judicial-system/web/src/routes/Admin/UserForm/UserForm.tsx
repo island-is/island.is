@@ -91,25 +91,20 @@ export const UserForm: React.FC<Props> = (props) => {
       [field]: value,
     })
 
-    validations.forEach((validation) => {
-      if (validate(value, validation).isValid) {
-        setErrorMessage(undefined)
-      }
-    })
+    if (validate([[value, validations]]).isValid) {
+      setErrorMessage(undefined)
+    }
   }
 
   const validateAndSetError = (
-    field: string,
     value: string,
     validations: Validation[],
     setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
   ) => {
-    const error = validations
-      .map((v) => validate(value, v))
-      .find((v) => v.isValid === false)
+    const validation = validate([[value, validations]])
 
-    if (error) {
-      setErrorMessage(error.errorMessage)
+    if (!validation.isValid) {
+      setErrorMessage(validation.errorMessage)
     }
   }
 
@@ -138,7 +133,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'name',
                 event.target.value,
                 ['empty'],
                 setNameErrorMessage,
@@ -151,6 +145,7 @@ export const UserForm: React.FC<Props> = (props) => {
         </Box>
         <Box marginBottom={2}>
           <InputMask
+            // eslint-disable-next-line local-rules/disallow-kennitalas
             mask="999999-9999"
             maskPlaceholder={null}
             value={user.nationalId || ''}
@@ -164,7 +159,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'nationalId',
                 event.target.value.replace('-', ''),
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
@@ -261,7 +255,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'title',
                 event.target.value,
                 ['empty'],
                 setTitleErrorMessage,
@@ -287,7 +280,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'mobileNumber',
                 event.target.value.replace('-', ''),
                 ['empty'],
                 setMobileNumberErrorMessage,
@@ -323,7 +315,6 @@ export const UserForm: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSetError(
-                'email',
                 event.target.value,
                 ['empty', 'email-format'],
                 setEmailErrorMessage,
@@ -353,7 +344,7 @@ export const UserForm: React.FC<Props> = (props) => {
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}
           nextButtonText="Vista"
-          previousUrl={constants.USER_LIST_ROUTE}
+          previousUrl={constants.USERS_ROUTE}
         />
       </FormContentContainer>
     </div>

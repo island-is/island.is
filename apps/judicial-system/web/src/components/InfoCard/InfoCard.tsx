@@ -1,95 +1,121 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  capitalize,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 
 import * as styles from './InfoCard.css'
 
 interface Props {
-  data: Array<{ title: string; value?: string }>
-  defendants?: Defendant[]
+  data: Array<{ title: string; value?: React.ReactNode }>
+  defendants?: { title: string; items: Defendant[] }
   defender?: {
     name: string
+    defenderNationalId?: string
+    sessionArrangement: SessionArrangements | undefined
     email?: string
     phoneNumber?: string
   }
-  sessionArrangement: SessionArrangements | undefined
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defender, sessionArrangement } = props
-  const { formatMessage } = useIntl()
+  const { data, defendants, defender } = props
 
   return (
-    <Box className={styles.infoCardContainer} data-testid="infoCard">
-      {defendants && (
-        <>
-          <Text variant="h4">
-            {capitalize(
-              formatMessage(core.defendant, {
-                suffix: defendants.length > 1 ? 'ar' : 'i',
-              }),
-            )}
-          </Text>
-          <Box marginBottom={4}>
-            {defendants.map((defendant, index) => (
-              <Text fontWeight="semiBold" key={index}>
-                {defendant.name}
-                <Text as="span">{`, `}</Text>
-                {`${defendant.noNationalId ? 'fd.' : 'kt.'} ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
-                {defendant.citizenship && ` (${defendant.citizenship})`}
-                {defendant.address && (
-                  <Text as="span">{`, ${defendant.address}`}</Text>
-                )}
-              </Text>
-            ))}
-          </Box>
-        </>
-      )}
-      <Box className={styles.infoCardTitleContainer}>
-        <Text variant="h4">
-          {sessionArrangement === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'Talsmaður'
-            : 'Verjandi'}
-        </Text>
-        {defender?.name ? (
-          <Box display="flex">
-            <Text>
-              {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
-                defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
-              }`}
+    <Box
+      className={styles.infoCardContainer}
+      padding={[2, 2, 3, 3]}
+      data-testid="infoCard"
+    >
+      <Box
+        className={styles.infoCardTitleContainer}
+        marginBottom={[2, 2, 3, 3]}
+        paddingBottom={[2, 2, 3, 3]}
+      >
+        {defendants && (
+          <>
+            <Text variant="h4">{defendants.title}</Text>
+            <Box marginBottom={defender ? [2, 2, 3, 3] : 0}>
+              {defendants.items.map((defendant, index) => (
+                <Text key={index}>
+                  <span className={styles.infoCardDefendant}>
+                    <Text
+                      as="span"
+                      fontWeight="semiBold"
+                    >{`${defendant.name}, `}</Text>
+                    <Text as="span" fontWeight="semiBold">
+                      {defendant.nationalId
+                        ? `${formatDOB(
+                            defendant.nationalId,
+                            defendant.noNationalId,
+                          )}, `
+                        : ''}
+                    </Text>
+                    <Text as="span">
+                      {defendant.citizenship && ` (${defendant.citizenship}), `}
+                    </Text>
+                    {defendant.address && (
+                      <Text as="span">{`${defendant.address}`}</Text>
+                    )}
+                  </span>
+                </Text>
+              ))}
+            </Box>
+          </>
+        )}
+        {defender && (
+          <>
+            <Text variant="h4">
+              {defender.sessionArrangement ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'Talsmaður'
+                : 'Verjandi'}
             </Text>
-          </Box>
-        ) : (
-          <Text>Hefur ekki verið skráður</Text>
+            {defender?.name ? (
+              <Box display="flex">
+                <Text>
+                  {`${defender.name}${
+                    defender.email ? `, ${defender.email}` : ''
+                  }${
+                    defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
+                  }`}
+                </Text>
+              </Box>
+            ) : (
+              <Text>Hefur ekki verið skráður</Text>
+            )}
+          </>
         )}
       </Box>
       <Box className={styles.infoCardDataContainer}>
-        {data.map((dataItem, index) => (
-          <Box
-            data-testid={`infoCardDataContainer${index}`}
-            className={styles.infoCardData}
-            // Should be applied to every element except the last two
-            marginBottom={index < data.length - 2 ? 3 : 0}
-            key={index}
-          >
-            <Text variant="h4">{dataItem.title}</Text>
-            <Text>{dataItem.value}</Text>
-          </Box>
-        ))}
+        {data.map((dataItem, index) => {
+          const isLastItem = index === data.length - 1
+          const isLastTwoItems = isLastItem || index === data.length - 2
+
+          return (
+            <Box
+              data-testid={`infoCardDataContainer${index}`}
+              className={styles.infoCardData}
+              marginBottom={[
+                isLastItem ? 0 : 2,
+                isLastItem ? 0 : 2,
+                isLastTwoItems ? 0 : 3,
+                isLastTwoItems ? 0 : 3,
+              ]}
+              key={index}
+            >
+              <Text variant="h4">{dataItem.title}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
+            </Box>
+          )
+        })}
       </Box>
     </Box>
   )

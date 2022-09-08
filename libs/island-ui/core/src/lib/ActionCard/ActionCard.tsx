@@ -4,6 +4,7 @@ import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { Inline } from '../Inline/Inline'
 import {
   ProgressMeter,
   ProgressMeterVariant,
@@ -11,6 +12,8 @@ import {
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
+import { Icon } from '../IconRC/Icon'
+import DialogPrompt from '../DialogPrompt/DialogPrompt'
 
 type ActionCardProps = {
   date?: string
@@ -18,6 +21,7 @@ type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
+  logo?: string
   backgroundColor?: 'white' | 'blue' | 'red'
   tag?: {
     label: string
@@ -34,6 +38,7 @@ type ActionCardProps = {
   }
   secondaryCta?: {
     label: string
+    visible?: boolean
     size?: ButtonSizes
     icon?: IconType
     onClick?: () => void
@@ -50,6 +55,16 @@ type ActionCardProps = {
     message?: string
   }
   avatar?: boolean
+  deleteButton?: {
+    visible?: boolean
+    onClick?: () => void
+    disabled?: boolean
+    icon?: IconType
+    dialogTitle?: string
+    dialogDescription?: string
+    dialogConfirmLabel?: string
+    dialogCancelLabel?: string
+  }
 }
 
 const defaultCta = {
@@ -57,7 +72,6 @@ const defaultCta = {
   icon: 'arrowForward',
   onClick: () => null,
 } as const
-
 const defaultTag = {
   variant: 'blue',
   outlined: true,
@@ -76,6 +90,17 @@ const defaultUnavailable = {
   message: '',
 } as const
 
+const defaultDelete = {
+  visible: false,
+  onClick: () => null,
+  disabled: true,
+  icon: 'trash',
+  dialogTitle: '',
+  dialogDescription: '',
+  dialogConfirmLabel: '',
+  dialogCancelLabel: '',
+} as const
+
 export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
@@ -88,12 +113,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
+  deleteButton: _delete,
   avatar,
+  logo,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
+  const deleteButton = { ...defaultDelete, ..._delete }
   const bgr =
     backgroundColor === 'white'
       ? 'white'
@@ -151,7 +179,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
+
         {renderTag()}
+        {renderDelete()}
       </Box>
     )
   }
@@ -168,11 +198,23 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
         marginBottom={[0, 2]}
       >
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Text variant="small">{date}</Text>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box display="flex" marginRight={1} justifyContent="center">
+            <Icon icon="time" size="medium" type="outline" color="blue400" />
+          </Box>
+          <Box display="flex" justifyContent="center">
+            <Text variant="small">{date}</Text>
+          </Box>
         </Box>
-
-        {!eyebrow && renderTag()}
+        <Inline alignY="center" space={1}>
+          {!eyebrow && renderTag()}
+          {!eyebrow && renderDelete()}
+        </Inline>
       </Box>
     )
   }
@@ -189,10 +231,46 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderDelete = () => {
+    if (!deleteButton.visible) {
+      return null
+    }
+
+    return (
+      <DialogPrompt
+        baseId="delete_dialog"
+        title={deleteButton.dialogTitle}
+        description={deleteButton.dialogDescription}
+        ariaLabel="delete"
+        img={
+          <img
+            src={`assets/images/settings.svg`}
+            alt={'globe'}
+            style={{ float: 'right' }}
+            width="80%"
+          />
+        }
+        disclosureElement={
+          <Tag outlined={tag.outlined} variant={tag.variant}>
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Icon icon={deleteButton.icon} size="small" type="outline" />
+            </Box>
+          </Tag>
+        }
+        onConfirm={deleteButton.onClick}
+        buttonTextConfirm={deleteButton.dialogConfirmLabel}
+        buttonTextCancel={deleteButton.dialogCancelLabel}
+      />
+    )
+  }
+
   const renderDefault = () => {
     const hasCTA = cta.label && !progressMeter.active
     const hasSecondaryCTA =
-      hasCTA && secondaryCta?.label && !progressMeter.active
+      hasCTA &&
+      secondaryCta?.label &&
+      !progressMeter.active &&
+      secondaryCta?.visible
 
     return (
       !!hasCTA && (
@@ -216,7 +294,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               </Button>
             </Box>
           )}
-          <Box>
+          <Box marginLeft={[0, 3]}>
             <Button
               variant={cta.variant}
               size="small"
@@ -265,6 +343,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderLogo = () => {
+    if (!logo || logo.length === 0) return null
+    return (
+      <Box
+        padding={2}
+        marginRight={2}
+        className={styles.logo}
+        style={{ backgroundImage: `url(${logo})` }}
+      ></Box>
+    )
+  }
+
   return (
     <Box
       display="flex"
@@ -299,12 +389,17 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
-                {heading}
-              </Text>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                {renderLogo()}
+                <Text
+                  variant={headingVariant}
+                  color={
+                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
+                  }
+                >
+                  {heading}
+                </Text>
+              </Box>
               <Hidden above="xs">
                 <Box>{!date && !eyebrow && renderTag()}</Box>
               </Hidden>

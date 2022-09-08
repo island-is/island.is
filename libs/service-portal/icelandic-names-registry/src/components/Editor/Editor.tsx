@@ -82,7 +82,7 @@ const Editor = () => {
           query: GET_ICELANDIC_NAME_BY_SEARCH,
           data: {
             getIcelandicNameBySearch: [
-              ...existingNames?.getIcelandicNameBySearch,
+              ...(existingNames?.getIcelandicNameBySearch ?? []),
               newName,
             ],
           },

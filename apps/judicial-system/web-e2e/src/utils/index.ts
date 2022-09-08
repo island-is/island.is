@@ -11,18 +11,74 @@ import {
   User,
   UserRole,
   CaseOrigin,
+  CaseFile,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
-export const intercept = (res: Case) => {
+export enum Operation {
+  CaseQuery = 'CaseQuery',
+  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
+  UpdateCaseMutation = 'UpdateCaseMutation',
+  SendNotificationMutation = 'SendNotificationMutation',
+  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
+  CreateFileMutation = 'CreateFileMutation',
+  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+}
+
+export const intercept = (res: Case, forceFail?: Operation) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'CaseQuery')) {
+    if (hasOperationName(req, Operation.CaseQuery)) {
+      req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
+    } else if (hasOperationName(req, Operation.LimitedAccessCaseQuery)) {
+      req.alias = 'gqlCaseQuery'
+      req.reply({
+        data: {
+          limitedAccessCase: res,
+        },
+      })
+    } else if (hasOperationName(req, Operation.UploadFileToCourtMutation)) {
+      req.alias = 'UploadFileToCourtMutation'
+      req.reply({
+        data: {
+          uploadFileToCourt: {
+            success: true,
+            __typename: 'UploadFileToCourtResponse',
+          },
+        },
+      })
+    } else if (hasOperationName(req, Operation.UpdateCaseMutation)) {
+      const { body } = req
+      req.alias = 'UpdateCaseMutation'
+      req.reply({
+        data: {
+          updateCase: { ...body.variables?.input, __typename: 'Case' },
+        },
+      })
+    } else if (hasOperationName(req, Operation.SendNotificationMutation)) {
+      req.alias = 'SendNotificationMutation'
+      req.reply({
+        fixture:
+          forceFail === Operation.SendNotificationMutation
+            ? 'sendNotificationFailedMutationResponse'
+            : 'sendNotificationMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreatePresignedPostMutation)) {
+      req.alias = 'CreatePresignedPostMutation'
+      req.reply({
+        fixture: 'createPresignedPostMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreateFileMutation)) {
+      req.alias = 'CreateFileMutation'
+      req.reply({
+        fixture: 'createFileMutationResponse',
+      })
     }
-  }).as('gqlCaseQuery')
+  })
 }
 
 export const hasOperationName = (
@@ -55,34 +111,10 @@ export const aliasMutation = (
   }
 }
 
-export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
-export const investigationCaseAccusedAddress = faker.address.streetAddress()
+export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
+export const mockAddress = faker.address.streetAddress()
 
-export const makeCustodyCase = (): Case => {
-  return {
-    id: 'test_id',
-    created: '2020-09-16T19:50:08.033Z',
-    modified: '2020-09-16T19:51:39.466Z',
-    state: CaseState.DRAFT,
-    origin: CaseOrigin.RVG,
-    type: CaseType.CUSTODY,
-    policeCaseNumber: '007-2021-202000',
-    defendants: [
-      {
-        id: 'test_defendant_id',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId: 'test_id',
-        nationalId: '000000-0000',
-        name: 'Donald Duck',
-        gender: Gender.MALE,
-        address: 'Batcave 1337',
-      },
-    ],
-  }
-}
-
-export const makeInvestigationCase = (): Case => {
+export const mockCase = (type: CaseType) => {
   const caseId = faker.datatype.uuid()
   return {
     id: caseId,
@@ -90,27 +122,45 @@ export const makeInvestigationCase = (): Case => {
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: CaseType.INTERNET_USAGE,
-    court: {
-      id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
-      created: '2020-09-16T19:50:08.033Z',
-      modified: '2020-09-16T19:50:08.033Z',
-      type: InstitutionType.COURT,
-      name: 'Héraðsdómur Reykjavíkur',
-    },
-    policeCaseNumber: '007-2021-202000',
+    type,
+    court: makeCourt(),
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
-        id: 'test_defendant_id',
+        id: faker.datatype.uuid(),
         created: '2020-09-16T19:50:08.033Z',
         modified: '2020-09-16T19:51:39.466Z',
         caseId,
         nationalId: '000000-0000',
-        name: investigationCaseAccusedName,
+        name: mockName,
         gender: Gender.MALE,
-        address: investigationCaseAccusedAddress,
+        address: mockAddress,
       },
     ],
+  }
+}
+
+export const makeJudge = (): User => {
+  return {
+    id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    name: faker.name.firstName(),
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    nationalId: '111111-1111',
+    mobileNumber: '111-1111',
+    email: faker.internet.email(),
+    role: UserRole.JUDGE,
+    active: true,
+    title: 'Dómari',
+    institution: {
+      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
+      created: '',
+      modified: '',
+      type: InstitutionType.COURT,
+      name: 'Dómstóll Testlands',
+      active: true,
+    },
   }
 }
 
@@ -127,11 +177,12 @@ export const makeProsecutor = (): User => {
     active: true,
     title: 'aðstoðarsaksóknari',
     institution: {
-      id: '',
+      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
       created: '',
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
+      active: true,
     },
   }
 }
@@ -143,5 +194,27 @@ export const makeCourt = (): Institution => {
     modified: '2020-09-16T19:50:08.033Z',
     type: InstitutionType.COURT,
     name: 'Héraðsdómur Reykjavíkur',
+    active: true,
+  }
+}
+
+export const makeCaseFile = (
+  caseId = 'test_id',
+  name = 'test_file_name',
+  type = 'pdf',
+  state = CaseFileState.STORED_IN_RVG,
+  key = 'test_id',
+  size = 100,
+): CaseFile => {
+  return {
+    id: 'test_case_file_id',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    caseId,
+    type,
+    name,
+    state,
+    key,
+    size,
   }
 }

@@ -78,10 +78,10 @@ export class EventService {
 
       const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
-        theCase.prosecutor?.institution
-          ? `${theCase.prosecutor?.institution?.name} `
+        theCase.creatingProsecutor?.institution
+          ? `${theCase.creatingProsecutor?.institution?.name} `
           : ''
-      }*${theCase.policeCaseNumber}*`
+      }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''

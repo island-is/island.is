@@ -1,14 +1,25 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
+
+export let linkOtherParentSMS = ''
+
+export type AssignOtherParentEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
 
 // TODO handle translations
-export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator = (
+export const generateAssignOtherParentApplicationEmail: AssignOtherParentEmail = (
   props,
+  senderName,
+  senderEmail,
 ): Message => {
   const {
     application,
@@ -16,6 +27,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
   } = props
 
   const otherParentEmail = get(application.answers, 'otherParentEmail')
+  const applicantName = get(application.externalData, 'person.data.fullName')
 
   if (!otherParentEmail) {
     throw new Error('Could not find other parent email')
@@ -23,6 +35,8 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
 
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
   const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+  linkOtherParentSMS = link
 
   return {
     from: {
@@ -58,7 +72,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
+            copy: `${applicantName} Kt:${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
           },
         },
         {
@@ -78,6 +92,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
           component: 'Copy',
           context: {
             copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+            small: true,
           },
         },
         {

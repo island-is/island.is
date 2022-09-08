@@ -1,40 +1,29 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
   FormContentContainer,
-  CaseInfo,
+  ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ProsecutorSubsections,
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
+import * as constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
   const {
@@ -42,9 +31,7 @@ export const StepFour: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -54,66 +41,11 @@ export const StepFour: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase } = useCase()
 
   useDeb(workingCase, 'demands')
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
-  useDeb(workingCase, 'comments')
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.defendants && workingCase.defendants.length > 0) {
-        autofill(
-          'demands',
-          `${formatMessage(rcReportForm.sections.demands.autofill, {
-            accusedName: workingCase.defendants[0].name,
-            accusedNationalId: workingCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  workingCase.defendants[0].nationalId ?? '',
-                )}, `,
-            extensionSuffix:
-              workingCase.parentCase &&
-              isAcceptingCaseDecision(workingCase.parentCase.decision)
-                ? ' áframhaldandi'
-                : '',
-            caseType:
-              workingCase.type === CaseType.CUSTODY
-                ? 'gæsluvarðhaldi'
-                : 'farbanni',
-            court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-            requestedValidToDate: formatDate(
-              workingCase.requestedValidToDate,
-              'PPPPp',
-            )
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.'),
-            isolationSuffix:
-              workingCase.type === CaseType.CUSTODY &&
-              workingCase.requestedCustodyRestrictions?.includes(
-                CaseCustodyRestrictions.ISOLATION,
-              )
-                ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-                : '',
-          })}`,
-          workingCase,
-        )
-
-        setWorkingCase({ ...workingCase })
-      }
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    autofill,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
 
   return (
     <PageLayout
@@ -121,7 +53,7 @@ export const StepFour: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FOUR}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FOUR}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -134,13 +66,7 @@ export const StepFour: React.FC = () => {
             {formatMessage(rcReportForm.heading)}
           </Text>
         </Box>
-        <Box marginBottom={7}>
-          <CaseInfo
-            workingCase={workingCase}
-            userRole={user?.role}
-            showAdditionalInfo
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={7}>
           <Box marginBottom={4}>
             <Text as="h3" variant="h3">
@@ -290,54 +216,17 @@ export const StepFour: React.FC = () => {
             />
           </Box>
           <Box component="section" marginBottom={7}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(rcReportForm.sections.comments.heading)}{' '}
-                <Tooltip
-                  placement="right"
-                  as="span"
-                  text={formatMessage(rcReportForm.sections.comments.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <Input
-                name="comments"
-                label={formatMessage(rcReportForm.sections.comments.label)}
-                placeholder={formatMessage(
-                  rcReportForm.sections.comments.placeholder,
-                )}
-                value={workingCase.comments || ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'comments',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'comments',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
-              />
-            </Box>
+            <CommentsInput
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
           </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidRC(workingCase)}
         />
       </FormContentContainer>

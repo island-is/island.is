@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 /**
  * This provider uses the new national registry API to fetch basic information
@@ -39,7 +39,7 @@ export class PersonInformationProvider extends BasicDataProvider {
           ...response.data.nationalRegistryUserV2,
         })
       })
-      .catch((e) => {
+      .catch(() => {
         return this.handleError()
       })
   }

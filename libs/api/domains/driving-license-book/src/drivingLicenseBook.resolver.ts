@@ -24,6 +24,7 @@ import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTes
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
 import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
+import { DrivingInstructorOrEmployeeGuard } from './guards/drivingInstructorOrEmployee.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -32,7 +33,7 @@ export class DrivingLicenseBookResolver {
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
-  @UseGuards(DrivingInstructorGuard, DrivingSchoolEmployeeGuard)
+  @UseGuards(DrivingInstructorOrEmployeeGuard)
   @Query(() => [DrivingLicenseBookStudent])
   drivingLicenseBookFindStudent(
     @Args('input') input: DrivingLicenseBookStudentsInput,
@@ -46,7 +47,7 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
-  @UseGuards(DrivingInstructorGuard, DrivingSchoolEmployeeGuard)
+  @UseGuards(DrivingInstructorOrEmployeeGuard)
   @Query(() => DrivingLicenseBookStudentOverview)
   drivingLicenseBookStudent(
     @Args('input') input: DrivingLicenseBookStudentInput,

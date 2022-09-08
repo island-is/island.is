@@ -12,9 +12,32 @@ export enum CaseOrigin {
 }
 
 export enum CaseType {
+  // Indictment cases
+  CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
+  PROPERTY_DAMAGE = 'PROPERTY_DAMAGE',
+  NARCOTICS_OFFENSE = 'NARCOTICS_OFFENSE',
+  EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FRAUD = 'FRAUD',
+  DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
+  ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
+  MURDER = 'MURDER',
+  MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MINOR_ASSAULT = 'MINOR_ASSAULT',
+  RAPE = 'RAPE',
+  UTILITY_THEFT = 'UTILITY_THEFT',
+  AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
+  TAX_VIOLATION = 'TAX_VIOLATION',
+  ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  TRAFFIC_VIOLATION = 'TRAFFIC_VIOLATION',
+  THEFT = 'THEFT',
+  OTHER_CRIMINAL_OFFENSES = 'OTHER_CRIMINAL_OFFENSES',
+  SEXUAL_OFFENSES_OTHER_THAN_RAPE = 'SEXUAL_OFFENSES_OTHER_THAN_RAPE',
+  OTHER_OFFENSES = 'OTHER_OFFENSES',
+  // Restriction Cases
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
   ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
+  // Investigation Cases
   SEARCH_WARRANT = 'SEARCH_WARRANT',
   BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
   PHONE_TAPPING = 'PHONE_TAPPING',
@@ -26,19 +49,11 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
-
-export const caseTypesWithMultipleDefendants = [
-  CaseType.SEARCH_WARRANT,
-  CaseType.BANKING_SECRECY_WAIVER,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.PHONE_TAPPING,
-  CaseType.TRACKING_EQUIPMENT,
-  CaseType.VIDEO_RECORDING_EQUIPMENT,
-]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -112,14 +127,13 @@ export interface Case {
   type: CaseType
   description?: string
   state: CaseState
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   defendants?: Defendant[]
   defenderName?: string
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -184,85 +198,92 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
-export interface CreateCase {
-  type: CaseType
-  description?: string
-  policeCaseNumber: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  courtId?: string
-  leadInvestigator?: string
-}
+export type CreateCase = Pick<
+  Case,
+  | 'type'
+  | 'description'
+  | 'policeCaseNumbers'
+  | 'defenderName'
+  | 'defenderNationalId'
+  | 'defenderEmail'
+  | 'defenderPhoneNumber'
+  | 'sendRequestToDefender'
+  | 'leadInvestigator'
+>
 
-export interface UpdateCase {
-  type?: string
-  description?: string
-  policeCaseNumber?: string
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
-  isHeightenedSecurityLevel?: boolean
+export interface UpdateCase
+  extends Pick<
+    Case,
+    | 'description'
+    | 'defenderName'
+    | 'defenderNationalId'
+    | 'defenderEmail'
+    | 'defenderPhoneNumber'
+    | 'sendRequestToDefender'
+    | 'isHeightenedSecurityLevel'
+    | 'leadInvestigator'
+    | 'arrestDate'
+    | 'requestedCourtDate'
+    | 'translator'
+    | 'requestedValidToDate'
+    | 'demands'
+    | 'lawsBroken'
+    | 'legalBasis'
+    | 'legalProvisions'
+    | 'requestedCustodyRestrictions'
+    | 'requestedOtherRestrictions'
+    | 'caseFacts'
+    | 'legalArguments'
+    | 'requestProsecutorOnlySession'
+    | 'prosecutorOnlySessionRequest'
+    | 'comments'
+    | 'caseFilesComments'
+    | 'courtCaseNumber'
+    | 'sessionArrangements'
+    | 'courtDate'
+    | 'courtLocation'
+    | 'courtRoom'
+    | 'courtStartDate'
+    | 'courtEndTime'
+    | 'isClosedCourtHidden'
+    | 'courtAttendees'
+    | 'prosecutorDemands'
+    | 'courtDocuments'
+    | 'sessionBookings'
+    | 'courtCaseFacts'
+    | 'introduction'
+    | 'courtLegalArguments'
+    | 'ruling'
+    | 'decision'
+    | 'validToDate'
+    | 'isCustodyIsolation'
+    | 'isolationToDate'
+    | 'conclusion'
+    | 'endOfSessionBookings'
+    | 'accusedAppealDecision'
+    | 'accusedAppealAnnouncement'
+    | 'prosecutorAppealDecision'
+    | 'prosecutorAppealAnnouncement'
+    | 'accusedPostponedAppealDate'
+    | 'prosecutorPostponedAppealDate'
+    | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
+    | 'caseResentExplanation'
+    | 'seenByDefender'
+  > {
+  type?: CaseType
+  state?: CaseState
+  policeCaseNumbers?: string[]
   courtId?: string
-  leadInvestigator?: string
-  arrestDate?: string
-  requestedCourtDate?: string
-  translator?: string
-  requestedValidToDate?: string
-  demands?: string
-  lawsBroken?: string
-  legalBasis?: string
-  legalProvisions?: CaseLegalProvisions[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  requestedOtherRestrictions?: string
-  caseFacts?: string
-  legalArguments?: string
-  requestProsecutorOnlySession?: boolean
-  prosecutorOnlySessionRequest?: string
-  comments?: string
-  caseFilesComments?: string
   prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string
-  courtCaseNumber?: string
-  sessionArrangements?: SessionArrangements
-  courtDate?: string
-  courtLocation?: string
-  courtRoom?: string
-  courtStartDate?: string
-  courtEndTime?: string
-  isClosedCourtHidden?: boolean
-  courtAttendees?: string
-  prosecutorDemands?: string
-  courtDocuments?: CourtDocument[]
-  sessionBookings?: string
-  courtCaseFacts?: string
-  introduction?: string
-  courtLegalArguments?: string
-  ruling?: string
-  decision?: CaseDecision
-  validToDate?: string
-  isCustodyIsolation?: boolean
-  isolationToDate?: string
-  conclusion?: string
-  endOfSessionBookings?: string
-  accusedAppealDecision?: CaseAppealDecision
-  accusedAppealAnnouncement?: string
-  prosecutorAppealDecision?: CaseAppealDecision
-  prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
-  prosecutorPostponedAppealDate?: string
-  registrarId?: string
+  sharedWithProsecutorsOfficeId?: string | null
+  registrarId?: string | null
   judgeId?: string
-  caseModifiedExplanation?: string
-  caseResentExplanation?: string
 }
 
 export interface TransitionCase {
@@ -280,6 +301,29 @@ export interface SignatureConfirmationResponse {
   code?: number
   message?: string
 }
+
+export const indictmentCases = [
+  CaseType.CHILD_PROTECTION_LAWS,
+  CaseType.PROPERTY_DAMAGE,
+  CaseType.NARCOTICS_OFFENSE,
+  CaseType.EMBEZZLEMENT,
+  CaseType.FRAUD,
+  CaseType.DOMESTIC_VIOLENCE,
+  CaseType.ASSAULT_LEADING_TO_DEATH,
+  CaseType.MURDER,
+  CaseType.MAJOR_ASSAULT,
+  CaseType.MINOR_ASSAULT,
+  CaseType.RAPE,
+  CaseType.UTILITY_THEFT,
+  CaseType.AGGRAVATED_ASSAULT,
+  CaseType.TAX_VIOLATION,
+  CaseType.ATTEMPTED_MURDER,
+  CaseType.TRAFFIC_VIOLATION,
+  CaseType.THEFT,
+  CaseType.OTHER_CRIMINAL_OFFENSES,
+  CaseType.SEXUAL_OFFENSES_OTHER_THAN_RAPE,
+  CaseType.OTHER_OFFENSES,
+]
 
 export const restrictionCases = [
   CaseType.CUSTODY,
@@ -299,10 +343,15 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.EXPULSION_FROM_HOME,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
+
+export function isIndictmentCase(type?: CaseType): boolean {
+  return Boolean(type && indictmentCases.includes(type))
+}
 
 export function isRestrictionCase(type?: CaseType): boolean {
   return Boolean(type && restrictionCases.includes(type))
@@ -314,10 +363,6 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
-  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

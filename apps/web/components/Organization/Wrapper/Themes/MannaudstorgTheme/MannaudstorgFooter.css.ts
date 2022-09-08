@@ -6,7 +6,7 @@ export const logo = style({
 
 export const container = style({
   backgroundImage:
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/5mnW5sXXiCT9OeESZk4wD/f814fe00378ff8bacb858bbfacda1cd3/Mynd_bg.jpg)',
+    'url(https://images.ctfassets.net/8k0h54kbe6bj/5MPtEcCql6t4YK2IdEr55B/4a874e12c84839a787631d803dd48364/FJA_Mannaudstorg_Vefsida_header_1440x750px_0522.png)',
   backgroundRepeat: 'no-repeat',
   backgroundSize: 'cover',
   backgroundPosition: 'right 40%',

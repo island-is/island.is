@@ -1,6 +1,63 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const requests = {
+  tags: defineMessages({
+    draft: {
+      id: 'judicial.system.core:requests.tags.draft',
+      defaultMessage: 'Drög',
+      description: 'Notað sem merki þegar mál í stöðu "Drög" í málalista',
+    },
+    new: {
+      id: 'judicial.system.core:requests.tags.new',
+      defaultMessage: 'Nýtt',
+      description: 'Notað sem merki þegar mál í stöðu "Nýtt" í málalista',
+    },
+    sent: {
+      id: 'judicial.system.core:requests.tags.sent',
+      defaultMessage: 'Sent',
+      description: 'Notað sem merki þegar mál í stöðu "Sent" í málalista',
+    },
+    received: {
+      id: 'judicial.system.core:requests.tags.received',
+      defaultMessage: 'Móttekið',
+      description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
+    },
+    scheduled: {
+      id: 'judicial.system.core:requests.tags.scheduled',
+      defaultMessage: 'Á dagskrá',
+      description: 'Notað sem merki þegar mál í stöðu "Á dagskrá" í málalista',
+    },
+    inactive: {
+      id: 'judicial.system.core:requests.tags.inactive',
+      defaultMessage: 'Lokið',
+      description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
+    },
+    active: {
+      id: 'judicial.system.core:requests.tags.active',
+      defaultMessage: 'Virkt',
+      description: 'Notað sem merki þegar mál í stöðu "Virkt" í málalista',
+    },
+    accepted: {
+      id: 'judicial.system.core:requests.tags.accepted',
+      defaultMessage: 'Samþykkt',
+      description: 'Notað sem merki þegar mál í stöðu "Samþykkt" í málalista',
+    },
+    rejected: {
+      id: 'judicial.system.core:requests.tags.rejected',
+      defaultMessage: 'Hafnað',
+      description: 'Notað sem merki þegar mál í stöðu "Hafnað" í málalista',
+    },
+    dismissed: {
+      id: 'judicial.system.core:requests.tags.dismissed',
+      defaultMessage: 'Vísað frá',
+      description: 'Notað sem merki þegar mál í stöðu "Vísað frá" í málalista',
+    },
+    unknown: {
+      id: 'judicial.system.core:requests.tags.unknown',
+      defaultMessage: 'Óþekkt',
+      description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
+    },
+  }),
   sections: {
     activeRequests: {
       table: {
@@ -32,6 +89,20 @@ export const requests = {
             defaultMessage: 'Stofnað/Fyrirtaka',
             description:
               'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
+          }),
+          created: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.created',
+            defaultMessage: 'Stofnað',
+            description:
+              'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
+          }),
+          hearing: defineMessage({
+            id:
+              'judicial.system.core:requests.active_requests.table.headers.hearing',
+            defaultMessage: 'Fyrirtaka',
+            description:
+              'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
           }),
         },
       },

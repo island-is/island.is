@@ -26,10 +26,7 @@ describe('EnhancedFetch', () => {
     await env.enhancedFetch(testUrl)
 
     // Assert
-    expect(env.fetch).toHaveBeenCalledWith(
-      testUrl,
-      expect.objectContaining({ timeout }),
-    )
+    expect(env.fetch.mock.calls[0][0].timeout).toEqual(timeout)
   })
 
   it('adds authentication header', async () => {
@@ -46,10 +43,7 @@ describe('EnhancedFetch', () => {
 
     // Assert
     expect(env.fetch).toHaveBeenCalled()
-    const request = new Request(
-      env.fetch.mock.calls[0][0],
-      env.fetch.mock.calls[0][1],
-    )
+    const request = env.fetch.mock.calls[0][0]
     expect(request.headers.get('authorization')).toEqual(mockUser.authorization)
   })
 

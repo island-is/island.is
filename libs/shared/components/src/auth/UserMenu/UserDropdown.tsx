@@ -16,14 +16,11 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import * as kennitala from 'kennitala'
-import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserDropdownProps {
   user: User
@@ -51,24 +48,14 @@ export const UserDropdown = ({
   }
 
   const actor = user.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(user)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany = false
-
-  const { value: showPersonalInfo } = useFeatureFlag(
-    Features.personalInformation,
-    false,
+  const isDelegationCompany = user.profile.subjectType === 'legalEntity'
+  const isProcurationHolder = user.profile.delegationType?.includes(
+    'ProcurationHolder',
   )
 
-  const showDelegations =
-    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
-
-  const { data, error, loading } = useActorDelegationsQuery({
-    skip: !showDelegations,
-    errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
-  })
-  const hasDelegationsData = data && data.authActorDelegations?.length > 0
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
 
@@ -105,32 +92,27 @@ export const UserDropdown = ({
         )}
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          {/* Current User */}
           <Box
             display="flex"
             flexWrap="nowrap"
             alignItems="center"
             paddingBottom={3}
+            paddingTop={2}
           >
-            {/* Check if actor is company - display company icon
-             * kennitala function is buggy - temp removal
-             */}
-            {/* {isDelegationCompany ? (
-            <Box
-              borderRadius="circle"
-              background="blue100"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              className={styles.companyIconSize}
+            {isDelegationCompany ? (
+              <Box
+                borderRadius="circle"
+                background="blue100"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                className={styles.companyIconSize}
               >
-              <Icon icon="business" type="filled" color="blue400" />
+                <Icon icon="business" type="filled" color="blue400" />
               </Box>
-              ) : (
-                <UserAvatar username={isDelegation ? actorName : userName} />
-          )} */}
-            <UserAvatar username={isDelegation ? actorName : userName} />
-
+            ) : (
+              <UserAvatar username={userName} />
+            )}
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">
                 {userName}
@@ -138,7 +120,6 @@ export const UserDropdown = ({
               {isDelegation && <Text variant="small">{actorName}</Text>}
             </Box>
           </Box>
-          {/* <Divider /> */}
           {showDropdownLanguage && (
             <Hidden above="sm">
               {<UserLanguageSwitcher user={user} dropdown />}
@@ -146,39 +127,29 @@ export const UserDropdown = ({
           )}
 
           <Divider />
-          {/* End of current User */}
-          {/* User delegations */}
-          {hasDelegationsData && (
-            <UserDelegations
-              user={user}
-              onSwitchUser={onSwitchUser}
-              data={{ data, error, loading } as QueryResult}
-            />
-          )}
-          {/* End of user delegations */}
-          {/* User settings */}
-          {!isDelegation && (showPersonalInfo || showDelegations) && (
-            <>
-              <UserProfileInfo onClick={() => onClose()} />
-              <Divider />
-            </>
-          )}
-          {/* End of user settings */}
 
-          {/* Logout */}
-          <Box paddingTop={[1, 2]}>
+          <Box paddingTop={2}>
+            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+          </Box>
+
+          {(!isDelegation || isProcurationHolder) && (
+            <Box paddingTop={1}>
+              <UserProfileInfo onClick={() => onClose()} />
+            </Box>
+          )}
+          <Box paddingTop={1}>
             <UserDropdownItem
               text={formatMessage(sharedMessages.logout)}
               icon={{ type: 'outline', icon: 'logOut' }}
               onClick={onLogout}
             />
           </Box>
-          {/* End of Logout */}
         </Box>
         <Hidden below="md">{closeButton}</Hidden>
       </Box>
     </Box>
   )
+
   return isMobile ? (
     <Box display={isVisible ? 'flex' : 'none'} height="full">
       {content}

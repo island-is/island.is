@@ -35,9 +35,17 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         extraAnnotations: {
-          dev: {},
-          staging: {},
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
           prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },

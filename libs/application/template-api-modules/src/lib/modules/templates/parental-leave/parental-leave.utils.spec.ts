@@ -4,7 +4,7 @@ import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import {
   getSelectedChild,
   NO,
@@ -27,6 +27,7 @@ const createApplicationBase = (): Application => ({
   answers: {},
   applicant: '',
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),

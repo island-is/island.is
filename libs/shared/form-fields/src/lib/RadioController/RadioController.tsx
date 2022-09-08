@@ -7,13 +7,20 @@ import {
   GridColumn,
   InputError,
   InputBackgroundColor,
+  TagVariant,
 } from '@island.is/island-ui/core'
+import { TestSupport } from '@island.is/island-ui/utils'
 
-interface Option {
+interface Option extends TestSupport {
   value: string
   label: React.ReactNode
   subLabel?: string
   tooltip?: React.ReactNode
+  tag?: {
+    label: string
+    variant?: TagVariant
+    outlined?: boolean
+  }
   excludeOthers?: boolean
   illustration?: React.FC
   disabled?: boolean
@@ -63,6 +70,7 @@ export const RadioController: FC<Props> = ({
               <RadioButton
                 large={largeButtons}
                 tooltip={option.tooltip}
+                tag={option.tag}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
                   clearErrors(id)
@@ -71,6 +79,7 @@ export const RadioController: FC<Props> = ({
                   setValue(id, target.value)
                 }}
                 checked={option.value === value}
+                dataTestId={option.dataTestId}
                 id={`${id}-${index}`}
                 name={`${id}`}
                 label={option.label}

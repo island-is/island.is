@@ -12,23 +12,27 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
+  getValueViaPath,
+  coreMessages,
+  coreErrorMessages,
+  getErrorReasonIfPresent,
+  isTranslationObject,
+} from '@island.is/application/core'
+import {
   DataProviderItem,
   DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
   FormValue,
-  getValueViaPath,
-  coreMessages,
   RecordObject,
   SetBeforeSubmitCallback,
-  coreErrorMessages,
   StaticText,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'
-import { verifyExternalData } from '../utils'
+import { verifyExternalData, hideSubmitErrorExternalData } from '../utils'
 
 const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   title,
@@ -51,14 +55,6 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   )
 }
 
-const isTranslationObject = (reason?: StaticText) => {
-  if (typeof reason !== 'object') {
-    return false
-  }
-
-  return reason.id !== undefined
-}
-
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
@@ -72,6 +68,12 @@ const ProviderItem: FC<{
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
+  const errorCode = dataProviderResult?.statusCode ?? 500
+  const errorType = errorCode < 500 ? 'warning' : 'error'
+  const { title: errorTitle, summary } = getErrorReasonIfPresent(
+    dataProviderResult?.reason,
+  )
+
   return (
     <Box marginBottom={3}>
       <ItemHeader title={title} subTitle={subTitle} />
@@ -79,14 +81,14 @@ const ProviderItem: FC<{
       {showError && (
         <Box marginTop={2}>
           <AlertMessage
-            type="error"
-            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            type={errorType}
+            title={
+              isTranslationObject(errorTitle)
+                ? formatMessage(errorTitle)
+                : (errorTitle as string)
+            }
             message={
-              isTranslationObject(dataProviderResult?.reason)
-                ? formatMessage(dataProviderResult.reason!)
-                : typeof dataProviderResult?.reason === 'string'
-                ? dataProviderResult.reason
-                : formatMessage(coreErrorMessages.failedDataProvider)
+              isTranslationObject(summary) ? formatMessage(summary) : summary
             }
           />
         </Box>
@@ -187,7 +189,19 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        return [false, formatMessage(coreErrorMessages.failedDataProvider)]
+        const showSubmitError =
+          response.data &&
+          !hideSubmitErrorExternalData(
+            getExternalDataFromResponse(response.data),
+            relevantDataProviders,
+          )
+
+        return [
+          false,
+          showSubmitError
+            ? formatMessage(coreErrorMessages.failedDataProviderSubmit)
+            : '',
+        ]
       })
     } else {
       setBeforeSubmitCallback(null)
@@ -247,6 +261,7 @@ const FormExternalDataProvider: FC<{
                 checked={value}
                 hasError={error !== undefined}
                 backgroundColor="blue"
+                dataTestId="agree-to-data-providers"
                 name={`${id}`}
                 label={
                   <Markdown>

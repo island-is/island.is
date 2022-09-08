@@ -24,14 +24,19 @@ export const generateApplicationEmail: ApplicationEmail = (
   applicationRecipientEmail,
   attachments,
 ): SendMailOptions => {
-  const {
-    application,
-    options: { locale },
-  } = props
+  const { application } = props
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
+  const contactEmail = getValueViaPath(
+    application.answers,
+    'contact.email',
+  ) as string
+  const contactName = getValueViaPath(
+    application.answers,
+    'contact.name',
+  ) as string
 
   const subject = `Umsókn frá ${institutionName}`
   const mailAttachments = attachments
@@ -51,6 +56,10 @@ export const generateApplicationEmail: ApplicationEmail = (
     from: {
       name: applicationSenderName,
       address: applicationSenderEmail,
+    },
+    replyTo: {
+      name: contactName,
+      address: contactEmail,
     },
     to: [
       {

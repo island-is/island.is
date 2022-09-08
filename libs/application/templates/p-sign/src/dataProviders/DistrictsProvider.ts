@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { DistrictCommissionerAgencies } from '../types/schema'
 import { m } from '../lib/messages'
 
@@ -35,7 +35,7 @@ export class DistrictsProvider extends BasicDataProvider {
       .catch((error) => this.handleError(error))
   }
 
-  handleError(error: any) {
+  handleError(_error: any) {
     return Promise.reject({})
   }
 

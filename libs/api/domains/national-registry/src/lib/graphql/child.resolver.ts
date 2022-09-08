@@ -1,6 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query } from '@nestjs/graphql'
+import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
 
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
@@ -31,5 +31,12 @@ export class ChildResolver {
   @Audit()
   getMyChildren(@CurrentUser() user: AuthUser): Promise<FamilyChild[]> {
     return this.nationalRegistryService.getChildren(user.nationalId)
+  }
+
+  @ResolveField('legalResidence', () => String, { nullable: true })
+  resolveLegalResidence(
+    @Parent() { homeAddress, postal }: FamilyChild,
+  ): string {
+    return `${homeAddress}, ${postal}`
   }
 }

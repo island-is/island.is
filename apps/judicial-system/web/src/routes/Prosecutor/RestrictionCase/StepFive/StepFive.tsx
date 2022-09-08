@@ -1,28 +1,43 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
-import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  ProsecutorSubsections,
+  ProsecutorCaseInfo,
+  FormContentContainer,
+  FormFooter,
+  PageLayout,
+  ParentCaseFiles,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  RestrictionCaseProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import {
+  titles,
+  rcCaseFiles as m,
+} from '@island.is/judicial-system-web/messages'
+import {
+  useCase,
+  useDeb,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  Box,
+  ContentBlock,
+  Input,
+  InputFileUpload,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import * as constants from '@island.is/judicial-system/consts'
+import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import { StepFiveForm } from './StepFiveForm'
-
-export interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorMessage?: string
-}
+import PoliceCaseFiles, {
+  PoliceCaseFileCheck,
+} from '../../SharedComponents/PoliceCaseFiles/PoliceCaseFiles'
 
 export const StepFive: React.FC = () => {
   const {
@@ -31,44 +46,24 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
-  const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const { formatMessage } = useIntl()
 
-  const router = useRouter()
-  const id = router.query.id
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [policeCaseFileList, setPoliceCaseFileList] = useState<
+    PoliceCaseFileCheck[]
+  >([])
 
   const {
-    data: policeData,
-    loading: policeDataLoading,
-    error: policeDataError,
-  } = useQuery(PoliceCaseFilesQuery, {
-    variables: { input: { caseId: id } },
-    fetchPolicy: 'no-cache',
-  })
+    uploadErrorMessage,
+    allFilesUploaded,
+    handleRemoveFromS3,
+    handleRetry,
+    handleS3Upload,
+    files,
+  } = useS3Upload(workingCase)
+  const { updateCase } = useCase()
 
-  useEffect(() => {
-    if (policeData && policeData.policeCaseFiles) {
-      setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
-        isLoading: false,
-        hasError: false,
-      })
-    } else if (policeDataLoading) {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: true,
-        hasError: false,
-      })
-    } else {
-      setPoliceCaseFiles({
-        files: policeData ? policeData.policeCaseFiles : [],
-        isLoading: false,
-        hasError: true,
-        errorMessage: policeDataError?.message,
-      })
-    }
-  }, [policeData, policeDataError?.message, policeDataLoading])
+  useDeb(workingCase, 'caseFilesComments')
 
   return (
     <PageLayout
@@ -76,19 +71,113 @@ export const StepFive: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.STEP_FIVE}
+      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       <PageHeader
         title={formatMessage(titles.prosecutor.restrictionCases.caseFiles)}
       />
-      <StepFiveForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        policeCaseFiles={policeCaseFiles}
-        user={user}
-      />
+      <FormContentContainer>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(m.heading)}
+          </Text>
+        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} />
+        <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
+        <Box marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.description.heading)}
+            </Text>
+          </Box>
+          <MarkdownWrapper
+            markdown={formatMessage(m.sections.description.list)}
+            textProps={{ marginBottom: 0 }}
+          />
+        </Box>
+        <PoliceCaseFiles
+          isUploading={isUploading}
+          setIsUploading={setIsUploading}
+          policeCaseFileList={policeCaseFileList}
+          setPoliceCaseFileList={setPoliceCaseFileList}
+        />
+        <Box marginBottom={3}>
+          <Text variant="h3" as="h3">
+            {formatMessage(m.sections.files.heading)}
+          </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.files.introduction)}
+          </Text>
+        </Box>
+        <Box marginBottom={5}>
+          <ContentBlock>
+            <InputFileUpload
+              name="fileUpload"
+              fileList={files}
+              header={formatMessage(m.sections.files.label)}
+              buttonLabel={formatMessage(m.sections.files.buttonLabel)}
+              onChange={handleS3Upload}
+              onRemove={(file) => {
+                handleRemoveFromS3(file)
+                setPoliceCaseFileList([
+                  ...policeCaseFileList,
+                  (file as unknown) as PoliceCaseFileCheck,
+                ])
+              }}
+              onRetry={handleRetry}
+              errorMessage={uploadErrorMessage}
+              disabled={isUploading}
+              showFileSize
+            />
+          </ContentBlock>
+        </Box>
+        <Box>
+          <Box marginBottom={3}>
+            <Text variant="h3" as="h3">
+              {formatMessage(m.sections.comments.heading)}{' '}
+              <Tooltip
+                placement="right"
+                as="span"
+                text={formatMessage(m.sections.comments.tooltip)}
+              />
+            </Text>
+          </Box>
+          <Box marginBottom={10}>
+            <Input
+              name="caseFilesComments"
+              label={formatMessage(m.sections.comments.label)}
+              placeholder={formatMessage(m.sections.comments.placeholder)}
+              value={workingCase.caseFilesComments || ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'caseFilesComments',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(evt) =>
+                updateCase(workingCase.id, {
+                  caseFilesComments: evt.target.value,
+                })
+              }
+              textarea
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
+            />
+          </Box>
+        </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${constants.RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.RESTRICTION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!allFilesUploaded || isUploading}
+        />
+      </FormContentContainer>
     </PageLayout>
   )
 }

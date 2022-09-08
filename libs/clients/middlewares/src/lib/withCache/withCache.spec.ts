@@ -1,17 +1,15 @@
 import { caching } from 'cache-manager'
 
 import { Auth } from '@island.is/auth-nest-tools'
-import {
-  buildCacheControl,
-  CacheControlOptions,
-} from '@island.is/clients/middlewares'
+import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
+import { sleep } from '@island.is/shared/utils'
+
 import {
   EnhancedFetchTestEnv,
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const testUrl = 'http://localhost/test'
 
 describe('EnhancedFetch#withCache', () => {
@@ -50,6 +48,36 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(1)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=50',
+    )
+  })
+
+  it('caches 404 responses', async () => {
+    // Arrange
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({
+      cache: { cacheManager },
+    })
+    mockResponse({ maxAge: 50 })
+
+    // Act
+    const response1 = await env.enhancedFetch(testUrl)
+    const response2 = await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.fetch).toHaveBeenCalledTimes(1)
+    await expect(response1.text()).resolves.toEqual('Response 1')
+    await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=50',
+    )
   })
 
   it('respects server no-store', async () => {
@@ -68,6 +96,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; stored=?0',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; stored=?0',
+    )
   })
 
   it('expires responses', async () => {
@@ -88,6 +122,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
   })
 
   it('does not cache authenticated requests', async () => {
@@ -110,6 +150,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; stored=?0',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; stored=?0',
+    )
   })
 
   it('caches public authenticated requests', async () => {
@@ -132,6 +178,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(1)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=50',
+    )
   })
 
   it('with shared=false does not share cache when user is missing', async () => {
@@ -184,6 +236,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
   })
 
   it('with shared=false caches based on nationalId users', async () => {
@@ -211,6 +269,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(1)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=50',
+    )
   })
 
   it('does not get stale if not error during stale-if-error', async () => {
@@ -231,6 +295,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=stale; ttl=50; stored',
+    )
   })
 
   it('gets stale if http error during stale-if-error', async () => {
@@ -262,6 +332,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=-1',
+    )
   })
 
   it('gets stale if network error during stale-if-error', async () => {
@@ -293,6 +369,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; fwd=miss; ttl=50; stored',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=-1',
+    )
   })
 
   it('returns stale while revalidate during stale-while-revalidate', async () => {
@@ -308,7 +390,7 @@ describe('EnhancedFetch#withCache', () => {
     await env.enhancedFetch(testUrl)
 
     // Wait until stale.
-    await sleep(1000)
+    await sleep(2000)
     const response1 = await env.enhancedFetch(testUrl)
 
     // Wait until revalidated.
@@ -319,6 +401,12 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
     await expect(response1.text()).resolves.toEqual('Response 1')
     await expect(response2.text()).resolves.toEqual('Response 2')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=-1',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=1',
+    )
   })
 
   it('cache-control can be overridden', async () => {
@@ -372,6 +460,7 @@ describe('EnhancedFetch#withCache', () => {
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
       logErrorResponseBody: true,
+      circuitBreaker: false,
       cache: {
         cacheManager,
         overrideCacheControl: buildCacheControl({ maxAge: 50 }),
@@ -383,10 +472,14 @@ describe('EnhancedFetch#withCache', () => {
 
     // Act
     const response1 = env.enhancedFetch(testUrl)
-    const response2 = env.enhancedFetch(testUrl)
 
     // Assert
     await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
+
+    // Act
+    const response2 = env.enhancedFetch(testUrl)
+
+    // Assert
     await expect(response2).rejects.toMatchObject({ body: 'Response 2' })
     expect(env.fetch).toHaveBeenCalledTimes(2)
   })
@@ -455,6 +548,34 @@ describe('EnhancedFetch#withCache', () => {
     await expect(response2.text()).resolves.toEqual('Response 2')
   })
 
+  it('caches 404 error responses', async () => {
+    // Arrange
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({
+      logErrorResponseBody: true,
+      cache: {
+        cacheManager,
+        overrideCacheControl: buildCacheControl({ maxAge: 50 }),
+      },
+    })
+    env.fetch
+      .mockResolvedValueOnce(fakeResponse('Response 1', { status: 404 }))
+      .mockResolvedValueOnce(fakeResponse('Response 2', { status: 404 }))
+
+    // Act
+    const response1 = env.enhancedFetch(testUrl)
+
+    // Assert
+    await expect(response1).rejects.toMatchObject({ body: 'Response 1' })
+
+    // Act
+    const response2 = env.enhancedFetch(testUrl)
+
+    // Assert
+    await expect(response2).rejects.toMatchObject({ body: 'Response 1' })
+    expect(env.fetch).toHaveBeenCalledTimes(1)
+  })
+
   it('supports empty response bodies', async () => {
     // Arrange
     const cacheManager = caching({ store: 'memory', ttl: 0 })
@@ -476,5 +597,64 @@ describe('EnhancedFetch#withCache', () => {
     expect(env.fetch).toHaveBeenCalledTimes(1)
     await expect(response1.text()).resolves.toEqual('')
     await expect(response2.text()).resolves.toEqual('')
+  })
+
+  it('supports 304 responses', async () => {
+    // Arrange
+    jest.useRealTimers()
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({
+      cache: {
+        cacheManager,
+        overrideCacheControl: buildCacheControl({
+          maxAge: 1,
+          staleWhileRevalidate: 100,
+        }),
+      },
+    })
+    env.fetch
+      .mockResolvedValueOnce(fakeResponse('Response 1'))
+      .mockResolvedValueOnce(fakeResponse('', { status: 304 }))
+
+    // Act. Unfortunately can't use fake timers since the revalidate runs in an un-awaited promise.
+    await env.enhancedFetch(testUrl)
+
+    // Wait until stale.
+    await sleep(2000)
+    const response1 = await env.enhancedFetch(testUrl)
+
+    // Wait until revalidated.
+    await sleep(10)
+    const response2 = await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.fetch).toHaveBeenCalledTimes(2)
+    await expect(response1.text()).resolves.toEqual('Response 1')
+    await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=-1',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=1',
+    )
+  })
+
+  // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
+  it('keeps all passed in headers', async () => {
+    // Arrange
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({ cache: { cacheManager } })
+    mockResponse()
+    const expectedHeaders = { 'X-Test': ['Test'], authorization: ['Test auth'] }
+
+    // Act
+    await env.enhancedFetch(testUrl, {
+      headers: { 'X-Test': 'Test' },
+      auth: { authorization: 'Test auth', scope: [], client: '' },
+    })
+
+    // Assert
+    const actualHeaders = env.fetch.mock.calls[0][0].headers.raw()
+    expect(actualHeaders).toMatchObject(expectedHeaders)
   })
 })

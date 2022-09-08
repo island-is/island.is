@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
@@ -15,14 +15,26 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import { ErrorShell } from '@island.is/application/ui-shell'
 import {
+  ErrorShell,
+  DelegationsScreen,
   useApplicationNamespaces,
-  useLocale,
-  useLocalizedQuery,
-} from '@island.is/localization'
+} from '@island.is/application/ui-shell'
+import { useLocale, useLocalizedQuery } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  Application,
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+} from '@island.is/application/types'
+import { EventObject } from 'xstate'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -30,17 +42,38 @@ export const Applications: FC = () => {
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
+  const { search } = useLocation()
+
+  const query = React.useMemo(() => new URLSearchParams(search), [search])
+
+  const [delegationsChecked, setDelegationsChecked] = useState(
+    !!query.get('delegationChecked'),
+  )
+  const [template, setTemplate] = useState<
+    | ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    | undefined
+  >(undefined)
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
+
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useLocalizedQuery(
-    APPLICATION_APPLICATIONS,
-    {
-      variables: {
-        input: { typeId: type },
-      },
-      skip: !type,
+  const {
+    data,
+    loading,
+    error: applicationsError,
+    refetch,
+  } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
+    variables: {
+      input: { typeId: type },
     },
-  )
+    skip: !type && !delegationsChecked,
+  })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -62,16 +95,49 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (type && data && isEmpty(data.applicationApplications)) {
+    const getTemplate = async () => {
+      if (type && !template) {
+        const appliTemplate = await getApplicationTemplateByTypeId(type)
+        if (appliTemplate) {
+          setTemplate(appliTemplate)
+        }
+      }
+    }
+    getTemplate().catch(console.error)
+  }, [type, template])
+
+  useEffect(() => {
+    if (
+      type &&
+      data &&
+      isEmpty(data.applicationApplications) &&
+      delegationsChecked
+    ) {
       createApplication()
     }
-  }, [type, data])
+  }, [type, data, delegationsChecked])
 
-  if (loading) {
+  if (loading || !template) {
     return <ApplicationLoading />
   }
 
   if (!type || applicationsError) {
+    const foundError = findProblemInApolloError(applicationsError as any, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
+      return (
+        <DelegationsScreen
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={checkDelegation}
+        />
+      )
+    }
     return (
       <ErrorShell
         title={formatMessage(coreMessages.notFoundApplicationType)}
@@ -93,15 +159,45 @@ export const Applications: FC = () => {
     )
   }
 
+  if (!delegationsChecked && type) {
+    return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
+  }
+
+  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
+    (x: Application) => x.state === 'draft',
+  ).length
+
+  const shouldRenderNewApplicationButton =
+    template.allowMultipleApplicationsInDraft === undefined
+      ? true
+      : template.allowMultipleApplicationsInDraft ||
+        numberOfApplicationsInDraft < 1
+
   return (
     <Page>
       <GridContainer>
         {!loading && !isEmpty(data?.applicationApplications) && (
           <Box>
-            <Box marginTop={5} marginBottom={5}>
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              justifyContent="spaceBetween"
+              display="flex"
+              flexDirection={['column', 'row']}
+            >
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
+              {shouldRenderNewApplicationButton ? (
+                <Box marginTop={[2, 0]}>
+                  <Button
+                    onClick={createApplication}
+                    data-testid="create-new-application"
+                  >
+                    {formatMessage(coreMessages.newApplication)}
+                  </Button>
+                </Box>
+              ) : null}
             </Box>
 
             {data?.applicationApplications && (
@@ -110,19 +206,9 @@ export const Applications: FC = () => {
                 onClick={(applicationUrl) =>
                   history.push(`../${applicationUrl}`)
                 }
+                refetch={refetch}
               />
             )}
-
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-            >
-              <Button onClick={createApplication}>
-                {formatMessage(coreMessages.newApplication)}
-              </Button>
-            </Box>
           </Box>
         )}
       </GridContainer>

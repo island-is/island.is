@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import cn from 'classnames'
+import format from 'date-fns/format'
+
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationState,
@@ -14,8 +17,6 @@ import {
   Municipality,
   DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
-
-import format from 'date-fns/format'
 
 import {
   CollapsibleProfileUnit,
@@ -168,6 +169,24 @@ const ApplicationProfile = ({
           isPrint={isPrint}
         />
 
+        {application.navSuccess === false && (
+          <Box
+            className={cn({
+              [`${styles.widthFull} `]: true,
+            })}
+            marginBottom={[5, 5, 7]}
+          >
+            <AlertMessage
+              type="warning"
+              message={
+                <Text variant="medium">
+                  Sjálfvirk yfirfærsla í Navision tókst ekki.
+                </Text>
+              }
+            />
+          </Box>
+        )}
+
         <ProfileUnit
           heading="Umsókn"
           info={applicationInfo}
@@ -189,6 +208,7 @@ const ApplicationProfile = ({
           {getDirectTaxPaymentsContent(
             applicantDirectPayments,
             application.hasFetchedDirectTaxPayment,
+            application.created,
           )}
         </CollapsibleProfileUnit>
 
@@ -210,6 +230,7 @@ const ApplicationProfile = ({
               {getDirectTaxPaymentsContent(
                 spouseDirectPayments,
                 application.spouseHasFetchedDirectTaxPayment,
+                application.created,
               )}
             </CollapsibleProfileUnit>
           </>
@@ -242,6 +263,7 @@ const ApplicationProfile = ({
 
         <History
           applicantName={application.name}
+          applicantEmail={application.email}
           applicationEvents={application.applicationEvents}
           spouseName={application.spouseName ?? ''}
         />
@@ -280,10 +302,16 @@ export default ApplicationProfile
 export const getDirectTaxPaymentsContent = (
   directPaymentsArr: DirectTaxPayment[],
   hasFetchedPayments: boolean,
+  applicationCreated: string,
 ) => {
   switch (true) {
     case directPaymentsArr.length > 0:
-      return <TaxBreakdown items={directPaymentsArr} />
+      return (
+        <TaxBreakdown
+          items={directPaymentsArr}
+          dateDataWasFetched={applicationCreated}
+        />
+      )
     case directPaymentsArr.length === 0 && hasFetchedPayments:
       return <Text marginBottom={4}>Engin staðgreiðsla</Text>
     case directPaymentsArr.length === 0 && !hasFetchedPayments:

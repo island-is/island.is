@@ -6,12 +6,6 @@ const devConfig = {
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
   sentryDsn: '',
-  redis: {
-    urls: (
-      process.env.REDIS_NODES ??
-      'localhost:7000,localhost:7001,localhost:7002,localhost:7003,localhost:7004,localhost:7005'
-    ).split(','),
-  },
   audit: {
     defaultNamespace: '@island.is/applications',
   },
@@ -21,10 +15,15 @@ const devConfig = {
     allowClientNationalId: true,
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4242/umsoknir',
+    clientLocationOrigin: `http://localhost:${
+      process.env.WEB_FRONTEND_PORT ?? '4242'
+    }/umsoknir`,
     emailOptions: {
-      useTestAccount: true,
+      useTestAccount: !(process.env.USE_SES === 'true'),
       useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+      options: {
+        region: process.env.EMAIL_REGION ?? 'eu-west-1',
+      },
     },
     email: {
       sender: 'Devland.is',
@@ -37,17 +36,6 @@ const devConfig = {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
-    },
-    drivingLicense: {
-      clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
-        xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
-        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-        xroadPathV1:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-        xroadPathV2:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
-      },
     },
     criminalRecord: {
       clientConfig: {
@@ -106,17 +94,6 @@ const devConfig = {
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
   },
-  application: {
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-  },
-  fileStorage: {
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
-  },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -129,11 +106,6 @@ const prodConfig = {
     'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
-  redis: {
-    urls: (process.env.REDIS_NODES ?? process.env.REDIS_URL_NODE_01)?.split(
-      ',',
-    ),
-  },
   audit: {
     defaultNamespace: '@island.is/applications',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -166,15 +138,6 @@ const prodConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    drivingLicense: {
-      clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
-        xroadClientId: process.env.XROAD_CLIENT_ID,
-        xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
-        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
-      },
-    },
     criminalRecord: {
       clientConfig: {
         xroadClientId: process.env.XROAD_CLIENT_ID,
@@ -216,17 +179,6 @@ const prodConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
-  },
-  application: {
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-  },
-  fileStorage: {
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,

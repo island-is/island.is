@@ -1,43 +1,36 @@
-import React, { useState } from 'react'
-import { useDrivingLicense } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { info } from 'kennitala'
+import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
+import { defineMessage } from 'react-intl'
+
 import {
+  AlertBanner,
   Box,
+  Button,
   Divider,
-  GridColumn,
-  GridRow,
   Icon,
+  Link,
   Stack,
   Text,
-  Button,
-  AlertBanner,
-  Link,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  PlausiblePageviewDetail,
+  IntroHeader,
   ServicePortalModuleComponent,
-  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
-import { isExpired, toDate } from '../../utils/dateUtils'
-import { mapCategory } from '../../utils/dataMapper'
-import ReactHtmlParser from 'react-html-parser'
-import ExpandableLine from './ExpandableLine'
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
-import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
-import { info } from 'kennitala'
-import { m } from '../../lib/messages'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
+
 import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { m } from '../../lib/messages'
+import { mapCategory } from '../../utils/dataMapper'
+import { isExpired, toDate } from '../../utils/dateUtils'
+import ExpandableLine from './ExpandableLine'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useDrivingLicense()
-
-  PlausiblePageviewDetail(
-    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
-  )
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const { age } = info(data?.kennitala ?? userInfo.profile.nationalId)
@@ -57,32 +50,26 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           />
         </Box>
       )}
-      <Box marginBottom={5}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={1}>
-              <Text variant="h3" as="h1" paddingTop={0}>
-                {formatMessage(m.yourDrivingLicense)}
-              </Text>
-              <Text as="p" variant="default">
-                {formatMessage(m.drivingLicenseDescription)}
-              </Text>
-            </Stack>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <IntroHeader
+        title={m.yourDrivingLicense}
+        intro={m.drivingLicenseDescription}
+      />
       {data && (
         <Stack space={2}>
-          <Box display="flex" flexDirection="row" alignItems="center">
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            alignItems={['flexStart', 'center']}
+          >
             <PkPass
               expireDate={toDate(
                 loading ? '' : new Date(data.gildirTil).getTime().toString(),
               )}
             />
-            <Box className={styles.line} marginX={3} />
+            <Box marginX={[0, 1]} marginY={[1, 0]} />
             <Link href={renewalLink}>
               <Button
-                variant="text"
+                variant="utility"
                 size="small"
                 icon="open"
                 iconType="outline"

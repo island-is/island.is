@@ -163,14 +163,14 @@ const DocumentCard: FC<Props> = ({ document }) => {
             <Text variant="h3" as="h1">
               {formatMessage({
                 id: 'sp.documents:document-notSupported-title',
-                defaultMessage: 'Ekki stuðningur við þetta skjal',
+                defaultMessage: 'Ekki er hægt að sýna þetta skjal.',
               })}
             </Text>
             <Text>
               {formatMessage({
                 id: 'sp.documents:document-notSupported-description',
                 defaultMessage:
-                  'Því miður bjóða mínar síður ekki upp á stuðning við þetta skjal eins og er. Þú getur farið á vef viðkomandi stofnunar til þess að skoða skjalið.',
+                  'Því miður er ekki hægt að skoða þetta skjal á Mínum síðum eins og er. Þú getur skoðað skjalið á vef viðkomandi stofnunar.',
               })}
             </Text>
           </Stack>

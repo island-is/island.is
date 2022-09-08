@@ -40,7 +40,7 @@ To access elasticsearch instance from dev environment:
 
 Caveats:
 
-- **You need to have docker installed and running**
+- **You need to have docker/podman installed and running**
 - **You have to refresh your AWS env variables every 8 hours**
 
 ```bash
@@ -65,6 +65,39 @@ yarn start web
 ```
 
 This starts a server on `localhost:4200`
+
+### Feature flags
+
+You can create and manage feature flags in https://configcat.com/
+<br />
+These feature flags allow you to change boolean values that can be used to change things in the project at runtime (like enabling or disabling a specific feature).
+
+**Example usage:**
+
+```js
+import { Screen } from '@island.is/web/types'
+import { getFeatureFlag } from '@island.is/web/utils/featureFlag'
+
+interface Props {
+  flag: boolean;
+}
+
+export const SomeScreen: Screen<Props> = ({ flag }) => {
+  return (
+    <div>
+      {flag && <p>This is shown when the flag is set to true</p>}
+      {!flag && <p>This is shown when the flag is set to false</p>}
+    </div>
+  )
+}
+
+SomeScreen.getInitialProps = async () => {
+  const flag = await getFeatureFlag('someFeatureFlag', false)
+  return { flag }
+}
+
+export default SomeScreen
+```
 
 ## Further Documentation
 

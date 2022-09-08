@@ -1,4 +1,8 @@
 import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,8 +10,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   Application,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
 import { institutionApplicationMessages as m } from './messages'
@@ -31,7 +34,11 @@ const contactSchema = z.object({
 
 const dataSchema = z.object({
   applicant: z.object({
-    institution: z.string().nonempty(),
+    institution: z.object({
+      nationalId: z.string().nonempty(),
+      label: z.string().nonempty(),
+      isat: z.string().optional(),
+    }),
   }),
   contact: contactSchema,
   hasSecondaryContact: z.enum([YES, NO]),
@@ -112,7 +119,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

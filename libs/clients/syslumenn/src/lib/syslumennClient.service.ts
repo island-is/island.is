@@ -7,8 +7,12 @@ import {
   DataUploadResponse,
   Person,
   Attachment,
+  AssetType,
   MortgageCertificate,
   MortgageCertificateValidation,
+  AssetName,
+  EstateRegistrant,
+  EstateRelations,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -18,6 +22,8 @@ import {
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
+  mapAssetName,
+  mapEstateRegistrant,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -26,6 +32,7 @@ import {
   Configuration,
   VirkLeyfiGetRequest,
   TegundAndlags,
+  VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -160,7 +167,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment | undefined,
+    attachments: Attachment[] | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -170,7 +177,7 @@ export class SyslumennService {
     const payload = constructUploadDataObject(
       id,
       persons,
-      attachment,
+      attachments,
       extraData,
       uploadDataName,
       uploadDataId,
@@ -213,6 +220,38 @@ export class SyslumennService {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesResponse)
+  }
+
+  async getAsset(
+    assetId: string,
+    assetType: AssetType,
+    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+  ): Promise<Array<AssetName>> {
+    const { id, api } = await this.createApi()
+    const response = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer: assetId,
+          tegundAndlags: assetType as number,
+        },
+      })
+      .catch((e) => {
+        if ((e as { status: number })?.status === 404) {
+          return []
+        }
+        throw e
+      })
+
+    return response.map(assetMapper)
+  }
+
+  async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
+    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+  }
+
+  async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
+    return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
   }
 
   async getMortgageCertificate(
@@ -301,5 +340,50 @@ export class SyslumennService {
     } else {
       throw new Error()
     }
+  }
+
+  async getEstateRegistrant(
+    registrantNationalId: string,
+  ): Promise<Array<EstateRegistrant>> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.skraningaradiliDanarbusGet({
+      audkenni: id,
+      kennitala: registrantNationalId,
+    })
+
+    if (res.length > 0) {
+      return res.map(mapEstateRegistrant)
+    }
+    return []
+  }
+
+  async getEstateRelations(): Promise<EstateRelations> {
+    const { id, api } = await this.createApi()
+    const res = await api.danarbuAlgengTengslGet({
+      audkenni: id,
+    })
+    return {
+      relations: res
+        .map((relation) => relation?.heiti)
+        .filter((heiti): heiti is string => Boolean(heiti)),
+    }
+  }
+
+  async changeEstateRegistrant(
+    currentRegistrantNationalId: string,
+    newRegistrantNationalId: string,
+    caseNumber: string,
+  ): Promise<unknown> {
+    const { id, api } = await this.createApi()
+    const res = await api.skiptaUmSkraningaradilaDanarbusPost({
+      payload: {
+        audkenni: id,
+        kennitalaFra: currentRegistrantNationalId,
+        kennitalaTil: newRegistrantNationalId,
+        malsnumer: caseNumber,
+      },
+    })
+    return res
   }
 }

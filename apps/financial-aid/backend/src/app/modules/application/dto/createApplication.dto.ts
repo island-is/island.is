@@ -28,6 +28,11 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly nationalId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   readonly phoneNumber: string
 
   @IsNotEmpty()
@@ -129,6 +134,16 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly spouseEmail: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseFormComment: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -167,4 +182,9 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly hasFetchedDirectTaxPayment: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly spouseHasFetchedDirectTaxPayment: boolean
 }

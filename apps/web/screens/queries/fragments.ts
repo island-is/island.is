@@ -37,6 +37,7 @@ export const slices = gql`
       tags
       link
     }
+    hasBorderAbove
   }
 
   fragment MailingListSignupFields on MailingListSignupSlice {
@@ -51,6 +52,8 @@ export const slices = gql`
     yesLabel
     noLabel
     disclaimerLabel
+    categoryLabel
+    categories
     buttonText
     signupUrl
   }
@@ -95,6 +98,9 @@ export const slices = gql`
       }
     }
     readMoreText
+    readMoreLink {
+      url
+    }
   }
 
   fragment LinkCardFields on LinkCardSlice {
@@ -190,7 +196,6 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    type
     processTitle
     processLink
     openLinkInModal
@@ -337,6 +342,8 @@ export const slices = gql`
     image {
       ...ImageFields
     }
+    automaticallyFetchArticles
+    sortBy
     articles {
       id
       slug
@@ -344,6 +351,17 @@ export const slices = gql`
       processEntry {
         id
       }
+      processEntryButtonText
+    }
+    resolvedArticles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+      processEntryButtonText
+      importance
     }
     link {
       text
@@ -370,6 +388,7 @@ export const slices = gql`
       text
       url
     }
+    dividerOnTop
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -399,7 +418,9 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+      ...AssetFields
     }
+    dividerOnTop
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -412,6 +433,7 @@ export const slices = gql`
       title
       content {
         ...HtmlFields
+        ...AssetFields
       }
       link {
         url
@@ -440,6 +462,7 @@ export const slices = gql`
         width
         height
       }
+      openLinkInNewTab
     }
     link {
       text
@@ -462,6 +485,90 @@ export const slices = gql`
       url
       width
       height
+    }
+  }
+
+  fragment FormFields on Form {
+    __typename
+    id
+    title
+    intro
+    recipient
+    fields {
+      title
+      placeholder
+      type
+      required
+      options
+    }
+    successText
+    aboutYouHeadingText
+    questionsHeadingText
+  }
+
+  fragment StepperFields on Stepper {
+    __typename
+    id
+    title
+    steps {
+      id
+      title
+      slug
+      stepType
+      subtitle {
+        ...HtmlFields
+      }
+      config
+    }
+    config
+  }
+
+  fragment GraphCardFields on GraphCard {
+    graphTitle
+    graphDescription
+    organization
+    data
+    datakeys
+    type
+    displayAsCard
+    organizationLogo {
+      id
+      url
+      title
+      contentType
+      width
+      height
+    }
+  }
+
+  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
+    id
+    title
+    lifeEventPageList {
+      id
+      title
+      shortTitle
+      slug
+      tinyThumbnail {
+        url
+        title
+      }
+    }
+  }
+
+  fragment SidebarCardFields on SidebarCard {
+    title
+    contentString
+    type
+    image {
+      url
+      title
+      width
+      height
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -494,6 +601,11 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...FormFields
+    ...StepperFields
+    ...GraphCardFields
+    ...LifeEventPageListSliceFields
+    ...SidebarCardFields
   }
 
   fragment AllSlices on Slice {

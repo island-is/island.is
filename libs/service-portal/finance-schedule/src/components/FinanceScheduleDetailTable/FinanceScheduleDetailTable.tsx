@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Icon, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { Table as T } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import cn from 'classnames'
@@ -12,6 +12,7 @@ import {
 import { DetailedSchedule } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
+import { theme } from '@island.is/island-ui/theme'
 
 interface Props {
   data: Array<DetailedSchedule>
@@ -27,54 +28,44 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 
-  const arr: DetailData = data.map((x, i) => {
-    const sum =
-      x.payments?.reduce(
-        (sum: number, current: { payAmount: number }) =>
-          sum + Math.abs(current.payAmount),
-        0,
-      ) || 0
-    return {
-      ...data[i],
-      paid: sum >= x.plannedAmount,
-    }
-  })
   const headerArray = [
-    {
-      value: formatMessage({
-        id: 'sp.finance-schedule:scheduled-paid-date',
-        defaultMessage: 'Gjalddagi',
-      }),
-      align: 'left',
-    },
-    {
-      value: formatMessage({
-        id: 'sp.finance-schedule:scheduled-paymend',
-        defaultMessage: 'Áætlun',
-      }),
-      align: 'left',
-    },
     { value: '' },
     {
       value: formatMessage({
-        id: 'sp.finance-schedule:paid-amount',
-        defaultMessage: 'Greitt',
+        id: 'sp.finance-schedule:paid-detail-date',
+        defaultMessage: 'Greiðsludagur',
       }),
       align: 'left',
     },
     {
       value: formatMessage({
-        id: 'sp.finance-schedule:paid-date',
-        defaultMessage: 'Dagsetning greiðslu',
+        id: 'sp.finance-schedule:payment-explanation',
+        defaultMessage: 'Skýring',
       }),
       align: 'left',
     },
     {
       value: formatMessage({
-        id: 'sp.finance-schedule:is-paid',
-        defaultMessage: 'Greiðslu lokið',
+        id: 'sp.finance-schedule:amount',
+        defaultMessage: 'Fjárhæð',
       }),
-      align: 'center',
+      align: 'right',
+    },
+    {
+      value: formatMessage({
+        id: 'sp.finance-schedule:detail-unpaid-no-interest',
+        defaultMessage: 'Eftirstöðvar án vaxta',
+      }),
+      align: 'right',
+    },
+    {
+      value: '',
+    },
+    {
+      value: '',
+    },
+    {
+      value: '',
     },
   ]
 
@@ -92,7 +83,8 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                 }}
                 key={i + item.value}
                 text={{ truncate: true }}
-                style={tableStyles}
+                style={{ ...tableStyles, backgroundColor: theme.color.white }}
+                color="white"
               >
                 <Text variant="medium" fontWeight="semiBold">
                   {item.value}
@@ -102,78 +94,52 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
           </T.Row>
         </T.Head>
         <T.Body>
-          {arr?.map((row, i) => (
+          {data?.map((row, i) => (
             <T.Row key={i + row.paymentNumber}>
               {[
                 {
-                  value: format(dateParse(row.plannedDate), dateFormat.is),
-                  align: 'left',
-                },
-                {
                   value: (
-                    <Box display="flex">
-                      {amountFormat(row.plannedAmount)}
-                      {i === arr.length - 1 ? (
-                        <Tooltip
-                          placement="bottom"
-                          text={formatMessage({
-                            id: 'sp.finance-schedule:last-payment-info',
-                            defaultMessage:
-                              'Vextir uppfærast daglega á líftíma greiðsluáætlunarinnar en eru greiddir á síðasta gjalddaga.',
-                          })}
-                        />
-                      ) : null}
-                    </Box>
-                  ),
-                  element: true,
-                  align: 'left',
-                },
-                { value: '' },
-                {
-                  value:
-                    row.paidAmount === 0 ? '' : amountFormat(row.paidAmount),
-                  align: 'left',
-                },
-                {
-                  value: row.paidDate.includes('*')
-                    ? row.payments &&
-                      format(
-                        dateParse(
-                          row.payments[row.payments.length - 1].payDate,
-                        ),
-                        dateFormat.is,
-                      )
-                    : row.paidDate.length <= 0
-                    ? ''
-                    : format(dateParse(row.paidDate), dateFormat.is),
-                  align: 'left',
-                },
-                {
-                  value: row.paid ? (
                     <Box
-                      marginRight={1}
                       display="flex"
                       alignItems="center"
-                      justifyContent="center"
-                      textAlign="center"
-                    >
-                      <Icon
-                        icon="checkmarkCircle"
-                        color="mint600"
-                        type="filled"
-                      />
-                    </Box>
-                  ) : (
-                    ''
+                      justifyContent="flexStart"
+                      cursor="pointer"
+                      className={styles.btnSpacer}
+                    ></Box>
                   ),
                   element: true,
-                  align: 'center',
+                },
+                {
+                  value: format(dateParse(row.paidDate), dateFormat.is),
+                  align: 'left',
+                },
+                {
+                  value: row.payExplanation,
+                  align: 'left',
+                },
+                {
+                  value: amountFormat(row.paidAmount),
+                  align: 'right',
+                },
+                {
+                  value: amountFormat(row.unpaidAmount),
+                  align: 'right',
+                },
+                {
+                  value: '',
+                },
+                {
+                  value: '',
+                },
+                {
+                  value: '',
                 },
               ].map((item, ii) => (
                 <T.Data
                   box={{ paddingRight: 2, paddingLeft: 2 }}
                   key={ii.toString() + item.value}
-                  style={tableStyles}
+                  style={{ ...tableStyles, flex: '1 1 0px' }}
+                  color="white"
                   borderColor="blue200"
                 >
                   <div

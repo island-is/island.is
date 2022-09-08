@@ -5,5 +5,5 @@ import { AppModule } from './app/app.module'
 bootstrap({
   appModule: AppModule,
   name: 'financial-aid-api',
-  port: 3333,
+  port: 3339,
 })

@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Box, ModalBase, Button, Text, Input } from '@island.is/island-ui/core'
-import { Application } from '@island.is/application/core'
+import { Box, ModalBase, Button, Text } from '@island.is/island-ui/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import * as styles from '../style.css'
 import { FindStudentQuery } from '../../graphql/queries'
 import { useQuery } from '@apollo/client'
+import { InputController } from '@island.is/shared/form-fields'
 
 interface FindStudentsModalProps {
   application?: Application
@@ -95,19 +96,20 @@ const FindStudentModal = ({
               {formatMessage(m.studentsOverviewOtherStudentIdModalDescription)}
             </Text>
             <Box marginTop={5} marginBottom={7}>
-              <Input
-                type="number"
+              <InputController
+                id="nationalId"
                 label={formatMessage(m.studentsOverviewOtherStudentInputLabel)}
-                name="search_student"
+                format="######-####"
                 backgroundColor="blue"
                 size="sm"
-                hasError={studentNotFoundError}
-                errorMessage={formatMessage(
-                  m.studentsOverviewNoStudentFoundInModal,
-                )}
-                onChange={(v) => {
-                  setStudentNationalId(v.target.value)
-                }}
+                onChange={(v) =>
+                  setStudentNationalId(v.target.value.replace(/\W/g, ''))
+                }
+                error={
+                  studentNotFoundError
+                    ? formatMessage(m.studentsOverviewNoStudentFoundInModal)
+                    : undefined
+                }
               />
             </Box>
             <Box display={'flex'} justifyContent={'spaceBetween'}>

@@ -20,7 +20,3 @@ export const loader = style({
   minHeight: 24,
   minWidth: 24,
 })
-
-export const detailsIcon = style({
-  marginLeft: 8,
-})

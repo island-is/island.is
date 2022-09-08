@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -45,7 +46,7 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
-import { useNamespace } from '../hooks'
+import { useFeatureFlag, useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -58,7 +59,7 @@ import {
   pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -66,8 +67,6 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
-const SHOULD_LINK_TO_SERVICE_WEB = false
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -103,6 +102,9 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  customAlertBanners?: GetAlertBannerQuery['getAlertBanner'][]
+  footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
 }
@@ -157,6 +159,9 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  articleAlertBannerContent,
+  customAlertBanners,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -166,6 +171,11 @@ const Layout: NextComponentType<
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
+
+  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
+    'iswebfooterlinkingtosupportpage',
+    false,
+  )
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -220,11 +230,31 @@ const Layout: NextComponentType<
           )}`,
           ...organizationAlertBannerContent,
         },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
+      ]
+        .concat(
+          customAlertBanners.map((banner) => ({
+            bannerId: `custom-alert-${stringHash(
+              JSON.stringify(banner ?? {}),
+            )}`,
+            ...banner,
+          })),
+        )
+        .filter(
+          (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+        ),
     )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+    customAlertBanners,
+  ])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -237,11 +267,7 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -323,7 +349,6 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
         {alertBanners.map((banner) => (
           <AlertBanner
             key={banner.bannerId}
@@ -349,7 +374,9 @@ const Layout: NextComponentType<
             }}
           />
         ))}
-
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -373,28 +400,40 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  {...(activeLocale === 'is'
+                    ? {
+                        linkToHelpWeb: isWebFooterLinkingToSupportPage
+                          ? linkResolver('serviceweb').href
+                          : '',
+                      }
+                    : { topLinksContact: footerUpperContact })}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
-                : { topLinksContact: footerUpperContact })}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`
@@ -642,12 +681,24 @@ export const withMainLayout = <T,>(
         ? componentProps['organizationPage']['alertBanner']
         : undefined
 
+    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'article' in componentProps
+        ? componentProps['article']['alertBanner']
+        : undefined
+
+    const customAlertBanners =
+      'customAlertBanners' in componentProps
+        ? componentProps['customAlertBanners']
+        : []
+
     return {
       layoutProps: {
         ...layoutProps,
         ...layoutConfig,
         ...themeConfig,
         organizationAlertBannerContent,
+        articleAlertBannerContent,
+        customAlertBanners,
       },
       componentProps,
     }

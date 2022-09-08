@@ -75,7 +75,7 @@ describe('PoliceController - Get all', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => [
-          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1' },
+          { rvMalSkjolMals_ID: 'Id 1', heitiSkjals: 'Name 1.pdf' },
           { rvMalSkjolMals_ID: 'Id 2', heitiSkjals: 'Name 2' },
         ],
       })
@@ -85,8 +85,8 @@ describe('PoliceController - Get all', () => {
 
     it('should return police case files', () => {
       expect(then.result).toEqual([
-        { id: 'Id 1', name: 'Name 1' },
-        { id: 'Id 2', name: 'Name 2' },
+        { id: 'Id 1', name: 'Name 1.pdf' },
+        { id: 'Id 2', name: 'Name 2.pdf' },
       ])
     })
   })

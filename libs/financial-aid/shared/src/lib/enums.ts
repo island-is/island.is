@@ -61,11 +61,6 @@ export enum ApplicationEventType {
   ASSIGNCASE = 'AssignCase',
 }
 
-export enum RolesRule {
-  OSK = 'osk',
-  VEITA = 'veita',
-}
-
 export enum FileType {
   TAXRETURN = 'TaxReturn',
   INCOME = 'Income',

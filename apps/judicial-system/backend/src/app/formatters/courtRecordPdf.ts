@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import isSameDay from 'date-fns/isSameDay'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -33,6 +34,22 @@ import {
   addNormalCenteredText,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
+
+export function formatCourtEndDate(
+  formatMessage: FormatMessage,
+  courtStartDate?: Date,
+  courtEndTime?: Date,
+): string {
+  return courtEndTime
+    ? formatMessage(courtRecord.signOff, {
+        endDate:
+          courtStartDate && isSameDay(courtStartDate, courtEndTime)
+            ? 'NONE'
+            : formatDate(courtEndTime, 'd. MMMM'),
+        endTime: formatDate(courtEndTime, 'p'),
+      })
+    : formatMessage(courtRecord.inSession)
+}
 
 function constructRestrictionCourtRecordPdf(
   theCase: Case,
@@ -105,7 +122,8 @@ function constructRestrictionCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -253,18 +271,18 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
+          actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
@@ -346,7 +364,8 @@ function constructInvestigationCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -497,18 +516,18 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.courtEndTime
-      ? formatMessage(courtRecord.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(courtRecord.inSession),
+    formatCourtEndDate(
+      formatMessage,
+      theCase.courtStartDate,
+      theCase.courtEndTime,
+    ),
   )
   addFooter(
     doc,
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
+          actorInstitution: user.institution?.name || 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
@@ -551,8 +570,8 @@ export async function getCourtRecordPdfAsString(
 
 export async function getCourtRecordPdfAsBuffer(
   theCase: Case,
-  user: User,
   formatMessage: FormatMessage,
+  user?: User,
 ): Promise<Buffer> {
   const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 

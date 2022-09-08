@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -21,7 +22,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import { flatten } from '@nestjs/common'
+import flatten from 'lodash/flatten'
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
@@ -60,7 +61,6 @@ const getTimeline = (
   let i = 0
   let offset = 50
   let lastTimestamp = 0
-  let lastYear = 0
 
   let currentMonth = 0
 
@@ -86,7 +86,6 @@ const getTimeline = (
           offset={offset}
         />,
       )
-      lastYear = year
       monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()
@@ -190,8 +189,22 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
 
   const monthEvents = eventMap.get(months[month].year).get(months[month].month)
 
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 6,
+      }
+    : {
+        paddingTop: 3,
+      }
+
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box paddingLeft={1}>
           <GridContainer>
@@ -200,11 +213,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box
-                  borderTopWidth="standard"
-                  borderColor="standard"
-                  paddingTop={6}
-                >
+                <Box {...borderProps}>
                   <Text variant="h2" paddingBottom={3}>
                     {slice.title}
                   </Text>

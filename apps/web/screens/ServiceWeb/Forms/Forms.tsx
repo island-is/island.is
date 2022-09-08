@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
@@ -67,6 +67,11 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
+
+  const organizationNamespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [organization?.namespace],
+  )
 
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
@@ -205,6 +210,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   </Box>
                 ) : (
                   <ServiceWebStandardForm
+                    namespace={organizationNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
@@ -302,5 +308,5 @@ ServiceWebFormsPage.getInitialProps = async ({
 
 export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

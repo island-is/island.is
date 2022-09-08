@@ -240,6 +240,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
   }
+
+  getLimitedAccessCase(id: string): Promise<Case> {
+    return this.get(`case/${id}/limitedAccess`)
+  }
 }
 
 export default BackendApi

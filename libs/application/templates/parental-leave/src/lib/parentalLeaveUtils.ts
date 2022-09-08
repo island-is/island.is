@@ -1,20 +1,21 @@
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import isSameMonth from 'date-fns/isSameMonth'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
 import parseISO from 'date-fns/parseISO'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
 import round from 'lodash/round'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   Field,
-  FormatMessage,
   FormValue,
-  getValueViaPath,
   Option,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -39,6 +40,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
+import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -243,10 +245,12 @@ export const getOtherParentOptions = (application: Application) => {
   const options: Option[] = [
     {
       value: NO,
+      dataTestId: 'no-other-parent',
       label: parentalLeaveFormMessages.shared.noOtherParent,
     },
     {
       value: MANUAL,
+      dataTestId: 'other-parent',
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]
@@ -387,10 +391,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParentObj.chooseOtherParent',
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,13 +428,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentName',
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentId',
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -468,6 +483,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -537,6 +557,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
@@ -545,6 +566,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -652,6 +674,21 @@ export const getOtherParentName = (
     return spouse.name
   }
 
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
+    }
+
+    return spouse.name
+  }
+
   return otherParentName
 }
 
@@ -729,9 +766,39 @@ export const calculateEndDateForPeriodWithStartAndLength = (
 
   const wholeMonthsToAdd = Math.floor(lengthInMonths)
   const daysToAdd =
-    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 28
+    (Math.round((lengthInMonths - wholeMonthsToAdd) * 100) / 100) * 30
 
-  return addDays(addMonths(start, wholeMonthsToAdd), daysToAdd - 1)
+  const lastMonthBeforeEndDate = addMonths(start, wholeMonthsToAdd)
+  let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
+  const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
+
+  // If startDay is first day of the month and daysToAdd = 0
+  if (daysToAdd === 0 && start.getDate() === 1) {
+    return endDate
+  }
+
+  // If endDate is the end of February and startDate is 15
+  if (daysInMonth === 28 && lastMonthBeforeEndDate.getDate() === 15) {
+    endDate = addDays(endDate, -1)
+  }
+
+  // February and months with 31 days
+  if (!isSameMonth(lastMonthBeforeEndDate, endDate)) {
+    if (daysInMonth === 31) {
+      endDate = addDays(endDate, 1)
+    } else if (daysInMonth === 28) {
+      endDate = addDays(endDate, -2)
+    } else if (daysInMonth === 29) {
+      endDate = addDays(endDate, -1)
+    }
+  } else {
+    // startDate is 16 and months with 31 days
+    if (start.getDate() === 16 && daysInMonth === 31) {
+      endDate = addDays(endDate, 1)
+    }
+  }
+
+  return endDate
 }
 
 export const calculatePeriodLengthInMonths = (
@@ -747,4 +814,18 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
+}
+
+const getMobilePhoneNumber = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber
+}
+
+export const removeCountryCode = (application: Application) => {
+  return getMobilePhoneNumber(application)?.startsWith('+354')
+    ? getMobilePhoneNumber(application)?.slice(4)
+    : getMobilePhoneNumber(application)?.startsWith('00354')
+    ? getMobilePhoneNumber(application)?.slice(5)
+    : getMobilePhoneNumber(application)
 }

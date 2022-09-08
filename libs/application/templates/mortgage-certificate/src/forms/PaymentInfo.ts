@@ -1,14 +1,11 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  Form,
-  FormModes,
   buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
 export const PaymentInfo: Form = buildForm({

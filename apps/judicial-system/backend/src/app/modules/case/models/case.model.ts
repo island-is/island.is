@@ -34,7 +34,7 @@ import { Defendant } from '../../defendant'
   tableName: 'case',
   timestamps: true,
 })
-export class Case extends Model<Case> {
+export class Case extends Model {
   /**********
    * A surrogate key assigned by the database
    **********/
@@ -107,11 +107,11 @@ export class Case extends Model<Case> {
    * A case number in LÖKE (police information system) connected to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  policeCaseNumber!: string
+  policeCaseNumbers!: string[]
 
   /**********
    * The case's defendants
@@ -643,8 +643,7 @@ export class Case extends Model<Case> {
   isolationToDate?: Date
 
   /**********
-   * The case conclusion - optional for custody and travel ban cases as the core conclusions
-   * are auto generated
+   * The case conclusion
    **********/
   @Column({
     type: DataType.TEXT,
@@ -855,6 +854,16 @@ export class Case extends Model<Case> {
   caseModifiedExplanation?: string
 
   /**********
+   * The history on when a case's ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulingModifiedHistory?: string
+
+  /**********
    * The explanation given for the extension of a case
    **********/
   @Column({
@@ -874,4 +883,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   isArchived?: boolean
+
+  /**********
+   * The date and time of when when the defender in a case opened the case
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  seenByDefender?: Date
 }

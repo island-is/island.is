@@ -5,7 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 type ScreenAttributes = {
   isNavigable?: boolean
@@ -36,4 +36,25 @@ export type FormScreen =
 export type ResolverContext = {
   formNode: FormNode
   dataSchema: Schema
+}
+
+export enum ScreenType {
+  NEW,
+  ONGOING,
+  NOT_SUPPORTED,
+  LOADING,
+}
+
+export type Delegation = {
+  type: string
+  from: {
+    nationalId: string
+    name: string
+  }
+}
+
+export type DelegationsScreenDataType = {
+  screenType: ScreenType
+  allowedDelegations?: string[]
+  authDelegations?: Delegation[]
 }

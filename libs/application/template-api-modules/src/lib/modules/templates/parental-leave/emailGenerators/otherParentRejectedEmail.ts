@@ -1,12 +1,25 @@
 import get from 'lodash/get'
 
-import { ApplicationConfigurations } from '@island.is/application/core'
+import { Message } from '@island.is/email-service'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { ApplicationConfigurations } from '@island.is/application/types'
+
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
+import { isRunningInProduction } from '../constants'
+
+export type OtherParentRejectedEmail = (
+  props: EmailTemplateGeneratorProps,
+  senderName?: string,
+  senderEmail?: string,
+) => Message
 
 // TODO handle translations
-export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
+export const generateOtherParentRejected: OtherParentRejectedEmail = (
+  props,
+  senderName,
+  senderEmail,
+) => {
   const {
     application,
     options: { email, clientLocationOrigin },
@@ -15,7 +28,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-  const subject = 'Beiðni um tilfærslu réttinda hafnað um fæðingarorlof'
+  const subject = 'Beiðni þín um tilfærslu réttinda hafnað'
 
   return {
     from: {
@@ -42,24 +55,24 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Image',
           context: {
-            src: pathToAsset('child.jpg'),
+            src: pathToAsset('reject.jpeg'),
             alt: 'Barn myndskreyting',
           },
         },
         { component: 'Heading', context: { copy: subject } },
-        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        { component: 'Copy', context: { copy: 'Góðan dag / Good day,' } },
         {
           component: 'Copy',
           context: {
             copy:
-              'Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.',
+              'Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
             copy:
-              'Til þess að skoða umsókn þína getur þú smellt á takkann hér fyrir neðan.',
+              'The other parent has denied your request to transfer rights. You therefore need to modify your application.',
           },
         },
         {

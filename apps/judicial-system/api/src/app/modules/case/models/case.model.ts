@@ -44,8 +44,8 @@ export class Case implements TCase {
   @Field(() => String)
   readonly state!: CaseState
 
-  @Field()
-  readonly policeCaseNumber!: string
+  @Field(() => [String])
+  readonly policeCaseNumbers!: string[]
 
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
@@ -258,5 +258,11 @@ export class Case implements TCase {
   readonly caseModifiedExplanation?: string
 
   @Field({ nullable: true })
+  readonly rulingModifiedHistory?: string
+
+  @Field({ nullable: true })
   readonly caseResentExplanation?: string
+
+  @Field({ nullable: true })
+  readonly seenByDefender?: string
 }

@@ -23,6 +23,7 @@ import {
   IntroHeader,
   ServicePortalPath,
   m,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -50,7 +51,7 @@ const IdentityQuery = gql`
   }
 `
 
-function GrantAccess() {
+const GrantAccess: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings-access-control')
 
   const noUserFoundToast = () => {
@@ -139,14 +140,24 @@ function GrantAccess() {
   return (
     <Box>
       <IntroHeader
-        title={defineMessage({
-          id: 'sp.settings-access-control:grant-intro-title',
-          defaultMessage: 'Veita aðgang',
-        })}
+        title={
+          userInfo?.profile?.name
+            ? formatMessage(
+                {
+                  id: 'sp.settings-access-control:grant-intro-title-w-name',
+                  defaultMessage: '{name} veitir umboð',
+                },
+                { name: userInfo.profile.name },
+              )
+            : defineMessage({
+                id: 'sp.settings-access-control:grant-intro-title',
+                defaultMessage: 'Veita aðgang',
+              })
+        }
         intro={defineMessage({
           id: 'sp.settings-access-control:grant-intro',
           defaultMessage:
-            'Hér velur þú einstakling sem á að fá umboð til að sjá gögn á Mínum síðum. Í næsta skrefi velur þú hvaða umboð þessi einstaklingur fær.',
+            'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
       />
 

@@ -5,13 +5,14 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
+} from '@island.is/application/core'
+import {
   Form,
   FormModes,
   FormValue,
   ExternalData,
-  buildSubmitField,
-  buildDescriptionField,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { m } from './messages'
 import Logo from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'

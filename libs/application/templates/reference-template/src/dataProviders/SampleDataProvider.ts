@@ -2,7 +2,7 @@ import {
   BasicDataProvider,
   Application,
   SuccessfulDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 interface SampleProviderData {
   value: string
@@ -11,7 +11,7 @@ interface SampleProviderData {
 export class SampleDataProvider extends BasicDataProvider {
   type = 'SampleDataProvider'
 
-  async provide(application: Application): Promise<unknown> {
+  async provide(_application: Application): Promise<unknown> {
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     const data: SampleProviderData = {

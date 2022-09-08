@@ -28,9 +28,18 @@ export class DataProtectionComplaintService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      const attachedFiles = await this.applicationAttachmentProvider.getFiles(
-        ['complaint.documents', 'commissions.documents'],
+      const complaintAttachedFiles = await this.applicationAttachmentProvider.getFiles(
+        ['complaint.documents'],
         application,
+      )
+
+      const commissionsAttachedFiles = await this.applicationAttachmentProvider.getFiles(
+        ['commissions.documents'],
+        application,
+      )
+
+      const attachedFiles = complaintAttachedFiles.concat(
+        commissionsAttachedFiles,
       )
 
       const complaintPdf = await this.pdfFileProvider.getApplicationPdf(

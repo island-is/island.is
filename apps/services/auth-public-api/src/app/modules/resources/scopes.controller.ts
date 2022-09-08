@@ -5,15 +5,11 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import {
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
+import { Documentation } from '@island.is/nest/swagger'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('scopes')
 @Controller('v1/scopes')
@@ -22,16 +18,25 @@ export class ScopesController {
 
   @Scopes('@island.is/auth/delegations:read')
   @Get()
-  @ApiOkResponse({ type: [ApiScope] })
-  @ApiUnauthorizedResponse()
-  @ApiForbiddenResponse()
-  @ApiInternalServerErrorResponse()
+  @Documentation({
+    isAuthorized: true,
+    request: {
+      query: {
+        locale: { type: String, required: false },
+      },
+    },
+    response: {
+      type: [ApiScope],
+    },
+  })
   async findAllWithExplicitDelegationGrant(
     @CurrentUser() user: User,
+    @Query('locale') locale?: string,
   ): Promise<ApiScope[]> {
     return this.resourcesService.findAllowedDelegationApiScopeListForUser(
       user.scope,
       user,
+      locale,
     )
   }
 }

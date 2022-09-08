@@ -418,15 +418,16 @@
         }
       }
     },
-    "/api/School/GetSchoolForSchoolStaff": {
+    "/api/School/GetSchoolForSchoolStaff/{userSsn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
         "summary": "Gets the school a person with a given SSN is associated with, if any. Returns null if person is not a school employee.",
         "parameters": [
           {
             "name": "userSsn",
-            "in": "query",
+            "in": "path",
             "description": "",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -544,6 +545,77 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/Student/CreateLicenseBook": {
+      "post": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Registeres new driving license book",
+        "requestBody": {
+          "description": "Information in book to register",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DigitalBookCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -2294,6 +2366,69 @@
         }
       }
     },
+    "/api/TestCenter/StudentLicenseNumber": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Get student license number",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "query",
+            "description": "Social security number of student",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "License category",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStudentLicenseNumberResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/api/TestCenter/ConfirmPracticalTestAndUpdateLicence": {
       "post": {
         "tags": ["DrivingLicenseBook"],
@@ -3300,6 +3435,37 @@
         },
         "additionalProperties": false,
         "description": ""
+      },
+      "GetStudentLicenseNumberResponse": {
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "categoriesOnLicense": {
+            "type": "string",
+            "nullable": true
+          },
+          "temporaryLicense": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "result": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "GetStudentOverviewForTeacherResponse": {
         "type": "object",

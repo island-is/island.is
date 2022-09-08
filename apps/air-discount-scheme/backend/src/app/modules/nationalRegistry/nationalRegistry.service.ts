@@ -1,19 +1,25 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
-import * as kennitala from 'kennitala'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  NationalRegistryGeneralLookupResponse,
-  NationalRegistryFamilyLookupResponse,
-  NationalRegistryUser,
-  FamilyMember,
-} from './nationalRegistry.types'
+import { NationalRegistryUser } from './nationalRegistry.types'
 import { environment } from '../../../environments'
+import {
+  EinstaklingarApi,
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaForeldriRequest,
+  EinstaklingarGetForsjaRequest,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
-export const MAX_AGE_LIMIT = 18
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -79,9 +85,43 @@ const TEST_USERS: NationalRegistryUser[] = [
     lastName: 'Ameríka',
     gender: 'kk',
     address: 'Vallargata 1',
-    postalcode: 900,
+    postalcode: 600,
+    city: 'Akureyri',
+  },
+  {
+    // Gervimadur Færeyjar
+    nationalId: '0101302399',
+    firstName: 'Gervimaður',
+    middleName: '',
+    lastName: 'Færeyjar',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 100,
+    city: 'Reykjavík',
+  },
+  {
+    // Gervibarn Ameríku
+    nationalId: '2222222229',
+    firstName: 'Litli',
+    middleName: 'Jói',
+    lastName: 'Ameríkuson',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 100,
     city: 'Vestmannaeyjar',
   },
+  {
+    // Gervibarn Ameríku
+    nationalId: '3333333339',
+    firstName: 'Litla',
+    middleName: 'Jóna',
+    lastName: 'Ameríkudóttir',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 100,
+    city: 'Vestmannaeyjar',
+  },
+
   {
     // Gervibarn Friðrik
     nationalId: '1204209090',
@@ -186,38 +226,94 @@ const TEST_USERS: NationalRegistryUser[] = [
 @Injectable()
 export class NationalRegistryService {
   constructor(
-    private httpService: HttpService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    private nationalRegistryIndividualsApi: EinstaklingarApi,
   ) {}
 
-  baseUrl = environment.nationalRegistry.url
+  personApiWithAuth(authUser: AuthUser) {
+    return this.nationalRegistryIndividualsApi.withMiddleware(
+      new AuthMiddleware(
+        authUser,
+        environment.nationalRegistry
+          .authMiddlewareOptions as AuthMiddlewareOptions,
+      ),
+    )
+  }
 
-  private getCacheKey(nationalId: string, suffix: 'user' | 'children'): string {
-    return `${CACHE_KEY}_${nationalId}_${suffix}`
+  // Þjóðskrá API gender keys
+  private mapGender(genderId: string): 'kk' | 'kvk' | 'hvk' | 'óvíst' {
+    if (['1', '3'].includes(genderId)) {
+      return 'kk'
+    } else if (['2', '4'].includes(genderId)) {
+      return 'kvk'
+    } else if (['7', '8'].includes(genderId)) {
+      return 'hvk'
+    }
+    return 'óvíst'
   }
 
   private createNationalRegistryUser(
-    response: NationalRegistryGeneralLookupResponse,
-  ): NationalRegistryUser | null {
-    if (response.error) {
-      return null
-    }
-
-    const parts = response.name.split(' ')
+    response: Einstaklingsupplysingar,
+  ): NationalRegistryUser {
+    const parts = response.fulltNafn?.split(' ') ?? []
     return {
-      nationalId: response.ssn,
+      nationalId: response.kennitala,
       firstName: parts[0] || '',
       middleName: parts.slice(1, -1).join(' '),
       lastName: parts.slice(-1).pop() || '',
-      gender: response.gender,
-      address: response.address,
-      postalcode: parseInt(response.postalcode),
-      city: response.city,
+      gender: this.mapGender(response.kynkodi),
+      address: response.logheimili?.heiti ?? response.adsetur?.heiti ?? '',
+      postalcode: parseInt(
+        response.logheimili?.postnumer ?? response.adsetur?.postnumer ?? '0',
+      ),
+      city: response.logheimili?.stadur ?? response.adsetur?.stadur ?? '',
     }
   }
 
-  async getUser(nationalId: string): Promise<NationalRegistryUser | null> {
+  async getRelations(authUser: AuthUser): Promise<Array<string>> {
+    const response = await this.personApiWithAuth(authUser)
+      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        id: authUser.nationalId,
+      })
+      .catch(this.handle404)
+
+    if (response === undefined) {
+      return []
+    }
+    return response
+  }
+
+  async getCustodians(
+    auth: AuthUser,
+    childNationalId: string,
+  ): Promise<Array<NationalRegistryUser | null>> {
+    const response = await this.personApiWithAuth(auth)
+      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
+        id: auth.nationalId,
+        barn: childNationalId,
+      })
+      .catch(this.handle404)
+
+    if (response === undefined) {
+      return []
+    }
+    // Add the callee parent to custodians
+    // Custody relation isn't circular/transitive
+    response.push(auth.nationalId)
+
+    const custodians = []
+    for (const custodian of response) {
+      const mappedCustodian = await this.getUser(custodian, auth)
+      custodians.push(mappedCustodian)
+    }
+    return custodians
+  }
+
+  async getUser(
+    nationalId: string,
+    auth: AuthUser,
+  ): Promise<NationalRegistryUser | null> {
     if (environment.environment !== 'prod') {
       const testUser = TEST_USERS.find(
         (testUser) => testUser.nationalId === nationalId,
@@ -226,87 +322,46 @@ export class NationalRegistryService {
         return testUser
       }
     }
-    const cacheKey = this.getCacheKey(nationalId, 'user')
-    const cacheValue = await this.cacheManager.get(cacheKey)
-    if (cacheValue) {
-      return cacheValue.user
+
+    const response = await this.personApiWithAuth(auth)
+      .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+        id: nationalId,
+      })
+      .catch(this.handle404)
+      .catch(this.handleInvalidJson)
+
+    if (!response) {
+      return null
     }
-    const response: {
-      data: [NationalRegistryGeneralLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
-      .toPromise()
 
-    const user = this.createNationalRegistryUser(response.data[0])
-    if (user) {
-      await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
-    } else if (user === null) {
-      this.logger.error(
-        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
-      )
+    const mappedUser = this.createNationalRegistryUser(response)
+    return mappedUser
+  }
+
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return undefined
     }
-    return user
+    throw error
   }
 
-  private isParent(person: FamilyMember): boolean {
-    return ['1', '2'].includes(person.gender)
-  }
-
-  private isChild(person: FamilyMember): boolean {
-    return (
-      !this.isParent(person) && kennitala.info(person.ssn).age < MAX_AGE_LIMIT
-    )
-  }
-
-  async getRelatedChildren(nationalId: string): Promise<string[]> {
-    if (environment.environment !== 'prod') {
-      const testUser = TEST_USERS.find((user) => user.nationalId === nationalId)
-      if (testUser) {
-        return TEST_USERS.filter(
-          (user) =>
-            user.nationalId !== nationalId && user.address === testUser.address,
-        ).map((user) => user.nationalId)
+  private handleInvalidJson(error: { type: string }): Einstaklingsupplysingar {
+    // OpenAPI client fails when national ids do not contain the promised information,
+    // (e.g. kerfiskennitala). The client fails with 'invalid-json'.
+    // Instead of the backend failing we return a null user with no ADS rights.
+    if (error.type === 'invalid-json') {
+      return {
+        bannmerking: false,
+        faedingardagur: new Date(),
+        kennitala: '0000000000',
+        kynkodi: '-1',
+        nafn: '',
+        adsetur: {
+          heiti: '',
+          postnumer: '-100',
+        },
       }
     }
-
-    const cacheKey = this.getCacheKey(nationalId, 'children')
-    const cacheValue = await this.cacheManager.get(cacheKey)
-    if (cacheValue) {
-      return cacheValue.children
-    }
-
-    const response: {
-      data: [NationalRegistryFamilyLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
-      .toPromise()
-
-    const data = response.data[0]
-    if (data.error) {
-      this.logger.error(
-        `Could not find family members for User<${nationalId}> due to: ${data.error}`,
-      )
-      return []
-    }
-
-    const family = data.results
-    const user = family.find((person) => person.ssn === nationalId)
-    if (!user) {
-      this.logger.error(
-        `Could not find User<${nationalId}> in list of family members`,
-      )
-      return []
-    }
-
-    let children: string[] = []
-    if (this.isParent(user)) {
-      children = family
-        .filter((person) => person.ssn !== nationalId && this.isChild(person))
-        .map((person) => person.ssn)
-    }
-
-    await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
-
-    return children
+    throw error
   }
 }

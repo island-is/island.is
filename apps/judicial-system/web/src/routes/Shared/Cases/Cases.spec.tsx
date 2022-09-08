@@ -34,7 +34,7 @@ const mockCasesQuery = [
             modified: '2020-09-16T19:51:39.466Z',
             created: '2020-09-16T19:50:08.033Z',
             state: CaseState.DRAFT,
-            policeCaseNumber: 'string',
+            policeCaseNumbers: ['string'],
             defendants: [{ nationalId: 'string', name: 'Jon Harring Sr.' }],
             validToDate: null,
             parentCase: {
@@ -46,7 +46,7 @@ const mockCasesQuery = [
             created: '2020-12-16T19:50:08.033Z',
             modified: '2020-12-16T19:51:39.466Z',
             state: CaseState.DRAFT,
-            policeCaseNumber: 'string',
+            policeCaseNumbers: ['string'],
             defendants: [{ nationalId: 'string', name: 'Jon Harring' }],
             validToDate: null,
           },
@@ -55,7 +55,7 @@ const mockCasesQuery = [
             created: '2020-05-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.ACCEPTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -66,7 +66,7 @@ const mockCasesQuery = [
             created: '2020-08-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.NEW,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [
               { nationalId: '012345-6789', name: 'Erlingur L Kristinsson' },
             ],
@@ -77,7 +77,7 @@ const mockCasesQuery = [
             created: '2020-08-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.DELETED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [
               { nationalId: '012345-6789', name: 'Erlingur L Kristinsson' },
             ],
@@ -88,7 +88,7 @@ const mockCasesQuery = [
             created: '2021-01-16T19:50:08.033Z',
             modified: '2021-01-16T19:51:39.466Z',
             state: CaseState.RECEIVED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'D. M. Kil' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
@@ -97,7 +97,7 @@ const mockCasesQuery = [
             created: '2021-02-16T19:50:08.033Z',
             modified: '2021-02-16T19:51:39.466Z',
             state: CaseState.SUBMITTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Moe' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
@@ -120,7 +120,7 @@ const mockCourtCasesQuery = [
             modified: '2020-09-16T19:51:39.466Z',
             created: '2020-09-16T19:50:08.033Z',
             state: CaseState.DRAFT,
-            policeCaseNumber: 'string',
+            policeCaseNumbers: ['string'],
             defendants: [{ nationalId: 'string', name: 'Jon Harring Sr.' }],
             validToDate: null,
             parentCase: {
@@ -132,7 +132,7 @@ const mockCourtCasesQuery = [
             created: '2020-12-16T19:50:08.033Z',
             modified: '2020-12-16T19:51:39.466Z',
             state: CaseState.DRAFT,
-            policeCaseNumber: 'string',
+            policeCaseNumbers: ['string'],
             defendants: [{ nationalId: 'string', name: 'Jon Harring' }],
             validToDate: null,
           },
@@ -141,7 +141,7 @@ const mockCourtCasesQuery = [
             created: '2020-05-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.ACCEPTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             validToDate: '2020-11-11T12:31:00.000Z',
             accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -152,7 +152,7 @@ const mockCourtCasesQuery = [
             created: '2020-08-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.DELETED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [
               { nationalId: '012345-6789', name: 'Erlingur L Kristinsson' },
             ],
@@ -163,7 +163,7 @@ const mockCourtCasesQuery = [
             created: '2021-01-16T19:50:08.033Z',
             modified: '2021-01-16T19:51:39.466Z',
             state: CaseState.RECEIVED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'D. M. Kil' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
@@ -172,7 +172,7 @@ const mockCourtCasesQuery = [
             created: '2021-02-16T19:50:08.033Z',
             modified: '2021-02-16T19:51:39.466Z',
             state: CaseState.SUBMITTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Moe' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
@@ -196,9 +196,10 @@ const mockPrisonUserCasesQuery = [
             created: '2020-05-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.ACCEPTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: true,
+            rulingDate: '2020-09-16T19:51:39.466Z',
           },
           {
             id: 'test_id_2',
@@ -206,9 +207,10 @@ const mockPrisonUserCasesQuery = [
             created: '2020-05-16T19:50:08.033Z',
             modified: '2020-09-16T19:51:39.466Z',
             state: CaseState.ACCEPTED,
-            policeCaseNumber: '008-2020-X',
+            policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
             isValidToDateInThePast: false,
+            rulingDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },
@@ -274,9 +276,8 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        await screen.findByText('Lögreglustjórinn á höfuðborgarsvæðinu'),
-      ).toBeInTheDocument()
+      expect(await screen.findByText('Lögreglustjórinn á')).toBeInTheDocument()
+      expect(await screen.findByText('höfuðborgarsvæðinu')).toBeInTheDocument()
     })
 
     test('should list all active cases in a list', async () => {
@@ -335,9 +336,8 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        await screen.findByText('Héraðsdómur Reykjavíkur'),
-      ).toBeInTheDocument()
+      expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
+      expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
     })
 
     test('should not display a button to create a cases', async () => {

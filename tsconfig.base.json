@@ -88,6 +88,12 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statements-inao": [
+        "libs/api/domains/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/api/domains/fishing-license": [
+        "libs/api/domains/fishing-license/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -106,8 +112,14 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/mailchimp": [
+        "libs/api/domains/mailchimp/src/index.ts"
+      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/api/domains/municipalities-financial-aid": [
+        "libs/api/domains/municipalities-financial-aid/src/index.ts"
       ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
@@ -133,13 +145,22 @@
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
+      "@island.is/api/domains/vehicles": [
+        "libs/api/domains/vehicles/src/index.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
+      "@island.is/application/api/files": [
+        "libs/application/api/files/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
+      "@island.is/application/core/messages": [
+        "libs/application/core/src/lib/messages.ts"
+      ],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
       ],
@@ -157,6 +178,12 @@
       ],
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
+      ],
+      "@island.is/application/templates/announcement-of-death": [
+        "libs/application/templates/announcement-of-death/src/index.ts"
+      ],
+      "@island.is/application/templates/announcement-of-death/types": [
+        "libs/application/templates/announcement-of-death/src/types.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -191,8 +218,17 @@
       "@island.is/application/templates/family-matters-core/*": [
         "libs/application/templates/family-matters/core/src/*"
       ],
+      "@island.is/application/templates/financial-aid": [
+        "libs/application/templates/financial-aid/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statements-inao": [
+        "libs/application/templates/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
+      ],
+      "@island.is/application/templates/general-fishing-license": [
+        "libs/application/templates/general-fishing-license/src/index.ts"
       ],
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
@@ -206,17 +242,35 @@
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
       ],
+      "@island.is/application/templates/marriage-conditions": [
+        "libs/application/templates/marriage-conditions/src/index.ts"
+      ],
+      "@island.is/application/templates/marriage-conditions/types": [
+        "libs/application/templates/marriage-conditions/src/types.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/no-debt-certificate": [
+        "libs/application/templates/no-debt-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/operating-license": [
+        "libs/application/templates/operating-license/src/index.ts"
+      ],
+      "@island.is/application/templates/operating-license/types": [
+        "libs/application/templates/operating-license/src/types.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
+      ],
+      "@island.is/application/templates/parental-leave/messages": [
+        "libs/application/templates/parental-leave/src/lib/messages.ts"
       ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
@@ -227,6 +281,7 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
@@ -244,9 +299,15 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/adr-and-machine-license": [
+        "libs/clients/adr-and-machine-license/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
+      ],
+      "@island.is/clients/charge-fjs-v2": [
+        "libs/clients/charge-fjs-v2/src/index.ts"
       ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
@@ -265,6 +326,12 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/financial-statements-inao": [
+        "libs/clients/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/clients/fishing-license": [
+        "libs/clients/fishing-license/src/index.ts"
+      ],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
@@ -273,12 +340,16 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/municipalities-financial-aid": [
+        "libs/clients/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
+      "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment": ["libs/clients/payment/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
@@ -299,6 +370,7 @@
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
+      "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -338,12 +410,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
-      "@island.is/gjafakort/application/*": [
-        "apps/gjafakort/application/src/*"
-      ],
-      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
-      "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
@@ -381,6 +447,9 @@
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
+      ],
+      "@island.is/judicial-system/message": [
+        "libs/judicial-system/message/src/index.ts"
       ],
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
@@ -445,9 +514,6 @@
       "@island.is/service-portal/endorsements": [
         "libs/service-portal/endorsements/src/index.ts"
       ],
-      "@island.is/service-portal/family": [
-        "libs/service-portal/family/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -462,6 +528,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/information": [
+        "libs/service-portal/information/src/index.ts"
       ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
@@ -478,7 +547,9 @@
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"
       ],
-      "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
+      "@island.is/service-portal/vehicles": [
+        "libs/service-portal/vehicles/src/index.ts"
+      ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

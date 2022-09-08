@@ -20,7 +20,6 @@ const items = [
   { label: 'Banana', value: 'banana' },
   { label: 'Fæðingarorlof', value: 'faedingarorlof' },
   { label: 'Atvinna', value: 'atvinna' },
-  { label: 'Ferðagjöf', value: 'ferdagjof' },
   { label: 'Vottorð', value: 'vottord' },
 ]
 

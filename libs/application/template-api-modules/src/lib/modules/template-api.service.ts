@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationTypes } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../types'
 import {
   ParentalLeaveService,
@@ -15,12 +15,19 @@ import {
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
+  AnnouncementOfDeathService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
+  MarriageConditionsSubmissionService,
+  FinancialAidService,
   DrivingSchoolConfirmationService,
+  PassportService,
+  OperatingLicenseService,
+  FinancialStatementsInaoTemplateService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -55,12 +62,19 @@ export class TemplateAPIService {
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
+    private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly announcementOfDeathService: AnnouncementOfDeathService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly marriageConditionsSubmissionService: MarriageConditionsSubmissionService,
+    private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
+    private readonly passportService: PassportService,
+    private readonly operatingLicenseService: OperatingLicenseService,
+    private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -78,12 +92,20 @@ export class TemplateAPIService {
       | PublicDebtPaymentPlanTemplateService
       | GeneralPetitionService
       | CriminalRecordSubmissionService
+      | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
+      | AnnouncementOfDeathService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
-      | DrivingSchoolConfirmationService,
+      | MarriageConditionsSubmissionService
+      | FinancialAidService
+      | DrivingSchoolConfirmationService
+      | MortgageCertificateSubmissionService
+      | PassportService
+      | OperatingLicenseService
+      | FinancialStatementsInaoTemplateService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -182,6 +204,11 @@ export class TemplateAPIService {
           this.criminalRecordSubmissionService,
           action,
         )
+      case ApplicationTypes.GENERAL_FISHING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.generalFishingLicenseService,
+          action,
+        )
       case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
         return this.tryRunningActionOnService(
           this.dataProtectionComplaintService,
@@ -190,6 +217,11 @@ export class TemplateAPIService {
       case ApplicationTypes.P_SIGN:
         return this.tryRunningActionOnService(
           this.pSignSubmissionService,
+          action,
+        )
+      case ApplicationTypes.ANNOUNCEMENT_OF_DEATH:
+        return this.tryRunningActionOnService(
+          this.announcementOfDeathService,
           action,
         )
       case ApplicationTypes.EXAMPLE_PAYMENT:
@@ -207,9 +239,28 @@ export class TemplateAPIService {
           this.mortgageCertificateSubmissionService,
           action,
         )
+      case ApplicationTypes.FINANCIAL_AID:
+        return this.tryRunningActionOnService(this.financialAidService, action)
       case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
         return this.tryRunningActionOnService(
           this.drivingSchoolConfirmationService,
+          action,
+        )
+      case ApplicationTypes.PASSPORT:
+        return this.tryRunningActionOnService(this.passportService, action)
+      case ApplicationTypes.MARRIAGE_CONDITIONS:
+        return this.tryRunningActionOnService(
+          this.marriageConditionsSubmissionService,
+          action,
+        )
+      case ApplicationTypes.OPERATING_LCENSE:
+        return this.tryRunningActionOnService(
+          this.operatingLicenseService,
+          action,
+        )
+      case ApplicationTypes.FINANCIAL_STATEMENTS_INAO:
+        return this.tryRunningActionOnService(
+          this.financialStatementsInaoService,
           action,
         )
     }

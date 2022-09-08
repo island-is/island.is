@@ -1,11 +1,8 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
-import {
-  Application,
-  formatText,
-  coreMessages,
-} from '@island.is/application/core'
+import { formatText, coreMessages } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
@@ -32,7 +29,6 @@ type ReviewSectionProps = {
 
 const ReviewSection: FC<ReviewSectionProps> = ({
   application,
-  index,
   step: { state, description, title },
 }) => {
   const { formatMessage } = useLocale()

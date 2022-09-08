@@ -31,6 +31,19 @@ export class AccessControlService {
     })
   }
 
+  async findByRecyclingPartner(
+    partnerId: string,
+  ): Promise<AccessControlModel[]> {
+    return this.accessControlModel.findAll({
+      where: { partnerId, role: ['recyclingCompany', 'recyclingCompanyAdmin'] },
+      include: [
+        {
+          model: RecyclingPartnerModel,
+        },
+      ],
+    })
+  }
+
   async findOne(nationalId: string): Promise<AccessControlModel> {
     return this.accessControlModel.findOne({
       where: { nationalId },

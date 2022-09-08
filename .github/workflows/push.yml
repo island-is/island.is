@@ -5,6 +5,7 @@ on:
     branches:
       - 'main'
       - 'release/**'
+      - 'pre-release/**'
     paths-ignore:
       - '**/*.md'
     tags:
@@ -17,6 +18,10 @@ on:
       - synchronize
       - labeled
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
@@ -27,15 +32,18 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
+      PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
-      LABELED_FOR_DEPLOY: ${{ steps.should-run.outputs.LABELED_FOR_DEPLOY }}
+      PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -65,8 +73,22 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
+          echo "::set-output name=PRE_RELEASE::false"
+
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
+
+            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
+                  exit 0
+                fi
+            done
 
             for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
             do
@@ -84,10 +106,6 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
-              if [[ "$deployFeature" == "true" ]]; then
-                echo "Pull request just labeled as feature-deploy"
-                echo "::set-output name=LABELED_FOR_DEPLOY::true"
-              fi
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -100,10 +118,23 @@ jobs:
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
           fi
+          for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            do
+                echo "Checking branch against pre_release_pattern '$pre_pattern'"
+                echo "Check if this is a pre-release and if it should generate a feature-deploy"
+                if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
+                  echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
+                  echo "::set-output name=PRE_CHECK::feature-deploy"
+                  echo "::set-output name=PRE_RELEASE::true"
+                  exit 0
+                fi
+            done
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -124,10 +155,10 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -138,14 +169,6 @@ jobs:
         run: |
           node -v
           ls -l `which node`
-
-      - name: Cleanup disk space
-        run: |
-          df -h
-          # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
-          sudo rm -rf "/usr/local/share/boost"
-          sudo apt clean
-          df -h
 
       - name: Git refs
         id: git_refs
@@ -163,8 +186,19 @@ jobs:
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
+      - name: Checking out relevant branches for a pre-release
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        run: |
+          echo "Feature Name: $FEATURE_NAME"
+
+          git checkout main
+          git checkout $GITHUB_SHA
+
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
       - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
@@ -225,7 +259,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
       - run: |
-            echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -241,7 +275,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -261,8 +295,14 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - run: |
-          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' ]]; then
+      - name: Preparing BASE tags
+        id: git_nx_base
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+        run: |
+          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
             export PR_REF=$GITHUB_SHA
@@ -277,12 +317,6 @@ jobs:
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-        id: git_nx_base
-        name: Preparing BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
@@ -362,27 +396,35 @@ jobs:
             echo "::set-output name=BUILD_CHUNKS::$CHUNKS"
           fi
 
-      - name: Prepare deployment targets
-        id: deploy_map
-        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
-        run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
-          echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
-          fi
-
       - name: Gather unaffected docker images
         id: unaffected
         run: |
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-cypress docker-jest)
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
+      - name: check pre-release
+        if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
+        run: |
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
+
+      - name: Prepare deployment targets
+        id: deploy_map
+        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
+        run: |
+          export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
+          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
+          echo "CHUNKS: '$CHUNKS'"
+          if [[ $CHUNKS != "[]" ]]; then
+            echo "::set-output name=IMAGES::$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
+          fi
+
   tests:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -391,11 +433,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
-      - uses: actions/setup-node@v2
+
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -426,7 +468,6 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        shell: bash
 
       - uses: ./.github/actions/unit-test
         with:
@@ -439,7 +480,9 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -460,12 +503,12 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
@@ -473,8 +516,8 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
-      
-      - uses: actions/checkout@v2
+
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
@@ -548,15 +591,17 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: kubernetes-runner
+    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
@@ -592,21 +637,19 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
-        if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `${COMMENT}`
-            })
+            await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -624,7 +667,7 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check docker-build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -632,11 +675,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Retag unaffected Docker images
-        if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
@@ -648,20 +692,14 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
-    strategy:
-      matrix:
-        service:
-          - islandis
-          - gjafakort
-          - identity-auth-api
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Trigger Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
+          curl $SPINNAKER_URL/webhooks/webhook/islandis -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
@@ -673,9 +711,31 @@ jobs:
             }
           }
           BODY
-
+      - name: Trigger Deployment for IDS-Services
+        env:
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+          GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
+        run: |
+          if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
+          export IDENTITY_SERVER_DOCKER_TAG=${IDENTITY_SERVER_RUN_NUMBER}_main_${IDENTITY_SERVER_HEAD_SHA:0:7}
+          echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
+          echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
+          curl $SPINNAKER_URL/webhooks/webhook/ids-dev -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$SPINNAKER_WEBHOOK_TOKEN",
+            "branch": "$GIT_BRANCH_DEPLOY",
+            "parameters": {
+              "dependency_docker_tag": "$DOCKER_TAG",
+              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
+            }
+          }
+          BODY
   push-success:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
     needs:
       - pre-checks
@@ -697,7 +757,9 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks

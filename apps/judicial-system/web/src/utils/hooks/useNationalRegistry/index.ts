@@ -17,10 +17,8 @@ const useNationalRegistry = (nationalId?: string) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
 
   const isMounted = useRef(false)
-  const { isValid: isValidNationalId } = validate(
-    nationalId ?? '',
-    'national-id',
-  )
+
+  const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -28,7 +26,7 @@ const useNationalRegistry = (nationalId?: string) => {
     data: personData,
     error: personError,
   } = useSWR<NationalRegistryResponsePerson>(
-    shouldFetch && isValidNationalId && !isBusiness(nationalId)
+    shouldFetch && nationalId && isValidNationalId && !isBusiness(nationalId)
       ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nationalId}`
       : null,
     fetcher,
@@ -38,7 +36,7 @@ const useNationalRegistry = (nationalId?: string) => {
     data: businessData,
     error: businessError,
   } = useSWR<NationalRegistryResponseBusiness>(
-    shouldFetch && isValidNationalId && isBusiness(nationalId)
+    shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
       ? `/api/nationalRegistry/getBusinessesByNationalId?nationalId=${nationalId}`
       : null,
     fetcher,
@@ -52,7 +50,7 @@ const useNationalRegistry = (nationalId?: string) => {
     } else {
       isMounted.current = true
     }
-  }, [nationalId])
+  }, [nationalId, shouldFetch])
 
   useEffect(() => {
     if (

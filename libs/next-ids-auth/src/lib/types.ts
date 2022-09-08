@@ -1,5 +1,4 @@
-import { User } from 'next-auth'
-import { SessionBase } from 'next-auth/_utils'
+import { Session, User } from 'next-auth'
 
 export type AuthUser = User & {
   nationalId: string
@@ -8,7 +7,7 @@ export type AuthUser = User & {
   idToken: string
 }
 
-export type AuthSession = SessionBase & {
+export type AuthSession = Session & {
   idToken: string
   scope: string[]
 }

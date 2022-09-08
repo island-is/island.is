@@ -5,10 +5,10 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  DefaultEvents,
 } from '@island.is/application/core'
-import { UPLOAD_ACCEPT } from '../../constants'
-import { addDocuments } from '../../lib/messages'
+import { DefaultEvents, FormValue } from '@island.is/application/types'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../constants'
+import { addDocuments, error } from '../../lib/messages'
 import {
   hasReceivedInjuryCertificate,
   hasReceivedPoliceReport,
@@ -35,16 +35,20 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             description: '',
             space: 5,
             titleVariant: 'h5',
-            condition: (formValue) => !hasReceivedInjuryCertificate(formValue),
+            condition: (formValue: FormValue) =>
+              !hasReceivedInjuryCertificate(formValue),
           }),
           buildFileUploadField({
             id: 'attachments.injuryCertificateFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.injuryCertificate.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            condition: (formValue) => !hasReceivedInjuryCertificate(formValue),
+            condition: (formValue: FormValue) =>
+              !hasReceivedInjuryCertificate(formValue),
           }),
           buildDescriptionField({
             id: 'attachments.powerOfAttorney.title',
@@ -52,7 +56,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             description: '',
             space: 5,
             titleVariant: 'h5',
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
@@ -61,7 +65,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             id: 'attachments.powerOfAttorney.fileLink',
             component: 'ProxyDocument',
             title: '',
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
@@ -69,11 +73,13 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.powerOfAttorneyFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.powerOfAttorney.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               isPowerOfAttorney(formValue) &&
               !isUniqueAssignee(formValue, !!isAssignee) &&
               !hasReceivedProxyDocument(formValue),
@@ -84,7 +90,7 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
             description: '',
             space: 5,
             titleVariant: 'h5',
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               isReportingOnBehalfOfInjured(formValue) &&
               isFatalAccident(formValue) &&
               !hasReceivedPoliceReport(formValue),
@@ -92,11 +98,13 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.deathCertificateFile.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.deathCertificate.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               isReportingOnBehalfOfInjured(formValue) &&
               isFatalAccident(formValue) &&
               !hasReceivedPoliceReport(formValue),
@@ -117,21 +125,26 @@ export const addAttachmentsSection = (isAssignee?: boolean) =>
           buildFileUploadField({
             id: 'attachments.additionalFiles.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            condition: (formValue) =>
+            condition: (formValue: FormValue) =>
               !isUniqueAssignee(formValue, !!isAssignee),
           }),
           buildFileUploadField({
             id: 'attachments.additionalFilesFromReviewer.file',
             title: '',
+            maxSize: FILE_SIZE_LIMIT,
+            maxSizeErrorText: error.attachmentMaxSizeError,
             uploadAccept: UPLOAD_ACCEPT,
             uploadHeader: addDocuments.general.uploadHeader,
             uploadDescription: addDocuments.general.uploadDescription,
             uploadButtonLabel: addDocuments.general.uploadButtonLabel,
-            condition: (formValue) => isUniqueAssignee(formValue, !!isAssignee),
+            condition: (formValue: FormValue) =>
+              isUniqueAssignee(formValue, !!isAssignee),
           }),
           buildSubmitField({
             id: 'overview.submit',

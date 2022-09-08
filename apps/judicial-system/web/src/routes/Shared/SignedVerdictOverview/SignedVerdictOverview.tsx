@@ -1,53 +1,83 @@
-import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select/src/types'
-import { useIntl } from 'react-intl'
-import compareAsc from 'date-fns/compareAsc'
+import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
-import subMilliseconds from 'date-fns/subMilliseconds'
 
 import {
+  Case,
   CaseDecision,
   CaseState,
   CaseType,
   InstitutionType,
+  isInvestigationCase,
   isRestrictionCase,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   UserRole,
+  CaseAppealDecision,
+  isAcceptingCaseDecision,
+  UpdateCase,
+  User,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   FormFooter,
   PageLayout,
-  FormContentContainer,
   Modal,
-  DateTime,
   BlueBox,
+  InfoCard,
+  PdfButton,
+  CourtRecordAccordionItem,
+  FormContentContainer,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  CommentsAccordionItem,
+  CaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+  useCase,
+  useInstitution,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  Box,
+  Text,
+  Accordion,
+  Button,
+  Select,
+  Tooltip,
+  Stack,
+  Divider,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  capitalize,
+  formatDate,
+  caseTypes,
+} from '@island.is/judicial-system/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import * as Constants from '@island.is/judicial-system/consts'
+import {
+  core,
+  signedVerdictOverview as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
+import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
+import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as constants from '@island.is/judicial-system/consts'
 
+import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
-import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
+import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 
 interface ModalControls {
   open: boolean
@@ -55,36 +85,121 @@ interface ModalControls {
   text: ReactNode
 }
 
-interface DateTime {
-  value?: Date
-  isValid: boolean
+function showCustodyNotice(
+  type: CaseType,
+  state: CaseState,
+  decision?: CaseDecision,
+) {
+  return (
+    (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
+    state === CaseState.ACCEPTED &&
+    isAcceptingCaseDecision(decision)
+  )
 }
+
+export const titleForCase = (
+  formatMessage: IntlShape['formatMessage'],
+  theCase: Case,
+) => {
+  const isTravelBan =
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    theCase.type === CaseType.TRAVEL_BAN
+
+  if (theCase.state === CaseState.REJECTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return 'Kröfu um rannsóknarheimild hafnað'
+    } else {
+      return 'Kröfu hafnað'
+    }
+  }
+
+  if (theCase.state === CaseState.DISMISSED) {
+    return formatMessage(m.dismissedTitle)
+  }
+
+  if (theCase.isValidToDateInThePast) {
+    return formatMessage(m.validToDateInThePast, {
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
+  }
+
+  return isInvestigationCase(theCase.type)
+    ? formatMessage(m.investigationAccepted)
+    : formatMessage(m.restrictionActive, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
+}
+
+export const rulingDateLabel = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+) => {
+  return formatMessage(m.rulingDateLabel, {
+    courtEndTime: `${formatDate(
+      workingCase.courtEndTime,
+      'PPP',
+    )} kl. ${formatDate(workingCase.courtEndTime, constants.TIME_FORMAT)}`,
+  })
+}
+
+export const shouldHideNextButton = (workingCase: Case, user?: User) =>
+  user?.role !== UserRole.PROSECUTOR ||
+  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+  workingCase.state === CaseState.REJECTED ||
+  workingCase.state === CaseState.DISMISSED ||
+  workingCase.isValidToDateInThePast ||
+  Boolean(workingCase.childCase)
+
+export const getExtensionInfoText = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+  user?: User,
+): string | undefined => {
+  if (user?.role !== UserRole.PROSECUTOR) {
+    // Only prosecutors should see the explanation.
+    return undefined
+  }
+
+  let rejectReason:
+    | 'rejected'
+    | 'dismissed'
+    | 'isValidToDateInThePast'
+    | 'acceptingAlternativeTravelBan'
+    | 'hasChildCase'
+    | 'none' = 'none'
+
+  if (workingCase.state === CaseState.REJECTED) {
+    rejectReason = 'rejected'
+  } else if (workingCase.state === CaseState.DISMISSED) {
+    rejectReason = 'dismissed'
+  } else if (
+    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+  ) {
+    rejectReason = 'acceptingAlternativeTravelBan'
+  } else if (workingCase.childCase) {
+    rejectReason = 'hasChildCase'
+  } else if (workingCase.isValidToDateInThePast) {
+    // This must be after the rejected and alternatice decision cases as the custody
+    // end date only applies to cases that were accepted by the judge. This must also
+    // be after the already extended case as the custody end date may expire after
+    // the case has been extended.
+    rejectReason = 'isValidToDateInThePast'
+  }
+
+  return rejectReason === 'none'
+    ? undefined
+    : formatMessage(m.sections.caseExtension.extensionInfoV2, {
+        hasChildCase: Boolean(workingCase.childCase),
+        caseType: workingCase.type,
+        rejectReason,
+      })
+}
+
+type availableModals = 'NoModal' | 'SigningModal'
 
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
-  const [
-    caseModifiedExplanation,
-    setCaseModifiedExplanation,
-  ] = useState<string>()
-  const [
-    caseModifiedExplanationErrorMessage,
-    setCaseModifiedExplanationErrorMessage,
-  ] = useState<string>('')
-  const [
-    isCaseModificationConfirmed,
-    setIsCaseModificationConfirmed,
-  ] = useState<boolean>(false)
-  const [validToDateChanged, setValidToDateChanged] = useState<boolean>()
-  const [
-    isolationToDateChanged,
-    setIsolationToDateChanged,
-  ] = useState<boolean>()
-  const [
-    modifiedIsolationToDate,
-    setModifiedIsolationToDate,
-  ] = useState<DateTime>()
 
   // Case sharing state
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
@@ -93,7 +208,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setSelectedSharingInstitutionId,
   ] = useState<ValueType<ReactSelectOption>>()
 
-  // Signature state
+  // Court record signature state
   const [
     requestCourtRecordSignatureResponse,
     setRequestCourtRecordSignatureResponse,
@@ -108,7 +223,18 @@ export const SignedVerdictOverview: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    refreshCase,
   } = useContext(FormContext)
+
+  // Ruling signature state
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -123,6 +249,33 @@ export const SignedVerdictOverview: React.FC = () => {
     isSendingNotification,
   } = useCase()
 
+  // skip loading institutions if the user does not have an id
+  const { prosecutorsOffices } = useInstitution(!user?.id)
+
+  /**
+   * If the case is not rejected it must be accepted because
+   * this screen is only rendered if the case is either accepted
+   * or rejected. Here we are first handling the case where a case
+   * is rejected, then the case where a case is accepted and the
+   * custody end date is in the past and then we assume that
+   * the case is accepted and the custody end date has not come yet.
+   * For accepted cases, we first handle the case where the judge
+   * decided only accept an alternative travel ban and finally we
+   * assume that the actual custody was accepted.
+   */
+
+  const canModifyCaseDates = useCallback(() => {
+    return (
+      user &&
+      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+        user.role,
+      ) ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
+      (workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY)
+    )
+  }, [workingCase.type, user])
+
   const [getCourtRecordSignatureConfirmation] = useLazyQuery(
     CourtRecordSignatureConfirmationQuery,
     {
@@ -134,44 +287,16 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse(
             courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
           )
-          if (workingCase) {
-            reloadCase({ variables: { input: { id: workingCase.id } } })
-          }
+          refreshCase()
         } else {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
       },
-      onError: (reason) => {
-        console.log(reason)
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
       },
     },
   )
-
-  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (caseData?.case) {
-        setWorkingCase(caseData.case)
-      }
-    },
-  })
-
-  useEffect(() => {
-    if (workingCase.validToDate) {
-      setModifiedValidToDate({
-        value: new Date(workingCase.validToDate),
-        isValid: true,
-      })
-    }
-
-    if (workingCase.isolationToDate) {
-      setModifiedIsolationToDate({
-        value: new Date(workingCase.isolationToDate),
-        isValid: true,
-      })
-    }
-  }, [workingCase.validToDate, workingCase.isolationToDate])
 
   const handleRequestCourtRecordSignature = async () => {
     if (!workingCase) {
@@ -200,116 +325,30 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
-          router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+          router.push(
+            `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+          )
         } else {
           router.push(
-            `${Constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
         await extendCase(workingCase.id).then((extendedCase) => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             } else {
-              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+              router.push(
+                `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${extendedCase.id}`,
+              )
             }
           }
         })
       }
     }
-  }
-
-  const getExtensionInfoText = (workingCase: Case): string | undefined => {
-    if (user?.role !== UserRole.PROSECUTOR) {
-      // Only prosecutors should see the explanation.
-      return undefined
-    } else if (
-      workingCase.state === CaseState.REJECTED ||
-      workingCase.state === CaseState.DISMISSED
-    ) {
-      return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY
-          ? 'gæsluvarðhald'
-          : workingCase.type === CaseType.TRAVEL_BAN
-          ? 'farbann'
-          : 'heimild'
-      } sem var ${
-        workingCase.state === CaseState.REJECTED ? 'hafnað' : 'vísað frá'
-      }.`
-    } else if (
-      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    ) {
-      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
-    } else if (workingCase.childCase) {
-      return 'Framlengingarkrafa hefur þegar verið útbúin.'
-    } else if (workingCase.isValidToDateInThePast) {
-      // This must be after the rejected and alternatice decision cases as the custody
-      // end date only applies to cases that were accepted by the judge. This must also
-      // be after the already extended case as the custody end date may expire after
-      // the case has been extended.
-      return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY
-          ? 'gæsluvarðhald'
-          : workingCase.type === CaseType.TRAVEL_BAN
-          ? 'farbann'
-          : 'heimild'
-      } sem er lokið.`
-    } else {
-      return undefined
-    }
-  }
-
-  const getModificationSuccessText = () => {
-    let modification = ''
-
-    const validToDateAndIsolationToDateAreTheSame =
-      modifiedValidToDate &&
-      modifiedValidToDate.value &&
-      workingCase.validToDate &&
-      modifiedIsolationToDate &&
-      modifiedIsolationToDate.value &&
-      workingCase.isolationToDate &&
-      compareAsc(modifiedValidToDate?.value, modifiedIsolationToDate?.value) ===
-        0
-
-    if (validToDateAndIsolationToDateAreTheSame) {
-      modification = `Gæsluvarðhald og einangrun til ${formatDate(
-        modifiedValidToDate?.value,
-        'PPPP',
-      )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-        modifiedValidToDate?.value,
-        Constants.TIME_FORMAT,
-      )}`
-    } else if (validToDateChanged || isolationToDateChanged) {
-      if (validToDateChanged) {
-        modification = `Gæsluvarðhald til ${formatDate(
-          modifiedValidToDate?.value,
-          'PPPP',
-        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-          modifiedValidToDate?.value,
-          Constants.TIME_FORMAT,
-        )}. `
-      }
-
-      if (isolationToDateChanged) {
-        modification = `${modification}Einangrun til ${formatDate(
-          modifiedIsolationToDate?.value,
-          'PPPP',
-        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-          modifiedIsolationToDate?.value,
-          Constants.TIME_FORMAT,
-        )}.`
-      }
-    }
-
-    return formatMessage(m.sections.modifyDatesModal.successText, {
-      modification,
-      courtOrProsecutor:
-        user?.role === UserRole.PROSECUTOR
-          ? 'héraðsdómstól'
-          : 'saksóknaraembætti',
-    })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -376,10 +415,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }),
           text: (
             <MarkdownWrapper
-              text={m.sections.shareCaseModal.closeText}
-              format={{
+              markdown={formatMessage(m.sections.shareCaseModal.closeText, {
                 prosecutorsOffice: workingCase.sharedWithProsecutorsOffice.name,
-              }}
+              })}
             />
           ),
         })
@@ -401,10 +439,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }),
           text: (
             <MarkdownWrapper
-              text={m.sections.shareCaseModal.openText}
-              format={{
+              markdown={formatMessage(m.sections.shareCaseModal.openText, {
                 prosecutorsOffice: (institution as ReactSelectOption).label,
-              }}
+              })}
             />
           ),
         })
@@ -417,6 +454,7 @@ export const SignedVerdictOverview: React.FC = () => {
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
+            active: true,
           },
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
@@ -434,147 +472,23 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleValidToDateModification = (
-    value: Date | undefined,
-    valid: boolean,
-  ) => {
-    if (
-      value &&
-      workingCase.isCustodyIsolation &&
-      workingCase.isolationToDate
-    ) {
-      const validToDateIsBeforeIsolationToDate =
-        compareAsc(value, new Date(workingCase.isolationToDate)) === -1
+  const onModifyDatesSubmit = async (update: UpdateCase) => {
+    const updatedCase = await updateCase(workingCase.id, { ...update })
 
-      const validToIsolationToDiff = validToDateIsBeforeIsolationToDate
-        ? differenceInMilliseconds(value, new Date(workingCase.isolationToDate))
-        : 0
-
-      if (validToDateIsBeforeIsolationToDate) {
-        setModifiedIsolationToDate({
-          value: subMilliseconds(value, Math.abs(validToIsolationToDiff)),
-          isValid: valid,
-        })
-
-        setIsolationToDateChanged(true)
-      }
+    if (!updatedCase) {
+      return false
     }
 
-    setModifiedValidToDate({
-      value: value ?? modifiedValidToDate?.value,
-      isValid: valid,
+    await sendNotification(workingCase.id, NotificationType.MODIFIED)
+
+    setWorkingCase({
+      ...workingCase,
+      ...(update as Case),
     })
 
-    setValidToDateChanged(
-      value !== undefined &&
-        workingCase.validToDate !== undefined &&
-        compareAsc(value, new Date(workingCase.validToDate)) !== 0,
-    )
+    return true
   }
 
-  const handleDateModification = async () => {
-    if (!caseModifiedExplanation) {
-      return
-    }
-
-    if (modifiedValidToDate?.value && modifiedIsolationToDate?.value) {
-      const formattedValidToDate = formatISO(modifiedValidToDate.value, {
-        representation: 'complete',
-      })
-
-      const formattedIsolationToDate = formatISO(
-        modifiedIsolationToDate.value,
-        {
-          representation: 'complete',
-        },
-      )
-
-      const update = {
-        validToDate: formattedValidToDate,
-        isolationToDate: formattedIsolationToDate,
-        caseModifiedExplanation: `${
-          workingCase.caseModifiedExplanation
-            ? workingCase.caseModifiedExplanation
-            : ''
-        }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
-      }
-
-      const updatedCase = await updateCase(workingCase.id, { ...update })
-
-      if (updatedCase) {
-        await sendNotification(workingCase.id, NotificationType.MODIFIED)
-      }
-
-      setWorkingCase({
-        ...workingCase,
-        ...update,
-      })
-
-      setIsCaseModificationConfirmed(true)
-    }
-  }
-
-  const createCaseModifiedExplanation = (reason?: string) => {
-    const now = new Date()
-
-    return `${
-      workingCase.caseModifiedExplanation ? '<br/><br/>' : ''
-    }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
-      now,
-      Constants.TIME_FORMAT,
-    )} - ${user?.name} ${user?.title}, ${
-      user?.institution?.name
-    }<br/>Ástæða: ${reason}`
-  }
-
-  const handleCaseModifiedExplanationChange = (reason: string) => {
-    const { isValid } = validate(reason, 'empty')
-
-    setCaseModifiedExplanation(reason)
-
-    if (isValid) {
-      setCaseModifiedExplanationErrorMessage('')
-    }
-  }
-
-  const handleCaseModifiedExplanationBlur = (reason: string) => {
-    const { isValid, errorMessage } = validate(reason, 'empty')
-
-    if (isValid) {
-      setCaseModifiedExplanation(reason)
-    } else {
-      setCaseModifiedExplanationErrorMessage(errorMessage)
-    }
-  }
-
-  const isCaseModificationInvalid = () => {
-    return (
-      !caseModifiedExplanation ||
-      !caseModifiedExplanation.trim() ||
-      !modifiedValidToDate?.isValid ||
-      (workingCase.isCustodyIsolation && !modifiedIsolationToDate?.isValid) ||
-      (!validToDateChanged && !isolationToDateChanged)
-    )
-  }
-
-  /**
-   * We assume that the signed verdict page is only opened for
-   * cases in state REJECTED or ACCEPTED.
-   *
-   * Based on the judge's decision the signed verdict page can
-   * be in one of five states:
-   *
-   * 1. Rejected
-   *    - state === REJECTED and decision === REJECTING
-   * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
-   * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
-   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
-   * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
-   */
   return (
     <PageLayout
       workingCase={workingCase}
@@ -583,44 +497,400 @@ export const SignedVerdictOverview: React.FC = () => {
       notFound={caseNotFound}
     >
       <PageHeader title={formatMessage(titles.shared.signedVerdictOverview)} />
-      <SignedVerdictOverviewForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        setAccusedAppealDate={setAccusedAppealDate}
-        setProsecutorAppealDate={setProsecutorAppealDate}
-        withdrawAccusedAppealDate={withdrawAccusedAppealDate}
-        withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
-        shareCaseWithAnotherInstitution={shareCaseWithAnotherInstitution}
-        selectedSharingInstitutionId={selectedSharingInstitutionId}
-        setSelectedSharingInstitutionId={setSelectedSharingInstitutionId}
-        isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
-        handleRequestCourtRecordSignature={handleRequestCourtRecordSignature}
-        handleOpenDateModificationModal={() =>
-          setIsModifyingDates(!isModifyingDates)
-        }
-      />
+      <FormContentContainer>
+        <Box marginBottom={5}>
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              preTextIcon="arrowBack"
+              onClick={() => router.push(constants.CASES_ROUTE)}
+            >
+              Til baka
+            </Button>
+          </Box>
+          <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+            <Box>
+              <Box marginBottom={1}>
+                <Text as="h1" variant="h1">
+                  {titleForCase(formatMessage, workingCase)}
+                </Text>
+              </Box>
+              <Box>
+                <Text variant="h5">
+                  {rulingDateLabel(formatMessage, workingCase)}
+                </Text>
+              </Box>
+            </Box>
+            <Box display="flex" flexDirection="column">
+              <RestrictionTags workingCase={workingCase} />
+            </Box>
+          </Box>
+          {isRestrictionCase(workingCase.type) &&
+            workingCase.state === CaseState.ACCEPTED && (
+              <CaseDates
+                workingCase={workingCase}
+                button={
+                  canModifyCaseDates()
+                    ? {
+                        label: formatMessage(core.update),
+                        onClick: () => setIsModifyingDates((value) => !value),
+                        icon: 'pencil',
+                      }
+                    : undefined
+                }
+              />
+            )}
+        </Box>
+        {workingCase.caseModifiedExplanation && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sections.modifyDatesInfo.titleV2, {
+                caseType: workingCase.type,
+              })}
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.caseModifiedExplanation}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
+        {workingCase.rulingModifiedHistory && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(m.sections.modifyRulingInfo.title)}
+              message={
+                <MarkdownWrapper
+                  markdown={workingCase.rulingModifiedHistory}
+                  textProps={{ variant: 'small' }}
+                />
+              }
+            />
+          </Box>
+        )}
+        <Box marginBottom={6}>
+          <InfoCard
+            data={[
+              {
+                title: formatMessage(core.policeCaseNumber),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
+              },
+              {
+                title: formatMessage(core.courtCaseNumber),
+                value: workingCase.courtCaseNumber,
+              },
+              {
+                title: formatMessage(core.prosecutor),
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+              },
+              {
+                title: formatMessage(core.court),
+                value: workingCase.court?.name,
+              },
+              {
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
+              },
+              {
+                title: formatMessage(core.judge),
+                value: workingCase.judge?.name,
+              },
+              // Conditionally add this field based on case type
+              ...(isInvestigationCase(workingCase.type)
+                ? [
+                    {
+                      title: formatMessage(core.caseType),
+                      value: capitalize(caseTypes[workingCase.type]),
+                    },
+                  ]
+                : []),
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar?.name,
+                    },
+                  ]
+                : []),
+            ]}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
+            defender={{
+              name: workingCase.defenderName ?? '',
+              defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
+              email: workingCase.defenderEmail,
+              phoneNumber: workingCase.defenderPhoneNumber,
+            }}
+          />
+        </Box>
+        {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+          workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+          workingCase.prosecutorAppealDecision ===
+            CaseAppealDecision.POSTPONE ||
+          workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
+          (user?.role === UserRole.JUDGE ||
+            user?.role === UserRole.REGISTRAR) &&
+          user?.institution?.type !== InstitutionType.HIGH_COURT && (
+            <Box marginBottom={7}>
+              <AppealSection
+                workingCase={workingCase}
+                setAccusedAppealDate={setAccusedAppealDate}
+                setProsecutorAppealDate={setProsecutorAppealDate}
+                withdrawAccusedAppealDate={withdrawAccusedAppealDate}
+                withdrawProsecutorAppealDate={withdrawProsecutorAppealDate}
+              />
+            </Box>
+          )}
+        {user?.role !== UserRole.STAFF && (
+          <>
+            <Box marginBottom={5} data-testid="accordionItems">
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+                {user && (
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                )}
+                {(workingCase.comments ||
+                  workingCase.caseFilesComments ||
+                  workingCase.caseResentExplanation) && (
+                  <CommentsAccordionItem workingCase={workingCase} />
+                )}
+              </Accordion>
+            </Box>
+            <Box marginBottom={6}>
+              <BlueBox>
+                <Box marginBottom={2} textAlign="center">
+                  <Text as="h3" variant="h3">
+                    {formatMessage(m.conclusionTitle)}
+                  </Text>
+                </Box>
+                <Box marginBottom={3}>
+                  <Box marginTop={1}>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
+                  </Box>
+                </Box>
+                <Box marginBottom={1} textAlign="center">
+                  <Text variant="h4">{workingCase.judge?.name}</Text>
+                </Box>
+              </BlueBox>
+            </Box>
+          </>
+        )}
+        <Box marginBottom={10}>
+          <Text as="h3" variant="h3" marginBottom={3}>
+            {formatMessage(m.caseDocuments)}
+          </Text>
+          <Box marginBottom={2}>
+            <Stack space={2} dividers>
+              {user?.role !== UserRole.STAFF && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'request'}
+                />
+              )}
+              {showCustodyNotice(
+                workingCase.type,
+                workingCase.state,
+                workingCase.decision,
+              ) && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonCustodyNotice)}
+                  pdfType="custodyNotice"
+                />
+              )}
+              <PdfButton
+                renderAs="row"
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType={'courtRecord'}
+              >
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role === UserRole.JUDGE ||
+                    user?.role === UserRole.REGISTRAR ? (
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : null)}
+              </PdfButton>
+              {user?.role !== UserRole.STAFF && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType={'ruling'}
+                >
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
+                      <SignedDocument
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
+                      />
+                    ) : user && user.id === workingCase.judge?.id ? (
+                      <Button
+                        size="small"
+                        loading={isRequestingRulingSignature}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          requestRulingSignature()
+                        }}
+                      >
+                        {formatMessage(m.signButton)}
+                      </Button>
+                    ) : (
+                      <Text>{formatMessage(m.unsignedDocument)}</Text>
+                    )}
+                    {user && user.id === workingCase.judge?.id && (
+                      <Box marginLeft={3}>
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          data-testid="modifyRulingButton"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            router.push(
+                              isRestrictionCase(workingCase.type)
+                                ? `${constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`
+                                : `${constants.INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            )
+                          }}
+                        >
+                          {capitalize(formatMessage(core.modify))}
+                        </Button>
+                      </Box>
+                    )}
+                  </Box>
+                </PdfButton>
+              )}
+            </Stack>
+          </Box>
+          <Divider />
+        </Box>
+        {user?.role === UserRole.PROSECUTOR &&
+          user.institution?.id ===
+            workingCase.creatingProsecutor?.institution?.id &&
+          isRestrictionCase(workingCase.type) && (
+            <Box marginBottom={9}>
+              <Box marginBottom={3}>
+                <Text variant="h3">
+                  {formatMessage(m.sections.shareCase.title)}{' '}
+                  <Tooltip text={formatMessage(m.sections.shareCase.info)} />
+                </Text>
+              </Box>
+              <BlueBox>
+                <Box display="flex">
+                  <Box flexGrow={1} marginRight={2}>
+                    <Select
+                      name="sharedWithProsecutorsOfficeId"
+                      label={formatMessage(m.sections.shareCase.label)}
+                      placeholder={formatMessage(
+                        m.sections.shareCase.placeholder,
+                      )}
+                      size="sm"
+                      icon={
+                        workingCase.sharedWithProsecutorsOffice
+                          ? 'checkmark'
+                          : undefined
+                      }
+                      options={prosecutorsOffices
+                        .map((prosecutorsOffice) => ({
+                          label: prosecutorsOffice.name,
+                          value: prosecutorsOffice.id,
+                        }))
+                        .filter((t) => t.value !== user?.institution?.id)}
+                      value={
+                        workingCase.sharedWithProsecutorsOffice
+                          ? {
+                              label:
+                                workingCase.sharedWithProsecutorsOffice.name,
+                              value: workingCase.sharedWithProsecutorsOffice.id,
+                            }
+                          : selectedSharingInstitutionId
+                          ? {
+                              label: (selectedSharingInstitutionId as ReactSelectOption)
+                                .label,
+                              value: (selectedSharingInstitutionId as ReactSelectOption)
+                                .value as string,
+                            }
+                          : null
+                      }
+                      onChange={(so: ValueType<ReactSelectOption>) =>
+                        setSelectedSharingInstitutionId(so)
+                      }
+                      disabled={Boolean(
+                        workingCase.sharedWithProsecutorsOffice,
+                      )}
+                    />
+                  </Box>
+                  <Button
+                    size="small"
+                    disabled={
+                      !selectedSharingInstitutionId &&
+                      !workingCase.sharedWithProsecutorsOffice
+                    }
+                    onClick={() =>
+                      shareCaseWithAnotherInstitution(
+                        selectedSharingInstitutionId,
+                      )
+                    }
+                  >
+                    {workingCase.sharedWithProsecutorsOffice
+                      ? formatMessage(m.sections.shareCase.close)
+                      : formatMessage(m.sections.shareCase.open)}
+                  </Button>
+                </Box>
+              </BlueBox>
+            </Box>
+          )}
+      </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.CASE_LIST_ROUTE}
-          hideNextButton={
-            user?.role !== UserRole.PROSECUTOR ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            workingCase.state === CaseState.REJECTED ||
-            workingCase.state === CaseState.DISMISSED ||
-            workingCase.isValidToDateInThePast ||
-            Boolean(workingCase.childCase)
-          }
-          nextButtonText={`Framlengja ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'gæslu'
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'farbann'
-              : 'heimild'
-          }`}
+          previousUrl={constants.CASES_ROUTE}
+          hideNextButton={shouldHideNextButton(workingCase, user)}
+          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
+            caseType: workingCase.type,
+          })}
           onNextButtonClick={() => handleCaseExtension()}
           nextIsLoading={isExtendingCase}
-          infoBoxText={getExtensionInfoText(workingCase)}
+          infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
         />
       </FormContentContainer>
       {shareCaseModal?.open && (
@@ -630,163 +900,19 @@ export const SignedVerdictOverview: React.FC = () => {
           primaryButtonText={formatMessage(
             m.sections.shareCaseModal.buttonClose,
           )}
-          handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+          onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
       <AnimatePresence exitBeforeEnter>
-        {isModifyingDates &&
-          (!isCaseModificationConfirmed ? (
-            <motion.div
-              key="dateModifyingModal"
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Modal
-                title={formatMessage(m.sections.modifyDatesModal.title)}
-                text={formatMessage(m.sections.modifyDatesModal.text)}
-                primaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.primaryButtonText,
-                )}
-                isPrimaryButtonDisabled={isCaseModificationInvalid()}
-                handlePrimaryButtonClick={() => handleDateModification()}
-                isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
-                secondaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.secondaryButtonText,
-                )}
-                handleSecondaryButtonClick={() => {
-                  setCaseModifiedExplanation(undefined)
-
-                  if (workingCase.validToDate) {
-                    setModifiedValidToDate({
-                      value: new Date(workingCase.validToDate),
-                      isValid: true,
-                    })
-                  }
-
-                  if (workingCase.isolationToDate) {
-                    setModifiedIsolationToDate({
-                      value: new Date(workingCase.isolationToDate),
-                      isValid: true,
-                    })
-                  }
-                  setIsModifyingDates(false)
-                }}
-              >
-                <Box marginBottom={5}>
-                  <Box marginBottom={3}>
-                    <Text variant="h3" as="h2">
-                      {formatMessage(
-                        m.sections.modifyDatesModal.reasonForChangeTitle,
-                      )}
-                    </Text>
-                  </Box>
-                  <Input
-                    name="reason"
-                    label={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangeLabel,
-                    )}
-                    placeholder={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangePlaceholder,
-                    )}
-                    onChange={(event) => {
-                      handleCaseModifiedExplanationChange(event.target.value)
-                    }}
-                    onBlur={(event) =>
-                      handleCaseModifiedExplanationBlur(event.target.value)
-                    }
-                    hasError={caseModifiedExplanationErrorMessage !== ''}
-                    errorMessage={caseModifiedExplanationErrorMessage}
-                    textarea
-                    rows={9}
-                    required
-                  />
-                </Box>
-                <Box marginBottom={6}>
-                  <BlueBox>
-                    <DateTime
-                      name="modifiedValidToDate"
-                      size="sm"
-                      datepickerLabel={formatMessage(
-                        m.sections.modifyDatesModal.modifiedValidToDateLabel,
-                      )}
-                      selectedDate={modifiedValidToDate?.value}
-                      onChange={(value, valid) => {
-                        handleValidToDateModification(value, valid)
-                      }}
-                      minDate={
-                        workingCase.rulingDate
-                          ? new Date(workingCase.rulingDate)
-                          : undefined
-                      }
-                      blueBox={false}
-                      required
-                    />
-                    {workingCase.isCustodyIsolation && (
-                      <Box marginTop={2}>
-                        <DateTime
-                          name="modifiedIsolationToDate"
-                          size="sm"
-                          datepickerLabel={formatMessage(
-                            m.sections.modifyDatesModal
-                              .modifiedIsolationToDateLabel,
-                          )}
-                          selectedDate={modifiedIsolationToDate?.value}
-                          onChange={(value, valid) => {
-                            setModifiedIsolationToDate({
-                              value: value ?? modifiedIsolationToDate?.value,
-                              isValid: valid,
-                            })
-
-                            setIsolationToDateChanged(
-                              value !== undefined &&
-                                workingCase.isolationToDate !== undefined &&
-                                compareAsc(
-                                  value,
-                                  new Date(workingCase.isolationToDate),
-                                ) !== 0,
-                            )
-                          }}
-                          minDate={
-                            workingCase.rulingDate
-                              ? new Date(workingCase.rulingDate)
-                              : undefined
-                          }
-                          maxDate={modifiedValidToDate?.value}
-                          blueBox={false}
-                          required
-                        />
-                      </Box>
-                    )}
-                  </BlueBox>
-                </Box>
-              </Modal>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="dateModifyingModalSuccess"
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Modal
-                title={formatMessage(m.sections.modifyDatesModal.successTitle)}
-                text={getModificationSuccessText()}
-                secondaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.secondaryButtonTextSuccess,
-                )}
-                handleSecondaryButtonClick={() => {
-                  setCaseModifiedExplanation(undefined)
-                  setValidToDateChanged(undefined)
-                  setIsolationToDateChanged(undefined)
-                  setIsModifyingDates(false)
-                  setIsCaseModificationConfirmed(false)
-                }}
-              />
-            </motion.div>
-          ))}
+        {isModifyingDates && (
+          <ModifyDatesModal
+            workingCase={workingCase}
+            onSubmit={onModifyDatesSubmit}
+            isSendingNotification={isSendingNotification}
+            isUpdatingCase={isUpdatingCase}
+            setIsModifyingDates={setIsModifyingDates}
+          />
+        )}
       </AnimatePresence>
       {requestCourtRecordSignatureResponse && (
         <Modal
@@ -832,10 +958,22 @@ export const SignedVerdictOverview: React.FC = () => {
               ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
               : ''
           }
-          handlePrimaryButtonClick={() => {
+          onPrimaryButtonClick={() => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}
+        />
+      )}
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          requestRulingSignature={requestRulingSignature}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => {
+            refreshCase()
+            setModalVisible('NoModal')
+          }}
+          navigateOnClose={false}
         />
       )}
     </PageLayout>

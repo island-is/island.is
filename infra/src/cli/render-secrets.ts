@@ -1,7 +1,7 @@
 import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
-import { charts } from '../uber-charts/all-charts'
+import { Charts } from '../uber-charts/all-charts'
 import { SSM } from '@aws-sdk/client-ssm'
 
 const API_INITIALIZATION_OPTIONS = {
@@ -14,6 +14,10 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
   'NOVA_USERNAME',
   'NOVA_PASSWORD',
 ]
+
+const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
+}
 
 const client = new SSM(API_INITIALIZATION_OPTIONS)
 
@@ -32,8 +36,8 @@ export const renderSecretsCommand = async (service: string) => {
 
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
-  const uberChart = new UberChart(Envs.dev)
-  const services = Object.values(charts).map(
+  const uberChart = new UberChart(Envs.dev01)
+  const services = Object.values(Charts).map(
     (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
   )
 
@@ -50,11 +54,22 @@ export const renderSecrets = async (service: string) => {
     })
     .reduce((p, c) => p.concat(c), [])
     .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+    .map((request) => {
+      const envName = request[0]
+      const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]
+      if (ssmName) {
+        return [envName, ssmName]
+      }
+      return request
+    })
 
   const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
 
   secretRequests.forEach(([envName, ssmName]) => {
-    console.log(`export ${envName}=${values[ssmName]}`)
+    const escapedValue = values[ssmName]
+      .replace(/\s+/g, ' ')
+      .replace(/'/g, "'\\''")
+    console.log(`export ${envName}='${escapedValue}'`)
   })
 }
 

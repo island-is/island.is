@@ -17,8 +17,6 @@ services:
     container_name: ads_redis_cluster
     image: grokzen/redis-cluster:5.0.6
     privileged: true
-    sysctls:
-      net.core.somaxconn: '511'
     environment:
       - IP=0.0.0.0
     ports:

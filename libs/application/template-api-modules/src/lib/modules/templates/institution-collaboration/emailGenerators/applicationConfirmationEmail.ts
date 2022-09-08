@@ -20,14 +20,11 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   applicationSenderEmail,
   attachments,
 ) => {
-  const {
-    application,
-    options: { locale },
-  } = props
+  const { application } = props
 
   const institutionName = getValueViaPath(
     application.answers,
-    'applicant.institution',
+    'applicant.institution.label',
   )
 
   const contactEmail = getValueViaPath(application.answers, 'contact.email')

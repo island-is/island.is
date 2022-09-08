@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState, useMemo } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import getConfig from 'next/config'
 import { theme } from '@island.is/island-ui/theme'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import {
@@ -27,8 +26,8 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import {
-  ChatPanel,
   HeadWithSocialSharing,
+  LiveChatIncChatPanel,
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -43,10 +42,18 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-
-import * as styles from './OrganizationWrapper.css'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { useNamespace } from '@island.is/web/hooks'
+import { liveChatIncConfig, watsonConfig } from './config'
+import { WatsonChatPanel } from '@island.is/web/components'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -74,17 +81,47 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
-export const footerEnabled = ['syslumenn', 'mannaudstorg']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
+export const footerEnabled = [
+  'syslumenn',
+  'district-commissioner',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
+
+  'sjukratryggingar',
+  'icelandic-health-insurance',
+
+  'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
+]
 
 export const getThemeConfig = (
   theme: string,
+  slug: string,
 ): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(slug)) {
+    footerVersion = 'organization'
+  }
+
   if (theme === 'sjukratryggingar')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
         headerColorScheme: 'blueberry',
+        footerVersion,
       },
     }
 
@@ -94,9 +131,10 @@ export const getThemeConfig = (
         themeConfig: {
           headerColorScheme: 'white',
           headerButtonColorScheme: 'negative',
+          footerVersion,
         },
       }
-    : { themeConfig: {} }
+    : { themeConfig: { footerVersion } }
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
@@ -109,6 +147,16 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
+    case 'fiskistofa':
+      return <FiskistofaHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -160,70 +208,103 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
-  if (!organization) return null
 
-  switch (organization.slug) {
+  const n = useNamespace(organization?.namespace ?? {})
+
+  let OrganizationFooterComponent = null
+
+  switch (organization?.slug) {
     case 'syslumenn':
-      return (
+    case 'district-commissioner':
+      OrganizationFooterComponent = (
         <SyslumennFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          questionsAndAnswersText={n(
+            'questionsAndAnswers',
+            'Spurningar og svör',
+          )}
+          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
         />
       )
+      break
     case 'sjukratryggingar':
-      return (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+    case 'icelandic-health-insurance':
+      OrganizationFooterComponent = (
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
+      break
     case 'utlendingastofnun':
-      return (
+    case 'directorate-of-immigration':
+      OrganizationFooterComponent = (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'mannaudstorg':
-      return (
+      OrganizationFooterComponent = (
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
-          phone={organization.phone}
-          contactLink={organization.link}
+          footerItems={organization.footerItems}
         />
       )
+      break
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      OrganizationFooterComponent = (
+        <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
+      )
+      break
   }
-  return null
+
+  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({
-  slugs,
-  pushUp = false,
+  organizationIds,
 }: {
-  slugs: string[]
+  organizationIds: string[]
   pushUp?: boolean
 }) => {
-  // remove when organization chat-bot is ready for release
-  const { publicRuntimeConfig } = getConfig()
-  const { disableOrganizationChatbot } = publicRuntimeConfig
-  if (disableOrganizationChatbot === 'true') {
-    return null
+  const organizationIdWithLiveChat = organizationIds.find((id) => {
+    return id in liveChatIncConfig
+  })
+
+  if (organizationIdWithLiveChat) {
+    return (
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[organizationIdWithLiveChat]}
+      />
+    )
   }
 
-  const chatEnabled = ['syslumenn']
+  const organizationIdWithWatson = organizationIds.find((id) => {
+    return id in watsonConfig
+  })
 
-  const slug = slugs.find((x) => chatEnabled.includes(x))
+  if (organizationIdWithWatson) {
+    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+  }
 
-  return slug ? (
-    <ChatPanel
-      endpoint={slug as keyof typeof chatPanelEndpoints}
-      pushUp={pushUp}
-    />
-  ) : null
+  return null
 }
 
 const SecondaryMenu = ({
@@ -347,21 +428,55 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
-                  {organizationPage.sidebarCards.map((card) => (
-                    <ProfileCard
-                      title={card.title}
-                      description={card.content}
-                      link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
-                      size="small"
-                    />
-                  ))}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
+                  <Box
+                    marginY={
+                      organizationPage.secondaryMenu &&
+                      secondaryNavList.length > 0
+                        ? 0
+                        : 3
+                    }
+                    className={styles.sidebarCardContainer}
+                  >
+                    {organizationPage.sidebarCards.map((card) => {
+                      if (card.__typename === 'SidebarCard') {
+                        return (
+                          <ProfileCard
+                            key={card.id}
+                            title={card.title}
+                            description={card.contentString}
+                            link={card.link}
+                            image={
+                              card.image?.url ||
+                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                            }
+                            size="small"
+                          />
+                        )
+                      }
+
+                      if (
+                        card.__typename === 'ConnectedComponent' &&
+                        (card.type === 'LatestNewsCard' ||
+                          card['componentType'] === 'LatestNewsCard')
+                      ) {
+                        return (
+                          <LatestNewsCardConnectedComponent
+                            key={card.id}
+                            {...card.json}
+                          />
+                        )
+                      }
+
+                      return null
+                    })}
+                  </Box>
                 </>
               )}
               {sidebarContent}
@@ -406,37 +521,39 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               )}
             </Box>
           )}
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
-                offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
-              >
-                {breadcrumbItems && (
-                  <Breadcrumbs
-                    items={breadcrumbItems ?? []}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
-                )}
-                {showExternalLinks && (
-                  <OrganizationExternalLinks
-                    organizationPage={organizationPage}
-                  />
-                )}
-                {pageDescription && (
-                  <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                    <Text variant="default">{pageDescription}</Text>
-                  </Box>
-                )}
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          {(!!breadcrumbItems || !!pageDescription) && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
+                >
+                  {breadcrumbItems && (
+                    <Breadcrumbs
+                      items={breadcrumbItems ?? []}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  )}
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+                  {pageDescription && (
+                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                      <Text variant="default">{pageDescription}</Text>
+                    </Box>
+                  )}
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
           {isMobile && sidebarContent}
           <Box paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
@@ -463,7 +580,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           force={true}
         />
       )}
-      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
+      <OrganizationChatPanel
+        organizationIds={[organizationPage?.organization?.id]}
+      />
     </>
   )
 }

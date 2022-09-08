@@ -8,10 +8,9 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import {
-  ApplicationWithAttachments as Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
@@ -42,6 +41,11 @@ type Photo = {
     key: string
     name: string
   }>
+}
+
+type Delivery = {
+  deliveryMethod: string
+  district: string
 }
 
 const YES = 'yes'
@@ -75,10 +79,12 @@ export class PSignSubmissionService {
             auth,
           })
     const name = this.getName(application)
-    const attachment: Attachment = {
-      name,
-      content,
-    }
+    const attachments: Attachment[] = [
+      {
+        name,
+        content,
+      },
+    ]
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -93,21 +99,35 @@ export class PSignSubmissionService {
       signed: true,
       type: PersonType.Plaintiff,
     }
-    const persons: Person[] = [person]
 
+    const actors: Person[] = application.applicantActors.map((actor) => ({
+      name: '',
+      ssn: actor,
+      phoneNumber: '',
+      email: '',
+      homeAddress: '',
+      postalCode: '',
+      city: '',
+      signed: true,
+      type: PersonType.CounterParty,
+    }))
+
+    const persons: Person[] = [person, ...actors]
+
+    const delivery = application.answers.delivery as Delivery
     const extraData: { [key: string]: string } =
-      application.answers.deliveryMethod === 'sendHome'
-        ? {
+      delivery.deliveryMethod === 'sendHome'
+        ? { Afhentingarmati: 'Sent með pósti' }
+        : {
             Afhentingarmati: 'Sótt á næsta afgreiðslustað',
-            StarfsstodID: application.answers.district as string,
+            Starfsstod: delivery.district as string,
           }
-        : { Afhentingarmati: 'Sent með pósti' }
 
     const uploadDataName = 'pkort1.0'
     const uploadDataId = 'pkort1.0'
 
     const result: DataUploadResponse = await this.syslumennService
-      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .uploadData(persons, attachments, extraData, uploadDataName, uploadDataId)
       .catch((e) => {
         return {
           success: false,

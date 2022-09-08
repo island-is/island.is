@@ -7,6 +7,7 @@ export type FlightLeg = {
   originalPrice: number
   discountPrice: number
   financialState: string
+  financialStateUpdated: Date
   flight: Flight
   date: Date
   created: Date
@@ -15,7 +16,7 @@ export type FlightLeg = {
 
 export type UserInfo = {
   age: number
-  gender: 'kk' | 'kvk' | 'hvk'
+  gender: 'kk' | 'kvk' | 'hvk' | 'óvíst'
   postalCode: number
 }
 
@@ -53,4 +54,5 @@ export type FlightLegsInput = {
   age?: RangeInput
   gender?: 'kk' | 'kvk' | 'hvk'
   postalCode?: number
+  nationalId?: string
 }

@@ -57,6 +57,7 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       amount {
         aidAmount
@@ -81,6 +82,7 @@ export const ApplicationQuery = gql`
         year
         userType
       }
+      navSuccess
     }
   }
 `
@@ -96,6 +98,25 @@ export const ApplicationSearchQuery = gql`
       files {
         id
       }
+    }
+  }
+`
+
+export const ApplicationFilterQuery = gql`
+  query ApplicationFilterQuery($input: FilterApplicationsInput!) {
+    filterApplications(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        state
+        modified
+        created
+        staff {
+          name
+        }
+      }
+      totalCount
     }
   }
 `
@@ -220,6 +241,7 @@ export const ApplicationEventMutation = gql`
         year
         userType
       }
+      navSuccess
     }
   }
 `
@@ -297,6 +319,7 @@ export const UpdateApplicationMutation = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       staff {
         name
@@ -326,6 +349,7 @@ export const UpdateApplicationMutation = gql`
           amount
         }
       }
+      navSuccess
     }
   }
 `
@@ -393,6 +417,10 @@ export const UpdateMunicipalityMutation = gql`
       municipalityId
       email
       rulesHomepage
+      usingNav
+      navUrl
+      navUsername
+      navPassword
       individualAid {
         ownPlace
         registeredRenting

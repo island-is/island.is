@@ -18,4 +18,7 @@ export class DrivingLicense {
 
   @Field(() => [Eligibility])
   categories!: Eligibility[]
+
+  @Field(() => [String])
+  healthRemarks?: string[]
 }

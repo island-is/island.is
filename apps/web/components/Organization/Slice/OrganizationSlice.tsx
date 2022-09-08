@@ -1,8 +1,12 @@
-import React from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import { RichText } from '@island.is/web/components'
 
 const DistrictsSlice = dynamic(() =>
@@ -69,11 +73,17 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
+const LifeEventPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
-  namespace?: Namespace
+  namespace?: Record<string, string>
   fullWidth?: boolean
   organizationPageSlug?: string
+  renderedOnOrganizationSubpage?: boolean
+  marginBottom?: ResponsiveSpace
 }
 
 const fullWidthSlices = [
@@ -81,9 +91,13 @@ const fullWidthSlices = [
   'LogoListSlice',
   'MailingListSignupSlice',
 ]
-const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace, organizationPageSlug) => {
+const renderSlice = (
+  slice,
+  namespace,
+  organizationPageSlug,
+  renderedOnOrganizationSubpage = false,
+) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -118,10 +132,13 @@ const renderSlice = (slice, namespace, organizationPageSlug) => {
         <LatestNewsSlice
           slice={slice}
           organizationPageSlug={organizationPageSlug}
+          renderedOnOrganizationSubpage={renderedOnOrganizationSubpage}
         />
       )
     case 'MailingListSignupSlice':
       return <MailingListSignupSlice slice={slice} namespace={namespace} />
+    case 'LifeEventPageListSlice':
+      return <LifeEventPageListSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
@@ -132,10 +149,12 @@ export const OrganizationSlice = ({
   namespace,
   fullWidth = false,
   organizationPageSlug = '',
+  renderedOnOrganizationSubpage = false,
+  marginBottom = 0,
 }: OrganizationSliceProps) => {
-  return !(fullWidth && slicesWithContainer.includes(slice.__typename)) ? (
+  return !fullWidth ? (
     <GridContainer>
-      <GridRow>
+      <GridRow marginBottom={marginBottom}>
         <GridColumn
           paddingTop={6}
           span={
@@ -149,11 +168,23 @@ export const OrganizationSlice = ({
               : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, organizationPageSlug)}
+          {renderSlice(
+            slice,
+            namespace,
+            organizationPageSlug,
+            renderedOnOrganizationSubpage,
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
   ) : (
-    renderSlice(slice, namespace, organizationPageSlug)
+    <Box marginBottom={marginBottom}>
+      {renderSlice(
+        slice,
+        namespace,
+        organizationPageSlug,
+        renderedOnOrganizationSubpage,
+      )}
+    </Box>
   )
 }

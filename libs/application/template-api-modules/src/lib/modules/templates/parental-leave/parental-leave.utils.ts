@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import { join } from 'path'
 import get from 'lodash/get'
 
@@ -9,7 +10,7 @@ import {
   PensionFund,
   Attachment,
 } from '@island.is/clients/vmst'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   getSelectedChild,
   getApplicationAnswers,
@@ -210,6 +211,7 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
   attachments?: Attachment[],
+  onlyValidate?: boolean,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -225,6 +227,8 @@ export const transformApplicationToParentalLeaveDTO = (
   )
   const { email, phoneNumber } = getApplicantContactInfo(application)
   const selfEmployed = isSelfEmployed === YES
+
+  const testData: string = onlyValidate!.toString()
 
   return {
     applicationId: application.id,
@@ -254,6 +258,7 @@ export const transformApplicationToParentalLeaveDTO = (
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
+    testData,
   }
 }
 
@@ -273,3 +278,20 @@ export const getRatio = (
   length: string,
   shouldUseLength: boolean,
 ) => (shouldUseLength ? `D${length}` : `${ratio}`)
+
+export const createAssignTokenWithoutNonce = (
+  application: Application,
+  secret: string,
+  expiresIn: number,
+) => {
+  const token = jwt.sign(
+    {
+      applicationId: application.id,
+      state: application.state,
+    },
+    secret,
+    { expiresIn },
+  )
+
+  return token
+}

@@ -466,6 +466,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
@@ -498,7 +499,7 @@ describe('isCaseBlockedFromUser', () => {
     )
   })
 
-  it('it should block an accepted travel ban case from prison staff', () => {
+  it('should block an accepted travel ban case from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -518,7 +519,7 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(true)
   })
 
-  it('it should not read block an accepted travel ban case from prison admin staff', () => {
+  it('should not read block an accepted travel ban case from prison admin staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -580,10 +581,52 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
+  it('should not read block an accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
   it('should not read block a partially accepted custody case from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING_PARTIALLY,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('should not read block a partially accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING_PARTIALLY,
     } as Case
@@ -617,7 +660,27 @@ describe('isCaseBlockedFromUser', () => {
     const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(true)
+    expect(isWriteBlocked).toBe(false)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('should not read block an accepted admission to facility case from prison admin staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
 })
@@ -748,7 +811,7 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: CaseType.CUSTODY },
+        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -775,7 +838,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+        {
+          type: [
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.CUSTODY,
+            CaseType.TRAVEL_BAN,
+          ],
+        },
       ],
     })
   })

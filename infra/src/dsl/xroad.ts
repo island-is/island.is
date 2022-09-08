@@ -95,7 +95,7 @@ export const DrivingLicense = new XroadConf({
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       staging:
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
   },
   secrets: {
@@ -123,6 +123,28 @@ export const HealthInsurance = new XroadConf({
       '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME',
     XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD:
       '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD',
+  },
+})
+
+export const RskProcuring = new XroadConf({
+  env: {
+    XROAD_RSK_PROCURING_REDIS_NODES: {
+      dev:
+        '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
+      staging:
+        '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
+      prod:
+        '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
+    },
+    XROAD_RSK_PROCURING_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
+    },
+  },
+  secrets: {
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
   },
 })
 
@@ -172,6 +194,17 @@ export const Properties = new XroadConf({
   },
 })
 
+export const AdrAndMachine = new XroadConf({
+  env: {
+    XROAD_ADR_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
@@ -211,6 +244,16 @@ export const NationalRegistry = new XroadConf({
       prod: '6503760649',
       dev: '10001',
       staging: '6503760649',
+    },
+  },
+})
+
+export const Passports = new XroadConf({
+  env: {
+    XROAD_PASSPORT_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1',
+      prod: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1',
     },
   },
 })
@@ -300,5 +343,46 @@ export const DrivingLicenseBook = new XroadConf({
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH',
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME',
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD',
+  },
+})
+
+export const FishingLicense = new XroadConf({
+  env: {
+    FISHING_LICENSE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      staging: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+      prod: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+    },
+  },
+})
+
+export const MunicipalitiesFinancialAid = new XroadConf({
+  env: {
+    XROAD_FINANCIAL_AID_BACKEND_PATH: {
+      dev: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
+      staging:
+        'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+      prod: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+    },
+  },
+})
+
+export const Vehicles = new XroadConf({
+  env: {
+    XROAD_VEHICLES_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
+  },
+})
+
+export const ChargeFjsV2 = new XroadConf({
+  env: {
+    XROAD_CHARGE_FJS_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
+    },
   },
 })

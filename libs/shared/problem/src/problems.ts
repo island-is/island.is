@@ -22,6 +22,14 @@ export interface ValidationFailedProblem extends BaseProblem {
   fields: ValidationFailedFields
 }
 
+export type AlternativeSubject = {
+  nationalId: string
+}
+export interface BadSubjectProblem extends BaseProblem {
+  type: ProblemType.BAD_SUBJECT
+  alternativeSubjects?: AlternativeSubject[]
+}
+
 // Should be avoided whenever possible in favour of typed problems.
 export interface UnknownProblem extends BaseProblem {
   [key: string]: unknown

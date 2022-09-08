@@ -1,0 +1,34 @@
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { Text, UploadFile } from '@island.is/island-ui/core'
+import { incomeFilesForm } from '../../lib/messages'
+import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
+import { Files } from '..'
+import withLogo from '../Logo/Logo'
+
+const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
+  const { formatMessage } = useIntl()
+  const { id, answers, externalData } = application
+
+  return (
+    <>
+      <Text marginTop={2} marginBottom={[3, 3, 5]}>
+        {formatMessage(
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.success
+            ? incomeFilesForm.general.descriptionTaxSuccess
+            : incomeFilesForm.general.description,
+        )}
+      </Text>
+      <Files
+        fileKey={field.id as UploadFileType}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
+        folderId={id}
+      />
+    </>
+  )
+}
+
+export default withLogo(IncomeFilesForm)

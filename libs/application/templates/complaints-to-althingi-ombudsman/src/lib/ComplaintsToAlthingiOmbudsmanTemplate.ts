@@ -1,4 +1,8 @@
 import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import {
   Application,
   ApplicationConfigurations,
   ApplicationContext,
@@ -7,8 +11,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
@@ -70,7 +73,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
         meta: {
           name: States.submitted,
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

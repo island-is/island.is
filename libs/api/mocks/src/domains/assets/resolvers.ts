@@ -22,8 +22,6 @@ export const resolvers: Resolvers = {
         : store.pagedUnitsOfUse()
     },
     assetsDetail: (_, { input }) => {
-      console.log('store.detailRealEstateAssets', store.detailRealEstateAssets)
-      console.log('input.assetId', input.assetId)
       const match = store.detailRealEstateAssets.find(
         (item) => item.propertyNumber === input.assetId,
       )

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
@@ -10,8 +10,10 @@ import {
   FileType,
   SignedUrl,
 } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
+  const { form } = useContext(FormContext)
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
@@ -79,7 +81,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
-        variables: { input: { fileName: encodeFilename(filename) } },
+        variables: {
+          input: {
+            fileName: encodeFilename(filename),
+            folder: form.fileFolderId,
+          },
+        },
       })
 
       signedUrl = presignedUrlData?.getSignedUrl
@@ -108,15 +115,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   }
 
   const uploadStateFiles = async (applicationId: string, type: FileType) => {
-    try {
-      return await createApplicationFiles({
-        variables: {
-          input: { files: formatFiles(files, applicationId, type) },
-        },
-      })
-    } catch (e) {
-      throw e
-    }
+    return createApplicationFiles({
+      variables: {
+        input: { files: formatFiles(files, applicationId, type) },
+      },
+    })
   }
 
   const uploadFiles = async (
@@ -124,15 +127,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     type: FileType,
     uploadFile: UploadFile[],
   ) => {
-    try {
-      return await createApplicationFiles({
-        variables: {
-          input: { files: formatFiles(uploadFile, applicationId, type) },
-        },
-      })
-    } catch (e) {
-      throw e
-    }
+    return createApplicationFiles({
+      variables: {
+        input: { files: formatFiles(uploadFile, applicationId, type) },
+      },
+    })
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {

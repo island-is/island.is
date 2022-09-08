@@ -1,14 +1,6 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { RskCompany } from './models/rskCompany.model'
-import {
-  GetCompanyApi,
-  SearchCompanyRegistryApi,
-} from '@island.is/clients/rsk/company-registry'
-import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
-import { RskCompanyVat } from './models/rskCompanyVat.model'
-import { RskCompanyAddress } from './models/rskCompanyAddress.model'
-import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
-import { RskCompanyClassification } from './models/rskCompanyClassification.model'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { decodeBase64, toBase64 } from './rsk-company-info.utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,76 +9,25 @@ import type { Logger } from '@island.is/logging'
 @Injectable()
 export class RskCompanyInfoService {
   constructor(
-    private rskCompanyInfoApi: GetCompanyApi,
-    private companyRegistrySearchApi: SearchCompanyRegistryApi,
+    private companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
   async getCompanyInformationWithExtra(
     nationalId: string,
-  ): Promise<RskCompany> {
+  ): Promise<RskCompany | null> {
     this.logger.debug(`Service getting company by nationalId ${nationalId}`)
-    const company = await this.rskCompanyInfoApi.getCompany({
-      nationalId,
-    })
+    const company = await this.companyRegistryClient.getCompany(nationalId)
+    if (!company) {
+      return null
+    }
     this.logger.debug(`Company in service ${company.toString()}`)
     return {
-      nationalId: company.kennitala,
-      name: company.nafn,
-      dateOfRegistration: company.skrad ? new Date(company.skrad) : undefined,
-      status: company.stada,
+      ...company,
       companyInfo: {
-        formOfOperation:
-          company.companyType?.map((item) => {
-            return {
-              type: item.tegund,
-              name: item.heiti,
-            } as RskCompanyFormOfOperation
-          }) ?? [],
-        address:
-          company.responseAddress?.map((item) => {
-            return {
-              streetAddress: item.heimilisfang1,
-              streetAddress2: item.heimilisfang2,
-              postalCode: item.postnumer,
-              city: item.sveitarfelag,
-              cityNumber: item.sveitarfelagsnumer,
-              country: item.land,
-            } as RskCompanyAddress
-          }) ?? [],
-        relatedParty:
-          company.tengdirAdilar?.map((item) => {
-            return {
-              type: item.tegund,
-              nationalId: item.kennitala,
-              name: item.nafn,
-            } as RskCompanyRelatedParty
-          }) ?? [],
-        vat:
-          company.virdisaukaskattur?.map((item) => {
-            return {
-              vatNumber: item.vskNumer,
-              dateOfRegistration: new Date(item.skrad),
-              status: item.stada,
-              dateOfDeregistration: item.afskraning
-                ? new Date(item.afskraning)
-                : undefined,
-              classification: item.categoryInfo?.map(
-                (classification) =>
-                  ({
-                    type: classification.gerd,
-                    classificationSystem: classification.flokkunarkerfi,
-                    number: classification.numer,
-                    name: classification.heiti,
-                  } as RskCompanyClassification),
-              ),
-            } as RskCompanyVat
-          }) ?? [],
+        ...company,
       },
-      lastUpdated: company.sidastUppfaert
-        ? new Date(company.sidastUppfaert)
-        : undefined,
     }
   }
 
@@ -94,53 +35,22 @@ export class RskCompanyInfoService {
     searchTerm: string,
     limit: number,
     cursor?: string,
-  ): Promise<RskCompanySearchItems | null> {
+  ): Promise<RskCompanySearchItems> {
     const offset = cursor ? decodeBase64(cursor) : '0'
-    const searchResults = await this.companyRegistrySearchApi.searchCompanies({
+    const searchResults = await this.companyRegistryClient.searchCompanies({
       searchString: searchTerm,
-      fetchSize: limit,
-      fetchOffset: +decodeBase64(offset) ?? 0,
-    })
-    if (
-      !searchResults.items ||
-      !searchResults?.count ||
-      searchResults.count < 1
-    ) {
-      return {
-        data: [],
-        totalCount: 0,
-        pageInfo: {
-          endCursor: toBase64('0'),
-          hasNextPage: false,
-        },
-      }
-    }
-
-    const formattedSearchResults = searchResults.items?.map((item) => {
-      return {
-        name: item.nafn,
-        status: item.stada,
-        dateOfRegistration: item.skrad ? new Date(item.skrad) : undefined,
-        nationalId: item.kennitala,
-        vatNumber: item.vskNumer,
-        lastUpdated: item.sidastUppfaert
-          ? new Date(item.sidastUppfaert)
-          : undefined,
-      } as RskCompany
+      limit,
+      offset: parseInt(offset, 10) || 0,
     })
 
-    const totalLength = searchResults.count
-    const resultOffset = searchResults.offset ?? 0
-    const endCursor = toBase64(
-      (resultOffset + formattedSearchResults.length).toString(),
-    )
+    const resultOffset = searchResults.offset
+    const endCursor = toBase64((resultOffset + searchResults.count).toString())
 
     return {
-      data: formattedSearchResults,
-      totalCount: totalLength,
+      data: searchResults.items,
       pageInfo: {
         endCursor: endCursor,
-        hasNextPage: !!searchResults.hasMore,
+        hasNextPage: searchResults.hasMore,
       },
     }
   }

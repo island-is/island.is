@@ -8,7 +8,6 @@ import juice from 'juice'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { ImageComponent, Template } from '../types'
 import registerHelpers from './helpers'
@@ -25,9 +24,10 @@ export class AdapterService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
     registerHelpers(handlebars)
 
-    const path = isRunningOnEnvironment('local')
-      ? 'libs/email-service/src/tools/design/*.hbs'
-      : 'email-service-assets/*.hbs'
+    const path =
+      process.env.NODE_ENV !== 'production'
+        ? 'libs/email-service/src/tools/design/*.hbs'
+        : 'email-service-assets/*.hbs'
     const files = glob.sync(path)
 
     files.forEach((file) => this.precompile(file))

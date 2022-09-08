@@ -4,6 +4,8 @@ import { renderUrls } from './render-urls'
 import { renderSecrets, renderSecretsCommand } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
+import { OpsEnvName } from '../dsl/types/charts'
+import { renderServiceEnvVars } from './render-env-vars'
 
 yargs(process.argv.slice(2))
   .command(
@@ -15,7 +17,9 @@ yargs(process.argv.slice(2))
         .option('chart', { choices: ChartNames, demandOption: true })
     },
     (argv) => {
-      renderEnv(argv.env as OpsEnv, argv.chart as ChartName)
+      process.stdout.write(
+        renderEnv(argv.env as OpsEnv, argv.chart as ChartName),
+      )
     },
   )
   .command(
@@ -36,6 +40,16 @@ yargs(process.argv.slice(2))
     },
     async (argv) => {
       await renderSecretsCommand(argv.service as string)
+    },
+  )
+  .command(
+    'render-env-vars',
+    'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
+    (yargs) => {
+      return yargs.option('service', { demandOption: true })
+    },
+    async (argv) => {
+      await renderServiceEnvVars(argv.service as string)
     },
   )
   .demandCommand(1)

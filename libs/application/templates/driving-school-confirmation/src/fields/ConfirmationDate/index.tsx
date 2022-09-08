@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { DatePickerController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 
@@ -24,6 +24,7 @@ const ConfirmationDate: FC<FieldBaseProps> = ({ field, error }) => {
             placeholder={formatMessage(m.confirmationSectionSelectDateLabel)}
             id={id}
             locale="is"
+            maxDate={new Date()}
             backgroundColor="white"
             onChange={(d) => {
               setValue(id, d)

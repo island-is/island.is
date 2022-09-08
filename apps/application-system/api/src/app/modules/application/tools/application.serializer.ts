@@ -7,11 +7,11 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
+import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
-  Application as BaseApplication,
-  ApplicationTemplateHelper,
   ApplicationTypes,
-} from '@island.is/application/core'
+  Application as BaseApplication,
+} from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
@@ -63,11 +63,16 @@ export class ApplicationSerializer
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
+    const userRole = template.mapUserToRole(nationalId, application) ?? ''
+
+    const roleInState = helper.getRoleInState(userRole)
+    const actors =
+      application.applicant === nationalId ? application.applicantActors : []
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
-      ...helper.getReadableAnswersAndExternalData(
-        template.mapUserToRole(nationalId, application) ?? '',
-      ),
+      ...helper.getReadableAnswersAndExternalData(userRole),
+      applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
           ? intl.formatMessage(actionCardMeta.title)
@@ -81,6 +86,7 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
+        deleteButton: roleInState?.delete,
       },
       name: intl.formatMessage(template.name),
       institution: template.institution

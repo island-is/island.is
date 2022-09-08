@@ -1,20 +1,41 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  BlueBox,
+  CourtCaseInfo,
+  CourtRecordAccordionItem,
+  FormContentContainer,
+  FormFooter,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import {
+  core,
+  titles,
+  icConfirmation as m,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
-
-import ConfirmationForm from './ConfirmationForm'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import {
+  CaseDecision,
+  CaseTransition,
+  completedCaseStates,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
 const Confirmation = () => {
   const {
@@ -25,34 +46,35 @@ const Confirmation = () => {
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [
+
+  const { transitionCase } = useCase()
+  const {
+    requestRulingSignature,
     requestRulingSignatureResponse,
-    setRequestRulingSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
 
   const { user } = useContext(UserContext)
-  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
-
-  useEffect(() => {
-    if (!modalVisible) {
-      setRequestRulingSignatureResponse(undefined)
-    }
-  }, [modalVisible, setRequestRulingSignatureResponse])
 
   const handleNextButtonClick = async () => {
     if (!workingCase) {
       return
     }
 
-    // Request ruling signature to get control code
-    const requestRulingSignatureResponse = await requestRulingSignature(
-      workingCase.id,
-    )
-    if (requestRulingSignatureResponse) {
-      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-      setModalVisible(true)
-    } else {
-      // TODO: Handle error
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
+        workingCase,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      ))
+
+    if (shouldSign) {
+      requestRulingSignature()
     }
   }
 
@@ -62,7 +84,7 @@ const Confirmation = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.CONFIRMATION}
+      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -71,18 +93,91 @@ const Confirmation = () => {
       />
       {user && (
         <>
-          <ConfirmationForm
-            workingCase={workingCase}
-            user={user}
-            isLoading={isRequestingRulingSignature}
-            handleNextButtonClick={handleNextButtonClick}
-          />
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                Yfirlit úrskurðar
+              </Text>
+            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
+            <Box marginBottom={9}>
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+              </Accordion>
+            </Box>
+            <Box marginBottom={7}>
+              <BlueBox>
+                <Box marginBottom={2} textAlign="center">
+                  <Text as="h3" variant="h3">
+                    {formatMessage(m.sections.conclusion.title)}
+                  </Text>
+                </Box>
+                <Box marginBottom={3}>
+                  <Box marginTop={1}>
+                    <Text variant="intro">{workingCase.conclusion}</Text>
+                  </Box>
+                </Box>
+                <Box marginBottom={1} textAlign="center">
+                  <Text variant="h4">{workingCase?.judge?.name}</Text>
+                </Box>
+              </BlueBox>
+            </Box>
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling"
+              />
+            </Box>
+            <Box marginBottom={15}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType="courtRecord"
+              />
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+              nextUrl={constants.CASES_ROUTE}
+              nextIsLoading={isRequestingRulingSignature}
+              nextButtonText={formatMessage(
+                workingCase.decision === CaseDecision.ACCEPTING
+                  ? m.footer.accepting.continueButtonText
+                  : workingCase.decision === CaseDecision.REJECTING
+                  ? m.footer.rejecting.continueButtonText
+                  : workingCase.decision === CaseDecision.DISMISSING
+                  ? m.footer.dismissing.continueButtonText
+                  : m.footer.acceptingPartially.continueButtonText,
+              )}
+              nextButtonIcon={
+                isAcceptingCaseDecision(workingCase.decision)
+                  ? 'checkmark'
+                  : 'close'
+              }
+              nextButtonColorScheme={
+                isAcceptingCaseDecision(workingCase.decision)
+                  ? 'default'
+                  : 'destructive'
+              }
+              onNextButtonClick={handleNextButtonClick}
+              hideNextButton={workingCase.judge?.id !== user?.id}
+              infoBoxText={
+                workingCase.judge?.id !== user?.id
+                  ? 'Einungis skráður dómari getur undirritað úrskurð'
+                  : undefined
+              }
+            />
+          </FormContentContainer>
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
+              requestRulingSignature={requestRulingSignature}
               requestRulingSignatureResponse={requestRulingSignatureResponse}
-              setModalVisible={setModalVisible}
+              onClose={() => setModalVisible(false)}
             />
           )}
         </>

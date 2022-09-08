@@ -30,7 +30,7 @@ import {
   DeleteDrivingLesson,
   EditDrivingLesson,
 } from '../../graphql/mutations'
-import { Application } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import Skeleton from './Skeleton'
 
 interface Props {
@@ -167,7 +167,7 @@ const ViewStudent = ({
         },
       },
     }).catch(() => {
-      toast.success(formatMessage(m.errorOnDeleteLesson))
+      toast.error(formatMessage(m.errorOnDeleteLesson))
     })
 
     if (
@@ -297,6 +297,7 @@ const ViewStudent = ({
                 placeholderText={formatMessage(
                   m.viewStudentSelectDatePlaceholder,
                 )}
+                maxDate={new Date()}
                 required
                 selected={date ? new Date(date) : null}
               />

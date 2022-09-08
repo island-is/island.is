@@ -1,4 +1,8 @@
 import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -6,8 +10,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { API_MODULE } from '../shared'
 import { answerValidators } from './answerValidators'
 import { m } from '../forms/messages'
@@ -107,7 +110,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

@@ -3,22 +3,25 @@ import faker from 'faker'
 import {
   Case,
   CaseState,
+  CaseType,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
-  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  IC_OVERVIEW_ROUTE,
+  INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  INVESTIGATION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
+  mockCase,
   makeProsecutor,
+  makeCaseFile,
   intercept,
+  mockName,
+  mockAddress,
 } from '../../../utils'
 
-describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -31,8 +34,8 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const caseFilesComments = faker.lorem.words(5)
 
   beforeEach(() => {
-    cy.login()
-    const caseData = makeInvestigationCase()
+    cy.login(UserRole.JUDGE)
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       demands,
@@ -50,17 +53,22 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
+      caseFiles: [makeCaseFile()],
+      seenByDefender: '2020-09-20T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
-    cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
-
     intercept(caseDataAddition)
+    cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
+  })
+
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {
     cy.getByTestid('infoCard').contains(
-      `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
+      `${mockName}, kt. 000000-0000, ${mockAddress}`,
     )
     cy.getByTestid('infoCard').contains('Verjandi')
     cy.getByTestid('infoCard').contains(
@@ -94,15 +102,22 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
+  it('should upload files to court', () => {
+    cy.get('button[aria-controls="caseFilesAccordionItem"]').click()
+    cy.getByTestid('upload-to-court-button').click()
+
+    cy.wait('@UploadFileToCourtMutation')
+
+    cy.getByTestid('upload-state-message').should('be.visible')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_COURT_HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should(
+      'include',
+      INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
+    )
   })
 })

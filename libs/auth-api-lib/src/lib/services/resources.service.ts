@@ -1,10 +1,12 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
-import { Op, Sequelize, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../config/DelegationConfig'
 import { IdentityResource } from '../entities/models/identity-resource.model'
@@ -29,7 +31,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
-import type { User } from '@island.is/auth-nest-tools'
+import { TranslationService } from './translation.service'
 
 @Injectable()
 export class ResourcesService {
@@ -60,6 +62,7 @@ export class ResourcesService {
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private translationService: TranslationService,
   ) {}
 
   /** Get's all identity resources and total count of rows */
@@ -384,10 +387,14 @@ export class ResourcesService {
   }
 
   /** Filters out scopes that don't have delegation grant and are access controlled */
-  async findAllowedDelegationApiScopeListForUser(scope: string[], user: User) {
+  async findAllowedDelegationApiScopeListForUser(
+    scope: string[],
+    user: User,
+    language?: string,
+  ) {
     this.logger.debug(`Finding allowed api scopes for scopes ${scope}`)
     const filteredScope = this.filterScopeForCustomDelegation(scope, user)
-    return this.apiScopeModel.findAll({
+    const scopes = await this.apiScopeModel.findAll({
       where: {
         name: {
           [Op.in]: filteredScope,
@@ -396,6 +403,11 @@ export class ResourcesService {
       },
       include: [ApiScopeGroup],
     })
+
+    if (language) {
+      await this.translateApiScopes(scopes, language)
+    }
+    return scopes
   }
 
   /** Returns the count of scopes that are allowed for delegations */
@@ -412,12 +424,15 @@ export class ResourcesService {
   }
 
   private filterScopeForCustomDelegation(scope: string[], user: User) {
-    const delegationType = user.actor?.delegationType ?? 'Self'
+    const delegationTypes = user.delegationType ?? []
+
     return scope.filter((scopeName) => {
       for (const rule of this.delegationConfig.customScopeRules) {
         if (
           rule.scopeName === scopeName &&
-          rule.onlyForDelegationType.includes(delegationType) === false
+          rule.onlyForDelegationType.some((delType: any) =>
+            delegationTypes.includes(delType),
+          ) === false
         ) {
           return false
         }
@@ -848,7 +863,10 @@ export class ResourcesService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]]> {
-    return this.apiScopeGroup.update({ ...group }, { where: { id: id } })
+    return this.apiScopeGroup.update(
+      { ...group },
+      { where: { id: id }, returning: true },
+    )
   }
 
   /** Delete ApiScopeGroup */
@@ -946,7 +964,10 @@ export class ResourcesService {
     domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
-    return this.domainModel.update({ ...domain }, { where: { name: name } })
+    return this.domainModel.update(
+      { ...domain },
+      { where: { name: name }, returning: true },
+    )
   }
 
   /** Delete Domain */
@@ -955,4 +976,49 @@ export class ResourcesService {
   }
 
   // #endregion Domain
+
+  private async translateApiScopes(
+    scopes: Array<ApiScope>,
+    language: string,
+  ): Promise<Array<ApiScope>> {
+    const translationMap = await this.translationService.findTranslationMap(
+      'apiscope',
+      scopes.map((scope) => scope.name),
+      language,
+    )
+
+    const groups: ApiScopeGroup[] = []
+    for (const scope of scopes) {
+      scope.displayName =
+        translationMap.get(scope.name)?.get('displayName') ?? scope.displayName
+      scope.description =
+        translationMap.get(scope.name)?.get('description') ?? scope.description
+
+      if (scope.group) {
+        groups.push(scope.group)
+      }
+    }
+
+    await this.translateApiScopeGroups(groups, language)
+    return scopes
+  }
+
+  private async translateApiScopeGroups(
+    groups: Array<ApiScopeGroup>,
+    language: string,
+  ): Promise<Array<ApiScopeGroup>> {
+    const translationMap = await this.translationService.findTranslationMap(
+      'apiscopegroup',
+      groups.map((group) => group.id),
+      language,
+    )
+
+    for (const group of groups) {
+      group.displayName =
+        translationMap.get(group.id)?.get('displayName') ?? group.displayName
+      group.description =
+        translationMap.get(group.id)?.get('description') ?? group.description
+    }
+    return groups
+  }
 }

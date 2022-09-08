@@ -2,12 +2,13 @@ import React, { FC } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
-import { tableStyles } from '@island.is/service-portal/core'
+import { tableStyles } from '../../utils/utils'
 interface Props {
   data: Array<{
     value: string | React.ReactElement
     align?: 'left' | 'right'
     element?: boolean
+    printHidden?: boolean
   }>
 }
 
@@ -17,7 +18,10 @@ const ExpandableLine: FC<Props> = ({ data }) => {
       <T.Row>
         {data.map((item, i) => (
           <T.HeadData
-            box={item.align ? { textAlign: item.align } : undefined}
+            box={{
+              textAlign: item.align ?? 'left',
+              printHidden: item.printHidden,
+            }}
             scope="col"
             key={i}
             style={tableStyles}

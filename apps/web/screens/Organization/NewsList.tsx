@@ -354,6 +354,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     )
   ).data.getOrganizationPage
   const tag = (query.tag as string) ?? organizationPage.newsTag?.slug ?? ''
+
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -383,7 +384,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
           page: selectedPage,
           year,
           month,
-          tag,
+          tags: [tag],
         },
       },
     }),
@@ -413,7 +414,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...getThemeConfig(organizationPage.theme),
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 

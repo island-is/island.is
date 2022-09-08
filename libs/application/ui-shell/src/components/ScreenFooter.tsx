@@ -2,14 +2,13 @@ import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { formatText, coreMessages } from '@island.is/application/core'
 import {
   Application,
-  formatText,
   FormModes,
   SubmitField,
-  coreMessages,
   CallToAction,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import * as styles from './ScreenFooter.css'
 
@@ -85,6 +84,7 @@ export const ScreenFooter: FC<FooterProps> = ({
       return (
         <Button
           icon="checkmarkCircle"
+          data-testid={submitField?.dataTestId}
           loading={!canProceed || loading}
           type="submit"
         >
@@ -93,28 +93,31 @@ export const ScreenFooter: FC<FooterProps> = ({
       )
     }
 
-    return (
-      <>
-        {submitField?.actions.map(({ event, type, name }) => {
-          const buttonConfig = submitButtonConfig[type]
+    return submitField?.actions
+      .filter(({ condition }) =>
+        typeof condition === 'function'
+          ? condition(application.answers, application.externalData)
+          : true,
+      )
+      .map(({ event, type, name, dataTestId }, idx) => {
+        const buttonConfig = submitButtonConfig[type]
 
-          return (
-            <Box key={`cta-${event}`} marginX={1}>
-              <Button
-                type="submit"
-                loading={!canProceed || loading}
-                colorScheme={buttonConfig.colorScheme as any}
-                id={typeof event === 'object' ? event.type : event}
-                variant={buttonConfig.variant}
-                icon={buttonConfig.icon}
-              >
-                {formatText(name, application, formatMessage)}
-              </Button>
-            </Box>
-          )
-        })}
-      </>
-    )
+        return (
+          <Box key={`cta-${event}`} marginLeft={idx === 0 ? 0 : 2}>
+            <Button
+              type="submit"
+              loading={!canProceed || loading}
+              colorScheme={buttonConfig.colorScheme as any}
+              data-testid={dataTestId}
+              id={typeof event === 'object' ? event.type : event}
+              variant={buttonConfig.variant}
+              icon={buttonConfig.icon}
+            >
+              {formatText(name, application, formatMessage)}
+            </Button>
+          </Box>
+        )
+      })
   }
 
   return (
@@ -139,6 +142,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   loading={loading}
                   onClick={() => history.push('/minarsidur')}
                   icon="arrowForward"
+                  data-testid="applications-home"
                   type="button"
                 >
                   {formatMessage({
@@ -153,6 +157,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 <Button
                   loading={!canProceed || loading}
                   icon="arrowForward"
+                  data-testid="proceed"
                   type="submit"
                 >
                   {formatMessage(coreMessages.buttonNext)}
@@ -164,6 +169,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             {showGoBack && (
               <Button
                 variant="ghost"
+                data-testid="step-back"
                 onClick={goBack}
                 disabled={!canProceed || loading}
               >
@@ -175,6 +181,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             {showGoBack && (
               <Button
                 circle
+                data-testid="step-back"
                 variant="ghost"
                 icon="arrowBack"
                 onClick={goBack}

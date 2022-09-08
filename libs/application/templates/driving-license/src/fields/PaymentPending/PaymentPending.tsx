@@ -1,10 +1,10 @@
 import React, { FC, useEffect } from 'react'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   CustomField,
   DefaultEvents,
   FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'

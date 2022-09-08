@@ -14,7 +14,7 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { m } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
 import * as styles from './InfoScreen.css'
 interface Props {
   title: MessageDescriptor
@@ -99,7 +99,7 @@ export const InfoScreen: FC<Props> = ({
         </GridColumn>
         <GridColumn span={['12/12', '5/12']} order={[1, 2]}>
           <Box marginBottom={[3, 0]}>
-            <img src={figure} alt={`${formatMessage(m.altText)} ${title}`} />
+            <img src={figure} alt="" />
           </Box>
         </GridColumn>
       </GridRow>

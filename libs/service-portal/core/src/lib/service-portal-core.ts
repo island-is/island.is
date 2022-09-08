@@ -1,9 +1,11 @@
-import { LazyExoticComponent, FC } from 'react'
-import { User } from 'oidc-client'
-import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
+
 import { IconProps } from '@island.is/island-ui/core'
+import { User } from '@island.is/shared/types'
+
+import { ServicePortalPath } from './navigation/paths'
 
 /**
  * A navigational item used by the service portal
@@ -17,7 +19,9 @@ export interface ServicePortalNavigationItem {
   icon?: Pick<IconProps, 'icon' | 'type'>
   children?: ServicePortalNavigationItem[]
 
-  // Hides the child item from the navigation bar, displays the breadcrumb.
+  /**
+   * Hides the child item from the navigation bar, displays the breadcrumb.
+   */
   navHide?: boolean
 
   // These two fields are used for the MVP version of the service portal where
@@ -34,6 +38,10 @@ export interface ServicePortalNavigationItem {
    * Subscribes to - get updates from badge context
    */
   subscribesTo?: 'documents'
+  /**
+   * Description for module
+   */
+  description?: MessageDescriptor
 }
 
 /**
@@ -78,6 +86,20 @@ export type ServicePortalRoute = {
    * Hides navigation item from navigation
    */
   navHide?: boolean
+  /**
+   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   */
+  dynamic?: boolean
+
+  /**
+   * The key for the route. Used to filter feature flagged pages.
+   *
+   * To feature flag a route:
+   * create a feature flag in ConfigCat called `isServicePortalVehicleHistoryPageEnabled`
+   * In which case your route key would be `VehicleHistory`.
+   */
+  key?: string
+
   /**
    * The render value of this component
    */
@@ -135,11 +157,11 @@ export interface ServicePortalModule {
    */
   routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
-   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   * Works the same way as routes.
+   * The key difference is that if there are company routes present when
+   * the logged in user is a company SSN only the company routes will be rendered.
    */
-  dynamicRoutes?: (
-    props: ServicePortalModuleProps,
-  ) => Promise<ServicePortalRoute[]>
+  companyRoutes?: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

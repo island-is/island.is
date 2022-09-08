@@ -1,67 +1,88 @@
+import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { mock } from 'jest-mock-extended'
 
-import { ConfigType } from '@island.is/nest/config'
+import { QueueModule } from '@island.is/message-queue'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
+import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
+import { PoliceService } from '../../police'
 import { EventService } from '../../event'
 import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
 import { Case } from '../models/case.model'
+import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
-import { CaseArchive } from '../models/caseArchive.model'
+import { InternalCaseController } from '../internalCase.controller'
+import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
-jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
 jest.mock('../../court/court.service')
+jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 
+const config = caseModuleConfig()
+
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
+      QueueModule.register({
+        queue: {
+          name: config.sqs.queueName,
+          queueName: config.sqs.queueName,
+          deadLetterQueue: { queueName: config.sqs.deadLetterQueueName },
+        },
+        client: {
+          endpoint: config.sqs.endpoint,
+          region: config.sqs.region,
+        },
+      }),
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
+      ConfigModule.forRoot({ load: [signingModuleConfig, caseModuleConfig] }),
     ],
-    controllers: [CaseController],
+    controllers: [
+      CaseController,
+      InternalCaseController,
+      LimitedAccessCaseController,
+    ],
     providers: [
       CourtService,
+      PoliceService,
       UserService,
       FileService,
       AwsS3Service,
       EventService,
       SigningService,
-      EmailService,
       DefendantService,
+      {
+        provide: EmailService,
+        useValue: { sendEmail: jest.fn(async () => uuid()) },
+      },
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({}),
-        },
-      },
-      {
-        provide: LOGGER_PROVIDER,
-        useValue: {
-          debug: jest.fn(),
-          info: jest.fn(),
-          error: jest.fn(),
+          useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
@@ -77,12 +98,26 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseArchive),
         useValue: { create: jest.fn() },
       },
-      { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
+      LimitedAccessCaseService,
     ],
-  }).compile()
+  })
+    .useMocker((token) => {
+      if (typeof token === 'function') {
+        return mock()
+      }
+    })
+    .overrideProvider(LOGGER_PROVIDER)
+    .useValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+    })
+    .compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
+
+  const policeService = caseModule.get<PoliceService>(PoliceService)
 
   const userService = caseModule.get<UserService>(UserService)
 
@@ -108,10 +143,23 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
+    LimitedAccessCaseService,
+  )
+
   const caseController = caseModule.get<CaseController>(CaseController)
+
+  const internalCaseController = caseModule.get<InternalCaseController>(
+    InternalCaseController,
+  )
+
+  const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
+    LimitedAccessCaseController,
+  )
 
   return {
     courtService,
+    policeService,
     userService,
     fileService,
     awsS3Service,
@@ -122,6 +170,9 @@ export const createTestingCaseModule = async () => {
     caseArchiveModel,
     caseConfig,
     caseService,
+    limitedAccessCaseService,
     caseController,
+    internalCaseController,
+    limitedAccessCaseController,
   }
 }

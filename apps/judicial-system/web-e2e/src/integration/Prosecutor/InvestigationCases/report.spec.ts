@@ -1,27 +1,26 @@
 import faker from 'faker'
 
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import {
-  IC_CASE_FILES_ROUTE,
-  IC_POLICE_REPORT_ROUTE,
+  INVESTIGATION_CASE_CASE_FILES_ROUTE,
+  INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, intercept } from '../../../utils'
+import { mockCase, intercept } from '../../../utils'
 
-describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       demands,
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_REPORT_ROUTE}/test_id`)
-
     intercept(caseDataAddition)
+    cy.visit(`${INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/test_id`)
   })
 
   it('should display the demand', () => {
@@ -52,6 +51,6 @@ describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
     cy.getByTestid('caseFacts').type(faker.lorem.words(5))
     cy.getByTestid('legalArguments').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_CASE_FILES_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_CASE_FILES_ROUTE)
   })
 })

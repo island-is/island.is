@@ -4,7 +4,6 @@ import {
   FileType,
   Employment,
   ApplicationEventType,
-  RolesRule,
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
@@ -13,6 +12,7 @@ import {
 } from './enums'
 
 export interface GetSignedUrl {
+  folder: string
   fileName: string
 }
 
@@ -29,6 +29,7 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
@@ -98,8 +99,6 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber?: string
-  folder: string
-  service: RolesRule
   currentApplicationId?: string
   spouse?: Spouse
   staff?: Staff
@@ -148,6 +147,7 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
 }
 
 export interface UpdateAdmin {
@@ -169,6 +169,10 @@ export interface Municipality {
   numberOfUsers?: number
   adminUsers?: Staff[]
   allAdminUsers?: UpdateAdmin[]
+  usingNav: boolean
+  navUrl?: string
+  navUsername?: string
+  navPassword?: string
 }
 
 export interface UpdateMunicipalityActivity {
@@ -264,7 +268,7 @@ export interface DirectTaxPayment {
   withheldAtSource: number
   month: number
   year: number
-  userType?: UserType
+  userType: UserType
 }
 
 export interface Application {
@@ -309,6 +313,7 @@ export interface Application {
   hasFetchedDirectTaxPayment: boolean
   spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
+  navSuccess?: boolean
 }
 
 export interface GetSignedUrlForId {
@@ -351,10 +356,10 @@ export interface NationalRegistryData {
 export interface ServiceCenter {
   name: string
   number: number
-  phone: string
-  address: string
-  addressPostalCode: string
-  postalCodes: number[]
+  phone?: string
+  address?: string
+  addressPostalCode?: string
+  postalCodes?: number[]
   active?: boolean
   link?: string
 }
@@ -391,4 +396,9 @@ export interface ApplicationProfileInfo {
   onclick?: () => void
   other?: string
   fullWidth?: boolean
+}
+
+export interface ApplicationPagination {
+  applications: Application[]
+  totalCount: number
 }

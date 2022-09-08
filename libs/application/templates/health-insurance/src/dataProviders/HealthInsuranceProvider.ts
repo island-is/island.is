@@ -3,14 +3,14 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 export class HealthInsuranceProvider extends BasicDataProvider {
   type = 'HealthInsuranceProvider'
 
-  provide(application: Application): Promise<boolean> {
+  provide(_application: Application): Promise<boolean> {
     const query = `query HealthInsuranceIsHealthInsured {
-      healthInsuranceIsHealthInsured 
+      healthInsuranceIsHealthInsured
     }`
 
     return this.useGraphqlGateway(query)

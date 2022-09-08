@@ -21,7 +21,7 @@ describe('PaymentScheduleResolver', () => {
         {
           provide: PaymentScheduleService,
           useFactory: () => ({
-            getConditions: jest.fn((user: User) => ({
+            getConditions: jest.fn((_: User) => ({
               maxDebtAmount: 100000,
               totalDebtAmount: 10000,
               minPayment: 0,
@@ -59,17 +59,12 @@ describe('PaymentScheduleResolver', () => {
                 ],
               },
             ]),
-            getCurrentEmployer: jest.fn((user: User) => ({
+            getCurrentEmployer: jest.fn((_: User) => ({
               employerNationalId: '0987654321',
               employerName: 'island.is',
             })),
             getInitalSchedule: jest.fn(
-              (
-                nationalId: string,
-                totalAmount: number,
-                disposableIncome: number,
-                type: ScheduleType,
-              ) => ({
+              (_1: string, _2: number, _3: number, _4: ScheduleType) => ({
                 nationalId: '1234567890',
                 scheduleType: ScheduleType.FinesAndLegalCost,
                 minPayment: 0,
@@ -78,7 +73,7 @@ describe('PaymentScheduleResolver', () => {
                 maxCountMonth: 12,
               }),
             ),
-            getPaymentDistribution: jest.fn((user: User) => ({
+            getPaymentDistribution: jest.fn((_: User) => ({
               nationalId: '1234567890',
               scheduleType: ScheduleType.FinesAndLegalCost,
               payments: [

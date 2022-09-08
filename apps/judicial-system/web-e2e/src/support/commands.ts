@@ -8,7 +8,9 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+import { UserRole } from '@island.is/judicial-system/types'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
+import 'cypress-file-upload'
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
@@ -21,7 +23,14 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         fixture: 'sendNotificationMutationResponse',
       }
     } else if (graphqlRequest.body.query.includes('CurrentUserQuery')) {
-      if (graphqlRequest.headers.referer.includes('/domur')) {
+      if (
+        graphqlRequest.headers.cookie.includes(UserRole.JUDGE) ||
+        graphqlRequest.headers.cookie.includes(UserRole.REGISTRAR)
+      ) {
+        return { fixture: 'judgeUser' }
+      } else if (graphqlRequest.headers.cookie.includes(UserRole.STAFF)) {
+        return { fixture: 'staffUser' }
+      } else if (graphqlRequest.headers.referer.includes('/domur')) {
         return { fixture: 'judgeUser' }
       } else {
         return { fixture: 'prosecutorUser' }
@@ -77,7 +86,7 @@ Cypress.Commands.add('stubAPIResponses', () => {
     },
   ).as('getPersonByNationalId')
 
-  cy.intercept('GET', '**/api/lawyers', (req) => {
+  cy.intercept('GET', '**/api/lawyers/getLawyers', (req) => {
     req.reply({ fixture: 'lawyersResponse' })
   }).as('lawyers')
 
@@ -86,8 +95,11 @@ Cypress.Commands.add('stubAPIResponses', () => {
   })
 })
 
-Cypress.Commands.add('login', () => {
-  cy.setCookie('judicial-system.csrf', 'test-csrf-token')
+Cypress.Commands.add('login', (userRole?: UserRole) => {
+  cy.setCookie(
+    'judicial-system.csrf',
+    `test-csrf-token${userRole ? `-${userRole}` : ''}`,
+  )
 })
 
 Cypress.Commands.add('getByTestid', (selector) => {

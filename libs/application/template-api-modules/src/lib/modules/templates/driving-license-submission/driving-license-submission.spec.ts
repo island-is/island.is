@@ -6,10 +6,9 @@ import {
 } from '@island.is/testing/fixtures'
 
 import {
-  Application,
   ApplicationStatus,
   ApplicationTypes,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import { SharedTemplateApiService } from '../../shared'
 import { DrivingLicenseSubmissionService } from './driving-license-submission.service'

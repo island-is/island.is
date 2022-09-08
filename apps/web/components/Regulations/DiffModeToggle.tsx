@@ -24,10 +24,11 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     publishedDate,
     lastAmendDate,
     showingDiff,
-    history,
+    history: regulationHistory,
   } = regulation
 
-  const firstEvent = regulation.history[0]
+  const history = regulationHistory.filter((h) => h.status === 'published')
+  const firstEvent = history[0]
 
   if (!firstEvent || firstEvent.effect !== 'amend') {
     return null

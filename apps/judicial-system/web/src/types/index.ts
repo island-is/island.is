@@ -13,7 +13,7 @@ export enum Sections {
   JUDGE_EXTENSION = 4,
 }
 
-export enum ProsecutorSubsections {
+export enum RestrictionCaseProsecutorSubsections {
   STEP_ONE = 0,
   STEP_TWO = 1,
   STEP_THREE = 2,
@@ -22,7 +22,7 @@ export enum ProsecutorSubsections {
   PROSECUTOR_OVERVIEW = 5,
 }
 
-export enum CourtSubsections {
+export enum RestrictionCaseCourtSubsections {
   RECEPTION_AND_ASSIGNMENT = 0,
   JUDGE_OVERVIEW = 1,
   HEARING_ARRANGEMENTS = 2,
@@ -31,7 +31,28 @@ export enum CourtSubsections {
   CONFIRMATION = 5,
 }
 
-export type ReactSelectOption = { label: string; value: string | number }
+export enum IndictmentsProsecutorSubsections {
+  DEFENDANT = 0,
+  PROCESSING = 1,
+  CASE_FILES = 2,
+  OVERVIEW = 3,
+}
+
+export enum IndictmentsCourtSubsections {
+  RECEPTION_AND_ASSIGNMENT = 0,
+  JUDGE_OVERVIEW = 1,
+  SUBPEONA = 2,
+  HEARING_ARRANGEMENTS = 3,
+  RULING = 4,
+  COURT_RECORD = 5,
+  CONFIRMATION = 6,
+}
+
+export type ReactSelectOption = {
+  label: string
+  value: string | number
+  __isNew__?: boolean
+}
 
 export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
@@ -49,6 +70,10 @@ export interface SortConfig {
 
 export interface CaseData {
   case?: Case
+}
+
+export interface LimitedAccessCaseData {
+  limitedAccessCase?: Case
 }
 
 export interface UserData {

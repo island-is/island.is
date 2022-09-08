@@ -43,8 +43,8 @@ import {
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const AuthApiScopesQuery = gql`
-  query AuthApiScopesQuery {
-    authApiScopes {
+  query AuthApiScopesQuery($input: AuthApiScopesInput!) {
+    authApiScopes(input: $input) {
       name
       displayName
       type
@@ -111,7 +111,7 @@ const DeleteAuthDelegationMutation = gql`
 const Access: FC = () => {
   useNamespaces('sp.settings-access-control')
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
   const [closeModalOpen, setCloseModalOpen] = useState(false)
@@ -130,6 +130,13 @@ const Access: FC = () => {
   )
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,
+    {
+      variables: {
+        input: {
+          lang,
+        },
+      },
+    },
   )
   const { data: delegationData, loading: delegationLoading } = useQuery<Query>(
     AuthDelegationQuery,
@@ -273,7 +280,11 @@ const Access: FC = () => {
                       defaultMessage:
                         'Ertu viss um að þú viljir eyða þessum aðgangi?',
                     })}
-                    text={`${authDelegation?.to?.name} mun missa umboð fyrir eftirfarandi:`}
+                    text={`${authDelegation?.to?.name} ${formatMessage({
+                      id:
+                        'sp.settings-access-control:will-loose-access-following',
+                      defaultMessage: 'mun missa umboð fyrir eftirfarandi:',
+                    })}`}
                     scopes={scopes as ScopeTag[]}
                     onClose={() => setCloseModalOpen(false)}
                     onCloseButtonText={formatMessage({
@@ -311,7 +322,10 @@ const Access: FC = () => {
                   defaultMessage: 'Ertu viss um að þú viljir veita umboðið?',
                 })}
                 //
-                text={`${authDelegation?.to?.name}  mun fá umboð fyrir eftirfarandi:`}
+                text={`${authDelegation?.to?.name} ${formatMessage({
+                  id: 'sp.settings-access-control:will-grant-access-following',
+                  defaultMessage: 'mun fá umboð fyrir eftirfarandi:',
+                })}`}
                 scopes={scopes as ScopeTag[]}
                 onClose={() => setSaveModalOpen(false)}
                 onCloseButtonText={formatMessage({

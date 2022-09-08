@@ -1,5 +1,4 @@
 import { apiDomainsHealthInsurance } from './api-domains-health-insurance'
-import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import {

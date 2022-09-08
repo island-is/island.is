@@ -7,6 +7,8 @@ import * as styles from './RadioButton.css'
 import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
+import { Tag, TagVariant } from '../Tag/Tag'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export interface RadioButtonProps {
   name?: string
@@ -17,6 +19,11 @@ export interface RadioButtonProps {
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
+  tag?: {
+    label: string
+    variant?: TagVariant
+    outlined?: boolean
+  }
   hasError?: boolean
   errorMessage?: string
   large?: boolean
@@ -47,12 +54,14 @@ export const RadioButton = ({
   disabled,
   onChange,
   tooltip,
+  tag,
   illustration: Illustration,
   hasError,
   errorMessage,
   large,
+  dataTestId,
   backgroundColor,
-}: RadioButtonProps) => {
+}: RadioButtonProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -77,6 +86,7 @@ export const RadioButton = ({
         name={name}
         disabled={disabled}
         id={id}
+        data-testid={dataTestId}
         onChange={onChange}
         value={value}
         checked={checked}
@@ -128,6 +138,13 @@ export const RadioButton = ({
           >
             <Tooltip text={tooltip} />
           </div>
+        )}
+        {tag && large && (
+          <Box display="flex" justifyContent="flexEnd" width="full">
+            <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+              {tag.label}
+            </Tag>
+          </Box>
         )}
       </label>
       {hasError && errorMessage && (

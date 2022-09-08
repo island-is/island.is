@@ -14,6 +14,7 @@ import { Link } from '../Link/Link'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
+import { Stack } from '../Stack/Stack'
 
 import * as styles from './Footer.css'
 
@@ -34,7 +35,8 @@ interface FooterProps {
   middleLinksTitle?: string
   bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
-  hideLanguageSwith?: boolean
+  privacyPolicyLink?: FooterLinkProps
+  hideLanguageSwitch?: boolean
   showMiddleLinks?: boolean
   /**
    * The link to the help web. If used it will be shown instead of the contact information links.
@@ -53,7 +55,8 @@ export const Footer = ({
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwith = false,
+  privacyPolicyLink = defaultPrivacyPolicyLink,
+  hideLanguageSwitch = false,
   linkToHelpWeb,
   linkToHelpWebText = 'Getum við aðstoðað?',
   languageSwitchOnClick,
@@ -137,8 +140,21 @@ export const Footer = ({
                   )}
                 </Box>
                 <div>
-                  <Inline space={3}>
-                    {!hideLanguageSwith && (
+                  <Stack space={1}>
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        type="info"
+                        height="15"
+                        width="15"
+                        color="blue400"
+                      />
+                      <Text variant="h5" color="blue600" fontWeight="light">
+                        <Link href={privacyPolicyLink.href}>
+                          {privacyPolicyLink.title}
+                        </Link>
+                      </Text>
+                    </Inline>
+                    {!hideLanguageSwitch && (
                       <Inline space={1} alignY="center">
                         <Icon
                           height="15"
@@ -156,6 +172,7 @@ export const Footer = ({
                         </Text>
                       </Inline>
                     )}
+
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
@@ -169,7 +186,7 @@ export const Footer = ({
                         </Link>
                       </Text>
                     </Inline>
-                  </Inline>
+                  </Stack>
                 </div>
               </Box>
             </GridColumn>
@@ -281,6 +298,11 @@ const defaultTopLinksContact = [
 const defaultLanguageSwitchLink = {
   title: 'English',
   href: 'https://island.is/en',
+}
+
+const defaultPrivacyPolicyLink = {
+  title: 'Persónuverndarstefna',
+  href: '/personuverndarstefna-stafraent-islands',
 }
 
 const defaultBottomLinks = [

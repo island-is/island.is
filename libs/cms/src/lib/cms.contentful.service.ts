@@ -70,6 +70,13 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import {
+  MailingListSignupSlice,
+  mapMailingListSignup,
+} from './models/mailingListSignupSlice.model'
+import { GetMailingListSignupSliceInput } from './dto/getMailingListSignupSlice'
+import { Form, mapForm } from './models/form.model'
+import { GetFormInput } from './dto/getForm.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -401,6 +408,7 @@ export class CmsContentfulService {
       .getEntry<{
         slug: Record<string, string>
         title: Record<string, string>
+        url: Record<string, string>
       }>(id, {
         locale: '*',
         include: 1,
@@ -409,15 +417,24 @@ export class CmsContentfulService {
 
     let slugs: TextFieldLocales = { is: '', en: '' }
     let titles: TextFieldLocales = { is: '', en: '' }
+    let urls: TextFieldLocales = { is: '', en: '' }
 
-    if (result?.fields?.slug && result?.fields.title) {
-      ;({ slugs, titles } = Object.keys(localeMap).reduce(
+    if (
+      result?.fields?.title &&
+      (result?.fields?.slug || result?.fields?.url)
+    ) {
+      ;({ slugs, titles, urls } = Object.keys(localeMap).reduce(
         (obj, k) => {
           obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
           obj.titles[k] = result?.fields?.title?.[localeMap[k]] ?? ''
+          obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
           return obj
         },
-        { slugs: {} as typeof localeMap, titles: {} as typeof localeMap },
+        {
+          slugs: {} as typeof localeMap,
+          titles: {} as typeof localeMap,
+          urls: {} as typeof localeMap,
+        },
       ))
     }
 
@@ -425,6 +442,7 @@ export class CmsContentfulService {
       id: result?.sys?.id,
       slug: slugs,
       title: titles,
+      url: urls,
       type: result?.sys?.contentType?.sys?.id ?? '',
     }
   }
@@ -732,5 +750,38 @@ export class CmsContentfulService {
       (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
       null
     )
+  }
+
+  async getMailingListSignupSlice({
+    id,
+    lang = 'is',
+  }: GetMailingListSignupSliceInput): Promise<MailingListSignupSlice | null> {
+    const params = {
+      ['content_type']: 'mailingListSignup',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IMailingListSignupFields>(lang, params)
+      .catch(errorHandler('getMailingListSignupSlice'))
+
+    return (
+      (result.items as types.IMailingListSignup[]).map(
+        mapMailingListSignup,
+      )[0] ?? null
+    )
+  }
+
+  async getForm(input: GetFormInput): Promise<Form | null> {
+    const params = {
+      ['content_type']: 'form',
+      'sys.id': input.id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IFormFields>(input.lang, params)
+      .catch(errorHandler('getForm'))
+
+    return (result.items as types.IForm[]).map(mapForm)[0] ?? null
   }
 }

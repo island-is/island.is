@@ -47,6 +47,9 @@ export class Organization {
   @Field(() => Boolean, { nullable: true })
   serviceWebEnabled?: boolean
 
+  @Field(() => Number, { nullable: true })
+  serviceWebPopularQuestionCount?: number
+
   @Field(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
@@ -55,6 +58,9 @@ export class Organization {
 
   @Field(() => [GenericTag])
   publishedMaterialSearchFilterGenericTags!: GenericTag[]
+
+  @Field(() => Boolean, { nullable: true })
+  showsUpOnTheOrganizationsPage?: boolean
 }
 
 export const mapOrganization = ({
@@ -63,10 +69,10 @@ export const mapOrganization = ({
 }: IOrganization): Organization => {
   return {
     id: sys.id,
-    title: fields.title ?? '',
+    title: fields.title?.trim() ?? '',
     shortTitle: fields.shortTitle ?? '',
     description: fields.description ?? '',
-    slug: fields.slug ?? '',
+    slug: fields.slug?.trim() ?? '',
     tag: (fields.tag ?? []).map(mapOrganizationTag),
     logo: fields.logo ? mapImage(fields.logo) : null,
     link: fields.link ?? '',
@@ -75,6 +81,7 @@ export const mapOrganization = ({
     email: fields.email ?? '',
     serviceWebTitle: fields.serviceWebTitle ?? '',
     serviceWebEnabled: Boolean(fields.serviceWebEnabled),
+    serviceWebPopularQuestionCount: fields.serviceWebPopularQuestionCount ?? 0,
     namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)
@@ -82,5 +89,6 @@ export const mapOrganization = ({
     publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
       ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
       : [],
+    showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
   }
 }

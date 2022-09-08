@@ -1,4 +1,4 @@
-import type { MessageDescriptor, IntlShape } from '@formatjs/intl'
+import type { IntlShape } from '@formatjs/intl'
 import { createTestIntl } from '../test'
 import type { FormatMessage } from '../types'
 
@@ -6,17 +6,9 @@ type Fl = Omit<IntlShape<string>, 'formatMessage'>
 type TestIntl = Fl & { formatMessage: FormatMessage }
 
 describe('formatMessage', () => {
-  const messages = {
-    title: {
-      id: 'testIntl.title',
-      defaultMessage: 'Testing {test}',
-      description: '',
-    },
-  }
-
   let intl: TestIntl
   beforeAll(() => {
-    intl = createTestIntl('is-IS', messages)
+    intl = createTestIntl({ locale: 'is-IS', onError: jest.fn() })
   })
 
   it('should return empty string when descriptor is missing', () => {
@@ -28,6 +20,13 @@ describe('formatMessage', () => {
   })
 
   it('should call format message when descriptor is not a string', () => {
+    const messages = {
+      title: {
+        id: 'testIntl.title',
+        defaultMessage: 'Testing {test}',
+        description: '',
+      },
+    }
     const result = intl.formatMessage(messages.title, { test: 'test' })
 
     expect(result).toBe('Testing test')

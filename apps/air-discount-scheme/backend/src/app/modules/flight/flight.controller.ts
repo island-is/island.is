@@ -49,8 +49,6 @@ import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
-import * as kennitala from 'kennitala'
-import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -171,7 +169,6 @@ export class PublicFlightController {
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
-    @Req() request: HttpRequest,
   ): Promise<void> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
@@ -203,9 +200,8 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const user = await this.nationalRegistryService.getUser(discount.nationalId)
-    if (!user) {
-      throw new NotFoundException(`User not found`)
+    if (!discount.user) {
+      throw new BadRequestException('No user associated with discount code')
     }
 
     if (
@@ -215,49 +211,6 @@ export class PublicFlightController {
       throw new BadRequestException(
         'Flight cannot be booked outside the current year',
       )
-    }
-
-    let meetsADSRequirements = this.flightService.isADSPostalCode(
-      user.postalcode,
-    )
-
-    // TODO: this is a quickly made temporary hotfix and should be rewritten
-    // along when the nationalregistry module is rewritten for the client V2 completely
-    if (
-      !meetsADSRequirements &&
-      kennitala.info(discount.nationalId).age < MAX_AGE_LIMIT
-    ) {
-      const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
-      const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
-
-      if (cacheValue) {
-        const custodians = cacheValue.custodians
-
-        for (const custodian of custodians) {
-          const custodianInfo = await this.nationalRegistryService.getUser(
-            custodian,
-          )
-
-          if (
-            custodianInfo &&
-            this.flightService.isADSPostalCode(custodianInfo.postalcode)
-          ) {
-            // Overview breaks when postalcode is null
-            // On rare occasions the national registry has no
-            // info on children. This is a patch for the overview screen
-            // to function properly on those occasions
-            if (!user.postalcode) {
-              user.postalcode = custodianInfo.postalcode
-            }
-            meetsADSRequirements = true
-            break
-          }
-        }
-      }
-    }
-
-    if (!meetsADSRequirements) {
-      throw new ForbiddenException('User postalcode does not meet conditions')
     }
 
     let connectingFlight = false
@@ -312,7 +265,7 @@ export class PublicFlightController {
 
     const newFlight = await this.flightService.create(
       flight,
-      user,
+      discount.user,
       request.airline,
       isConnectable,
       connectingId,

@@ -7,6 +7,9 @@ export enum ServicePortalPath {
 
   // Applications
   ApplicationRoot = '/umsoknir',
+  ApplicationIncompleteApplications = '/umsoknir/oklaradar-umsoknir',
+  ApplicationCompleteApplications = '/umsoknir/klaradar-umsoknir',
+  ApplicationInProgressApplications = '/umsoknir/i-vinnslu',
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
@@ -29,12 +32,13 @@ export enum ServicePortalPath {
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
-  FamilyRoot = '/min-gogn/fjolskyldan',
-  FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
-  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
+  Child = '/min-gogn/barn/:nationalId',
+  FamilyMember = '/min-gogn/:nationalId',
+  Spouse = '/min-gogn/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+  Company = '/fyrirtaeki',
 
   // General Petitions
   Petitions = '/min-gogn/medmaeli',
@@ -76,6 +80,10 @@ export enum ServicePortalPath {
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
+  AssetsMyVehicles = '/okutaeki/min-okutaeki',
+  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
+  AssetsVehiclesLookup = '/okutaeki/leit',
+  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
 
   // Messages
   MessagesRoot = '/skilabod',

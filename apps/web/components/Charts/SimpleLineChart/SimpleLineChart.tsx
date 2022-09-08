@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Line,
 } from 'recharts'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   CustomizedAxisTick,
   RenderLegend,

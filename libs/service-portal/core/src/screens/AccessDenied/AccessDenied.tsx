@@ -1,9 +1,12 @@
 import React from 'react'
-import { m, ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
+import { ServicePortalModuleComponent } from '../../lib/service-portal-core'
 import { useLocale } from '@island.is/localization'
 import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
 import { useLocation } from 'react-router-dom'
-import { servicePortalMasterNavigation } from '@island.is/service-portal/core'
+import { servicePortalMasterNavigation } from '../../lib/navigation/masterNavigation'
+import { useAuth } from '@island.is/auth/react'
+import { checkDelegation } from '@island.is/shared/utils'
 
 export const AccessDenied: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
@@ -11,17 +14,27 @@ export const AccessDenied: ServicePortalModuleComponent = () => {
   const navItem = servicePortalMasterNavigation[0].children?.find(
     (x) => x.path === pathname,
   )
+  const { userInfo: user } = useAuth()
+
+  const isDelegation = user && checkDelegation(user)
+
   return (
     <ErrorScreen
-      tag={formatMessage(m.accessDenied)}
-      tagVariant="red"
-      title={
+      tag={
         (navItem && formatMessage(navItem?.name)) ||
         formatMessage(m.accessDenied).toString()
       }
-      figure="./assets/images/hourglass.svg"
+      tagVariant="red"
+      title={
+        isDelegation
+          ? formatMessage(m.accessNeeded)
+          : formatMessage(m.accessDenied)
+      }
+      figure="./assets/images/jobsGrid.svg"
     >
-      {formatMessage(m.accessDeniedText)}
+      {isDelegation
+        ? formatMessage(m.accessDeniedText)
+        : formatMessage(m.accessNeededText)}
     </ErrorScreen>
   )
 }

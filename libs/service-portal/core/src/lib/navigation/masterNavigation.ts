@@ -1,31 +1,25 @@
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { ServicePortalNavigationItem } from '../service-portal-core'
 import { m } from '../messages'
 import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: m.info,
+    name: m.overview,
+    systemRoute: true,
+    path: ServicePortalPath.MinarSidurRoot,
+    icon: {
+      icon: 'home',
+    },
     children: [
-      // Yfirlit
-      {
-        name: m.overview,
-        systemRoute: true,
-        path: ServicePortalPath.MinarSidurRoot,
-        icon: {
-          type: 'outline',
-          icon: 'home',
-        },
-      },
-
       // Rafraen skjol
       {
         name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
-          type: 'outline',
           icon: 'reader',
         },
         subscribesTo: 'documents',
+        description: m.documentsDescription,
       },
 
       // Umsoknir
@@ -33,9 +27,33 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.applications,
         path: ServicePortalPath.ApplicationRoot,
         icon: {
-          type: 'outline',
           icon: 'fileTrayFull',
         },
+        children: [
+          {
+            name: m.inProgressApplications,
+            path: ServicePortalPath.ApplicationInProgressApplications,
+          },
+          {
+            name: m.unfinishedApplications,
+            path: ServicePortalPath.ApplicationIncompleteApplications,
+          },
+          {
+            name: m.finishedApplications,
+            path: ServicePortalPath.ApplicationCompleteApplications,
+          },
+        ],
+        description: m.applicationsDescription,
+      },
+
+      // Company
+      {
+        name: m.companyTitle,
+        path: ServicePortalPath.Company,
+        icon: {
+          icon: 'business',
+        },
+        description: m.companyDescription,
       },
 
       // Min Gogn
@@ -43,7 +61,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.userInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
-          type: 'outline',
           icon: 'person',
         },
         children: [
@@ -53,10 +70,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.UserInfo,
           },
           {
-            name: m.family,
+            name: m.familySpouse,
             navHide: true,
-            path: ServicePortalPath.FamilyRoot,
+            path: ServicePortalPath.Spouse,
           },
+          {
+            name: m.familyChild,
+            navHide: true,
+            path: ServicePortalPath.Child,
+          },
+
           {
             // Petitions
             name: m.endorsements,
@@ -68,6 +91,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.PetitionsAdminView,
           },
         ],
+        description: m.userInfoDescription,
       },
       // Mín skírteini
       {
@@ -75,7 +99,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.LicensesRoot,
 
         icon: {
-          type: 'outline',
           icon: 'wallet',
         },
         children: [
@@ -85,22 +108,22 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
+        description: m.licensesDescription,
       },
       // Starfsleyfi
       {
         name: m.educationLicense,
         path: ServicePortalPath.EducationLicense,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
+        description: m.educationLicenseDescription,
       },
       // Mín réttindi
       {
         name: m.delegation,
         path: ServicePortalPath.MyLicensesRoot,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
         children: [
@@ -115,15 +138,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.education,
         path: ServicePortalPath.EducationRoot,
         icon: {
-          type: 'outline',
           icon: 'school',
         },
+        description: m.educationDescription,
       },
       {
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
         // The first release will only contain "Skjalaveitur" and only for the project owners.
@@ -172,7 +194,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.icelandicNamesRegistry,
         path: ServicePortalPath.IcelandicNamesRegistryRoot,
         icon: {
-          type: 'outline',
           icon: 'fileTrayFull',
         },
       },
@@ -182,9 +203,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.realEstate,
         path: ServicePortalPath.AssetsRoot,
         icon: {
-          type: 'outline',
           icon: 'home',
         },
+        children: [
+          {
+            name: 'id',
+            navHide: true,
+            path: ServicePortalPath.AssetsRealEstateDetail,
+          },
+        ],
+        description: m.realEstateDescription,
       },
 
       // Fjarmal
@@ -218,21 +246,43 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
         icon: {
-          type: 'outline',
           icon: 'cellular',
         },
+        description: m.financeDescription,
       },
 
       // Ökutæki
       {
         name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
-        systemRoute: true,
+        path: ServicePortalPath.AssetsMyVehicles,
         icon: {
-          type: 'outline',
           icon: 'car',
         },
+        children: [
+          {
+            name: m.myVehicles,
+            path: ServicePortalPath.AssetsMyVehicles,
+            children: [
+              {
+                // Path param reference
+                name: 'id',
+                navHide: true,
+                path: ServicePortalPath.AssetsVehiclesDetail,
+              },
+            ],
+          },
+          {
+            name: m.vehiclesLookup,
+            path: ServicePortalPath.AssetsVehiclesLookup,
+          },
+          {
+            name: m.vehiclesHistory,
+            path: ServicePortalPath.AssetsVehiclesHistory,
+          },
+        ],
+        description: m.vehiclesDescription,
       },
+
       // Stillingar - hidden from nav
       {
         name: m.settings,
@@ -241,14 +291,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
-          },
-          {
-            name: m.accessControlGrant,
-            path: ServicePortalPath.SettingsAccessControlGrant,
-          },
-          {
-            name: m.accessControlAccess,
-            path: ServicePortalPath.SettingsAccessControlAccess,
+            children: [
+              {
+                name: m.accessControlGrant,
+                path: ServicePortalPath.SettingsAccessControlGrant,
+              },
+              {
+                name: m.accessControlAccess,
+                path: ServicePortalPath.SettingsAccessControlAccess,
+              },
+            ],
           },
           {
             name: m.mySettings,
@@ -271,6 +323,14 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
+      },
+      {
+        name: m.accessControl,
+        path: ServicePortalPath.SettingsAccessControl,
+        icon: {
+          icon: 'lockClosed',
+        },
+        description: m.accessControlDescription,
       },
     ],
   },

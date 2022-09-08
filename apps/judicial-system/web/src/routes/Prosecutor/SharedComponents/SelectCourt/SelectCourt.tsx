@@ -2,15 +2,17 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
-import { Box, Select, Text, Option } from '@island.is/island-ui/core'
+import { Box, Select, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import type { Case, Institution } from '@island.is/judicial-system/types'
-import { selectCourt as m } from '@island.is/judicial-system-web/messages/Core/selectCourt'
+import { selectCourt as m } from '@island.is/judicial-system-web/messages'
+
+type CourtSelectOption = ReactSelectOption & { court: Institution }
 
 interface Props {
   workingCase: Case
   courts: Institution[]
-  onChange: (courtId: string) => boolean
+  onChange: (court: Institution) => boolean
 }
 
 const SelectCourt: React.FC<Props> = (props) => {
@@ -18,18 +20,22 @@ const SelectCourt: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
 
-  const [selectedCourt, setSelectedCourt] = useState<ValueType<Option>>(
+  const [selectedCourt, setSelectedCourt] = useState<
+    ValueType<CourtSelectOption>
+  >(
     workingCase.court
       ? {
           label: workingCase.court.name,
           value: workingCase.court.id,
+          court: workingCase.court,
         }
       : null,
   )
 
-  const selectCourts = courts.map((court) => ({
+  const selectCourts: CourtSelectOption[] = courts.map((court) => ({
     label: court.name,
     value: court.id,
+    court,
   }))
 
   return (
@@ -46,8 +52,8 @@ const SelectCourt: React.FC<Props> = (props) => {
         value={selectedCourt}
         options={selectCourts}
         onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-          onChange((selectedOption as ReactSelectOption).value as string) &&
-            setSelectedCourt(selectedOption)
+          onChange((selectedOption as CourtSelectOption).court) &&
+            setSelectedCourt(selectedOption as CourtSelectOption)
         }}
         required
       />

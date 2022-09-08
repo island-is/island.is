@@ -1,9 +1,9 @@
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
 import { format as formatKennitala } from 'kennitala'
-import amountFormat from './amountFormat'
+import { amountFormat } from '@island.is/service-portal/core'
 import { messages } from '../lib/messages'
-import { FormatMessage } from '@island.is/application/core'
+import { FormatMessage } from '@island.is/localization'
 
 import {
   PropertyOwner,

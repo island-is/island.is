@@ -10,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (user: StaffModel) => Promise<Then>
+type GivenWhenThen = (staff: StaffModel) => Promise<Then>
 
 describe('StaffController - Get staff by national id', () => {
   let mockStaffModel: typeof StaffModel
@@ -21,11 +21,11 @@ describe('StaffController - Get staff by national id', () => {
 
     mockStaffModel = staffModel
 
-    givenWhenThen = async (user: StaffModel): Promise<Then> => {
+    givenWhenThen = async (staff: StaffModel): Promise<Then> => {
       const then = {} as Then
 
       await staffController
-        .getStaffByNationalId(user)
+        .getStaffByNationalId(staff)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -34,11 +34,11 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff not active', () => {
-    const user = { nationalId: '0000000000', active: false } as StaffModel
+    const staff = { nationalId: '0000000000', active: false } as StaffModel
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(user)
+      then = await givenWhenThen(staff)
     })
 
     it('should throw forbidden exception', () => {
@@ -47,11 +47,11 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff not found', () => {
-    const user = undefined as StaffModel
+    const staff = undefined as StaffModel
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(user)
+      then = await givenWhenThen(staff)
     })
 
     it('should throw forbidden exception', () => {

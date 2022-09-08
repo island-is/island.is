@@ -10,11 +10,18 @@ on:
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
+  create:
+    branches:
+      - 'release/**'
   pull_request:
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
+
+defaults:
+  run:
+    shell: bash
 
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
@@ -23,7 +30,9 @@ env:
 
 jobs:
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -31,7 +40,8 @@ jobs:
         id: select_envs
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          ENVS=("dev" "staging")
+          # ENVS=("dev" "staging")
+          ENVS=("dev" "staging" "prod")
           if [[ $GIT_BRANCH =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
@@ -40,11 +50,13 @@ jobs:
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
 
   helm-values-validation:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -77,12 +89,17 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -108,7 +125,7 @@ jobs:
         run: echo "ROLE=$${{ matrix.env }}" >> $GITHUB_ENV
       - name: Get local secrets
         working-directory: infra
-        run: ./node_modules/.bin/ts-node src/secrets.ts get-all-required-secrets --env=${{ matrix.env }} >> LOCAL_SECRETS
+        run: node -r esbuild-register src/secrets.ts get-all-required-secrets --env=${{ matrix.env }} >> LOCAL_SECRETS
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -124,6 +141,23 @@ jobs:
           AWS_MAX_ATTEMPTS: '6'
         run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
         working-directory: infra
+
+      - name: Configure AWS Credentials for IDS Prod
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DESCRIBE_SSM_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DESCRIBE_SSM_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-duration-seconds: 900
+          role-to-assume: arn:aws:iam::567113216315:role/list-ssm-parameters
+
+      - name: Get secrets in IDS Prod AWS
+        env:
+          AWS_RETRY_MODE: standard
+          AWS_MAX_ATTEMPTS: '6'
+        run: aws ssm describe-parameters --query=Parameters[*].[Name] --output=text >> CLOUD_SECRETS
+        working-directory: infra
+
       - name: Compare secrets
         working-directory: infra
         shell: /bin/bash {0}

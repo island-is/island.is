@@ -93,6 +93,7 @@ export type PaymentSchedule = {
   scheduleNumber: string
   totalAmount: number
   unpaidAmount: number
+  unpaidWithInterest: number
   unpaidCount: string
   documentID: string
 }
@@ -135,4 +136,26 @@ export type DebtStatus = {
 }
 export type DebtStatusType = {
   myDeptStatus: DebtStatus[]
+}
+
+export type DebtLessCertificateError = {
+  code: string
+  message: string
+  help: string
+  trackingId: string
+  param: string
+}
+export type DebtLessCertificateType = {
+  debtLessCertificateResult?: {
+    debtLess: boolean
+    certificate?: {
+      type: string
+      document: string
+    }
+  }
+  error?: {
+    code: number
+    message: string
+    errors: DebtLessCertificateError[]
+  }
 }

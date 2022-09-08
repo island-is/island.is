@@ -16,9 +16,10 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
+  SearchableTags,
   SupportQna,
-  Tag,
 } from '@island.is/web/graphql/schema'
+import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 
 interface SearchInputProps {
   title?: string
@@ -28,7 +29,6 @@ interface SearchInputProps {
   colored?: boolean
   initialInputValue?: string
   placeholder?: string
-  tags?: Tag[]
 }
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
@@ -51,7 +51,6 @@ export const SearchInput = ({
   size = 'large',
   initialInputValue = '',
   placeholder = 'Leitaðu á þjónustuvefnum',
-  tags,
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -61,6 +60,8 @@ export const SearchInput = ({
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
+  const institutionSlug = getSlugPart(Router.asPath, 2)
+
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
@@ -69,6 +70,13 @@ export const SearchInput = ({
       updateOptions()
     },
   })
+
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+  const mannaudstorgTag = [
+    { key: 'mannaudstorg', type: SearchableTags.Organization },
+  ]
 
   useDebounce(
     () => {
@@ -83,7 +91,9 @@ export const SearchInput = ({
               query: {
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
-                tags,
+                [institutionSlugBelongsToMannaudstorg
+                  ? 'tags'
+                  : 'excludedTags']: mannaudstorgTag,
               },
             },
           })
@@ -200,8 +210,12 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
+        const pathname = `${linkResolver('serviceweb').href}${
+          institutionSlug ? `/${institutionSlug}` : ''
+        }/leit`
+
         Router.push({
-          pathname: linkResolver('servicewebsearch').href,
+          pathname,
           query: { q: value },
         })
       }}

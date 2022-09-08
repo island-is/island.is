@@ -8,12 +8,17 @@ import {
   HealthInsurance,
   Labor,
   NationalRegistry,
+  Passports,
   Payment,
   Properties,
   PaymentSchedule,
   CriminalRecord,
   RskCompanyInfo,
   DrivingLicenseBook,
+  FishingLicense,
+  MunicipalitiesFinancialAid,
+  Vehicles,
+  AdrAndMachine,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -105,11 +110,32 @@ export const serviceSetup = (services: {
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '30000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
+      XROAD_FINANCES_TIMEOUT: '20000',
+      XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
+        dev: 'http://web-financial-aid-backend',
+        staging: 'http://web-financial-aid-backend',
+        prod: 'http://web-financial-aid-backend',
+      },
+      FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
+        dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        staging: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
+        prod: 'https://star-re.crm4.dynamics.com/api/data/v9.1',
+      },
+      FINANCIAL_STATEMENTS_INAO_ISSUER:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0',
+      FINANCIAL_STATEMENTS_INAO_SCOPE: {
+        dev: 'https://dev-re.crm4.dynamics.com/.default',
+        staging: 'https://dev-re.crm4.dynamics.com/.default',
+        prod: 'https://star-re.crm4.dynamics.com/.default',
+      },
+      FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
     })
 
     .secrets({
@@ -154,8 +180,13 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .xroad(
+      AdrAndMachine,
       Base,
       Client,
       HealthInsurance,
@@ -170,6 +201,10 @@ export const serviceSetup = (services: {
       CriminalRecord,
       RskCompanyInfo,
       DrivingLicenseBook,
+      FishingLicense,
+      MunicipalitiesFinancialAid,
+      Vehicles,
+      Passports,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -193,8 +228,13 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '800m', memory: '2048Mi' },
+      requests: { cpu: '200m', memory: '1024Mi' },
+    })
+    .replicaCount({
+      default: 10,
+      max: 50,
+      min: 10,
     })
     .grantNamespaces(
       'nginx-ingress-external',

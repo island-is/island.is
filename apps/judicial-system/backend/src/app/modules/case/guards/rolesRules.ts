@@ -8,7 +8,7 @@ import {
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
   'description',
-  'policeCaseNumber',
+  'policeCaseNumbers',
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
@@ -84,6 +84,13 @@ const courtFields: (keyof UpdateCase)[] = [
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
+  'rulingModifiedHistory',
+]
+
+const staffFields: (keyof UpdateCase)[] = [
+  'validToDate',
+  'isolationToDate',
+  'caseModifiedExplanation',
 ]
 
 // Allows judges to update a specific set of fields
@@ -98,6 +105,15 @@ export const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
   dtoFields: courtFields,
+} as RolesRule
+
+// Allows staff to update a specific set of fields
+// In practice, only prison admins will be able to update these fields,
+// as write access is blocked for other staff roles
+export const staffUpdateRule = {
+  role: UserRole.STAFF,
+  type: RulesType.FIELD,
+  dtoFields: staffFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases

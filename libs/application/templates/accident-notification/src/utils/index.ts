@@ -1,9 +1,9 @@
-import { MessageFormatter } from '@island.is/application/core'
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { getValueViaPath } from '@island.is/application/core'
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments, overview } from '../lib/messages'
+import { FormatMessage } from '@island.is/localization'
 
 export const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -65,7 +65,7 @@ export const getAttachmentTitles = (answers: AccidentNotification) => {
 
 export const returnMissingDocumentsList = (
   answers: AccidentNotification,
-  formatMessage: MessageFormatter,
+  formatMessage: FormatMessage,
 ) => {
   const injuryCertificate = answers.injuryCertificate
   const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer

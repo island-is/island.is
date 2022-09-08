@@ -34,12 +34,24 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína frá Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki skráningarréttindi ökuskóla. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
 
   /* Student Info Section */
   studentInfoTitle: {
     id: 'dsc.application:studentInfoTitle',
     defaultMessage: 'Upplýsingar um ökunema',
     description: 'Student info section title',
+  },
+  studentInfoSubtitle: {
+    id: 'dsc.application:studentInfoSubtitle',
+    defaultMessage:
+      'Vinsamlega skráðu inn upplýsingar um ökunema. Athugaðu að þú ert að skrá fyrir: ',
+    description: 'Student info section subtitle',
   },
   studentInfoNationalId: {
     id: 'dsc.application:studentInfoNationalId',
@@ -113,11 +125,32 @@ export const m = defineMessages({
     defaultMessage: 'Ökuskóli',
     description: 'school',
   },
+  confirmSchoolButton: {
+    id: 'dsc.application:confirmSchoolButton',
+    defaultMessage: 'Staðfesta skráningu',
+    description: 'school',
+  },
+  newConfirmSchoolButton: {
+    id: 'dsc.application:newConfirmSchoolButton',
+    defaultMessage: 'Ný skráning',
+    description: 'new school confirmation',
+  },
 
-  /* No student was found */
-  noStudentFoundMessage: {
-    id: 'dsc.application:noStudentFoundMessage',
-    defaultMessage: 'Enginn nemandi fannst. Reyndu aftur',
+  /* Errors */
+  noStudentInfoFoundMessage: {
+    id: 'dsc.application:noStudentInfoFoundMessage',
+    defaultMessage:
+      'Tókst ekki að sækja upplýsingar um ökunema. Vinsamlegast reynið aftur síðar',
     description: 'No student found alert message',
+  },
+  noStudentFoundForGivenNationalIdMessage: {
+    id: 'dsc.application:noStudentFoundForGivenNationalIdMessage',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description: 'No name for given national Id',
+  },
+  invalidNationalIdValue: {
+    id: 'an.application:error.invalidNationalIdValue',
+    defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
+    description: 'Error message when a value is invalid.',
   },
 })

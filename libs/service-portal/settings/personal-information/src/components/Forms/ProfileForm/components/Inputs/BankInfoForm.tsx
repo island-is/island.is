@@ -16,6 +16,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { BankInfoTypes } from '../../../ProfileForm/types/form'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -82,7 +83,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
     <form onSubmit={handleSubmit(submitFormData)}>
       <Box display="flex" flexWrap="wrap" alignItems="center">
         <Box marginRight={3} className={styles.formContainer}>
-          <Columns alignY="center">
+          <Columns collapseBelow="sm" alignY="center">
             <Column width="content">
               <Box className={styles.bank}>
                 <InputController
@@ -203,11 +204,9 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
           paddingTop={2}
         >
           {!loading && (
-            <button disabled={inputPristine} type="submit">
-              <Button disabled={inputPristine} variant="text" size="small">
-                {formatMessage(msg.buttonAccountSave)}
-              </Button>
-            </button>
+            <FormButton disabled={inputPristine} submit>
+              {formatMessage(msg.buttonAccountSave)}
+            </FormButton>
           )}
           {loading && <LoadingDots />}
         </Box>

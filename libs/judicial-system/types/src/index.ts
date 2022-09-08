@@ -18,7 +18,7 @@ export type {
   SendNotificationResponse,
 } from './lib/notification'
 
-export { CaseFileState } from './lib/file'
+export { CaseFileState, CaseFileCategory } from './lib/file'
 
 export type {
   PresignedPost,
@@ -33,7 +33,7 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles } from './lib/user'
+export { UserRole, courtRoles, isCourtRole } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
@@ -48,12 +48,13 @@ export {
   SessionArrangements,
   restrictionCases,
   investigationCases,
+  indictmentCases,
+  isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isCaseTypeWithMultipleDefendantsSupport,
 } from './lib/case'
 export type {
   Case,

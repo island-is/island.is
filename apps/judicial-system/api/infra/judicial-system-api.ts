@@ -28,10 +28,15 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
+      },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: '',
-        prod: '',
+        staging: 'INDICTMENTS',
+        prod: 'INDICTMENTS',
       },
     })
     .xroad(Base, JudicialSystem)
@@ -50,6 +55,20 @@ export const serviceSetup = (services: {
           prod: 'rettarvorslugatt.island.is',
         },
         paths: ['/api/graphql', '/api/auth', '/api/case', '/api/feature'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
     .grantNamespaces('nginx-ingress-external')

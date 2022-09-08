@@ -4,17 +4,19 @@ import unset from 'lodash/unset'
 import cloneDeep from 'lodash/cloneDeep'
 
 import {
+  DEPRECATED_DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
+import {
   ApplicationContext,
+  ApplicationConfigurations,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationTemplate,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
-  ApplicationConfigurations,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+} from '@island.is/application/types'
 
 import {
   YES,
@@ -24,6 +26,8 @@ import {
   NO,
   MANUAL,
   SPOUSE,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -50,6 +54,7 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -91,6 +96,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -100,7 +106,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         entry: 'clearAssignees',
-        exit: 'setOtherParentIdIfSelectedSpouse',
+        exit: [
+          'setOtherParentIdIfSelectedSpouse',
+          'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
+          'setUnionValuesIfUseUnionIsNO',
+          'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
+          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
+          'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
+        ],
         meta: {
           name: States.DRAFT,
           actionCard: {
@@ -112,6 +126,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
           },
           progress: 0.25,
+          onExit: {
+            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -127,6 +145,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -145,13 +164,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: 'clearAssignees',
+        exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
             description: statesMessages.otherParentApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
@@ -177,6 +196,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
                   'personalAllowanceFromSpouse',
+                  'periods',
                 ],
               },
             },
@@ -188,6 +208,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -206,12 +227,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
+        entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
             description: statesMessages.otherParentActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction:
@@ -227,6 +249,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -241,7 +264,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerWaitingToAssignDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -256,6 +279,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -272,7 +296,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -310,6 +334,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -329,8 +354,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -340,6 +370,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -348,12 +379,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
+        entry: 'assignToVMST',
+        exit: 'clearAssignees',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
             description: statesMessages.vinnumalastofnunApprovalDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.75,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.sendApplication,
@@ -370,11 +403,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
-          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
-          // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
@@ -385,7 +424,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.5,
           roles: [
             {
@@ -409,7 +448,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.approvedDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -419,13 +458,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              write: 'all',
             },
           ],
         },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        },
+        // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
+        // on: {
+        //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        // },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -436,7 +475,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.editOrAddPeriodsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 1,
           roles: [
             {
@@ -475,7 +514,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             description:
               statesMessages.employerWaitingToAssignForEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
@@ -505,7 +544,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -535,7 +574,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.employerEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -563,7 +602,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunApproveEditsDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -591,7 +630,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.vinnumalastofnunEditsActionDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           progress: 0.4,
           roles: [
             {
@@ -676,9 +715,105 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           // have already been any applications created by the primary parent
           set(
             application.answers,
-            'otherParentId',
+            'otherParentObj.otherParentId',
             getOtherParentId(application),
           )
+        }
+
+        return context
+      }),
+      clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.usePersonalAllowance === NO) {
+          if (application.answers.personalAllowance) {
+            unset(application.answers, 'personalAllowance')
+          }
+        }
+
+        return context
+      }),
+      clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.usePersonalAllowanceFromSpouse === NO) {
+          if (application.answers.personalAllowanceFromSpouse) {
+            unset(application.answers, 'personalAllowanceFromSpouse')
+          }
+        }
+
+        return context
+      }),
+      setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
+        ) {
+          set(
+            application.answers,
+            'payments.privatePensionFund',
+            NO_PRIVATE_PENSION_FUND,
+          )
+        }
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFundPercentage !== '0'
+        ) {
+          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        }
+
+        return context
+      }),
+      setUnionValuesIfUseUnionIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.useUnion === NO && answers.union !== NO_UNION) {
+          set(application.answers, 'payments.union', NO_UNION)
+        }
+
+        return context
+      }),
+      setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.personalUseAsMuchAsPossible === YES &&
+          answers.personalUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowance', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
+        }
+
+        return context
+      }),
+      setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.spouseUseAsMuchAsPossible === YES &&
+          answers.spouseUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowanceFromSpouse', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
         }
 
         return context
@@ -694,6 +829,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ) {
           set(application, 'assignees', [otherParentId])
         }
+
+        return context
+      }),
+      assignToVMST: assign((context) => {
+        const { application } = context
+        const VMST_ID = process.env.VMST_ID ?? ''
+
+        set(application, 'assignees', [VMST_ID])
 
         return context
       }),
@@ -730,11 +873,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         // Current parent is secondary parent, this will set otherParentId to the id of the primary parent
         set(
           answers,
-          'otherParentId',
+          'otherParentObj.otherParentId',
           selectedChild.primaryParentNationalRegistryId,
         )
 
-        set(answers, 'otherParent', MANUAL)
+        set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
 
         return context
       }),
@@ -784,6 +927,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      removePeriodsOrAllowanceOnSpouseRejection: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.requestDays > 0) {
+          unset(application.answers, 'periods')
+          unset(application.answers, 'validatedPeriods')
+          set(application.answers, 'requestRights.requestDays', '0')
+          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'giveRights.giveDays', '0')
+          set(application.answers, 'giveRights.isGivingRights', 'no')
+        }
+
+        if (answers.usePersonalAllowanceFromSpouse === YES) {
+          unset(application.answers, 'personalAllowanceFromSpouse')
+        }
+
+        return context
+      }),
       clearAssignees: assign((context) => ({
         ...context,
         application: {
@@ -808,6 +971,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
+    }
+
+    const VMST_ID = process.env.VMST_ID
+    if (id === VMST_ID) {
+      return Roles.ORGINISATION_REVIEWER
     }
 
     return undefined

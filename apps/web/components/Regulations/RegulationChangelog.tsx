@@ -2,7 +2,7 @@ import * as s from './RegulationsSidebarBox.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
-import { Text } from '@island.is/island-ui/core'
+import { Icon, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import {
   ISODate,
@@ -115,11 +115,15 @@ export const useRegulationEffectPrepper = (
             { name },
           )
           const href =
-            item.effect === 'amend'
+            item.effect === 'amend' && item.status === 'published'
               ? linkToRegulation(regulation.name, {
                   d: item.date,
                   diff: true,
                 })
+              : item.effect === 'amend' && item.status === 'pending'
+              ? // Link to current version (no diff) because the impact (text-changes)
+                // has not been inserted yet.
+                linkToRegulation(item.name)
               : undefined
 
           const active = isItemActive(item.date)
@@ -127,7 +131,10 @@ export const useRegulationEffectPrepper = (
 
           const Content = (
             <>
-              <strong>{formatDate(item.date)}</strong>
+              <strong>{formatDate(item.date)}</strong>{' '}
+              {item.status === 'pending' && (
+                <Icon icon="warning" type="outline" size="small" />
+              )}
               <br />
               <span className={className} title={label + ' ' + item.title}>
                 {label}
