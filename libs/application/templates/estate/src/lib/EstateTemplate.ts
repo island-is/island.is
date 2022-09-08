@@ -13,6 +13,7 @@ import {
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import { EstateEvent, Roles, States } from './constants'
+import { Features } from '@island.is/feature-flags'
 
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -23,7 +24,7 @@ const EstateTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   dataSchema: estateSchema,
-  //featureFlag: Features.estateApplication,
+  featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,
