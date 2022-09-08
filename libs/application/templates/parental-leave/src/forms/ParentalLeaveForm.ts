@@ -42,6 +42,7 @@ import {
   NO_UNION,
   ParentalRelations,
   PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   StartDateOptions,
   YES,
@@ -90,6 +91,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   {
                     label: 'Fæðingarstyrkur - utan vinnumarkaðar',
                     value: PARENTAL_GRANT,
+                  },
+                  {
+                    label: 'Fæðingarstyrkur - námsmenn',
+                    value: PARENTAL_GRANT_STUDENTS,
                   },
                 ])
               },

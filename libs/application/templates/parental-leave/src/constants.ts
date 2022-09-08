@@ -4,6 +4,7 @@ export const MANUAL = 'manual'
 export const SPOUSE = 'spouse'
 export const PARENTAL_LEAVE = 'parentalLeave'
 export const PARENTAL_GRANT = 'parentalGrant'
+export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
