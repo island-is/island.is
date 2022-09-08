@@ -87,9 +87,15 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     },
   ]
 
-  const currentNavItem = organizationPage.menuLinks.find(
-    ({ primaryLink }) => primaryLink.url === router.asPath,
-  )?.primaryLink
+  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+
+  const currentNavItem =
+    organizationPage.menuLinks.find(
+      ({ primaryLink }) => primaryLink.url === baseRouterPath,
+    )?.primaryLink ??
+    organizationPage.secondaryMenu?.childrenLinks.find(
+      ({ url }) => url === baseRouterPath,
+    )
 
   const newsTitle =
     currentNavItem?.text ??
@@ -123,19 +129,17 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     })),
   ]
 
-  const pathWithoutHash = router.asPath.split('#')[0]
-
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pathWithoutHash ||
-        childrenLinks.some((link) => link.url === pathWithoutHash),
+        primaryLink.url === baseRouterPath ||
+        childrenLinks.some((link) => link.url === baseRouterPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pathWithoutHash,
+        active: url === baseRouterPath,
       })),
     }),
   )

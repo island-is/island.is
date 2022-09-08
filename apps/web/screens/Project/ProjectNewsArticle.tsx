@@ -1,10 +1,5 @@
-import {
-  Box,
-  BreadCrumbItem,
-  Breadcrumbs,
-  Hidden,
-  NavigationItem,
-} from '@island.is/island-ui/core'
+import { useRouter } from 'next/router'
+import { BreadCrumbItem } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import {
   GET_NAMESPACE_QUERY,
@@ -19,61 +14,47 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   Query,
+  QueryGetProjectPageArgs,
+  ProjectPage,
 } from '@island.is/web/graphql/schema'
 import {
   getThemeConfig,
   HeadWithSocialSharing,
   NewsArticle,
-  OrganizationWrapper,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
-
+import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { CustomNextError } from '../../units/errors'
-import { useRouter } from 'next/router'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { getParentPage } from './NewsList'
+import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
 
-interface OrganizationNewsArticleProps {
+interface ProjectNewsArticleleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
   namespace: GetNamespaceQuery['getNamespace']
-  parentPage: Query['getOrganizationPage'] | Query['getProjectPage']
+  projectPage: ProjectPage
+  locale: Locale
 }
 
-const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
+const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
   newsItem,
   namespace,
-  parentPage,
+  projectPage,
+  locale,
 }) => {
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  useContentfulId(parentPage.id, newsItem?.id)
+  useContentfulId(projectPage.id, newsItem?.id)
   useLocalLinkTypeResolver()
-
-  // We only display breadcrumbs and highlighted nav item if the news has the
-  // primary news tag of the organization
-  const isParentPageNews = newsItem.genericTags.some(
-    (x) => x.slug === parentPage.newsTag.slug,
-  )
 
   const overviewPath: string = Router.asPath.substring(
     0,
     Router.asPath.lastIndexOf('/'),
   )
 
-  const menuLinks =
-    parentPage.__typename === 'ProjectPage'
-      ? parentPage.sidebarLinks
-      : parentPage.menuLinks
-
-  const overviewLinkType: LinkType =
-    parentPage.__typename === 'ProjectPage'
-      ? 'projectnewsoverview'
-      : 'organizationnewsoverview'
-
-  const currentNavItem = menuLinks.find(
+  const currentNavItem = projectPage.sidebarLinks.find(
     ({ primaryLink }) => primaryLink.url === overviewPath,
   )
 
@@ -81,126 +62,69 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
     ? currentNavItem.primaryLink.text
     : n('newsTitle', 'Fréttir og tilkynningar')
 
-  const isNewsletter = newsItem?.genericTags?.some(
-    (x) => x.slug === 'frettabref',
-  )
-
-  const newsletterTitle = newsItem?.genericTags?.find(
-    (x) => x.slug === 'frettabref',
-  )?.title
-
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage').href,
+      href: linkResolver('homepage', [], locale).href,
       typename: 'homepage',
     },
     {
-      title: parentPage.title,
-      href: linkResolver(parentPage.__typename.toLowerCase() as LinkType, [
-        parentPage.slug,
-      ]).href,
-      typename: parentPage.__typename.toLowerCase() as LinkType,
+      title: projectPage.title,
+      href: linkResolver('projectpage', [projectPage.slug], locale).href,
+      typename: 'projectpage',
     },
-    ...(isParentPageNews
-      ? [
-          {
-            isTag: true,
-            title: newsOverviewTitle,
-            href: linkResolver(overviewLinkType, [parentPage.slug]).href,
-            typename: overviewLinkType,
-          },
-        ]
-      : []),
-    ...(isNewsletter
-      ? [
-          {
-            isTag: true,
-            title: newsletterTitle,
-            href:
-              linkResolver(overviewLinkType, [parentPage.slug]).href +
-              '?tag=frettabref',
-            typename: overviewLinkType,
-          },
-        ]
-      : []),
+    {
+      isTag: true,
+      title: newsOverviewTitle,
+      href: linkResolver('projectnewsoverview', [projectPage.slug]).href,
+      typename: 'projectnewsoverview',
+    },
   ]
-
-  const navList: NavigationItem[] = menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: isParentPageNews && primaryLink.url === overviewPath,
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-      })),
-    }),
-  )
-
-  const socialHead = (
-    <HeadWithSocialSharing
-      title={`${newsItem.title} | ${parentPage.title}`}
-      description={newsItem.intro}
-      imageUrl={newsItem.image?.url}
-      imageWidth={newsItem.image?.width.toString()}
-      imageHeight={newsItem.image?.height.toString()}
-    />
-  )
-
-  const content = <NewsArticle newsItem={newsItem} />
-
-  if (parentPage.__typename === 'ProjectPage') {
-    return (
-      <>
-        {socialHead}
-        <ProjectWrapper
-          withSidebar={true}
-          breadcrumbItems={breadCrumbs}
-          projectPage={parentPage}
-          sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
-        >
-          {content}
-        </ProjectWrapper>
-      </>
-    )
-  }
 
   return (
     <>
-      <OrganizationWrapper
-        pageTitle={parentPage.title}
-        organizationPage={parentPage}
+      <ProjectWrapper
+        projectPage={projectPage}
         breadcrumbItems={breadCrumbs}
-        navigationData={{
-          title: n('navigationTitle', 'Efnisyfirlit'),
-          items: navList,
-        }}
+        sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
+        withSidebar={true}
       >
-        {content}
-      </OrganizationWrapper>
-      {socialHead}
+        <NewsArticle newsItem={newsItem} />
+      </ProjectWrapper>
+      <HeadWithSocialSharing
+        title={`${newsItem.title} | ${projectPage.title}`}
+        description={newsItem.intro}
+        imageUrl={newsItem.image?.url}
+        imageWidth={newsItem.image?.width.toString()}
+        imageHeight={newsItem.image?.height.toString()}
+      />
     </>
   )
 }
 
-NewsItem.getInitialProps = async ({
+ProjectNewsArticle.getInitialProps = async ({
   apolloClient,
   locale,
   query,
-  pathname,
 }) => {
-  const parentPage = await getParentPage(
-    apolloClient,
-    pathname,
-    locale,
-    (query?.slug as string) ?? '',
-  )
+  const projectPage = (
+    await Promise.resolve(
+      apolloClient.query<Query, QueryGetProjectPageArgs>({
+        query: GET_PROJECT_PAGE_QUERY,
+        variables: {
+          input: {
+            slug: query.slug as string,
+            lang: locale as Locale,
+          },
+        },
+      }),
+    )
+  ).data?.getProjectPage
 
-  if (!parentPage) {
+  if (!projectPage) {
     throw new CustomNextError(
       404,
-      `Could not find parent page with slug: ${query.slug}`,
+      `Could not find project page with slug: ${query.slug}`,
     )
   }
 
@@ -241,11 +165,12 @@ NewsItem.getInitialProps = async ({
   }
 
   return {
-    parentPage: parentPage,
+    projectPage: projectPage,
     newsItem,
     namespace,
-    ...getThemeConfig(parentPage.theme, parentPage.slug),
+    locale: locale as Locale,
+    ...getThemeConfig(projectPage.theme, projectPage.slug),
   }
 }
 
-export default withMainLayout(OrganizationNewsArticle)
+export default withMainLayout(ProjectNewsArticle)
