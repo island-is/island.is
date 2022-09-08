@@ -1,7 +1,7 @@
-import type { RegistrationOfTypeForPeriod } from '@island.is/clients/electronic-registrations'
+import type { BrokenDownRegistrationStatistic } from '@island.is/api/domains/electronic-registration-statistics'
 
 export const extractRegistrationTypesFromData = (
-  data: RegistrationOfTypeForPeriod[],
+  data: BrokenDownRegistrationStatistic[],
 ) => {
   const types = new Set<string>()
   // TODO: i18n

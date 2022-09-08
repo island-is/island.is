@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'api-domains-electronic-registrations',
-  preset: '../../../../jest.preset.js',
+  displayName: 'clients-electronic-registration-statistics',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
@@ -12,5 +12,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/electronic-registrations',
+    '../../../coverage/libs/clients/electronic-registration-statistics',
 }

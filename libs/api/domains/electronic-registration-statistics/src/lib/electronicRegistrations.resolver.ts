@@ -1,4 +1,4 @@
-import { ElectronicRegistrationsClientService } from '@island.is/clients/electronic-registrations'
+import { ElectronicRegistrationsClientService } from '@island.is/clients/electronic-registration-statistics'
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetBrokenDownElectronicRegistrationStatisticsInput } from './dto/getBrokenDownElectronicRegistrationStatistics.input'
 import { BrokenDownRegistrationStatistic } from './models/brokenDownRegistrationStatistic'

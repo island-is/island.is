@@ -21,7 +21,7 @@ export class ElectronicRegistrationsClientService {
     return new StatisticsApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-electronic-registrations',
+          name: 'clients-electronic-registration-statistics',
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
