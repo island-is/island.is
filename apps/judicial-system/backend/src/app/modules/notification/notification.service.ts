@@ -376,6 +376,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
+      theCase.type,
       theCase.policeCaseNumbers,
       `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
