@@ -105,9 +105,7 @@ const feeInfoArray = (
       [
         {
           title: formatMessage(messages.mortages),
-          value: isNumber(data?.mortages)
-            ? amountFormat(Number(data.mortages))
-            : '',
+          value: isNumber(data?.mortages) && data?.mortages > 0 ? 'Já' : 'Nei',
         },
         {
           title: formatMessage(messages.insured),

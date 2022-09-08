@@ -123,20 +123,20 @@ export class VehiclesService {
       })[0]
 
       const axleMaxWeight =
-        (data.techincal?.mass?.massdaxle1
-          ? data.techincal?.mass?.massdaxle1
+        (data.techincal?.mass?.massmaxle1
+          ? data.techincal?.mass?.massmaxle1
           : 0) +
-        (data.techincal?.mass?.massdaxle2
-          ? data.techincal?.mass?.massdaxle2
+        (data.techincal?.mass?.massmaxle1
+          ? data.techincal?.mass?.massmaxle1
           : 0) +
-        (data.techincal?.mass?.massdaxle3
-          ? data.techincal?.mass?.massdaxle3
+        (data.techincal?.mass?.massmaxle3
+          ? data.techincal?.mass?.massmaxle3
           : 0) +
-        (data.techincal?.mass?.massdaxle4
-          ? data.techincal?.mass?.massdaxle4
+        (data.techincal?.mass?.massmaxle4
+          ? data.techincal?.mass?.massmaxle4
           : 0) +
-        (data.techincal?.mass?.massdaxle5
-          ? data.techincal?.mass?.massdaxle5
+        (data.techincal?.mass?.massmaxle5
+          ? data.techincal?.mass?.massmaxle5
           : 0)
 
       const numberOfAxles = data.techincal?.axle?.axleno ?? 0
