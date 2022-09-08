@@ -121,6 +121,7 @@
     "clients-documents": "libs/clients/documents",
     "clients-driving-license": "libs/clients/driving-license",
     "clients-driving-license-book": "libs/clients/driving-license-book",
+    "clients-electronic-registrations": "libs/clients/electronic-registrations",
     "clients-finance": "libs/clients/finance",
     "clients-financial-statements-inao": "libs/clients/financial-statements-inao",
     "clients-firearm-license": "libs/clients/firearm-license",

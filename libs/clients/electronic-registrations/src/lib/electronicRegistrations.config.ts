@@ -19,7 +19,7 @@ export const ElectronicRegistrationsClientConfig = defineConfig({
       ),
       fetch: {
         timeout:
-          env.optionalJSON('ELECTRONIC_REGISTRATIONS_API_TIMEOUT') ?? 10000,
+          env.optionalJSON('ELECTRONIC_REGISTRATIONS_API_TIMEOUT') ?? 120000,
       },
     }
   },
