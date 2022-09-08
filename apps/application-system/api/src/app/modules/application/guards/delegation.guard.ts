@@ -41,6 +41,8 @@ export class DelegationGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
+    const handlerName = context.getHandler().name
+    const controllerType = context.getClass().name
     const user: User = request.user
     if (!user.actor) {
       // If there is no actor then the user is not using delegations
@@ -72,6 +74,14 @@ export class DelegationGuard implements CanActivate {
           throw new BadSubject()
         }
       } else {
+        // typeId isnt supplied when requesting all applications on the overview in mínar síður
+        // so we make an exception for findAll for the ApplicationController
+        if (
+          handlerName === 'findAll' &&
+          controllerType === 'ApplicationController'
+        ) {
+          return true
+        }
         // This can happen if the user enters a drafted application and does not have access the getTypeIdFromApplicationId needs to get the application from the user id
         throw new BadSubject()
       }
