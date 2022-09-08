@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/types'
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
-import { EstateEvent, Roles, States } from './constants'
+import { EstateEvent, EstateTypes, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
 
 const EstateTemplate: ApplicationTemplate<
@@ -104,7 +104,15 @@ const EstateTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.APPLICANT_NO_PROPERTY,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.Done),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
                 import('../forms/Done').then((val) =>
                   Promise.resolve(val.Done),
@@ -122,9 +130,11 @@ const EstateTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
-      if (application.answers.selectedEstate === 'Opinber skipti') {
+      if (application.answers.selectedEstate === EstateTypes.officialEstate) {
         return Roles.APPLICANT_OFFICIAL_ESTATE
-      } else if (application.answers.selectedEstate === 'Eignarlaust dánarbú') {
+      } else if (
+        application.answers.selectedEstate === EstateTypes.noPropertyEstate
+      ) {
         return Roles.APPLICANT_NO_PROPERTY
       } else return Roles.APPLICANT
     }

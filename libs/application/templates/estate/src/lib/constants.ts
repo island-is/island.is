@@ -31,3 +31,8 @@ export enum Roles {
   APPLICANT_OFFICIAL_ESTATE = 'applicant_official_estate',
   APPLICANT_NO_PROPERTY = 'applicant_no_property',
 }
+
+export const EstateTypes = {
+  officialEstate: 'Opinber skipti',
+  noPropertyEstate: 'Eignarlaust dánarbú',
+}

@@ -8,6 +8,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
@@ -62,13 +63,13 @@ export const Prerequisites: Form = buildForm({
               width: 'full',
               options: [
                 {
-                  value: 'Eignarlaust dánarbú',
-                  label: 'Eignarlaust dánarbú',
+                  value: EstateTypes.noPropertyEstate,
+                  label: EstateTypes.noPropertyEstate,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 {
-                  value: 'Opinber skipti',
-                  label: 'Opinber skipti',
+                  value: EstateTypes.officialEstate,
+                  label: EstateTypes.officialEstate,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 //{ value: 'Einkaskipti', label: 'Einkaskipti', tooltip: 'Sjá nánar linkur hér' },

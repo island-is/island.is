@@ -1,10 +1,9 @@
 import * as z from 'zod'
+import { EstateTypes } from './constants'
 
 export const estateSchema = z.object({
   selectedEstate: z.enum([
-    'Eignarlaust dánarbú',
-    'Einkaskipti',
-    'Opinber skipti',
-    'Búsetuleyfi',
+    EstateTypes.officialEstate,
+    EstateTypes.noPropertyEstate,
   ]),
 })
