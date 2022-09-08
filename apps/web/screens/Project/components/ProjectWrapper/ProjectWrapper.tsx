@@ -66,7 +66,8 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           isSticky={true}
           sidebarContent={
             <>
-              {projectPageSidebarNavigationComponent()}
+              {projectPage.sidebarLinks?.length > 0 &&
+                projectPageSidebarNavigationComponent()}
               {sidebarContent}
             </>
           }

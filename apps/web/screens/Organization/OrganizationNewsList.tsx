@@ -6,7 +6,6 @@ import {
 } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
-  ContentLanguage,
   GetNamespaceQuery,
   GetNewsDatesQuery,
   GetNewsQuery,
@@ -18,10 +17,13 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespaceStrict } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { Locale } from 'locale'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import {
@@ -43,6 +45,7 @@ interface OrganizationNewsListProps {
   selectedPage: number
   selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
+  locale: Locale
 }
 
 const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
@@ -55,26 +58,32 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   selectedPage,
   selectedTag,
   namespace,
+  locale,
 }) => {
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
+  useContentfulId(organizationPage.id)
+  useLocalLinkTypeResolver()
 
   const n = useNamespaceStrict(namespace)
 
-  const newsOverviewUrl = linkResolver('organizationnewsoverview', [
-    organizationPage.slug,
-  ]).href
+  const newsOverviewUrl = linkResolver(
+    'organizationnewsoverview',
+    [organizationPage.slug],
+    locale,
+  ).href
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage').href,
+      href: linkResolver('homepage', [], locale).href,
       typename: 'homepage',
     },
     {
       title: organizationPage.title,
-      href: newsOverviewUrl,
-      typename: 'projectnewsoverview',
+      href: linkResolver('organizationpage', [organizationPage.slug], locale)
+        .href,
+      typename: 'organizationpage',
     },
   ]
 
@@ -206,7 +215,7 @@ OrganizationNewsList.getInitialProps = async ({
         variables: {
           input: {
             slug: query.slug as string,
-            lang: locale as ContentLanguage,
+            lang: locale as Locale,
           },
         },
       }),
@@ -237,7 +246,7 @@ OrganizationNewsList.getInitialProps = async ({
       query: GET_NEWS_DATES_QUERY,
       variables: {
         input: {
-          lang: locale as ContentLanguage,
+          lang: locale as Locale,
           tag,
         },
       },
@@ -246,7 +255,7 @@ OrganizationNewsList.getInitialProps = async ({
       query: GET_NEWS_QUERY,
       variables: {
         input: {
-          lang: locale as ContentLanguage,
+          lang: locale as Locale,
           size: PERPAGE,
           page: selectedPage,
           year,
@@ -260,7 +269,7 @@ OrganizationNewsList.getInitialProps = async ({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            lang: locale as ContentLanguage,
+            lang: locale as Locale,
             namespace: 'NewsList',
           },
         },
@@ -281,6 +290,7 @@ OrganizationNewsList.getInitialProps = async ({
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
+    locale: locale as Locale,
     ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }

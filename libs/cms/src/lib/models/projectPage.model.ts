@@ -75,7 +75,9 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   slug: fields.slug ?? '',
   theme: fields.theme ?? 'default',
   sidebar: fields.sidebar ?? false,
-  sidebarLinks: (fields.sidebarLinks ?? []).map(mapLinkGroup),
+  sidebarLinks: (fields.sidebarLinks ?? [])
+    .map(mapLinkGroup)
+    .filter((link) => Boolean(link.primaryLink)),
   subtitle: fields.subtitle ?? '',
   intro: fields.intro ?? '',
   content: fields.content

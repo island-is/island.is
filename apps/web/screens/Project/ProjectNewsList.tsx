@@ -2,7 +2,6 @@ import { BreadCrumbItem } from '@island.is/island-ui/core'
 import { NewsList } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
-  ContentLanguage,
   GetNamespaceQuery,
   GetNewsDatesQuery,
   GetNewsQuery,
@@ -13,11 +12,14 @@ import {
   QueryGetNewsDatesArgs,
   QueryGetProjectPageArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver, useNamespaceStrict } from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { Locale } from 'locale'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import {
@@ -41,6 +43,7 @@ interface ProjectNewsListProps {
   selectedPage: number
   selectedTag: string
   namespace: GetNamespaceQuery['getNamespace']
+  locale: Locale
 }
 
 const ProjectNewsList: Screen<ProjectNewsListProps> = ({
@@ -53,26 +56,31 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   selectedPage,
   selectedTag,
   namespace,
+  locale,
 }) => {
   const router = useRouter()
   const { getMonthByIndex } = useDateUtils()
+  useContentfulId(projectPage.id)
+  useLocalLinkTypeResolver()
 
-  const n = useNamespaceStrict(namespace)
+  const n = useNamespace(namespace)
 
-  const newsOverviewUrl = linkResolver('projectnewsoverview', [
-    projectPage.slug,
-  ]).href
+  const newsOverviewUrl = linkResolver(
+    'projectnewsoverview',
+    [projectPage.slug],
+    locale,
+  ).href
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage').href,
+      href: linkResolver('homepage', [], locale).href,
       typename: 'homepage',
     },
     {
       title: projectPage.title,
-      href: newsOverviewUrl,
-      typename: 'projectnewsoverview',
+      href: linkResolver('projectpage', [projectPage.slug], locale).href,
+      typename: 'projectpage',
     },
   ]
 
@@ -180,7 +188,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         variables: {
           input: {
             slug: query.slug as string,
-            lang: locale as ContentLanguage,
+            lang: locale as Locale,
           },
         },
       }),
@@ -211,7 +219,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       query: GET_NEWS_DATES_QUERY,
       variables: {
         input: {
-          lang: locale as ContentLanguage,
+          lang: locale as Locale,
           tag,
         },
       },
@@ -220,7 +228,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
       query: GET_NEWS_QUERY,
       variables: {
         input: {
-          lang: locale as ContentLanguage,
+          lang: locale as Locale,
           size: PERPAGE,
           page: selectedPage,
           year,
@@ -234,7 +242,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            lang: locale as ContentLanguage,
+            lang: locale as Locale,
             namespace: 'NewsList',
           },
         },
@@ -255,6 +263,7 @@ ProjectNewsList.getInitialProps = async ({ apolloClient, query, locale }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
+    locale: locale as Locale,
     ...getThemeConfig(projectPage?.theme),
   }
 }

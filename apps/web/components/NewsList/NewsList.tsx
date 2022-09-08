@@ -9,11 +9,7 @@ import {
   Box,
   Link,
 } from '@island.is/island-ui/core'
-import {
-  linkResolver,
-  LinkType,
-  useNamespaceStrict,
-} from '@island.is/web/hooks'
+import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
 import { NewsCard } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
@@ -53,7 +49,7 @@ export const NewsList = ({
   monthOptions,
 }: NewsListProps) => {
   const router = useRouter()
-  const n = useNamespaceStrict(namespace)
+  const n = useNamespace(namespace)
 
   const allYearsString = n('allYears', 'Allar fréttir')
   const yearString = n('year', 'Ár')

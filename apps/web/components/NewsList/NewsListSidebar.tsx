@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Select as NativeSelect } from '@island.is/web/components'
 import { makeHref } from './utils'
-import { useNamespaceStrict } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 interface NewsListSidebarProps {
@@ -35,7 +35,7 @@ export const NewsListSidebar = ({
   months,
 }: NewsListSidebarProps) => {
   const router = useRouter()
-  const n = useNamespaceStrict(namespace)
+  const n = useNamespace(namespace)
   const { getMonthByIndex } = useDateUtils()
 
   const allYearsString = n('allYears', 'Allar fréttir')
