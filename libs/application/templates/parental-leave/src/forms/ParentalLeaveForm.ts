@@ -77,7 +77,7 @@ export const ParentalLeaveForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'leaveType',
-          title: 'Veldu orlof',
+          title: 'Veldu umsókn',
           children: [
             buildAsyncSelectField({
               title: 'Veldu umsókn',
