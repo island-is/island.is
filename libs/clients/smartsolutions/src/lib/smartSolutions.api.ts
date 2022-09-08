@@ -8,6 +8,8 @@ import {
   UpsertPkPassResponse,
   PassTemplatesDTO,
   PkPassServiceErrorResponse,
+  ListPassesDTO,
+  ListPassesResponse,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
 import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
@@ -45,6 +47,8 @@ export class SmartSolutionsApi {
       throw new ForbiddenException('Missing apikey')
     }
 
+    this.logger.debug(payload)
+
     return fetch(this.config.pkPassApiUrl, {
       method: 'POST',
       headers: {
@@ -54,6 +58,104 @@ export class SmartSolutionsApi {
       timeout: this.config.timeout,
       body: payload,
     })
+  }
+
+  async listPkPasses(
+    queryId: string,
+    passTemplateId: string,
+    issuer: PkPassIssuer,
+  ): Promise<ListPassesDTO | null> {
+    const listPassesQuery = `
+      query ListPasses {
+        passes(
+          search: { query: "${queryId}" },
+          passTemplateId: "${passTemplateId}",
+          order: { column: WHEN_MODIFIED, dir: DESC }
+          ) {
+          data {
+            whenCreated
+            whenModified
+            passTemplate {
+                id
+            }
+            distributionUrl
+            distributionQRCode
+            id
+            status
+            inputFieldValues {
+              passInputField {
+                identifier
+              }
+              value
+            }
+          }
+        }
+      }
+    `
+    let res: Response | null = null
+
+    const graphql = JSON.stringify({
+      query: listPassesQuery,
+      variables: {},
+    })
+
+    try {
+      res = await this.fetchUrl(graphql, issuer)
+    } catch (e) {
+      this.logger.warn('Unable to retrieve pk passes', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+    }
+
+    if (!res) {
+      this.logger.warn('Unable to get pk passes, null from fetch', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    if (!res.ok) {
+      const responseErrors: PkPassServiceErrorResponse = {}
+      try {
+        const json = await res.json()
+        responseErrors.message = json?.message ?? undefined
+        responseErrors.status = json?.status ?? undefined
+        responseErrors.data = json?.data ?? undefined
+      } catch {
+        // noop
+      }
+
+      this.logger.warn('Expected 200 status for list pkpasses', {
+        status: res.status,
+        statusText: res.statusText,
+        category: LOG_CATEGORY,
+        ...responseErrors,
+      })
+      return null
+    }
+
+    let json: unknown
+    try {
+      json = await res.json()
+    } catch (e) {
+      this.logger.warn('Unable to parse JSON for pk passes', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      //return null
+    }
+
+    const response = json as ListPassesResponse
+
+    if (response?.data?.passes?.data) {
+      const passesDTO: ListPassesDTO = {
+        passes: response.data.passes.data,
+      }
+      return passesDTO
+    }
+
+    return null
   }
 
   async upsertPkPass(

@@ -1,5 +1,3 @@
-import { Pass, PassTemplate } from '../../gen/schema'
-
 export interface CreatePkPassDataInput {
   passTemplateId?: string
   inputFieldValues?: {
@@ -27,38 +25,57 @@ export interface PkPassServiceErrorResponse {
   status?: number
   data?: unknown
 }
-export interface PassTemplateDTO {
-  id?: string
-  name?: string
-}
-
 export interface ListPassesResponse {
   data: {
     passes: {
-      data: Array<Pass>
+      data: Array<PassDTO>
     }
   }
 }
 
 export interface PassTemplatesDTO {
-  passTemplates: Array<PassTemplate>
+  passTemplates: Array<PassTemplateDTO>
+}
+
+export interface PassDTO {
+  distributionUrl: string
+  deliveryPageUrl: string
+  distributionQRCode: string
+  whenCreated: string
+  whenModified: string
+  passTemplate: PassTemplateDTO
+  id: string
+  status: string
+  inputFieldValues: {
+    passInputField: {
+      identifier: string
+    }
+    value: string
+  }
 }
 
 export interface ListPassesDTO {
-  passes: Array<Pass>
+  passes: Array<PassDTO>
 }
 
 export interface PassTemplatesResponse {
   data?: {
     passTemplates?: {
-      data?: PassTemplate[]
+      data?: PassTemplateDTO[]
     }
+  }
+}
+
+export interface PassTemplateDTO {
+  passTemplate: {
+    id: string
+    name: string
   }
 }
 
 export interface UpsertPkPassResponse {
   data?: {
-    upsertPass?: Pass
+    upsertPass?: PassDTO
   }
   message?: string
   status?: number
