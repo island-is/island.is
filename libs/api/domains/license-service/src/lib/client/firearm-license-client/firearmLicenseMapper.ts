@@ -3,14 +3,16 @@ import {
   LicenseData,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
+import format from 'date-fns/format'
+import { format as formatSsn } from 'kennitala'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
 
-const ExtractDateString = (dateTime: string) =>
-  dateTime ? new Date(dateTime).toISOString().split('T')[0] : null
+const formatDateString = (dateTime: string) =>
+  dateTime ? format(new Date(dateTime), 'dd.MM.yy') : ''
 
 export const parseFirearmLicensePayload = (
   licenseData: LicenseData,
@@ -33,12 +35,12 @@ export const parseFirearmLicensePayload = (
     licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími',
-      value: ExtractDateString(licenseInfo.expirationDate) ?? '',
+      value: formatDateString(licenseInfo.expirationDate) ?? '',
     },
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
-      value: ExtractDateString(licenseInfo.issueDate) ?? '',
+      value: formatDateString(licenseInfo.issueDate) ?? '',
     },
     licenseInfo.licenseNumber && {
       type: GenericLicenseDataFieldType.Value,
@@ -48,8 +50,7 @@ export const parseFirearmLicensePayload = (
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
-      value:
-        ExtractDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
+      value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
     },
     licenseInfo.address && {
       type: GenericLicenseDataFieldType.Value,
@@ -129,7 +130,7 @@ export const createPkPassDataInput = (
   return [
     {
       identifier: 'gildir',
-      value: licenseInfo.expirationDate ?? '',
+      value: formatDateString(licenseInfo.expirationDate ?? ''),
     },
     {
       identifier: 'nafn',
@@ -137,7 +138,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'kt',
-      value: nationalId ?? '',
+      value: licenseInfo.ssn ? formatSsn(licenseInfo.ssn) : '',
     },
     {
       identifier: 'heimilisfang',
@@ -153,7 +154,9 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'rettindi',
-      value: licenseInfo.qualifications ?? '',
+      value: licenseInfo.qualifications
+        ? licenseInfo.qualifications.split('').join(' ')
+        : '',
     },
     {
       identifier: 'skotvopn',
