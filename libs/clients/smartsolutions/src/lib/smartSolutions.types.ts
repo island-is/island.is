@@ -32,16 +32,28 @@ export interface PassTemplateDTO {
   name?: string
 }
 
+export interface ListPassesResponse {
+  data: {
+    passes: {
+      data: Array<Pass>
+    }
+  }
+}
+
+export interface PassTemplatesDTO {
+  passTemplates: Array<PassTemplate>
+}
+
+export interface ListPassesDTO {
+  passes: Array<Pass>
+}
+
 export interface PassTemplatesResponse {
   data?: {
     passTemplates?: {
       data?: PassTemplate[]
     }
   }
-}
-
-export interface PassTemplatesDTO {
-  passTemplates?: Array<PassTemplate>
 }
 
 export interface UpsertPkPassResponse {
