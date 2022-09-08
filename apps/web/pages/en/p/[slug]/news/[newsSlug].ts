@@ -1,5 +1,5 @@
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
-import newsItemScreen from '@island.is/web/screens/Organization/NewsItem'
+import ProjectNewsArticle from '@island.is/web/screens/Project/ProjectNewsArticle'
 
-export default withApollo(withLocale('en')(newsItemScreen))
+export default withApollo(withLocale('en')(ProjectNewsArticle))

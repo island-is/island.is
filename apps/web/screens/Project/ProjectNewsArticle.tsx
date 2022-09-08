@@ -32,16 +32,16 @@ import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 import { CustomNextError } from '../../units/errors'
 import { useRouter } from 'next/router'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { ProjectWrapper } from '../Project/components/ProjectWrapper'
+import { ProjectWrapper } from './components/ProjectWrapper'
 import { getParentPage } from './NewsList'
 
-interface NewsItemProps {
+interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
   namespace: GetNamespaceQuery['getNamespace']
   parentPage: Query['getOrganizationPage'] | Query['getProjectPage']
 }
 
-const NewsItem: Screen<NewsItemProps> = ({
+const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   newsItem,
   namespace,
   parentPage,
@@ -248,4 +248,4 @@ NewsItem.getInitialProps = async ({
   }
 }
 
-export default withMainLayout(NewsItem)
+export default withMainLayout(OrganizationNewsArticle)
