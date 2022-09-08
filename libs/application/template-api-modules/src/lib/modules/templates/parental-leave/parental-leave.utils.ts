@@ -179,14 +179,17 @@ export const getRightsCode = (application: Application): string => {
 
   const answers = getApplicationAnswers(application.answers)
   const isSelfEmployed = answers.isSelfEmployed === YES
-
+  
   const isUnemployed = answers.applicationType === 'parentalGrant'
+  const isStudent = answers.applicationType === 'parentalGrantStudents'
 
   if (selectedChild.parentalRelation === ParentalRelations.primary) {
-    if (isSelfEmployed) {
-      return 'M-S-GR'
-    } else if (isUnemployed) {
+    if (isUnemployed){
       return 'M-FS'
+    } else if (isStudent) {
+      return 'M-FSN'    
+    } else if (isSelfEmployed)  {
+      return 'M-S-GR'
     } else {
       return 'M-L-GR'
     }
@@ -201,19 +204,23 @@ export const getRightsCode = (application: Application): string => {
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
-    if (isSelfEmployed) {
-      return `${parentPrefix}-S-GR`
-    } else if (isUnemployed) {
+    if (isUnemployed) {
       return `${parentPrefix}-FS`
+    } else if (isStudent) {
+      return `${parentPrefix}-FSN`  
+    } else if (isSelfEmployed) {
+      return `${parentPrefix}-S-GR`
     } else {
       return `${parentPrefix}-L-GR`
     }
   }
 
-  if (isSelfEmployed) {
+  if (isUnemployed) {
+    return `${parentPrefix}-FL-FS` 
+  } else if (isStudent) {
+    return `${parentPrefix}-FL-FSN`  
+  } else if (isSelfEmployed) {  
     return `${parentPrefix}-FL-S-GR`
-  } else if (isUnemployed) {
-    return `${parentPrefix}-FL-FS`
   } else {
     return `${parentPrefix}-FL-L-GR`
   }
