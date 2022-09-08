@@ -43,7 +43,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   organizationPage,
   locale,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, newsItem?.id)
@@ -55,9 +55,9 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
     (x) => x.slug === organizationPage.newsTag.slug,
   )
 
-  const overviewPath: string = Router.asPath.substring(
+  const overviewPath: string = router.asPath.substring(
     0,
-    Router.asPath.lastIndexOf('/'),
+    router.asPath.lastIndexOf('/'),
   )
 
   const currentNavItem = organizationPage.menuLinks.find(

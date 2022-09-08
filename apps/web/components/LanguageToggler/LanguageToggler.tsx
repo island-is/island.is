@@ -104,9 +104,6 @@ export const LanguageToggler = ({
       type = typeResolver(pathWithoutQueryParams).type
     }
 
-    console.log('TYPE:', type)
-    console.log('SLUGS:', slugs)
-
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
