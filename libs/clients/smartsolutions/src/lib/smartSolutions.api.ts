@@ -10,10 +10,10 @@ import {
   PkPassServiceErrorResponse,
   ListPassesDTO,
   ListPassesResponse,
+  CreatePkPassDataInput,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
 import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
-import { PassDataInput } from '../../gen/schema'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
@@ -158,7 +158,7 @@ export class SmartSolutionsApi {
   }
 
   async upsertPkPass(
-    payload: PassDataInput,
+    payload: CreatePkPassDataInput,
     issuer: PkPassIssuer,
   ): Promise<UpsertPkPassResponse | null> {
     const createPkPassMutation = `
@@ -237,7 +237,10 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassQrCode(payload: PassDataInput, issuer: PkPassIssuer) {
+  async generatePkPassQrCode(
+    payload: CreatePkPassDataInput,
+    issuer: PkPassIssuer,
+  ) {
     const response = await this.upsertPkPass(payload, issuer)
 
     if (response?.data?.upsertPass?.distributionQRCode) {
@@ -256,7 +259,10 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassUrl(payload: PassDataInput, issuer: PkPassIssuer) {
+  async generatePkPassUrl(
+    payload: CreatePkPassDataInput,
+    issuer: PkPassIssuer,
+  ) {
     const response = await this.upsertPkPass(payload, issuer)
 
     if (response?.data?.upsertPass?.distributionUrl) {
