@@ -90,8 +90,6 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
     ({ primaryLink }) => primaryLink.url === baseRouterPath,
   )?.primaryLink
 
-  console.log(currentNavItem)
-
   const newsTitle =
     currentNavItem?.text ??
     newsList[0]?.genericTags.find((x) => x.slug === selectedTag)?.title ??
