@@ -148,8 +148,30 @@ export class GenericFirearmLicenseApi
     )
     return pass ?? null
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
-    return null
+  async verifyPkPass(
+    code: string,
+    date: string,
+    passTemplateId: string,
+  ): Promise<PkPassVerification | null> {
+    const payload = {
+      dynamicBarcodeData: {
+        code,
+        date,
+        passTemplateId,
+      },
+    }
+    const response = await this.smartApi.verifyPkPass(payload, this.issuer)
+
+    if (response?.data) {
+      return { valid: true, data: JSON.stringify(response.data) }
+    }
+
+    return {
+      valid: false,
+      errors: response?.errors.map((error) => ({
+        status: '',
+        message: error.message,
+      })),
+    }
   }
 }

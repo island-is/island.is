@@ -33,6 +33,33 @@ export interface ListPassesResponse {
   }
 }
 
+export interface VerifyPassResponse {
+  data: {
+    pass: PassDTO
+  }
+  errors: {
+    message: string
+    path: string
+  }[]
+}
+
+export interface DynamicBarcodeDataInput {
+  dynamicBarcodeData: {
+    code: string
+    //iso8601
+    date: string
+  }
+}
+
+export enum PkPassStatus {
+  Expired = 'EXPIRED',
+  Unclaimed = 'UNCLAIMED',
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  Voided = 'VOIDED',
+  DeleteInProcess = 'DELETE_IN_PROCESS',
+}
+
 export interface PassTemplatesDTO {
   passTemplates: Array<PassTemplateDTO>
 }
@@ -48,7 +75,7 @@ export interface PassDTO {
   alreadyPaid: boolean
   passTemplate: PassTemplateDTO
   id: string
-  status: string
+  status: PkPassStatus
   inputFieldValues: {
     passInputField: {
       identifier: string
@@ -67,15 +94,6 @@ export interface PassTemplatesResponse {
       data?: PassTemplateDTO[]
     }
   }
-}
-
-export enum PkPassStatus {
-  Expired = 'EXPIRED',
-  Unclaimed = 'UNCLAIMED',
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  Voided = 'VOIDED',
-  DeleteInProcess = 'DELETE_IN_PROCESS',
 }
 
 export interface PassTemplateDTO {

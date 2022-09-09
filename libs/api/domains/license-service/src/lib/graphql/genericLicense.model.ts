@@ -150,9 +150,9 @@ export class GenericPkPassVerification {
 
   @Field(() => GenericPkPassVerificationError, {
     nullable: true,
-    description: 'Optional error related to the pkpass verification',
+    description: 'Optional errors array related to the pkpass verification',
   })
-  error?: GenericPkPassVerificationError
+  errors?: GenericPkPassVerificationError[]
 
   @Field({ description: 'Is the pkpass valid?' })
   valid!: boolean

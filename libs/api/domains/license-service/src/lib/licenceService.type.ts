@@ -139,10 +139,21 @@ export type PkPassVerificationError = {
   data?: string
 }
 
+export type PkPassVerificationData = {
+  id?: string
+  validFrom?: string
+  expirationDate?: string
+  expirationTime?: string
+  status?: string
+  whenCreated?: string
+  whenModified?: string
+  alreadyPaid?: boolean
+}
+
 export type PkPassVerification = {
   valid: boolean
   data?: string
-  error?: PkPassVerificationError
+  errors?: Array<PkPassVerificationError>
 }
 
 /**
@@ -162,7 +173,11 @@ export interface GenericLicenseClient<LicenseType> {
 
   getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
 
-  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
+  verifyPkPass: (
+    code: string,
+    date: string,
+    passTemplateId: string,
+  ) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'

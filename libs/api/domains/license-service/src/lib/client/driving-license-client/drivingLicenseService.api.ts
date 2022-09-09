@@ -372,7 +372,7 @@ export class GenericDrivingLicenseApi
       return {
         valid: false,
         data: undefined,
-        error,
+        errors: [error],
       }
     }
 
@@ -412,7 +412,7 @@ export class GenericDrivingLicenseApi
     return {
       valid: result.valid,
       data: response ? JSON.stringify(response) : undefined,
-      error,
+      errors: error ? [error] : undefined,
     }
   }
 }

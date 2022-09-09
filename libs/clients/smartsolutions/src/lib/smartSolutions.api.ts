@@ -11,6 +11,8 @@ import {
   ListPassesDTO,
   ListPassesResponse,
   CreatePkPassDataInput,
+  VerifyPassResponse,
+  DynamicBarcodeDataInput,
   PkPassStatus,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
@@ -150,6 +152,97 @@ export class SmartSolutionsApi {
         passes: response.data.passes.data,
       }
       return passesDTO
+    }
+
+    return null
+  }
+
+  async verifyPkPass(
+    payload: DynamicBarcodeDataInput,
+    issuer: PkPassIssuer,
+  ): Promise<VerifyPassResponse | null> {
+    const verifyPkPassMutation = `
+      mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
+        updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
+          id
+          validFrom
+          expirationDate
+          expirationTime
+          status
+          whenCreated
+          whenModified
+          alreadyPaid
+        }
+      }
+    `
+
+    const { code, date } = payload.dynamicBarcodeData
+
+    const body = {
+      query: verifyPkPassMutation,
+      variables: {
+        dynamicBarcodeData: {
+          code,
+          date,
+        },
+      },
+    }
+
+    let res: Response | null = null
+
+    try {
+      res = await this.fetchUrl(JSON.stringify(body), issuer)
+    } catch (e) {
+      this.logger.warn('Unable to verify pass', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    if (!res) {
+      this.logger.warn('pkpass verification failed, null from fetch', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    if (!res.ok) {
+      const responseErrors: PkPassServiceErrorResponse = {}
+      try {
+        const json = await res.json()
+        this.logger.debug(json)
+        responseErrors.message = json?.message ?? undefined
+        responseErrors.status = json?.status ?? undefined
+        responseErrors.data = json?.data ?? undefined
+      } catch {
+        // noop
+      }
+
+      this.logger.warn('Expected 200 status for pkpass verification', {
+        status: res.status,
+        statusText: res.statusText,
+        category: LOG_CATEGORY,
+        ...responseErrors,
+      })
+      return null
+    }
+
+    let json: unknown
+    try {
+      json = await res.json()
+    } catch (e) {
+      this.logger.warn('Unable to parse JSON for pkpass verification', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      //return null
+    }
+
+    const response = json as VerifyPassResponse
+
+    if (response) {
+      return response
     }
 
     return null

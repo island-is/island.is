@@ -71,7 +71,13 @@ export class VerifyPkPassInput {
   licenseType!: GenericLicenseType
 
   @Field(() => String)
-  data!: string
+  code!: string
+
+  @Field(() => String)
+  date!: string
+
+  @Field(() => String)
+  passTemplateId!: string
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -162,13 +168,23 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
-    const verification = await this.licenseServiceService.verifyPkPass(
+    const {
+      valid,
+      data,
+      errors,
+    } = await this.licenseServiceService.verifyPkPass(
       user,
       locale,
       input.licenseType,
-      input.data,
+      input.code,
+      input.date,
+      input.passTemplateId,
     )
 
-    return verification
+    return {
+      valid,
+      data,
+      errors,
+    }
   }
 }
