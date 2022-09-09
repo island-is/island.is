@@ -212,6 +212,7 @@ export const Cases: React.FC = () => {
               {isProsecutor && (
                 <Box display={['none', 'none', 'block']}>
                   <DropdownMenu
+                    dataTestId="createCaseDropdown"
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
