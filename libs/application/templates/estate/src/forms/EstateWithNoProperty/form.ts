@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
@@ -31,6 +32,12 @@ export const form: Form = buildForm({
               id: 'estateMembersHeader',
               title: m.estateMembers,
               titleVariant: 'h3',
+            }),
+            buildCustomField({
+              title: '',
+              id: 'estateMembers',
+              component: 'EstateMemberRepeater',
+              width: 'half',
             }),
           ],
         }),
