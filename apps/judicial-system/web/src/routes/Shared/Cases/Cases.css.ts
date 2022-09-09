@@ -38,6 +38,12 @@ export const deleteButtonContainer = style({
   maxWidth: '0',
   height: '100%',
   padding: 0,
+  position: 'relative',
+})
+
+export const deleteButtonInnerContainer = style({
+  transform: 'translate(5px, -50%)',
+  position: 'absolute',
 })
 
 export const thButton = style({
