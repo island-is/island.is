@@ -749,7 +749,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     >
                       {formatMessage(m.signButton)}
                     </Button>
-                  ) : (
+                  ) : isRestrictionCase(workingCase.type) ? null : (
                     <Text>{formatMessage(m.unsignedDocument)}</Text>
                   ))}
               </PdfButton>
