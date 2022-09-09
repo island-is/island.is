@@ -1,6 +1,19 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Prereqs title
+  prerequisitesTitle: {
+    id: 'es.application:prerequisitesTitle',
+    defaultMessage: 'Ákvörðun um skipti bús',
+    description: '',
+  },
+  prerequisitesSubtitle: {
+    id: 'es.application:prerequisitesSubtitle',
+    defaultMessage:
+      'Hægt er að fara fjórar leiðir við skipti á búi. Vinsamlega veldu þá leið sem þú og aðrir erfingjar viljið fara.',
+    description: '',
+  },
+
   // Data collection - external data providers
   dataCollectionTitle: {
     id: 'es.application:dataCollectionTitle',
@@ -14,7 +27,7 @@ export const m = defineMessages({
   },
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
-    defaultMessage: 'UUpplýsingar um hinn látna',
+    defaultMessage: 'Upplýsingar um hinn látna',
     description: '',
   },
   deceasedInfoProviderSubtitle: {
@@ -41,6 +54,18 @@ export const m = defineMessages({
   settingsInfoProviderSubtitle: {
     id: 'es.application:settingsInfoProviderSubtitle',
     defaultMessage: 'Persónustillingar þínar frá Ísland.is.',
+    description: '',
+  },
+
+  // The deceased
+  theDeceased: {
+    id: 'es.application:theDeceased',
+    defaultMessage: 'Hinn látni',
+    description: '',
+  },
+  deathDate: {
+    id: 'es.application:deathDate',
+    defaultMessage: 'Dánardagur',
     description: '',
   },
 
@@ -82,16 +107,28 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Estate members
-  estateMembersTitle: {
-    id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar og erfðaskrá',
+  // Overview
+  overviewTitle: {
+    id: 'es.application:overviewTitle',
+    defaultMessage: 'Yfirlit',
     description: '',
   },
-  estateMembersSubtitle: {
-    id: 'es.application:estateMembersSubtitle',
+  overviewSubtitle: {
+    id: 'es.application:overviewSubtitle',
     defaultMessage:
-      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+      'Þú hefur valið að tilkynna um eignarlaust bú. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+    description: '',
+  },
+
+  // Done
+  officialExchangeDoneTitle: {
+    id: 'es.application:officialExchangeDoneTitle',
+    defaultMessage: 'Tilkynning móttekin',
+    description: '',
+  },
+  officialExchangeDoneSubtitle: {
+    id: 'es.application:officialExchangeDoneSubtitle',
+    defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um opinber skipti.',
     description: '',
   },
 

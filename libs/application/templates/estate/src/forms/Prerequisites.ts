@@ -23,17 +23,16 @@ export const Prerequisites: Form = buildForm({
       children: [
         buildMultiField({
           id: 'estate',
-          title: 'Ákvörðun um skipti bús',
-          description:
-            'Hægt er að fara fjórar leiðir við skipti á búi. Vinsamlega veldu þá leið sem þú og aðrir erfingjar viljið fara.',
+          title: m.prerequisitesTitle,
+          description: m.prerequisitesSubtitle,
           children: [
             buildKeyValueField({
-              label: 'Nafn',
+              label: m.name,
               value: 'Jóna Jónsdóttir',
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Kennitala',
+              label: m.nationalId,
               value: '190841-2409',
               width: 'half',
             }),
@@ -43,12 +42,12 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildKeyValueField({
-              label: 'Lögheimili',
+              label: m.address,
               value: 'lalallala',
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Dánardagur',
+              label: m.deathDate,
               value: '05.02.2022',
               width: 'half',
             }),
@@ -77,7 +76,7 @@ export const Prerequisites: Form = buildForm({
               ],
             }),
             buildSubmitField({
-              id: 'overview.submit',
+              id: 'estate.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
