@@ -409,35 +409,33 @@ const ActiveCases: React.FC<Props> = (props) => {
                     )}
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  <Box className={styles.deleteButtonInnerContainer}>
-                    <Button
-                      colorScheme="destructive"
-                      size="small"
-                      loading={isDeletingCase}
-                      onClick={async (evt) => {
-                        if (onDeleteCase && setActiveCases) {
-                          evt.stopPropagation()
+                  <Button
+                    colorScheme="destructive"
+                    size="small"
+                    loading={isDeletingCase}
+                    onClick={async (evt) => {
+                      if (onDeleteCase && setActiveCases) {
+                        evt.stopPropagation()
 
-                          await onDeleteCase(cases[i])
+                        await onDeleteCase(cases[i])
 
-                          controls
-                            .start('isNotDeleting')
-                            .then(() => {
-                              setRequestToRemoveIndex(undefined)
-                            })
-                            .then(() => {
-                              setActiveCases(
-                                cases.filter((c: Case) => c !== cases[i]),
-                              )
-                            })
-                        }
-                      }}
-                    >
-                      <Box as="span" className={styles.deleteButtonText}>
-                        Afturkalla
-                      </Box>
-                    </Button>
-                  </Box>
+                        controls
+                          .start('isNotDeleting')
+                          .then(() => {
+                            setRequestToRemoveIndex(undefined)
+                          })
+                          .then(() => {
+                            setActiveCases(
+                              cases.filter((c: Case) => c !== cases[i]),
+                            )
+                          })
+                      }
+                    }}
+                  >
+                    <Box as="span" className={styles.deleteButtonText}>
+                      Afturkalla
+                    </Box>
+                  </Button>
                 </td>
               </motion.tr>
             ))}
