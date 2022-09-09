@@ -128,7 +128,7 @@ const ReceptionAndAssignment = () => {
       ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
       : isInvestigationCase(workingCase.type)
       ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+      : `${constants.CASES_ROUTE}` // TODO: add next step
   }
 
   const getActiveSubSection = () => {
@@ -190,7 +190,7 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
           nextUrl={getNextRoute()}
           nextIsDisabled={!isReceptionAndAssignmentStepValid(workingCase)}
         />
