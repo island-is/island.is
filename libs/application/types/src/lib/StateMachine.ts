@@ -8,7 +8,7 @@ import {
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
-import { Application, ActionCardTag } from './Application'
+import { Application, ActionCardTag, ApplicationStatus } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 
@@ -87,6 +87,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
     description?: StaticText
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
+  statusType: ApplicationStatus
   progress?: number
   roles?: RoleInState<T>[]
   onExit?: ApplicationTemplateAPIAction

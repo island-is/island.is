@@ -792,7 +792,7 @@ export class ApplicationController {
   ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
-    const status = helper.getApplicationStatus()
+
     let updatedApplication: BaseApplication = application
     await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
@@ -869,6 +869,11 @@ export class ApplicationController {
     }
 
     try {
+      const status = new ApplicationTemplateHelper(
+        updatedApplication,
+        template,
+      ).getApplicationStatus()
+
       const update = await this.applicationService.updateApplicationState(
         application.id,
         newState,
