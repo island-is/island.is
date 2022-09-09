@@ -71,6 +71,12 @@ export class UpdateDelegationDTO {
   @IsOptional()
   @IsArray()
   scopes?: UpdateDelegationScopeDTO[]
+
+  @ApiPropertyOptional({ type: Date })
+  @Type(() => Date)
+  @IsOptional()
+  @IsDateString()
+  validTo?: Date | null
 }
 
 export class CreateDelegationDTO {

@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger as NestLogger,
   NotFoundException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
@@ -11,6 +12,7 @@ import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
+import * as kennitala from 'kennitala'
 
 import { AuthDelegationType, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
@@ -18,7 +20,11 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import {
+  ApiResponse,
+  EinstaklingarApi,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -43,6 +49,10 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/entit
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from './resources.service'
+import { FetchError } from '@island.is/clients/middlewares'
+import partition from 'lodash/partition'
+import { isDefined, getYesterday } from '@island.is/shared/utils'
+import { String } from 'aws-sdk/clients/cloudsearchdomain'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -324,8 +334,10 @@ export class DelegationsService {
     delegationTypes?: DelegationType[],
   ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
-
     const delegationPromises = []
+    // Promises that need to be verified before returning the delegations.
+    // If delegation is directly linked to a deceased person, then we do not want to return it.
+    const needVerifyDelegationSets = []
 
     const hasDelegationTypeFilter =
       delegationTypes && delegationTypes.length > 0
@@ -349,21 +361,137 @@ export class DelegationsService {
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.Custom))
     ) {
-      delegationPromises.push(this.findAllValidCustomIncoming(user))
+      needVerifyDelegationSets.push(this.findAllValidCustomIncoming(user))
     }
     if (
       (!client || client.supportsPersonalRepresentatives) &&
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.PersonalRepresentative))
     ) {
-      delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
+      needVerifyDelegationSets.push(
+        this.findAllRepresentedPersonsIncoming(user),
+      )
     }
-    const delegationSets = await Promise.all(delegationPromises)
+
+    const [delegations, needsCheckDelegations] = await Promise.all([
+      Promise.all(delegationPromises),
+      Promise.all(needVerifyDelegationSets),
+    ])
+
+    const {
+      aliveDelegations,
+      deceasedDelegations,
+    } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
+
+    if (deceasedDelegations.length > 0) {
+      NestLogger.log('HEEEELLLLLOOOOOOOOO')
+      NestLogger.log(deceasedDelegations)
+      NestLogger.log(deceasedDelegations[0].scopes)
+
+      //await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
+    }
 
     return uniqBy(
-      ([] as DelegationDTO[]).concat(...delegationSets),
+      [...delegations.flat(), ...aliveDelegations],
       'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
+  }
+
+  // TODO remove this function when Eirikurs PR is merged
+  private async handlePersonResponse(
+    response: ApiResponse<Einstaklingsupplysingar> | undefined,
+  ) {
+    if (response === undefined) {
+      return undefined
+    } else if (response.raw.status === 204) {
+      // TODO audit system method action is findAll
+      return undefined
+    }
+
+    return response.value()
+  }
+
+  // TODO remove this function when Eirikurs PR is merged
+  private handle404(error: FetchError): undefined {
+    if (error.status === 404) {
+      return undefined
+    }
+
+    throw error
+  }
+
+  /**
+   * Updates validTo date field to start of yesterday for deceased person delegation.
+   */
+  private async updateDeceasedPersonsDelegations(
+    user: User,
+    deceasedDelegations: DelegationDTO[],
+  ) {
+    const deceasedDelegationIds = deceasedDelegations
+      .map(({ id }) => id)
+      // Since id is optional, we need to filter out null or undefined values
+      .filter(isDefined)
+
+    if (deceasedDelegationIds.length > 0) {
+      const delegations = await Promise.all(
+        deceasedDelegationIds.map((id) => this.findById(user, id)),
+      )
+      const delegationsWithAllScopes = delegations.filter(isDefined)
+
+      const startOfDay = new Date()
+      startOfDay.setHours(0, 0, 0, 0)
+
+      // TODO audit system method action is findAll
+      // TODO update exp column in Delegation table to make it expired.
+      await Promise.all(
+        deceasedDelegationIds.map((id) =>
+          // Since we know delegation id is mapped to a deceased person,
+          // we can safely set the expiration date to expired, i.e. start of yesterday.
+          this.update(user, { validTo: getYesterday(startOfDay) }, id),
+        ),
+      )
+    }
+  }
+
+  /**
+   * Divides delegations into alive and deceased delegations
+   * - Makes calls for every delegation to NationalRegistry to check if the person exists.
+   * - Divides the delegations into alive and deceased delegations, based on
+   *   1. All companies will be divided into alive delegations.
+   *   2. If the person exists in NationalRegistry, then the delegation is alive.
+   */
+  private async getLiveStatusFromDelegations(delegations: DelegationDTO[]) {
+    const delegationsPromises = delegations.map(({ fromNationalId }) =>
+      this.personApi
+        .einstaklingarGetEinstaklingurRaw({
+          id: fromNationalId,
+        })
+        .catch(this.handle404),
+    )
+
+    // Check if delegations is linked to a person, i.e. not deceased
+    const persons = await Promise.all(delegationsPromises)
+    const personsValues = await Promise.all(
+      persons.map(this.handlePersonResponse),
+    )
+
+    // Divide delegations into alive or deceased delegations.
+    const [aliveDelegations, deceasedDelegations] = partition(
+      delegations,
+      ({ fromNationalId }) =>
+        personsValues.find(
+          (person) =>
+            // All companies will be divided into aliveDelegations
+            kennitala.isCompany(fromNationalId) ||
+            // Make sure we can match the person to the delegation, i.e. not deceased
+            person?.kennitala === fromNationalId,
+        ),
+    )
+
+    return {
+      aliveDelegations,
+      deceasedDelegations,
+    }
   }
 
   /**
