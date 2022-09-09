@@ -80,6 +80,7 @@
     "application-templates-health-insurance": "libs/application/templates/health-insurance",
     "application-templates-institution-collaboration": "libs/application/templates/institution-collaboration",
     "application-templates-login-service": "libs/application/templates/login-service",
+    "application-templates-marriage-conditions": "libs/application/templates/marriage-conditions",
     "application-templates-mortgage-certificate": "libs/application/templates/mortgage-certificate",
     "application-templates-no-debt-certificate": "libs/application/templates/no-debt-certificate",
     "application-templates-operating-license": "libs/application/templates/operating-license",

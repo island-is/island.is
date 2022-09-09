@@ -39,6 +39,9 @@ const idsLogin = ({
   cy.visit(`${baseUrl}${urlPath}`)
 
   cy.origin(authUrl, sentArgs, ({ phoneNumber }) => {
+    // The input field seems to get re-rendered early.
+    // Waiting prevents the typed phone number from being removed in the re-render.
+    cy.wait(3000)
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
@@ -86,12 +89,33 @@ Cypress.Commands.add(
   },
 )
 
-Cypress.Commands.add('cognitoLogin', ({ username, password }) => {
+Cypress.Commands.add('cognitoLogin', (credentials = Cypress.env('cognito')) => {
   if (testEnvironment !== 'local') {
     cy.session('cognitoLogin', () => {
-      cognitoLogin({ username, password })
+      cognitoLogin(credentials)
     })
   } else {
     cy.log('skipLogin', 'On localhost, skip Cognito login')
   }
+})
+
+Cypress.Commands.add('pathUuid', () => {
+  return cy
+    .location('pathname')
+    .then((path: string) => path.split('/').pop()?.split('?').shift())
+})
+
+Cypress.Commands.add('bypassApplicationFluff', () => {
+  cy.intercept('/api/graphql?op=ActorDelegations', {
+    body: {
+      data: { authActorDelegations: [] },
+    },
+  })
+  cy.intercept('/api/graphql?op=ApplicationApplications', {
+    body: {
+      data: {
+        applicationApplications: [],
+      },
+    },
+  })
 })

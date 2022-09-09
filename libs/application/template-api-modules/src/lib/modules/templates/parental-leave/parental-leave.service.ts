@@ -57,8 +57,6 @@ interface VMSTError {
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
-const senderName = 'island.is'
-const senderEmail = 'noreply@island.is'
 
 @Injectable()
 export class ParentalLeaveService {
@@ -94,12 +92,7 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateAssignOtherParentApplicationEmail(
-          props,
-          senderName,
-          senderEmail,
-        ),
+      generateAssignOtherParentApplicationEmail,
       application,
     )
 
@@ -119,7 +112,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      (props) => generateOtherParentRejected(props, senderName, senderEmail),
+      generateOtherParentRejected,
       application,
     )
 
@@ -146,7 +139,7 @@ export class ParentalLeaveService {
     const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
 
     await this.sharedTemplateAPIService.sendEmail(
-      (props) => generateEmployerRejected(props, senderName, senderEmail),
+      generateEmployerRejected,
       application,
     )
 
@@ -175,13 +168,7 @@ export class ParentalLeaveService {
     const applicantId = application.applicant
 
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      (props, assignLink) =>
-        generateAssignEmployerApplicationEmail(
-          props,
-          assignLink,
-          senderName,
-          senderEmail,
-        ),
+      generateAssignEmployerApplicationEmail,
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
@@ -304,7 +291,6 @@ export class ParentalLeaveService {
         numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
-
       if (
         !isUsingTransferredRights &&
         !willStartToUseTransferredRightsWithPeriod
@@ -440,6 +426,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
+        false, // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -461,23 +448,13 @@ export class ParentalLeaveService {
         // Only needs to send an email if being approved by employer
         // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationApprovedByEmployerEmail(
-              props,
-              senderName,
-              senderEmail,
-            ),
+          generateApplicationApprovedByEmployerEmail,
           application,
         )
 
         // Also send confirmation to employer
         await this.sharedTemplateAPIService.sendEmail(
-          (props) =>
-            generateApplicationApprovedByEmployerToEmployerEmail(
-              props,
-              senderName,
-              senderEmail,
-            ),
+          generateApplicationApprovedByEmployerToEmployerEmail,
           application,
         )
       }
@@ -486,6 +463,37 @@ export class ParentalLeaveService {
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
+    }
+  }
+
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
+    const nationalRegistryId = application.applicant
+    const attachments = await this.getAttachments(application)
+
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
+        nationalRegistryId,
+      )
+
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        true,
+      )
+
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request
+      // for validation purposes
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
+
+      return
+    } catch (e) {
+      this.logger.error('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 }

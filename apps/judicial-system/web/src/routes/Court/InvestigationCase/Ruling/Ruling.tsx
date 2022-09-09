@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   CaseFileList,
-  CaseInfo,
+  CourtCaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -158,9 +158,7 @@ const Ruling = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />

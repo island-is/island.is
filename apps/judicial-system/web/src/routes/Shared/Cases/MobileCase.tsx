@@ -2,7 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Case, isInvestigationCase } from '@island.is/judicial-system/types'
-import { formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  displayFirstPlusRemaining,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import { Box, Text, FocusableBox, Tag } from '@island.is/island-ui/core'
 
 import * as styles from './MobileCase.css'
@@ -70,7 +73,9 @@ const MobileCase: React.FC<Props> = ({
         </Tag>,
       ]}
     >
-      <Text>{theCase.policeCaseNumbers.join(', ')}</Text>
+      <Text title={theCase.policeCaseNumbers.join(', ')}>
+        {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
+      </Text>
       {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
       <br />
       {theCase.defendants && theCase.defendants.length > 0 && (

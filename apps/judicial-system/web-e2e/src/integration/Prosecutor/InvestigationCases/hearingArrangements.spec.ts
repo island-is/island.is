@@ -2,11 +2,11 @@ import {
   INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { UserRole } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
-  makeInvestigationCase,
+  mockCase,
   makeProsecutor,
   intercept,
   Operation,
@@ -14,7 +14,7 @@ import {
 
 describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -58,7 +58,7 @@ describe(`${INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should show an error message if sending a notification failed', () => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
