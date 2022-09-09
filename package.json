@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
-    "node": "^14.17",
+    "node": "^18.8",
     "yarn": "^1.22"
   },
   "repository": {
@@ -460,7 +460,7 @@
     "path-parse": "1.0.7"
   },
   "volta": {
-    "node": "14.17.6",
+    "node": "18.8.0",
     "yarn": "1.22.19"
   }
 }
