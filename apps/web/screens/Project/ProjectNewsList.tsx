@@ -1,5 +1,5 @@
 import { BreadCrumbItem } from '@island.is/island-ui/core'
-import { NewsList } from '@island.is/web/components'
+import { HeadWithSocialSharing, NewsList } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
@@ -123,41 +123,51 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
   ]
 
   return (
-    <ProjectWrapper
-      projectPage={projectPage}
-      breadcrumbItems={breadCrumbs}
-      sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
-      withSidebar={true}
-      sidebarContent={
-        <NewsListSidebar
-          months={months}
+    <>
+      <ProjectWrapper
+        projectPage={projectPage}
+        breadcrumbItems={breadCrumbs}
+        sidebarNavigationTitle={n('navigationTitle', 'Efnisyfirlit')}
+        withSidebar={true}
+        sidebarContent={
+          <NewsListSidebar
+            months={months}
+            namespace={namespace}
+            newsOverviewUrl={newsOverviewUrl}
+            selectedMonth={selectedMonth}
+            selectedTag={selectedTag}
+            selectedYear={selectedYear}
+            title={newsTitle}
+            yearOptions={yearOptions}
+          />
+        }
+      >
+        <NewsList
           namespace={namespace}
+          newsItemLinkType="projectnews"
           newsOverviewUrl={newsOverviewUrl}
+          newsList={newsList}
+          parentPageSlug={projectPage.slug}
           selectedMonth={selectedMonth}
+          selectedPage={selectedPage}
           selectedTag={selectedTag}
           selectedYear={selectedYear}
-          title={newsTitle}
+          total={total}
           yearOptions={yearOptions}
+          monthOptions={monthOptions}
+          title={newsTitle}
+          newsPerPage={10}
         />
-      }
-    >
-      <NewsList
-        namespace={namespace}
-        newsItemLinkType="projectnews"
-        newsOverviewUrl={newsOverviewUrl}
-        newsList={newsList}
-        parentPageSlug={projectPage.slug}
-        selectedMonth={selectedMonth}
-        selectedPage={selectedPage}
-        selectedTag={selectedTag}
-        selectedYear={selectedYear}
-        total={total}
-        yearOptions={yearOptions}
-        monthOptions={monthOptions}
-        title={newsTitle}
-        newsPerPage={10}
+      </ProjectWrapper>
+      <HeadWithSocialSharing
+        title={`${newsTitle} | ${projectPage.title}`}
+        description={projectPage.featuredDescription}
+        imageUrl={projectPage.featuredImage?.url}
+        imageWidth={projectPage.featuredImage?.width?.toString()}
+        imageHeight={projectPage.featuredImage?.height?.toString()}
+        imageContentType={projectPage.featuredImage?.contentType}
       />
-    </ProjectWrapper>
+    </>
   )
 }
 
