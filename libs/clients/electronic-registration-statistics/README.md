@@ -1,4 +1,4 @@
-<!-- gitbook ignore -->
+<!-- gitbook-ignore -->
 
 # Clients Electronic Registrations
 
