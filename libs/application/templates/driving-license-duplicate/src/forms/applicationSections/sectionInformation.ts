@@ -43,6 +43,12 @@ export const sectionInformation = buildSection({
             formatNationalId(application.applicant),
         }),
         buildCustomField({
+          id: 'categories',
+          title: '',
+          component: 'CurrentLicense',
+     
+        }),
+        buildCustomField({
           id: 'qphoto',
           title: '',
           component: 'QualityPhoto',

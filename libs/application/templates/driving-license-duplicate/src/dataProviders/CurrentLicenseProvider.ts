@@ -10,7 +10,7 @@ import { YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
-  currentLicense: Eligibility[] | null
+  categories: Eligibility[] | null
 }
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
@@ -60,7 +60,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
           : category.name,
     }))
     return {
-      currentLicense: !!categories
+      categories: !!categories
         ? categories
         : null,
     }
