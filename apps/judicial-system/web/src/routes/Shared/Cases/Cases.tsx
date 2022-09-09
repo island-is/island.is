@@ -257,7 +257,7 @@ export const Cases: React.FC = () => {
                             },
                           ]
                     }
-                    title="Stofna nýja kröfu"
+                    title={formatMessage(m.createCaseButton)}
                   />
                 </Box>
               )}

@@ -58,6 +58,12 @@ export const cases = {
       description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
     },
   }),
+  createCaseButton: defineMessage({
+    id: 'judicial.system.core:cases.create_case_button',
+    defaultMessage: 'Stofna nýtt mál',
+    description:
+      'Notaður sem titill á takka sem notandi getur ýtt á til að stofna nýtt mál',
+  }),
   activeRequests: {
     table: {
       headers: defineMessages({
