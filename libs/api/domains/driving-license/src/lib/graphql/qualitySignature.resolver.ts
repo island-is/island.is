@@ -10,26 +10,26 @@ import {
 } from '@island.is/auth-nest-tools'
 import { DrivingLicenseService } from '../drivingLicense.service'
 export * from '@island.is/nest/audit'
-import { QualityPhoto } from './models'
+import { QualitySignature } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver(QualityPhoto)
-export class QualityPhotoResolver {
+@Resolver(QualitySignature)
+export class QualitySignatureResolver {
   constructor(private readonly drivingLicenseService: DrivingLicenseService) {}
 
   @ResolveField('dataUri', () => String, { nullable: true })
   resolveDataUri(
-    @Parent() { hasQualityPhoto }: QualityPhoto,
+    @Parent() { hasQualitySignature }: QualitySignature,
     @CurrentUser() user: User,
   ): Promise<String | null> {
-    return hasQualityPhoto
-      ? this.drivingLicenseService.getQualityPhotoUri('1511982449') //user.nationalId)
+    return hasQualitySignature
+      ? this.drivingLicenseService.getQualitySignatureUri('1511982449') //user.nationalId)
       : Promise.resolve(null)
   }
 
-  @Query(() => QualityPhoto)
-  drivingLicenseQualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto('1511982449') //user.nationalId)
+  @Query(() => QualitySignature)
+  drivingLicenseQualitySignature(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getQualitySignature('1511982449') //user.nationalId)
   }
 }

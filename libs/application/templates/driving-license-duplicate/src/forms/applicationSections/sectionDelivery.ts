@@ -1,0 +1,48 @@
+import {
+  buildDescriptionField,
+  buildMultiField,
+  buildRadioField,
+  buildSection,
+  buildSelectField,
+} from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import { PICK_UP, SEND_HOME } from '../../lib/constants'
+import { m } from '../../lib/messages'
+import { Delivery } from '../../types'
+import { DistrictCommissionerAgencies } from '../../types/schema'
+
+export const sectionDelivery = buildSection({
+  id: 'delivery',
+  title: m.deliveryMethodTitle,
+  children: [
+    buildMultiField({
+      id: 'deliverySection',
+      title: m.deliveryMethodTitle,
+      children: [
+        buildDescriptionField({
+          id: 'deliveryDescription',
+          title: '',
+          description: m.deliveryMethodDescription,
+        }),
+        buildSelectField({
+          id: 'district',
+          title: m.deliveryMethodOfficeLabel,
+          placeholder: m.deliveryMethodOfficeSelectPlaceholder,
+          options: ({
+            externalData: {
+              districts: { data },
+            },
+          }) => {
+            return (data as DistrictCommissionerAgencies[]).map(
+              ({ name, place, address }) => ({
+                value: `${name}, ${place}`,
+                label: `${name}, ${place}`,
+                tooltip: `${address}`,
+              }),
+            )
+          },
+        }),
+      ],
+    }),
+  ],
+})
