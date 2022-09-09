@@ -32,7 +32,7 @@ export const DrivingLicense = ({
       tag={{
         text: `${formatMessage(m.validUntil)} ${toDate(
           new Date(expireDate).getTime().toString(),
-        )}}`,
+        )}`,
         color: 'blue',
       }}
       conditionalTag={

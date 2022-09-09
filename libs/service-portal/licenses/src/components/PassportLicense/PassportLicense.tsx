@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useHistory } from 'react-router-dom'
 import { formatDate, getExpiresIn } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
