@@ -105,9 +105,7 @@ const feeInfoArray = (
       [
         {
           title: formatMessage(messages.mortages),
-          value: isNumber(data?.mortages)
-            ? amountFormat(Number(data.mortages))
-            : '',
+          value: isNumber(data?.mortages) && data?.mortages > 0 ? 'Já' : 'Nei',
         },
         {
           title: formatMessage(messages.insured),
@@ -371,6 +369,46 @@ const technicalInfoArray = (
         {
           title: formatMessage(messages.axleTotalWeight),
           value: displayWithUnit(data.axleTotalWeight?.toString(), 'kg'),
+        },
+        data.tyres?.axle1 && {
+          title: formatMessage(messages.axle),
+          value: '1',
+        },
+        data.tyres?.axle1 && {
+          title: formatMessage(messages.axleWheel),
+          value: data.tyres.axle1,
+        },
+        data.tyres?.axle2 && {
+          title: formatMessage(messages.axle),
+          value: '2',
+        },
+        data.tyres?.axle2 && {
+          title: formatMessage(messages.axleWheel),
+          value: data.tyres.axle2,
+        },
+        data.tyres?.axle3 && {
+          title: formatMessage(messages.axle),
+          value: '3',
+        },
+        data.tyres?.axle3 && {
+          title: formatMessage(messages.axleWheel),
+          value: data.tyres.axle3,
+        },
+        data.tyres?.axle4 && {
+          title: formatMessage(messages.axle),
+          value: '4',
+        },
+        data.tyres?.axle4 && {
+          title: formatMessage(messages.axleWheel),
+          value: data.tyres.axle4,
+        },
+        data.tyres?.axle5 && {
+          title: formatMessage(messages.axle),
+          value: '5',
+        },
+        data.tyres?.axle5 && {
+          title: formatMessage(messages.axleWheel),
+          value: data.tyres.axle5,
         },
       ],
       2,
