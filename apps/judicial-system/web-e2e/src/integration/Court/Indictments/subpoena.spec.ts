@@ -1,8 +1,5 @@
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
-import {
-  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  INDICTMENTS_SUBPOENA_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { INDICTMENTS_SUBPOENA_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -13,7 +10,7 @@ import {
   mockCase,
 } from '../../../utils'
 
-describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
+describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(CaseType.MAJOR_ASSAULT)
 
@@ -26,7 +23,7 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
+    cy.visit(`${INDICTMENTS_SUBPOENA_ROUTE}/test`)
   })
 
   it('should enable continue button when required fields are valid', () => {
@@ -60,7 +57,5 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.get('#react-select-judge-option-0').click()
 
     cy.getByTestid('continueButton').should('be.enabled')
-    cy.getByTestid('continueButton').click()
-    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}/test_id_stadfest`)
   })
 })
