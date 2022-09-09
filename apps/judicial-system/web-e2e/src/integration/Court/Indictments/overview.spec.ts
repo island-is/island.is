@@ -1,5 +1,8 @@
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import {
   makeProsecutor,
@@ -43,5 +46,13 @@ describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('infoCardDataContainer4').contains('Skattalagabrot')
 
     cy.getByTestid('PDFButton').contains('test.pdf')
+  })
+
+  it('should navigate to the next page when the next button is clicked', () => {
+    cy.getByTestid('continueButton').click()
+    cy.url().should(
+      'include',
+      `${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test_id_stadfest`,
+    )
   })
 })

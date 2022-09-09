@@ -1,8 +1,5 @@
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
-import {
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -60,7 +57,5 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.get('#react-select-judge-option-0').click()
 
     cy.getByTestid('continueButton').should('be.enabled')
-    cy.getByTestid('continueButton').click()
-    cy.url().should('include', INDICTMENTS_COURT_OVERVIEW_ROUTE)
   })
 })
