@@ -91,7 +91,11 @@ export class GenericFirearmLicenseApi
   }
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
-    const inputValues = createPkPassDataInput(data.licenseInfo, user.nationalId)
+    const inputValues = createPkPassDataInput(
+      data.licenseInfo,
+      data.properties,
+      user.nationalId,
+    )
 
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
@@ -115,12 +119,16 @@ export class GenericFirearmLicenseApi
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
-    const { licenseInfo } = await this.fetchLicenseData(user)
+    const data = await this.fetchLicenseData(user)
 
-    const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
+    const inputValues = createPkPassDataInput(
+      data.licenseInfo,
+      data.properties,
+      user.nationalId,
+    )
 
     //slice out headers from base64 image string
-    const image = licenseInfo?.licenseImgBase64
+    const image = data.licenseInfo?.licenseImgBase64
     const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
     if (!inputValues) return null

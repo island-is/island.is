@@ -1,5 +1,6 @@
 import {
   FirearmProperty,
+  FirearmPropertyList,
   LicenseData,
   LicenseInfo,
 } from '@island.is/clients/firearm-license'
@@ -12,7 +13,7 @@ import {
 } from '../../licenceService.type'
 
 const formatDateString = (dateTime: string) =>
-  dateTime ? format(new Date(dateTime), 'dd.MM.yy') : ''
+  dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
 
 export const parseFirearmLicensePayload = (
   licenseData: LicenseData,
@@ -121,8 +122,22 @@ const parseProperties = (
   return mappedProperty
 }
 
+const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
+  if (!properties?.length) return 'Engin skráð skotvopn'
+
+  const propertyString = properties
+    .map(
+      (property) =>
+        `${property.typeOfFirearm} ${property.name}, hlaupvídd ${property.caliber}, númer ${property.serialNumber}`,
+    )
+    .join('\r\n')
+
+  return propertyString
+}
+
 export const createPkPassDataInput = (
   licenseInfo?: LicenseInfo | null,
+  propertyInfo?: FirearmPropertyList | null,
   nationalId?: string,
 ) => {
   if (!licenseInfo || !nationalId) return null
@@ -162,7 +177,9 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'skotvopn',
-      value: 'placeholder',
+      value: propertyInfo
+        ? parsePropertyForPkpassInput(propertyInfo.properties ?? [])
+        : '',
     },
     {
       identifier: 'utgefandi',
