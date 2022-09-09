@@ -35,26 +35,22 @@ export const DrivingLicense = ({
         )}`,
         color: 'blue',
       }}
-      conditionalTag={
-        expiresIn ? (
-          <Box paddingRight={1} paddingTop={[1, 0]}>
-            {expiresIn.value <= 0 ? (
-              <Tag disabled variant="red">
-                {formatMessage(m.isExpired)}
-              </Tag>
-            ) : (
-              <Tag disabled variant="red">
-                {formatMessage(m.expiresIn)}
-                {'\xa0'}
-                {Math.round(expiresIn.value)}
-                {'\xa0'}
-                {expiresIn.key === 'months'
-                  ? formatMessage(m.months)
-                  : formatMessage(m.days)}
-              </Tag>
-            )}
-          </Box>
-        ) : undefined
+      secondaryTag={
+        expiresIn
+          ? {
+              color: 'red',
+              text:
+                expiresIn.value <= 0
+                  ? formatMessage(m.isExpired)
+                  : `${formatMessage(m.expiresIn)} ${Math.round(
+                      expiresIn.value,
+                    )} ${
+                      expiresIn.key === 'months'
+                        ? formatMessage(m.months)
+                        : formatMessage(m.days)
+                    }`,
+            }
+          : undefined
       }
       additionalLink={
         <PkPass

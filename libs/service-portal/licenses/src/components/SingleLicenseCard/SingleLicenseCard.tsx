@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom'
 import * as styles from './SingleLicenseCard.css'
 import { m } from '../../lib/messages'
 
+export type tag = {
+  text?: string
+  color: 'red' | 'blue'
+}
+
 export const SingleLicenseCard = ({
   title,
   subtitle,
@@ -14,7 +19,7 @@ export const SingleLicenseCard = ({
     text: undefined,
     color: 'blue',
   },
-  conditionalTag,
+  secondaryTag,
   additionalLink,
   additionalLinkText,
 }: {
@@ -22,13 +27,10 @@ export const SingleLicenseCard = ({
   subtitle: string
   link: string
   img: string
-  tag: {
-    text?: string
-    color: 'red' | 'blue'
-  }
-  conditionalTag?: ReactNode
+  tag: tag
   additionalLink?: ReactNode | string
   additionalLinkText?: string
+  secondaryTag?: tag
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
@@ -67,13 +69,15 @@ export const SingleLicenseCard = ({
             textAlign="right"
             marginBottom={1}
           >
-            {conditionalTag && (
+            {secondaryTag ? (
               <Box paddingRight={1} paddingTop={[1, 0]}>
-                {conditionalTag}
+                <Tag disabled variant={secondaryTag.color}>
+                  {secondaryTag.text}
+                </Tag>
               </Box>
-            )}
-            {tag.text ? (
-              <Box paddingTop={conditionalTag ? [1, 1, 0] : undefined}>
+            ) : null}
+            {tag ? (
+              <Box paddingTop={secondaryTag ? [1, 1, 0] : undefined}>
                 <Tag disabled variant={tag.color}>
                   {tag.text}
                 </Tag>
