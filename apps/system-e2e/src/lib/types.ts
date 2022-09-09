@@ -34,7 +34,7 @@ enum BaseAuthority {
   staging = 'beta.staging01.devland.is',
   ads = 'loftbru.dev01.devland.is',
   prod = 'island.is',
-  local = 'localhost:4242',
+  local = 'localhost:4200',
 }
 
 type ADSUserWithDiscount = ADSDiscount & {
