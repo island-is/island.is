@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ActionCard } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import { formatDate, getExpiresIn } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { SingleLicenseCard } from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
 
 export const PassportLicense = ({
@@ -19,7 +19,6 @@ export const PassportLicense = ({
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const history = useHistory()
   const [currentDate] = useState(new Date())
 
   const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
@@ -54,26 +53,17 @@ export const PassportLicense = ({
     return formatMessage(m.isValid)
   }
 
-  const handleClick = () =>
-    history.push(ServicePortalPath.LicensesPassportDetail.replace(':id', id))
   return (
-    <ActionCard
-      heading={name || formatMessage(m.passportCardTitle)}
-      headingVariant="h4"
+    <SingleLicenseCard
+      title={name || formatMessage(m.passportCardTitle)}
+      subtitle={formatMessage(m.passportNumber) + ' - ' + id}
+      link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
+      img={
+        'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?w=100&h=100&fit=pad&bg=white'
+      }
       tag={{
-        label: getLabel(),
-        variant: expiresIn || isInvalid ? 'red' : 'blue',
-        outlined: false,
-      }}
-      logo="https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?w=100&h=100&fit=pad&bg=white"
-      text={formatMessage(m.passportNumber) + ' - ' + id}
-      progressMeter={{
-        active: false,
-      }}
-      cta={{
-        variant: 'text',
-        onClick: handleClick,
-        label: formatMessage(m.seeDetails),
+        text: getLabel(),
+        color: expiresIn || isInvalid ? 'red' : 'blue',
       }}
     />
   )
