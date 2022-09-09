@@ -25,27 +25,35 @@ export const estateSchema = z.object({
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().nonempty(), m.errorRelation),
 
-  estateMembers: z
-    .object({
-      initial: z.boolean().optional(),
-      name: z.string().nonempty(),
-      relation: customZodError(z.string().nonempty(), m.errorRelation),
-      nationalId: z.string().optional(),
-      custodian: z.string().length(10).optional(),
-      foreignCitizenship: z.string().array().min(0).max(1).optional(),
-      dateOfBirth: z.string().nonempty().optional(),
-    })
-    .array()
-    .optional(),
+  estate: z.object({
+    estateMembers: z
+      .object({
+        initial: z.boolean().optional(),
+        name: z.string().nonempty(),
+        relation: customZodError(z.string().nonempty(), m.errorRelation),
+        nationalId: z.string().optional(),
+        custodian: z.string().length(10).optional(),
+        foreignCitizenship: z.string().array().min(0).max(1).optional(),
+        dateOfBirth: z.string().nonempty().optional(),
+      })
+      .array()
+      .optional(),
+
+    assets: asset, // is: fasteignir
+    flyers: asset,
+    vehicles: asset,
+    knowledgeOfOtherWills: z.enum(['yes', 'no']),
+    caseNumber: z.string().nonempty(),
+    dateOfDeath: z.date(),
+    nameOfDeceased: z.string().nonempty(),
+    nationalIdOfDeceased: z.string().length(10),
+    districtCommissionerHasWill: z.boolean(),
+  }),
 
   selectedEstate: z.enum([
     EstateTypes.officialEstate,
     EstateTypes.noPropertyEstate,
   ]),
-  assets: asset, // is: fasteignir
-  flyers: asset,
-  vehicles: asset,
-
   // is: innbú
   inventory: z.string().optional(),
   inventoryValue: z.string().optional(),

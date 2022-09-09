@@ -14,13 +14,14 @@ import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import { EstateEvent, EstateTypes, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { ApiActions } from '../shared'
 
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EstateEvent>,
   EstateEvent
 > = {
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.ESTATE,
   name: m.name,
   institution: m.institutionName,
   dataSchema: estateSchema,
@@ -37,6 +38,11 @@ const EstateTemplate: ApplicationTemplate<
             shouldBeListed: false,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.syslumennOnEntry,
+            shouldPersistToExternalData: true,
+            throwOnError: false,
           },
           roles: [
             {

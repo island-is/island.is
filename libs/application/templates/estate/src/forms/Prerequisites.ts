@@ -10,6 +10,15 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
+
+function isEstateRegistrant(
+  data: string | number | boolean | object | undefined,
+): data is { estate: EstateRegistrant } {
+  return (
+    (data as { estate: EstateRegistrant }).estate.nameOfDeceased !== undefined
+  )
+}
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -29,12 +38,24 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildKeyValueField({
               label: 'Nafn',
-              value: 'Jóna Jónsdóttir',
+              value: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) =>
+                isEstateRegistrant(data) ? data.estate.nameOfDeceased : 'Bingo',
               width: 'half',
             }),
             buildKeyValueField({
               label: 'Kennitala',
-              value: '190841-2409',
+              value: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) =>
+                isEstateRegistrant(data)
+                  ? data.estate.nationalIdOfDeceased
+                  : 'Bango',
               width: 'half',
             }),
             buildDescriptionField({
@@ -44,12 +65,19 @@ export const Prerequisites: Form = buildForm({
             }),
             buildKeyValueField({
               label: 'Lögheimili',
-              value: 'lalallala',
+              value: 'La la Land 123', // TODO: address this with API about getting lögheimili
               width: 'half',
             }),
             buildKeyValueField({
               label: 'Dánardagur',
-              value: '05.02.2022',
+              value: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) =>
+                isEstateRegistrant(data)
+                  ? data.estate.dateOfDeath.toString()
+                  : 'Dánardagur ekki skráður',
               width: 'half',
             }),
             buildDescriptionField({

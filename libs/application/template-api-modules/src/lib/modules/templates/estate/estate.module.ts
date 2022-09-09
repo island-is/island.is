@@ -4,15 +4,15 @@ import { SharedTemplateAPIModule } from '../../shared'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
-import { EstateService } from './estate.service'
+import { EstateTemplateService } from './estate.service'
 
-export class EstateModule {
+export class EstateTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: EstateModule,
+      module: EstateTemplateModule,
       imports: [SharedTemplateAPIModule.register(config)],
-      providers: [EstateService],
-      exports: [EstateService],
+      providers: [EstateTemplateService],
+      exports: [EstateTemplateService],
     }
   }
 }

@@ -1,6 +1,29 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Application begin
+  name: {
+    id: 'es.application:application.name',
+    defaultMessage: 'Dánarbú',
+    description: 'Application name',
+  },
+  institutionName: {
+    id: 'es.application:institution.name',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution name',
+  },
+  draftTitle: {
+    id: 'es.application:draft.title',
+    defaultMessage: 'Drög',
+    description: 'Draft title',
+  },
+  draftDescription: {
+    id: 'es.application:draft.description',
+    defaultMessage: 'Drög að ólokinni umsókn',
+    description: 'Draft description',
+  },
+  // Application end
+
   // Applicant begin
   errorPhoneNumber: {
     id: 'es.application:error.errorPhoneNumber',

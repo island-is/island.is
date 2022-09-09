@@ -69,6 +69,7 @@
     "application-templates-driving-instructor-registrations": "libs/application/templates/driving-instructor-registrations",
     "application-templates-driving-license": "libs/application/templates/driving-license",
     "application-templates-driving-school-confirmation": "libs/application/templates/driving-school-confirmation",
+    "application-templates-estate": "libs/application/templates/estate",
     "application-templates-example-payment": "libs/application/templates/example-payment",
     "application-templates-family-matters-core": "libs/application/templates/family-matters/core",
     "application-templates-financial-aid": "libs/application/templates/financial-aid",
