@@ -1909,27 +1909,44 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     .formatMessage
 
   const fn = (
+    caseType: CaseType,
     policeCaseNumbers: string[],
     overviewUrl: string,
     courtName?: string,
   ) =>
     formatDefenderResubmittedToCourtEmailNotification(
       formatMessage,
+      caseType,
       policeCaseNumbers,
       overviewUrl,
       courtName,
     )
 
   it('should format email', () => {
+    const caseType = CaseType.CUSTODY
     const policeCaseNumbers = ['007-2022-06546']
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
     const courtName = 'Héraðsdómur Reykjavíkur'
 
-    const result = fn(policeCaseNumbers, overviewUrl, courtName)
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
 
     expect(result.body).toEqual(
       'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
     )
-    expect(result.subject).toEqual('Krafa í máli 007-2022-06546 send aftur')
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  })
+
+  it('should format email with multiple policeCaseNumbers', () => {
+    const caseType = CaseType.CUSTODY
+    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+
+    expect(result.body).toEqual(
+      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+    )
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
   })
 })
