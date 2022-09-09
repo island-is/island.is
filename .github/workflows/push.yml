@@ -160,7 +160,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -439,7 +439,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -505,12 +505,12 @@ jobs:
         continue-on-error: true
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
