@@ -39,8 +39,8 @@ export class TemplateAPIService {
       success: false,
       error: new TemplateApiError(
         {
-          title: 'Invalid application template',
-          summary: 'application could not be found',
+          title: 'Invalid template api',
+          summary: 'No api registered with: ' + serviceId,
         },
         500,
       ),

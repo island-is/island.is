@@ -11,15 +11,19 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class GeneralFishingLicenseService {
+export class GeneralFishingLicenseService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
-  ) {}
+  ) {
+    super(ApplicationTypes.GENERAL_FISHING_LICENSE)
+  }
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as GeneralFishingLicenseAnswers
@@ -114,7 +118,7 @@ export class GeneralFishingLicenseService {
     }
   }
 
-  async getShips({ application, auth }: TemplateApiModuleActionProps) {
+  async getShips({ auth }: TemplateApiModuleActionProps) {
     const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
     return { ships }
   }

@@ -1,7 +1,20 @@
-import { TemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
 
-export interface FishingLicenceDataProviders {
-  generalFishingLicenceProvider: TemplateApi
-  nationalRegistryProvider: TemplateApi
-  paymentCatalogProvider: TemplateApi
-}
+const FISKISTOFA_NATIONAL_ID = '6608922069'
+
+export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configure(
+  {
+    params: {
+      orginizationId: FISKISTOFA_NATIONAL_ID,
+    },
+    externalDataId: 'feeInfoProvider',
+  },
+)
+
+export const ShipRegistryApi = defineTemplateApi({
+  action: 'getShips',
+  externalDataId: 'directoryOfFisheries',
+})

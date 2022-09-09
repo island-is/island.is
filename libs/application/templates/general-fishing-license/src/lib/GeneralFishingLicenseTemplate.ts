@@ -8,12 +8,16 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
-import { FishingLicenceDataProviders } from '../dataProviders'
+import {
+  DepartmentOfFisheriesPaymentCatalogApi,
+  ShipRegistryApi,
+} from '../dataProviders'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -69,7 +73,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [],
+              api: [
+                NationalRegistryUserApi,
+                DepartmentOfFisheriesPaymentCatalogApi,
+                ShipRegistryApi,
+              ],
               write: 'all',
             },
           ],

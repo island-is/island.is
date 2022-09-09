@@ -22,10 +22,12 @@ export class TemplateApi<TParams = unknown> {
       throwOnError,
       params,
       shouldPersistToExternalData,
+      externalDataId,
     } = definition
 
     this.action = action
     this.actionId = namespace ? `${namespace}.${action}` : action
+    this.externalDataId = externalDataId
 
     this.order = order ? order : 0
     this.params = params

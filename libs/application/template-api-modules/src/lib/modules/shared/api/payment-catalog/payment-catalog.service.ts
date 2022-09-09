@@ -1,4 +1,7 @@
-import { PaymentCatalogItem } from '@island.is/application/types'
+import {
+  PaymentCatalogItem,
+  PaymentCatalogParameters,
+} from '@island.is/application/types'
 
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { PaymentAPI } from '@island.is/clients/payment'
@@ -13,13 +16,11 @@ export class PaymentCatalogService extends BaseTemplateApiService {
 
   async paymentCatalog({
     params,
-  }: TemplateApiModuleActionProps): Promise<PaymentCatalogItem[]> {
-    const parameters = params as { organizationId: string }
-
-    const data = await (parameters
-      ? this.paymentClientApi.getCatalogByPerformingOrg(
-          parameters.organizationId,
-        )
+  }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
+    PaymentCatalogItem[]
+  > {
+    const data = await (params
+      ? this.paymentClientApi.getCatalogByPerformingOrg(params.orginizationId)
       : this.paymentClientApi.getCatalog())
 
     return data.item

@@ -7,6 +7,7 @@ export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParamet
   {
     action: 'getUser',
     namespace: 'NationalRegistry',
+    externalDataId: 'nationalRegistry',
   },
 )
 
@@ -18,4 +19,13 @@ export const NationalRegistryFamilyApi = defineTemplateApi({
 export const UserProfileApi = defineTemplateApi({
   action: 'getUserProfile',
   namespace: 'UserProfile',
+})
+
+export interface PaymentCatalogParameters {
+  orginizationId: string
+}
+
+export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
+  action: 'paymentCatalog',
+  namespace: 'PaymentCatalog',
 })
