@@ -13,10 +13,4 @@ export const overview = defineMessages({
     description:
       'Notaður sem undirtitill á skjölum málsins í ákæru yfirliti í dómaraflæði',
   },
-  continueButtonLabel: {
-    id:
-      'judicial.system.court:court_indictments_overview.continue_button_label',
-    defaultMessage: 'Skrá þingfestingu',
-    description: 'Notaður sem texti á "halda áfram" hnappi í ákæru yfirliti.',
-  },
 })
