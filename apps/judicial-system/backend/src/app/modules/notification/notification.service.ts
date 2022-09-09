@@ -354,7 +354,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
-      theCase.court?.name,
+      theCase.prosecutor?.institution?.name,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
