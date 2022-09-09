@@ -19,10 +19,10 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const Overview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -72,7 +72,7 @@ const Overview = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.CASES_ROUTE}`} // TODO: add correct url when ready
+          nextUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextButtonText={formatMessage(m.continueButtonLabel)}
         />
       </FormContentContainer>
