@@ -1,4 +1,67 @@
 import { defineMessages } from 'react-intl'
+export const applicationForMessages = {
+  NONE: defineMessages({
+    title: {
+      id: 'dl.application:shared.none',
+      defaultMessage: 'Engin ökuréttindi',
+      description: 'no license',
+    },
+    rightsDescription: {
+      id: 'dl.application:shared.none.rightDescription',
+      defaultMessage: 'Umsækjandi hefur engin ökuréttindi.',
+      description: 'No license rights description',
+    },
+  }),
+  B_TEMP: defineMessages({
+    title: {
+      id: 'dl.application:shared.temp',
+      defaultMessage: 'Almenn ökuréttindi',
+      description: 'B-temp',
+    },
+    rightsDescription: {
+      id: 'dl.application:shared.temp.rightDescription',
+      defaultMessage: 'B flokki (fólksbifreið)',
+      description: 'Temp license rights description',
+    },
+    applicationDescription: {
+      id: 'dl.application:shared.temp.applicationDescription',
+      defaultMessage:
+        'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
+      description: 'Temp license application description',
+    },
+  }),
+  B_FULL: defineMessages({
+    title: {
+      id: 'dl.application:shared.full',
+      defaultMessage: 'Fullnaðarréttindi',
+      description: 'B-full',
+    },
+    rightsDescription: {
+      id: 'dl.application:shared.full.rightDescription',
+      defaultMessage: 'B flokki (fólksbifreið)',
+      description: 'Full license rights description',
+    },
+    applicationDescription: {
+      id: 'dl.application:shared.full.applicationDescription',
+      defaultMessage:
+        'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
+      description: 'full license application description',
+    },
+  }),
+  B_RENEW: defineMessages({
+    title: {
+      id: 'dl.application:shared.renewFull',
+      defaultMessage: 'Endurnýjun fullnaðarréttinda',
+      description: 'B-renew',
+    },
+    applicationDescription: {
+      id: 'dl.application:shared.renewFull.applicationDescription',
+      defaultMessage:
+        'Ef ökumaður hefur fullnaðarréttindi sem eru útrunnin eða renna út innan við 6 mánaða er hægt að sækja um endurnýjun.',
+      description: 'renewFull license application description',
+    },
+  }),
+}
 
 export const m = defineMessages({
   applicationTitle: {
