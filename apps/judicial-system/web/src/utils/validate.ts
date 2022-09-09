@@ -362,6 +362,15 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   )
 }
 
+export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
+  const date = courtDate || workingCase.courtDate
+
+  return (
+    workingCase.subpoenaType !== null &&
+    validate([[date, ['empty', 'date-format']]]).isValid
+  )
+}
+
 export const isAdminUserFormValid = (user: User) => {
   return (
     user.institution &&

@@ -1,13 +1,16 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   CourtCaseInfo,
   FormContentContainer,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CourtArrangements, {
@@ -17,14 +20,19 @@ import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import SelectSubpoenaType from '@island.is/judicial-system-web/src/components/SelectSubpoenaType/SelectSubpoenaType'
-import { SubpoenaType } from '@island.is/judicial-system/types'
+import {
+  NotificationType,
+  SubpoenaType,
+} from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { subpoena as strings } from './Subpoena.strings'
+import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Subpoena: React.FC = () => {
   const {
@@ -33,18 +41,55 @@ const Subpoena: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const [modalVisible, setModalVisible] = useState(false)
   const { formatMessage } = useIntl()
-  const { courtDate, handleCourtDateChange } = useCourtArrangements(workingCase)
+  const {
+    courtDate,
+    handleCourtDateChange,
+    courtDateHasChanged,
+  } = useCourtArrangements(workingCase)
   const { setAndSendToServer } = useCase()
 
   const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
-    console.log('subpoenaType', subpoenaType)
     setAndSendToServer(
       [{ subpoenaType, force: true }],
       workingCase,
       setWorkingCase,
     )
   }
+
+  const handleNextButtonClick = useCallback(() => {
+    const hasSentNotification = workingCase?.notifications?.find(
+      (notification) => notification.type === NotificationType.COURT_DATE,
+    )
+
+    setAndSendToServer(
+      [
+        {
+          courtDate: courtDate
+            ? formatDateForServer(new Date(courtDate))
+            : undefined,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+
+    if (hasSentNotification && !courtDateHasChanged) {
+      router.push(
+        `${constants.CASES_ROUTE}`, // TODO: Add correct route
+      )
+    } else {
+      setModalVisible(true)
+    }
+  }, [
+    workingCase,
+    setAndSendToServer,
+    courtDate,
+    setWorkingCase,
+    courtDateHasChanged,
+  ])
 
   return (
     <PageLayout
@@ -58,13 +103,19 @@ const Subpoena: React.FC = () => {
       <FormContentContainer>
         <PageTitle title={formatMessage(strings.title)} />
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={3}>
+        <Box component="section" marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.selectSubpoenaTypeHeading)}
+          />
           <SelectSubpoenaType
             workingCase={workingCase}
             onChange={handleSubpoenaTypeChange}
           />
         </Box>
         <Box component="section" marginBottom={10}>
+          <SectionHeading
+            title={formatMessage(strings.courtArrangementsHeading)}
+          />
           <CourtArrangements
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
@@ -77,10 +128,27 @@ const Subpoena: React.FC = () => {
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.CASES_ROUTE}`} // TODO: Add next route when ready
+          onNextButtonClick={handleNextButtonClick}
           nextButtonText={formatMessage(strings.nextButtonText)}
+          nextIsDisabled={!isSubpoenaStepValid(workingCase, courtDate)}
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title={formatMessage(strings.modalTitle)}
+          onPrimaryButtonClick={async () => {
+            router.push(
+              `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+            )
+          }}
+          onSecondaryButtonClick={() => {
+            router.push(`${constants.CASES_ROUTE}`)
+          }}
+          primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
+          secondaryButtonText={formatMessage(core.continue)}
+          isPrimaryButtonLoading={false}
+        />
+      )}
     </PageLayout>
   )
 }
