@@ -222,9 +222,9 @@ export const INVESTIGATION_CASE_MODIFY_RULING_ROUTE =
 export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
   '/domur/rannsoknarheimild/stadfesta'
 
+export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
-export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 /* COURT ROUTES END */
 
 // Feedback
