@@ -312,9 +312,9 @@ const Defendant: React.FC = () => {
             )
           }
           nextIsLoading={isCreatingCase}
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
-          }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </PageLayout>
