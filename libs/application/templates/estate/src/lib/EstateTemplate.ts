@@ -20,9 +20,9 @@ const EstateTemplate: ApplicationTemplate<
   ApplicationStateSchema<EstateEvent>,
   EstateEvent
 > = {
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.ESTATE,
   name: m.prerequisitesTitle,
-  institution: 'Sýslumenn',
+  institution: m.institution,
   dataSchema: estateSchema,
   featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
@@ -70,7 +70,7 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_NO_PROPERTY,
               formLoader: () =>
-                import('../forms/EstateWithNoProperty/form').then((module) =>
+                import('../forms/estateWithNoProperty/form').then((module) =>
                   Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
@@ -80,7 +80,7 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
-                import('../forms/OfficialExchange/form').then((module) =>
+                import('../forms/officialExchange/form').then((module) =>
                   Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
@@ -106,7 +106,7 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_NO_PROPERTY,
               formLoader: () =>
-                import('../forms/EstateWithNoProperty/done').then((val) =>
+                import('../forms/estateWithNoProperty/done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',
@@ -114,7 +114,7 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
-                import('../forms/OfficialExchange/done').then((val) =>
+                import('../forms/officialExchange/done').then((val) =>
                   Promise.resolve(val.done),
                 ),
               read: 'all',

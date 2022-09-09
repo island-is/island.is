@@ -13,6 +13,11 @@ export const m = defineMessages({
       'Hægt er að fara fjórar leiðir við skipti á búi. Vinsamlega veldu þá leið sem þú og aðrir erfingjar viljið fara.',
     description: '',
   },
+  institution: {
+    id: 'es.application:institution',
+    defaultMessage: 'Sýslumenn',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -104,6 +109,24 @@ export const m = defineMessages({
   email: {
     id: 'es.application:email',
     defaultMessage: 'Netfang',
+    description: '',
+  },
+
+  // Estate members
+  estateMembersTitle: {
+    id: 'es.application:estateMembersTitle',
+    defaultMessage: 'Erfingjar of erfðaskrá',
+    description: '',
+  },
+  estateMembersSubtitle: {
+    id: 'es.application:estateMembersSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: '',
+  },
+  estateMembers: {
+    id: 'es.application:estateMembers',
+    defaultMessage: 'Erfingjar',
     description: '',
   },
 

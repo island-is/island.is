@@ -1,8 +1,6 @@
 import {
-  buildDataProviderItem,
   buildDescriptionField,
   buildDividerField,
-  buildExternalDataProvider,
   buildForm,
   buildKeyValueField,
   buildMultiField,
@@ -12,6 +10,8 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { announcerInfo } from '../sharedSections/announcerInfo'
+import { dataCollection } from '../sharedSections/dataCollection'
 
 export const form: Form = buildForm({
   id: 'officialExchange',
@@ -20,79 +20,8 @@ export const form: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'externalData',
-      title: m.dataCollectionTitle,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: m.dataCollectionTitle,
-          subTitle: m.dataCollectionSubtitle,
-          checkboxLabel: '',
-          dataProviders: [
-            buildDataProviderItem({
-              id: '',
-              type: '',
-              title: m.deceasedInfoProviderTitle,
-              subTitle: m.deceasedInfoProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              id: '',
-              type: '',
-              title: m.personalInfoProviderTitle,
-              subTitle: m.personalInfoProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              id: '',
-              type: '',
-              title: m.settingsInfoProviderTitle,
-              subTitle: m.settingsInfoProviderSubtitle,
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'information',
-      title: m.announcer,
-      children: [
-        buildMultiField({
-          id: 'applicant',
-          title: m.announcer,
-          description: m.applicantsInfoSubtitle,
-          children: [
-            buildTextField({
-              id: 'applicant.name',
-              title: m.name,
-              readOnly: true,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: m.nationalId,
-              readOnly: true,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.address',
-              title: m.address,
-              readOnly: true,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.phone',
-              title: m.phone,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'applicant.email',
-              title: m.email,
-              width: 'half',
-            }),
-          ],
-        }),
-      ],
-    }),
+    dataCollection,
+    announcerInfo,
     buildSection({
       id: 'overview',
       title: m.overviewTitle,
