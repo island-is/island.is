@@ -11,10 +11,10 @@ import {
   ListPassesDTO,
   ListPassesResponse,
   CreatePkPassDataInput,
+  PkPassStatus,
 } from './smartSolutions.types'
 import { ConfigType } from '@nestjs/config'
 import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
-
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -45,8 +45,6 @@ export class SmartSolutionsApi {
     if (!apiKey) {
       throw new ForbiddenException('Missing apikey')
     }
-
-    this.logger.debug(payload)
 
     return fetch(this.config.pkPassApiUrl, {
       method: 'POST',
@@ -237,18 +235,50 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassQrCode(
+  async generatePkPass(
     payload: CreatePkPassDataInput,
+    nationalId: string,
     issuer: PkPassIssuer,
   ) {
+    const existingPasses = await this.listPkPasses(
+      nationalId,
+      payload.passTemplateId ?? '',
+      issuer,
+    )
+
+    const containsActiveOrUnclaimed =
+      existingPasses?.passes &&
+      existingPasses.passes.some(
+        (p) =>
+          p.status === PkPassStatus.Active ||
+          p.status === PkPassStatus.Unclaimed,
+      )
+
+    if (containsActiveOrUnclaimed) {
+      const activePasses = existingPasses?.passes.filter(
+        (p) => p.status === PkPassStatus.Active,
+      )
+      if (activePasses?.length) {
+        return activePasses[0]
+      }
+
+      const unclaimedPasses = existingPasses?.passes.filter(
+        (p) => p.status === PkPassStatus.Unclaimed,
+      )
+
+      if (unclaimedPasses?.length) {
+        return unclaimedPasses[0]
+      }
+    }
+
     const response = await this.upsertPkPass(payload, issuer)
 
-    if (response?.data?.upsertPass?.distributionQRCode) {
-      return response?.data?.upsertPass?.distributionQRCode
+    if (response?.data?.upsertPass) {
+      return response?.data?.upsertPass
     }
 
     this.logger.warn(
-      'the pkpass service response does not include distributionQrCode',
+      'the pkpass service response did not include a generated pass',
       {
         serviceStatus: response?.status,
         serviceMessage: response?.message,
@@ -259,26 +289,24 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPassUrl(
+  async generatePkPassQrCode(
     payload: CreatePkPassDataInput,
+    nationalId: string,
     issuer: PkPassIssuer,
   ) {
-    const response = await this.upsertPkPass(payload, issuer)
+    const pkPass = await this.generatePkPass(payload, nationalId, issuer)
 
-    if (response?.data?.upsertPass?.distributionUrl) {
-      return response?.data?.upsertPass?.distributionUrl
-    }
+    this.logger.debug(JSON.stringify(pkPass))
+    return pkPass?.distributionQRCode ?? ''
+  }
 
-    this.logger.warn(
-      'the pkpass service response does not include distributionUrl',
-      {
-        serviceStatus: response?.status,
-        serviceMessage: response?.message,
-        category: LOG_CATEGORY,
-      },
-    )
-
-    return null
+  async generatePkPassUrl(
+    payload: CreatePkPassDataInput,
+    nationalId: string,
+    issuer: PkPassIssuer,
+  ) {
+    const pkPass = await this.generatePkPass(payload, nationalId, issuer)
+    return pkPass?.distributionUrl ?? ''
   }
 
   async listTemplates(issuer: PkPassIssuer): Promise<PassTemplatesDTO | null> {

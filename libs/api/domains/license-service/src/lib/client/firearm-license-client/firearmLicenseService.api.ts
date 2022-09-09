@@ -24,6 +24,7 @@ import {
   FirearmApi,
   LicenseData,
 } from '@island.is/clients/firearm-license'
+import { format } from 'kennitala'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -89,11 +90,11 @@ export class GenericFirearmLicenseApi
     return this.getLicense(user)
   }
   async getPkPassUrl(user: User): Promise<string | null> {
-    const { licenseInfo } = await this.fetchLicenseData(user)
-    const inputValues = createPkPassDataInput(licenseInfo, user.nationalId)
+    const data = await this.fetchLicenseData(user)
+    const inputValues = createPkPassDataInput(data.licenseInfo, user.nationalId)
 
     //slice out headers from base64 image string
-    const image = licenseInfo?.licenseImgBase64
+    const image = data.licenseInfo?.licenseImgBase64
     const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
     if (!inputValues) return null
@@ -106,7 +107,11 @@ export class GenericFirearmLicenseApi
       },
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(payload, this.issuer)
+    const pass = await this.smartApi.generatePkPassUrl(
+      payload,
+      format(user.nationalId),
+      this.issuer,
+    )
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -128,7 +133,11 @@ export class GenericFirearmLicenseApi
       },
     }
 
-    const pass = await this.smartApi.generatePkPassQrCode(payload, this.issuer)
+    const pass = await this.smartApi.generatePkPassQrCode(
+      payload,
+      format(user.nationalId),
+      this.issuer,
+    )
     return pass ?? null
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

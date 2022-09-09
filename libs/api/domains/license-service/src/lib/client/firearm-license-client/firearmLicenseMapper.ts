@@ -130,7 +130,9 @@ export const createPkPassDataInput = (
   return [
     {
       identifier: 'gildir',
-      value: formatDateString(licenseInfo.expirationDate ?? ''),
+      value: licenseInfo.expirationDate
+        ? formatDateString(licenseInfo.expirationDate)
+        : '',
     },
     {
       identifier: 'nafn',
@@ -146,7 +148,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'postnr.',
-      value: 'ekki komið',
+      value: 'placeholder',
     },
     {
       identifier: 'numer',

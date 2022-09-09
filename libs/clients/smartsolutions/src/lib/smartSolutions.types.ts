@@ -43,6 +43,9 @@ export interface PassDTO {
   distributionQRCode: string
   whenCreated: string
   whenModified: string
+  expirationDate: string
+  expirationTime: string
+  alreadyPaid: boolean
   passTemplate: PassTemplateDTO
   id: string
   status: string
@@ -64,6 +67,15 @@ export interface PassTemplatesResponse {
       data?: PassTemplateDTO[]
     }
   }
+}
+
+export enum PkPassStatus {
+  Expired = 'EXPIRED',
+  Unclaimed = 'UNCLAIMED',
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+  Voided = 'VOIDED',
+  DeleteInProcess = 'DELETE_IN_PROCESS',
 }
 
 export interface PassTemplateDTO {
