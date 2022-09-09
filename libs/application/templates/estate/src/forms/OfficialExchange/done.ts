@@ -1,15 +1,16 @@
 import { buildForm, buildDescriptionField } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { m } from '../../lib/messages'
 
-export const Done: Form = buildForm({
+export const done: Form = buildForm({
   id: 'done',
   title: '',
   mode: FormModes.APPLYING,
   children: [
     buildDescriptionField({
-      id: 'approved',
-      title: 'Til hamingju!',
-      description: 'Umsókn þín hefur verið samþykkt!',
+      id: 'officialExchangeDone#markdown',
+      title: m.officialExchangeDoneTitle,
+      description: m.officialExchangeDoneSubtitle,
     }),
   ],
 })

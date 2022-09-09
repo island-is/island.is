@@ -22,8 +22,8 @@ const EstateTemplate: ApplicationTemplate<
   EstateEvent
 > = {
   type: ApplicationTypes.ESTATE,
-  name: m.name,
-  institution: m.institutionName,
+  name: m.prerequisitesTitle,
+  institution: m.institution,
   dataSchema: estateSchema,
   featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
@@ -67,8 +67,8 @@ const EstateTemplate: ApplicationTemplate<
         meta: {
           name: '',
           actionCard: {
-            title: m.draftTitle,
-            description: m.draftDescription,
+            title: '', //TODO
+            description: '', //TODO
           },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
@@ -76,8 +76,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_NO_PROPERTY,
               formLoader: () =>
-                import('../forms/EstateWithoutProperty').then((module) =>
-                  Promise.resolve(module.estateWithoutProperty),
+                import('../forms/EstateWithNoProperty/form').then((module) =>
+                  Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -86,8 +86,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
-                import('../forms/OfficialExchange').then((module) =>
-                  Promise.resolve(module.officialExchange),
+                import('../forms/OfficialExchange/form').then((module) =>
+                  Promise.resolve(module.form),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -112,16 +112,16 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_NO_PROPERTY,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.Done),
+                import('../forms/EstateWithNoProperty/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
             {
               id: Roles.APPLICANT_OFFICIAL_ESTATE,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.Done),
+                import('../forms/OfficialExchange/done').then((val) =>
+                  Promise.resolve(val.done),
                 ),
               read: 'all',
             },
