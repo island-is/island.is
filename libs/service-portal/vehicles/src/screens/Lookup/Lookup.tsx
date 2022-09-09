@@ -64,12 +64,12 @@ export const Lookup: ServicePortalModuleComponent = () => {
     vin,
     type,
     color,
-    firstRegDate,
+    firstregdate,
     nextInspection,
     currentOwner,
     currentOwnerAddress,
     useGroup,
-    regType,
+    regtype,
     mass,
     massLaden,
     vehicleStatus,
@@ -267,7 +267,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
               [
                 {
                   title: formatMessage(messages.regType),
-                  value: regType ?? '',
+                  value: regtype ?? '',
                 },
                 {
                   title: formatMessage(messages.owner),
@@ -277,7 +277,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
               [
                 {
                   title: formatMessage(messages.firstReg),
-                  value: firstRegDate ? formatDate(firstRegDate) : '',
+                  value: firstregdate ? formatDate(firstregdate) : '',
                 },
                 {
                   title: formatMessage(messages.address),

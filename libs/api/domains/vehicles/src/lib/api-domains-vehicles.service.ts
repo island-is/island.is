@@ -121,23 +121,7 @@ export class VehiclesService {
           return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
-
-      const axleMaxWeight =
-        (data.techincal?.mass?.massdaxle1
-          ? data.techincal?.mass?.massdaxle1
-          : 0) +
-        (data.techincal?.mass?.massdaxle2
-          ? data.techincal?.mass?.massdaxle2
-          : 0) +
-        (data.techincal?.mass?.massdaxle3
-          ? data.techincal?.mass?.massdaxle3
-          : 0) +
-        (data.techincal?.mass?.massdaxle4
-          ? data.techincal?.mass?.massdaxle4
-          : 0) +
-        (data.techincal?.mass?.massdaxle5
-          ? data.techincal?.mass?.massdaxle5
-          : 0)
+      let axleMaxWeight = 0
 
       const numberOfAxles = data.techincal?.axle?.axleno ?? 0
 
@@ -153,12 +137,16 @@ export class VehiclesService {
           axles.push({
             axleMaxWeight:
               data.techincal.mass[
-                `massdaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+                `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
               ],
             wheelAxle: data.techincal.axle[
               `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxle
             ]?.toString(),
           })
+          axleMaxWeight +=
+            data.techincal.mass[
+              `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+            ] ?? 0
         }
       }
 
