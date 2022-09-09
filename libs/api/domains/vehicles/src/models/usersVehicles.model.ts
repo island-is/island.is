@@ -85,28 +85,28 @@ export class VehiclesVehicle {
   @Field({ nullable: true })
   deregistrationDate?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   operatorNumber?: number
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   primaryOperator?: boolean
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   ownerSsid?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   ownerName?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   lastInspectionResult?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   lastInspectionDate?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   lastInspectionType?: string
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: null })
   nextInspectionDate?: string
 }
 

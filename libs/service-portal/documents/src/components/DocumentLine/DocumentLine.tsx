@@ -59,7 +59,6 @@ const DocumentLine: FC<Props> = ({ documentLine, img, documentCategories }) => {
         const win = window.open('', '_blank')
         win && win.document.write(html)
         win?.focus()
-        win?.close()
       }, 250)
     } else {
       // Create form elements
