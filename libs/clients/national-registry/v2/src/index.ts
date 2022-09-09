@@ -3,3 +3,8 @@ export { NationalRegistryClientConfig } from './lib/nationalRegistryClient.confi
 export { NationalRegistryClientService } from './lib/nationalRegistryClient.service'
 export { IndividualDto } from './lib/types/individual.dto'
 export { AddressDto } from './lib/types/address.dto'
+export { BirthplaceDto } from './lib/types/birthplace.dto'
+export { CitizenshipDto } from './lib/types/citizenship.dto'
+export { FamilyDto } from './lib/types/family'
+export { CohabitationDto } from './lib/types/cohabitation.dto'
+export { ResidenceHistoryEntryDto } from './lib/types/residence-history-entry.dto'

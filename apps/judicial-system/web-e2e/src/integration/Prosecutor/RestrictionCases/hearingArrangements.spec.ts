@@ -2,18 +2,18 @@ import {
   RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import {
-  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
   Operation,
+  mockCase,
 } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
-  const caseData = makeRestrictionCase()
+  const caseData = mockCase(CaseType.CUSTODY)
   const caseDataAddition: Case = {
     ...caseData,
     prosecutor: makeProsecutor(),

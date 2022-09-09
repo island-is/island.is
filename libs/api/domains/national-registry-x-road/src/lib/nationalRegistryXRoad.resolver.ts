@@ -1,12 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import {
-  Resolver,
-  Query,
-  ResolveField,
-  Parent,
-  Context,
-  Args,
-} from '@nestjs/graphql'
+import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -22,7 +15,8 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
-import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
+import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -55,9 +49,7 @@ export class NationalRegistryXRoadResolver {
     if (person.nationalId !== user.nationalId) {
       return undefined
     }
-    return await this.nationalRegistryXRoadService.getChildrenCustodyInformation(
-      user,
-    )
+    return this.nationalRegistryXRoadService.getChildrenCustodyInformation(user)
   }
 
   @ResolveField('residenceHistory', () => [NationalRegistryResidence], {
@@ -68,7 +60,7 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistryResidence[] | undefined> {
-    return await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+    return this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
       person.nationalId,
     )
   }
@@ -79,6 +71,28 @@ export class NationalRegistryXRoadResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryPerson,
   ): Promise<NationalRegistrySpouse | null> {
-    return await this.nationalRegistryXRoadService.getSpouse(person.nationalId)
+    return this.nationalRegistryXRoadService.getSpouse(person.nationalId)
+  }
+
+  @ResolveField('birthplace', () => NationalRegistryBirthplace, {
+    nullable: true,
+  })
+  @Audit()
+  async resolveBirthPlace(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryPerson,
+  ): Promise<NationalRegistryBirthplace | null> {
+    return this.nationalRegistryXRoadService.getBirthplace(person.nationalId)
+  }
+
+  @ResolveField('citizenship', () => NationalRegistryCitizenship, {
+    nullable: true,
+  })
+  @Audit()
+  async resolveCitizenship(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryPerson,
+  ): Promise<NationalRegistryCitizenship | null> {
+    return this.nationalRegistryXRoadService.getCitizenship(person.nationalId)
   }
 }

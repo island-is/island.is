@@ -1,21 +1,22 @@
+import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/service-portal/users.json'
+import { Timeout } from '../../../lib/types'
 
 describe('Service Portal', () => {
+  const testUser = getFakeUser(fakeUsers, 'María Sól ÞÍ Torp')
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
-      baseUrl: Cypress.config('baseUrl'),
+      phoneNumber: testUser.phoneNumber,
       urlPath: '/minarsidur/',
     })
-  })
-
-  it(`should have user ${fakeUsers[0].name} logged in`, () => {
-    cy.visit('/minarsidur/')
-    cy.contains(fakeUsers[0].name)
+    cy.visit('/minarsidur')
+    cy.wait(Timeout.short)
   })
 
   it('should have Pósthólf', () => {
-    cy.visit('/minarsidur/')
     cy.contains('Pósthólf')
+    cy.get('a[href="/minarsidur/postholf"]').click()
+    cy.contains('Hér getur þú fundið skjöl')
+    // TODO: mock items in inbox and verify they appear in the inbox
   })
 })

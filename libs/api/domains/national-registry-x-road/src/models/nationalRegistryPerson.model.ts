@@ -1,7 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
+import { NationalRegistryBirthplace } from './nationalRegistryBirthplace.model'
 import { NationalRegistryResidence } from './nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from './nationalRegistrySpouse.model'
+import { NationalRegistryCitizenship } from './nationalRegistryCitizenship.model'
 
 @ObjectType()
 export class NationalRegistryPerson {
@@ -34,4 +36,10 @@ export class NationalRegistryPerson {
 
   @Field(() => NationalRegistrySpouse, { nullable: true })
   spouse?: NationalRegistrySpouse | null
+
+  @Field(() => NationalRegistryBirthplace, { nullable: true })
+  birthplace?: NationalRegistryBirthplace | null
+
+  @Field(() => NationalRegistryCitizenship, { nullable: true })
+  citizenship?: NationalRegistryCitizenship | null
 }

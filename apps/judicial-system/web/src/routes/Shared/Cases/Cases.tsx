@@ -71,6 +71,7 @@ export const Cases: React.FC = () => {
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
     getIndictmentCaseProsecutorSection,
+    getIndictmentsCourtSections,
   } = useSections()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -170,10 +171,14 @@ export const Cases: React.FC = () => {
         routeTo = findLastValidStep(
           getRestrictionCaseCourtSections(caseToOpen, user),
         ).href
-      } else {
+      } else if (isInvestigationCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
           getInvestigationCaseCourtSections(caseToOpen, user),
         ).href
+      } else {
+        // Route to Indictment Overivew section since it always a valid step and
+        // would be skipped if we route to the last valid step
+        routeTo = getIndictmentsCourtSections(caseToOpen).children[0].href
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
