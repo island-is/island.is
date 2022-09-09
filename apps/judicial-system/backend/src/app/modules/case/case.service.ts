@@ -960,7 +960,7 @@ export class CaseService {
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
         this.formatMessage(courtUpload.requestFileName, {
-          caseType: capitalize(caseTypes[theCase.type]),
+          caseType: caseTypes[theCase.type],
         }),
         pdf,
       )
