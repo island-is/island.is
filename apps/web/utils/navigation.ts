@@ -12,17 +12,12 @@ interface Navigatable {
   title: string
 }
 
-const isNavigatable = (slice: any): slice is Navigatable => {
-  return (
-    typeof slice === 'object' &&
-    slice.id &&
-    slice.title &&
-    slice.__typename === 'SectionWithImage' &&
-    // The FaqList slice has a field which hides or shows the title so we only indicate that it's navigatable
-    // if the field is set to true or isn't there (meaning that we are dealing with another kind of slice)
-    (slice.showTitle === undefined || slice.showTitle === true)
-  )
-}
+const isNavigatable = (slice: Slice) =>
+  typeof slice === 'object' &&
+  slice['id'] &&
+  slice['title'] &&
+  slice.__typename !== 'Image' &&
+  (slice['showTitle'] === undefined || slice['showTitle'])
 
 // hide the implementation rather than have everyone import slugify themselfes
 export const makeId = (s: string) => slugify(s)
@@ -64,7 +59,7 @@ const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
   }
 
   if (isNavigatable(slice)) {
-    const { id, title: text } = slice
+    const { id, title: text } = slice as Navigatable
     return [{ id, text }]
   }
 
