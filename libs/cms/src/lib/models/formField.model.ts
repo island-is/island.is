@@ -23,7 +23,7 @@ export class FormField {
   options!: Array<string>
 
   @Field(() => graphqlTypeJson, { nullable: true })
-  recipientDecider?: Record<string, string>
+  emailConfig?: Record<string, string>
 }
 
 export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
@@ -33,5 +33,5 @@ export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
   type: fields.type ?? 'input',
   required: fields.required ?? false,
   options: fields.options ?? [],
-  recipientDecider: fields.recipientDecider ?? {},
+  emailConfig: fields.emailConfig ?? {},
 })

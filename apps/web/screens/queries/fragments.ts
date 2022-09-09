@@ -500,7 +500,6 @@ export const slices = gql`
       type
       required
       options
-      recipientDecider
     }
     successText
     aboutYouHeadingText
@@ -511,7 +510,6 @@ export const slices = gql`
       type
       required
       options
-      recipientDecider
     }
   }
 

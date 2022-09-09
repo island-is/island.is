@@ -236,7 +236,8 @@ export const Form = ({ form, namespace }: FormProps) => {
     )
   }
 
-  const getRecipientFormFieldDeciderValue = () => {
+  /** Returns the value for the form field that decides what email the form will be sent to */
+  const getRecipientFormFieldDeciderValue = (): string | undefined => {
     if (!form?.recipientFormFieldDecider?.title) return undefined
     return data[slugify(form.recipientFormFieldDecider.title)]
   }
@@ -252,7 +253,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             name: data['name'],
             email: data['email'],
             message: formatBody(),
-            recipientDeciderValue: getRecipientFormFieldDeciderValue(),
+            recipientFormFieldDeciderValue: getRecipientFormFieldDeciderValue(),
           },
         },
       })

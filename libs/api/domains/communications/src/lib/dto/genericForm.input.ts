@@ -20,5 +20,5 @@ export class GenericFormInput {
   message!: string
 
   @Field({ nullable: true })
-  recipientDeciderValue?: string
+  recipientFormFieldDeciderValue?: string
 }

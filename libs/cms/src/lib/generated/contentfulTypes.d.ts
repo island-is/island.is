@@ -820,8 +820,8 @@ export interface IFormFieldFields {
   /** Options */
   options?: string[] | undefined
 
-  /** Recipient Decider */
-  recipientDecider?: Record<string, any> | undefined
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
