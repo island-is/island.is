@@ -8,7 +8,7 @@ export const GET_VEHICLES_SEARCH = gql`
       vin
       type
       color
-      firstRegDate
+      firstregdate
       latestregistration
       nextInspection {
         nextinspectiondate
@@ -17,7 +17,7 @@ export const GET_VEHICLES_SEARCH = gql`
       currentOwner
       currentOwnerAddress
       useGroup
-      regType
+      regtype
       mass
       massLaden
       vehicleStatus

@@ -7,6 +7,11 @@ export const request = {
     description:
       'Notaður sem titill í kröfu PDF þar sem {caseType} er mála týpan og bætt er við sjálfkrafa í kóða',
   }),
+  policeCaseNumbers: defineMessage({
+    id: 'judicial.system.backend:pdf.restriction_request.police_case_numbers',
+    defaultMessage: 'LÖKE málsnúmer',
+    description: 'Notaður sem text fyrir LÖKE málsnúmer í kröfu PDF',
+  }),
   noDistrict: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.no_district',
     defaultMessage: 'Ekki skráð',

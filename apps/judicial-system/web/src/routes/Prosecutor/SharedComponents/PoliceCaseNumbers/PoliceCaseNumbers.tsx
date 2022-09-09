@@ -103,8 +103,8 @@ const PoliceCaseNumbers: React.FC<Props> = (props) => {
         isDisabled={(value) =>
           !validate([[value, ['empty', 'police-casenumber-format']]]).isValid
         }
-        onBlur={() => {
-          setHasError(clientPoliceNumbers.length === 0)
+        onBlur={(event) => {
+          setHasError(clientPoliceNumbers.length === 0 && !event.target.value)
         }}
         hasError={hasError}
         errorMessage={validate([[undefined, ['empty']]]).errorMessage}
