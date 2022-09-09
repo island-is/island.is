@@ -21,6 +21,8 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     const query = `
       query LicenseQuery {
         drivingLicense {
+          issued
+          expires
           categories {
             name
             expires
@@ -46,9 +48,20 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
+    const categories = (
+      response.data?.drivingLicense?.categories ?? []
+    ).map((category) => ({
+      ...category,
+      name:
+        category.name === 'B'
+          ? response.data?.drivingLicense?.issued === category.issued
+            ? 'B'
+            : 'B-full'
+          : category.name,
+    }))
     return {
-      currentLicense: !!response.data?.drivingLicense?.categories
-        ? response.data?.drivingLicense?.categories
+      currentLicense: !!categories
+        ? categories
         : null,
     }
   }
