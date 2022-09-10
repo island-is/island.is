@@ -22,7 +22,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import * as FileSystem from 'expo-file-system'
 import styled, { useTheme } from 'styled-components/native'
-import agencyLogo from '../../assets/temp/agency-logo.png'
 import { client } from '../../graphql/client'
 import {
   GenericUserLicenseStatus,
@@ -136,14 +135,14 @@ const FieldRender = ({ data, level = 1, licenseType }: any) => {
               }
               return (
                 <FieldGroup key={key}>
-                  <FieldRow>{FieldRender({ data: fields, level: 2 })}</FieldRow>
+                  <FieldRow>{FieldRender({ data: fields, level: 2, licenseType: licenseType })}</FieldRow>
                 </FieldGroup>
               )
 
             case 'Category':
               return (
                 <FieldCard key={key} code={name} title={label} type={licenseType} hasFields={!!fields}>
-                  <FieldRow>{FieldRender({ data: fields, level: 3 })}</FieldRow>
+                  <FieldRow>{FieldRender({ data: fields, level: 3, licenseType: licenseType })}</FieldRow>
                 </FieldCard>
               )
 
@@ -169,7 +168,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       client,
       variables: {
         input: {
-          licenseType: item.license.type,
+          licenseType: item?.license?.type,
         },
       },
     },
@@ -197,7 +196,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           mutation: GENERATE_PKPASS_MUTATION,
           variables: {
             input: {
-              licenseType: item.license.type,
+              licenseType: item?.license?.type,
             },
           },
         })
@@ -272,7 +271,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               style={{ marginTop: 32 }}
             />
           ) : (
-            <FieldRender data={fields} licenseType={data?.license.type} />
+            <FieldRender data={fields} licenseType={data?.license?.type} />
           )}
         </SafeAreaView>
         {Platform.OS === 'android' && <Spacer />}

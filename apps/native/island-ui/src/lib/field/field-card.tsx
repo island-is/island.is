@@ -25,7 +25,7 @@ const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Header = styled.View<{ hideBorder: boolean}>`
+const Header = styled.View<{ hideBorder?: boolean }>`
   align-items: center;
   flex-direction: row;
   border-bottom-width: ${({ theme, hideBorder }) => hideBorder ? 0 : theme.border.width.standard}px;
@@ -118,14 +118,15 @@ export function FieldCard(props: FieldCardProps) {
         break
     }
   }
+
   return (
     <Host>
-      {props.title && props.code &&
+      {(props.title !== null || props.title !== undefined && props.code) ? (
         <Header hideBorder={!props.hasFields}>
           <HeaderTextBold rightSpacing={!props.hasFields}>{props.code}</HeaderTextBold>
           <HeaderText>{props.title}</HeaderText>
           {icon && <IconWrap>{icon}</IconWrap>}
-        </Header>
+        </Header>) : null
       }
       {props.hasFields && <ChildrenWrap>{props.children}</ChildrenWrap>}
     </Host>
