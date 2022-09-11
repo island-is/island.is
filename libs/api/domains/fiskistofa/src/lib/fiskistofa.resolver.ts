@@ -2,9 +2,11 @@ import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetAflamarkInformationForShipInput } from './dto/getAflamarkInformationForShip.input'
 import { GetDeilistofnaInformationForShipInput } from './dto/getDeilistofnaInformationForShip.input'
+import { GetShipsInput } from './dto/getShips.input'
 import { GetUpdatedAflamarkInformationForShipInput } from './dto/getUpdatedAflamarkInformationForShip.input'
 import { GetUpdatedDeilistofnaInformationForShipInput } from './dto/getUpdatedDeilistofnaInformationForShip.input'
 import { Fish } from './models/fish'
+import { ShipBasicInfo } from './models/shipBasicInfo'
 import {
   ExtendedShipStatusInformation,
   ExtendedShipStatusInformationUpdate,
@@ -58,5 +60,11 @@ export class FiskistofaResolver {
   @Query(() => [Fish])
   getAllFishes() {
     return this.fiskistofaClientService.getAllFishes()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [ShipBasicInfo])
+  getShips(@Args('input') input: GetShipsInput) {
+    return this.fiskistofaClientService.getShips(input)
   }
 }
