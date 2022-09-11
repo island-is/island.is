@@ -2678,6 +2678,7 @@ export interface ISliceConnectedComponentFields {
     | 'Undirskriftalistar/PetitionLists'
     | 'LatestNewsCard'
     | 'Fiskistofa/Calculator'
+    | 'Fiskistofa/ShipSearch'
     | undefined
 
   /** JSON */
