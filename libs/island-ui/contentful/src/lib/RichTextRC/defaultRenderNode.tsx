@@ -157,9 +157,6 @@ export const defaultRenderNode: RenderNode = {
     <T.HeadData>{children}</T.HeadData>
   ),
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
-  [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
-    <T.HeadData>{children}</T.HeadData>
-  ),
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
