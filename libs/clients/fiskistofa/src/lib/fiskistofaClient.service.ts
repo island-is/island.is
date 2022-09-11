@@ -4,13 +4,16 @@ import {
   GetDeilistofnaInformationForShipInput,
   GetUpdatedAflamarkInformationForShipInput,
   GetUpdatedDeilistofnaInformationForShipInput,
+  GetShipsInput,
 } from '@island.is/api/domains/fiskistofa'
 import {
   Configuration,
+  SkipApi,
   StadaSkipsApi,
   StodtoflurApi,
-  V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest,
-  V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest,
+  V1SkipHeitiHeitiGetRequest,
+  V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
+  V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest,
   V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
   V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
 } from '../../gen/fetch'
@@ -26,8 +29,9 @@ import {
 
 @Injectable()
 export class FiskistofaClientService {
-  private shipApi: StadaSkipsApi | null = null
-  private fishApi: StodtoflurApi | null = null
+  private stadaSkipsApi: StadaSkipsApi | null = null
+  private stodtoflurApi: StodtoflurApi | null = null
+  private skipApi: SkipApi | null = null
 
   constructor(
     @Inject(FiskistofaClientConfig.KEY)
@@ -35,11 +39,16 @@ export class FiskistofaClientService {
   ) {}
 
   private async initialize(ignoreCache: boolean = false) {
-    if (this.shipApi && this.fishApi && !ignoreCache) {
+    if (
+      this.stadaSkipsApi &&
+      this.stodtoflurApi &&
+      this.skipApi &&
+      !ignoreCache
+    ) {
       return
     }
 
-    const shipApi = new StadaSkipsApi(
+    const stadaSkipsApi = new StadaSkipsApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-fiskistofa',
@@ -53,7 +62,22 @@ export class FiskistofaClientService {
         },
       }),
     )
-    const fishApi = new StodtoflurApi(
+    const stodtoflurApi = new StodtoflurApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-fiskistofa',
+          treat400ResponsesAsErrors: true,
+          ...this.clientConfig.fetch,
+        }),
+        basePath: this.clientConfig.url,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }),
+    )
+
+    const skipApi = new SkipApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-fiskistofa',
@@ -91,10 +115,13 @@ export class FiskistofaClientService {
       throw new Error('Fiskistofa client configuration and login went wrong')
     }
 
-    this.shipApi = shipApi.withMiddleware(
+    this.stadaSkipsApi = stadaSkipsApi.withMiddleware(
       new AuthHeaderMiddleware(`Bearer ${access_token}`),
     )
-    this.fishApi = fishApi.withMiddleware(
+    this.stodtoflurApi = stodtoflurApi.withMiddleware(
+      new AuthHeaderMiddleware(`Bearer ${access_token}`),
+    )
+    this.skipApi = skipApi.withMiddleware(
       new AuthHeaderMiddleware(`Bearer ${access_token}`),
     )
   }
@@ -120,7 +147,7 @@ export class FiskistofaClientService {
 
     try {
       const response = await this.getUpdatedAflamarkInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
@@ -128,7 +155,7 @@ export class FiskistofaClientService {
       if (error instanceof FetchError) {
         await this.initialize(true)
         const response = await this.getUpdatedAflamarkInformationForShipInternal(
-          this.shipApi as StadaSkipsApi,
+          this.stadaSkipsApi as StadaSkipsApi,
           params,
         )
         return response
@@ -157,14 +184,14 @@ export class FiskistofaClientService {
 
     try {
       const response = await this.getAflamarkInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
     } catch (error) {
       await this.initialize(true)
       const response = this.getAflamarkInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
@@ -184,7 +211,7 @@ export class FiskistofaClientService {
   async getDeilistofnaInformationForShip(
     input: GetDeilistofnaInformationForShipInput,
   ) {
-    const params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest = {
+    const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest = {
       ar: input.year,
       skipnumer: input.shipNumber,
     }
@@ -193,14 +220,14 @@ export class FiskistofaClientService {
 
     try {
       const response = await this.getDeilistofnaInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
     } catch (error) {
       await this.initialize(true)
       const response = this.getDeilistofnaInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
@@ -209,9 +236,9 @@ export class FiskistofaClientService {
 
   private async getDeilistofnaInformationForShipInternal(
     api: StadaSkipsApi,
-    params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarGetRequest,
+    params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest,
   ) {
-    const response = await api.v1StadaskipsSkipnumerAlmannaksarArDeilistofnarGet(
+    const response = await api.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
       params,
     )
     return mapChangedAllowedCatchForShip(response)
@@ -220,7 +247,7 @@ export class FiskistofaClientService {
   async getUpdatedDeilistofnaInformationForShip(
     input: GetUpdatedDeilistofnaInformationForShipInput,
   ) {
-    const params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest = {
+    const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest = {
       ar: input.year,
       skipnumer: input.shipNumber,
       aflamarkSkipsBreytingarDTO: {
@@ -237,14 +264,14 @@ export class FiskistofaClientService {
 
     try {
       const response = await this.getUpdatedDeilistofnaInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
     } catch (error) {
       await this.initialize(true)
       const response = this.getUpdatedDeilistofnaInformationForShipInternal(
-        this.shipApi as StadaSkipsApi,
+        this.stadaSkipsApi as StadaSkipsApi,
         params,
       )
       return response
@@ -253,9 +280,9 @@ export class FiskistofaClientService {
 
   private async getUpdatedDeilistofnaInformationForShipInternal(
     api: StadaSkipsApi,
-    params: V1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPostRequest,
+    params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
   ) {
-    const response = await api.v1StadaskipsSkipnumerAlmannaksarArDeilistofnarBreyttPost(
+    const response = await api.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
       params,
     )
     return mapChangedAllowedCatchForShip(response)
@@ -265,13 +292,13 @@ export class FiskistofaClientService {
     await this.initialize()
     try {
       const response = await this.getAllFishesInternal(
-        this.fishApi as StodtoflurApi,
+        this.stodtoflurApi as StodtoflurApi,
       )
       return response
     } catch (error) {
       await this.initialize(true)
       const response = await this.getAllFishesInternal(
-        this.fishApi as StodtoflurApi,
+        this.stodtoflurApi as StodtoflurApi,
       )
       return response
     }
@@ -280,5 +307,32 @@ export class FiskistofaClientService {
   private async getAllFishesInternal(api: StodtoflurApi) {
     const response = await api.v1StodtoflurFisktegundirGet()
     return mapFishes(response)
+  }
+
+  async getShips(input: GetShipsInput) {
+    await this.initialize()
+    try {
+      const response = await this.getShipsInternal(this.skipApi as SkipApi, {
+        heiti: input.shipName,
+      })
+      return response
+    } catch (error) {
+      await this.initialize(true)
+      const response = await this.getShipsInternal(this.skipApi as SkipApi, {
+        heiti: input.shipName,
+      })
+      return response
+    }
+  }
+
+  async getShipsInternal(api: SkipApi, params: V1SkipHeitiHeitiGetRequest) {
+    const response = await api.v1SkipHeitiHeitiGet(params)
+    return (response ?? []).map((ship) => ({
+      id: ship.skipaskraNumer,
+      name: ship.heiti ?? '',
+      shippingCompany: ship.utgerdarflokkur ?? '',
+      shippingClass: ship.utgerd ?? '',
+      homePort: ship.heimahofn ?? '',
+    }))
   }
 }
