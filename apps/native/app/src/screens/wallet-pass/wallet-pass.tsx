@@ -200,18 +200,20 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             },
           },
         })
-
         if (Platform.OS === 'android') {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
+
           await FileSystem.downloadAsync(
             data.generatePkPass.pkpassUrl,
             pkPassUri,
+            { headers: { 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1' }}
           )
           const pkPassContentUri = await FileSystem.getContentUriAsync(
             pkPassUri,
           )
+
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
               alert(

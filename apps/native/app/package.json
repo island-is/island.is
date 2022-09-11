@@ -32,6 +32,7 @@
     "dotenv": "*",
     "js-base64": "*",
     "@formatjs/intl-numberformat": "*",
-    "graphql": "*"
+    "graphql": "*",
+    "@formatjs/intl-locale": "*"
   }
 }
