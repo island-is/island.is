@@ -83,12 +83,10 @@ const MobileCase: React.FC<Props> = ({
           <Text>{theCase.defendants[0].name ?? ''}</Text>
           {theCase.defendants.length === 1 ? (
             <Text>
-              <Text>
-                {formatDOB(
-                  theCase.defendants[0].nationalId,
-                  theCase.defendants[0].noNationalId,
-                )}
-              </Text>
+              {formatDOB(
+                theCase.defendants[0].nationalId,
+                theCase.defendants[0].noNationalId,
+              )}
             </Text>
           ) : (
             <Text>{`+ ${theCase.defendants.length - 1}`}</Text>

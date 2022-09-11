@@ -20,7 +20,6 @@ import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
-import { Namespace } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Form.css'
 
@@ -34,7 +33,7 @@ interface FormFieldProps {
 
 interface FormProps {
   form: FormType
-  namespace: Namespace
+  namespace: Record<string, string>
 }
 
 const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {

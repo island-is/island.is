@@ -120,6 +120,7 @@
           "sequelize-cli db:seed:all --seeders-path ./seeders/local",
           "sequelize-cli db:seed:all"
         ],
+        "parallel": false,
         "cwd": "libs/auth-api-lib"
       }
     }

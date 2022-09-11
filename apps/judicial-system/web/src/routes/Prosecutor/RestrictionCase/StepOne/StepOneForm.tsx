@@ -9,7 +9,7 @@ import {
 import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { accused as m } from '@island.is/judicial-system-web/messages'
+import { accused as m, core } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {
   validateAndSendToServer,
@@ -164,9 +164,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
           }
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
-          }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </>
