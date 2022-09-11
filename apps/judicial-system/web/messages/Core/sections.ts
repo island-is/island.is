@@ -122,6 +122,13 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Dómskjöl skref í hliðarstiku í ákærum hjá sækjendum',
     },
+    overview: {
+      id:
+        'judicial.system.core:sections.indictment_case_prosecutor_section.overview',
+      defaultMessage: 'Yfirlit ákæru',
+      description:
+        'Notaður sem texti fyrir Yfirlit ákæru skref í hliðarstiku í ákærum hjá sækjendum',
+    },
   }),
   investigationCaseCourtSection: defineMessages({
     title: {
@@ -210,6 +217,21 @@ export const sections = {
       defaultMessage: 'Yfirlit úrskurðar',
       description:
         'Notaður sem texti fyrir Yfirlit úrskurðar skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
+    },
+  }),
+  indictmentsCourtSection: defineMessages({
+    receptionAndAssignment: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.reception_and_assignment',
+      defaultMessage: 'Móttaka',
+      description:
+        'Notaður sem texti fyrir Móttaka skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    overview: {
+      id: 'judicial.system.core:sections.indictments_court_section.overview',
+      defaultMessage: 'Yfirlit',
+      description:
+        'Notaður sem texti fyrir Yfirlit skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
   }),
   extensionSection: defineMessages({

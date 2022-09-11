@@ -1,5 +1,6 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
   Gender,
@@ -9,6 +10,9 @@ import {
   UserRole,
   InstitutionType,
   CaseCustodyRestrictions,
+  investigationCases,
+  restrictionCases,
+  indictmentCases,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -443,91 +447,57 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
       .formatMessage
   })
 
-  test('should format ready for court email subject', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const court = 'Héraðsdómur Reykjavíkur'
-    const policeCaseNumbers = ['1234567', '007-2022-01']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
-
-    // Act
-    const res = formatProsecutorReadyForCourtEmailNotification(
+  const fn = (
+    policeCaseNumbers: string[],
+    caseType: CaseType,
+    courtName?: string,
+    overviewUrl?: string,
+  ) =>
+    formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
       policeCaseNumbers,
-      type,
-      court,
+      caseType,
+      courtName,
       overviewUrl,
     )
 
-    // Assert
-    expect(res.subject).toBe('Krafa í máli 1234567, 007-2022-01')
-  })
+  test.each([...restrictionCases, ...investigationCases])(
+    'should format ready for court email for %s',
+    (type) => {
+      // Arrange
+      const court = 'Héraðsdómur Reykjavíkur'
+      const policeCaseNumbers = ['007-2022-01']
+      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
-  test('should format ready for court email for custody cases', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const court = 'Héraðsdómur Reykjavíkur'
-    const policeCaseNumbers = ['1234567']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+      // Act
+      const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
-    // Act
-    const res = formatProsecutorReadyForCourtEmailNotification(
-      formatMessage,
-      policeCaseNumbers,
-      type,
-      court,
-      overviewUrl,
-    )
+      // Assert
+      expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+      expect(res.body).toBe(
+        `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+      )
+    },
+  )
 
-    // Assert
-    expect(res.body).toBe(
-      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdóm Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
-    )
-  })
+  test.each(indictmentCases)(
+    'should format ready for court email for %s',
+    (type) => {
+      // Arrange
+      const court = 'Héraðsdómur Reykjavíkur'
+      const policeCaseNumbers = ['007-2022-02', '007-2022-01']
+      const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
-  test('should format ready for court email for travel ban cases', () => {
-    // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const court = 'Héraðsdómur Reykjaness'
-    const policeCaseNumbers = ['66666']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+      // Act
+      const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
-    // Act
-    const res = formatProsecutorReadyForCourtEmailNotification(
-      formatMessage,
-      policeCaseNumbers,
-      type,
-      court,
-      overviewUrl,
-    )
-
-    // Assert
-    expect(res.body).toBe(
-      'Þú hefur sent kröfu um farbann á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
-    )
-  })
-
-  test('should format ready for court email for travel ban cases', () => {
-    // Arrange
-    const type = CaseType.ADMISSION_TO_FACILITY
-    const court = 'Héraðsdómur Reykjaness'
-    const policeCaseNumbers = ['66666']
-    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
-
-    // Act
-    const res = formatProsecutorReadyForCourtEmailNotification(
-      formatMessage,
-      policeCaseNumbers,
-      type,
-      court,
-      overviewUrl,
-    )
-
-    // Assert
-    expect(res.body).toBe(
-      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
-    )
-  })
+      // Assert
+      expect(res.subject).toBe(`Ákæra send`)
+      expect(res.body).toBe(
+        `Þú hefur sent ákæru á Héraðsdóm Reykjavíkur vegna LÖKE mála: 007-2022-02, 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
+      )
+    },
+  )
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
@@ -645,9 +615,34 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       .formatMessage
   })
 
+  const fn = (
+    type: CaseType,
+    courtCaseNumber: string,
+    court?: string,
+    courtDate?: Date,
+    courtRoom?: string,
+    judgeName?: string,
+    registrarName?: string,
+    defenderName?: string,
+    sessionArrangements?: SessionArrangements,
+  ) =>
+    formatProsecutorCourtDateEmailNotification(
+      formatMessage,
+      type,
+      courtCaseNumber,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      defenderName,
+      sessionArrangements,
+    )
+
   test('should format court date notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
@@ -657,9 +652,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = undefined
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -670,7 +665,8 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.subject).toBe('Fyrirtaka í máli: R-898/2021')
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
@@ -678,15 +674,16 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification with no judge, registrar and defender', () => {
     // Arrange
     const type = CaseType.CUSTODY
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
     const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -697,7 +694,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
@@ -705,6 +702,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
@@ -714,9 +712,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -727,7 +725,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um farbann.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
@@ -735,6 +733,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification for admission to facility', () => {
     // Arrange
     const type = CaseType.ADMISSION_TO_FACILITY
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
@@ -744,9 +743,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -757,7 +756,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um vistun á viðeigandi stofnun.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
@@ -765,6 +764,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification for investigation', () => {
     // Arrange
     const type = CaseType.SOUND_RECORDING_EQUIPMENT
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
@@ -774,9 +774,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -787,7 +787,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
@@ -795,6 +795,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification for investigation of type OTHER', () => {
     // Arrange
     const type = CaseType.OTHER
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
@@ -804,9 +805,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -817,7 +818,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
@@ -825,6 +826,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification when defender will not attend', () => {
     // Arrange
     const type = CaseType.OTHER
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2021-12-24T10:00')
     const courtRoom = '999'
@@ -834,9 +836,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const sessionArrangements = SessionArrangements.PROSECUTOR_PRESENT
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -847,7 +849,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
@@ -855,6 +857,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification when courtroom is not set', () => {
     // Arrange
     const type = CaseType.CUSTODY
+    const courtCaseNumber = 'R-898/2021'
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = undefined
@@ -863,9 +866,9 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const defenderName = 'Valdi Verjandi'
 
     // Act
-    const res = formatProsecutorCourtDateEmailNotification(
-      formatMessage,
+    const res = fn(
       type,
+      courtCaseNumber,
       court,
       courtDate,
       courtRoom,
@@ -875,7 +878,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
+    expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
@@ -1906,27 +1909,44 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     .formatMessage
 
   const fn = (
+    caseType: CaseType,
     policeCaseNumbers: string[],
     overviewUrl: string,
     courtName?: string,
   ) =>
     formatDefenderResubmittedToCourtEmailNotification(
       formatMessage,
+      caseType,
       policeCaseNumbers,
       overviewUrl,
       courtName,
     )
 
   it('should format email', () => {
+    const caseType = CaseType.CUSTODY
     const policeCaseNumbers = ['007-2022-06546']
     const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
     const courtName = 'Héraðsdómur Reykjavíkur'
 
-    const result = fn(policeCaseNumbers, overviewUrl, courtName)
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
 
     expect(result.body).toEqual(
       'Sækjandi í máli 007-2022-06546 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
     )
-    expect(result.subject).toEqual('Krafa í máli 007-2022-06546 send aftur')
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
+  })
+
+  it('should format email with multiple policeCaseNumbers', () => {
+    const caseType = CaseType.CUSTODY
+    const policeCaseNumbers = ['007-2022-06546', '007-2022-06547']
+    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    const result = fn(caseType, policeCaseNumbers, overviewUrl, courtName)
+
+    expect(result.body).toEqual(
+      'Sækjandi í málum: 007-2022-06546, 007-2022-06547 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+    )
+    expect(result.subject).toEqual('Krafa um gæsluvarðhald send aftur')
   })
 })

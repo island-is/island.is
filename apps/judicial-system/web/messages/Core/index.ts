@@ -203,6 +203,11 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
+  createCase: {
+    id: 'judicial.system.core:create_case',
+    defaultMessage: 'Stofna mál',
+    description: 'Notað fyrir "Stofna mál" takka í öllum flæðum.',
+  },
   linkCopied: {
     id: 'judicial.system.core:link_copied',
     defaultMessage: 'Hlekkur afritaður',
