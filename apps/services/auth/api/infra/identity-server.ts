@@ -1,4 +1,4 @@
-import { service, ServiceBuilder, ref } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder, ref } from '../../../../../infra/src/dsl/dsl'
 
 /**
  * This setup is for the Identity Server, which is hosted in a different repository - https://github.com/island-is/identity-server.web

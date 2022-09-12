@@ -1,6 +1,6 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { json } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
+import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { json } from '../../../../../infra/src/dsl/dsl'
+import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'servicesauth',
