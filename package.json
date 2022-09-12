@@ -458,7 +458,7 @@
     "path-parse": "1.0.7"
   },
   "volta": {
-    "node": "18.8.0",
-    "yarn": "3.2.3"
-  }
+    "node": "18.8.0"
+  },
+  "packageManager": "yarn@3.2.3"
 }
