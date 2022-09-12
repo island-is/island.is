@@ -24,7 +24,6 @@ export const estateSchema = z.object({
   estate: z.object({
     estateMembers: z
       .object({
-        initial: z.boolean().optional(),
         name: z.string().nonempty(),
         relation: customZodError(z.string().nonempty(), m.errorRelation),
         nationalId: z.string().optional(),
