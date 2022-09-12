@@ -639,6 +639,33 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           roles: [
             {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/EmployerApproval').then((val) =>
+                  Promise.resolve(val.EmployerApproval),
+                ),
+              read: {
+                answers: [
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                  'firstPeriodStart',
+                ],
+                externalData: ['children'],
+              },
+              write: {
+                answers: ['employerNationalRegistryId'],
+              },
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Approve',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
+              ],
+            },
+            {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/EditsInReview').then((val) =>
