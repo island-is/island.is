@@ -51,8 +51,7 @@ import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from './resources.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import partition from 'lodash/partition'
-import { isDefined, getYesterday } from '@island.is/shared/utils'
-import { String } from 'aws-sdk/clients/cloudsearchdomain'
+import { isDefined } from '@island.is/shared/utils'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -206,9 +205,13 @@ export class DelegationsService {
    * Finds a single delegation for a user.
    * @param nationalId Id of the user to find the delegation from.
    * @param id Id of the delegation to find.
-   * @returns
+   * @param disableFilter If true then the delegation will not be filtered by the user scope.
    */
-  async findById(user: User, id: string): Promise<DelegationDTO | null> {
+  async findById(
+    user: User,
+    id: string,
+    disableFilter = false,
+  ): Promise<DelegationDTO | null> {
     if (!isUuid(id)) {
       throw new BadRequestException('delegationId must be a valid uuid')
     }
@@ -243,7 +246,7 @@ export class DelegationsService {
       ],
     })
 
-    if (delegation) {
+    if (delegation && !disableFilter) {
       delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
         this.checkIfScopeAllowed(s, user),
       )
@@ -384,11 +387,7 @@ export class DelegationsService {
     } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
 
     if (deceasedDelegations.length > 0) {
-      NestLogger.log('HEEEELLLLLOOOOOOOOO')
-      NestLogger.log(deceasedDelegations)
-      NestLogger.log(deceasedDelegations[0].scopes)
-
-      //await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
+      await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
     }
 
     return uniqBy(
@@ -421,7 +420,7 @@ export class DelegationsService {
   }
 
   /**
-   * Updates validTo date field to start of yesterday for deceased person delegation.
+   * Updates delegation.scope.validTo date field to start of yesterday for deceased person delegation.
    */
   private async updateDeceasedPersonsDelegations(
     user: User,
@@ -434,22 +433,30 @@ export class DelegationsService {
 
     if (deceasedDelegationIds.length > 0) {
       const delegations = await Promise.all(
-        deceasedDelegationIds.map((id) => this.findById(user, id)),
+        // We need to refetch the delegation to make sure we get all delegation.scopes
+        deceasedDelegationIds.map((id) => this.findById(user, id, true)),
       )
       const delegationsWithAllScopes = delegations.filter(isDefined)
 
-      const startOfDay = new Date()
-      startOfDay.setHours(0, 0, 0, 0)
+      if (delegationsWithAllScopes.length > 0) {
+        const delegationScopesIds = delegationsWithAllScopes
+          .map((delegation) =>
+            delegation.scopes?.map(({ id }) => id).filter(isDefined),
+          )
+          .filter(isDefined)
+          .flat()
+
+        if (delegationScopesIds.length > 0) {
+          await Promise.all(
+            delegationScopesIds.map((id) =>
+              this.delegationScopeService.invalidate(id),
+            ),
+          )
+        }
+      }
 
       // TODO audit system method action is findAll
       // TODO update exp column in Delegation table to make it expired.
-      await Promise.all(
-        deceasedDelegationIds.map((id) =>
-          // Since we know delegation id is mapped to a deceased person,
-          // we can safely set the expiration date to expired, i.e. start of yesterday.
-          this.update(user, { validTo: getYesterday(startOfDay) }, id),
-        ),
-      )
     }
   }
 

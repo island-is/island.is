@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import {
   ScopeType,
@@ -17,10 +17,15 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
 } from '../personal-representative'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { getYesterday } from '@island.is/shared/utils'
 
 @Injectable()
 export class DelegationScopeService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     @InjectModel(DelegationScope)
     private delegationScopeModel: typeof DelegationScope,
     @InjectModel(ApiScope)
@@ -66,6 +71,29 @@ export class DelegationScopeService {
         delegationId,
       })),
     )
+  }
+
+  /**
+   * Invalidates delegation scope, i.e. make it expired. To make delegation scope invalid we have
+   * set validTo field to yesterdays date.
+   *
+   * @param id Scope id
+   */
+  async invalidate(id: string): Promise<void> {
+    this.logger.debug(`Invalidating delegationScope ${id}`)
+
+    const startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+
+    try {
+      await this.delegationScopeModel.update(
+        { validTo: getYesterday(startOfDay) },
+        { where: { id } },
+      )
+    } catch (error) {
+      // Swallow error if scope is already invalidated
+      this.logger.error(`Error invalidating delegationScope ${id}`, error)
+    }
   }
 
   async delete(
