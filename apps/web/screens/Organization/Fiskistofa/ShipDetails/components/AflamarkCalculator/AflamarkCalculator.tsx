@@ -33,6 +33,15 @@ type Changes = Record<
   }
 >
 
+type ChangeErrors = Record<
+  number,
+  {
+    id: number
+    catchChange: boolean
+    allowedCatchChange: boolean
+  }
+>
+
 export const AflamarkCalculator = () => {
   const shipNumber = 1281
 
@@ -44,6 +53,14 @@ export const AflamarkCalculator = () => {
     selectedTimePeriod,
     setSelectedTimePeriod,
   ] = useState<TimePeriodOption>(timePeriodOptions[0])
+
+  // TODO: think whether this should be in done in backend
+  // const [quotaState, setQuotaState] = useState({
+  //   rateOfShare: 0,
+  //   nextYearQuota: 0,
+  //   nextYearFromQuota: 0,
+  //   allowedCatch: 0,
+  // })
 
   const initialResponse = useQuery<
     { getShipStatusForTimePeriod: ExtendedShipStatusInformation },
@@ -67,7 +84,7 @@ export const AflamarkCalculator = () => {
     for (const change of Object.values(changes)) {
       if (isNaN(Number(change?.catchChange)) && change?.catchChange) {
         valid = false
-        errors[change?.id] = { ...errors[change?.id], catchChange: 'Ekki tala' }
+        errors[change?.id] = { ...errors[change?.id], catchChange: true }
       }
       if (
         isNaN(Number(change?.allowedCatchChange)) &&
@@ -76,7 +93,7 @@ export const AflamarkCalculator = () => {
         valid = false
         errors[change?.id] = {
           ...errors[change?.id],
-          allowedCatchChange: 'Ekki tala',
+          allowedCatchChange: true,
         }
       }
     }
@@ -118,7 +135,7 @@ export const AflamarkCalculator = () => {
   const error = initialResponse.error
 
   const [changes, setChanges] = useState<Changes>({})
-  const [changeErrors, setChangeErrors] = useState<Changes>({})
+  const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
 
   const getFieldDifference = (
     category: ExtendedAllowedCatchCategory,
@@ -127,13 +144,35 @@ export const AflamarkCalculator = () => {
     const a = mutationResponse?.data?.getUpdatedShipStatusForTimePeriod?.allowedCatchCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
-    const b = initialResponse?.data.getShipStatusForTimePeriod?.allowedCatchCategories?.find(
+    const b = initialResponse?.data?.getShipStatusForTimePeriod?.allowedCatchCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
 
     if (!a || !b) return 0
 
     return a - b
+  }
+
+  const calculate = () => {
+    const changeValues = Object.values(changes)
+
+    if (!validateChanges()) {
+      return
+    }
+
+    mutate({
+      variables: {
+        input: {
+          shipNumber,
+          timePeriod: selectedTimePeriod.value,
+          changes: changeValues.map((change) => ({
+            ...change,
+            catchChange: Number(change.catchChange ?? 0),
+            allowedCatchChange: Number(change.allowedCatchChange ?? 0),
+          })),
+        },
+      },
+    })
   }
 
   return (
@@ -160,9 +199,11 @@ export const AflamarkCalculator = () => {
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
             <Button
-              onClick={() =>
+              onClick={() => {
                 setData(initialResponse.data.getShipStatusForTimePeriod)
-              }
+                setChanges({})
+                setChangeErrors({})
+              }}
               variant="ghost"
               size="small"
             >
@@ -170,29 +211,7 @@ export const AflamarkCalculator = () => {
             </Button>
             <Button
               disabled={Object.keys(changes).length === 0}
-              onClick={() => {
-                const changeValues = Object.values(changes)
-
-                if (!validateChanges()) {
-                  return
-                }
-
-                mutate({
-                  variables: {
-                    input: {
-                      shipNumber,
-                      timePeriod: selectedTimePeriod.value,
-                      changes: changeValues.map((change) => ({
-                        ...change,
-                        catchChange: Number(change.catchChange ?? 0),
-                        allowedCatchChange: Number(
-                          change.allowedCatchChange ?? 0,
-                        ),
-                      })),
-                    },
-                  },
-                })
-              }}
+              onClick={calculate}
               size="small"
             >
               Reikna
@@ -222,111 +241,67 @@ export const AflamarkCalculator = () => {
       )}
 
       {data?.allowedCatchCategories?.length > 0 && (
-        <table className={styles.tableContainer}>
-          <thead className={styles.tableHead}>
-            <tr>
-              <th>Kvótategund</th>
-              {data?.allowedCatchCategories?.map((category) => {
-                return <th key={category.name}>{category.name}</th>
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Úthlutun</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.allocation}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Sérst. úthl.</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.specialAlloction}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Milli ára</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.betweenYears}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Milli skipa</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.betweenShips}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Aflamarksbr.</td>
-              {/* TODO: keep track of difference from initial aflamark to what it is now */}
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>
-                  {category.id === 0 ? (
-                    getFieldDifference(category, 'allowedCatch')
-                  ) : (
-                    <input
-                      className={cn({
-                        [styles.error]:
-                          changeErrors?.[category.id]?.allowedCatchChange
-                            ?.length > 0,
-                      })}
-                      value={changes?.[category.id]?.allowedCatchChange ?? ''}
-                      onChange={(ev) => {
-                        setChanges((prevChanges) => {
-                          return {
-                            ...prevChanges,
-                            [category.id]: {
-                              id: category.id,
-                              allowedCatchChange: ev.target.value,
-                              catchChange:
-                                prevChanges[category.id]?.catchChange,
-                            },
-                          }
-                        })
-                      }}
-                    />
-                  )}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>Aflamark</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.allowedCatch}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Afli</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.catch}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Aflabreyting</td>
-
-              {data?.allowedCatchCategories?.map((category) => {
-                return (
+        <Box className={styles.tableBox}>
+          <table className={styles.tableContainer}>
+            <thead className={styles.tableHead}>
+              <tr>
+                <th>Kvótategund</th>
+                {data?.allowedCatchCategories?.map((category) => {
+                  return <th key={category.name}>{category.name}</th>
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Úthlutun</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.allocation}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Sérst. úthl.</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.specialAlloction}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Milli ára</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.betweenYears}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Milli skipa</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.betweenShips}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Aflamarksbr.</td>
+                {/* TODO: keep track of difference from initial aflamark to what it is now */}
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
-                    {/* TODO: keep track of difference from initial afli to what it is now */}
                     {category.id === 0 ? (
-                      getFieldDifference(category, 'catch')
+                      getFieldDifference(category, 'allowedCatch')
                     ) : (
                       <input
+                        onKeyDown={(ev) => {
+                          if (ev.key === 'Enter') calculate()
+                        }}
                         className={cn({
                           [styles.error]:
-                            changeErrors?.[category.id]?.catchChange?.length >
-                            0,
+                            changeErrors?.[category.id]?.allowedCatchChange,
                         })}
-                        value={changes?.[category.id]?.catchChange ?? ''}
+                        value={changes?.[category.id]?.allowedCatchChange ?? ''}
                         onChange={(ev) => {
                           setChanges((prevChanges) => {
                             return {
                               ...prevChanges,
                               [category.id]: {
                                 id: category.id,
-                                catchChange: ev.target.value,
-                                allowedCatchChange:
-                                  prevChanges[category.id]?.allowedCatchChange,
+                                allowedCatchChange: ev.target.value,
+                                catchChange:
+                                  prevChanges[category.id]?.catchChange,
                               },
                             }
                           })
@@ -334,111 +309,165 @@ export const AflamarkCalculator = () => {
                       />
                     )}
                   </td>
-                )
-              })}
-            </tr>
-            <tr>
-              <td>Staða</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.status}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Tilfærsla</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.displacement}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Ný staða</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.newStatus}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Á næsta ár</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.nextYear}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Umframafli</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.excessCatch}</td>
-              ))}
-            </tr>
-            <tr>
-              <td>Ónotað</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>{category.unused}</td>
-              ))}
-            </tr>
+                ))}
+              </tr>
+              <tr>
+                <td>Aflamark</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.allowedCatch}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Afli</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.catch}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Aflabreyting</td>
 
-            <tr>
-              <td className={styles.visualSeparationLine}>Heildaraflamark</td>
-              {data?.allowedCatchCategories?.map((category) => (
-                <td className={styles.visualSeparationLine} key={category.name}>
-                  {category.totalAllowedCatch}
-                </td>
-              ))}
-            </tr>
+                {data?.allowedCatchCategories?.map((category) => {
+                  return (
+                    <td key={category.name}>
+                      {/* TODO: keep track of difference from initial afli to what it is now */}
+                      {category.id === 0 ? (
+                        getFieldDifference(category, 'catch')
+                      ) : (
+                        <input
+                          onKeyDown={(ev) => {
+                            if (ev.key === 'Enter') calculate()
+                          }}
+                          className={cn({
+                            [styles.error]:
+                              changeErrors?.[category.id]?.catchChange,
+                          })}
+                          value={changes?.[category.id]?.catchChange ?? ''}
+                          onChange={(ev) => {
+                            setChanges((prevChanges) => {
+                              return {
+                                ...prevChanges,
+                                [category.id]: {
+                                  id: category.id,
+                                  catchChange: ev.target.value,
+                                  allowedCatchChange:
+                                    prevChanges[category.id]
+                                      ?.allowedCatchChange,
+                                },
+                              }
+                            })
+                          }}
+                        />
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+              <tr>
+                <td>Staða</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.status}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Tilfærsla</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.displacement}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Ný staða</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.newStatus}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Á næsta ár</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.nextYear}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Umframafli</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.excessCatch}</td>
+                ))}
+              </tr>
+              <tr>
+                <td>Ónotað</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>{category.unused}</td>
+                ))}
+              </tr>
 
-            <tr>
-              <td>Hlutdeild</td>
+              <tr>
+                <td className={styles.visualSeparationLine}>Heildaraflamark</td>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td
+                    className={styles.visualSeparationLine}
+                    key={category.name}
+                  >
+                    {category.totalAllowedCatch}
+                  </td>
+                ))}
+              </tr>
 
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>
-                  {category.id === 0 ? (
-                    category.rateOfShare
-                  ) : (
-                    <input
-                      value={category.rateOfShare}
-                      onChange={(ev) => {
-                        // TODO: store changes in state
-                      }}
-                    />
-                  )}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>Á næsta ár kvóti</td>
-              {/* TODO: add input box */}
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>
-                  {category.id === 0 ? (
-                    category.nextYearQuota
-                  ) : (
-                    <input
-                      value={category.nextYearQuota}
-                      onChange={(ev) => {
-                        // TODO: store changes in state
-                      }}
-                    />
-                  )}
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>Af næsta ár kvóti</td>
+              <tr>
+                <td>Hlutdeild</td>
 
-              {data?.allowedCatchCategories?.map((category) => (
-                <td key={category.name}>
-                  {category.id === 0 ? (
-                    category.nextYearFromQuota
-                  ) : (
-                    <input
-                      value={category.nextYearFromQuota}
-                      onChange={(ev) => {
-                        // TODO: store changes in state
-                      }}
-                    />
-                  )}
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>
+                    {category.id === 0 ? (
+                      category.rateOfShare
+                    ) : (
+                      <input
+                        value={category.rateOfShare}
+                        onChange={(ev) => {
+                          // TODO: store changes in state
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>Á næsta ár kvóti</td>
+                {/* TODO: add input box */}
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>
+                    {category.id === 0 ? (
+                      category.nextYearQuota
+                    ) : (
+                      <input
+                        value={category.nextYearQuota}
+                        onChange={(ev) => {
+                          // TODO: store changes in state
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td>Af næsta ár kvóti</td>
+
+                {data?.allowedCatchCategories?.map((category) => (
+                  <td key={category.name}>
+                    {category.id === 0 ? (
+                      category.nextYearFromQuota
+                    ) : (
+                      <input
+                        value={category.nextYearFromQuota}
+                        onChange={(ev) => {
+                          // TODO: store changes in state
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </Box>
       )}
     </Box>
   )

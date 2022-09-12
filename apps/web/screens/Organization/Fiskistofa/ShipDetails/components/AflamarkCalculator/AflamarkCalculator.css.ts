@@ -5,6 +5,11 @@ export const selectBox = style({
   width: '250px',
 })
 
+export const tableBox = style({
+  overflow: 'scroll',
+  minWidth: '100%',
+})
+
 export const tableContainer = style({
   border: '1px solid #CCDFFF',
 
@@ -53,7 +58,7 @@ globalStyle(`${tableContainer} td`, {
 })
 
 globalStyle(`${tableContainer} tr td:nth-child(1)`, {
-  backgroundColor: 'rgba(229, 229, 229, 0.65)',
+  backgroundColor: 'rgba(229, 229, 229, 1)',
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
   textAlign: 'left',
@@ -61,6 +66,7 @@ globalStyle(`${tableContainer} tr td:nth-child(1)`, {
   minWidth: '120px',
   maxWidth: '120px',
   left: '0px',
+  zIndex: 1,
 })
 
 globalStyle(`${tableContainer} tr th:nth-child(1)`, {
@@ -70,24 +76,29 @@ globalStyle(`${tableContainer} tr th:nth-child(1)`, {
   minWidth: '120px',
   maxWidth: '120px',
   left: '0px',
+  zIndex: 1,
+  background: '#E6F2FB',
 })
 
 globalStyle(`${tableContainer} tr td:nth-child(2)`, {
-  backgroundColor: 'rgba(230, 242, 251, 0.35)',
+  backgroundColor: 'rgba(230, 242, 251, 1)',
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
   textAlign: 'right',
   width: '180px',
   minWidth: '180px',
   maxWidth: '180px',
-  left: '166px',
+  left: '120px',
+  zIndex: 1,
 })
 
 globalStyle(`${tableContainer} tr th:nth-child(2)`, {
+  background: '#E6F2FB',
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
   width: '180px',
   minWidth: '180px',
   maxWidth: '180px',
-  left: '166px',
+  left: '120px',
+  zIndex: 1,
 })
