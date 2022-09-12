@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
+import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
@@ -17,6 +18,7 @@ import {
   UserRole,
   Feature,
   isInvestigationCase,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -105,26 +107,20 @@ export const Cases: React.FC = () => {
 
   useEffect(() => {
     if (resCases && !activeCases) {
-      // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
 
-      setActiveCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast && c.rulingDate
-            : !c.rulingDate
-        }),
-      )
+      const casesByState = partition(casesWithoutDeleted, (c: Case) => {
+        return isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED
+          ? false
+          : isPrisonAdminUser || isPrisonUser
+          ? !c.isValidToDateInThePast && c.rulingDate
+          : !c.rulingDate
+      })
 
-      setPastCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast && c.rulingDate
-            : c.rulingDate
-        }),
-      )
+      setActiveCases(casesByState[0])
+      setPastCases(casesByState[1])
     }
   }, [
     activeCases,

@@ -31,10 +31,29 @@ export const courtRecord = defineMessages({
     description:
       'Notaður sem titill á hlaða upp gögnum hlutum á Þingbók og dómur skrefi.',
   },
-  buttonLabel: {
-    id: 'judicial.system.core:court_indictments_overview.button_label',
+  uploadButtonText: {
+    id: 'judicial.system.core:court_indictments_overview.upload_button_text',
     defaultMessage: 'Velja gögn til að hlaða upp',
     description:
       'Notaður sem titill á hlaða upp takka á Þingbók og dómur skrefi.',
+  },
+  nextButtonText: {
+    id: 'judicial.system.core:court_indictments_overview.next_button_text',
+    defaultMessage: 'Ljúka máli',
+    description:
+      'Notaður sem titill á ljúka máli takka á Þingbók og dómur skrefi.',
+  },
+  modalTitle: {
+    id: 'judicial.system.core:court_indictments_overview.modal_title',
+    defaultMessage: 'Máli hefur verið lokið',
+    description:
+      'Notaður sem titill í modal glugga eftir að máli er lokið í ákærum.',
+  },
+  modalText: {
+    id: 'judicial.system.core:court_indictments_overview.modal_text',
+    defaultMessage:
+      'Gögn hafa verið send á ákæranda og verjanda hafi þeim verið hlaðið upp.',
+    description:
+      'Notaður sem texti í modal glugga eftir að máli er lokið í ákærum.',
   },
 })
