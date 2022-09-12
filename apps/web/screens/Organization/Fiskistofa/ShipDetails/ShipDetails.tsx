@@ -4,7 +4,6 @@ import {
   Button,
   GridContainer,
   Inline,
-  Tabs,
 } from '@island.is/island-ui/core'
 import {
   GetNamespaceQuery,
@@ -20,9 +19,12 @@ import { AflamarkCalculator } from './components/AflamarkCalculator'
 import { Dashboard } from './components/Dashboard'
 import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
 
-// TODO: stop using tabs component
 const tabs = [
-  { label: 'Mælaborð', content: <Dashboard />, id: 'dashboard' },
+  {
+    label: 'Mælaborð',
+    content: <Dashboard />,
+    id: 'dashboard',
+  },
   {
     label: 'Reiknivél aflamarks',
     content: <AflamarkCalculator />,
@@ -73,7 +75,6 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
           </Inline>
         </Box>
       </GridContainer>
-
       {selectedTab.content}
     </>
   )
