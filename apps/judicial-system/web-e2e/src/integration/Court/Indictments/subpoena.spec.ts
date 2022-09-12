@@ -18,6 +18,7 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
       ...caseData,
       state: CaseState.RECEIVED,
       court: makeCourt(),
+      courtDate: '2020-09-16T19:50:08.033Z',
     }
 
     cy.login(UserRole.JUDGE)
@@ -28,10 +29,9 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
 
   it('should enable continue button when required fields are valid', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      console.log('intercepting')
       if (hasOperationName(req, Operation.UpdateCaseMutation)) {
         const { body } = req
-        console.log('intercepting updatecase', body)
+
         req.reply({
           data: {
             updateCase: {
@@ -44,6 +44,8 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
       }
     })
 
+    cy.getByTestid('continueButton').should('not.be.enabled')
+    cy.get('#subpoenaTypeAbsenceSummons').click()
     cy.getByTestid('continueButton').should('be.enabled')
   })
 })
