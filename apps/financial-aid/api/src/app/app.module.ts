@@ -25,6 +25,7 @@ const autoSchemaFile = environment.production
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,

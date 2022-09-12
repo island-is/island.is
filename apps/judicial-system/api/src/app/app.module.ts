@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { ApolloDriver } from '@nestjs/apollo'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
@@ -30,6 +31,7 @@ const autoSchemaFile = environment.production
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
