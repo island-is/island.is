@@ -1,15 +1,22 @@
 import { INestApplication } from '@nestjs/common'
-import { TemplateApiActionRunner } from './templateApiActionRunner.service'
+
 import { Test } from '@nestjs/testing'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { LoggingModule } from '@island.is/logging'
 import {
   TemplateApi,
   PerformActionResult,
   defineTemplateApi,
+  FormatMessage,
 } from '@island.is/application/types'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
+import {
+  createApplication,
+  createCurrentUser,
+} from '@island.is/testing/fixtures'
+import { TemplateApiActionRunner } from './templateApiActionRunner.service'
 
 let app: INestApplication
 
@@ -32,7 +39,7 @@ beforeAll(async () => {
             //return dummy result
             return Promise.resolve({
               success: true,
-              response: {},
+              response: { data: 'dummy' },
             })
           },
         })),
@@ -46,16 +53,6 @@ beforeAll(async () => {
 })
 
 describe('TemplateApi Action runner', () => {
-  it('should call action', async () => {
-    const templateApi: TemplateApi = {
-      actionId: 'sendApplication',
-      action: 'sendApplication',
-      externalDataId: 'sendApplication',
-      params: {},
-    }
-
-    await templateApiRunnerService.callAction(templateApi)
-  })
   it(`Should sort and default to Zero`, async () => {
     const withOrder2 = defineTemplateApi({
       action: 'withOrder2',
