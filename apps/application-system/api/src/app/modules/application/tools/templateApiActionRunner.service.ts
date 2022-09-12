@@ -10,7 +10,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { TemplateApiErrorProblem } from '@island.is/shared/problem'
 import type { FormatMessage } from '@island.is/cms-translations'
-import { isTranslationObject } from '@island.is/application/core'
+import {
+  getErrorReasonIfPresent,
+  isTranslationObject,
+} from '@island.is/application/core'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -139,17 +142,14 @@ export class TemplateApiActionRunner {
 
     const problem = error.problem as TemplateApiErrorProblem
 
-    const reason =
-      typeof problem.errorReason === 'string'
-        ? (problem.errorReason as string)
-        : {
-            summary: isTranslationObject(problem.errorReason.summary)
-              ? this.formatMessage(problem.errorReason.summary)
-              : problem.errorReason.summary,
-            title: isTranslationObject(problem.errorReason.title)
-              ? this.formatMessage(problem.errorReason.title)
-              : problem.errorReason.title,
-          }
+    const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
+
+    const reason = {
+      summary: isTranslationObject(summary)
+        ? this.formatMessage(summary)
+        : summary,
+      title: isTranslationObject(title) ? this.formatMessage(title) : title,
+    }
 
     return {
       [externalDataId || action]: {

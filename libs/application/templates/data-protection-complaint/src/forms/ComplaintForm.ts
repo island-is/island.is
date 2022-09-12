@@ -16,6 +16,8 @@ import {
   Form,
   FormModes,
   FormValue,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
@@ -51,14 +53,12 @@ export const ComplaintForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              //provider: null/ SharedDataProviders.nationalRegistryProvider,
+              provider: NationalRegistryUserApi,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              //provider: SharedDataProviders.userProfileProvider,
+              provider: UserProfileApi,
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),

@@ -10,9 +10,11 @@ import type { Logger } from '@island.is/logging'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { SharedTemplateApiService } from '../../shared'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class DataProtectionComplaintService {
+export class DataProtectionComplaintService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly caseApi: CaseApi,
@@ -20,7 +22,9 @@ export class DataProtectionComplaintService {
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly pdfFileProvider: PdfFileProvider,
     private readonly sharedService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT)
+  }
 
   get caseApiWithAuth() {
     return this.caseApi.withMiddleware(this.tokenMiddleware)
@@ -74,9 +78,10 @@ export class DataProtectionComplaintService {
         applicationPdfKey: key,
       }
     } catch (error) {
+      console.log('error here ', error)
       this.logger.error('Error submitting', error)
 
-      throw new Error('Villa kom kom upp við að senda umsókn')
+      throw error
     }
   }
 }

@@ -21,7 +21,7 @@ export class UserProfileService extends BaseTemplateApiService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getUserProfile({ auth }: TemplateApiModuleActionProps) {
+  async userProfile({ auth }: TemplateApiModuleActionProps) {
     // Temporary solution while we still run the old user profile service.
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })

@@ -96,6 +96,7 @@ import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -703,8 +704,8 @@ export class ApplicationController {
       },
     })
 
-    if (hasError) {
-      throw new BadRequestException(error)
+    if (hasError && error) {
+      throw new TemplateApiError(error, 500)
     }
 
     if (hasChanged) {
@@ -736,6 +737,7 @@ export class ApplicationController {
     const result = updatedApplication.externalData[externalDataId || action]
 
     if (result.status === 'failure' && throwOnError) {
+      console.log('Error performing action on application :', result.reason)
       return {
         updatedApplication,
         hasError: true,
@@ -760,6 +762,7 @@ export class ApplicationController {
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     const status = helper.getApplicationStatus()
     let updatedApplication: BaseApplication = application
+
     await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
       const {

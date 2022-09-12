@@ -51,6 +51,7 @@ import { OperatingLicenseService } from './operating-license/operatingLicense.se
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
+  DataProtectionComplaintModule,
   /*ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
@@ -79,6 +80,7 @@ export const modules = [
 export const services = [
   ReferenceTemplateService,
   GeneralFishingLicenseService,
+  DataProtectionComplaintService,
   /*ParentalLeaveService,
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,

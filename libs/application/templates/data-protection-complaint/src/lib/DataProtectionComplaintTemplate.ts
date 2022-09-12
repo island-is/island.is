@@ -7,6 +7,8 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
@@ -49,7 +51,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [],
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },

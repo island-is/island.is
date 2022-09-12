@@ -39,7 +39,7 @@ export interface ProviderErrorReason {
 
 export interface TemplateApiErrorProblem extends BaseProblem {
   type: ProblemType.TEMPLATE_API_ERROR
-  errorReason: ProviderErrorReason | string
+  errorReason: ProviderErrorReason | StaticText
 }
 
 // Should be avoided whenever possible in favour of typed problems.
