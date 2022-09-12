@@ -2,8 +2,9 @@ import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath, m } from '@island.is/service-portal/core'
-import { Box, ActionCard, Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { PropertyOverview } from '@island.is/api/schema'
+import { ActionCard } from '@island.is/service-portal/core'
 
 interface Props {
   assets?: PropertyOverview
@@ -26,7 +27,6 @@ const AssetListCards: FC<Props> = ({ assets, paginateCallback }) => {
         <Box key={asset.propertyNumber} marginTop={i > 0 ? 2 : undefined}>
           <ActionCard
             heading={asset?.defaultAddress?.display || ''}
-            headingVariant="h4"
             text={asset.propertyNumber as string}
             cta={{
               label: formatMessage(m.viewDetail),

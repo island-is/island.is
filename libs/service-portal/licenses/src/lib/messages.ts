@@ -82,7 +82,7 @@ export const m = defineMessages({
   },
   errorFetch: {
     id: 'sp.license:error-fetch',
-    defaultMessage: 'Ekki tókst að sækja gögn',
+    defaultMessage: 'Tókst ekki að sækja skírteini, eitthvað fór úrskeiðis',
   },
   errorNoData: {
     id: 'sp.license:no-data-found',

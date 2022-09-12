@@ -25,6 +25,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -118,6 +119,18 @@ const DocumentScreen: FC<Props> = ({
     setFromDate(backInTheDay)
     setToDate(new Date())
   }, [])
+
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetch)}
+      />
+    )
+  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -224,12 +237,6 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </Hidden>
         <Box marginTop={2}>
-          {error && (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          )}
           {!called && !loading && (
             <AlertBanner
               description={formatMessage(m.datesForResults)}

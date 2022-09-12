@@ -16,6 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  ErrorScreen,
   formSubmit,
   IntroHeader,
   m,
@@ -107,15 +108,21 @@ export const VehiclesOverview: ServicePortalModuleComponent = ({
     isFlagEnabled()
   }, [])
 
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetch)}
+      />
+    )
+  }
   return (
     <>
       <IntroHeader title={messages.title} intro={messages.intro} />
 
-      {error && (
-        <Box>
-          <EmptyState description={m.errorFetch} />
-        </Box>
-      )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState />

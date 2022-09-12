@@ -22,11 +22,13 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   amountFormat,
+  ErrorScreen,
   formSubmit,
   NotFound,
   ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -95,7 +97,18 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
-  if ((error || noInfo) && !loading) {
+  if (error && !loading) {
+    return (
+      <ErrorScreen
+        figure="./assets/images/hourglass.svg"
+        tagVariant="red"
+        tag="500"
+        title={formatMessage(m.somethingWrong)}
+        children={formatMessage(m.errorFetch)}
+      />
+    )
+  }
+  if (noInfo && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 
