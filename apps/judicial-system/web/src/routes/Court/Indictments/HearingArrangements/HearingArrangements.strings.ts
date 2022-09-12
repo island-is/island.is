@@ -7,4 +7,11 @@ export const hearingArrangements = defineMessages({
     description:
       'Notaður sem titill á síðu á Þingfesting skrefi í dómaraflæði í ákærum.',
   },
+  selectProsecutorHeading: {
+    id:
+      'judicial.system.core:court_indictments.hearing_arrangements.select_prosecutor_heading',
+    defaultMessage: 'Ákærandi sem mætir fyrir dóm',
+    description:
+      'Notaður sem texti fyrir val á ákæranda sem mætir fyrir dóm í dómaraflæði í ákærum.',
+  },
 })

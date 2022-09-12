@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -8,6 +8,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
@@ -16,14 +17,38 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
+import { Box } from '@island.is/island-ui/core'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { hearingArrangements as m } from './HearingArrangements.strings'
 
+import ProsecutorSelection from '../../../Prosecutor/SharedComponents/ProsecutorSection/ProsecutorSelection'
+
 const HearingArrangements: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const { setAndSendToServer } = useCase()
   const { formatMessage } = useIntl()
+  const handleProsecutorChange = useCallback(
+    (prosecutorId: string) => {
+      setAndSendToServer(
+        [
+          {
+            prosecutorId: prosecutorId,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+      return true
+    },
+    [workingCase, setWorkingCase, setAndSendToServer],
+  )
 
   return (
     <PageLayout
@@ -39,6 +64,10 @@ const HearingArrangements: React.FC = () => {
       <FormContentContainer>
         <PageTitle title={formatMessage(m.title)} />
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
+          <ProsecutorSelection onChange={handleProsecutorChange} />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
