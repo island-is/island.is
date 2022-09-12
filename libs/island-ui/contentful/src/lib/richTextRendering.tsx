@@ -16,6 +16,7 @@ import {
   CompanyList,
   CompanyListConnected,
   ShipSearch,
+  SidebarShipSearchInput,
 } from '@island.is/shared/connected'
 import { Image, ImageProps } from './Image/Image'
 import FaqList, { FaqListProps } from './FaqList/FaqList'
@@ -160,6 +161,8 @@ const renderConnectedComponent = (slice) => {
       break
     case 'Fiskistofa/ShipSearch':
       return <ShipSearch />
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return <SidebarShipSearchInput />
     default:
       break
   }
