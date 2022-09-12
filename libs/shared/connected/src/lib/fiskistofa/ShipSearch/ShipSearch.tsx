@@ -10,7 +10,20 @@ import {
 import { QueryGetShipsArgs, ShipBasicInfo } from '@island.is/web/graphql/schema'
 import { GET_SHIPS_QUERY } from './queries'
 
-export const ShipSearch = () => {
+const linkResolver = {
+  shipDetailsPage: {
+    is: '/s/fiskistofa/skip',
+    en: '/en/o/directorate-of-fisheries/ship',
+  },
+}
+
+interface ShipSearchProps {
+  shipDetailsHref?: string
+}
+
+export const ShipSearch = ({
+  shipDetailsHref = '/s/fiskistofa/skip',
+}: ShipSearchProps) => {
   const [searchTerm, setSearchTerm] = useState('')
 
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -69,8 +82,8 @@ export const ShipSearch = () => {
         </T.Head>
         <T.Body>
           {ships.map((ship) => {
-            // TODO: change url
-            const href = '/s/fiskistofa/reiknivel?id=' + ship.id.toString()
+            const href = `${shipDetailsHref}?nr=${ship.id}`
+
             return (
               <T.Row key={ship.id}>
                 <T.Data>
