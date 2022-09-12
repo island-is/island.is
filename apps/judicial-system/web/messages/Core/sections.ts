@@ -220,6 +220,12 @@ export const sections = {
     },
   }),
   indictmentsCourtSection: defineMessages({
+    overview: {
+      id: 'judicial.system.core:sections.indictments_court_section.overview',
+      defaultMessage: 'Yfirlit',
+      description:
+        'Notaður sem texti fyrir Yfirlit skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
     receptionAndAssignment: {
       id:
         'judicial.system.core:sections.indictments_court_section.reception_and_assignment',
@@ -227,11 +233,11 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Móttaka skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
-    overview: {
-      id: 'judicial.system.core:sections.indictments_court_section.overview',
-      defaultMessage: 'Yfirlit',
+    subpoena: {
+      id: 'judicial.system.core:sections.indictments_court_section.subpoena',
+      defaultMessage: 'Fyrirkall',
       description:
-        'Notaður sem texti fyrir Yfirlit skref í hliðarstiku í ákærum hjá héraðsdómum',
+        'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
   }),
   extensionSection: defineMessages({

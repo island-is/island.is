@@ -482,6 +482,13 @@ const useSections = () => {
           ),
           href: `${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
         },
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(sections.indictmentsCourtSection.subpoena),
+          href: isReceptionAndAssignmentStepValid(workingCase)
+            ? `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`
+            : undefined,
+        },
       ],
     }
   }
