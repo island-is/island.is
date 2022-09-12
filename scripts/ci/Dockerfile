@@ -8,7 +8,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock ./
-
+RUN yarn set version berry
 RUN CI=true yarn install --frozen-lockfile
 
 FROM deps as src
