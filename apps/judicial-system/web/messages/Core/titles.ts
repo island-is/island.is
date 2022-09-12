@@ -199,6 +199,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í ákærum',
       },
+      subpoena: {
+        id: 'judicial.system.core:titles.court.indictments.subpoena',
+        defaultMessage: 'Fyrirkall - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
+      },
       courtRecord: {
         id: 'judicial.system.core:titles.court.indictments.court_record',
         defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
