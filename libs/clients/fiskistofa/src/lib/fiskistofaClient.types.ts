@@ -74,3 +74,11 @@ export interface AllowedCatchForShip {
   /** aflamarkstegundir */
   allowedCatchCategories: AllowedCatchCategory[]
 }
+
+/** Kvótategund */
+export interface QuotaType {
+  id?: number
+  name: string
+  from: string
+  to: string
+}

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetAflamarkInformationForShipInput {
+export class GetShipStatusForTimePeriod {
   @Field()
   shipNumber!: number
 

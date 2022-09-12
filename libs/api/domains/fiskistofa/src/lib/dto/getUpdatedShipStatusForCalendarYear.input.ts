@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { CategoryChange } from './getUpdatedAflamarkInformationForShip.input'
+import { CategoryChange } from './getUpdatedShipStatusForTimePeriod.input'
 
 @InputType()
-export class GetUpdatedDeilistofnaInformationForShipInput {
+export class GetUpdatedShipStatusForCalendarYear {
   @Field()
   shipNumber!: number
 
