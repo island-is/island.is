@@ -34,9 +34,9 @@ export const notifications = {
       'Texti í pósti sem tilgreinir hvaða dómritari er skráður í málinu',
   },
   prosecutorText: {
-    id: 'judicial.system.backend:notifications.prosecutor_text',
+    id: 'judicial.system.backend:notifications.prosecutor_text_v2',
     defaultMessage:
-      'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
+      'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}{institutionName, select, NONE {} other { ({institutionName})}}.',
     description:
       'Notaður sem texti í sms-i til þess að tilgreina hver er sækjandi í málinu',
   },

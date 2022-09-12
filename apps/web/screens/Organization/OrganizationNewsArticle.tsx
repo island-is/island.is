@@ -1,10 +1,10 @@
-import React from 'react'
+import { useRouter } from 'next/router'
 import { BreadCrumbItem, NavigationItem } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import {
   GET_NAMESPACE_QUERY,
-  GET_SINGLE_NEWS_ITEM_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
+  GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -16,6 +16,7 @@ import {
   GetNamespaceQuery,
   Query,
   QueryGetOrganizationPageArgs,
+  OrganizationPage,
 } from '@island.is/web/graphql/schema'
 import {
   getThemeConfig,
@@ -25,23 +26,24 @@ import {
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-
 import { CustomNextError } from '../../units/errors'
-import { useRouter } from 'next/router'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { Locale } from 'locale'
 
-interface NewsItemProps {
+interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
   namespace: GetNamespaceQuery['getNamespace']
-  organizationPage: Query['getOrganizationPage']
+  organizationPage: OrganizationPage
+  locale: Locale
 }
 
-const NewsItem: Screen<NewsItemProps> = ({
+const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
   newsItem,
   namespace,
   organizationPage,
+  locale,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, newsItem?.id)
@@ -49,14 +51,15 @@ const NewsItem: Screen<NewsItemProps> = ({
 
   // We only display breadcrumbs and highlighted nav item if the news has the
   // primary news tag of the organization
-  const isOrganizationNews = newsItem.genericTags.some(
+  const newsHavePrimaryNewsTagOfOrganization = newsItem.genericTags.some(
     (x) => x.slug === organizationPage.newsTag.slug,
   )
 
-  const overviewPath: string = Router.asPath.substring(
+  const overviewPath: string = router.asPath.substring(
     0,
-    Router.asPath.lastIndexOf('/'),
+    router.asPath.lastIndexOf('/'),
   )
+
   const currentNavItem = organizationPage.menuLinks.find(
     ({ primaryLink }) => primaryLink.url === overviewPath,
   )
@@ -76,15 +79,16 @@ const NewsItem: Screen<NewsItemProps> = ({
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage').href,
+      href: linkResolver('homepage', [], locale).href,
       typename: 'homepage',
     },
     {
       title: organizationPage.title,
-      href: linkResolver('organizationpage', [organizationPage.slug]).href,
+      href: linkResolver('organizationpage', [organizationPage.slug], locale)
+        .href,
       typename: 'organizationpage',
     },
-    ...(isOrganizationNews
+    ...(newsHavePrimaryNewsTagOfOrganization
       ? [
           {
             isTag: true,
@@ -114,7 +118,9 @@ const NewsItem: Screen<NewsItemProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: isOrganizationNews && primaryLink.url === overviewPath,
+      active:
+        newsHavePrimaryNewsTagOfOrganization &&
+        primaryLink.url === overviewPath,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -146,25 +152,38 @@ const NewsItem: Screen<NewsItemProps> = ({
   )
 }
 
-NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
+OrganizationNewsArticle.getInitialProps = async ({
+  apolloClient,
+  locale,
+  query,
+}) => {
+  const organizationPage = (
+    await Promise.resolve(
+      apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+        query: GET_ORGANIZATION_PAGE_QUERY,
+        variables: {
+          input: {
+            slug: query.slug as string,
+            lang: locale as Locale,
+          },
+        },
+      }),
+    )
+  ).data?.getOrganizationPage
+
+  if (!organizationPage) {
+    throw new CustomNextError(
+      404,
+      `Could not find organization page with slug: ${query.slug}`,
+    )
+  }
+
   const [
-    {
-      data: { getOrganizationPage },
-    },
     {
       data: { getSingleNews: newsItem },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
     apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
       query: GET_SINGLE_NEWS_ITEM_QUERY,
       variables: {
@@ -196,11 +215,12 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 
   return {
-    organizationPage: getOrganizationPage,
+    organizationPage: organizationPage,
     newsItem,
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    locale: locale as Locale,
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 
-export default withMainLayout(NewsItem)
+export default withMainLayout(OrganizationNewsArticle)
