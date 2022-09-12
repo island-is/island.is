@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -21,8 +21,14 @@ interface Props {
 }
 
 export const useCourtArrangements = (workingCase: Case) => {
-  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
+  const [courtDate, setCourtDate] = useState<string>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+
+  useEffect(() => {
+    if (workingCase.courtDate) {
+      setCourtDate(workingCase.courtDate)
+    }
+  }, [workingCase.courtDate])
 
   const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
     if (date && valid) {

@@ -154,6 +154,7 @@ export const CaseQuery = gql`
       caseResentExplanation
       origin
       seenByDefender
+      subpoenaType
     }
   }
 `
