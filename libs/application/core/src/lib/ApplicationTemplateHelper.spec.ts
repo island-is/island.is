@@ -369,7 +369,7 @@ describe('ApplicationTemplate', () => {
     it('should return onEntry action with expected default values', () => {
       const expectedAction: TemplateApi = defineTemplateApi({
         action: 'testAction',
-        externalDataId: 'testAction',
+        order: 0,
         shouldPersistToExternalData: true,
         throwOnError: true,
       })
