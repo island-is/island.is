@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 import {
   Box,
   Button,
@@ -10,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { QueryGetShipsArgs, ShipBasicInfo } from '@island.is/web/graphql/schema'
 import { GET_SHIPS_QUERY } from './queries'
-import { useRouter } from 'next/router'
 
 interface ShipSearchProps {
   shipDetailsHref?: string
@@ -20,8 +20,8 @@ export const ShipSearch = ({
   shipDetailsHref = '/s/fiskistofa/skip',
 }: ShipSearchProps) => {
   const [nameInput, setNameInput] = useState('')
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const hasSearched = useRef(false)
+  const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
+
   const [inputError, setInputError] = useState('')
   const router = useRouter()
 
@@ -29,22 +29,25 @@ export const ShipSearch = ({
     return `${shipDetailsHref}?nr=${id}`
   }
 
-  const response = useQuery<{ getShips: ShipBasicInfo[] }, QueryGetShipsArgs>(
-    GET_SHIPS_QUERY,
-    {
-      variables: {
-        input: {
-          shipName: searchQuery,
-        },
-      },
-    },
-  )
+  const [loadShips, { data, error, loading, called }] = useLazyQuery<
+    { getShips: ShipBasicInfo[] },
+    QueryGetShipsArgs
+  >(GET_SHIPS_QUERY)
 
-  const ships = response?.data?.getShips ?? ([] as ShipBasicInfo[])
-  const loading = response.loading && searchQuery.length > 0
+  useEffect(() => {
+    if (router?.query?.name) {
+      setNameInput(router.query.name as string)
+      setNameInputDuringLastSearch(router.query.name as string)
+      loadShips({
+        variables: { input: { shipName: router.query.name as string } },
+      })
+    }
+  }, [router?.query?.name])
 
-  const searchForShips = () => {
-    const nameInputIsNumber = !isNaN(Number(nameInput))
+  const ships = data?.getShips ?? ([] as ShipBasicInfo[])
+
+  const handleShipSearch = () => {
+    const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
     if (!nameInputIsNumber && nameInput.length < 2) {
       setInputError('Leitarstrengur þarf að vera a.m.k. 2 stafir')
       return
@@ -54,8 +57,14 @@ export const ShipSearch = ({
     if (nameInputIsNumber) {
       router.push(getShipDetailsHref(Number(nameInput)))
     } else {
-      hasSearched.current = true
-      setSearchQuery(nameInput)
+      setNameInputDuringLastSearch(nameInput)
+      loadShips({
+        variables: {
+          input: {
+            shipName: nameInput,
+          },
+        },
+      })
     }
   }
 
@@ -70,15 +79,16 @@ export const ShipSearch = ({
         errorMessage={inputError}
         onKeyDown={(ev) => {
           if (ev.key === 'Enter') {
-            searchForShips()
+            handleShipSearch()
           }
         }}
       />
       <Box marginTop={3}>
         <Button
-          onClick={() => {
-            searchForShips()
-          }}
+          disabled={
+            nameInput === nameInputDuringLastSearch && nameInput.length > 0
+          }
+          onClick={handleShipSearch}
         >
           Leita
         </Button>
@@ -93,11 +103,18 @@ export const ShipSearch = ({
       >
         <LoadingDots />
       </Box>
-      {ships.length === 0 && hasSearched.current && !loading && (
+      {ships.length === 0 && called && !loading && !error && (
         <Box display="flex" justifyContent="center">
           <Text>Engar niðurstöður fundust</Text>
         </Box>
       )}
+
+      {error && (
+        <Box display="flex" justifyContent="center">
+          <Text>Villa kom upp við að leita eftir skipi</Text>
+        </Box>
+      )}
+
       {ships.length > 0 && (
         <T.Table>
           <T.Head>
