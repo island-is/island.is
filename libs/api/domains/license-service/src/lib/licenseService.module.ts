@@ -70,7 +70,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: false,
-    timeout: 100,
+    timeout: 101,
   },
 ]
 
