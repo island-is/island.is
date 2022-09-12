@@ -153,7 +153,7 @@ export type PkPassVerificationData = {
 export type PkPassVerification = {
   valid: boolean
   data?: string
-  errors?: Array<PkPassVerificationError>
+  error?: PkPassVerificationError
 }
 
 /**

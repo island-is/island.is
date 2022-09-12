@@ -166,12 +166,15 @@ export class GenericFirearmLicenseApi
       return { valid: true, data: JSON.stringify(response.data) }
     }
 
+    const firstError = response?.errors?.[0]
+    //Take the first error for now
     return {
       valid: false,
-      errors: response?.errors.map((error) => ({
+      error: {
+        message: firstError?.message ?? '',
+        data: firstError ? JSON.stringify(firstError) : '',
         status: '',
-        message: error.message,
-      })),
+      },
     }
   }
 }

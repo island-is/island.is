@@ -168,11 +168,7 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: VerifyPkPassInput,
   ): Promise<GenericPkPassVerification> {
-    const {
-      valid,
-      data,
-      errors,
-    } = await this.licenseServiceService.verifyPkPass(
+    const verification = await this.licenseServiceService.verifyPkPass(
       user,
       locale,
       input.licenseType,
@@ -180,11 +176,6 @@ export class MainResolver {
       input.date,
       input.passTemplateId,
     )
-
-    return {
-      valid,
-      data,
-      errors,
-    }
+    return verification
   }
 }
