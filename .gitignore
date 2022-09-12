@@ -4,7 +4,7 @@
 /dist
 /tmp
 /out-tsc
-
+**/tsconfig.tsbuildinfo
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
