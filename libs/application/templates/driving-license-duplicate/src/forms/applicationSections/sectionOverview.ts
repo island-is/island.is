@@ -8,16 +8,8 @@ import {
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import {
-  NationalRegistryUser,
-  UserProfile,
-  DistrictCommissionerAgencies,
-} from '../../types/schema'
+import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-import { YES, NO, SEND_HOME, PICK_UP } from '../../lib/constants'
-import { Photo, Delivery } from '../../types'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -44,16 +36,7 @@ export const sectionOverview = buildSection({
         }),
 
         buildDividerField({}),
-        // buildKeyValueField({
-        //   label: m.cardValidityPeriod,
-        //   width: 'half',
-        //   value: ({ externalData: { doctorsNote } }) =>
-        //     format(
-        //       new Date((doctorsNote.data as any).expirationDate),
-        //       'dd/MM/yyyy',
-        //       { locale: is },
-        //     ),
-        // }),
+
         buildDividerField({}),
         buildKeyValueField({
           label: m.qualityPhotoTitle,

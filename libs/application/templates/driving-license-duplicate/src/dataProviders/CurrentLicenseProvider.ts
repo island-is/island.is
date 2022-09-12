@@ -6,7 +6,6 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { YES } from '../lib/constants'
 import { Eligibility, DrivingLicense } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
@@ -48,21 +47,19 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
-    const categories = (
-      response.data?.drivingLicense?.categories ?? []
-    ).map((category) => ({
-      ...category,
-      name:
-        category.name === 'B'
-          ? response.data?.drivingLicense?.issued === category.issued
-            ? 'B'
-            : 'B-full'
-          : category.name,
-    }))
+    const categories = (response.data?.drivingLicense?.categories ?? []).map(
+      (category) => ({
+        ...category,
+        name:
+          category.name === 'B'
+            ? response.data?.drivingLicense?.issued === category.issued
+              ? 'B'
+              : 'B-full'
+            : category.name,
+      }),
+    )
     return {
-      categories: !!categories
-        ? categories
-        : null,
+      categories: !!categories ? categories : null,
     }
   }
 

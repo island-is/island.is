@@ -18,6 +18,5 @@ export type Photo = {
 }
 
 export type Delivery = {
-  deliveryMethod: string
   district: string
 }

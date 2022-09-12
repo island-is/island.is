@@ -1,23 +1,16 @@
 import React, { FC } from 'react'
 
 import { useLocale } from '@island.is/localization'
-import {
-  ActionCard,
-  Box,
-  Tag,
-  Text,
-  TopicCard,
-} from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
-import { FieldBaseProps, Application } from '@island.is/application/types'
-import { ApplicationList } from '@island.is/application/ui-components'
-import { m } from '../lib/messages'
-import { useHistory } from 'react-router-dom'
+import { FieldBaseProps } from '@island.is/application/types'
 import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
+import { format } from 'date-fns'
+import { m } from '../lib/messages'
+import { getApplicationInfo } from '../lib/utils'
 
-export const CurrentLicense: FC<FieldBaseProps> = ({ application, field }) => {
+export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-  const { description } = field
 
   const currentLicense =
     getValueViaPath<CurrentLicenseProviderResult>(
@@ -31,55 +24,80 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application, field }) => {
 
   return (
     <>
-      {description && (
-        <Box marginBottom={4}>
-          <Text>{formatText(description, application, formatMessage)}</Text>
-        </Box>
-      )}
-      <Box>
-        {currentLicense.categories.map((category) => (
-          <Box
-            display="flex"
-            flexDirection="column"
-            borderColor="blue200"
-            borderRadius="large"
-            borderWidth="standard"
-            paddingX={[3, 3, 4]}
-            paddingY={3}
-          >
-            <Box
-              alignItems={['flexStart', 'center']}
-              display="flex"
-              flexDirection={['column', 'row']}
-            >
-              <Box flexDirection="row" width="full">
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="spaceBetween"
-                  alignItems={['flexStart', 'flexStart', 'flexEnd']}
-                >
-                  <Box display="flex" flexDirection="row" alignItems="center">
-                    <Text variant="h4">{category.name}</Text>
-                  </Box>
-                </Box>
-
-                <Text paddingTop={1}> {category.name}</Text>
-              </Box>
-
+      <Box marginBottom={3} marginTop={4}>
+        <Text variant="h3">
+          {formatText(m.rights, application, formatMessage)}
+        </Text>
+      </Box>
+      <Box marginBottom={4}>
+        {currentLicense.categories.map((category) => {
+          const expires =
+            formatMessage(m.validTag) +
+            ' ' +
+            format(new Date(category.expires), 'dd.mm.yyyy')
+          const messages = getApplicationInfo(category.name)
+          return (
+            <>
               <Box
                 display="flex"
-                alignItems={['flexStart', 'flexEnd']}
                 flexDirection="column"
-                flexShrink={0}
-                marginTop={[1, 0]}
-                marginLeft={[0, 'auto']}
+                borderColor="blue200"
+                borderRadius="large"
+                borderWidth="standard"
+                paddingX={[3, 3, 4]}
+                paddingY={3}
               >
-                <Tag>{category.expires}</Tag>
+                <Box
+                  alignItems={['flexStart', 'center']}
+                  display="flex"
+                  flexDirection={['column', 'row']}
+                >
+                  <Box flexDirection="row" width="full">
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="spaceBetween"
+                      alignItems={['flexStart', 'flexStart', 'flexEnd']}
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                      >
+                        <Text variant="h3">
+                          {formatText(
+                            messages.title,
+                            application,
+                            formatMessage,
+                          )}
+                        </Text>
+                      </Box>
+                    </Box>
+
+                    <Text paddingTop={1}>
+                      {formatText(
+                        messages.rightsDescription,
+                        application,
+                        formatMessage,
+                      )}
+                    </Text>
+                  </Box>
+
+                  <Box
+                    display="flex"
+                    alignItems={['flexStart', 'flexEnd']}
+                    flexDirection="column"
+                    flexShrink={0}
+                    marginTop={[1, 0]}
+                    marginLeft={[0, 'auto']}
+                  >
+                    <Tag disabled={true}>{expires}</Tag>
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-          </Box>
-        ))}
+            </>
+          )
+        })}
       </Box>
     </>
   )

@@ -37,11 +37,7 @@ const QualitySignature: FC<FieldBaseProps> = ({ application }) => {
   const { qualitySignature } = useQualitySignature(application)
   const img = signature({ qualitySignature, application })
   return (
-    <Box
-      marginTop={4}
-      marginBottom={3}
-      style={{ width: '191px', height: '242px' }}
-    >
+    <Box marginTop={4} marginBottom={3} width="full">
       {qualitySignature ? img : <SkeletonLoader height={242} width={191} />}
     </Box>
   )

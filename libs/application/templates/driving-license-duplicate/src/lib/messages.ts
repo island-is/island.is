@@ -1,17 +1,5 @@
 import { defineMessages } from 'react-intl'
 export const applicationForMessages = {
-  NONE: defineMessages({
-    title: {
-      id: 'dl.application:shared.none',
-      defaultMessage: 'Engin ökuréttindi',
-      description: 'no license',
-    },
-    rightsDescription: {
-      id: 'dl.application:shared.none.rightDescription',
-      defaultMessage: 'Umsækjandi hefur engin ökuréttindi.',
-      description: 'No license rights description',
-    },
-  }),
   B_TEMP: defineMessages({
     title: {
       id: 'dl.application:shared.temp',
@@ -22,12 +10,6 @@ export const applicationForMessages = {
       id: 'dl.application:shared.temp.rightDescription',
       defaultMessage: 'B flokki (fólksbifreið)',
       description: 'Temp license rights description',
-    },
-    applicationDescription: {
-      id: 'dl.application:shared.temp.applicationDescription',
-      defaultMessage:
-        'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
-      description: 'Temp license application description',
     },
   }),
   B_FULL: defineMessages({
@@ -40,25 +22,6 @@ export const applicationForMessages = {
       id: 'dl.application:shared.full.rightDescription',
       defaultMessage: 'B flokki (fólksbifreið)',
       description: 'Full license rights description',
-    },
-    applicationDescription: {
-      id: 'dl.application:shared.full.applicationDescription',
-      defaultMessage:
-        'Ef ökumaður hefur haft bráðabirgðaskírteini í að minnsta kosti ár og farið í akstursmat með ökukennara getur hann sótt um fullnaðarskírteini.',
-      description: 'full license application description',
-    },
-  }),
-  B_RENEW: defineMessages({
-    title: {
-      id: 'dl.application:shared.renewFull',
-      defaultMessage: 'Endurnýjun fullnaðarréttinda',
-      description: 'B-renew',
-    },
-    applicationDescription: {
-      id: 'dl.application:shared.renewFull.applicationDescription',
-      defaultMessage:
-        'Ef ökumaður hefur fullnaðarréttindi sem eru útrunnin eða renna út innan við 6 mánaða er hægt að sækja um endurnýjun.',
-      description: 'renewFull license application description',
     },
   }),
 }
@@ -137,15 +100,46 @@ export const m = defineMessages({
 
   /* Information Section */
   informationSubtitle: {
-    id: 'dld.application:informationSectionSubtitle',
+    id: 'dld.application:information.sectionSubtitle',
     defaultMessage:
       'Hér fyrir neðan eru  upplýsingar um þig og þín ökuréttindi, sem koma fram á ökuskírteini þínu.',
     description: 'Information section title',
   },
   informationTitle: {
-    id: 'dld.application:informationTitle',
+    id: 'dld.application:information.title',
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
+  },
+  validTag: {
+    id: 'dld.application:information.validTag',
+    defaultMessage: 'Gildir til ',
+    description: 'Some description',
+  },
+  rights: {
+    id: 'dld.application:information.rights',
+    defaultMessage: 'Ökuréttindi',
+    description: 'Some description',
+  },
+  signatureAndImageAlert: {
+    id: 'dld.application:information.signatureAndImageAlert',
+    defaultMessage:
+      'Ef þú þarft að uppfæra mynd eða undirskrift að þá þarft þú að fara til Sýslumanns til þess að gera það.',
+    description: 'Some description',
+  },
+  signatureAndImage: {
+    id: 'dld.application:information.signatureAndImage',
+    defaultMessage: 'Undirskrift og mynd',
+    description: 'Some description',
+  },
+  signature: {
+    id: 'dld.application:information.signature',
+    defaultMessage: 'Undirskrift á skrá',
+    description: 'Some description',
+  },
+  image: {
+    id: 'dld.application:information.Mynd',
+    defaultMessage: 'Mynd á skrá',
+    description: 'Some description',
   },
 
   /* Applicant - used in information and overview sections */

@@ -3,6 +3,8 @@ import {
   buildMultiField,
   buildTextField,
   buildCustomField,
+  buildKeyValueField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
@@ -27,7 +29,6 @@ export const sectionInformation = buildSection({
           backgroundColor: 'white',
           disabled: true,
           defaultValue: (application: Application) => {
-            console.log(application)
             const nationalRegistry = application.externalData.nationalRegistry
               .data as User
             return nationalRegistry.fullName
@@ -42,22 +43,23 @@ export const sectionInformation = buildSection({
           defaultValue: (application: Application) =>
             formatNationalId(application.applicant),
         }),
+
         buildCustomField({
           id: 'categories',
           title: '',
           component: 'CurrentLicense',
-     
         }),
         buildCustomField({
-          id: 'qphoto',
+          id: 'qualityAlert',
           title: '',
-          component: 'QualityPhoto',
-          condition: (_, externalData) => {
-            return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === true
-            )
-          },
+          component: 'QualityAlert',
+        }),
+        buildDescriptionField({
+          id: 'overview.operationTitle',
+          title: m.signature,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
         }),
         buildCustomField({
           id: 'qSignature',
@@ -67,6 +69,24 @@ export const sectionInformation = buildSection({
             return (
               (externalData.qualitySignature as HasQualitySignatureData)?.data
                 ?.hasQualitySignature === true
+            )
+          },
+        }),
+        buildDescriptionField({
+          id: 'overview.operationTitle',
+          title: m.image,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
+        }),
+        buildCustomField({
+          id: 'qphoto',
+          title: '',
+          component: 'QualityPhoto',
+          condition: (_, externalData) => {
+            return (
+              (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                ?.hasQualityPhoto === true
             )
           },
         }),
