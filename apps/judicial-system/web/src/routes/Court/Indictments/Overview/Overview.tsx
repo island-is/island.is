@@ -73,7 +73,7 @@ const Overview = () => {
         <FormFooter
           previousUrl={`${constants.CASES_ROUTE}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`}
+          nextUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextButtonText={formatMessage(core.continue)}
         />
       </FormContentContainer>
