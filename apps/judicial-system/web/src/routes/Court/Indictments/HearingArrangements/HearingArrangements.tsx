@@ -9,6 +9,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
@@ -21,8 +22,6 @@ import { Box } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { hearingArrangements as m } from './HearingArrangements.strings'
-
-import ProsecutorSelection from '../../../Prosecutor/SharedComponents/ProsecutorSection/ProsecutorSelection'
 
 const HearingArrangements: React.FC = () => {
   const {

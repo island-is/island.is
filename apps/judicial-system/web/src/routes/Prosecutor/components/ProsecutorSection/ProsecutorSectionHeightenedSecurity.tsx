@@ -9,11 +9,11 @@ import {
   BlueBox,
   FormContext,
   Modal,
+  ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
-import ProsecutorSelection from './ProsecutorSelection'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
 
 const ProsecutorSectionHeightenedSecurity: React.FC = () => {
