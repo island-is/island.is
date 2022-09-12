@@ -12,7 +12,7 @@ import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
-import { AuthDelegationType, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/auth-nest-tools'
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
@@ -710,15 +710,13 @@ export class DelegationsService {
   }
 
   private async getPersonName(nationalId: string) {
-    const person = await this.personApi.einstaklingarGetEinstaklingur({
-      id: nationalId,
-    })
+    const person = await this.nationalRegistryClient.getIndividual(nationalId)
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
-    return person.fulltNafn || person.nafn
+    return person.fullName ?? person.name
   }
 
   /**
