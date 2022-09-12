@@ -35,7 +35,8 @@ export const TableGrid: FC<Props> = ({ dataArray, title, subtitle, mt }) => {
           <T.Row key={`row-${ii}`}>
             {row.map(
               (rowitem, iii) =>
-                rowitem && (
+                rowitem &&
+                rowitem.value && (
                   <T.Data
                     key={`rowitem-${iii}`}
                     colSpan={2}

@@ -73,9 +73,11 @@ export function formatLegalProvisions(
 const getProsecutorText = (
   formatMessage: FormatMessage,
   prosecutorName?: string,
+  institutionName?: string,
 ): string =>
   formatMessage(notifications.prosecutorText, {
     prosecutorName: prosecutorName || 'NONE',
+    institutionName: institutionName || 'NONE',
   })
 
 export function formatCourtHeadsUpSmsNotification(
@@ -115,20 +117,19 @@ export function formatCourtReadyForCourtSmsNotification(
   formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
-  court?: string,
+  prosecutorInstitution?: string,
 ): string {
   const submittedCaseText = formatMessage(
     notifications.courtReadyForCourt.submittedCase,
     { caseType: type, courtTypeName: caseTypes[type] },
   )
-  const prosecutorText = getProsecutorText(formatMessage, prosecutorName)
-  const courtText = formatMessage(notifications.courtReadyForCourt.courtText, {
-    court: court ?? 'NONE',
-  })
+  const prosecutorText = getProsecutorText(
+    formatMessage,
+    prosecutorName,
+    prosecutorInstitution,
+  )
 
-  return [submittedCaseText, prosecutorText, courtText]
-    .filter(Boolean)
-    .join(' ')
+  return [submittedCaseText, prosecutorText].filter(Boolean).join(' ')
 }
 
 export function formatCourtResubmittedToCourtSmsNotification(
