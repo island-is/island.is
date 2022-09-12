@@ -16,7 +16,7 @@ export class CategoryChange {
 }
 
 @InputType()
-export class GetUpdatedAflamarkInformationForShipInput {
+export class GetUpdatedShipStatusForTimePeriod {
   @Field()
   shipNumber!: number
 

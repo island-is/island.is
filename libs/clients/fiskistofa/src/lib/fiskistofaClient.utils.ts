@@ -3,6 +3,7 @@ import type {
   AflamarkSkipsUpphafDTO,
   AflamarkSkipsUpplDTO,
   AflamarkstegundirDTO,
+  AflamarkTegundirByTimabilDTO,
   FisktegundDTO,
 } from '../../gen/fetch'
 import type {
@@ -42,10 +43,10 @@ const mapAllowedCatchCategory = (
 })
 
 export const mapAllowedCatchForShip = (
-  info: AflamarkSkipsUpphafDTO,
+  info?: AflamarkSkipsUpphafDTO,
 ): AllowedCatchForShip => ({
-  shipInformation: mapShipInformation(info.skipUpplysingar),
-  allowedCatchCategories: (info.aflamarkstegundir ?? []).map(
+  shipInformation: mapShipInformation(info?.skipUpplysingar),
+  allowedCatchCategories: (info?.aflamarkstegundir ?? []).map(
     mapAllowedCatchCategory,
   ),
 })
@@ -70,10 +71,10 @@ const mapChangedAllowedCatchCategory = (
 })
 
 export const mapChangedAllowedCatchForShip = (
-  info: AflamarkSkipsBreyttDTO,
+  info?: AflamarkSkipsBreyttDTO,
 ): AllowedCatchForShip => ({
-  shipInformation: mapShipInformation(info.skipUppl),
-  allowedCatchCategories: (info.aflamarkstegundir ?? []).map(
+  shipInformation: mapShipInformation(info?.skipUppl),
+  allowedCatchCategories: (info?.aflamarkstegundir ?? []).map(
     mapChangedAllowedCatchCategory,
   ),
 })
@@ -83,4 +84,13 @@ export const mapFishes = (fishes: FisktegundDTO[]) => {
     id: fish?.fisktegundKodi,
     name: fish?.heiti ?? '',
   }))
+}
+
+export const mapQuotaType = (type: AflamarkTegundirByTimabilDTO) => {
+  return {
+    from: type?.gildirFra ?? '',
+    to: type?.gildirTil ?? '',
+    id: type?.kvotategund,
+    name: type?.kvotategundHeiti ?? '',
+  }
 }
