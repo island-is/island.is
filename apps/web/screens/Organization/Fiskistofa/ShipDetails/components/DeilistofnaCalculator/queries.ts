@@ -1,10 +1,10 @@
 import gql from 'graphql-tag'
 
-export const GET_DEILISTOFNA_INFORMATION_FOR_SHIP = gql`
-  query GetDeilistofnaInformationForShip(
-    $input: GetDeilistofnaInformationForShipInput!
+export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
+  query GetShipStatusForCalendarYear(
+    $input: GetShipStatusForCalendarYearInput!
   ) {
-    getDeilistofnaInformationForShip(input: $input) {
+    getShipStatusForCalendarYear(input: $input) {
       shipInformation {
         id
         shipNumber
