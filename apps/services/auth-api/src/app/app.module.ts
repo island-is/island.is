@@ -25,9 +25,11 @@ import { TranslationModule } from './modules/translation/translation.module'
 import { DelegationsModule } from './modules/delegations/delegations.module'
 import { PermissionsModule } from './modules/permissions/permissions.module'
 import { UserProfileModule } from './modules/user-profile/user-profile.module'
+import { AuditModule } from '@island.is/nest/audit'
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
