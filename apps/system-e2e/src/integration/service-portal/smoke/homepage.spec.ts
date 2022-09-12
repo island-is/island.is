@@ -6,7 +6,7 @@ describe('Home page', () => {
   const fakeUser = getFakeUser(fakeUsers, 'María Sól Þí Torp')
   beforeEach(() => {
     cy.log('the fake user:', fakeUser)
-    cy.idsLogin({ phoneNumber: fakeUser.phoneNumber })
+    cy.idsLogin({ phoneNumber: fakeUser.phoneNumber, urlPath: '/minarsidur' })
     cy.visit('/minarsidur')
     // Workaround for late-loaded service portal
     cy.wait(Timeout.short)

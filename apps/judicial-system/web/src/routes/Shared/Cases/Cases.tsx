@@ -22,11 +22,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import {
-  core,
-  requests as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
@@ -39,6 +35,7 @@ import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import * as styles from './Cases.css'
+import { cases as m } from './Cases.strings'
 
 const SectionTitle: React.FC = ({ children }) => {
   return (
@@ -216,6 +213,7 @@ export const Cases: React.FC = () => {
               {isProsecutor && (
                 <Box display={['none', 'none', 'block']}>
                   <DropdownMenu
+                    dataTestId="createCaseDropdown"
                     menuLabel="Tegund kröfu"
                     icon="add"
                     items={
@@ -261,7 +259,7 @@ export const Cases: React.FC = () => {
                             },
                           ]
                     }
-                    title="Stofna nýja kröfu"
+                    title={formatMessage(m.createCaseButton)}
                   />
                 </Box>
               )}
@@ -280,11 +278,10 @@ export const Cases: React.FC = () => {
                 <SectionTitle>
                   {formatMessage(
                     isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers.title
+                      ? m.activeRequests.prisonStaffUsers.title
                       : isPrisonAdminUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .prisonAdminTitle
-                      : m.sections.activeRequests.title,
+                      ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
+                      : m.activeRequests.title,
                   )}
                 </SectionTitle>
                 <Box marginBottom={[5, 5, 12]}>
@@ -311,15 +308,15 @@ export const Cases: React.FC = () => {
                       <AlertMessage
                         title={formatMessage(
                           isPrisonUser || isPrisonAdminUser
-                            ? m.sections.activeRequests.prisonStaffUsers
+                            ? m.activeRequests.prisonStaffUsers
                                 .infoContainerTitle
-                            : m.sections.activeRequests.infoContainerTitle,
+                            : m.activeRequests.infoContainerTitle,
                         )}
                         message={formatMessage(
                           isPrisonUser || isPrisonAdminUser
-                            ? m.sections.activeRequests.prisonStaffUsers
+                            ? m.activeRequests.prisonStaffUsers
                                 .infoContainerText
-                            : m.sections.activeRequests.infoContainerText,
+                            : m.activeRequests.infoContainerText,
                         )}
                         type="info"
                       />
@@ -336,12 +333,12 @@ export const Cases: React.FC = () => {
             <SectionTitle>
               {formatMessage(
                 isHighCourtUser
-                  ? m.sections.pastRequests.highCourtUsers.title
+                  ? m.pastRequests.highCourtUsers.title
                   : isPrisonUser
-                  ? m.sections.pastRequests.prisonStaffUsers.title
+                  ? m.pastRequests.prisonStaffUsers.title
                   : isPrisonAdminUser
-                  ? m.sections.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.sections.pastRequests.title,
+                  ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
+                  : m.pastRequests.title,
               )}
             </SectionTitle>
             {pastCases && pastCases.length > 0 ? (
@@ -355,15 +352,13 @@ export const Cases: React.FC = () => {
                 <AlertMessage
                   title={formatMessage(
                     isPrisonAdminUser || isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerTitle
-                      : m.sections.pastRequests.infoContainerTitle,
+                      ? m.activeRequests.prisonStaffUsers.infoContainerTitle
+                      : m.pastRequests.infoContainerTitle,
                   )}
                   message={formatMessage(
                     isPrisonAdminUser || isPrisonUser
-                      ? m.sections.activeRequests.prisonStaffUsers
-                          .infoContainerText
-                      : m.sections.pastRequests.infoContainerText,
+                      ? m.activeRequests.prisonStaffUsers.infoContainerText
+                      : m.pastRequests.infoContainerText,
                   )}
                   type="info"
                 />

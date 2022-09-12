@@ -105,6 +105,14 @@ export const routesTemplate = {
     is: '/gagnatorg/[slug]',
     en: '/en/gagnatorg/[slug]',
   },
+  projectnews: {
+    is: '/v/[slug]/frett/[subSlug]',
+    en: '/en/o/[slug]/news/[subSlug]',
+  },
+  projectnewsoverview: {
+    is: '/v/[slug]/frett',
+    en: '/en/p/[slug]/news',
+  },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
     en: '/en/p/[slug]/[subSlug]',
