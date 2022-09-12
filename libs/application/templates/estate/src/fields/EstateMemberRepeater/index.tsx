@@ -1,1 +1,0 @@
-export { EstateMemberRepeater } from './EstateMemberRepeater'
