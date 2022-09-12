@@ -29,10 +29,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { subpoena as strings } from './Subpoena.strings'
-import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Subpoena: React.FC = () => {
   const {
@@ -136,7 +136,7 @@ const Subpoena: React.FC = () => {
       {modalVisible && (
         <Modal
           title={formatMessage(strings.modalTitle)}
-          onPrimaryButtonClick={async () => {
+          onPrimaryButtonClick={() => {
             router.push(
               `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
             )
