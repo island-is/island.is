@@ -630,6 +630,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
+        exit: 'clearAssignees',
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
           actionCard: {
@@ -641,8 +642,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/EmployerApproval').then((val) =>
-                  Promise.resolve(val.EmployerApproval),
+                import('../forms/EmployerApproveEdits').then((val) =>
+                  Promise.resolve(val.EmployerApproveEdits),
                 ),
               read: {
                 answers: [
