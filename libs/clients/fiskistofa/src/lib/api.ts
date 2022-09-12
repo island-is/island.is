@@ -8,10 +8,11 @@ import {
   StadaSkipsApi,
   V1SkipHeitiHeitiGetRequest,
   V1StadaskipsKvotategundirAlmanaksarArGetRequest,
+  V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest,
-  V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
-  V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+  V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest,
+  V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest,
 } from '../../gen/fetch'
 import { FiskistofaClientConfig } from './fiskistofaClient.config'
 import {
@@ -97,18 +98,18 @@ export class FiskistofaApi {
   }
 
   async getUpdatedShipStatusForTimePeriod(
-    params: V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
+    params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest,
   ) {
-    const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarTimabilBreyttPost(
+    const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
       params,
     )
     return mapAllowedCatchForShip(data)
   }
 
   async getShipStatusForTimePeriod(
-    params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+    params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest,
   ) {
-    const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarTimabilGet(
+    const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
       params,
     )
     return mapAllowedCatchForShip(data)
@@ -133,9 +134,9 @@ export class FiskistofaApi {
   }
 
   async getQuotaTypesForTimePeriod(
-    params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+    params: V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
   ) {
-    const data = await this.stadaSkipsApi?.v1StadaskipsKvotategundirFiskveidiarTimabilGet(
+    const data = await this.stadaSkipsApi?.v1StadaskipsKvotategundirFiskveidiarFiskveidiarGet(
       params,
     )
     return (data ?? []).map(mapQuotaType)

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetShipStatusForCalendarYear {
+export class GetShipStatusForCalendarYearInput {
   @Field()
   shipNumber!: number
 

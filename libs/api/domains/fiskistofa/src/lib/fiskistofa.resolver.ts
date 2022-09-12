@@ -1,12 +1,12 @@
 import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { GetQuotaTypesForCalendarYear } from './dto/getQuotaTypesForCalendarYear.input'
-import { GetQuotaTypesForTimePeriod } from './dto/getQuotaTypesForTimePeriod.input'
+import { GetQuotaTypesForCalendarYearInput } from './dto/getQuotaTypesForCalendarYear.input'
+import { GetQuotaTypesForTimePeriodInput } from './dto/getQuotaTypesForTimePeriod.input'
 import { GetShipsInput } from './dto/getShips.input'
-import { GetShipStatusForCalendarYear } from './dto/getShipStatusForCalendarYear.input'
-import { GetShipStatusForTimePeriod } from './dto/getShipStatusForTimePeriod.input'
-import { GetUpdatedShipStatusForCalendarYear } from './dto/getUpdatedShipStatusForCalendarYear.input'
-import { GetUpdatedShipStatusForTimePeriod } from './dto/getUpdatedShipStatusForTimePeriod.input'
+import { GetShipStatusForCalendarYearInput } from './dto/getShipStatusForCalendarYear.input'
+import { GetShipStatusForTimePeriodInput } from './dto/getShipStatusForTimePeriod.input'
+import { GetUpdatedShipStatusForCalendarYearInput } from './dto/getUpdatedShipStatusForCalendarYear.input'
+import { GetUpdatedShipStatusForTimePeriodInput } from './dto/getUpdatedShipStatusForTimePeriod.input'
 
 import { QuotaType } from './models/fish'
 import { ShipBasicInfo } from './models/shipBasicInfo'
@@ -27,14 +27,16 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => ExtendedShipStatusInformation)
-  getShipStatusForTimePeriod(@Args('input') input: GetShipStatusForTimePeriod) {
+  getShipStatusForTimePeriod(
+    @Args('input') input: GetShipStatusForTimePeriodInput,
+  ) {
     return this.fiskistofaClientService.getShipStatusForTimePeriod(input)
   }
 
   @Directive(cacheControlDirective())
   @Mutation(() => ExtendedShipStatusInformationUpdate)
   getUpdatedShipStatusForTimePeriod(
-    @Args('input') input: GetUpdatedShipStatusForTimePeriod,
+    @Args('input') input: GetUpdatedShipStatusForTimePeriodInput,
   ) {
     return this.fiskistofaClientService.getUpdatedShipStatusForTimePeriod(input)
   }
@@ -42,7 +44,7 @@ export class FiskistofaResolver {
   @Directive(cacheControlDirective())
   @Query(() => ShipStatusInformation)
   getShipStatusForCalendarYear(
-    @Args('input') input: GetShipStatusForCalendarYear,
+    @Args('input') input: GetShipStatusForCalendarYearInput,
   ) {
     return this.fiskistofaClientService.getShipStatusForCalendarYear(input)
   }
@@ -50,7 +52,7 @@ export class FiskistofaResolver {
   @Directive(cacheControlDirective())
   @Mutation(() => ShipStatusInformation)
   getUpdatedShipStatusForCalendarYear(
-    @Args('input') input: GetUpdatedShipStatusForCalendarYear,
+    @Args('input') input: GetUpdatedShipStatusForCalendarYearInput,
   ) {
     return this.fiskistofaClientService.getUpdatedShipStatusForCalendarYear(
       input,
@@ -59,14 +61,16 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [QuotaType])
-  getQuotaTypesForTimePeriod(@Args('input') input: GetQuotaTypesForTimePeriod) {
+  getQuotaTypesForTimePeriod(
+    @Args('input') input: GetQuotaTypesForTimePeriodInput,
+  ) {
     return this.fiskistofaClientService.getQuotaTypesForTimePeriod(input)
   }
 
   @Directive(cacheControlDirective())
   @Query(() => [QuotaType])
   getQuotaTypesForCalendarYear(
-    @Args('input') input: GetQuotaTypesForCalendarYear,
+    @Args('input') input: GetQuotaTypesForCalendarYearInput,
   ) {
     return this.fiskistofaClientService.getQuotaTypesForCalendarYear(input)
   }

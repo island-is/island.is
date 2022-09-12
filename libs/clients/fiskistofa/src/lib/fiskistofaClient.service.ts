@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import {
   GetShipsInput,
-  GetQuotaTypesForCalendarYear,
-  GetQuotaTypesForTimePeriod,
-  GetUpdatedShipStatusForTimePeriod,
-  GetShipStatusForTimePeriod,
-  GetShipStatusForCalendarYear,
-  GetUpdatedShipStatusForCalendarYear,
+  GetQuotaTypesForCalendarYearInput,
+  GetQuotaTypesForTimePeriodInput,
+  GetUpdatedShipStatusForCalendarYearInput,
+  GetShipStatusForCalendarYearInput,
+  GetShipStatusForTimePeriodInput,
+  GetUpdatedShipStatusForTimePeriodInput,
 } from '@island.is/api/domains/fiskistofa'
 import {
   V1StadaskipsKvotategundirAlmanaksarArGetRequest,
+  V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest,
-  V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest,
-  V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest,
+  V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest,
+  V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest,
 } from '../../gen/fetch'
 import { FetchError } from '@island.is/clients/middlewares'
 import { FiskistofaApi } from './api'
@@ -35,11 +36,11 @@ export class FiskistofaClientService {
   }
 
   async getUpdatedShipStatusForTimePeriod(
-    input: GetUpdatedShipStatusForTimePeriod,
+    input: GetUpdatedShipStatusForTimePeriodInput,
   ) {
-    const params: V1StadaskipsSkipnumerFiskveidiarTimabilBreyttPostRequest = {
+    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest = {
       skipnumer: input.shipNumber,
-      timabil: input.timePeriod,
+      fiskveidiar: input.timePeriod,
       aflamarkSkipsBreytingarDTO: {
         breytingarFisktegundar: input.changes.map(
           ({ catchChange, allowedCatchChange, id }) => ({
@@ -53,15 +54,15 @@ export class FiskistofaClientService {
     return this.wrapper((api) => api.getUpdatedShipStatusForTimePeriod(params))
   }
 
-  async getShipStatusForTimePeriod(input: GetShipStatusForTimePeriod) {
-    const params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest = {
+  async getShipStatusForTimePeriod(input: GetShipStatusForTimePeriodInput) {
+    const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest = {
       skipnumer: input.shipNumber,
-      timabil: input.timePeriod,
+      fiskveidiar: input.timePeriod,
     }
     return this.wrapper((api) => api.getShipStatusForTimePeriod(params))
   }
 
-  async getShipStatusForCalendarYear(input: GetShipStatusForCalendarYear) {
+  async getShipStatusForCalendarYear(input: GetShipStatusForCalendarYearInput) {
     const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest = {
       ar: input.year,
       skipnumer: input.shipNumber,
@@ -70,7 +71,7 @@ export class FiskistofaClientService {
   }
 
   async getUpdatedShipStatusForCalendarYear(
-    input: GetUpdatedShipStatusForCalendarYear,
+    input: GetUpdatedShipStatusForCalendarYearInput,
   ) {
     const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest = {
       ar: input.year,
@@ -90,15 +91,14 @@ export class FiskistofaClientService {
     )
   }
 
-  async getQuotaTypesForTimePeriod(input: GetQuotaTypesForTimePeriod) {
-    const params: V1StadaskipsSkipnumerFiskveidiarTimabilGetRequest = {
-      skipnumer: input.shipNumber,
-      timabil: input.timePeriod,
+  async getQuotaTypesForTimePeriod(input: GetQuotaTypesForTimePeriodInput) {
+    const params: V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest = {
+      fiskveidiar: input.timePeriod,
     }
     return this.wrapper((api) => api.getQuotaTypesForTimePeriod(params))
   }
 
-  async getQuotaTypesForCalendarYear(input: GetQuotaTypesForCalendarYear) {
+  async getQuotaTypesForCalendarYear(input: GetQuotaTypesForCalendarYearInput) {
     const params: V1StadaskipsKvotategundirAlmanaksarArGetRequest = {
       ar: input.year,
     }
