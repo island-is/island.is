@@ -4,3 +4,4 @@ export { GeneralPetitionLists } from './lib/generalPetition/GeneralPetitionLists
 export { RealEstateAgentsList } from './lib/RealEstateAgentsList/RealEstateAgentsList'
 export { LawyersList } from './lib/LawyersList/LawyersList'
 export { ShipSearch } from './lib/fiskistofa/ShipSearch/ShipSearch'
+export { SidebarShipSearchInput } from './lib/fiskistofa/SidebarShipSearchInput/SidebarShipSearchInput'

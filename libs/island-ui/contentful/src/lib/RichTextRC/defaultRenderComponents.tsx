@@ -5,6 +5,7 @@ import {
   RealEstateAgentsList,
   LawyersList,
   ShipSearch,
+  SidebarShipSearchInput,
 } from '@island.is/shared/connected'
 import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
@@ -41,6 +42,8 @@ const renderConnectedComponent = (slice) => {
       return <LawyersList slice={slice} />
     case 'Fiskistofa/ShipSearch':
       return <ShipSearch />
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return <SidebarShipSearchInput />
     default:
       break
   }
