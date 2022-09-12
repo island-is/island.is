@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import {
   Box,
@@ -40,11 +40,18 @@ export const ShipSearch = ({
     },
   )
 
+  useEffect(() => {
+    if (router?.query?.name) {
+      setNameInput(router.query.name as string)
+      setSearchQuery(router.query.name as string)
+    }
+  }, [router?.query?.name])
+
   const ships = response?.data?.getShips ?? ([] as ShipBasicInfo[])
   const loading = response.loading && searchQuery.length > 0
 
   const searchForShips = () => {
-    const nameInputIsNumber = !isNaN(Number(nameInput))
+    const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0
     if (!nameInputIsNumber && nameInput.length < 2) {
       setInputError('Leitarstrengur þarf að vera a.m.k. 2 stafir')
       return

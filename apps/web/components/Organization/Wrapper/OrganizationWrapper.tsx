@@ -53,6 +53,7 @@ import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNord
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
+import { SidebarShipSearchInput } from '@island.is/shared/connected'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -355,6 +356,21 @@ const getActiveNavigationItemTitle = (
   }
 }
 
+const renderConnectedComponent = (slice) => {
+  if (!slice?.componentType) return null
+
+  switch (slice.componentType) {
+    case 'LatestNewsCard':
+      return (
+        <LatestNewsCardConnectedComponent key={slice?.id} {...slice?.json} />
+      )
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      return <SidebarShipSearchInput key={slice?.id} {...slice?.json} />
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -461,17 +477,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         )
                       }
 
-                      if (
-                        card.__typename === 'ConnectedComponent' &&
-                        (card.type === 'LatestNewsCard' ||
-                          card['componentType'] === 'LatestNewsCard')
-                      ) {
-                        return (
-                          <LatestNewsCardConnectedComponent
-                            key={card.id}
-                            {...card.json}
-                          />
-                        )
+                      if (card.__typename === 'ConnectedComponent') {
+                        return renderConnectedComponent(card)
                       }
 
                       return null

@@ -2670,8 +2670,11 @@ export interface ISliceConnectedComponentFields {
     | 'Skilavottord/CompanyList'
     | 'Skilavottord/CompanyListConnected'
     | 'Undirskriftalistar/PetitionLists'
+<<<<<<< HEAD
     | 'LatestNewsCard'
     | 'Fiskistofa/Calculator'
+=======
+>>>>>>> da1a76846a729fbedeae68845f7b9fa0e5b50d18
     | 'Fiskistofa/ShipSearch'
     | undefined
 
