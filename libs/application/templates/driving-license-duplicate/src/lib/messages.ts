@@ -29,7 +29,7 @@ export const applicationForMessages = {
 export const m = defineMessages({
   applicationTitle: {
     id: 'dld.application:applicationTitle',
-    defaultMessage: 'Umsókn um Stæðiskort',
+    defaultMessage: 'Umsókn um samrit',
     description: 'Application for P-Sign',
   },
   /* Data Collection Section */
@@ -153,41 +153,6 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National id label',
   },
-  applicantsAddress: {
-    id: 'dld.application:applicantsAddress',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address label',
-  },
-  applicantsCity: {
-    id: 'dld.application:applicantsCity',
-    defaultMessage: 'Staður',
-    description: 'City label',
-  },
-  applicantsEmail: {
-    id: 'dld.application:applicantsEmail',
-    defaultMessage: 'Netfang',
-    description: 'Email label',
-  },
-  applicantsPhoneNumber: {
-    id: 'dld.application:applicantsPhoneNumber',
-    defaultMessage: 'Símanúmer',
-    description: 'Phone number label',
-  },
-  applicantsActorEmail: {
-    id: 'dld.application:applicantsEmail',
-    defaultMessage: 'Netfang forráðamanns',
-    description: 'Email label',
-  },
-  applicantsActorPhoneNumber: {
-    id: 'dld.application:applicantsPhoneNumber',
-    defaultMessage: 'Símanúmer forráðamanns',
-    description: 'Phone number label',
-  },
-  cardValidityPeriod: {
-    id: 'dld.application:cardValidityPeriod',
-    defaultMessage: 'Gildistími',
-    description: 'Card validity label',
-  },
 
   /* Quality Photo Section */
   qualityPhotoTitle: {
@@ -284,64 +249,54 @@ export const m = defineMessages({
   },
 
   /* Delivery method Section */
+  deliveryMethodSectionTitle: {
+    id: 'dld.application:deliveryMethodSectionTitle',
+    defaultMessage: 'Afhending',
+    description: 'Title for delivery method section',
+  },
   deliveryMethodTitle: {
     id: 'dld.application:deliveryMethodTitle',
-    defaultMessage: 'Afhending',
+    defaultMessage: 'Afhendingarstaður',
     description: 'Title for delivery method section',
   },
   deliveryMethodDescription: {
     id: 'dld.application:deliveryMethodDescription',
     defaultMessage:
-      'Þú getur valið að fá stæðiskortið sent með pósti á lögheimili þitt eftir 3 til 5 virka daga eða sótt það hjá næsta sýslumannsembætti.',
+      'Fljótlegast er að sækja samrit hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
     description: 'Description for delivery method section',
-  },
-  deliveryMethodHomeDelivery: {
-    id: 'dld.application:deliveryMethodHomeDelivery',
-    defaultMessage: 'Fá sent í pósti',
-    description: 'Checkbox label for home delivery method',
-  },
-  deliveryMethodPickUp: {
-    id: 'dld.application:deliveryMethodPickUp',
-    defaultMessage: 'Sækja til Sýslumanns',
-    description: 'Checkbox label for self-pickup',
   },
   deliveryMethodOfficeLabel: {
     id: 'dld.application:deliveryMethodOfficeLabel',
-    defaultMessage: 'Embætti',
+    defaultMessage: 'Afhendingarstaður',
     description: 'Title for office',
   },
   deliveryMethodOfficeSelectPlaceholder: {
     id: 'dld.application:deliveryMethodOfficeSelectPlaceholder',
-    defaultMessage: 'Veldu embætti',
+    defaultMessage: 'Veldu afhendingarstað',
     description: 'Placeholder for office selection',
   },
 
   /* Overview Section */
   overviewTitle: {
-    id: 'dld.application:overviewTitle',
-    defaultMessage: 'Yfirlit',
+    id: 'dld.application:overview.title',
+    defaultMessage: 'Yfirlit umsóknar',
     description: 'Title for overview section',
   },
   overviewSectionTitle: {
-    id: 'dld.application:overviewTitle',
+    id: 'dld.application:overview.sectionTitle',
     defaultMessage: 'Yfirlit',
     description: 'Title for overview section',
   },
   overviewSectionDescription: {
-    id: 'dld.application:overviewSectionDescription',
+    id: 'dld.application:overview.sectionDescription',
     defaultMessage:
-      'Vinsamlegast lestu yfir umsóknina og vertu viss um að allar upplýsingar séu rétt uppgefnar. Að loknum yfirlestri getur þú sent inn umsóknina.',
+      'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
     description: 'Description for overview section',
   },
-  overviewSelfPickupText: {
-    id: 'dld.application:overviewSelfPickupText',
-    defaultMessage: 'Þú hefur valið að sækja stæðiskortið sjálf/ur/t á: ',
-    description: 'Text for delivery info',
-  },
-  overviewDeliveryText: {
-    id: 'dld.application:overviewDeliveryText',
-    defaultMessage: 'Þú hefur valið að fá stæðiskortið sent heim í pósti',
-    description: 'Text for delivery info',
+  overviewLicenseExpires: {
+    id: 'dld.application:overview.licenseExpires',
+    defaultMessage: 'Gildistími ökuskírteinis',
+    description: 'Some description',
   },
 
   /* Congratulation Section */

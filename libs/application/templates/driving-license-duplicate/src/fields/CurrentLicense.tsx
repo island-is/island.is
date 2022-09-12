@@ -30,72 +30,61 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
       <Box marginBottom={4}>
-        {currentLicense.categories.map((category) => {
+        {currentLicense.categories.map((category, index) => {
           const expires =
             formatMessage(m.validTag) +
             ' ' +
-            format(new Date(category.expires), 'dd.mm.yyyy')
+            format(new Date(category.expires), 'dd.MM.yyyy')
           const messages = getApplicationInfo(category.name)
           return (
-            <>
+            <Box
+              key={category.name + JSON.stringify(index)}
+              display="flex"
+              flexDirection="column"
+              borderColor="blue200"
+              borderRadius="large"
+              borderWidth="standard"
+              paddingX={[3, 3, 4]}
+              paddingY={3}
+            >
               <Box
+                alignItems={['flexStart', 'center']}
                 display="flex"
-                flexDirection="column"
-                borderColor="blue200"
-                borderRadius="large"
-                borderWidth="standard"
-                paddingX={[3, 3, 4]}
-                paddingY={3}
+                flexDirection={['column', 'row']}
               >
-                <Box
-                  alignItems={['flexStart', 'center']}
-                  display="flex"
-                  flexDirection={['column', 'row']}
-                >
-                  <Box flexDirection="row" width="full">
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="spaceBetween"
-                      alignItems={['flexStart', 'flexStart', 'flexEnd']}
-                    >
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        <Text variant="h3">
-                          {formatText(
-                            messages.title,
-                            application,
-                            formatMessage,
-                          )}
-                        </Text>
-                      </Box>
-                    </Box>
-
-                    <Text paddingTop={1}>
-                      {formatText(
-                        messages.rightsDescription,
-                        application,
-                        formatMessage,
-                      )}
-                    </Text>
-                  </Box>
-
+                <Box flexDirection="row" width="full">
                   <Box
                     display="flex"
-                    alignItems={['flexStart', 'flexEnd']}
-                    flexDirection="column"
-                    flexShrink={0}
-                    marginTop={[1, 0]}
-                    marginLeft={[0, 'auto']}
+                    flexDirection="row"
+                    justifyContent="spaceBetween"
+                    alignItems={['flexStart', 'flexStart', 'flexEnd']}
                   >
-                    <Tag disabled={true}>{expires}</Tag>
+                    <Box display="flex" flexDirection="row" alignItems="center">
+                      <Text variant="h3">
+                        {formatText(messages.title, application, formatMessage)}
+                      </Text>
+                    </Box>
                   </Box>
+                  <Text paddingTop={1}>
+                    {formatText(
+                      messages.rightsDescription,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                </Box>
+                <Box
+                  display="flex"
+                  alignItems={['flexStart', 'flexEnd']}
+                  flexDirection="column"
+                  flexShrink={0}
+                  marginTop={[1, 0]}
+                  marginLeft={[0, 'auto']}
+                >
+                  <Tag disabled={true}>{expires}</Tag>
                 </Box>
               </Box>
-            </>
+            </Box>
           )
         })}
       </Box>

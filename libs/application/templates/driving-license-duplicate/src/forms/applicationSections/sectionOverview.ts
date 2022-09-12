@@ -5,11 +5,14 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildSubmitField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
+import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
+import { format } from 'date-fns'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -22,6 +25,13 @@ export const sectionOverview = buildSection({
       description: m.overviewSectionDescription,
       children: [
         buildDividerField({}),
+        buildDescriptionField({
+          id: 'overview.informationTitle',
+          title: m.informationTitle,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
+        }),
         buildKeyValueField({
           label: m.applicantsName,
           width: 'half',
@@ -35,35 +45,60 @@ export const sectionOverview = buildSection({
             formatNationalId(application.applicant),
         }),
 
-        buildDividerField({}),
-
-        buildDividerField({}),
         buildKeyValueField({
-          label: m.qualityPhotoTitle,
+          label: m.rights,
           width: 'half',
-          value: '',
-        }),
-
-        buildCustomField({
-          id: 'qphoto',
-          title: '',
-          component: 'QualityPhoto',
+          value: 'Almenn ökuréttindi',
         }),
         buildKeyValueField({
-          label: m.qualityPhotoTitle,
+          label: m.overviewLicenseExpires,
           width: 'half',
-          value: '',
+          value: ({ externalData: { currentLicense } }) =>
+            format(
+              new Date(
+                (currentLicense.data as CurrentLicenseProviderResult).expires,
+              ),
+              'dd.MM.yyyy',
+            ),
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overview.signatureTitle',
+          title: m.signature,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
         }),
         buildCustomField({
-          id: 'qphoto',
+          id: 'qsignatureOverview',
           title: '',
           component: 'QualitySignature',
         }),
         buildDividerField({}),
+        buildDescriptionField({
+          id: 'overview.imageTitle',
+          title: m.image,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
+        }),
+        buildCustomField({
+          id: 'qphotoOverview',
+          title: '',
+          component: 'QualityPhoto',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overview.deliveryTitle',
+          title: m.deliveryMethodSectionTitle,
+          titleVariant: 'h3',
+          description: '',
+          space: 'gutter',
+        }),
         buildKeyValueField({
           label: m.deliveryMethodTitle,
           value: ({ answers: { district } }) => {
-            return `Þú hefur valið að sækja stæðiskortið sjálf/ur/t hjá: ${district}`
+            return `${district}`
           },
         }),
 

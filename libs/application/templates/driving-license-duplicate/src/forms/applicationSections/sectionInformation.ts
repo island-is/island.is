@@ -55,7 +55,7 @@ export const sectionInformation = buildSection({
           component: 'QualityAlert',
         }),
         buildDescriptionField({
-          id: 'overview.operationTitle',
+          id: 'information.signatureTitle',
           title: m.signature,
           titleVariant: 'h3',
           description: '',
@@ -73,7 +73,7 @@ export const sectionInformation = buildSection({
           },
         }),
         buildDescriptionField({
-          id: 'overview.operationTitle',
+          id: 'information.imgTitle',
           title: m.image,
           titleVariant: 'h3',
           description: '',

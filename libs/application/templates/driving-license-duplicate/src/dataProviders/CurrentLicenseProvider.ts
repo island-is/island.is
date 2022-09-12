@@ -10,6 +10,7 @@ import { Eligibility, DrivingLicense } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
   categories: Eligibility[] | null
+  expires: Date
 }
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
@@ -60,6 +61,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     )
     return {
       categories: !!categories ? categories : null,
+      expires: response.data?.drivingLicense?.expires,
     }
   }
 

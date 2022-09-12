@@ -13,15 +13,16 @@ import { DistrictCommissionerAgencies } from '../../types/schema'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
-  title: m.deliveryMethodTitle,
+  title: m.deliveryMethodSectionTitle,
   children: [
     buildMultiField({
       id: 'deliverySection',
-      title: m.deliveryMethodTitle,
+      title: m.deliveryMethodSectionTitle,
       children: [
         buildDescriptionField({
           id: 'deliveryDescription',
-          title: '',
+          titleVariant: 'h3',
+          title: m.deliveryMethodTitle,
           description: m.deliveryMethodDescription,
         }),
         buildSelectField({
