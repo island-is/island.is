@@ -1,5 +1,3 @@
-import { AddressDto } from '@island.is/clients/national-registry-v2'
-
 /**
  * These are copied from '@island.is/clients/national-registry-v2' to get rid of circular dependencies.
  * Needs to be manually kept in sync. Using these types in `@island.is/api/domains/national-registry-x-road` to
@@ -24,6 +22,6 @@ export interface NationalRegistryClientPerson {
   genderCode: string
   exceptionFromDirectMarketing: boolean
   birthdate: Date
-  legalDomicile: AddressDto | null
-  residence: AddressDto | null
+  legalDomicile: NationalRegistryClientAddress | null
+  residence: NationalRegistryClientAddress | null
 }

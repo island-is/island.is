@@ -49,7 +49,7 @@ Then you'll have access to the National Registry Client Service:
 ```typescript
 import {
   NationalRegistryClientService,
-  IndividualDto
+  IndividualDto,
 } from '@island.is/clients/tjodskra'
 
 @Injectable()
