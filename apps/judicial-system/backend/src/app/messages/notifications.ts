@@ -154,7 +154,7 @@ export const notifications = {
   prosecutorReceivedByCourt: {
     id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
     defaultMessage:
-      '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
+      '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} withIndictmentPrefix {ákæru} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
     description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
   },
   prosecutorCourtDateEmail: defineMessages({

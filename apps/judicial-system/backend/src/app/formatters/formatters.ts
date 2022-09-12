@@ -201,6 +201,8 @@ export function formatProsecutorReceivedByCourtSmsNotification(
     investigationPrefix = 'onlyPrefix'
   } else if (isInvestigationCase(type)) {
     investigationPrefix = 'withPrefix'
+  } else if (isIndictmentCase(type)) {
+    investigationPrefix = 'withIndictmentPrefix'
   }
 
   return formatMessage(notifications.prosecutorReceivedByCourt, {
