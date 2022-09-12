@@ -11,11 +11,11 @@ const ProsecutorSection: React.FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendToServer } = useCase()
 
-  const handleProsecutorChange = (prosecutor: User) => {
+  const handleProsecutorChange = (prosecutorId: string) => {
     setAndSendToServer(
       [
         {
-          prosecutorId: prosecutor.id,
+          prosecutorId: prosecutorId,
           force: true,
         },
       ],

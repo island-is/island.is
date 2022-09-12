@@ -1,79 +1,72 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 
-import { Select } from '@island.is/island-ui/core'
-import { User, UserRole } from '@island.is/judicial-system/types'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { Select, Option } from '@island.is/island-ui/core'
+import {
+  isIndictmentCase,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { strings } from './ProsecutorSelection.strings'
 import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-
-type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
+import { OptionsType, ValueType } from 'react-select'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
-  onChange: (prosecutor: User) => boolean
+  onChange: (prosecutorId: string) => boolean
 }
 
 const ProsecutorSelection: React.FC<Props> = (props) => {
   const { onChange } = props
-
   const { formatMessage } = useIntl()
-
   const { workingCase } = useContext(FormContext)
 
-  const [selectedProsecutor, setSelectedProsecutor] = useState<
-    ValueType<ProsecutorSelectOption>
-  >(
-    workingCase.prosecutor
+  const selectedProsecutor = useMemo(() => {
+    return workingCase.prosecutor
       ? {
           label: workingCase.prosecutor.name,
           value: workingCase.prosecutor.id,
-          prosecutor: workingCase.prosecutor,
         }
-      : null,
-  )
-
-  const [availableProsecutors, setAvailableProsecutors] = useState<
-    ProsecutorSelectOption[]
-  >([])
+      : undefined
+  }, [workingCase.prosecutor])
 
   const { data, loading } = useQuery(ProsecutorSelectionUsersQuery, {
-    fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  useEffect(() => {
-    if (data?.users) {
-      setAvailableProsecutors(
-        data.users
-          .filter(
-            (aUser: User) =>
-              aUser.role === UserRole.PROSECUTOR &&
-              (!workingCase.creatingProsecutor ||
-                aUser.institution?.id ===
-                  workingCase.creatingProsecutor?.institution?.id),
-          )
-          .map((prosecutor: User) => ({
-            label: prosecutor.name,
-            value: prosecutor.id,
-            prosecutor,
-          })),
+  const availableProsecutors: OptionsType<Option> = useMemo(() => {
+    return data?.users
+      .filter(
+        (aUser: User) =>
+          aUser.role === UserRole.PROSECUTOR &&
+          (!workingCase.creatingProsecutor ||
+            aUser.institution?.id ===
+              workingCase.creatingProsecutor?.institution?.id),
       )
-    }
+      .map((prosecutor: User) => ({
+        label: prosecutor.name,
+        value: prosecutor.id,
+      }))
   }, [data?.users, workingCase.creatingProsecutor])
 
   return (
     <Select
       name="prosecutor"
-      label={formatMessage(strings.label)}
-      placeholder={formatMessage(strings.placeholder)}
+      label={formatMessage(strings.label, {
+        isIndictmentCase: isIndictmentCase(workingCase.type),
+      })}
+      placeholder={formatMessage(strings.placeholder, {
+        isIndictmentCase: isIndictmentCase(workingCase.type),
+      })}
       value={selectedProsecutor}
       options={availableProsecutors}
-      onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-        onChange((selectedOption as ProsecutorSelectOption).prosecutor) &&
-          setSelectedProsecutor(selectedOption as ProsecutorSelectOption)
+      onChange={(value: ValueType<Option>) => {
+        const id = (value as ReactSelectOption).value
+        if (id && typeof id === 'string') {
+          onChange(id)
+        }
       }}
       disabled={loading}
       required
