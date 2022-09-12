@@ -605,6 +605,26 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
       'Héraðsdómur Reykjavíkur hefur móttekið kröfu um rannsóknarheimild sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
+
+  test('should format received by court notification for an indictment of type MURDER', () => {
+    // Arranged
+    const type = CaseType.MURDER
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
