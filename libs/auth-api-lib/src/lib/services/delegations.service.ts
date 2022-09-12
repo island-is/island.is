@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  Logger as NestLogger,
   NotFoundException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
@@ -14,6 +13,7 @@ import { Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 
+import { AuditService } from '@island.is/nest/audit'
 import { AuthDelegationType, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
@@ -86,6 +86,7 @@ export class DelegationsService {
     private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
     private resourcesService: ResourcesService,
+    private readonly auditService: AuditService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
@@ -388,6 +389,13 @@ export class DelegationsService {
 
     if (deceasedDelegations.length > 0) {
       await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
+
+      deceasedDelegations.forEach((delegation) => {
+        this.auditService.auditSystem({
+          action: 'deceasedDelegation',
+          resources: delegation.id as string,
+        })
+      })
     }
 
     return uniqBy(
@@ -400,10 +408,7 @@ export class DelegationsService {
   private async handlePersonResponse(
     response: ApiResponse<Einstaklingsupplysingar> | undefined,
   ) {
-    if (response === undefined) {
-      return undefined
-    } else if (response.raw.status === 204) {
-      // TODO audit system method action is findAll
+    if (response === undefined || response.raw.status === 204) {
       return undefined
     }
 
@@ -454,9 +459,6 @@ export class DelegationsService {
           )
         }
       }
-
-      // TODO audit system method action is findAll
-      // TODO update exp column in Delegation table to make it expired.
     }
   }
 

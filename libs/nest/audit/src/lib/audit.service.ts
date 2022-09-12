@@ -8,6 +8,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Auth } from '@island.is/auth-nest-tools'
 import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
+import isString from 'lodash/isString'
 
 export interface AuditMessage {
   auth: Auth
@@ -16,6 +17,8 @@ export interface AuditMessage {
   resources?: string | string[]
   meta?: Record<string, unknown>
 }
+
+export type AuditSystemMessage = Omit<AuditMessage, 'auth'>
 
 export type AuditTemplate<ResultType> = {
   auth: Auth
@@ -91,6 +94,14 @@ export class AuditService {
     return clients
   }
 
+  private checkNameSpace(namespace?: string) {
+    if (!namespace) {
+      throw new Error(
+        'Audit namespace is required. Did you configure a defaultNamespace?',
+      )
+    }
+  }
+
   private formatMessage({
     auth,
     namespace = this.defaultNamespace,
@@ -98,21 +109,36 @@ export class AuditService {
     resources,
     meta,
   }: AuditMessage) {
-    if (!namespace) {
-      throw new Error(
-        'Audit namespace is required. Did you configure a defaultNamespace?',
-      )
-    }
+    this.checkNameSpace(namespace)
+
     const message = {
       subject: auth.nationalId,
       actor: auth.actor ? auth.actor.nationalId : auth.nationalId,
       client: this.getClients(auth),
       action: `${namespace}#${action}`,
-      resources:
-        resources && (typeof resources === 'string' ? [resources] : resources),
+      resources: isString(resources) ? [resources] : resources,
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: process.env.APP_VERSION,
+    }
+
+    return this.useDevLogger ? { message: 'Audit record', ...message } : message
+  }
+
+  private formatSystemMessage({
+    namespace = this.defaultNamespace,
+    action,
+    resources,
+    meta,
+  }: AuditSystemMessage) {
+    this.checkNameSpace(namespace)
+
+    const message = {
+      namespace: `${namespace}/system`,
+      action: `${namespace}#${action}`,
+      resources: isString(resources) ? [resources] : resources,
+      meta,
       appVersion: process.env.APP_VERSION,
     }
 
@@ -139,8 +165,13 @@ export class AuditService {
         resources: this.unwrap(template.resources, result),
         meta: this.unwrap(template.meta, result),
       }
-      this.auditLog?.info(this.formatMessage(message))
+      this.audit(message)
+
       return result
     })
+  }
+
+  auditSystem(message: AuditSystemMessage) {
+    this.auditLog?.info(this.formatSystemMessage(message))
   }
 }
