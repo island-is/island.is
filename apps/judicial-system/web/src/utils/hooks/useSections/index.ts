@@ -463,13 +463,18 @@ const useSections = () => {
 
   const getIndictmentsCourtSections = (
     workingCase: Case,
-    activeSubSection?: number,
+    _activeSubSection?: number,
   ) => {
     const { id } = workingCase
 
     return {
       name: formatMessage(sections.courtSection.title),
       children: [
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(sections.indictmentsCourtSection.overview),
+          href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
+        },
         {
           type: 'SUB_SECTION',
           name: formatMessage(
@@ -479,12 +484,10 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.indictmentsCourtSection.overview),
-          href:
-            (activeSubSection && activeSubSection > 1) ||
-            isReceptionAndAssignmentStepValid(workingCase)
-              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
-              : undefined,
+          name: formatMessage(sections.indictmentsCourtSection.subpoena),
+          href: isReceptionAndAssignmentStepValid(workingCase)
+            ? `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`
+            : undefined,
         },
       ],
     }

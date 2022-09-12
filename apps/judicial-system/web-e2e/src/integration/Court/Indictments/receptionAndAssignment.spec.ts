@@ -1,7 +1,7 @@
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import {
@@ -61,6 +61,6 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', INDICTMENTS_COURT_OVERVIEW_ROUTE)
+    cy.url().should('include', `${INDICTMENTS_SUBPOENA_ROUTE}/test`)
   })
 })

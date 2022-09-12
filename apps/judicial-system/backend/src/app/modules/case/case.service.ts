@@ -33,7 +33,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
@@ -284,7 +284,10 @@ export class CaseService {
   private async uploadCaseFilesPdfToCourt(theCase: Case): Promise<void> {
     try {
       if (theCase.caseFiles && theCase.caseFiles.length > 0) {
-        const caseFilesPdf = await getCasefilesPdfAsString(theCase)
+        const caseFilesPdf = await getCasefilesPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
 
         if (!this.config.production) {
           writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
@@ -961,6 +964,7 @@ export class CaseService {
         theCase.courtCaseNumber ?? '',
         this.formatMessage(courtUpload.requestFileName, {
           caseType: caseTypes[theCase.type],
+          date: '',
         }),
         pdf,
       )
