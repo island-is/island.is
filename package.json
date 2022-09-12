@@ -409,7 +409,6 @@
     "mailparser": "3.5.0",
     "next-secure-headers": "2.1.0",
     "nx": "13.10.3",
-    "openapi-typescript-codegen": "0.23.0",
     "prettier": "2.2.1",
     "quicktype": "15.0.258",
     "react-test-renderer": "17.0.2",

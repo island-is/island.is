@@ -67,14 +67,14 @@ export class NationalRegistryXRoadService {
       parentUser,
     )
 
+    if (childrenNationalIds.length === 0) {
+      return []
+    }
+
     const parentAFamily = await this.nationalRegistryApi.getFamily(
       parentUser.nationalId,
     )
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
-
-    if (!parentAFamily) {
-      return []
-    }
 
     const children: Array<NationalRegistryPerson | null> = await Promise.all(
       childrenNationalIds.map(async (childNationalId) => {

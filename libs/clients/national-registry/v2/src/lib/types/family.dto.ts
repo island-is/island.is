@@ -15,7 +15,7 @@ export function formatFamilyDto(
   return {
     familyId: family.fjolskyldunumer,
     individuals: (family.einstaklingar ?? []).map(
-      (individual) => formatIndividualDto(individual)!,
+      (individual) => formatIndividualDto(individual) as IndividualDto,
     ),
   }
 }

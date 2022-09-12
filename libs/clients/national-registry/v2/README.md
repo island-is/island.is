@@ -57,7 +57,7 @@ export class SomeService {
   constructor(private nationalRegistryClient: NationalRegistryClientService) {}
 
   async getPerson(nationalId: string): Promise<IndividualDto> {
-    return await this.nationalRegistryClient.getIndividual(nationalId)
+    return this.nationalRegistryClient.getIndividual(nationalId)
   }
 }
 ```
