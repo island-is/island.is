@@ -74,10 +74,10 @@ export class DelegationScopeService {
   }
 
   /**
-   * Invalidates delegation scope, i.e. make it expired. To make delegation scope invalid we have
-   * set validTo field to yesterdays date.
+   * Invalidates DelegationScope, i.e. makes it expired.
+   * To make invalid we have to set validTo field to yesterdays date.
    *
-   * @param id Scope id
+   * @param id - DelegationScope id
    */
   async invalidate(id: string): Promise<void> {
     this.logger.debug(`Invalidating delegationScope ${id}`)

@@ -341,7 +341,7 @@ export class DelegationsService {
     const delegationPromises = []
     // Promises that need to be verified before returning the delegations.
     // If delegation is directly linked to a deceased person, then we do not want to return it.
-    const needVerifyDelegationSets = []
+    const needVerifyDelegationPromises = []
 
     const hasDelegationTypeFilter =
       delegationTypes && delegationTypes.length > 0
@@ -365,30 +365,32 @@ export class DelegationsService {
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.Custom))
     ) {
-      needVerifyDelegationSets.push(this.findAllValidCustomIncoming(user))
+      needVerifyDelegationPromises.push(this.findAllValidCustomIncoming(user))
     }
     if (
       (!client || client.supportsPersonalRepresentatives) &&
       (!hasDelegationTypeFilter ||
         delegationTypes?.includes(DelegationType.PersonalRepresentative))
     ) {
-      needVerifyDelegationSets.push(
+      needVerifyDelegationPromises.push(
         this.findAllRepresentedPersonsIncoming(user),
       )
     }
 
     const [delegations, needsCheckDelegations] = await Promise.all([
       Promise.all(delegationPromises),
-      Promise.all(needVerifyDelegationSets),
+      Promise.all(needVerifyDelegationPromises),
     ])
 
+    // Only check live status, i.e. dead or alive for needsCheckDelegations
     const {
       aliveDelegations,
       deceasedDelegations,
     } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
 
     if (deceasedDelegations.length > 0) {
-      await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
+      // Invalidate all deceased delegations
+      await this.invalidateDelegations(user, deceasedDelegations)
 
       this.auditService.auditSystem({
         action: 'deceasedDelegation',
@@ -423,39 +425,35 @@ export class DelegationsService {
   }
 
   /**
-   * Updates delegation.scope.validTo date field to start of yesterday for deceased person delegation.
+   * Invalidates delegations by updating delegation.scope[index].validTo date field to start of yesterday.
    */
-  private async updateDeceasedPersonsDelegations(
+  private async invalidateDelegations(
     user: User,
     deceasedDelegations: DelegationDTO[],
   ) {
-    const deceasedDelegationIds = deceasedDelegations
-      .map(({ id }) => id)
-      // Since id is optional, we need to filter out null or undefined values
-      .filter(isDefined)
+    const delegations = await Promise.all(
+      // We need to refetch the delegation to make sure we get all delegation.scopes
+      deceasedDelegations.map(({ id }) =>
+        id ? this.findById(user, id, true) : undefined,
+      ),
+    )
+    const delegationsWithAllScopes = delegations.filter(isDefined)
 
-    if (deceasedDelegationIds.length > 0) {
-      const delegations = await Promise.all(
-        // We need to refetch the delegation to make sure we get all delegation.scopes
-        deceasedDelegationIds.map((id) => this.findById(user, id, true)),
-      )
-      const delegationsWithAllScopes = delegations.filter(isDefined)
+    if (delegationsWithAllScopes.length > 0) {
+      // Gather all delegation scope ids that needs to be invalidated
+      const delegationScopeIds = delegationsWithAllScopes
+        .map((delegation) =>
+          delegation.scopes?.map(({ id }) => id).filter(isDefined),
+        )
+        .filter(isDefined)
+        .flat()
 
-      if (delegationsWithAllScopes.length > 0) {
-        const delegationScopesIds = delegationsWithAllScopes
-          .map((delegation) =>
-            delegation.scopes?.map(({ id }) => id).filter(isDefined),
-          )
-          .filter(isDefined)
-          .flat()
-
-        if (delegationScopesIds.length > 0) {
-          await Promise.all(
-            delegationScopesIds.map((id) =>
-              this.delegationScopeService.invalidate(id),
-            ),
-          )
-        }
+      if (delegationScopeIds.length > 0) {
+        await Promise.all(
+          delegationScopeIds.map((id) =>
+            this.delegationScopeService.invalidate(id),
+          ),
+        )
       }
     }
   }
@@ -467,7 +465,12 @@ export class DelegationsService {
    *   1. All companies will be divided into alive delegations.
    *   2. If the person exists in NationalRegistry, then the delegation is alive.
    */
-  private async getLiveStatusFromDelegations(delegations: DelegationDTO[]) {
+  private async getLiveStatusFromDelegations(
+    delegations: DelegationDTO[],
+  ): Promise<{
+    aliveDelegations: DelegationDTO[]
+    deceasedDelegations: DelegationDTO[]
+  }> {
     const delegationsPromises = delegations.map(({ fromNationalId }) =>
       this.personApi
         .einstaklingarGetEinstaklingurRaw({
