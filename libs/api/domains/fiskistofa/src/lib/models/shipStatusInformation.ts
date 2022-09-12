@@ -5,7 +5,7 @@ class Ship {
   @Field()
   id!: string
 
-  @Field()
+  @Field({ nullable: true })
   shipNumber?: number
 
   @Field()
@@ -17,41 +17,41 @@ class Ship {
 
 @ObjectType()
 class AllowedCatchCategory {
-  @Field()
+  @Field({ nullable: true })
   id?: number
   @Field()
   name!: string
-  @Field()
+  @Field({ nullable: true })
   allocation?: number
-  @Field()
+  @Field({ nullable: true })
   specialAlloction?: number
-  @Field()
+  @Field({ nullable: true })
   betweenYears?: number
-  @Field()
+  @Field({ nullable: true })
   betweenShips?: number
-  @Field()
+  @Field({ nullable: true })
   allowedCatch?: number
-  @Field()
+  @Field({ nullable: true })
   catch?: number
-  @Field()
+  @Field({ nullable: true })
   status?: number
-  @Field()
+  @Field({ nullable: true })
   displacement?: number
-  @Field()
+  @Field({ nullable: true })
   newStatus?: number
-  @Field()
+  @Field({ nullable: true })
   nextYear?: number
-  @Field()
+  @Field({ nullable: true })
   excessCatch?: number
-  @Field()
+  @Field({ nullable: true })
   unused?: number
-  @Field()
+  @Field({ nullable: true })
   totalAllowedCatch?: number
-  @Field()
+  @Field({ nullable: true })
   rateOfShare?: number
-  @Field()
+  @Field({ nullable: true })
   nextYearQuota?: number
-  @Field()
+  @Field({ nullable: true })
   nextYearFromQuota?: number
 }
 

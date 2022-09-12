@@ -7,7 +7,6 @@ import { GetShipStatusForCalendarYearInput } from './dto/getShipStatusForCalenda
 import { GetShipStatusForTimePeriodInput } from './dto/getShipStatusForTimePeriod.input'
 import { GetUpdatedShipStatusForCalendarYearInput } from './dto/getUpdatedShipStatusForCalendarYear.input'
 import { GetUpdatedShipStatusForTimePeriodInput } from './dto/getUpdatedShipStatusForTimePeriod.input'
-
 import { QuotaType } from './models/fish'
 import { ShipBasicInfo } from './models/shipBasicInfo'
 import {
