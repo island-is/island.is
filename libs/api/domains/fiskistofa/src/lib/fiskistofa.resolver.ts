@@ -1,8 +1,7 @@
 import { FiskistofaClientService } from '@island.is/clients/fiskistofa'
 import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetQuotaTypesForCalendarYear } from './dto/getQuotaTypesForCalendarYear.input'
-import { getQuotaTypesForTimePeriod } from './dto/getQuotaTypesForTimePeriod.input'
-
+import { GetQuotaTypesForTimePeriod } from './dto/getQuotaTypesForTimePeriod.input'
 import { GetShipsInput } from './dto/getShips.input'
 import { GetShipStatusForCalendarYear } from './dto/getShipStatusForCalendarYear.input'
 import { GetShipStatusForTimePeriod } from './dto/getShipStatusForTimePeriod.input'
@@ -60,7 +59,7 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [QuotaType])
-  getQuotaTypesForTimePeriod(@Args('input') input: getQuotaTypesForTimePeriod) {
+  getQuotaTypesForTimePeriod(@Args('input') input: GetQuotaTypesForTimePeriod) {
     return this.fiskistofaClientService.getQuotaTypesForTimePeriod(input)
   }
 
