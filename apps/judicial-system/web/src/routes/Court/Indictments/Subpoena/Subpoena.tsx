@@ -136,7 +136,7 @@ const Subpoena: React.FC = () => {
       {modalVisible && (
         <Modal
           title={formatMessage(strings.modalTitle)}
-          onPrimaryButtonClick={async () => {
+          onPrimaryButtonClick={() => {
             router.push(
               `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
             )
