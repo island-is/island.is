@@ -390,11 +390,9 @@ export class DelegationsService {
     if (deceasedDelegations.length > 0) {
       await this.updateDeceasedPersonsDelegations(user, deceasedDelegations)
 
-      deceasedDelegations.forEach((delegation) => {
-        this.auditService.auditSystem({
-          action: 'deceasedDelegation',
-          resources: delegation.id as string,
-        })
+      this.auditService.auditSystem({
+        action: 'deceasedDelegation',
+        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
       })
     }
 
