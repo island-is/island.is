@@ -133,10 +133,10 @@ export class AuditService {
     meta,
   }: AuditSystemMessage) {
     this.checkNameSpace(namespace)
-
+    const namespacePostfix = `${namespace}/system`
     const message = {
-      namespace: `${namespace}/system`,
-      action: `${namespace}#${action}`,
+      namespace: namespacePostfix,
+      action: `${namespacePostfix}#${action}`,
       resources: isString(resources) ? [resources] : resources,
       meta,
       appVersion: process.env.APP_VERSION,
