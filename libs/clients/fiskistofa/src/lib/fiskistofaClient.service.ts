@@ -25,11 +25,11 @@ export class FiskistofaClientService {
   async wrapper(callback: (api: FiskistofaApi) => void) {
     try {
       this.api.initialize()
-      callback(this.api)
+      return callback(this.api)
     } catch (error) {
       if (error instanceof FetchError && error.status === 401) {
         this.api.initialize(true)
-        callback(this.api)
+        return callback(this.api)
       }
     }
   }
