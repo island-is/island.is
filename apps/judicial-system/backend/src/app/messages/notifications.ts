@@ -137,16 +137,16 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject',
-      defaultMessage: 'Krafa í máli {policeCaseNumber} send aftur',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v2',
+      defaultMessage: 'Krafa um {caseType} send aftur',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
     body: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.body',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v2',
       defaultMessage:
-        'Sækjandi í máli {policeCaseNumber} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
+        'Sækjandi í {policeCaseNumbersCount, plural, zero {máli} one {máli {policeCaseNumbers}} other {málum: {policeCaseNumbers}}} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
       description:
         'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },

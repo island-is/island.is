@@ -12,7 +12,7 @@ import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
-  OrganizationSlice,
+  SliceMachine,
   OrganizationWrapper,
   SearchBox,
 } from '@island.is/web/components'
@@ -65,11 +65,11 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         items: navList,
       }}
       mainContent={organizationPage.slices.map((slice, index) => (
-        <OrganizationSlice
+        <SliceMachine
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPage.slug}
+          slug={organizationPage.slug}
           marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
         />
       ))}
@@ -92,11 +92,11 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       }
     >
       {organizationPage.bottomSlices.map((slice) => (
-        <OrganizationSlice
+        <SliceMachine
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPage.slug}
+          slug={organizationPage.slug}
           fullWidth={true}
         />
       ))}
