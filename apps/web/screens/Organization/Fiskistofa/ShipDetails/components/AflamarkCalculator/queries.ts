@@ -1,10 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
-  query GetAflamarkInformationForShip(
-    $input: GetAflamarkInformationForShipInput!
-  ) {
-    getAflamarkInformationForShip(input: $input) {
+  query GetShipStatusForTimePeriod($input: GetShipStatusForTimePeriodInput!) {
+    getShipStatusForTimePeriod(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -35,11 +33,11 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
   }
 `
 
-export const GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP = gql`
-  mutation GetUpdatedAflamarkInformationForShip(
-    $input: GetUpdatedAflamarkInformationForShipInput!
+export const GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD = gql`
+  mutation GetUpdatedShipStatusForTimePeriod(
+    $input: GetUpdatedShipStatusForTimePeriodInput!
   ) {
-    getUpdatedAflamarkInformationForShip(input: $input) {
+    getUpdatedShipStatusForTimePeriod(input: $input) {
       shipInformation {
         id
         shipNumber

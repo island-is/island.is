@@ -1,3 +1,4 @@
+import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const selectBox = style({
@@ -22,6 +23,10 @@ export const tableHead = style({
 
 export const visualSeparationLine = style({
   borderTop: '1px solid #CCDFFF',
+})
+
+export const error = style({
+  borderColor: theme.color.red400,
 })
 
 globalStyle(`${tableContainer} th`, {

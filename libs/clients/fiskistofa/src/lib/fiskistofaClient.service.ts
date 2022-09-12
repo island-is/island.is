@@ -23,6 +23,7 @@ import { FiskistofaApi } from './api'
 export class FiskistofaClientService {
   constructor(private api: FiskistofaApi) {}
 
+  // TODO: test with invalid token
   async wrapper(callback: (api: FiskistofaApi) => void) {
     try {
       this.api.initialize()
