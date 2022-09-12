@@ -222,7 +222,7 @@ export class FinanceResolver {
 
   @Query(() => DebtLessCertificateModel)
   @Audit()
-  @Scopes(ApiScope.company)
+  @Scopes(ApiScope.noDebtCertificate)
   async getDebtLessCertificate(
     @CurrentUser() user: User,
     @Args('input') language: string,
