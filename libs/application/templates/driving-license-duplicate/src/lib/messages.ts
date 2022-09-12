@@ -54,17 +54,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki að láta sækja gögn',
     description: 'Checkbox label for data collection section',
   },
-  dataCollectionDoctorsNoteTitle: {
-    id: 'dld.application:dataCollectionDoctorsNoteTitle',
-    defaultMessage: 'Læknisvottorð vegna umsóknar um stæðiskort',
-    description: 'Doctors note title',
-  },
-  dataCollectionDoctorsNoteSubtitle: {
-    id: 'dld.application:dataCollectionDoctorsNoteLabel',
-    defaultMessage:
-      'Rafrænt læknisvottorð frá heimilislækni þar sem tilgreindur er gildistími stæðiskorts.',
-    description: 'Doctors note subtitle',
-  },
   dataCollectionNationalRegistryTitle: {
     id: 'dld.application:dataCollectionNationalRegistryTitle',
     defaultMessage: 'Persónuupplýsingar',
@@ -171,31 +160,6 @@ export const m = defineMessages({
       'Hér er núverandi mynd úr ökuskírteinaskrá. Hægt er að nota hana eða hlaða inn nýrri mynd með tilgreindum skilyrðum hér fyrir neðan.',
     description: `Text for the user's existing quality photo`,
   },
-  qualityPhotoUseExistingPhoto: {
-    id: 'dld.application:qualityPhotoUseExistingPhoto',
-    defaultMessage: 'Nota núverandi mynd',
-    description: `Text for the user's existing quality photo`,
-  },
-  qualityPhotoUploadNewPhoto: {
-    id: 'dld.application:qualityPhotoUploadNewPhoto',
-    defaultMessage: 'Hlaða inn mynd',
-    description: `Text for uploading a new photo`,
-  },
-  qualityPhotoFileUploadTitle: {
-    id: 'dld.application:qualityPhotoFileUploadTitle',
-    defaultMessage: 'Dragðu mynd hingað til að hlaða upp',
-    description: `Title for file upload`,
-  },
-  qualityPhotoFileUploadDescription: {
-    id: 'dld.application:qualityPhotoFileUploadDescription',
-    defaultMessage: 'Tekið er við mynd með endingu: .jpeg, .png, .jpg',
-    description: `Description for file upload`,
-  },
-  qualityPhotoUploadButtonLabel: {
-    id: 'dld.application:qualityPhotoUploadButtonLabel',
-    defaultMessage: 'Velja mynd til að hlaða upp',
-    description: `Upload button label`,
-  },
   qualityPhotoNoPhotoDescription: {
     id: 'dld.application:qualityPhotoNoPhotoDescription',
     defaultMessage:
@@ -206,41 +170,6 @@ export const m = defineMessages({
     id: 'dld.application:qualityPhotoAltText',
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
-  },
-  qualityPhotoInstructionsBulletOne: {
-    id: 'dld.application:qualityPhoto.instructionsbulletone',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletTwo: {
-    id: 'dld.application:qualityPhoto.instructionsbullettwo',
-    defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletThree: {
-    id: 'dld.application:qualityPhoto.instructionsbulletthree',
-    defaultMessage: `
-    Lýsing andlits þarf að vera jöfn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFour: {
-    id: 'dld.application:qualityPhoto.instructionsbulletfour',
-    defaultMessage: `
-    Hvorki má glampa á gleraugu né skyggja á augu.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFive: {
-    id: 'dld.application:qualityPhoto.instructionsbulletfive',
-    defaultMessage: `
-    Bakgrunnur þarf að vera einfaldur og ljós á litinn.
-    `,
-    description: 'Description of photo requirements',
   },
   qualityPhotoNoPhotoAlertMessage: {
     id: 'dld.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',
