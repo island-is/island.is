@@ -373,6 +373,67 @@
         }
       }
     },
+    "/v1/skip/utgerd/{kennitalaHeiti}": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir gögn um öll skip sem falla undir leitarstreng út frá kennitölu eða heiti útgerðar.",
+        "parameters": [
+          {
+            "name": "kennitalaHeiti",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SkipLeitDTO" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/v1/skip/{skipnumer}": {
       "get": {
         "tags": ["Skip"],
@@ -531,13 +592,13 @@
         }
       }
     },
-    "/v1/stadaskips/kvotategundir/fiskveidiar/{timabil}": {
+    "/v1/stadaskips/kvotategundir/fiskveidiar/{fiskveidiar}": {
       "get": {
         "tags": ["StadaSkips"],
         "summary": "Sækir gögn um kvótategundir sem falla undir reikning samkvæmt fiskveiðiári.",
         "parameters": [
           {
-            "name": "timabil",
+            "name": "fiskveidiar",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -665,7 +726,7 @@
         }
       }
     },
-    "/v1/stadaskips/{skipnumer}/fiskveidiar/{timabil}": {
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}": {
       "get": {
         "tags": ["StadaSkips"],
         "summary": "Sækir gögn um aflamark skips og ýmsar tilfærslur afla út frá skipaskrárnúmeri og tímabili.",
@@ -677,7 +738,7 @@
             "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "timabil",
+            "name": "fiskveidiar",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -729,7 +790,7 @@
         }
       }
     },
-    "/v1/stadaskips/{skipnumer}/fiskveidiar/{timabil}/breytt": {
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}/breytt": {
       "post": {
         "tags": ["StadaSkips"],
         "summary": "Skilar breyttum gögnum um aflamark skips og ýmsum tilfærslum út frá breytingum, skipaskrárnúmeri og tímabili.",
@@ -741,7 +802,7 @@
             "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "timabil",
+            "name": "fiskveidiar",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -808,6 +869,28 @@
               "application/json": { "schema": { "type": "string" } },
               "text/json": { "schema": { "type": "string" } }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
           }
         }
       }
@@ -871,6 +954,28 @@
               "text/plain": { "schema": { "type": "string" } },
               "application/json": { "schema": { "type": "string" } },
               "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
             }
           }
         }
@@ -954,6 +1059,28 @@
               "text/plain": { "schema": { "type": "string" } },
               "application/json": { "schema": { "type": "string" } },
               "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
             }
           }
         }
@@ -1341,11 +1468,6 @@
               "$ref": "#/components/schemas/AflamarkTegundirBreyttDTO"
             },
             "description": "Listi aflamarkstegunda eftir beytta stöðu.",
-            "nullable": true
-          },
-          "villuskilabod": {
-            "type": "string",
-            "description": "Skilar ástæðu villu ef fyrirspurnin var ólögleg. Skila tómum streng ef fyrirspurnin var lögleg.",
             "nullable": true
           }
         },

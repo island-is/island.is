@@ -1,37 +1,90 @@
 import { useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
 import { Box, Button, Inline, Select, Tag } from '@island.is/island-ui/core'
-import { Fish } from '@island.is/web/graphql/schema'
-import { GET_ALL_FISHES_QUERY } from './queries'
+import {
+  GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
+  GET_QUOTA_TYPES_FOR_TIME_PERIOD,
+} from './queries'
+import initApollo from '@island.is/web/graphql/client'
+import { useI18n } from '@island.is/web/i18n'
 
-import * as styles from './FishSelect.css'
+import {
+  QueryGetQuotaTypesForTimePeriodArgs,
+  QuotaType,
+} from '@island.is/api/schema'
+import { QueryGetQuotaTypesForCalendarYearArgs } from '@island.is/web/graphql/schema'
+
+import * as styles from './QuotaTypeSelect.css'
 
 const emptyValue = { value: -1, label: '' }
 
-type GetAllFishesQuery = {
-  getAllFishes: Fish[]
+interface QuotaTypeSelectProps {
+  type: 'aflamark' | 'deilistofn'
+  timePeriod?: string
+  year?: string
 }
 
-export const FishSelect = () => {
-  const { data } = useQuery<GetAllFishesQuery>(GET_ALL_FISHES_QUERY)
+export const QuotaTypeSelect = ({
+  type,
+  timePeriod,
+  year,
+}: QuotaTypeSelectProps) => {
+  const { activeLocale } = useI18n()
 
   const [optionsInDropdown, setOptionsInDropdown] = useState([])
-
   const [selectedOptions, setSelectedOptions] = useState([])
 
   useEffect(() => {
-    if (!data?.getAllFishes) return
-    const fishes = data.getAllFishes
-      .filter((fish) => fish?.name)
-      .map((fish) => ({
-        value: fish.id,
-        label: fish.name,
-      }))
-    if (selectedOptions.length === 0) {
-      fishes.sort((a, b) => a.label.localeCompare(b.label))
-      setOptionsInDropdown(fishes)
+    let mounted = true
+    const fetchQuotaTypes = async () => {
+      const apolloClient = initApollo({}, activeLocale)
+
+      let query =
+        type === 'aflamark'
+          ? GET_QUOTA_TYPES_FOR_TIME_PERIOD
+          : GET_QUOTA_TYPES_FOR_CALENDAR_YEAR
+
+      const response = await apolloClient.query<
+        | { getQuotaTypeForTimePeriod: QuotaType[] }
+        | { getQuotaTypesForCalendarYear: QuotaType[] },
+        | QueryGetQuotaTypesForTimePeriodArgs
+        | QueryGetQuotaTypesForCalendarYearArgs
+      >({
+        query,
+        variables: {
+          input: {
+            timePeriod,
+            year,
+          },
+        },
+      })
+
+      const data =
+        response?.data?.[
+          type === 'aflamark'
+            ? 'getQuotaTypesForTimePeriod'
+            : 'getQuotaTypesForCalendarYear'
+        ]
+
+      if (!data) return
+
+      const quotaTypes = data
+        .filter((qt) => qt?.name)
+        .map((qt) => ({
+          value: qt.id,
+          label: qt.name,
+        }))
+      if (selectedOptions.length === 0) {
+        quotaTypes.sort((a, b) => a.label.localeCompare(b.label))
+        if (mounted) setOptionsInDropdown(quotaTypes)
+      }
     }
-  }, [data])
+
+    fetchQuotaTypes()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   return (
     <Box>

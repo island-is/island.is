@@ -16,7 +16,7 @@ export class CategoryChange {
 }
 
 @InputType()
-export class GetUpdatedShipStatusForTimePeriod {
+export class GetUpdatedShipStatusForTimePeriodInput {
   @Field()
   shipNumber!: number
 
