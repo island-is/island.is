@@ -18,8 +18,8 @@ export const courtUpload = defineMessages({
     description: 'Notaður sem nafn á úrskurði í Auði.',
   },
   requestFileName: {
-    id: 'judicial.system.backend:court_upload.request_file_name',
-    defaultMessage: 'Krafa um {caseType}',
+    id: 'judicial.system.backend:court_upload.request_file_name_v2',
+    defaultMessage: 'Krafa um {caseType}{date}',
     description: 'Notaður sem nafn á kröfuskjali í Auði.',
   },
 })
