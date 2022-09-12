@@ -15,6 +15,7 @@ import {
   UnauthorizedException,
   Delete,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -62,7 +63,7 @@ import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from '@island.is/application/api/core'
-import { FileService } from './files/file.service'
+import { FileService } from '@island.is/application/api/files'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -96,6 +97,8 @@ import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
@@ -116,6 +119,7 @@ export class ApplicationController {
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -186,6 +190,7 @@ export class ApplicationController {
       throw new UnauthorizedException()
     }
 
+    this.logger.debug(`Getting applications with status ${status}`)
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
@@ -381,6 +386,8 @@ export class ApplicationController {
       assignApplicationDto.token,
     )
 
+    this.logger.info('Application assign started.')
+    this.logger.debug(`Decoded token ${JSON.stringify(decodedToken)}`)
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
     }
@@ -452,8 +459,14 @@ export class ApplicationController {
     )
 
     if (hasError) {
+      this.logger.error(
+        `Application (ID: ${existingApplication.id}) assignment finished with an error: ${error}`,
+      )
       throw new BadRequestException(error)
     }
+    this.logger.info(
+      `Application (ID: ${existingApplication.id}) assignment finished with no errors.`,
+    )
 
     if (hasChanged) {
       return updatedApplication
@@ -705,8 +718,10 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
+      this.logger.error(`Application submission ended with an error: ${error}`)
       throw new TemplateApiError(error, 500)
     }
+    this.logger.info(`Application submission ended successfully`)
 
     if (hasChanged) {
       return updatedApplication
@@ -723,7 +738,9 @@ export class ApplicationController {
     locale: Locale,
   ): Promise<TemplateAPIModuleActionResult> {
     const { action, externalDataId, throwOnError } = api
-
+    this.logger.debug(
+      `Performing action ${action} on ${JSON.stringify(template.name)}`,
+    )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
@@ -735,16 +752,21 @@ export class ApplicationController {
     )
 
     const result = updatedApplication.externalData[externalDataId || action]
-
+    this.logger.debug(
+      `Performing action ${action} on ${JSON.stringify(
+        template.name,
+      )} ended with ${result.status}`,
+    )
     if (result.status === 'failure' && throwOnError) {
-      console.log('Error performing action on application :', result.reason)
       return {
         updatedApplication,
         hasError: true,
         error: result.reason,
       }
     }
-
+    this.logger.debug(
+      `Updated external data for application with ID ${updatedApplication.id}`,
+    )
     return {
       updatedApplication,
       hasError: false,
@@ -1174,6 +1196,8 @@ export class ApplicationController {
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
+
+    await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
     await this.applicationService.delete(existingApplication.id)
   }

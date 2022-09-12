@@ -107,3 +107,15 @@ export abstract class BaseTemplateApiApplicationService {
     expiresIn: number,
   ): Promise<string>
 }
+
+export type SmsTemplateGenerator = (application: Application) => SmsMessage
+
+export type AssignmentSmsTemplateGenerator = (
+  application: Application,
+  assignLink: string,
+) => SmsMessage
+
+export interface SmsMessage {
+  phoneNumber: string
+  message: string
+}

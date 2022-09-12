@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -15,7 +15,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -116,7 +116,9 @@ const HearingArrangements = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
@@ -134,7 +136,7 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -170,9 +172,7 @@ const HearingArrangements = () => {
                 {formatMessage(m.title)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
@@ -300,7 +300,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={handleNextButtonClick}
               nextIsDisabled={
                 !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
@@ -321,24 +321,28 @@ const HearingArrangements = () => {
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
                 )
 
                 if (notificationSent) {
-                  router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                  router.push(
+                    `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                  )
                 }
               }}
-              handleSecondaryButtonClick={() => {
+              onSecondaryButtonClick={() => {
                 sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
                   true,
                 )
 
-                router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+                router.push(
+                  `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+                )
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
               secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

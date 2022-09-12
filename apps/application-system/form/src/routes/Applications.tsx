@@ -27,6 +27,14 @@ import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  Application,
+  ApplicationContext,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+} from '@island.is/application/types'
+import { EventObject } from 'xstate'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -41,6 +49,14 @@ export const Applications: FC = () => {
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
+  const [template, setTemplate] = useState<
+    | ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    | undefined
+  >(undefined)
   const checkDelegation = useCallback(() => {
     setDelegationsChecked((d) => !d)
   }, [])
@@ -79,6 +95,18 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
+    const getTemplate = async () => {
+      if (type && !template) {
+        const appliTemplate = await getApplicationTemplateByTypeId(type)
+        if (appliTemplate) {
+          setTemplate(appliTemplate)
+        }
+      }
+    }
+    getTemplate().catch(console.error)
+  }, [type, template])
+
+  useEffect(() => {
     if (
       type &&
       data &&
@@ -89,7 +117,7 @@ export const Applications: FC = () => {
     }
   }, [type, data, delegationsChecked])
 
-  if (loading) {
+  if (loading || !template) {
     return <ApplicationLoading />
   }
 
@@ -135,6 +163,16 @@ export const Applications: FC = () => {
     return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
   }
 
+  const numberOfApplicationsInDraft = data?.applicationApplications.filter(
+    (x: Application) => x.state === 'draft',
+  ).length
+
+  const shouldRenderNewApplicationButton =
+    template.allowMultipleApplicationsInDraft === undefined
+      ? true
+      : template.allowMultipleApplicationsInDraft ||
+        numberOfApplicationsInDraft < 1
+
   return (
     <Page>
       <GridContainer>
@@ -150,12 +188,16 @@ export const Applications: FC = () => {
               <Text variant="h1">
                 {formatMessage(coreMessages.applications)}
               </Text>
-
-              <Box marginTop={[2, 0]}>
-                <Button onClick={createApplication}>
-                  {formatMessage(coreMessages.newApplication)}
-                </Button>
-              </Box>
+              {shouldRenderNewApplicationButton ? (
+                <Box marginTop={[2, 0]}>
+                  <Button
+                    onClick={createApplication}
+                    data-testid="create-new-application"
+                  >
+                    {formatMessage(coreMessages.newApplication)}
+                  </Button>
+                </Box>
+              ) : null}
             </Box>
 
             {data?.applicationApplications && (

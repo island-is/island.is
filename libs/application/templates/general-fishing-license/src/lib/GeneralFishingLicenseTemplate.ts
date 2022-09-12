@@ -14,6 +14,7 @@ import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
+import { AuthDelegationType } from '../types/schema'
 import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,
@@ -45,6 +46,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
+  allowedDelegations: [AuthDelegationType.ProcurationHolder],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

@@ -162,7 +162,7 @@ afterAll(async () => {
 
 const minimalCaseData = {
   type: CaseType.CUSTODY,
-  policeCaseNumber: 'Case Number',
+  policeCaseNumbers: ['Case Number'],
 }
 
 function remainingCreateCaseData() {
@@ -356,7 +356,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.type).toBe(caseTwo.type)
   expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
-  expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
+  expect(caseOne.policeCaseNumbers).toStrictEqual(caseTwo.policeCaseNumbers)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
   expect(caseOne.defenderNationalId ?? null).toBe(
     caseTwo.defenderNationalId ?? null,
@@ -853,7 +853,7 @@ describe('Notification', () => {
     await Case.create({
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
+      policeCaseNumbers: ['Case Number'],
     })
       .then((value) => {
         dbCase = value
@@ -903,7 +903,7 @@ describe('Notification', () => {
     await Case.create({
       origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
-      policeCaseNumber: 'Case Number',
+      policeCaseNumbers: ['Case Number'],
     })
       .then((value) => {
         dbCase = value

@@ -19,6 +19,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'reader',
         },
         subscribesTo: 'documents',
+        description: m.documentsDescription,
       },
 
       // Umsoknir
@@ -28,6 +29,21 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+        children: [
+          {
+            name: m.inProgressApplications,
+            path: ServicePortalPath.ApplicationInProgressApplications,
+          },
+          {
+            name: m.unfinishedApplications,
+            path: ServicePortalPath.ApplicationIncompleteApplications,
+          },
+          {
+            name: m.finishedApplications,
+            path: ServicePortalPath.ApplicationCompleteApplications,
+          },
+        ],
+        description: m.applicationsDescription,
       },
 
       // Company
@@ -37,6 +53,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'business',
         },
+        description: m.companyDescription,
       },
 
       // Min Gogn
@@ -53,22 +70,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.UserInfo,
           },
           {
-            name: m.family,
+            name: m.familySpouse,
             navHide: true,
-            path: ServicePortalPath.FamilyRoot,
-            children: [
-              {
-                name: m.familySpouse,
-                navHide: true,
-                path: ServicePortalPath.Spouse,
-              },
-              {
-                name: m.familyChild,
-                navHide: true,
-                path: ServicePortalPath.Child,
-              },
-            ],
+            path: ServicePortalPath.Spouse,
           },
+          {
+            name: m.familyChild,
+            navHide: true,
+            path: ServicePortalPath.Child,
+          },
+
           {
             // Petitions
             name: m.endorsements,
@@ -80,6 +91,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.PetitionsAdminView,
           },
         ],
+        description: m.userInfoDescription,
       },
       // Mín skírteini
       {
@@ -96,6 +108,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
+        description: m.licensesDescription,
       },
       // Starfsleyfi
       {
@@ -104,6 +117,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
+        description: m.educationLicenseDescription,
       },
       // Mín réttindi
       {
@@ -126,6 +140,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'school',
         },
+        description: m.educationDescription,
       },
       {
         name: m.documentProvider,
@@ -197,6 +212,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.AssetsRealEstateDetail,
           },
         ],
+        description: m.realEstateDescription,
       },
 
       // Fjarmal
@@ -232,6 +248,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'cellular',
         },
+        description: m.financeDescription,
       },
 
       // Ökutæki
@@ -254,15 +271,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
               },
             ],
           },
-          // {
-          //   name: m.vehiclesLookup,
-          //   path: ServicePortalPath.AssetsVehiclesLookup,
-          // },
+          {
+            name: m.vehiclesLookup,
+            path: ServicePortalPath.AssetsVehiclesLookup,
+          },
           {
             name: m.vehiclesHistory,
             path: ServicePortalPath.AssetsVehiclesHistory,
           },
         ],
+        description: m.vehiclesDescription,
       },
 
       // Stillingar - hidden from nav
@@ -310,8 +328,9 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
         icon: {
-          icon: 'people',
+          icon: 'lockClosed',
         },
+        description: m.accessControlDescription,
       },
     ],
   },

@@ -9,6 +9,8 @@ import {
   BasicVehicleInformationTechnicalAxle,
   PersidnoLookup,
   VehicleSearch,
+  PdfApi,
+  VehicleReportPdfGetRequest,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -26,7 +28,9 @@ export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(VehicleSearchApi)
+    @Inject(PdfApi)
     private vehiclesApi: VehicleSearchApi,
+    private vehiclesPDFApi: PdfApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -48,6 +52,9 @@ export class VehiclesService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private getPdfWithAuth(auth: Auth) {
+    return this.vehiclesPDFApi.withMiddleware(new AuthMiddleware(auth))
+  }
   async getVehiclesForUser(
     auth: User,
     showDeregistered: boolean,
@@ -114,23 +121,7 @@ export class VehiclesService {
           return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
-
-      const axleMaxWeight =
-        (data.techincal?.mass?.massdaxle1
-          ? data.techincal?.mass?.massdaxle1
-          : 0) +
-        (data.techincal?.mass?.massdaxle2
-          ? data.techincal?.mass?.massdaxle2
-          : 0) +
-        (data.techincal?.mass?.massdaxle3
-          ? data.techincal?.mass?.massdaxle3
-          : 0) +
-        (data.techincal?.mass?.massdaxle4
-          ? data.techincal?.mass?.massdaxle4
-          : 0) +
-        (data.techincal?.mass?.massdaxle5
-          ? data.techincal?.mass?.massdaxle5
-          : 0)
+      let axleMaxWeight = 0
 
       const numberOfAxles = data.techincal?.axle?.axleno ?? 0
 
@@ -146,12 +137,16 @@ export class VehiclesService {
           axles.push({
             axleMaxWeight:
               data.techincal.mass[
-                `massdaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+                `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
               ],
             wheelAxle: data.techincal.axle[
               `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxle
             ]?.toString(),
           })
+          axleMaxWeight +=
+            data.techincal.mass[
+              `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMass
+            ] ?? 0
         }
       }
 

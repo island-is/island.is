@@ -1,4 +1,4 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -36,7 +36,7 @@ const PSignTemplate: ApplicationTemplate<
           },
           progress: 0.33,
           lifecycle: {
-            shouldBeListed: false,
+            shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
@@ -61,6 +61,21 @@ const PSignTemplate: ApplicationTemplate<
               ],
               write: 'all',
             },
+            {
+              id: Roles.ACTOR,
+              formLoader: () =>
+                import('../forms/applicationWithActor').then((val) =>
+                  Promise.resolve(val.getApplication()),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -71,11 +86,16 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
 
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
+            {
+              id: Roles.ACTOR,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },
@@ -89,7 +109,12 @@ const PSignTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    if (
+      application.applicant === nationalId &&
+      application.applicantActors.length > 0
+    ) {
+      return Roles.ACTOR
+    } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
   },

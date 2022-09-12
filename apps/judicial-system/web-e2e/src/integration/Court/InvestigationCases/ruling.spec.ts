@@ -1,17 +1,18 @@
 import faker from 'faker'
 
 import {
-  IC_COURT_RECORD_ROUTE,
-  IC_RULING_ROUTE,
+  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
+  INVESTIGATION_CASE_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, intercept } from '../../../utils'
+import { mockCase, intercept } from '../../../utils'
+import { CaseType } from '@island.is/judicial-system/types'
 
-describe(`${IC_RULING_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_RULING_ROUTE}/:id`, () => {
   const lorem = faker.lorem.sentence()
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition = {
       ...caseData,
       demands: lorem,
@@ -21,7 +22,7 @@ describe(`${IC_RULING_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_RULING_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_RULING_ROUTE}/test_id_stadfest`)
   })
 
   it('should autofill conclusion when accepting decision is chosen and decision is ACCEPTING', () => {
@@ -73,6 +74,6 @@ describe(`${IC_RULING_ROUTE}/:id`, () => {
 
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').should('not.be.disabled').click()
-    cy.url().should('include', IC_COURT_RECORD_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_COURT_RECORD_ROUTE)
   })
 })

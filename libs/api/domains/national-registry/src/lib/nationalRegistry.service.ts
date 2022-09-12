@@ -14,6 +14,8 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
+import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
+import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
 @Injectable()
 export class NationalRegistryService {
@@ -179,6 +181,37 @@ export class NationalRegistryService {
       })
 
     return members
+  }
+
+  async postUserCorrection(
+    input: FamilyCorrectionInput,
+    nationalId: User['nationalId'],
+  ): Promise<FamilyCorrectionResponse> {
+    const userChildren = await this.nationalRegistryApi.getMyChildren(
+      nationalId,
+    )
+    const isAllowed = some(userChildren, ['Barn', input.nationalIdChild])
+
+    /**
+     * Only show data if child SSN is part of user's family.
+     */
+    if (!isAllowed) {
+      throw new ForbiddenException('Child not found')
+    }
+
+    const user = await this.getUser(nationalId)
+
+    const correctionInput = {
+      ...input,
+      name: user.fullName,
+      nationalId: nationalId,
+    }
+
+    const userCorrectionResponse = await this.nationalRegistryApi.postUserCorrection(
+      correctionInput,
+    )
+
+    return userCorrectionResponse
   }
 
   private formatGender(genderIndex: string): Gender {

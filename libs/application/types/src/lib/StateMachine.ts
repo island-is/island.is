@@ -10,6 +10,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
+import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
@@ -53,7 +54,7 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
   condition?: Condition
-}
+} & TestSupport
 
 export type StateLifeCycle =
   | {

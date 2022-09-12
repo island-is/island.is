@@ -1,6 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
-import { ApiScope } from '@island.is/auth/scopes'
+import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
@@ -20,9 +20,9 @@ export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       ),
       fetch: {
-        timeout: 10000,
+        timeout: 30000,
       },
-      scope: [ApiScope.vehicles],
+      scope: [VehiclesScope.vehicle],
     }
   },
 })

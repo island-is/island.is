@@ -1,15 +1,11 @@
-import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 
-import {
-  intercept,
-  makeProsecutor,
-  makeInvestigationCase,
-} from '../../../utils'
+import { intercept, makeProsecutor, mockCase } from '../../../utils'
 
 describe('Signed verdict overview - Prosecutor - Investigation cases', () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
@@ -18,7 +14,7 @@ describe('Signed verdict overview - Prosecutor - Investigation cases', () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

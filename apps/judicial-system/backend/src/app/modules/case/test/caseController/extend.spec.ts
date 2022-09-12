@@ -72,7 +72,7 @@ describe('CaseController - Extend', () => {
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
-    const policeCaseNumber = '007-2021-777'
+    const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
     const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
@@ -94,7 +94,7 @@ describe('CaseController - Extend', () => {
       origin,
       type,
       description,
-      policeCaseNumber,
+      policeCaseNumbers,
       defenderName,
       defenderNationalId,
       defenderEmail,
@@ -123,7 +123,7 @@ describe('CaseController - Extend', () => {
           origin,
           type,
           description,
-          policeCaseNumber,
+          policeCaseNumbers,
           defenderName,
           defenderNationalId,
           defenderEmail,
@@ -156,7 +156,7 @@ describe('CaseController - Extend', () => {
     const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
-    const policeCaseNumber = '007-2021-777'
+    const policeCaseNumbers = ['007-2021-777']
     const defenderName = 'John Doe'
     const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
@@ -178,7 +178,7 @@ describe('CaseController - Extend', () => {
       origin,
       type,
       description,
-      policeCaseNumber,
+      policeCaseNumbers,
       defenderName,
       defenderNationalId,
       defenderEmail,
@@ -207,7 +207,7 @@ describe('CaseController - Extend', () => {
           origin,
           type,
           description,
-          policeCaseNumber,
+          policeCaseNumbers,
           defenderName,
           defenderNationalId,
           defenderEmail,

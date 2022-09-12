@@ -3,15 +3,14 @@ import { IntlShape, useIntl } from 'react-intl'
 
 import {
   BlueBox,
-  CaseInfo,
-  CourtDocuments,
+  CourtCaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
   HideableText,
   PageLayout,
   PdfButton,
-  TimeInputField,
+  CourtDocuments,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -20,7 +19,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -31,7 +30,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   GridRow,
@@ -46,14 +44,8 @@ import {
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  formatRequestCaseType,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -95,6 +87,7 @@ const getSessionBookingsAutofill = (
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
+
   const { setAndSendToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -104,14 +97,12 @@ const CourtRecord = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
   const [
     sessionBookingsErrorMessage,
     setSessionBookingsMessage,
   ] = useState<string>('')
-  const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
 
   useDeb(workingCase, 'courtAttendees')
   useDeb(workingCase, 'sessionBookings')
@@ -137,7 +128,10 @@ const CourtRecord = () => {
         ) {
           autofillAttendees.push(
             `\n${workingCase.defenderName} skipaður ${
-              workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi'
             } ${formatMessage(core.defendant, { suffix: 'a' })}`,
           )
         }
@@ -220,7 +214,7 @@ const CourtRecord = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.COURT_RECORD}
+      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -230,19 +224,19 @@ const CourtRecord = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Þingbók
+            {formatMessage(m.sections.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
             <Box marginBottom={3}>
               <DateTime
                 name="courtStartDate"
-                datepickerLabel="Dagsetning þinghalds"
-                timeLabel="Þinghald hófst (kk:mm)"
+                datepickerLabel={formatMessage(
+                  m.sections.courtStartDate.dateLabel,
+                )}
+                timeLabel={formatMessage(m.sections.courtStartDate.timeLabel)}
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -342,23 +336,9 @@ const CourtRecord = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.courtDocuments.header)}
-            </Text>
-          </Box>
           <CourtDocuments
-            title={formatMessage(core.requestCaseType, {
-              caseType: formatRequestCaseType(workingCase.type),
-            })}
-            tagText={formatMessage(m.sections.courtDocuments.tag)}
-            tagVariant="darkerBlue"
-            text={formatMessage(m.sections.courtDocuments.text)}
-            caseId={workingCase.id}
-            selectedCourtDocuments={workingCase.courtDocuments ?? []}
-            onUpdateCase={updateCase}
-            setWorkingCase={setWorkingCase}
             workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -808,52 +788,43 @@ const CourtRecord = () => {
         <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Þinghald
+              {formatMessage(m.sections.endOfSessionTitle)}
             </Text>
           </Box>
           <GridContainer>
             <GridRow>
               <GridColumn>
-                <TimeInputField
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
+                <DateTime
+                  name="courtEndTime"
+                  datepickerLabel={formatMessage(
+                    m.sections.courtEndTime.dateLabel,
+                  )}
+                  timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                  minDate={
+                    workingCase.courtStartDate
+                      ? new Date(workingCase.courtStartDate)
+                      : undefined
+                  }
+                  maxDate={new Date()}
+                  selectedDate={workingCase.courtEndTime}
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    setAndSendToServer(
+                      [
+                        {
+                          courtEndTime:
+                            date && valid
+                              ? formatDateForServer(date)
+                              : undefined,
+                          force: true,
+                        },
+                      ],
                       workingCase,
                       setWorkingCase,
-                      courtDocumentEndEM,
-                      setCourtDocumentEndEM,
                     )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'courtEndTime',
-                      workingCase.courtStartDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setCourtDocumentEndEM,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="courtEndTime"
-                    name="courtEndTime"
-                    label="Þinghaldi lauk (kk:mm)"
-                    placeholder="Veldu tíma"
-                    autoComplete="off"
-                    defaultValue={formatDate(
-                      workingCase.courtEndTime,
-                      constants.TIME_FORMAT,
-                    )}
-                    errorMessage={courtDocumentEndEM}
-                    hasError={courtDocumentEndEM !== ''}
-                    required
-                  />
-                </TimeInputField>
+                  }}
+                  blueBox={false}
+                  required
+                />
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -868,9 +839,9 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

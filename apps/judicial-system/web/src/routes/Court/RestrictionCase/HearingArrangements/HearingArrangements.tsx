@@ -6,7 +6,7 @@ import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
@@ -17,13 +17,12 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   rcHearingArrangements as m,
   titles,
@@ -43,7 +42,6 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const [modalVisible, setModalVisible] = useState(false)
 
@@ -124,7 +122,9 @@ export const HearingArrangements: React.FC = () => {
     )
 
     if (hasSentNotification && !courtDateHasChanged) {
-      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(
+        `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+      )
     } else {
       setModalVisible(true)
     }
@@ -142,7 +142,7 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -164,9 +164,7 @@ export const HearingArrangements: React.FC = () => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
@@ -191,7 +189,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={
@@ -217,19 +215,23 @@ export const HearingArrangements: React.FC = () => {
             },
           )}
           isPrimaryButtonLoading={isSendingNotification}
-          handleSecondaryButtonClick={() => {
+          onSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+            router.push(
+              `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+            )
           }}
-          handlePrimaryButtonClick={async () => {
+          onPrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
               workingCase.id,
               NotificationType.COURT_DATE,
             )
 
             if (notificationSent) {
-              router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import {
   Box,
@@ -20,9 +20,8 @@ import slugify from '@sindresorhus/slugify'
 import { isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client/react'
 import { GENERIC_FORM_MUTATION } from '@island.is/web/screens/queries/Form'
-import * as styles from './Form.css'
-import { Namespace } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import * as styles from './Form.css'
 
 interface FormFieldProps {
   field: FormType['fields'][0]
@@ -34,7 +33,7 @@ interface FormFieldProps {
 
 interface FormProps {
   form: FormType
-  namespace: Namespace
+  namespace: Record<string, string>
 }
 
 const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
@@ -69,7 +68,11 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           onChange={(e) => onChange(slug, e.target.value)}
         />
       )
-    case 'dropdown':
+    case 'dropdown': {
+      const options = field.options.map((option) => ({
+        label: option,
+        value: option,
+      }))
       return (
         <Select
           key={slug}
@@ -77,16 +80,16 @@ const FormField = ({ field, slug, value, error, onChange }: FormFieldProps) => {
           label={field.title}
           placeholder={field.placeholder}
           required={field.required}
-          options={field.options.map((option, idx) => ({
-            label: option,
-            value: option,
-          }))}
-          value={{ label: value, value }}
+          options={options}
+          value={
+            options.find((o) => o.value === value) ?? { label: value, value }
+          }
           onChange={({ value }: Option) => onChange(slug, value)}
           hasError={!!error}
           errorMessage={error}
         />
       )
+    }
     case 'radio':
       return (
         <Box>
@@ -280,11 +283,11 @@ export const Form = ({ form, namespace }: FormProps) => {
           </Text>
           <Text marginBottom={2}>{form.intro}</Text>
           <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
-            {n('formAboutYouTitle', 'Segðu okkur frá þér')}
+            {form.aboutYouHeadingText}
           </Text>
           <Stack space={4}>
             <Input
-              placeholder={n('formAboutYouTitle', 'Nafnið þitt')}
+              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
               name="name"
               label={n('formFullName', 'Fullt nafn')}
               required={true}
@@ -296,7 +299,7 @@ export const Form = ({ form, namespace }: FormProps) => {
               onChange={(e) => onChange('name', e.target.value)}
             />
             <Input
-              placeholder={n('formEmail', 'Netfang')}
+              placeholder={n('formEmailPlaceholder', 'Netfang')}
               name="email"
               label={n('formEmail', 'Netfang')}
               required={true}
@@ -309,7 +312,7 @@ export const Form = ({ form, namespace }: FormProps) => {
             />
           </Stack>
           <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
-            {n('formQuestions', 'Spurningar')}
+            {form.questionsHeadingText}
           </Text>
           <Stack space={4}>
             {form.fields.map((field) => {

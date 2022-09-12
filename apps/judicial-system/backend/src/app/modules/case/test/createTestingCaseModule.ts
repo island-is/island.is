@@ -15,6 +15,7 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
+import { PoliceService } from '../../police'
 import { EventService } from '../../event'
 import { UserService } from '../../user'
 import { FileService } from '../../file'
@@ -31,6 +32,7 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/email-service')
 jest.mock('../../court/court.service')
+jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
@@ -66,6 +68,7 @@ export const createTestingCaseModule = async () => {
     ],
     providers: [
       CourtService,
+      PoliceService,
       UserService,
       FileService,
       AwsS3Service,
@@ -79,7 +82,7 @@ export const createTestingCaseModule = async () => {
       {
         provide: IntlService,
         useValue: {
-          useIntl: async () => ({ formatMessage: jest.fn() }),
+          useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
@@ -113,6 +116,8 @@ export const createTestingCaseModule = async () => {
     .compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
+
+  const policeService = caseModule.get<PoliceService>(PoliceService)
 
   const userService = caseModule.get<UserService>(UserService)
 
@@ -154,6 +159,7 @@ export const createTestingCaseModule = async () => {
 
   return {
     courtService,
+    policeService,
     userService,
     fileService,
     awsS3Service,

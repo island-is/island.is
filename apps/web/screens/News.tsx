@@ -438,7 +438,7 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
             page: selectedPage,
             year,
             month,
-            tag,
+            tags: [tag],
           },
         },
       }),

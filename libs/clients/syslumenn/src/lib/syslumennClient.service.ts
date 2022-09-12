@@ -167,7 +167,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment | undefined,
+    attachments: Attachment[] | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -177,7 +177,7 @@ export class SyslumennService {
     const payload = constructUploadDataObject(
       id,
       persons,
-      attachment,
+      attachments,
       extraData,
       uploadDataName,
       uploadDataId,
@@ -363,35 +363,10 @@ export class SyslumennService {
     const res = await api.danarbuAlgengTengslGet({
       audkenni: id,
     })
-    //return res TODO: change when generated api is fixed
     return {
-      relations: [
-        'Systir',
-        'Bróðir',
-        'Móðir',
-        'Faðir',
-        'Dóttir',
-        'Sonur',
-        'Dótturdóttir',
-        'Dóttursonur',
-        'Sonardóttir',
-        'Sonarsonur',
-        'Maki',
-        'Bréferfingi',
-        'Systkinabarn',
-        'Systkinabarnabarn',
-        'Afi',
-        'Amma',
-        'Stjúpdóttir',
-        'Stjúpsonur',
-        'Fósturdóttir',
-        'Fóstursonur',
-        'Útfararþjónusta',
-        'Skv. erfðaskrá',
-        'Annað',
-        'Dóttir látins maka',
-        'Sonur látins maka',
-      ],
+      relations: res
+        .map((relation) => relation?.heiti)
+        .filter((heiti): heiti is string => Boolean(heiti)),
     }
   }
 

@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -108,7 +111,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             action: API_MODULE.sendApplyHealthInsuranceApplication,
           }),
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

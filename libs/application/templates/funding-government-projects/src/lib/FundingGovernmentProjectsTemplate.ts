@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationConfigurations,
   ApplicationTemplate,
@@ -87,7 +90,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TEMPLATE_API_ACTIONS.sendApplication,
           }),

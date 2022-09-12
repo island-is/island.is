@@ -2,7 +2,10 @@ import { assign } from 'xstate'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  DEPRECATED_DefaultStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -163,7 +166,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Waiting to assign reviewer',
           progress: 0.4,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: API_MODULE_ACTIONS.assignReviewer,
           }),
@@ -187,7 +190,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: States.IN_REVIEW,
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -225,7 +228,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: API_MODULE_ACTIONS.applicationRejected,
           }),
@@ -245,7 +248,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'TestPhase',
           progress: 0.75,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: API_MODULE_ACTIONS.applicationApproved,
           }),
@@ -271,7 +274,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Finished',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
