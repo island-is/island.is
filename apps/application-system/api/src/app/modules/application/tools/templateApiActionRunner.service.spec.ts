@@ -10,8 +10,6 @@ import {
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
-import { ConfigBase } from 'aws-sdk/lib/config-base'
-import { canConsumeForm } from '@island.is/clients/islykill'
 
 let app: INestApplication
 

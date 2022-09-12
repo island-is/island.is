@@ -55,7 +55,7 @@ describe('dataProviderUtils', () => {
     expect(isProviderErrorReason(mockErrorReasonStringOnly)).toBe(false)
 
     expect(getErrorReasonIfPresent(mockErrorReasonStringOnly)).toEqual({
-      title: coreErrorMessages.errorDataProvider,
+      title: coreErrorMessages.failedDataProviderSubmit,
       summary: 'someError',
     })
 
@@ -64,7 +64,7 @@ describe('dataProviderUtils', () => {
     expect(isProviderErrorReason(mockErrorReasonTranslationOnly)).toBe(false)
 
     expect(getErrorReasonIfPresent(mockErrorReasonTranslationOnly)).toEqual({
-      title: coreErrorMessages.errorDataProvider,
+      title: coreErrorMessages.failedDataProviderSubmit,
       summary: coreErrorMessages.fileUpload,
     })
 
