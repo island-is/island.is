@@ -11,6 +11,8 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
+import format from 'date-fns/format'
+import { format as formatKennitala } from 'kennitala'
 
 function isEstateRegistrant(
   data: string | number | boolean | object | undefined,
@@ -53,8 +55,8 @@ export const Prerequisites: Form = buildForm({
                 },
               }) =>
                 isEstateRegistrant(data)
-                  ? data.estate.nationalIdOfDeceased
-                  : 'Bango',
+                  ? formatKennitala(data.estate.nationalIdOfDeceased)
+                  : '',
               width: 'half',
             }),
             buildDescriptionField({
@@ -75,8 +77,8 @@ export const Prerequisites: Form = buildForm({
                 },
               }) =>
                 isEstateRegistrant(data)
-                  ? data.estate.dateOfDeath.toString()
-                  : 'Dánardagur ekki skráður',
+                  ? format(new Date(data.estate.dateOfDeath), 'dd/MM/yyyy')
+                  : m.deathDateNotRegistered,
               width: 'half',
             }),
             buildDescriptionField({
@@ -110,7 +112,7 @@ export const Prerequisites: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: m.confirmButton,
                   type: 'primary',
                 },
               ],

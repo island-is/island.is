@@ -36,6 +36,11 @@ export const m = defineMessages({
     defaultMessage: 'Sýslumenn',
     description: '',
   },
+  confirmButton: {
+    id: 'es.application:confirmButton',
+    defaultMessage: 'Staðfesta',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -89,6 +94,11 @@ export const m = defineMessages({
   deathDate: {
     id: 'es.application:deathDate',
     defaultMessage: 'Dánardagur',
+    description: '',
+  },
+  deathDateNotRegistered: {
+    id: 'es.application:deathDateNotRegistered',
+    defaultMessage: 'Dánardagur ekki skráður',
     description: '',
   },
 
