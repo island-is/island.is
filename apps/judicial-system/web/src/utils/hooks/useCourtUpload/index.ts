@@ -127,8 +127,8 @@ export const useCourtUpload = (
               (error as ApolloError).graphQLErrors[0].extensions?.code,
             detail:
               error instanceof ApolloError &&
-              (error as ApolloError).graphQLErrors[0].extensions?.problem
-                ?.detail,
+              ((error as ApolloError).graphQLErrors[0].extensions
+                ?.problem as any)?.detail,
           }
 
           if (errorCode === 'https://httpstatuses.org/404') {

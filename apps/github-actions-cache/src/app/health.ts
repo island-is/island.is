@@ -6,7 +6,7 @@ export const healthCheck = async (_: any, res: express.Response) => {
 }
 
 export const livenessCheck = async (_: any, res: express.Response) => {
-  if (cache.ping()) {
+  if (await cache.ping()) {
     res.send('OK')
   } else {
     res.status(500).send('Cache ping failed')

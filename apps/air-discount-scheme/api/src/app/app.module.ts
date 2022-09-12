@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { CmsModule } from '@island.is/cms'
 
@@ -27,6 +28,7 @@ const autoSchemaFile = environment.production
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
+      driver: ApolloDriver,
     }),
     AuthModule.register(environment.identityServerAuth),
     UserModule,

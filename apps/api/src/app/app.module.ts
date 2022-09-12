@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
@@ -79,6 +80,7 @@ const autoSchemaFile = environment.production
   controllers: [HealthController],
   imports: [
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       debug,
       playground,
       autoSchemaFile,
@@ -95,6 +97,7 @@ const autoSchemaFile = environment.production
         }),
       ],
     }),
+
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,

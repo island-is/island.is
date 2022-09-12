@@ -1,6 +1,7 @@
 {
   "platform": "node",
   "external": [
+    "@apollo/subgraph",
     "fsevents",
     "@nestjs/microservices",
     "class-transformer",
@@ -40,7 +41,8 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "safer-buffer"
+    "safer-buffer",
+    "ts-morph"
   ],
   "keepNames": true
 }

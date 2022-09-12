@@ -128,6 +128,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   useEffect(() => {
+    //if (typeof(policeDataError?.graphQLErrors[0].extensions?.code) !== "unknown")
     if (workingCase.origin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
@@ -151,7 +152,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
+        errorCode: policeDataError?.graphQLErrors[0].extensions.code as string
       })
     }
   }, [

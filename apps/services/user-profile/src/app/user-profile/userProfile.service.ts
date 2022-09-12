@@ -76,7 +76,7 @@ export class UserProfileService {
         ...body,
         nationalId: user.nationalId,
       })
-    } catch (e) {
+    } catch (e: any) {
       throw new BadRequestException(e.errors)
     }
   }

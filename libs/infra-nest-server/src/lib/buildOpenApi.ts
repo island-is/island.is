@@ -33,7 +33,7 @@ export const buildOpenApi = async ({
     // https://github.com/configcat/common-js/issues/36
     // TODO: Remove this when it's been fixed.
     process.exit(0)
-  } catch (e) {
+  } catch (e: any) {
     logger.error('Error while creating openapi.yaml', { message: e.message })
   }
 }
