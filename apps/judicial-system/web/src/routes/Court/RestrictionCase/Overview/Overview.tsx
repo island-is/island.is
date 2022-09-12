@@ -50,7 +50,7 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -196,13 +196,24 @@ export const JudgeOverview: React.FC = () => {
                   : 'Var ekki skráður',
               },
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
+              sessionArrangement: workingCase.sessionArrangements,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box marginBottom={5}>

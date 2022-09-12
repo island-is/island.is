@@ -277,15 +277,7 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   ]).isValid
 }
 
-export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
-  return (
-    workingCase.judge &&
-    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
-      .isValid
-  )
-}
-
-export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+export const isReceptionAndAssignmentStepValid = (workingCase: Case) => {
   return (
     workingCase.judge &&
     validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
@@ -367,6 +359,15 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
       [workingCase.conclusion, ['empty']],
       [workingCase.ruling, ['empty']],
     ]).isValid
+  )
+}
+
+export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
+  const date = courtDate || workingCase.courtDate
+
+  return (
+    workingCase.subpoenaType &&
+    validate([[date, ['empty', 'date-format']]]).isValid
   )
 }
 

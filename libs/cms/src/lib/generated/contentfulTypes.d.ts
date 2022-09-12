@@ -688,9 +688,6 @@ export interface IFeaturedArticlesFields {
   /** Link */
   link?: ILink | undefined
 
-  /** Application Label */
-  applicationLabel: string
-
   /** Automatically Fetch Articles */
   automaticallyFetchArticles: boolean
 
@@ -763,7 +760,7 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFormFields {
   /** Title */
-  title: string
+  title?: string | undefined
 
   /** Intro */
   intro?: string | undefined
@@ -1036,7 +1033,7 @@ export interface IGenericTagFields {
   genericTagGroup?: IGenericTagGroup | undefined
 }
 
-/** A generic uniquely named tag that can be used for tag miscellaneous things. */
+/** A generic uniquely named tag that can be used to tag miscellaneous things. */
 
 export interface IGenericTag extends Entry<IGenericTagFields> {
   sys: {
@@ -2423,11 +2420,20 @@ export interface IProjectPageFields {
   slices?:
     | (
         | IAccordionSlice
+        | IBigBulletList
+        | IContactUs
         | IMailingListSignup
+        | IEventSlice
+        | IFaqList
         | IFeaturedArticles
         | ISectionHeading
         | ILatestNewsSlice
+        | IMultipleStatistics
         | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITwoColumnText
       )[]
     | undefined
 
@@ -2448,6 +2454,17 @@ export interface IProjectPageFields {
 
   /** Featured Description */
   featuredDescription?: string | undefined
+
+  /** Bottom Slices */
+  bottomSlices?:
+    | (
+        | ILatestNewsSlice
+        | ILogoListSlice
+        | IOneColumnText
+        | ITimeline
+        | ITwoColumnText
+      )[]
+    | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2481,7 +2498,26 @@ export interface IProjectSubpageFields {
   renderSlicesAsTabs?: boolean | undefined
 
   /** Slices */
-  slices?: IOneColumnText[] | undefined
+  slices?:
+    | (
+        | IAccordionSlice
+        | IBigBulletList
+        | IContactUs
+        | IDistricts
+        | IMailingListSignup
+        | IEventSlice
+        | IFaqList
+        | IFeaturedArticles
+        | ILatestNewsSlice
+        | IMultipleStatistics
+        | IOneColumnText
+        | IOverviewLinks
+        | ITabSection
+        | ITeamList
+        | ITellUsAStory
+        | ITwoColumnText
+      )[]
+    | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
