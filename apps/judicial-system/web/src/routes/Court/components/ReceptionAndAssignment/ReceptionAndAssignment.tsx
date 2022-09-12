@@ -128,7 +128,7 @@ const ReceptionAndAssignment = () => {
       ? `${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${id}`
       : isInvestigationCase(workingCase.type)
       ? `${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${id}`
-      : `${constants.CASES_ROUTE}` // TODO: add next step
+      : `${constants.INDICTMENTS_SUBPOENA_ROUTE}/${id}`
   }
 
   const getActiveSubSection = () => {
