@@ -19,11 +19,8 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
-<<<<<<< HEAD
   getApplicationExternalData,
   PARENTAL_LEAVE,
-=======
->>>>>>> 4f7dec55f24aa12ac46acba954cacc26a94bf0be
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
