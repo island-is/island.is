@@ -17,9 +17,9 @@ import { useMemo, useState } from 'react'
 import { GET_DEILISTOFNA_INFORMATION_FOR_SHIP } from './queries'
 
 import { getYearOptions, YearOption } from '../../utils'
+import { QuotaTypeSelect } from '../QuotaTypeSelect'
 
 import * as styles from './DeilistofnaCalculator.css'
-import { FishSelect } from '../FishSelect'
 
 type GetDeilistofnaInformationForShipQuery = {
   getDeilistofnaInformationForShip: ShipStatusInformation
@@ -63,7 +63,7 @@ export const DeilistofnaCalculator = () => {
               }}
             />
           </Box>
-          <FishSelect />
+          <QuotaTypeSelect type="deilistofn" year={selectedYear.value} />
         </Inline>
 
         <Box marginTop={[3, 3, 0]}>

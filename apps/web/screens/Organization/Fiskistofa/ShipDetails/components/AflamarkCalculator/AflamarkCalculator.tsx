@@ -19,7 +19,7 @@ import {
   GET_UPDATED_AFLAMARK_INFORMATION_FOR_SHIP,
 } from './queries'
 import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
-import { FishSelect } from '../FishSelect'
+import { QuotaTypeSelect } from '../QuotaTypeSelect'
 
 import * as styles from './AflamarkCalculator.css'
 
@@ -142,7 +142,10 @@ export const AflamarkCalculator = () => {
               }}
             />
           </Box>
-          <FishSelect />
+          <QuotaTypeSelect
+            type="aflamark"
+            timePeriod={selectedTimePeriod.value}
+          />
         </Inline>
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
