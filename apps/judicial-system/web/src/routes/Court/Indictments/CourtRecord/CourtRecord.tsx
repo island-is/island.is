@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { AlertMessage, Box, InputFileUpload } from '@island.is/island-ui/core'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -38,6 +38,8 @@ const CourtRecord: React.FC = () => {
     allFilesUploaded,
   } = useS3Upload(workingCase)
 
+  const handleNextButtonClick = () => {}
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -50,6 +52,12 @@ const CourtRecord: React.FC = () => {
       <FormContentContainer>
         <PageTitle title={formatMessage(m.title)} />
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(m.alertBannerText)}
+            type="info"
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
@@ -65,7 +73,7 @@ const CourtRecord: React.FC = () => {
             onRetry={handleRetry}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <SectionHeading title={formatMessage(m.rulingTitle)} />
           <InputFileUpload
             fileList={files.filter(
@@ -83,7 +91,8 @@ const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          // previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.CASES_ROUTE}`} // TODO: Add previous url when it is ready
+          onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
         />
