@@ -1,5 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import { gql } from '@apollo/client'
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
@@ -15,13 +16,104 @@ import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
-import {
-  GET_SINGLE_PROPERTY_QUERY,
-  GET_PROPERTY_OWNERS_QUERY,
-} from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
+
+export const GET_PROPERTY_OWNERS_QUERY = gql`
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+    assetsPropertyOwners(input: $input) {
+      registeredOwners {
+        name
+        ssn
+        ownership
+        purchaseDate
+        grantDisplay
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        offset
+        total
+        hasPreviousPage
+        hasNextPage
+      }
+    }
+  }
+`
+
+export const GET_SINGLE_PROPERTY_QUERY = gql`
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        locationNumber
+        postNumber
+        municipality
+        propertyNumber
+        display
+        displayShort
+      }
+      appraisal {
+        activeAppraisal
+        plannedAppraisal
+        activeStructureAppraisal
+        plannedStructureAppraisal
+        activePlotAssessment
+        plannedPlotAssessment
+        activeYear
+        plannedYear
+      }
+      registeredOwners {
+        registeredOwners {
+          name
+          ssn
+          ownership
+          purchaseDate
+          grantDisplay
+        }
+      }
+      land {
+        landNumber
+        landAppraisal
+        useDisplay
+        area
+        areaUnit
+      }
+      unitsOfUse {
+        unitsOfUse {
+          propertyNumber
+          unitOfUseNumber
+          marking
+          usageDisplay
+          displaySize
+          buildYearDisplay
+          fireAssessment
+          explanation
+          appraisal {
+            activeAppraisal
+            plannedAppraisal
+            activeStructureAppraisal
+            plannedStructureAppraisal
+            activePlotAssessment
+            plannedPlotAssessment
+            activeYear
+            plannedYear
+          }
+          address {
+            locationNumber
+            postNumber
+            municipality
+            propertyNumber
+            display
+            displayShort
+          }
+        }
+      }
+    }
+  }
+`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')

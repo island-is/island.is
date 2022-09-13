@@ -1,13 +1,21 @@
 import { useMutation } from '@apollo/client'
+import { gql } from '@apollo/client'
 import {
   Mutation,
   MutationCreateEmailVerificationArgs,
 } from '@island.is/api/schema'
-import { CREATE_EMAIL_VERIFICATION } from '../../lib/mutations/createEmailVerification'
 
 export type CreateEmailVerificationData = {
   email: string
 }
+
+export const CREATE_EMAIL_VERIFICATION = gql`
+  mutation createEmailVerification($input: CreateEmailVerificationInput!) {
+    createEmailVerification(input: $input) {
+      created
+    }
+  }
+`
 
 export const useVerifyEmail = () => {
   const [
