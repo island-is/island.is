@@ -8,7 +8,7 @@ export enum AppealDecisionRole {
 export enum Sections {
   PROSECUTOR = 0,
   JUDGE = 1,
-  // We skip 2 because that step has the ruling, i.e. the SignedVerdictPage, which has no subsections.
+  CASE_CLOSED = 2,
   EXTENSION = 3,
   JUDGE_EXTENSION = 4,
 }

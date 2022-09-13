@@ -10,7 +10,7 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   createCurrentUser,
   createNationalRegistryUser,
@@ -44,7 +44,7 @@ describe('DelegationsController', () => {
     let prRightTypeModel: typeof PersonalRepresentativeRightType
     let prTypeModel: typeof PersonalRepresentativeType
 
-    let einstaklingarApi: EinstaklingarApi
+    let nationalRegistryApi: NationalRegistryClientService
 
     const userKennitala = getFakeNationalId()
 
@@ -78,7 +78,7 @@ describe('DelegationsController', () => {
       prScopePermission = app.get<typeof PersonalRepresentativeScopePermission>(
         'PersonalRepresentativeScopePermissionRepository',
       )
-      einstaklingarApi = app.get(EinstaklingarApi)
+      nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
     afterAll(async () => {
@@ -137,7 +137,7 @@ describe('DelegationsController', () => {
       ])(
         'and given user has %d active representees with valid rights, %d active representees with outdate rights and %d active representees with unactivated',
         (valid: number, outdated: number, unactivated: number) => {
-          let einstaklingarApiSpy: jest.SpyInstance
+          let nationalRegistryApiSpy: jest.SpyInstance
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
@@ -192,22 +192,22 @@ describe('DelegationsController', () => {
             }
 
             const nationalRegistryUsers = [
-              ...validRepresentedPersons.map(([nafn, kennitala]) =>
-                createNationalRegistryUser({ nafn, kennitala }),
+              ...validRepresentedPersons.map(([name, nationalId]) =>
+                createNationalRegistryUser({ name, nationalId }),
               ),
-              ...outdatedRepresentedPersons.map(([nafn, kennitala]) =>
-                createNationalRegistryUser({ nafn, kennitala }),
+              ...outdatedRepresentedPersons.map(([name, nationalId]) =>
+                createNationalRegistryUser({ name, nationalId }),
               ),
-              ...unactivatedRepresentedPersons.map(([nafn, kennitala]) =>
-                createNationalRegistryUser({ nafn, kennitala }),
+              ...unactivatedRepresentedPersons.map(([name, nationalId]) =>
+                createNationalRegistryUser({ name, nationalId }),
               ),
             ]
 
-            einstaklingarApiSpy = jest
-              .spyOn(einstaklingarApi, 'einstaklingarGetEinstaklingur')
-              .mockImplementation(({ id }) => {
+            nationalRegistryApiSpy = jest
+              .spyOn(nationalRegistryApi, 'getIndividual')
+              .mockImplementation((id) => {
                 const user = nationalRegistryUsers.find(
-                  (u) => u.kennitala === id,
+                  (u) => u.nationalId === id,
                 )
                 return user ? Promise.resolve(user) : Promise.reject()
               })
@@ -275,8 +275,8 @@ describe('DelegationsController', () => {
               valid === 1 ? 'name' : 'names'
             }  of the valid represented ${
               valid === 1 ? 'person' : 'persons'
-            } from einstaklingarApi`, () => {
-              expect(einstaklingarApiSpy).toHaveBeenCalledTimes(valid)
+            } from nationalRegistryApi`, () => {
+              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(valid)
             })
 
             it('should have the delegation type claims of PersonalRepresentative', () => {

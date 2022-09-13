@@ -226,17 +226,20 @@ export function formatProsecutorCourtDateEmailNotification(
   sessionArrangements?: SessionArrangements,
 ): { subject: string; body: string } {
   const cf = notifications.prosecutorCourtDateEmail
-  const scheduledCaseText = formatMessage(cf.scheduledCase, {
-    court,
-    investigationPrefix:
-      type === CaseType.OTHER
-        ? 'onlyPrefix'
-        : isInvestigationCase(type)
-        ? 'withPrefix'
-        : 'noPrefix',
-    courtTypeName: caseTypes[type],
-  })
+  const scheduledCaseText = isIndictmentCase(type)
+    ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
+    : formatMessage(cf.scheduledCase, {
+        court,
+        investigationPrefix:
+          type === CaseType.OTHER
+            ? 'onlyPrefix'
+            : isInvestigationCase(type)
+            ? 'withPrefix'
+            : 'noPrefix',
+        courtTypeName: caseTypes[type],
+      })
   const courtDateText = formatMessage(cf.courtDate, {
+    isIndictment: isIndictmentCase(type),
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -255,17 +258,26 @@ export function formatProsecutorCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  const body = formatMessage(cf.body, {
-    scheduledCaseText,
-    courtDateText,
-    courtRoomText,
-    judgeText,
-    registrarText: registrarText || 'NONE',
-    defenderText,
-    sessionArrangements,
-  })
+  const body = isIndictmentCase(type)
+    ? formatMessage(cf.bodyIndictments, {
+        scheduledCaseText,
+        courtDateText,
+        courtRoomText,
+        judgeText,
+        registrarText: registrarText || 'NONE',
+      })
+    : formatMessage(cf.body, {
+        scheduledCaseText,
+        courtDateText,
+        courtRoomText,
+        judgeText,
+        registrarText: registrarText || 'NONE',
+        defenderText,
+        sessionArrangements,
+      })
 
   const subject = formatMessage(cf.subject, {
+    isIndictment: isIndictmentCase(type),
     courtCaseNumber: courtCaseNumber || '',
   })
 
