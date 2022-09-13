@@ -1,7 +1,7 @@
 import {
   Box,
   Breadcrumbs,
-  Button,
+  Text,
   GridContainer,
   Inline,
 } from '@island.is/island-ui/core'
@@ -14,28 +14,9 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { Locale } from 'locale'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AflamarkCalculator } from './components/AflamarkCalculator'
-import { Dashboard } from './components/Dashboard'
 import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
-
-const tabs = [
-  {
-    label: 'Mælaborð',
-    content: <Dashboard />,
-    id: 'dashboard',
-  },
-  {
-    label: 'Reiknivél aflamarks',
-    content: <AflamarkCalculator />,
-    id: 'aflamark',
-  },
-  {
-    label: 'Reiknivél deilistofna',
-    content: <DeilistofnaCalculator />,
-    id: 'deilistofn',
-  },
-]
 
 interface ShipDetailsProps {
   locale: Locale
@@ -43,6 +24,22 @@ interface ShipDetailsProps {
 }
 
 const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
+  const tabs = useMemo(
+    () => [
+      {
+        label: 'Reiknivél aflamarks',
+        content: <AflamarkCalculator namespace={namespace} />,
+        id: 'aflamark',
+      },
+      {
+        label: 'Reiknivél deilistofna',
+        content: <DeilistofnaCalculator namespace={namespace} />,
+        id: 'deilistofn',
+      },
+    ],
+    [],
+  )
+
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
   const breadcrumbItems = [
@@ -61,17 +58,24 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
       <GridContainer>
         <Breadcrumbs items={breadcrumbItems} />
         <Box marginTop={3} marginBottom={3}>
-          <Inline alignY="center" space={3}>
-            {tabs.map((tab) => (
-              <Button
-                onClick={() => setSelectedTab(tab)}
-                type=""
-                variant="text"
-                key={tab.id}
-              >
-                {tab.label}
-              </Button>
-            ))}
+          <Inline alignY="center" space={5}>
+            {tabs.map((tab) => {
+              const isSelected = selectedTab.id === tab.id
+              return (
+                <Box
+                  cursor="pointer"
+                  onClick={() => setSelectedTab(tab)}
+                  key={tab.id}
+                >
+                  <Text
+                    fontWeight={isSelected ? 'semiBold' : undefined}
+                    color={isSelected ? 'blue400' : undefined}
+                  >
+                    {tab.label}
+                  </Text>
+                </Box>
+              )
+            })}
           </Inline>
         </Box>
       </GridContainer>

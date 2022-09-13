@@ -40,7 +40,6 @@ export class FiskistofaApi {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-fiskistofa',
-          treat400ResponsesAsErrors: true,
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
@@ -55,7 +54,6 @@ export class FiskistofaApi {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-fiskistofa',
-          treat400ResponsesAsErrors: true,
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,

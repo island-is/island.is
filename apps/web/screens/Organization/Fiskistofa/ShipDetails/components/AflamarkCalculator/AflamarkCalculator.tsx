@@ -22,6 +22,7 @@ import {
 } from './queries'
 import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
 import { QuotaTypeSelect } from '../QuotaTypeSelect'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './AflamarkCalculator.css'
 
@@ -43,9 +44,15 @@ type ChangeErrors = Record<
   }
 >
 
-export const AflamarkCalculator = () => {
+interface AflamarkCalculatorProps {
+  namespace: Record<string, string>
+}
+
+export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   const [shipNumber, setShipNumber] = useState<number>(-1)
   const router = useRouter()
+
+  const n = useNamespace(namespace)
 
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
 
@@ -86,7 +93,10 @@ export const AflamarkCalculator = () => {
     },
     onCompleted(response) {
       const initialData = response?.getShipStatusForTimePeriod
-      if (initialData) setData(initialData)
+      if (initialData) {
+        console.log(initialData)
+        setData(initialData)
+      }
     },
   })
 
@@ -160,7 +170,7 @@ export const AflamarkCalculator = () => {
       (c) => c.id === category.id,
     )?.[fieldName]
 
-    if (!a || !b) return 0
+    if (!a || !b) return undefined
 
     return a - b
   }
@@ -257,7 +267,7 @@ export const AflamarkCalculator = () => {
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
-                <th>Kvótategund</th>
+                <th>{n('kvotategund', 'Kvótategund')}</th>
                 {data?.allowedCatchCategories?.map((category) => {
                   return <th key={category.name}>{category.name}</th>
                 })}
@@ -265,31 +275,31 @@ export const AflamarkCalculator = () => {
             </thead>
             <tbody>
               <tr>
-                <td>Úthlutun</td>
+                <td>{n('uthlutun', 'Úthlutun')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.allocation}</td>
                 ))}
               </tr>
               <tr>
-                <td>Sérst. úthl.</td>
+                <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.specialAlloction}</td>
                 ))}
               </tr>
               <tr>
-                <td>Milli ára</td>
+                <td>{n('milliAra', 'Milli ára')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.betweenYears}</td>
                 ))}
               </tr>
               <tr>
-                <td>Milli skipa</td>
+                <td>{n('milliSkipa', 'Milli skipa')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.betweenShips}</td>
                 ))}
               </tr>
               <tr>
-                <td>Aflamarksbr.</td>
+                <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
                 {/* TODO: keep track of difference from initial aflamark to what it is now */}
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
@@ -324,19 +334,19 @@ export const AflamarkCalculator = () => {
                 ))}
               </tr>
               <tr>
-                <td>Aflamark</td>
+                <td>{n('aflamark', 'Aflamark')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.allowedCatch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Afli</td>
+                <td>{n('afli', 'Afli')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.catch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Aflabreyting</td>
+                <td>{n('aflabreyting', 'Aflabreyting')}</td>
 
                 {data?.allowedCatchCategories?.map((category) => {
                   return (
@@ -375,37 +385,37 @@ export const AflamarkCalculator = () => {
                 })}
               </tr>
               <tr>
-                <td>Staða</td>
+                <td>{n('stada', 'Staða')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.status}</td>
                 ))}
               </tr>
               <tr>
-                <td>Tilfærsla</td>
+                <td>{n('tilfaersla', 'Tilfærsla')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.displacement}</td>
                 ))}
               </tr>
               <tr>
-                <td>Ný staða</td>
+                <td>{n('nyStada', 'Ný staða')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.newStatus}</td>
                 ))}
               </tr>
               <tr>
-                <td>Á næsta ár</td>
+                <td>{n('aNaestaAr', 'Á næsta ár')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.nextYear}</td>
                 ))}
               </tr>
               <tr>
-                <td>Umframafli</td>
+                <td>{n('umframafli', 'Umframafli')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.excessCatch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Ónotað</td>
+                <td>{n('onotad', 'Ónotað')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.unused}</td>
                 ))}
@@ -424,7 +434,7 @@ export const AflamarkCalculator = () => {
               </tr>
 
               <tr>
-                <td>Hlutdeild</td>
+                <td>{n('hlutdeild', 'Hlutdeild')}</td>
 
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
@@ -442,7 +452,7 @@ export const AflamarkCalculator = () => {
                 ))}
               </tr>
               <tr>
-                <td>Á næsta ár kvóti</td>
+                <td>{n('aNaestaArKvoti', 'Á næsta ár kvóti')}</td>
                 {/* TODO: add input box */}
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
@@ -460,8 +470,7 @@ export const AflamarkCalculator = () => {
                 ))}
               </tr>
               <tr>
-                <td>Af næsta ár kvóti</td>
-
+                <td>{n('afNaestaArKvoti', 'Af næsta ár kvóti')}</td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
