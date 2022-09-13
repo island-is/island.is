@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import cn from 'classnames'
 import {
   Inline,
@@ -7,24 +7,30 @@ import {
   Button,
   Select,
   Text,
+  Tag,
 } from '@island.is/island-ui/core'
 import {
   AllowedCatchCategory,
   MutationGetUpdatedShipStatusForCalendarYearArgs,
+  QueryGetQuotaTypesForCalendarYearArgs,
+  QueryGetQuotaTypesForTimePeriodArgs,
   QueryGetShipStatusForCalendarYearArgs,
+  QuotaType,
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   GET_SHIP_STATUS_FOR_TIME_PERIOD,
   GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR,
 } from './queries'
 import { getYearOptions, YearOption } from '../../utils'
-import { QuotaTypeSelect } from '../QuotaTypeSelect'
 import { useRouter } from 'next/router'
 import { useNamespace } from '@island.is/web/hooks'
+import { GET_QUOTA_TYPES_FOR_CALENDAR_YEAR } from '../QuotaTypeSelect/queries'
 
 import * as styles from './DeilistofnaCalculator.css'
+
+const emptyValue = { value: -1, label: '' }
 
 type Changes = Record<
   number,
@@ -115,6 +121,47 @@ export const DeilistofnaCalculator = ({
     },
   })
 
+  const quotaTypeResponse = useQuery<
+    { getQuotaTypesForCalendarYear: QuotaType[] },
+    QueryGetQuotaTypesForCalendarYearArgs
+  >(GET_QUOTA_TYPES_FOR_CALENDAR_YEAR, {
+    variables: {
+      input: {
+        year: selectedYear.value,
+      },
+    },
+    onCompleted(res) {
+      const quotaData = res?.getQuotaTypesForCalendarYear
+      if (!quotaData) return
+      const quotaTypes = quotaData
+        .filter((qt) => qt?.name)
+        .map((qt) => ({
+          value: qt.id,
+          label: qt.name,
+        }))
+      if (selectedOptions.length === 0) {
+        quotaTypes.sort((a, b) => a.label.localeCompare(b.label))
+        setOptionsInDropdown(quotaTypes)
+      }
+    },
+  })
+
+  useEffect(() => {
+    if (
+      data?.allowedCatchCategories?.length > 0 &&
+      quotaTypeResponse?.data?.getQuotaTypesForCalendarYear?.length > 0
+    ) {
+      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForCalendarYear
+      setOptionsInDropdown(
+        quotaTypes
+          .filter(
+            (t) => !data?.allowedCatchCategories?.find((c) => c?.id === t?.id),
+          )
+          .map((t) => ({ label: t.name, value: t.id })),
+      )
+    }
+  }, [data, quotaTypeResponse])
+
   const getFieldDifference = (
     category: AllowedCatchCategory,
     fieldName: string,
@@ -133,6 +180,8 @@ export const DeilistofnaCalculator = ({
 
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
+  const [optionsInDropdown, setOptionsInDropdown] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([])
 
   const validateChanges = () => {
     let valid = true
@@ -177,6 +226,30 @@ export const DeilistofnaCalculator = ({
     })
   }
 
+  const reset = () => {
+    const initialData = initialResponse?.data?.getShipStatusForCalendarYear
+    if (initialData) {
+      const initialCategories = initialData?.allowedCatchCategories ?? []
+      const codValue = initialCategories.find((c) => c.id === 0)
+      const categories = [
+        codValue,
+        ...initialCategories.filter((c) => c.id !== 0),
+      ]
+      setData({
+        ...initialData,
+        allowedCatchCategories: categories,
+      })
+    }
+    setSelectedOptions((prevSelected) => {
+      setOptionsInDropdown((prevDropdown) => {
+        const updatedDropdown = prevDropdown.concat(prevSelected)
+        updatedDropdown.sort((a, b) => a.label.localeCompare(b.label))
+        return updatedDropdown
+      })
+      return []
+    })
+  }
+
   const loading = initialResponse.loading || updatedResponse.loading
   const error = initialResponse.error || updatedResponse.error
 
@@ -204,12 +277,55 @@ export const DeilistofnaCalculator = ({
               }}
             />
           </Box>
-          <QuotaTypeSelect type="deilistofn" year={selectedYear.value} />
+          <Box className={styles.selectBox} marginBottom={3}>
+            <Select
+              size="sm"
+              label="Bæta við tegund"
+              name="tegund-fiskur-select"
+              options={optionsInDropdown}
+              onChange={(selectedOption: { value: number; label: string }) => {
+                if (
+                  !initialResponse?.data?.getShipStatusForCalendarYear
+                    ?.allowedCatchCategories?.length
+                ) {
+                  return
+                }
+                setSelectedOptions((prev) => prev.concat(selectedOption))
+                setOptionsInDropdown((prev) => {
+                  return prev.filter((o) => o.value !== selectedOption.value)
+                })
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    allowedCatchCategories: prev.allowedCatchCategories
+                      .filter((c) => c.id !== selectedOption.value)
+                      .concat({
+                        name: selectedOption.label,
+                        id: selectedOption.value,
+                        allocation: 0,
+                        allowedCatch: 0,
+                        betweenShips: 0,
+                        betweenYears: 0,
+                        catch: 0,
+                        displacement: 0,
+                        excessCatch: 0,
+                        newStatus: 0,
+                        nextYear: 0,
+                        specialAlloction: 0,
+                        status: 0,
+                        unused: 0,
+                      }),
+                  }
+                })
+              }}
+              value={emptyValue}
+            />
+          </Box>
         </Inline>
 
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
-            <Button variant="ghost" size="small">
+            <Button onClick={reset} variant="ghost" size="small">
               {n('reset', 'Frumstilla')}
             </Button>
             <Button onClick={calculate} size="small">
@@ -217,6 +333,67 @@ export const DeilistofnaCalculator = ({
             </Button>
           </Inline>
         </Box>
+      </Box>
+
+      <Box className={styles.tagContainer}>
+        <Inline alignY="center" space={2}>
+          {selectedOptions.map((o) => (
+            <Tag
+              onClick={() => {
+                setSelectedOptions((prevSelected) =>
+                  prevSelected.filter((prev) => prev.value !== o.value),
+                )
+                setOptionsInDropdown((prevDropdown) => {
+                  const updatedDropdown = prevDropdown.concat(o)
+                  updatedDropdown.sort((a, b) => a.label.localeCompare(b.label))
+                  return updatedDropdown
+                })
+                setData((prev) => ({
+                  ...prev,
+                  allowedCatchCategories: prev?.allowedCatchCategories?.filter(
+                    (c) => c?.id !== o.value,
+                  ),
+                }))
+              }}
+              key={o.value}
+            >
+              <Box flexDirection="row" alignItems="center">
+                {o.label}
+                <span className={styles.crossmark}>&#10005;</span>
+              </Box>
+            </Tag>
+          ))}
+          {selectedOptions.length > 0 && (
+            <Button
+              onClick={() => {
+                setSelectedOptions((prevSelected) => {
+                  setData((prev) => {
+                    const selectedIds = prevSelected.map((s) => s.value)
+                    return {
+                      ...prev,
+                      allowedCatchCategories: prev?.allowedCatchCategories?.filter(
+                        (c) => !selectedIds.includes(c?.id),
+                      ),
+                    }
+                  })
+                  setOptionsInDropdown((prevDropdown) => {
+                    const updatedDropdown = prevDropdown.concat(prevSelected)
+                    updatedDropdown.sort((a, b) =>
+                      a.label.localeCompare(b.label),
+                    )
+                    return updatedDropdown
+                  })
+                  return []
+                })
+              }}
+              variant="text"
+              size="small"
+              colorScheme="default"
+            >
+              Hreinsa allt
+            </Button>
+          )}
+        </Inline>
       </Box>
 
       <Box
@@ -242,7 +419,7 @@ export const DeilistofnaCalculator = ({
       )}
 
       {data?.allowedCatchCategories && (
-        <Box className={styles.tableBox}>
+        <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
