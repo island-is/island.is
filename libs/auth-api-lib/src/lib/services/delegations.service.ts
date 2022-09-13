@@ -14,7 +14,7 @@ import { isUuid, uuid } from 'uuidv4'
 import * as kennitala from 'kennitala'
 
 import { AuditService } from '@island.is/nest/audit'
-import { AuthDelegationType, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/auth-nest-tools'
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
@@ -48,7 +48,6 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/entit
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from './resources.service'
-import { FetchError } from '@island.is/clients/middlewares'
 import partition from 'lodash/partition'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -397,51 +396,10 @@ export class DelegationsService {
       })
     }
 
-    const [delegations, needsCheckDelegations] = await Promise.all([
-      Promise.all(delegationPromises),
-      Promise.all(needVerifyDelegationPromises),
-    ])
-
-    // Only check live status, i.e. dead or alive for needsCheckDelegations
-    const {
-      aliveDelegations,
-      deceasedDelegations,
-    } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
-
-    if (deceasedDelegations.length > 0) {
-      // Invalidate all deceased delegations
-      await this.invalidateDelegations(user, deceasedDelegations)
-
-      this.auditService.auditSystem({
-        action: 'deceasedDelegation',
-        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
-      })
-    }
-
     return uniqBy(
       [...delegations.flat(), ...aliveDelegations],
       'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
-  }
-
-  // TODO remove this function when Eirikurs PR is merged
-  private async handlePersonResponse(
-    response: ApiResponse<Einstaklingsupplysingar> | undefined,
-  ) {
-    if (response === undefined || response.raw.status === 204) {
-      return undefined
-    }
-
-    return response.value()
-  }
-
-  // TODO remove this function when Eirikurs PR is merged
-  private handle404(error: FetchError): undefined {
-    if (error.status === 404) {
-      return undefined
-    }
-
-    throw error
   }
 
   /**
@@ -492,18 +450,12 @@ export class DelegationsService {
     deceasedDelegations: DelegationDTO[]
   }> {
     const delegationsPromises = delegations.map(({ fromNationalId }) =>
-      this.personApi
-        .einstaklingarGetEinstaklingurRaw({
-          id: fromNationalId,
-        })
-        .catch(this.handle404),
+      this.nationalRegistryClient.getIndividual(fromNationalId),
     )
 
     // Check if delegations is linked to a person, i.e. not deceased
     const persons = await Promise.all(delegationsPromises)
-    const personsValues = await Promise.all(
-      persons.map(this.handlePersonResponse),
-    )
+    const personsValues = persons.filter(isDefined)
 
     // Divide delegations into alive or deceased delegations.
     const [aliveDelegations, deceasedDelegations] = partition(
@@ -514,7 +466,7 @@ export class DelegationsService {
             // All companies will be divided into aliveDelegations
             kennitala.isCompany(fromNationalId) ||
             // Make sure we can match the person to the delegation, i.e. not deceased
-            person?.kennitala === fromNationalId,
+            person?.nationalId === fromNationalId,
         ),
     )
 
