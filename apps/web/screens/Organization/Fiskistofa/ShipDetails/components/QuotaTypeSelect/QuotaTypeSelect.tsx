@@ -8,10 +8,10 @@ import initApollo from '@island.is/web/graphql/client'
 import { useI18n } from '@island.is/web/i18n'
 
 import {
+  QueryGetQuotaTypesForCalendarYearArgs,
   QueryGetQuotaTypesForTimePeriodArgs,
   QuotaType,
-} from '@island.is/api/schema'
-import { QueryGetQuotaTypesForCalendarYearArgs } from '@island.is/web/graphql/schema'
+} from '@island.is/web/graphql/schema'
 
 import * as styles from './QuotaTypeSelect.css'
 

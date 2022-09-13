@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import cn from 'classnames'
 import {
   Inline,
@@ -14,16 +14,17 @@ import {
   QueryGetShipStatusForCalendarYearArgs,
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   GET_SHIP_STATUS_FOR_TIME_PERIOD,
   GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR,
 } from './queries'
 import { getYearOptions, YearOption } from '../../utils'
 import { QuotaTypeSelect } from '../QuotaTypeSelect'
+import { useRouter } from 'next/router'
+import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './DeilistofnaCalculator.css'
-import { useRouter } from 'next/router'
 
 type Changes = Record<
   number,
@@ -43,47 +44,43 @@ type ChangeErrors = Record<
   }
 >
 
-export const DeilistofnaCalculator = () => {
-  const [shipNumber, setShipNumber] = useState<number>(-1)
+interface DeilistofnaCalculatorProps {
+  namespace: Record<string, string>
+}
 
+export const DeilistofnaCalculator = ({
+  namespace,
+}: DeilistofnaCalculatorProps) => {
   const router = useRouter()
-
   const yearOptions = useMemo(() => getYearOptions(), [])
 
-  const [data, setData] = useState<ShipStatusInformation | null>(null)
-
-  const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
-
-  useEffect(() => {
+  const shipNumber = useMemo<number | null>(() => {
     if (
       router?.query?.nr &&
       !isNaN(Number(router.query.nr)) &&
       router.query.nr.length > 0
     ) {
-      setShipNumber(Number(router.query.nr))
-      fetchShipStatus({
-        variables: {
-          input: {
-            shipNumber: Number(router.query.nr),
-            year: selectedYear.value,
-          },
-        },
-      })
+      return Number(router.query.nr)
     }
+    return null
   }, [router?.query?.nr])
+
+  const n = useNamespace(namespace)
+
+  const [data, setData] = useState<ShipStatusInformation | null>(null)
+
+  const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
 
   const [fetchShipStatus, initialResponse] = useLazyQuery<
     { getShipStatusForCalendarYear: ShipStatusInformation },
     QueryGetShipStatusForCalendarYearArgs
   >(GET_SHIP_STATUS_FOR_TIME_PERIOD, {
+    fetchPolicy: 'no-cache',
     onCompleted(response) {
-      console.log(response)
       const initialData = response?.getShipStatusForCalendarYear
       if (initialData) {
         const initialCategories = initialData?.allowedCatchCategories ?? []
-
         const codValue = initialCategories.find((c) => c.id === 0)
-
         const categories = [
           codValue,
           ...initialCategories.filter((c) => c.id !== 0),
@@ -96,22 +93,20 @@ export const DeilistofnaCalculator = () => {
     },
   })
 
-  const [mutate, mutationResponse] = useMutation<
+  const [fetchUpdatedShipStatus, updatedResponse] = useMutation<
     { getUpdatedShipStatusForCalendarYear: ShipStatusInformation },
     MutationGetUpdatedShipStatusForCalendarYearArgs
   >(GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR, {
+    fetchPolicy: 'no-cache',
     onCompleted(response) {
       const mutationData = response?.getUpdatedShipStatusForCalendarYear
       if (mutationData) {
         const initialCategories = mutationData?.allowedCatchCategories ?? []
-
         const codValue = initialCategories.find((c) => c.id === 0)
-
         const categories = [
           codValue,
           ...initialCategories.filter((c) => c.id !== 0),
         ]
-
         setData({
           ...mutationData,
           allowedCatchCategories: categories,
@@ -124,22 +119,20 @@ export const DeilistofnaCalculator = () => {
     category: AllowedCatchCategory,
     fieldName: string,
   ) => {
-    const a = mutationResponse?.data?.getUpdatedShipStatusForCalendarYear?.allowedCatchCategories?.find(
+    const a = updatedResponse?.data?.getUpdatedShipStatusForCalendarYear?.allowedCatchCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
     const b = initialResponse?.data?.getShipStatusForCalendarYear?.allowedCatchCategories?.find(
       (c) => c.id === category.id,
     )?.[fieldName]
 
-    if (!a || !b) return 0
+    if (!a || !b) return undefined
 
     return a - b
   }
 
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
-
-  const shipInformation = data
 
   const validateChanges = () => {
     let valid = true
@@ -166,12 +159,10 @@ export const DeilistofnaCalculator = () => {
 
   const calculate = () => {
     const changeValues = Object.values(changes)
-
     if (!validateChanges()) {
       return
     }
-
-    mutate({
+    fetchUpdatedShipStatus({
       variables: {
         input: {
           shipNumber,
@@ -186,8 +177,8 @@ export const DeilistofnaCalculator = () => {
     })
   }
 
-  const loading = initialResponse.loading || mutationResponse.loading
-  const error = initialResponse.error || mutationResponse.error
+  const loading = initialResponse.loading || updatedResponse.loading
+  const error = initialResponse.error || updatedResponse.error
 
   return (
     <Box margin={6}>
@@ -219,9 +210,11 @@ export const DeilistofnaCalculator = () => {
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
             <Button variant="ghost" size="small">
-              Frumstilla
+              {n('reset', 'Frumstilla')}
             </Button>
-            <Button size="small">Reikna</Button>
+            <Button onClick={calculate} size="small">
+              {n('calculate', 'Reikna')}
+            </Button>
           </Inline>
         </Box>
       </Box>
@@ -234,58 +227,60 @@ export const DeilistofnaCalculator = () => {
         <LoadingDots />
       </Box>
 
-      {!loading && !shipInformation && !error && (
+      {!loading && !data && !error && (
         <Box width="full" textAlign="center">
-          <Text>Engar niðurstöður fundust</Text>
+          <Text>{n('noResultsFound', 'Engar niðurstöður fundust')}</Text>
         </Box>
       )}
 
       {error && (
         <Box width="full" textAlign="center">
-          <Text>Villa kom upp við að sækja deilistofna</Text>
+          <Text>
+            {n('deilistofnaError', 'Villa kom upp við að sækja deilistofna')}
+          </Text>
         </Box>
       )}
 
-      {shipInformation?.allowedCatchCategories && (
+      {data?.allowedCatchCategories && (
         <Box className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
-                <th>Kvótategund</th>
-                {shipInformation?.allowedCatchCategories?.map((category) => {
+                <th>{n('kvotategund', 'Kvótategund')}</th>
+                {data?.allowedCatchCategories?.map((category) => {
                   return <th key={category.name}>{category.name}</th>
                 })}
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Úthlutun</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('uthlutun', 'Úthlutun')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.allocation}</td>
                 ))}
               </tr>
               <tr>
-                <td>Sérst. úthl.</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.specialAlloction}</td>
                 ))}
               </tr>
               <tr>
-                <td>Milli ára</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('milliAra', 'Milli ára')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.betweenYears}</td>
                 ))}
               </tr>
               <tr>
-                <td>Milli skipa</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('milliSkipa', 'Milli skipa')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.betweenShips}</td>
                 ))}
               </tr>
               <tr>
-                <td>Aflamarksbr.</td>
+                <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
                 {/* TODO: keep track of difference from initial aflamark to what it is now */}
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
                       getFieldDifference(category, 'allowedCatch')
@@ -318,21 +313,21 @@ export const DeilistofnaCalculator = () => {
                 ))}
               </tr>
               <tr>
-                <td>Aflamark</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('aflamark', 'Aflamark')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.allowedCatch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Afli</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('afli', 'Afli')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.catch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Aflabreyting</td>
+                <td>{n('aflabreyting', 'Aflabreyting')}</td>
 
-                {shipInformation?.allowedCatchCategories?.map((category) => {
+                {data?.allowedCatchCategories?.map((category) => {
                   return (
                     <td key={category.name}>
                       {/* TODO: keep track of difference from initial afli to what it is now */}
@@ -369,38 +364,38 @@ export const DeilistofnaCalculator = () => {
                 })}
               </tr>
               <tr>
-                <td>Staða</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('stada', 'Staða')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.status}</td>
                 ))}
               </tr>
               <tr>
-                <td>Tilfærsla</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('tilfaersla', 'Tilfærsla')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.displacement}</td>
                 ))}
               </tr>
               <tr>
-                <td>Ný staða</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('nyStada', 'Ný staða')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.newStatus}</td>
                 ))}
               </tr>
               <tr>
-                <td>Á næsta ár</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('aNaestaAr', 'Á næsta ár')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.nextYear}</td>
                 ))}
               </tr>
               <tr>
-                <td>Umframafli</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('umframafli', 'Umframafli')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.excessCatch}</td>
                 ))}
               </tr>
               <tr>
-                <td>Ónotað</td>
-                {shipInformation?.allowedCatchCategories?.map((category) => (
+                <td>{n('onotad', 'Ónotað')}</td>
+                {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>{category.unused}</td>
                 ))}
               </tr>
