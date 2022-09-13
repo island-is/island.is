@@ -4,7 +4,6 @@ import {
   buildCustomField,
   buildDividerField,
   buildKeyValueField,
-  buildSubmitField,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents } from '@island.is/application/types'

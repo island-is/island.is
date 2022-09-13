@@ -31,8 +31,8 @@ export const sectionDataProviders = buildSection({
         buildDataProviderItem({
           id: 'qualitySignature',
           type: 'QualitySignatureProvider',
-          title: m.dataCollectionQualityPhotoTitle,
-          subTitle: m.dataCollectionQualityPhotoSubtitle,
+          title: '',
+          subTitle: '',
         }),
         buildDataProviderItem({
           id: 'userProfile',

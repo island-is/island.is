@@ -9,7 +9,7 @@ import { m } from '../../lib/messages'
 
 export const sectionPayment = buildSection({
   id: 'payment',
-  title: m.paymentSection,
+  title: m.paymentSectionTitle,
   children: [
     buildMultiField({
       id: 'payment',

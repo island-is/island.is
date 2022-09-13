@@ -66,13 +66,14 @@ export const m = defineMessages({
   },
   dataCollectionQualityPhotoTitle: {
     id: 'dld.application:dataCollectionQualityPhotoTitle',
-    defaultMessage: 'Ökuskírteini (ef til staðar)',
+    defaultMessage: 'Upplýsingar úr Ökuskírteinaskrá',
     description: 'Info from drivers license',
   },
   dataCollectionQualityPhotoSubtitle: {
     id: 'dld.application:dataCollectionQualityPhotoSubtitle',
-    defaultMessage: 'Mynd úr ökuskírteinakerfi hjá Samgöngustofu.',
-    description: 'National registry subtitle',
+    defaultMessage:
+      'Sóttar eru almennar upplýsingar um núverandi réttindi, sviptingar, punktastöðu og akstursmat ef við á.',
+    description: 'Info from drivers license subtitle',
   },
   dataCollectionUserProfileTitle: {
     id: 'cr.application:dataCollectionUserProfileTitle',

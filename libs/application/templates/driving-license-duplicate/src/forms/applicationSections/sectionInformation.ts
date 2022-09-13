@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildTextField,
   buildCustomField,
-  buildKeyValueField,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'

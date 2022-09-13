@@ -21,11 +21,7 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
       <ContentBlock>
         <AlertMessage
           type="success"
-          title={`${formatText(
-            m.congratulationsTitle,
-            application,
-            formatMessage,
-          )} ${name.fullName}`}
+          title={formatText(m.congratulationsTitle, application, formatMessage)}
           message={formatText(
             m.congratulationsTitleSuccess,
             application,
