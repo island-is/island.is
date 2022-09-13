@@ -257,6 +257,7 @@ describe('getOtherParentOptions', () => {
     const application = buildApplication()
     expect(getOtherParentOptions(application)).toEqual([
       {
+        dataTestId: 'no-other-parent',
         label: {
           defaultMessage: 'Ég vil ekki staðfesta hitt foreldrið að svo stöddu',
           description:
@@ -266,6 +267,7 @@ describe('getOtherParentOptions', () => {
         value: 'no',
       },
       {
+        dataTestId: 'other-parent',
         label: {
           defaultMessage: 'Hitt foreldrið er:',
           description: 'The other parent is:',

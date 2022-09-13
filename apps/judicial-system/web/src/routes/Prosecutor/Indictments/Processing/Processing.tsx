@@ -1,11 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
   FormFooter,
   PageLayout,
+  ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
@@ -17,9 +18,8 @@ import {
   titles,
   processing as m,
 } from '@island.is/judicial-system-web/messages'
-import { Box, Tag, Text } from '@island.is/island-ui/core'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { Box, Text } from '@island.is/island-ui/core'
+import { CaseTransition, Institution } from '@island.is/judicial-system/types'
 import {
   useCase,
   useInstitution,
@@ -28,7 +28,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 
 const Processing: React.FC = () => {
@@ -38,54 +38,10 @@ const Processing: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
-  const { data: userData } = useQuery<{ users: User[] }>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  const [prosecutors, setProsecutors] = useState<User[]>()
-
-  useEffect(() => {
-    if (userData?.users && workingCase) {
-      setProsecutors(
-        userData.users.filter(
-          (aUser: User) =>
-            aUser.role === UserRole.PROSECUTOR &&
-            (!workingCase.creatingProsecutor ||
-              aUser.institution?.id ===
-                workingCase.creatingProsecutor?.institution?.id),
-        ),
-      )
-    }
-  }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
-
-  const setProsecutor = async (prosecutor: User) => {
-    if (workingCase) {
-      return setAndSendToServer(
-        [
-          {
-            prosecutorId: prosecutor.id,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }
-
-  const handleProsecutorChange = (prosecutor: User) => {
-    if (!workingCase) {
-      return false
-    }
-
-    setProsecutor(prosecutor)
-
-    return true
-  }
+  const router = useRouter()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -106,6 +62,12 @@ const Processing: React.FC = () => {
     return false
   }
 
+  const handleNextButtonClick = async () => {
+    await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+
+    router.push(`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`)
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -123,16 +85,8 @@ const Processing: React.FC = () => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
-        <Box marginBottom={5}>
-          <Tag>{workingCase.policeCaseNumber}</Tag>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SelectProsecutor
-            workingCase={workingCase}
-            prosecutors={prosecutors || []}
-            onChange={handleProsecutorChange}
-          />
-        </Box>
+        <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+        <ProsecutorSection />
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
@@ -150,8 +104,8 @@ const Processing: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_DEFENDANT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isProcessingStepValidIndictments(workingCase)}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
     </PageLayout>

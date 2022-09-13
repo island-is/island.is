@@ -128,11 +128,17 @@ const someDefendantIsInvalid = (workingCase: Case) => {
   )
 }
 
-export const isDefendantStepValidRC = (workingCase: Case) => {
+export const isDefendantStepValidRC = (
+  workingCase: Case,
+  policeCaseNumbers: string[],
+) => {
   return (
+    policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
-      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
       workingCase.type === CaseType.TRAVEL_BAN
@@ -143,19 +149,26 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidForSidebarRC = (workingCase: Case) => {
-  return workingCase.id && isDefendantStepValidRC(workingCase)
+  return (
+    workingCase.id &&
+    isDefendantStepValidRC(workingCase, workingCase.policeCaseNumbers)
+  )
 }
 
 export const isDefendantStepValidIC = (
   workingCase: Case,
   caseType: CaseType | undefined,
+  policeCaseNumbers: string[],
 ) => {
   return (
+    policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
-      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
     ]).isValid
@@ -163,21 +176,33 @@ export const isDefendantStepValidIC = (
 }
 
 export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
-  return workingCase.id && isDefendantStepValidIC(workingCase, workingCase.type)
+  return (
+    workingCase.id &&
+    isDefendantStepValidIC(
+      workingCase,
+      workingCase.type,
+      workingCase.policeCaseNumbers,
+    )
+  )
 }
 
 export const isDefendantStepValidIndictments = (
   workingCase: Case,
   caseType: CaseType | undefined,
+  policeCaseNumbers: string[],
 ) => {
-  return (
+  const result =
+    policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     validate([
       [workingCase.type, ['empty']],
-      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      ...policeCaseNumbers.map(
+        (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
+      ),
     ]).isValid
-  )
+
+  return result
 }
 
 export const isDefendantStepValidForSidebarIndictments = (
@@ -185,7 +210,11 @@ export const isDefendantStepValidForSidebarIndictments = (
 ) => {
   return (
     workingCase.id &&
-    isDefendantStepValidIndictments(workingCase, workingCase.type)
+    isDefendantStepValidIndictments(
+      workingCase,
+      workingCase.type,
+      workingCase.policeCaseNumbers,
+    )
   )
 }
 
@@ -248,15 +277,7 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   ]).isValid
 }
 
-export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
-  return (
-    workingCase.judge &&
-    validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
-      .isValid
-  )
-}
-
-export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+export const isReceptionAndAssignmentStepValid = (workingCase: Case) => {
   return (
     workingCase.judge &&
     validate([[workingCase.courtCaseNumber, ['empty', 'court-case-number']]])
@@ -338,6 +359,15 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
       [workingCase.conclusion, ['empty']],
       [workingCase.ruling, ['empty']],
     ]).isValid
+  )
+}
+
+export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
+  const date = courtDate || workingCase.courtDate
+
+  return (
+    workingCase.subpoenaType &&
+    validate([[date, ['empty', 'date-format']]]).isValid
   )
 }
 

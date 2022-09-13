@@ -23,7 +23,7 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
 import {
@@ -47,7 +47,7 @@ import {
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
-import { notifications } from '../../messages'
+import { courtUpload, notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
@@ -266,10 +266,10 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}-${format(
-          nowFactory(),
-          'yyyy-MM-dd-HH:mm',
-        )}`,
+        this.formatMessage(courtUpload.requestFileName, {
+          caseType: caseTypes[theCase.type],
+          date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
+        }),
         requestPdf,
       )
     } catch (error) {
@@ -354,7 +354,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
-      theCase.court?.name,
+      theCase.prosecutor?.institution?.name,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
@@ -376,7 +376,8 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
-      theCase.policeCaseNumber || '',
+      theCase.type,
+      theCase.policeCaseNumbers,
       `${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
     )
@@ -392,7 +393,7 @@ export class NotificationService {
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
-    const { type, court, policeCaseNumber } = theCase
+    const { type, court, policeCaseNumbers } = theCase
 
     const overviewUrl = `${
       isRestrictionCase(theCase.type)
@@ -402,9 +403,9 @@ export class NotificationService {
 
     const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
+      policeCaseNumbers,
       type,
       court?.name,
-      policeCaseNumber,
       overviewUrl,
     )
 
@@ -538,10 +539,10 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const subject = `Fyrirtaka í máli ${theCase.policeCaseNumber}`
-    const html = formatProsecutorCourtDateEmailNotification(
+    const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
+      theCase.courtCaseNumber,
       theCase.court?.name,
       theCase.courtDate,
       theCase.courtRoom,
@@ -554,7 +555,7 @@ export class NotificationService {
 
     return this.sendEmail(
       subject,
-      html,
+      body,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
@@ -565,7 +566,7 @@ export class NotificationService {
           theCase,
           user,
           subject,
-          html,
+          body,
           theCase.prosecutor?.email,
         )
       }

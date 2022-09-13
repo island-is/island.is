@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
@@ -10,7 +10,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import PoliceCaseNumbers from '../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import {
   IndictmentsProsecutorSubsections,
   ReactSelectOption,
@@ -28,6 +27,7 @@ import {
   Case,
   CaseType,
   Defendant as TDefendant,
+  Gender,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -36,6 +36,9 @@ import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDef
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
+import PoliceCaseNumbers, {
+  usePoliceCaseNumbers,
+} from '../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../SharedComponents/DefendantInfo/DefendantInfo'
 
 const Defendant: React.FC = () => {
@@ -50,7 +53,19 @@ const Defendant: React.FC = () => {
   const { createDefendant, updateDefendant } = useDefendants()
   const router = useRouter()
 
-  const [caseType, setCaseType] = React.useState<CaseType>()
+  // This state is needed because type is initially set to OHTER on the
+  // workingCase and we need to validate that the user selects an option
+  // from the case type list to allow the user to continue.
+  const [caseType, setCaseType] = useState<CaseType>()
+  useEffect(() => {
+    if (workingCase.id) {
+      setCaseType(workingCase.type)
+    }
+  }, [workingCase.id, workingCase.type])
+
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   const updateDefendantState = useCallback(
     (defendantId: string, update: UpdateDefendant) => {
@@ -190,6 +205,8 @@ const Defendant: React.FC = () => {
           <PoliceCaseNumbers
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            clientPoliceNumbers={clientPoliceNumbers}
+            setClientPoliceNumbers={setClientPoliceNumbers}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -199,7 +216,7 @@ const Defendant: React.FC = () => {
             </Text>
           </Box>
           <Select
-            name="type"
+            name="case-type"
             options={constants.IndictmentTypes}
             label={formatMessage(m.sections.indictmentType.label)}
             placeholder={formatMessage(m.sections.indictmentType.placeholder)}
@@ -234,7 +251,11 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {capitalize(formatMessage(core.indictmentDefendant))}
+              {capitalize(
+                formatMessage(core.indictmentDefendant, {
+                  gender: Gender.MALE,
+                }),
+              )}
             </Text>
           </Box>
           <AnimatePresence>
@@ -284,12 +305,16 @@ const Defendant: React.FC = () => {
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={
-            !isDefendantStepValidIndictments(workingCase, caseType)
+            !isDefendantStepValidIndictments(
+              workingCase,
+              caseType,
+              clientPoliceNumbers,
+            )
           }
           nextIsLoading={isCreatingCase}
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
-          }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </PageLayout>

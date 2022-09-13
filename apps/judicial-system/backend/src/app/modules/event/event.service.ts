@@ -81,7 +81,7 @@ export class EventService {
         theCase.creatingProsecutor?.institution
           ? `${theCase.creatingProsecutor?.institution?.name} `
           : ''
-      }*${theCase.policeCaseNumber}*`
+      }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `${theCase.court.name} ${
             theCase.courtCaseNumber ? `*${theCase.courtCaseNumber}*` : ''

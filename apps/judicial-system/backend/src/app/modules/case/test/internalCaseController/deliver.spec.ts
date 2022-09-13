@@ -1,10 +1,19 @@
 import { uuid } from 'uuidv4'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import {
+  CaseFileState,
+  CaseOrigin,
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
-import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
+import {
+  getCourtRecordPdfAsBuffer,
+  getCourtRecordPdfAsString,
+} from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtService } from '../../../court'
+import { PoliceService } from '../../../police'
 import { FileService } from '../../../file'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -21,6 +30,7 @@ type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver', () => {
   let mockCourtService: CourtService
+  let mockPoliceService: PoliceService
   let mockFileService: FileService
   let mockAwsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
@@ -28,12 +38,14 @@ describe('InternalCaseController - Deliver', () => {
   beforeEach(async () => {
     const {
       courtService,
+      policeService,
       fileService,
       awsS3Service,
       internalCaseController,
     } = await createTestingCaseModule()
 
     mockCourtService = courtService
+    mockPoliceService = policeService
     mockFileService = fileService
     mockAwsS3Service = awsS3Service
 
@@ -94,7 +106,7 @@ describe('InternalCaseController - Deliver', () => {
 
   // Deliver court record to court
 
-  describe('court record generated', () => {
+  describe('court record buffer generated', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
 
@@ -105,7 +117,7 @@ describe('InternalCaseController - Deliver', () => {
       await givenWhenThen(caseId, theCase)
     })
 
-    it('should generate the court record', async () => {
+    it('should generate the court buffer record', async () => {
       expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
@@ -285,6 +297,74 @@ describe('InternalCaseController - Deliver', () => {
 
     it('should return a failure response', () => {
       expect(then.result.caseFilesDeliveredToCourt).toBe(false)
+    })
+  })
+
+  // Deliver case to police
+
+  describe('court record string generated', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, origin: CaseOrigin.LOKE } as Case
+
+    beforeEach(async () => {
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(Buffer.from('test ruling'))
+      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
+      mockGetAllCaseFiles.mockResolvedValue([])
+
+      const then = await givenWhenThen(caseId, theCase)
+      console.log(then)
+    })
+
+    it('should generate the court record string', async () => {
+      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
+    })
+  })
+
+  describe('create court record', () => {
+    const caseId = uuid()
+    const caseOrigin = CaseOrigin.LOKE
+    const caseType = CaseType.CUSTODY
+    const caseState = CaseState.ACCEPTED
+    const policeCaseNumbers = [uuid()]
+    const defendantNationalId = uuid()
+    const caseConclusion = 'test conclusion'
+    const theCase = {
+      id: caseId,
+      origin: caseOrigin,
+      type: caseType,
+      state: caseState,
+      policeCaseNumbers,
+      defendants: [{ nationalId: defendantNationalId }],
+      conclusion: caseConclusion,
+    } as Case
+    const pdf = 'test court record'
+
+    beforeEach(async () => {
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(Buffer.from('test ruling'))
+      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
+      mockGetAllCaseFiles.mockResolvedValue([])
+
+      const mockGet = getCourtRecordPdfAsString as jest.Mock
+      mockGet.mockResolvedValueOnce(pdf)
+
+      await givenWhenThen(caseId, theCase)
+    })
+
+    it('should create a court record at court', async () => {
+      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
+        caseId,
+        caseType,
+        caseState,
+        pdf,
+        policeCaseNumbers,
+        [defendantNationalId],
+        caseConclusion,
+      )
     })
   })
 })

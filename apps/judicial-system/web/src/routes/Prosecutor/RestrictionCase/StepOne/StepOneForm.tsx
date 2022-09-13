@@ -9,7 +9,7 @@ import {
 import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { accused as m } from '@island.is/judicial-system-web/messages'
+import { accused as m, core } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {
   validateAndSendToServer,
@@ -19,7 +19,9 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
+import PoliceCaseNumbers, {
+  usePoliceCaseNumbers,
+} from '../../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
@@ -59,6 +61,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
     },
     [workingCase.id, updateDefendantState, updateDefendant],
   )
+  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
+    workingCase,
+  )
 
   return (
     <>
@@ -72,6 +77,8 @@ export const StepOneForm: React.FC<Props> = (props) => {
           <PoliceCaseNumbers
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            clientPoliceNumbers={clientPoliceNumbers}
+            setClientPoliceNumbers={setClientPoliceNumbers}
           />
         </Box>
         {workingCase.defendants && (
@@ -154,10 +161,12 @@ export const StepOneForm: React.FC<Props> = (props) => {
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
-          nextIsDisabled={!isDefendantStepValidRC(workingCase)}
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
+          nextIsDisabled={
+            !isDefendantStepValidRC(workingCase, clientPoliceNumbers)
           }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </>

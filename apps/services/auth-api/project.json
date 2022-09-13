@@ -25,7 +25,7 @@
       }
     },
     "esbuild": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "./tools/executors/node:build",
       "options": {
         "outputPath": "dist/apps/services/auth-api",
         "main": "apps/services/auth-api/src/main.ts",
@@ -120,6 +120,7 @@
           "sequelize-cli db:seed:all --seeders-path ./seeders/local",
           "sequelize-cli db:seed:all"
         ],
+        "parallel": false,
         "cwd": "libs/auth-api-lib"
       }
     }

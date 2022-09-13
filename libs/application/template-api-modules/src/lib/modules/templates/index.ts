@@ -18,10 +18,12 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
+import { MarriageConditionsSubmissionModule } from './marriage-conditions-submission/marriage-conditions-submission.module'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
+import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -44,10 +46,12 @@ export const modules = [
   ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
+  MarriageConditionsSubmissionModule,
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
+  FinancialStatementsInaoTemplateModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -70,7 +74,9 @@ export { AnnouncementOfDeathService } from './announcement-of-death/announcement
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+export { MarriageConditionsSubmissionService } from './marriage-conditions-submission/marriage-conditions-submission.service'
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 export { PassportService } from './passport/passport.service'
 export { OperatingLicenseService } from './operating-license/operatingLicense.service'
+export { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'

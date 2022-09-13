@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -172,9 +172,7 @@ const HearingArrangements = () => {
                 {formatMessage(m.title)}
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box component="section" marginBottom={8}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
@@ -323,7 +321,7 @@ const HearingArrangements = () => {
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
               )}
-              handlePrimaryButtonClick={async () => {
+              onPrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,
@@ -335,7 +333,7 @@ const HearingArrangements = () => {
                   )
                 }
               }}
-              handleSecondaryButtonClick={() => {
+              onSecondaryButtonClick={() => {
                 sendNotification(
                   workingCase.id,
                   NotificationType.COURT_DATE,

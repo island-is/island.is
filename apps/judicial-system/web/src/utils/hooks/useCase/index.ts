@@ -189,7 +189,7 @@ const useCase = () => {
               input: {
                 type: theCase.type,
                 description: theCase.description,
-                policeCaseNumber: theCase.policeCaseNumber,
+                policeCaseNumbers: theCase.policeCaseNumbers,
                 defenderName: theCase.defenderName,
                 defenderNationalId: theCase.defenderNationalId,
                 defenderEmail: theCase.defenderEmail,

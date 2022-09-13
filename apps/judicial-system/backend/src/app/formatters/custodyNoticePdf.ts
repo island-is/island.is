@@ -56,7 +56,6 @@ function constructCustodyNoticePdf(
     }`,
     'Helvetica',
   )
-  addLargeHeading(doc, `LÖKE málsnúmer ${theCase.policeCaseNumber}`)
   addEmptyLines(doc)
   setLineGap(doc, 8)
   addMediumText(doc, 'Sakborningur', 'Helvetica-Bold')

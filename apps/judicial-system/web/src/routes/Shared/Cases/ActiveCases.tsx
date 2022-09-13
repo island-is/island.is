@@ -24,14 +24,19 @@ import {
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
-import { core, requests } from '@island.is/judicial-system-web/messages'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
+import { cases as m } from './Cases.strings'
 
 interface Props {
   cases: Case[]
@@ -140,7 +145,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             {theCase.courtDate ? (
               <Text fontWeight={'medium'} variant="small">
                 {`${formatMessage(
-                  requests.sections.activeRequests.table.headers.hearing,
+                  m.activeRequests.table.headers.hearing,
                 )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
                   parseISO(theCase.courtDate),
                   'kk:mm',
@@ -149,7 +154,7 @@ const ActiveCases: React.FC<Props> = (props) => {
             ) : (
               <Text variant="small" fontWeight={'medium'}>
                 {`${formatMessage(
-                  requests.sections.activeRequests.table.headers.created,
+                  m.activeRequests.table.headers.created,
                 )} ${format(parseISO(theCase.created), 'd.M.y')}`}
               </Text>
             )}
@@ -163,9 +168,7 @@ const ActiveCases: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.caseNumber,
-              )}
+              {formatMessage(m.activeRequests.table.headers.caseNumber)}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -198,16 +201,12 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.type,
-              )}
+              {formatMessage(m.activeRequests.table.headers.type)}
             </Text>
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(
-                requests.sections.activeRequests.table.headers.state,
-              )}
+              {formatMessage(m.activeRequests.table.headers.state)}
             </Text>
           </th>
           <th className={styles.th}>
@@ -219,9 +218,7 @@ const ActiveCases: React.FC<Props> = (props) => {
               onClick={() => requestSort('createdAt')}
             >
               <Text fontWeight="regular">
-                {formatMessage(
-                  requests.sections.activeRequests.table.headers.date,
-                )}
+                {formatMessage(m.activeRequests.table.headers.date)}
               </Text>
               <Box
                 className={cn(styles.sortIcon, {
@@ -267,12 +264,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
                       </Box>
-                      <Text as="span" variant="small" color="dark400">
-                        {c.policeCaseNumber}
+                      <Text
+                        as="span"
+                        variant="small"
+                        color="dark400"
+                        title={c.policeCaseNumbers.join(', ')}
+                      >
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
                       </Text>
                     </>
                   ) : (
-                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    <Text as="span" title={c.policeCaseNumbers.join(', ')}>
+                      {displayFirstPlusRemaining(c.policeCaseNumbers) || '-'}
+                    </Text>
                   )}
                 </td>
                 <td className={cn(styles.td, styles.largeColumn)}>

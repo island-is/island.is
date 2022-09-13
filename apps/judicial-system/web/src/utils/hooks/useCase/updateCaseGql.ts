@@ -9,7 +9,7 @@ export const UpdateCaseMutation = gql`
       type
       description
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId
@@ -153,6 +153,7 @@ export const UpdateCaseMutation = gql`
       caseResentExplanation
       origin
       seenByDefender
+      subpoenaType
     }
   }
 `

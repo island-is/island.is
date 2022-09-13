@@ -9,7 +9,7 @@ export const CaseQuery = gql`
       type
       description
       state
-      policeCaseNumber
+      policeCaseNumbers
       defendants {
         id
         noNationalId
@@ -145,6 +145,7 @@ export const CaseQuery = gql`
         created
         state
         key
+        category
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -153,6 +154,7 @@ export const CaseQuery = gql`
       caseResentExplanation
       origin
       seenByDefender
+      subpoenaType
     }
   }
 `

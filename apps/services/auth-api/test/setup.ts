@@ -1,6 +1,6 @@
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
@@ -15,11 +15,10 @@ import {
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
 
-class MockEinstaklingarApi {
-  withMiddleware = () => this
-  einstaklingarGetEinstaklingur = jest.fn().mockResolvedValue({})
-  einstaklingarGetEinstaklingurRaw = jest.fn().mockResolvedValue({})
-  einstaklingarGetForsja = jest.fn().mockResolvedValue([])
+class MockNationalRegistryClientService
+  implements Partial<NationalRegistryClientService> {
+  getIndividual = jest.fn().mockResolvedValue({})
+  getCustodyChildren = jest.fn().mockResolvedValue([])
 }
 
 class MockUserProfile {
@@ -46,8 +45,8 @@ export const setupWithAuth = async ({
             scope: user.scope,
           }),
         )
-        .overrideProvider(EinstaklingarApi)
-        .useClass(MockEinstaklingarApi)
+        .overrideProvider(NationalRegistryClientService)
+        .useClass(MockNationalRegistryClientService)
         .overrideProvider(UserProfileApi)
         .useClass(MockUserProfile)
         .overrideProvider(CompanyRegistryClientService)

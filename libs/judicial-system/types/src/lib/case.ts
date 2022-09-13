@@ -119,6 +119,11 @@ export enum SessionArrangements {
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
 }
 
+export enum SubpoenaType {
+  ARREST_SUMMONS = 'ARREST_SUMMONS',
+  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+}
+
 export interface Case {
   id: string
   created: string
@@ -127,14 +132,13 @@ export interface Case {
   type: CaseType
   description?: string
   state: CaseState
-  policeCaseNumber: string
+  policeCaseNumbers: string[]
   defendants?: Defendant[]
   defenderName?: string
   defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  defenderIsSpokesperson?: boolean
   isHeightenedSecurityLevel?: boolean
   court?: Institution
   leadInvestigator?: string
@@ -202,13 +206,14 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
+  subpoenaType?: SubpoenaType
 }
 
 export type CreateCase = Pick<
   Case,
   | 'type'
   | 'description'
-  | 'policeCaseNumber'
+  | 'policeCaseNumbers'
   | 'defenderName'
   | 'defenderNationalId'
   | 'defenderEmail'
@@ -226,7 +231,6 @@ export interface UpdateCase
     | 'defenderEmail'
     | 'defenderPhoneNumber'
     | 'sendRequestToDefender'
-    | 'defenderIsSpokesperson'
     | 'isHeightenedSecurityLevel'
     | 'leadInvestigator'
     | 'arrestDate'
@@ -277,10 +281,11 @@ export interface UpdateCase
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'seenByDefender'
+    | 'subpoenaType'
   > {
   type?: CaseType
   state?: CaseState
-  policeCaseNumber?: string
+  policeCaseNumbers?: string[]
   courtId?: string
   prosecutorId?: string
   sharedWithProsecutorsOfficeId?: string | null

@@ -3,11 +3,6 @@ import { User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
-import {
-  NationalRegistryClientModule,
-  NationalRegistryClientConfig,
-} from '@island.is/clients/national-registry-v2'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
 import kennitala from 'kennitala'
@@ -53,13 +48,6 @@ describe('UserService', () => {
             set: () => ({}),
           })),
         },
-      ],
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [XRoadConfig, NationalRegistryClientConfig],
-        }),
-        NationalRegistryClientModule,
       ],
     }).compile()
 

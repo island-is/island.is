@@ -8,7 +8,7 @@ import {
 const prosecutorFields: (keyof UpdateCase)[] = [
   'type',
   'description',
-  'policeCaseNumber',
+  'policeCaseNumbers',
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
@@ -85,6 +85,7 @@ const courtFields: (keyof UpdateCase)[] = [
   'registrarId',
   'caseModifiedExplanation',
   'rulingModifiedHistory',
+  'subpoenaType',
 ]
 
 const staffFields: (keyof UpdateCase)[] = [

@@ -7,7 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -74,10 +74,11 @@ air-discount-scheme-backend:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'prod'
+    IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -137,7 +138,7 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
@@ -157,11 +158,11 @@ air-discount-scheme-backend:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
-    VEGAGERDIN_IDS_CLIENTS_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -173,7 +174,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
     NEXTAUTH_URL: 'https://loftbru.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -247,10 +248,10 @@ api:
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-prod-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
-    FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://org2ecc07a8.crm4.dynamics.com/api/data/v9.1'
-    FINANCIAL_STATEMENTS_INAO_ISSUER: 'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/v2.0'
-    FINANCIAL_STATEMENTS_INAO_SCOPE: 'https://org2ecc07a8.crm4.dynamics.com/.default'
-    FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/oauth2/v2.0/token'
+    FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'
+    FINANCIAL_STATEMENTS_INAO_ISSUER: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0'
+    FINANCIAL_STATEMENTS_INAO_SCOPE: 'https://star-re.crm4.dynamics.com/.default'
+    FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
@@ -260,7 +261,7 @@ api:
     NODE_OPTIONS: '--max-old-space-size=2000'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     SEND_FROM_EMAIL: 'island@island.is'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '30000'
@@ -424,6 +425,10 @@ application-system-api:
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-prod-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
+    FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://star-re.crm4.dynamics.com/api/data/v9.1'
+    FINANCIAL_STATEMENTS_INAO_ISSUER: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0'
+    FINANCIAL_STATEMENTS_INAO_SCOPE: 'https://star-re.crm4.dynamics.com/.default'
+    FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
@@ -438,7 +443,7 @@ application-system-api:
     NOVA_USERNAME: 'IslandIs_User_Production'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -515,7 +520,7 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
@@ -550,6 +555,8 @@ application-system-api:
     EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
+    FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
+    FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
@@ -594,7 +601,7 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
@@ -664,7 +671,7 @@ application-system-form:
   env:
     BASEPATH: '/umsoknir'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
@@ -728,7 +735,7 @@ contentful-translation-extension:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -782,7 +789,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -860,7 +867,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -904,7 +911,7 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
@@ -956,7 +963,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
   grantNamespacesEnabled: true
@@ -1012,7 +1019,7 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
@@ -1038,7 +1045,7 @@ island-ui-storybook:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1113,7 +1120,7 @@ search-indexer-service:
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1191,7 +1198,7 @@ search-indexer-service:
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
       S3_BUCKET: 'prod-es-custom-packages'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
@@ -1225,7 +1232,7 @@ service-portal:
   env:
     BASEPATH: '/minarsidur'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
@@ -1296,7 +1303,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1350,7 +1357,7 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
@@ -1394,7 +1401,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -1437,7 +1444,7 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
@@ -1464,7 +1471,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1516,10 +1523,10 @@ skilavottord-web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
     NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
+    SKILAVOTTORD_WEB_IDS_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1532,7 +1539,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1585,7 +1592,7 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
@@ -1626,7 +1633,7 @@ user-notification:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1697,7 +1704,7 @@ user-notification-worker:
     IDENTITY_SERVER_PATH: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app'
   grantNamespaces:
@@ -1759,7 +1766,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1829,7 +1836,7 @@ xroad-collector:
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=208'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms,INAO_Client'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
