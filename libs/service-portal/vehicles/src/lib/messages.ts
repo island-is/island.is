@@ -106,7 +106,7 @@ export const messages = defineMessages({
     id: 'sp.vehicles:country',
     defaultMessage: 'Framleiðsluland',
   },
-  preRegYear: {
+  productYear: {
     id: 'sp.vehicles:pre-reg-year',
     defaultMessage: 'Framleiðsluár',
   },

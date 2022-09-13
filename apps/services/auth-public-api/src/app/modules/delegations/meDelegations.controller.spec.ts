@@ -46,7 +46,7 @@ const user = createCurrentUser({
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
-  kennitala: '6677889900',
+  nationalId: '6677889900',
 })
 const today = new Date('2021-11-12')
 const mockDelegations = {
@@ -253,7 +253,7 @@ describe('MeDelegationsController', () => {
         // Arrange
         await delegationModel.create(
           createDelegation({
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromNationalId: nationalRegistryUser.nationalId,
             toNationalId: user.nationalId,
             scopes: [Scopes[5].name],
             today,
@@ -449,7 +449,7 @@ describe('MeDelegationsController', () => {
         const expectedModel = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [Scopes[5].name],
             today,
           }),
@@ -645,7 +645,7 @@ describe('MeDelegationsController', () => {
         const expectedModel = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[5].name],
               today,
@@ -672,7 +672,7 @@ describe('MeDelegationsController', () => {
         // Arrange
         const expectedModel = await delegationModel.create(
           createDelegation({
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromNationalId: nationalRegistryUser.nationalId,
             toNationalId: user.nationalId,
             scopes: [Scopes[5].name],
             today,
@@ -781,14 +781,14 @@ describe('MeDelegationsController', () => {
       it.each`
         model
         ${{
-  toNationalId: nationalRegistryUser.kennitala,
+  toNationalId: nationalRegistryUser.nationalId,
 }}
         ${{
-  toNationalId: nationalRegistryUser.kennitala,
+  toNationalId: nationalRegistryUser.nationalId,
   scopes: [],
 }}
         ${{
-  toNationalId: nationalRegistryUser.kennitala,
+  toNationalId: nationalRegistryUser.nationalId,
   scopes: [{
       name: Scopes[0].name,
       type: ScopeType.ApiScope,
@@ -822,7 +822,7 @@ describe('MeDelegationsController', () => {
       it('should return 400 Bad Request when scope is not allowed for delegation', async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[2].name,
@@ -847,7 +847,7 @@ describe('MeDelegationsController', () => {
       it('should return 400 Bad Request when user does not have access to all the requested scopes', async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[0].name,
@@ -878,7 +878,7 @@ describe('MeDelegationsController', () => {
       it('should return 400 Bad Request when scopes have a validTo before the current datetime', async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[0].name,
@@ -905,7 +905,7 @@ describe('MeDelegationsController', () => {
       it("should return 400 Bad Request when scopes don't have validTo set", async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[0].name,
@@ -930,7 +930,7 @@ describe('MeDelegationsController', () => {
       it('should return 400 Bad Request when scopes have a invalid type', async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[0].name,
@@ -961,7 +961,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [],
             today,
           }),
@@ -996,7 +996,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [Scopes[0].name],
             today,
           }),
@@ -1030,7 +1030,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [Scopes[0].name, Scopes[1].name, Scopes[5].name],
             today,
           }),
@@ -1085,7 +1085,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [],
             today,
           }),
@@ -1118,7 +1118,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [],
             today,
           }),
@@ -1151,7 +1151,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [],
             today,
           }),
@@ -1185,7 +1185,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [],
             today,
           }),
@@ -1245,7 +1245,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [Scopes[0].name],
             today,
           }),
@@ -1274,7 +1274,7 @@ describe('MeDelegationsController', () => {
         const { id } = await delegationModel.create(
           createDelegation({
             fromNationalId: user.nationalId,
-            toNationalId: nationalRegistryUser.kennitala,
+            toNationalId: nationalRegistryUser.nationalId,
             scopes: [Scopes[0].name, Scopes[5].name],
             today,
           }),
@@ -1372,7 +1372,7 @@ describe('MeDelegationsController', () => {
       it(`POST /me/delegations should ${workOrFail} when scope has a special delegation rule`, async () => {
         // Arrange
         const model = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[3].name,
@@ -1392,7 +1392,7 @@ describe('MeDelegationsController', () => {
         // Arrange
         const expectedValidTo = addDays(today, 2)
         const createModel = {
-          toNationalId: nationalRegistryUser.kennitala,
+          toNationalId: nationalRegistryUser.nationalId,
           scopes: [
             {
               name: Scopes[0].name,
