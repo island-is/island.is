@@ -504,6 +504,13 @@ export const slices = gql`
     successText
     aboutYouHeadingText
     questionsHeadingText
+    recipientFormFieldDecider {
+      title
+      placeholder
+      type
+      required
+      options
+    }
   }
 
   fragment StepperFields on Stepper {
