@@ -5,19 +5,18 @@ import {
   Button,
   FocusableBox,
   Link,
-  LinkCard,
   Stack,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
-import { Namespace } from '@island.is/api/schema'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
 interface SliceProps {
   slice: FeaturedArticles
-  namespace?: Namespace
+  namespace?: Record<string, string>
 }
 
 export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
@@ -30,9 +29,22 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const isMobile = width < theme.breakpoints.md
   const labelId = 'sliceTitle-' + slice.id
 
+  const sortedArticles =
+    slice.sortBy === 'importance'
+      ? slice.resolvedArticles
+          .slice()
+          .sort((a, b) =>
+            a.importance > b.importance
+              ? -1
+              : a.importance === b.importance
+              ? a.title.localeCompare(b.title)
+              : 1,
+          )
+      : slice.resolvedArticles
+
   return (
-    !!slice.articles.length && (
-      <section key={slice.id} aria-labelledby={labelId}>
+    (!!slice.articles.length || !!slice.resolvedArticles.length) && (
+      <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box
           borderTopWidth="standard"
           borderColor="standard"
@@ -43,28 +55,32 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             {slice.title}
           </Text>
           <Stack space={2}>
-            {slice.articles.map(
-              ({ title, slug, processEntry, processEntryButtonText }) => {
+            {(slice.automaticallyFetchArticles
+              ? sortedArticles
+              : slice.articles
+            ).map(
+              ({
+                title,
+                slug,
+                processEntry = null,
+                processEntryButtonText = null,
+              }) => {
                 const url = linkResolver('Article' as LinkType, [slug])
                 return (
                   <FocusableBox
                     key={slug}
+                    borderRadius="large"
                     href={url.href}
                     target={isMobile ? '' : '_blank'}
-                    borderRadius="large"
                   >
-                    {({ isFocused }) => (
-                      <LinkCard
-                        isFocused={isFocused}
-                        tag={
-                          processEntryButtonText || !!processEntry
-                            ? n(processEntryButtonText || 'application', '')
-                            : undefined
-                        }
-                      >
-                        {title}
-                      </LinkCard>
-                    )}
+                    <TopicCard
+                      tag={
+                        (!!processEntry || processEntryButtonText) &&
+                        n(processEntryButtonText || 'application', 'Umsókn')
+                      }
+                    >
+                      {title}
+                    </TopicCard>
                   </FocusableBox>
                 )
               },

@@ -1,0 +1,94 @@
+{
+  "root": "apps/services/documents",
+  "sourceRoot": "apps/services/documents/src",
+  "projectType": "application",
+  "prefix": "services-documents",
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/services/documents",
+        "main": "apps/services/documents/src/main.ts",
+        "tsConfig": "apps/services/documents/tsconfig.app.json",
+        "showCircularDependencies": false,
+        "assets": [
+          "apps/services/documents/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/documents/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/documents",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/documents",
+            "output": "./"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-documents:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/services/documents/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "apps/services/documents/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/apps/services/documents"]
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/services/documents"
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/documents/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/documents/tsconfig.app.json apps/services/documents/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/documents"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/documents"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

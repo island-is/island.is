@@ -13,6 +13,7 @@ import type {
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -44,8 +45,8 @@ export class Case implements TCase {
   @Field(() => String)
   readonly state!: CaseState
 
-  @Field()
-  readonly policeCaseNumber!: string
+  @Field(() => [String])
+  readonly policeCaseNumbers!: string[]
 
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
@@ -265,4 +266,7 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly seenByDefender?: string
+
+  @Field(() => String, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }

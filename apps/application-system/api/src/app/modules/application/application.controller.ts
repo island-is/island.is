@@ -15,6 +15,7 @@ import {
   UnauthorizedException,
   Delete,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -42,6 +43,9 @@ import {
   ApplicationTemplateAPIAction,
   PdfTypes,
   ApplicationStatus,
+  ApplicationTemplate,
+  ApplicationContext,
+  ApplicationStateSchema,
 } from '@island.is/application/types'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
@@ -62,7 +66,7 @@ import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from '@island.is/application/api/core'
-import { FileService } from './files/file.service'
+import { FileService } from '@island.is/application/api/files'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -94,10 +98,13 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { EventObject } from 'xstate'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 import { PaymentService } from '../payment/payment.service'
 import { ApplicationChargeService } from './charge/application-charge.service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -117,6 +124,7 @@ export class ApplicationController {
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -186,17 +194,38 @@ export class ApplicationController {
       throw new UnauthorizedException()
     }
 
+    this.logger.debug(`Getting applications with status ${status}`)
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
     )
+
+    // keep all templates that have been fetched in order to avoid fetching them again
+    const templates: Partial<
+      Record<
+        ApplicationTypes,
+        ApplicationTemplate<
+          ApplicationContext,
+          ApplicationStateSchema<EventObject>,
+          EventObject
+        >
+      >
+    > = {}
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
-
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
-      if (templateTypeToIsReady[application.typeId]) {
+      // now we just need to check if it should be displayed for the user
+      if (
+        templateTypeToIsReady[application.typeId] &&
+        templates[application.typeId] !== undefined &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          templates[application.typeId],
+        ))
+      ) {
         filteredApplications.push(application)
         continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
@@ -209,8 +238,19 @@ export class ApplicationController {
         application.typeId,
       )
 
+      // Add template to avoid fetching it again for the same types
+      templates[application.typeId] = applicationTemplate
+
       if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
+        (await this.validationService.isTemplateReady(
+          user,
+          applicationTemplate,
+        )) &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          applicationTemplate,
+        ))
       ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
@@ -347,6 +387,8 @@ export class ApplicationController {
       assignApplicationDto.token,
     )
 
+    this.logger.info('Application assign started.')
+    this.logger.debug(`Decoded token ${JSON.stringify(decodedToken)}`)
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
     }
@@ -417,8 +459,14 @@ export class ApplicationController {
     )
 
     if (hasError) {
+      this.logger.error(
+        `Application (ID: ${existingApplication.id}) assignment finished with an error: ${error}`,
+      )
       throw new BadRequestException(error)
     }
+    this.logger.info(
+      `Application (ID: ${existingApplication.id}) assignment finished with no errors.`,
+    )
 
     if (hasChanged) {
       return updatedApplication
@@ -646,8 +694,10 @@ export class ApplicationController {
     })
 
     if (hasError) {
+      this.logger.error(`Application submission ended with an error: ${error}`)
       throw new BadRequestException(error)
     }
+    this.logger.info(`Application submission ended successfully`)
 
     if (hasChanged) {
       return updatedApplication
@@ -668,7 +718,11 @@ export class ApplicationController {
       externalDataId,
       throwOnError,
     } = action
-
+    this.logger.debug(
+      `Performing action ${apiModuleAction} on ${JSON.stringify(
+        template.name,
+      )}`,
+    )
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
       type: apiModuleAction,
@@ -677,6 +731,11 @@ export class ApplicationController {
         auth,
       },
     })
+    this.logger.debug(
+      `Performing action ${apiModuleAction} on ${JSON.stringify(
+        template.name,
+      )} ended with ${actionResult.success ? 'success' : 'failure'}`,
+    )
 
     let updatedApplication: BaseApplication = application
 
@@ -690,6 +749,9 @@ export class ApplicationController {
             : actionResult.error,
         },
       }
+      this.logger.debug(
+        `Updating external data for application with ID ${updatedApplication.id}`,
+      )
 
       const {
         updatedApplication: withExternalData,
@@ -1141,6 +1203,8 @@ export class ApplicationController {
 
     // delete the entry in Payment table to prevent FK error
     await this.paymentService.delete(existingApplication.id, user)
+
+    await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
     await this.applicationService.delete(existingApplication.id)
   }

@@ -23,6 +23,7 @@ import {
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -107,11 +108,11 @@ export class Case extends Model {
    * A case number in LÖKE (police information system) connected to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  policeCaseNumber!: string
+  policeCaseNumbers!: string[]
 
   /**********
    * The case's defendants
@@ -893,4 +894,15 @@ export class Case extends Model {
   })
   @ApiProperty()
   seenByDefender?: Date
+
+  /**********
+   * A indictment subpeona type. Either ARREST_SUMMONS or ABSENCE_SUMMONS
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SubpoenaType),
+  })
+  @ApiProperty({ enum: SubpoenaType })
+  subpoenaType?: SubpoenaType
 }

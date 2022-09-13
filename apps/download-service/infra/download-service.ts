@@ -1,9 +1,7 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { Base, Client, Finance } from '../../../infra/src/dsl/xroad'
+import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { Base, Client, Finance, Vehicles } from '../../../infra/src/dsl/xroad'
 
-export const serviceSetup = (services: {
-  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
-}): ServiceBuilder<'download-service'> =>
+export const serviceSetup = (): ServiceBuilder<'download-service'> =>
   service('download-service')
     .image('download-service')
     .namespace('download-service')
@@ -14,9 +12,6 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service',
-      REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
-      ),
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -25,11 +20,8 @@ export const serviceSetup = (services: {
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
       POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH',
-      REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
-      REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
-        '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
     })
-    .xroad(Base, Client, Finance)
+    .xroad(Base, Client, Finance, Vehicles)
     .ingress({
       primary: {
         host: {

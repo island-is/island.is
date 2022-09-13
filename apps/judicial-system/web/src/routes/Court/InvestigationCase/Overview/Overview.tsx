@@ -12,7 +12,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -47,7 +47,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
 
 const Overview = () => {
   const {
@@ -58,18 +58,17 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { autofill } = useCase()
+  const { setAndSendToServer } = useCase()
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      autofill(
+      setAndSendToServer(
         [
           {
-            key: 'ruling',
-            value: !workingCase.parentCase
+            ruling: !workingCase.parentCase
               ? `\n${formatMessage(ruling.autofill, {
                   judgeName: workingCase.judge?.name,
                 })}`
@@ -82,7 +81,13 @@ const Overview = () => {
         setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    setAndSendToServer,
+    formatMessage,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -90,7 +95,7 @@ const Overview = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.JUDGE_OVERVIEW}
+      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -141,7 +146,9 @@ const Overview = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumber,
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               {
                 title: formatMessage(core.prosecutor),
@@ -166,14 +173,25 @@ const Overview = () => {
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <>
@@ -275,9 +293,9 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />

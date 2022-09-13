@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
 
 import {
@@ -18,10 +17,7 @@ import { Webreader } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import {
-  GetNamespaceQuery,
-  Stepper as StepperSchema,
-} from '@island.is/web/graphql/schema'
+import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 
 import {
@@ -55,15 +51,9 @@ interface StepperProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   showWebReader?: boolean
   webReaderClassName?: string
-}
-
-interface StepOptionSelectItem {
-  label: string
-  value: string
-  transition: string
 }
 
 interface QuestionAndAnswer {
@@ -98,7 +88,7 @@ const getInitialStateAndAnswersByQueryParams = (
     if (stepType === STEP_TYPES.ANSWER) break
 
     const options = getStepOptions(step, activeLocale, optionsFromNamespace)
-    const selectedOption = options.find((o) => o.slug === answer)
+    const selectedOption = options.find((o) => o.value === answer)
     if (!selectedOption) break
 
     initialState = stepperMachine.transition(
@@ -111,7 +101,7 @@ const getInitialStateAndAnswersByQueryParams = (
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
-        slug: selectedOption.slug,
+        slug: selectedOption.value,
       })
     }
   }
@@ -210,7 +200,7 @@ const Stepper = ({
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
-  const stepOptions = useMemo<StepOption[]>(
+  const stepOptions = useMemo(
     () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
     [activeLocale, currentStep, optionsFromNamespace],
   )
@@ -232,7 +222,7 @@ const Stepper = ({
 
     // Select the option that was previously selected if we want to change an answer
     if (previousAnswer && selectedOption === null) {
-      const option = stepOptions.find((o) => o.slug === previousAnswer) ?? null
+      const option = stepOptions.find((o) => o.value === previousAnswer) ?? null
       setSelectedOption(option)
       previousAnswerIsValid = option !== null
     }
@@ -335,7 +325,7 @@ const Stepper = ({
                 pathname: pathnameWithoutQueryParams,
                 query: {
                   ...router.query,
-                  answers: `${previousAnswers}${selectedOption.slug}`,
+                  answers: `${previousAnswers}${selectedOption.value}`,
                 },
               })
               .then(() => {
@@ -399,7 +389,7 @@ const Stepper = ({
                 hasClickedContinueWithoutSelecting && selectedOption === null
               }
               label={option.label}
-              checked={option.slug === selectedOption?.slug}
+              checked={option.value === selectedOption?.value}
               onChange={() => setSelectedOption(option)}
             />
           </Box>
@@ -415,24 +405,11 @@ const Stepper = ({
                 size="sm"
                 name="step-option-select"
                 noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
-                value={{
-                  label: selectedOption?.label ?? '',
-                  value: selectedOption?.slug ?? '',
+                value={selectedOption}
+                onChange={(option) => {
+                  setSelectedOption(option as StepOption)
                 }}
-                onChange={(option: ValueType<StepOptionSelectItem>) => {
-                  const stepOptionSelectItem = option as StepOptionSelectItem
-                  const newSelectedOption = {
-                    label: stepOptionSelectItem.label,
-                    slug: stepOptionSelectItem.value,
-                    transition: stepOptionSelectItem.transition,
-                  }
-                  setSelectedOption(newSelectedOption)
-                }}
-                options={stepOptions.map((option) => ({
-                  label: option.label,
-                  value: option.slug,
-                  transition: option.transition,
-                }))}
+                options={stepOptions}
               />
             </GridColumn>
           </GridRow>
@@ -472,7 +449,10 @@ const Stepper = ({
               {n('yourAnswers', 'Svörin þín')}
             </Text>
             <Box marginBottom={3} textAlign="right">
-              <Link shallow={true} href={router.asPath.split('?')[0]}>
+              <Link
+                shallow={true}
+                href={`${router.asPath.split('?')[0]}?stepper=true`}
+              >
                 <Button variant="text" icon="reload" size="small" nowrap={true}>
                   {n('startAgain', 'Byrja aftur')}
                 </Button>

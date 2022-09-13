@@ -1,17 +1,22 @@
-import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   intercept,
-  makeRestrictionCase,
   makeProsecutor,
   makeCaseFile,
+  mockCase,
 } from '../../../utils'
 
 describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
   const caseFile = makeCaseFile('caseId', 'caseFileName')
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const prosecutor = makeProsecutor()
     const caseDataAddition: Case = {
       ...caseData,
@@ -25,7 +30,7 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
     cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
+    cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)
   })
 
   it('should display appropriate components on the page', () => {

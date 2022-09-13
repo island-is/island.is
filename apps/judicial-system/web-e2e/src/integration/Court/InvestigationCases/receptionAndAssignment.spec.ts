@@ -1,14 +1,21 @@
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
-  IC_OVERVIEW_ROUTE,
-  IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INVESTIGATION_CASE_OVERVIEW_ROUTE,
+  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCourt, makeRestrictionCase, intercept } from '../../../utils'
+import {
+  makeCourt,
+  intercept,
+  hasOperationName,
+  Operation,
+  makeJudge,
+  mockCase,
+} from '../../../utils'
 
-describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
 
     const caseDataAddition = {
       ...caseData,
@@ -19,10 +26,26 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
+    cy.visit(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
   })
 
   it('should enable continue button when required fields are valid', () => {
+    cy.intercept('POST', '**/api/graphql', (req) => {
+      console.log('intercepting')
+      if (hasOperationName(req, Operation.UpdateCaseMutation)) {
+        const { body } = req
+        console.log('intercepting updatecase', body)
+        req.reply({
+          data: {
+            updateCase: {
+              ...body.variables?.input,
+              judge: makeJudge(),
+              __typename: 'Case',
+            },
+          },
+        })
+      }
+    })
     // case number validation
     cy.getByTestid('courtCaseNumber').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
@@ -35,16 +58,9 @@ describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('select-judge').click()
     cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('continueButton').should('be.enabled')
-  })
 
-  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtCaseNumber').type('R-1/2021')
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
+    cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_OVERVIEW_ROUTE)
+    cy.url().should('include', INVESTIGATION_CASE_OVERVIEW_ROUTE)
   })
 })

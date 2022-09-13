@@ -5,6 +5,8 @@ import {
   IsUUID,
   IsBoolean,
   IsObject,
+  ArrayMinSize,
+  IsArray,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -17,6 +19,7 @@ import {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -31,9 +34,11 @@ export class UpdateCaseDto {
   readonly description?: string
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @ApiPropertyOptional()
-  readonly policeCaseNumber?: string
+  readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
@@ -334,4 +339,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly seenByDefender?: Date
+
+  @IsOptional()
+  @IsEnum(SubpoenaType)
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  readonly subpoenaType?: SubpoenaType
 }

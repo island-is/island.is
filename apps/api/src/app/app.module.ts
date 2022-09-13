@@ -14,6 +14,7 @@ import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { CommunicationsModule } from '@island.is/api/domains/communications'
+import { MailchimpModule } from '@island.is/api/domains/mailchimp'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
@@ -65,6 +66,8 @@ import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
+import { PassportsClientConfig } from '@island.is/clients/passports'
+import { FileStorageConfig } from '@island.is/file-storage'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -120,7 +123,7 @@ const autoSchemaFile = environment.production
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     DirectorateOfLabourModule.register(),
-    FileUploadModule.register({ fileStorage: environment.fileStorage }),
+    FileUploadModule,
     DocumentModule.register({
       documentClientConfig: {
         basePath: environment.documentService.basePath!,
@@ -184,6 +187,7 @@ const autoSchemaFile = environment.production
       },
     }),
     CommunicationsModule,
+    MailchimpModule,
     ApiCatalogueModule,
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
@@ -278,6 +282,8 @@ const autoSchemaFile = environment.production
         FishingLicenseClientConfig,
         DrivingLicenseBookClientConfig,
         DrivingLicenseApiConfig,
+        PassportsClientConfig,
+        FileStorageConfig,
       ],
     }),
   ],

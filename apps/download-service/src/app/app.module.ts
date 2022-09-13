@@ -16,20 +16,19 @@ import {
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
-import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
-import {
-  RegulationsAdminClientConfig,
-  RegulationsAdminClientModule,
-} from '@island.is/clients/regulations-admin'
-import { RegulationsService } from '@island.is/clients/regulations'
 import { environment } from '../environments'
+import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import {
+  VehiclesClientConfig,
+  VehiclesClientModule,
+} from '@island.is/clients/vehicles'
 
 @Module({
   controllers: [
     DocumentController,
     DocumentsInfraController,
     FinanceDocumentController,
-    RegulationDocumentsController,
+    VehicleController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -41,26 +40,17 @@ import { environment } from '../environments'
       tokenUrl: environment.documentService.tokenUrl,
     }),
     FinanceClientModule,
-    RegulationsAdminClientModule,
+    VehiclesClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         FinanceClientConfig,
-        RegulationsAdminClientConfig,
         IdsClientConfig,
         XRoadConfig,
+        VehiclesClientConfig,
       ],
     }),
   ],
-  providers: [
-    {
-      provide: RegulationsService,
-      useFactory: async () =>
-        new RegulationsService({
-          url: environment.regulationsAdmin.regulationsApiUrl,
-          presignedKey: environment.regulationsAdmin.presignedKey,
-        }),
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}

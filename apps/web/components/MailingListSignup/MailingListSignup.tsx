@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import jsonp from 'jsonp'
 import { Box, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import {
+  MailchimpSubscribeMutation,
+  MailchimpSubscribeMutationVariables,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useMutation } from '@apollo/client/react'
+import { MAILING_LIST_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 
 type FormState = {
   type: 'default' | 'error' | 'success'
@@ -16,14 +20,14 @@ interface FormProps {
 }
 
 interface MailingListSignupProps {
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   id: string
   title: string
   description: string
   inputLabel: string
   placeholder?: string
   buttonText: string
-  mailingListUrl: string
+  signupID: string
 }
 
 export const MailingListSignup: React.FC<MailingListSignupProps> = ({
@@ -34,44 +38,24 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   inputLabel,
   placeholder,
   buttonText,
-  mailingListUrl,
+  signupID,
 }) => {
-  // Validate Mailing List Url contains email replacement token
-  // TODO: What is the proper way of logging such validation errors?
-  const mailingListUrlEmailReplacementToken = '{{EMAIL}}'
-  if (!mailingListUrl.includes(mailingListUrlEmailReplacementToken)) {
-    console.warn(
-      `Mailing list URL must include email replacement token "${mailingListUrlEmailReplacementToken}"`,
-    )
-  }
-
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
     type: 'default',
     message: '',
   })
 
+  const [subscribeToMailchimp, { data: result, loading, error }] = useMutation<
+    MailchimpSubscribeMutation,
+    MailchimpSubscribeMutationVariables
+  >(MAILING_LIST_SIGNUP_MUTATION)
+
   const handleSubmit = ({ email }: FormProps) => {
     if (isValidEmail.test(email)) {
-      // Submit the valid email address.
-      const url = formatMailingSignupUrl(email)
-      jsonp(
-        url,
-        {
-          param: 'c',
-        },
-        (err: Error, data: any) => {
-          if (err) {
-            setStatus({
-              type: 'error',
-              message: err.message,
-            })
-          } else if (data.result !== 'success') {
-            setStatus({
-              type: 'error',
-              message: data.msg,
-            })
-          } else {
+      subscribeToMailchimp({ variables: { input: { signupID, email } } })
+        .then((result) => {
+          if (result?.data?.mailchimpSubscribe?.subscribed) {
             const successMessage: string = n(
               'formSuccess',
               'Þú þarft að fara í pósthólfið þitt og samþykkja umsóknina. Takk fyrir.',
@@ -80,9 +64,19 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
               type: 'success',
               message: successMessage,
             })
+          } else {
+            setStatus({
+              type: 'error',
+              message: n('formEmailUnknownError', 'Óþekkt villa.'),
+            })
           }
-        },
-      )
+        })
+        .catch((error) =>
+          setStatus({
+            type: 'error',
+            message: n('formEmailUnknownError', 'Óþekkt villa.'),
+          }),
+        )
     } else {
       // Email address is not valid.
       setStatus({
@@ -114,48 +108,6 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
     }
   }, [status.type, formik.values.email])
 
-  /**
-   * Formats the Mailing list signup URL with the given email.
-   *
-   * @param email A valid email address.
-   * @returns A URL to call to subsribe the given email address to the Mailing List.
-   */
-  const formatMailingSignupUrl = (email: string) => {
-    const encodedEmail = encodeURIComponent(email)
-    return mailingListUrl.replace(
-      mailingListUrlEmailReplacementToken,
-      encodedEmail,
-    )
-  }
-
-  /**
-   * Parses error messages to make them more user friendly.
-   *
-   * @param message An error message.
-   * @returns A more user friendly version of the given error message.
-   */
-  const parseErrorMessage = (message: string) => {
-    if (!message) {
-      return
-    }
-    const msg = message.toLowerCase()
-
-    if (
-      msg.includes('is already subscribed') ||
-      msg.includes('er nú þegar skráður')
-    ) {
-      return n('formEmailAlreadyRegistered', 'Þetta netfang er þegar á skrá.')
-    }
-
-    if (msg.includes('invalid email') || msg.includes('ógilt netfang')) {
-      return n('formInvalidEmail', 'Þetta er ógilt netfang.')
-    }
-
-    // TODO: Is this the proper way to log unexpected cases of error messages?
-    console.warn(message)
-    return n('formEmailUnknownError', 'Óþekkt villa.')
-  }
-
   return (
     <Box background="blue100" paddingX={[2, 2, 8]} paddingY={[2, 2, 6]}>
       <NewsletterSignup
@@ -170,9 +122,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
         onChange={formik.handleChange}
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
-        errorMessage={parseErrorMessage(
-          status.type === 'error' ? status.message : '',
-        )}
+        errorMessage={status.type === 'error' ? status.message : ''}
         successTitle={n('formSuccessTitle', 'Skráning tókst')}
         successMessage={status.type === 'success' ? status.message : ''}
         state={status.type}

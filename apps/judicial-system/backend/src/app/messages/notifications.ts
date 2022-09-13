@@ -34,31 +34,24 @@ export const notifications = {
       'Texti í pósti sem tilgreinir hvaða dómritari er skráður í málinu',
   },
   prosecutorText: {
-    id: 'judicial.system.backend:notifications.prosecutor_text',
+    id: 'judicial.system.backend:notifications.prosecutor_text_v2',
     defaultMessage:
-      'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
+      'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}{institutionName, select, NONE {} other { ({institutionName})}}.',
     description:
       'Notaður sem texti í sms-i til þess að tilgreina hver er sækjandi í málinu',
   },
   readyForCourt: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.ready_for_court.subject',
-      defaultMessage: 'Krafa í máli {policeCaseNumber}',
+      id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',
+      defaultMessage:
+        '{isIndictmentCase, select, true {Ákæra} other {Krafa um {caseType}}} send',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
     prosecutorHtml: {
       id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v1',
+        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v3',
       defaultMessage:
-        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
-    },
-    prosecutorHtmlV2: {
-      id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v2',
-      defaultMessage:
-        'Þú hefur sent kröfu um {caseType, select, CUSTODY {gæsluvarðhald} TRAVEL_BAN {farbann} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {rannsóknarheimild}} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
+        'Þú hefur sent {isIndictmentCase, select, true {ákæru} other {kröfu}} á {courtName} vegna LÖKE {policeCaseNumbersCount, plural, zero {máls} one {máls {policeCaseNumbers}} other {mála: {policeCaseNumbers}}}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
     },
@@ -144,16 +137,16 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject',
-      defaultMessage: 'Krafa í máli {policeCaseNumber} send aftur',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v2',
+      defaultMessage: 'Krafa um {caseType} send aftur',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
     body: {
       id:
-        'judicial.system.backend:notifications.defender_resubmitted_to_court.body',
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body_v2',
       defaultMessage:
-        'Sækjandi í máli {policeCaseNumber} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
+        'Sækjandi í {policeCaseNumbersCount, plural, zero {máli} one {máli {policeCaseNumbers}} other {málum: {policeCaseNumbers}}} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
       description:
         'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
@@ -180,6 +173,13 @@ export const notifications = {
         'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
+    },
+    subject: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
+      defaultMessage: 'Fyrirtaka í máli: {courtCaseNumber}',
+      description:
+        'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
     body: {
       id:

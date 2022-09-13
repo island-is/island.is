@@ -1,0 +1,82 @@
+{
+  "root": "apps/services/user-notification",
+  "sourceRoot": "apps/services/user-notification/src",
+  "projectType": "application",
+  "prefix": "services-user-notification",
+  "targets": {
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/user-notification/src/messages.ts'"
+      }
+    },
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/user-notification",
+        "main": "apps/services/user-notification/src/main.ts",
+        "tsConfig": "apps/services/user-notification/tsconfig.app.json",
+        "assets": ["apps/services/user-notification/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/services/user-notification/src/environments/environment.ts",
+              "with": "apps/services/user-notification/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-user-notification:build"
+      }
+    },
+    "worker": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "worker"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/user-notification"],
+      "options": {
+        "jestConfig": "apps/services/user-notification/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d --build",
+        "cwd": "apps/services/user-notification"
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/user-notification/src/openapi.yaml",
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
+      }
+    },
+    "docker-express": {}
+  },
+  "tags": []
+}

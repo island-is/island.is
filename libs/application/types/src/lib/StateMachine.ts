@@ -10,6 +10,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -37,6 +38,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   delete?: boolean
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
+  shouldBeListedForRole?: boolean
 }
 
 export interface ApplicationContext {
@@ -48,7 +50,7 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
   condition?: Condition
-}
+} & TestSupport
 
 export interface ApplicationTemplateAPIAction {
   // Name of the action that will be run on the API

@@ -1,58 +1,46 @@
-import { STEP_ONE_CUSTODY_REQUEST_ROUTE } from '@island.is/judicial-system/consts'
+import { CREATE_RESTRICTION_CASE_ROUTE } from '@island.is/judicial-system/consts'
 
-describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
+describe(CREATE_RESTRICTION_CASE_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(STEP_ONE_CUSTODY_REQUEST_ROUTE)
+    cy.visit(CREATE_RESTRICTION_CASE_ROUTE)
   })
 
-  it('should require a valid police case number', () => {
-    cy.getByTestid('policeCaseNumber').type('0').blur()
-    cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
-    cy.getByTestid('policeCaseNumber').clear().blur()
+  it('should require a valid data', () => {
+    cy.get('#policeCaseNumbers').type('0').type('{enter}')
+    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 0)
+    cy.get('#policeCaseNumbers').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('policeCaseNumber').clear().type('00000000000')
+    cy.get('#policeCaseNumbers').type('007202201').type('{enter}')
+    cy.getByTestid('policeCaseNumbers-list').children().should('have.length', 1)
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
 
-  it('should require a valid accused national id if the user has a national id', () => {
+    // National id
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
     cy.getByTestid('nationalId').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('0000000000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
-  it('should autofill name, address and gender after getting person by national id in national registry', () => {
-    // eslint-disable-next-line local-rules/disallow-kennitalas
-    cy.getByTestid('nationalId').type('1111111111')
+    cy.getByTestid('continueButton').should('be.disabled')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
     cy.getByTestid('accusedName').should('have.value', 'The Joker')
     cy.getByTestid('select-defendantGender').should('contain', 'Karl')
-  })
 
-  it('should require a valid accused date of birth or empty if the user does not have a national id', () => {
+    // Birth date
     cy.get('[type="checkbox"]').check()
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
     cy.getByTestid('nationalId').clear().type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
 
-  it('should require a valid accused name', () => {
-    cy.getByTestid('accusedName').click().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('accusedName').clear().type('Sidwell Sidwellsson')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
-  it('should require a valid accused address', () => {
-    cy.getByTestid('accusedAddress').click().blur()
+    // Address
+    cy.getByTestid('accusedAddress').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedAddress').clear().type('Sidwellssongata 300')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
   })
 
   it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
@@ -62,8 +50,8 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('defenderNotFound').should('exist')
   })
 
-  it('should not allow users to move forward if they entered an invalid defender email address', () => {
-    cy.getByTestid('policeCaseNumber').type('00000000000')
+  it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
+    cy.get('#policeCaseNumbers').type('00000000000').type('{enter}')
     cy.getByTestid('nationalId').type('0000000000')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('nationalId').blur()
@@ -73,7 +61,13 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('leadInvestigator').type('John Doe')
     cy.getByTestid('continueButton').should('not.be.disabled')
+
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderEmail').clear()
+    cy.getByTestid('defenderPhoneNumber').type('000')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
+    cy.getByTestid('continueButton').should('not.be.disabled')
   })
 })

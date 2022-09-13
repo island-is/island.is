@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import { FC, useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -8,6 +8,7 @@ import {
   Link,
   NavigationItem,
   Stack,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -29,27 +30,59 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
-  OrganizationSlice,
+  SliceMachine,
   OrganizationWrapper,
   SliceDropdown,
+  Form,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { Locale } from 'locale'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
+  locale: Locale
+}
+
+const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
+  const navigation = useMemo(
+    () =>
+      slices
+        .map((slice) => ({
+          id: slice.id,
+          text: slice['title'] ?? slice['leftTitle'] ?? '',
+        }))
+        .filter((item) => !!item.text),
+    [slices],
+  )
+  if (navigation.length === 0) {
+    return null
+  }
+  return (
+    <Box marginY={2}>
+      <TableOfContents
+        tableOfContentsTitle={title}
+        headings={navigation.map(({ id, text }) => ({
+          headingTitle: text,
+          headingId: id,
+        }))}
+        onClick={(id) => scrollTo(id, { smooth: true })}
+      />
+    </Box>
+  )
 }
 
 const SubPage: Screen<SubPageProps> = ({
   organizationPage,
   subpage,
   namespace,
+  locale,
 }) => {
   const router = useRouter()
 
@@ -86,11 +119,15 @@ const SubPage: Screen<SubPageProps> = ({
       breadcrumbItems={[
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage').href,
+          href: linkResolver('homepage', [], locale).href,
         },
         {
           title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          href: linkResolver(
+            'organizationpage',
+            [organizationPage.slug],
+            locale,
+          ).href,
         },
       ]}
       navigationData={{
@@ -118,6 +155,12 @@ const SubPage: Screen<SubPageProps> = ({
                     </Box>
                   </GridColumn>
                 </GridRow>
+                {subpage.showTableOfContents && (
+                  <TOC
+                    slices={subpage.slices}
+                    title={n('navigationTitle', 'Efnisyfirlit')}
+                  />
+                )}
                 <GridRow>
                   <GridColumn
                     span={[
@@ -126,7 +169,13 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[])}
+                    {richText(subpage.description as SliceType[], {
+                      renderComponent: {
+                        Form: (slice) => (
+                          <Form form={slice} namespace={namespace} />
+                        ),
+                      },
+                    })}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn
@@ -165,20 +214,21 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
-  namespace: Namespace,
-  organizationPageSlug: string,
+  namespace: Record<string, string>,
+  slug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice) => (
-        <OrganizationSlice
+      return slices.map((slice, index) => (
+        <SliceMachine
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPageSlug}
+          slug={slug}
           renderedOnOrganizationSubpage={true}
+          marginBottom={index === slices.length - 1 ? 5 : 0}
         />
       ))
   }
@@ -235,11 +285,19 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  if (!getOrganizationPage) {
+    throw new CustomNextError(
+      404,
+      `Organization page with slug: ${slug} was not found`,
+    )
+  }
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    locale: locale as Locale,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }

@@ -10,6 +10,8 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
+import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
+import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -150,6 +152,7 @@ export class NationalRegistryXRoadService {
     const spouse = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetHjuskapur({ id: nationalId })
       .catch(this.handle400)
+      .catch(this.handle404)
 
     return (
       spouse && {
@@ -179,5 +182,40 @@ export class NationalRegistryXRoadService {
         municipalityCode: null,
       },
     }))
+  }
+
+  async getBirthplace(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryBirthplace | undefined> {
+    const birthplace = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFaedingarstadur({ id: nationalId })
+      .catch(this.handle400)
+      .catch(this.handle404)
+
+    return (
+      birthplace && {
+        dateOfBirth: birthplace.faedingardagur,
+        location: birthplace.stadur,
+        municipalityCode: birthplace.sveitarfelagsnumer,
+      }
+    )
+  }
+
+  async getCitizenship(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryCitizenship | undefined> {
+    const citizenship = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetRikisfang({ id: nationalId })
+      .catch(this.handle400)
+      .catch(this.handle404)
+
+    return (
+      citizenship && {
+        code: citizenship.kodi,
+        name: citizenship.land,
+      }
+    )
   }
 }

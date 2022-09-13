@@ -2,7 +2,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/clients/zendesk'
-import { ContentfulRepository, localeMap } from '@island.is/cms'
+import {
+  ContentfulRepository,
+  CmsContentfulService,
+  localeMap,
+} from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ContactUsInput } from './dto/contactUs.input'
@@ -14,6 +18,8 @@ import {
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
+import { GenericFormInput } from './dto/genericForm.input'
+import { environment } from './environments/environment'
 
 type SendEmailInput =
   | ContactUsInput
@@ -25,6 +31,7 @@ export class CommunicationsService {
   constructor(
     private readonly emailService: EmailService,
     private readonly zendeskService: ZendeskService,
+    private readonly cmsContentfulService: CmsContentfulService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -117,5 +124,47 @@ export class CommunicationsService {
     })
 
     return true
+  }
+
+  async sendFormResponseEmail(input: GenericFormInput): Promise<boolean> {
+    const form = await this.cmsContentfulService.getForm({
+      id: input.id,
+      lang: 'is-IS',
+    })
+    if (!form) {
+      return false
+    }
+
+    let recipient = form.recipient
+
+    const emailConfig = form.recipientFormFieldDecider?.emailConfig
+    const key: string | undefined = input.recipientFormFieldDeciderValue
+
+    // The CMS might have a form field which decides what the recipient email address is
+    if (!!key && emailConfig && emailConfig[key]) {
+      recipient = emailConfig[key]
+    }
+
+    const emailOptions = {
+      from: {
+        name: input.name,
+        address: environment.emailOptions.sendFrom!,
+      },
+      replyTo: {
+        name: input.name,
+        address: input.email,
+      },
+      to: recipient,
+      subject: `Island.is form: ${form.title}`,
+      text: input.message,
+    }
+
+    try {
+      await this.emailService.sendEmail(emailOptions)
+      return true
+    } catch (error) {
+      this.logger.error('Failed to send email', { message: error.message })
+      return false
+    }
   }
 }

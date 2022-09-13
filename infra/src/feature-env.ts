@@ -77,7 +77,11 @@ const parseArguments = (argv: Arguments) => {
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
-    .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
+    .filter(
+      (h) =>
+        (images.length === 1 && images[0] === '*') ||
+        images?.includes(h.serviceDef.image ?? h.serviceDef.name),
+    )
   return { ch, habitat, affectedServices }
 }
 

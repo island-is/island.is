@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   BlueBox,
-  CaseInfo,
+  CourtCaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -13,13 +13,14 @@ import {
   RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
@@ -30,6 +31,8 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
+  CaseTransition,
+  completedCaseStates,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
@@ -44,6 +47,7 @@ const Confirmation = () => {
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
+  const { transitionCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -52,13 +56,35 @@ const Confirmation = () => {
 
   const { user } = useContext(UserContext)
 
+  const handleNextButtonClick = async () => {
+    if (!workingCase) {
+      return
+    }
+
+    const shouldSign =
+      completedCaseStates.includes(workingCase.state) ||
+      (await transitionCase(
+        workingCase,
+        workingCase.decision === CaseDecision.REJECTING
+          ? CaseTransition.REJECT
+          : workingCase.decision === CaseDecision.DISMISSING
+          ? CaseTransition.DISMISS
+          : CaseTransition.ACCEPT,
+        setWorkingCase,
+      ))
+
+    if (shouldSign) {
+      requestRulingSignature()
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.CONFIRMATION}
+      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -73,9 +99,7 @@ const Confirmation = () => {
                 Yfirlit úrskurðar
               </Text>
             </Box>
-            <Box component="section" marginBottom={7}>
-              <CaseInfo workingCase={workingCase} userRole={user.role} />
-            </Box>
+            <CourtCaseInfo workingCase={workingCase} />
             <Box marginBottom={9}>
               <Accordion>
                 <PoliceRequestAccordionItem workingCase={workingCase} />
@@ -117,8 +141,8 @@ const Confirmation = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
-              nextUrl={constants.CASE_LIST_ROUTE}
+              previousUrl={`${constants.INVESTIGATION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
+              nextUrl={constants.CASES_ROUTE}
               nextIsLoading={isRequestingRulingSignature}
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING
@@ -139,7 +163,7 @@ const Confirmation = () => {
                   ? 'default'
                   : 'destructive'
               }
-              onNextButtonClick={requestRulingSignature}
+              onNextButtonClick={handleNextButtonClick}
               hideNextButton={workingCase.judge?.id !== user?.id}
               infoBoxText={
                 workingCase.judge?.id !== user?.id
@@ -151,7 +175,7 @@ const Confirmation = () => {
           {modalVisible && (
             <SigningModal
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
+              requestRulingSignature={requestRulingSignature}
               requestRulingSignatureResponse={requestRulingSignatureResponse}
               onClose={() => setModalVisible(false)}
             />

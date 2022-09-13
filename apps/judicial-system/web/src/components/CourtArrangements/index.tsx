@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
-import formatISO from 'date-fns/formatISO'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
@@ -12,6 +11,7 @@ import {
   validateAndSendToServer,
 } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
+import { formatDateForServer } from '../../utils/hooks/useCase'
 
 interface Props {
   workingCase: Case
@@ -21,8 +21,14 @@ interface Props {
 }
 
 export const useCourtArrangements = (workingCase: Case) => {
-  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
+  const [courtDate, setCourtDate] = useState<string>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+
+  useEffect(() => {
+    if (workingCase.courtDate) {
+      setCourtDate(workingCase.courtDate)
+    }
+  }, [workingCase.courtDate])
 
   const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
     if (date && valid) {
@@ -33,7 +39,7 @@ export const useCourtArrangements = (workingCase: Case) => {
         setCourtDateHasChanged(true)
       }
 
-      setCourtDate(formatISO(date, { representation: 'complete' }))
+      setCourtDate(formatDateForServer(date))
     }
   }
 

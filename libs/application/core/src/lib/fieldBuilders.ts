@@ -42,6 +42,7 @@ const extractCommonFields = (
     doesNotRequireAnswer = false,
     id,
     title,
+    dataTestId,
     width = 'full',
   } = data
 
@@ -51,6 +52,7 @@ const extractCommonFields = (
     defaultValue,
     description,
     disabled,
+    dataTestId,
     doesNotRequireAnswer,
     title,
     width,
@@ -271,8 +273,9 @@ export function buildFileUploadField(
     uploadDescription,
     uploadButtonLabel,
     uploadMultiple,
-    uploadAccept,
-    maxSize,
+    uploadAccept:
+      uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+    maxSize: maxSize ?? 10000000,
     maxSizeErrorText,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,

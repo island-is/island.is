@@ -1,0 +1,22 @@
+{
+  "root": "libs/application/api/core",
+  "sourceRoot": "libs/application/api/core/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/application/api/core/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/api/core"],
+      "options": {
+        "jestConfig": "libs/application/api/core/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

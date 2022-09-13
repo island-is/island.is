@@ -111,34 +111,10 @@ export const aliasMutation = (
   }
 }
 
-export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
-export const investigationCaseAccusedAddress = faker.address.streetAddress()
+export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
+export const mockAddress = faker.address.streetAddress()
 
-export const makeRestrictionCase = (): Case => {
-  return {
-    id: 'test_id',
-    created: '2020-09-16T19:50:08.033Z',
-    modified: '2020-09-16T19:51:39.466Z',
-    state: CaseState.DRAFT,
-    origin: CaseOrigin.RVG,
-    type: CaseType.CUSTODY,
-    policeCaseNumber: '007-2021-202000',
-    defendants: [
-      {
-        id: 'test_defendant_id',
-        created: '2020-09-16T19:50:08.033Z',
-        modified: '2020-09-16T19:51:39.466Z',
-        caseId: 'test_id',
-        nationalId: '000000-0000',
-        name: 'Donald Duck',
-        gender: Gender.MALE,
-        address: 'Batcave 1337',
-      },
-    ],
-  }
-}
-
-export const makeInvestigationCase = (): Case => {
+export const mockCase = (type: CaseType) => {
   const caseId = faker.datatype.uuid()
   return {
     id: caseId,
@@ -146,28 +122,45 @@ export const makeInvestigationCase = (): Case => {
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: CaseType.INTERNET_USAGE,
-    court: {
-      id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
-      created: '2020-09-16T19:50:08.033Z',
-      modified: '2020-09-16T19:50:08.033Z',
-      type: InstitutionType.COURT,
-      name: 'Héraðsdómur Reykjavíkur',
-      active: true,
-    },
-    policeCaseNumber: '007-2021-202000',
+    type,
+    court: makeCourt(),
+    policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
-        id: 'test_defendant_id',
+        id: faker.datatype.uuid(),
         created: '2020-09-16T19:50:08.033Z',
         modified: '2020-09-16T19:51:39.466Z',
         caseId,
         nationalId: '000000-0000',
-        name: investigationCaseAccusedName,
+        name: mockName,
         gender: Gender.MALE,
-        address: investigationCaseAccusedAddress,
+        address: mockAddress,
       },
     ],
+  }
+}
+
+export const makeJudge = (): User => {
+  return {
+    id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    name: faker.name.firstName(),
+    // eslint-disable-next-line local-rules/disallow-kennitalas
+    nationalId: '111111-1111',
+    mobileNumber: '111-1111',
+    email: faker.internet.email(),
+    role: UserRole.JUDGE,
+    active: true,
+    title: 'Dómari',
+    institution: {
+      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
+      created: '',
+      modified: '',
+      type: InstitutionType.COURT,
+      name: 'Dómstóll Testlands',
+      active: true,
+    },
   }
 }
 

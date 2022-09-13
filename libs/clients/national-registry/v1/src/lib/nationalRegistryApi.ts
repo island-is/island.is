@@ -12,6 +12,7 @@ import {
   ISLFjolskyldan,
   ISLBorninMin,
   ISLEinstaklingur,
+  FamilyCorrection,
 } from './dto'
 import { SoapClient } from './soapClient'
 
@@ -50,7 +51,7 @@ export class NationalRegistryApi {
       logger.error('NationalRegistry password not provided')
     }
 
-    this.client = soapClient
+    this.client = this.soapClient
     this.clientUser = clientUser
     this.clientPassword = clientPassword
   }
@@ -118,29 +119,69 @@ export class NationalRegistryApi {
     return Array.isArray(documentData) ? documentData : [documentData]
   }
 
+  public async postUserCorrection(
+    values: FamilyCorrection,
+  ): Promise<{ success: boolean; message?: string }> {
+    const response = await this.signal(
+      'CreateAndUpdateMS_Leidretting',
+      {
+        S5RequestID: '',
+        Kennitala: values.nationalId,
+        Barn: values.nationalIdChild,
+        Nafn: values.name,
+        Simanumer: values.phonenumber,
+        Netfang: values.email,
+        Athugasemd: values.comment,
+        Stada: 'Skráð',
+      },
+      true,
+    )
+
+    if (!response) {
+      throw new InternalServerErrorException(
+        'User correction not sent. Unknown error',
+      )
+    }
+    return {
+      success: response?.success,
+      message: response?.message,
+    }
+  }
+
   private async signal(
     functionName: string,
     args: Record<string, string>,
+    post?: boolean,
   ): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.client) {
         throw new InternalServerErrorException('Client not initialized')
       }
 
+      const formatData = Object.keys(args).reduce(
+        (acc: Record<string, string>, key: string) => ({
+          ...acc,
+          [`:${key}`]: args[key],
+        }),
+        {},
+      )
+
+      const formattedData = post
+        ? {
+            ':S5Username': this.clientUser,
+            ':S5Password': this.clientPassword,
+            ':values': formatData,
+          }
+        : {
+            ':SortColumn': 1,
+            ':SortAscending': true,
+            ':S5Username': this.clientUser,
+            ':S5Password': this.clientPassword,
+            ...formatData,
+          }
+
       this.client[functionName](
-        {
-          ':SortColumn': 1,
-          ':SortAscending': true,
-          ':S5Username': this.clientUser,
-          ':S5Password': this.clientPassword,
-          ...Object.keys(args).reduce(
-            (acc: Record<string, string>, key: string) => ({
-              ...acc,
-              [`:${key}`]: args[key],
-            }),
-            {},
-          ),
-        },
+        formattedData,
         (
           // eslint-disable-next-line
           error: any,
@@ -156,7 +197,11 @@ export class NationalRegistryApi {
               logger.error(error)
               reject(error)
             }
-            resolve(result.table.diffgram ? result : null)
+            if (post) {
+              resolve(result ? result : null)
+            } else {
+              resolve(result.table.diffgram ? result : null)
+            }
           }
           resolve(null)
         },

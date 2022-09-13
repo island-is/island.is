@@ -1,18 +1,18 @@
 import {
-  STEP_FOUR_ROUTE,
-  STEP_THREE_ROUTE,
+  RESTRICTION_CASE_POLICE_REPORT_ROUTE,
+  RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeRestrictionCase, intercept } from '../../../utils'
+import { intercept, mockCase } from '../../../utils'
 
-describe(`${STEP_THREE_ROUTE}/:id`, () => {
+describe(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   const interceptByType = (type: CaseType) => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
 
     cy.stubAPIResponses()
     intercept({ ...caseData, type })
-    cy.visit(`${STEP_THREE_ROUTE}/test_id`)
+    cy.visit(`${RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/test_id`)
   }
 
   describe('Custody cases', () => {
@@ -68,7 +68,7 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
       cy.getByTestid('lawsBroken').type('Lorem ipsum')
       cy.getByTestid('checkbox').first().click()
       cy.getByTestid('continueButton').click()
-      cy.url().should('include', STEP_FOUR_ROUTE)
+      cy.url().should('include', RESTRICTION_CASE_POLICE_REPORT_ROUTE)
     })
 
     it('should show custody restrictions', () => {

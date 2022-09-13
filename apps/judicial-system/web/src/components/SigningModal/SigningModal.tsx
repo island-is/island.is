@@ -1,16 +1,16 @@
-import React, { useEffect, useCallback } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
-import { ApolloError, useMutation, useQuery } from '@apollo/client'
+import {
+  ApolloError,
+  FetchResult,
+  MutationFunctionOptions,
+  OperationVariables,
+  useMutation,
+  useQuery,
+} from '@apollo/client'
 import { IntlShape, useIntl } from 'react-intl'
 
-import {
-  CaseDecision,
-  CaseState,
-  CaseTransition,
-  CaseType,
-  NotificationType,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
+import { CaseType, isInvestigationCase } from '@island.is/judicial-system/types'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   icConfirmation,
@@ -21,7 +21,6 @@ import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
-import { useCase } from '../../utils/hooks'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
   RequestRulingSignatureMutationMutation,
@@ -47,9 +46,17 @@ const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
 
 interface SigningModalProps {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  requestRulingSignature: (
+    options?:
+      | MutationFunctionOptions<
+          RequestRulingSignatureMutationMutation,
+          OperationVariables
+        >
+      | undefined,
+  ) => Promise<FetchResult<RequestRulingSignatureMutationMutation>>
   requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
   onClose: () => void
+  navigateOnClose?: boolean
 }
 
 export const useRequestRulingSignature = (
@@ -117,14 +124,13 @@ export const getSuccessText = (
 
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
-  setWorkingCase,
+  requestRulingSignature,
   requestRulingSignatureResponse,
   onClose,
+  navigateOnClose = true,
 }) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-
-  const { transitionCase, sendNotification } = useCase()
 
   const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
     RulingSignatureConfirmationQuery,
@@ -136,43 +142,9 @@ const SigningModal: React.FC<SigningModalProps> = ({
         },
       },
       fetchPolicy: 'no-cache',
+      skip: !requestRulingSignatureResponse,
     },
   )
-
-  const commitDecision = useCallback(
-    async (decision: CaseDecision | undefined) => {
-      const transitioned = await transitionCase(
-        workingCase,
-        decision === CaseDecision.REJECTING
-          ? CaseTransition.REJECT
-          : decision === CaseDecision.DISMISSING
-          ? CaseTransition.DISMISS
-          : CaseTransition.ACCEPT,
-        setWorkingCase,
-      )
-
-      if (transitioned) {
-        sendNotification(workingCase.id, NotificationType.RULING)
-      } else {
-        // TODO: handle error
-      }
-    },
-    [transitionCase, workingCase, setWorkingCase, sendNotification],
-  )
-
-  useEffect(() => {
-    if (
-      data?.rulingSignatureConfirmation?.documentSigned &&
-      workingCase.state === CaseState.RECEIVED
-    ) {
-      commitDecision(workingCase.decision)
-    }
-  }, [
-    data?.rulingSignatureConfirmation?.documentSigned,
-    workingCase.state,
-    workingCase.decision,
-    commitDecision,
-  ])
 
   const signingProgress = getSigningProgress(
     data?.rulingSignatureConfirmation,
@@ -203,29 +175,43 @@ const SigningModal: React.FC<SigningModalProps> = ({
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )
       }
+      primaryButtonText={
+        signingProgress === 'inProgress'
+          ? ''
+          : signingProgress === 'success'
+          ? ''
+          : 'Undirrita seinna'
+      }
       secondaryButtonText={
         signingProgress === 'inProgress'
           ? undefined
           : signingProgress === 'success'
           ? 'Loka glugga'
-          : 'Loka og reyna aftur'
+          : 'Reyna aftur'
       }
-      primaryButtonText={
-        data?.rulingSignatureConfirmation?.documentSigned
-          ? 'Senda ábendingu'
-          : ''
-      }
-      handlePrimaryButtonClick={() => {
-        window.open(constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
-      }}
-      handleSecondaryButtonClick={async () => {
-        if (data?.rulingSignatureConfirmation?.documentSigned) {
-          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
-        } else {
-          onClose()
+      onPrimaryButtonClick={() => {
+        if (navigateOnClose) {
+          router.push(
+            `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+          )
         }
+        onClose()
       }}
+      onSecondaryButtonClick={async () => {
+        if (signingProgress === 'success') {
+          if (navigateOnClose) {
+            router.push(
+              `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
+            )
+          }
+        } else {
+          requestRulingSignature()
+        }
+        onClose()
+      }}
+      invertButtonColors={
+        signingProgress === 'canceled' || signingProgress === 'error'
+      }
     />
   )
 }

@@ -5,14 +5,13 @@ import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
 
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   BlueBox,
   DateTime,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { UpdateCase, UserRole } from '@island.is/judicial-system/types'
+import { Case, UpdateCase, UserRole } from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -322,7 +321,7 @@ const ModifyDatesModal: React.FC<Props> = ({
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonTextSuccess,
         )}
-        handleSecondaryButtonClick={() => {
+        onSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)
           setSuccessText(undefined)
@@ -348,12 +347,12 @@ const ModifyDatesModal: React.FC<Props> = ({
           m.sections.modifyDatesModal.primaryButtonText,
         )}
         isPrimaryButtonDisabled={isCaseModificationInvalid()}
-        handlePrimaryButtonClick={handleDateModification}
+        onPrimaryButtonClick={handleDateModification}
         isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonText,
         )}
-        handleSecondaryButtonClick={() => {
+        onSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
 
           if (workingCase.validToDate) {

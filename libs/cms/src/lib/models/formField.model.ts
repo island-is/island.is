@@ -1,0 +1,37 @@
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
+import { IFormField } from '../generated/contentfulTypes'
+
+@ObjectType()
+export class FormField {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field()
+  placeholder!: string
+
+  @Field()
+  type!: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+
+  @Field()
+  required!: boolean
+
+  @Field(() => [String])
+  options!: Array<string>
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  emailConfig?: Record<string, string>
+}
+
+export const mapFormField = ({ sys, fields }: IFormField): FormField => ({
+  id: sys.id,
+  title: fields.title ?? '',
+  placeholder: fields.placeholder ?? '',
+  type: fields.type ?? 'input',
+  required: fields.required ?? false,
+  options: fields.options ?? [],
+  emailConfig: fields.emailConfig ?? {},
+})

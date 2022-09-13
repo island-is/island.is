@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 
 import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
-import { PageLayout, GDPR } from '@island.is/skilavottord-web/components'
+import { GDPR, PageLayout } from '@island.is/skilavottord-web/components'
 import { Query } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
 

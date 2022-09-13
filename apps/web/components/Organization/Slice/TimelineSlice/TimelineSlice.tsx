@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
 import {
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -188,8 +189,22 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
 
   const monthEvents = eventMap.get(months[month].year).get(months[month].month)
 
+  const borderProps: BoxProps = slice.hasBorderAbove
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 6,
+      }
+    : {
+        paddingTop: 3,
+      }
+
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section
+      key={slice.id}
+      id={slice.id}
+      aria-labelledby={'sliceTitle-' + slice.id}
+    >
       <GridContainer>
         <Box paddingLeft={1}>
           <GridContainer>
@@ -198,11 +213,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                 span={['9/9', '9/9', '7/9']}
                 offset={['0', '0', '1/9']}
               >
-                <Box
-                  borderTopWidth="standard"
-                  borderColor="standard"
-                  paddingTop={6}
-                >
+                <Box {...borderProps}>
                   <Text variant="h2" paddingBottom={3}>
                     {slice.title}
                   </Text>

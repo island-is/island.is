@@ -25,7 +25,11 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  LiveChatIncChatPanel,
+  Sticky,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -40,7 +44,7 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
-import { watsonConfig } from './config'
+import { liveChatIncConfig, watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
@@ -48,6 +52,7 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -279,10 +284,27 @@ export const OrganizationChatPanel = ({
   organizationIds: string[]
   pushUp?: boolean
 }) => {
-  const id = organizationIds.find((id) => {
+  const organizationIdWithLiveChat = organizationIds.find((id) => {
+    return id in liveChatIncConfig
+  })
+
+  if (organizationIdWithLiveChat) {
+    return (
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[organizationIdWithLiveChat]}
+      />
+    )
+  }
+
+  const organizationIdWithWatson = organizationIds.find((id) => {
     return id in watsonConfig
   })
-  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
+
+  if (organizationIdWithWatson) {
+    return <WatsonChatPanel {...watsonConfig[organizationIdWithWatson]} />
+  }
+
+  return null
 }
 
 const SecondaryMenu = ({
@@ -413,18 +435,48 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                         items={secondaryNavList}
                       />
                     )}
-                  {organizationPage.sidebarCards.map((card) => (
-                    <ProfileCard
-                      title={card.title}
-                      description={card.content}
-                      link={card.link}
-                      image={
-                        card.image?.url ||
-                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                  <Box
+                    marginY={
+                      organizationPage.secondaryMenu &&
+                      secondaryNavList.length > 0
+                        ? 0
+                        : 3
+                    }
+                    className={styles.sidebarCardContainer}
+                  >
+                    {organizationPage.sidebarCards.map((card) => {
+                      if (card.__typename === 'SidebarCard') {
+                        return (
+                          <ProfileCard
+                            key={card.id}
+                            title={card.title}
+                            description={card.contentString}
+                            link={card.link}
+                            image={
+                              card.image?.url ||
+                              'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                            }
+                            size="small"
+                          />
+                        )
                       }
-                      size="small"
-                    />
-                  ))}
+
+                      if (
+                        card.__typename === 'ConnectedComponent' &&
+                        (card.type === 'LatestNewsCard' ||
+                          card['componentType'] === 'LatestNewsCard')
+                      ) {
+                        return (
+                          <LatestNewsCardConnectedComponent
+                            key={card.id}
+                            {...card.json}
+                          />
+                        )
+                      }
+
+                      return null
+                    })}
+                  </Box>
                 </>
               )}
               {sidebarContent}

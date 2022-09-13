@@ -1,14 +1,14 @@
-import { Case, CaseDecision } from '@island.is/judicial-system/types'
+import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import {
-  IC_MODIFY_RULING_ROUTE,
-  SIGNED_VERDICT_OVERVIEW,
+  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
+  SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept, makeInvestigationCase } from '../../../utils'
+import { intercept, mockCase } from '../../../utils'
 
-describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
+describe(`${INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -20,7 +20,7 @@ describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${IC_MODIFY_RULING_ROUTE}/test_id_stadfest`)
+    cy.visit(`${INVESTIGATION_CASE_MODIFY_RULING_ROUTE}/test_id_stadfest`)
   })
 
   it('should have an alert message', () => {
@@ -39,6 +39,6 @@ describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modal').should('exist')
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', SIGNED_VERDICT_OVERVIEW)
+    cy.url().should('include', SIGNED_VERDICT_OVERVIEW_ROUTE)
   })
 })
