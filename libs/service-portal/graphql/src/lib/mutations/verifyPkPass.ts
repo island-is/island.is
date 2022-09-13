@@ -5,7 +5,7 @@ export const verifyPkPassMutation = gql`
     verifyPkPass(input: $input) {
       data
       valid
-      errors {
+      error {
         status
         message
         data
