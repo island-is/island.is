@@ -9,7 +9,7 @@ import {
   PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { Claim } from './claim.model'
+import { Claim } from '../../entities/models/claim.model'
 
 @Table({
   tableName: 'user_identity',

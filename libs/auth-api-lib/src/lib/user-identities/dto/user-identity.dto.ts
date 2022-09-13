@@ -1,6 +1,6 @@
 import { IsString, IsArray, IsBoolean, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { ClaimDto } from './claim.dto'
+import { ClaimDto } from '../../entities/dto/claim.dto'
 
 export class UserIdentityDto {
   @IsString()

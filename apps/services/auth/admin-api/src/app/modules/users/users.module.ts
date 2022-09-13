@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UserIdentitiesController } from './user-identities.controller'
 import {
-  UserIdentity,
-  Claim,
-  UserIdentitiesService,
+  UserIdentitiesModule,
   AccessService,
   ApiScopeUserAccess,
   ApiScopeUser,
@@ -12,14 +10,10 @@ import {
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      Claim,
-      UserIdentity,
-      ApiScopeUserAccess,
-      ApiScopeUser,
-    ]),
+    SequelizeModule.forFeature([ApiScopeUserAccess, ApiScopeUser]),
+    UserIdentitiesModule,
   ],
   controllers: [UserIdentitiesController],
-  providers: [UserIdentitiesService, AccessService],
+  providers: [AccessService],
 })
 export class UsersModule {}
