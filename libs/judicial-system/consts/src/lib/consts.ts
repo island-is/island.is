@@ -225,6 +225,7 @@ export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
 export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
+export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 /* COURT ROUTES END */
 
 // Feedback

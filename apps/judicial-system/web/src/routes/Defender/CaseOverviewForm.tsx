@@ -257,11 +257,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                       signatory={workingCase.courtRecordSignatory.name}
                       signingDate={workingCase.courtRecordSignatureDate}
                     />
-                  ) : (
-                    <Text>
-                      {formatMessage(defenderCaseOverview.unsignedDocument)}
-                    </Text>
-                  )}
+                  ) : null}
                 </PdfButton>
                 <PdfButton
                   renderAs="row"

@@ -20,8 +20,8 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
 
