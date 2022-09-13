@@ -35,9 +35,8 @@ import * as constants from '@island.is/judicial-system/consts'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
-import * as styles from './Cases.css'
 import { cases as m } from './Cases.strings'
-import e from 'express'
+import * as styles from './Cases.css'
 
 const SectionTitle: React.FC = ({ children }) => {
   return (

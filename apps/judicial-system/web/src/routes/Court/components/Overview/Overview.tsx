@@ -57,7 +57,7 @@ const Overview = () => {
             <InfoCardClosedIndictment />
           ) : (
             <InfoCardActiveIndictment />
-          )}{' '}
+          )}
         </Box>
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
