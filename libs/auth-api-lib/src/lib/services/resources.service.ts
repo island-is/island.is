@@ -31,7 +31,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
-import { TranslationService } from './translation.service'
+import { TranslationService } from '../translation/translation.service'
 
 @Injectable()
 export class ResourcesService {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { Language } from '../entities/models/language.model'
-import { Translation } from '../entities/models/translation.model'
-import { TranslationService } from '../services/translation.service'
+import { Language } from './models/language.model'
+import { Translation } from './models/translation.model'
+import { TranslationService } from './translation.service'
 
 @Module({
   imports: [SequelizeModule.forFeature([Language, Translation])],

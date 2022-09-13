@@ -6,10 +6,10 @@ import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Translation } from '../entities/models/translation.model'
-import { Language } from '../entities/models/language.model'
-import { TranslationDTO } from '../entities/dto/translation.dto'
-import { LanguageDTO } from '../entities/dto/language.dto'
+import { Translation } from './models/translation.model'
+import { Language } from './models/language.model'
+import { TranslationDTO } from './dto/translation.dto'
+import { LanguageDTO } from './dto/language.dto'
 
 @Injectable()
 export class TranslationService {
