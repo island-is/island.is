@@ -11,6 +11,8 @@ import {
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
 } from './emailGenerators'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 interface Contact {
   name: string
@@ -31,11 +33,13 @@ interface Helpdesk {
 const ONE_DAY_IN_SECONDS_EXPIRES = 24 * 60 * 60
 
 @Injectable()
-export class DocumentProviderOnboardingService {
+export class DocumentProviderOnboardingService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private organisationsApi: OrganisationsApi,
-  ) {}
+  ) {
+    super(ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING)
+  }
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
     const token = await this.sharedTemplateAPIService.createAssignToken(

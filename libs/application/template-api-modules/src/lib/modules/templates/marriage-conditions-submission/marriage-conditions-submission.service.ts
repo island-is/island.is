@@ -11,14 +11,18 @@ import {
 } from '@island.is/clients/syslumenn'
 import { PersonTypes } from './types'
 import { MarriageConditionsAnswers } from '@island.is/application/templates/marriage-conditions/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class MarriageConditionsSubmissionService {
+export class MarriageConditionsSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.MARRIAGE_CONDITIONS)
+  }
 
   async createCharge({
     application: { id, answers },

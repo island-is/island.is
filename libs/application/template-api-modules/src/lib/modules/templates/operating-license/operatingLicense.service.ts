@@ -19,18 +19,23 @@ import {
   ApplicationAttachments,
   AttachmentPaths,
 } from './types/attachments'
-import { ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import { Info } from './types/application'
 import { getExtraData } from './utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class OperatingLicenseService {
+export class OperatingLicenseService extends BaseTemplateApiService {
   s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
   ) {
+    super(ApplicationTypes.OPERATING_LCENSE)
     this.s3 = new S3()
   }
 

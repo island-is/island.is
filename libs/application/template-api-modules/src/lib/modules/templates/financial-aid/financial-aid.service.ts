@@ -12,14 +12,18 @@ import { ApplicationApi } from '@island.is/clients/municipalities-financial-aid'
 import { UploadFile } from '@island.is/island-ui/core'
 
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication
 }
 
 @Injectable()
-export class FinancialAidService {
-  constructor(private applicationApi: ApplicationApi) {}
+export class FinancialAidService extends BaseTemplateApiService {
+  constructor(private applicationApi: ApplicationApi) {
+    super(ApplicationTypes.FINANCIAL_AID)
+  }
 
   private applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))

@@ -22,13 +22,17 @@ import {
 } from './announcement-of-death-utils'
 
 import { isPerson } from 'kennitala'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationTypes } from '@island.is/application/types'
 
 @Injectable()
-export class AnnouncementOfDeathService {
+export class AnnouncementOfDeathService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
+  }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
     const estates = await this.syslumennService.getEstateRegistrant(

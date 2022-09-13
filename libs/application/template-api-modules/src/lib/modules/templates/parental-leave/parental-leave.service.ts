@@ -12,6 +12,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationConfigurations,
   Application,
+  ApplicationTypes,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -47,6 +48,7 @@ import {
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 interface VMSTError {
   type: string
@@ -61,7 +63,7 @@ const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
-export class ParentalLeaveService {
+export class ParentalLeaveService extends BaseTemplateApiService {
   s3 = new S3()
 
   constructor(
@@ -71,7 +73,9 @@ export class ParentalLeaveService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+  ) {
+    super(ApplicationTypes.PARENTAL_LEAVE)
+  }
 
   private parseErrors(e: Error | VMSTError) {
     if (e instanceof Error) {

@@ -1,5 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   DefaultApi,
@@ -9,7 +9,9 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   PublicDebtPaymentPlanPayment,
   PublicDebtPaymentPlanPaymentCollection,
@@ -17,12 +19,14 @@ import {
 } from './types'
 
 @Injectable()
-export class PublicDebtPaymentPlanTemplateService {
+export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
   constructor(
     private paymentScheduleApi: DefaultApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {}
+  ) {
+    super(ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN)
+  }
 
   paymentScheduleApiWithAuth(auth: Auth) {
     return this.paymentScheduleApi.withMiddleware(new AuthMiddleware(auth))

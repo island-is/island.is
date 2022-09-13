@@ -5,13 +5,17 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { transformApplicationToHealthInsuranceDTO } from './health-insurance.utils'
 import { HealthInsuranceAPI } from '@island.is/health-insurance'
+import { ApplicationTypes } from '@island.is/application/types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class HealthInsuranceService {
+export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private healthInsuranceAPI: HealthInsuranceAPI,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.HEALTH_INSURANCE)
+  }
 
   async sendApplyHealthInsuranceApplication({
     application,

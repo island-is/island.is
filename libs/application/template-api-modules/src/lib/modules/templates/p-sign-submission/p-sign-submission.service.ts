@@ -9,11 +9,15 @@ import {
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -50,12 +54,13 @@ type Delivery = {
 
 const YES = 'yes'
 @Injectable()
-export class PSignSubmissionService {
+export class PSignSubmissionService extends BaseTemplateApiService {
   s3: S3
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
+    super(ApplicationTypes.P_SIGN)
     this.s3 = new S3()
   }
 

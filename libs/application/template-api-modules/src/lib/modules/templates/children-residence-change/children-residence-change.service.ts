@@ -20,10 +20,11 @@ import {
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -33,7 +34,7 @@ type props = Override<
 >
 
 @Injectable()
-export class ChildrenResidenceChangeService {
+export class ChildrenResidenceChangeService extends BaseTemplateApiService {
   s3: S3
 
   constructor(
@@ -42,6 +43,7 @@ export class ChildrenResidenceChangeService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
   ) {
+    super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
     this.s3 = new S3()
   }
 

@@ -1,5 +1,4 @@
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
+import { ReferenceTemplateModule } from './reference-template/reference-template.module'import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
@@ -53,6 +52,7 @@ export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
+  PublicDebtPaymentPlanTemplateModule,
   /*ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
@@ -62,7 +62,6 @@ export const modules = [
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
   AccidentNotificationModule,
-  PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
   GeneralFishingLicenseModule,
@@ -84,6 +83,7 @@ export const services = [
   ReferenceTemplateService,
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
+  PublicDebtPaymentPlanTemplateService,
   /*ParentalLeaveService,
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
@@ -93,7 +93,6 @@ export const services = [
   FundingGovernmentProjectsService,
   DrivingLicenseSubmissionService,
   AccidentNotificationService,
-  PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
   GeneralFishingLicenseService,

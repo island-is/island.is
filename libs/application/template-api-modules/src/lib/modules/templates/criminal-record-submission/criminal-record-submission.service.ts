@@ -10,17 +10,23 @@ import {
   PersonType,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class CriminalRecordSubmissionService {
+export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly syslumennService: SyslumennService,
-  ) {}
+  ) {
+    super(ApplicationTypes.CRIMINAL_RECORD)
+  }
 
   async createCharge({
     application: { id },
