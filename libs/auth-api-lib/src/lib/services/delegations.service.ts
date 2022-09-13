@@ -449,6 +449,13 @@ export class DelegationsService {
     aliveDelegations: DelegationDTO[]
     deceasedDelegations: DelegationDTO[]
   }> {
+    if (delegations.length === 0) {
+      return {
+        aliveDelegations: [],
+        deceasedDelegations: [],
+      }
+    }
+
     const delegationsPromises = delegations.map(({ fromNationalId }) =>
       this.nationalRegistryClient.getIndividual(fromNationalId),
     )

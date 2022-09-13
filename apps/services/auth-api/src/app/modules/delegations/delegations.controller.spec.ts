@@ -127,20 +127,26 @@ describe('DelegationsController', () => {
       })
 
       describe.each([
-        [1, 0, 0],
-        [2, 0, 0],
-        [0, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1],
-        [0, 1, 1],
-        [1, 1, 1],
+        [1, 0, 0, 2],
+        [2, 0, 0, 1],
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [1, 1, 1, 0],
       ])(
         'and given user has %d active representees with valid rights, %d active representees with outdate rights and %d active representees with unactivated',
-        (valid: number, outdated: number, unactivated: number) => {
+        (
+          valid: number,
+          outdated: number,
+          unactivated: number,
+          deceased: number,
+        ) => {
           let nationalRegistryApiSpy: jest.SpyInstance
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
+          const deceasedRepresentedPersons: NameIdTuple[] = []
 
           beforeAll(async () => {
             for (let i = 0; i < valid; i++) {
@@ -191,6 +197,23 @@ describe('DelegationsController', () => {
               )
             }
 
+            const deceasedNationalIds = Array.from(
+              Array(deceased).keys(),
+            ).map(() => getFakeNationalId())
+
+            for (let i = 0; i < deceased; i++) {
+              const representedPerson: NameIdTuple = [
+                getFakeName(),
+                deceasedNationalIds[i],
+              ]
+              const relationship = getPersonalRepresentativeRelationship(
+                userKennitala,
+                representedPerson[1],
+              )
+              deceasedRepresentedPersons.push(representedPerson)
+              await prModel.create(relationship)
+            }
+
             const nationalRegistryUsers = [
               ...validRepresentedPersons.map(([name, nationalId]) =>
                 createNationalRegistryUser({ name, nationalId }),
@@ -207,9 +230,13 @@ describe('DelegationsController', () => {
               .spyOn(nationalRegistryApi, 'getIndividual')
               .mockImplementation((id) => {
                 const user = nationalRegistryUsers.find(
-                  (u) => u.nationalId === id,
+                  (u) =>
+                    u?.nationalId === id &&
+                    // Make sure we don't return a user that has been marked as deceased
+                    !deceasedNationalIds.includes(u?.nationalId),
                 )
-                return user ? Promise.resolve(user) : Promise.reject()
+
+                return user ? Promise.resolve(user) : Promise.reject(null)
               })
           })
 
