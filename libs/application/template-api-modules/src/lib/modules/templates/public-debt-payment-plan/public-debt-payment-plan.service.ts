@@ -1,13 +1,22 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, ApplicationTypes } from '@island.is/application/types'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
+  Application,
+  ApplicationTypes,
+  NO,
+  YES,
+} from '@island.is/application/types'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import {
+  ConditionsDT,
+  DebtsAndSchedulesDT,
   DefaultApi,
+  DistributionInitialPosition,
   PaymentsDT,
   ScheduleType,
 } from '@island.is/clients/payment-schedule'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -17,6 +26,8 @@ import {
   PublicDebtPaymentPlanPaymentCollection,
   PublicDebtPaymentPlanPrerequisites,
 } from './types'
+import { errorModal } from '@island.is/application/templates/public-debt-payment-plan'
+import { mockData } from './mockData'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService {
@@ -113,6 +124,166 @@ export class PublicDebtPaymentPlanTemplateService extends BaseTemplateApiService
         error,
       )
       throw error
+    }
+  }
+
+  async paymentPlanPrerequisites({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const fakeData = getValueViaPath(application.answers, 'mock') as {
+      useMockData: typeof YES | typeof NO
+    }
+    if (fakeData?.useMockData === YES) {
+      return this.getMockData()
+    }
+
+    const conditions = await this.getConditions(auth)
+    const debts = await this.getDebts(auth)
+    const employer = await this.getCurrentEmployer(auth)
+    const allInitialSchedules = [] as DistributionInitialPosition[]
+    for (const debt of debts) {
+      const initialSchedule = await this.getInitalSchedule(
+        auth,
+        conditions.disposableIncome,
+        debt.type,
+        debt.totalAmount,
+      )
+
+      allInitialSchedules.push(initialSchedule)
+    }
+
+    if (this.condtionsAreNotMetForApplicaiton(conditions, debts)) {
+      throw new TemplateApiError(
+        {
+          title: errorModal.noDebts.title,
+          summary: errorModal.noDebts.summary,
+        },
+        404,
+      )
+    }
+
+    return {
+      conditions,
+      debts,
+      allInitialSchedules,
+      employer,
+    }
+  }
+
+  getMockData() {
+    return {
+      conditions: mockData.data.conditions,
+      debts: mockData.data.debts as DebtsAndSchedulesDT[],
+      allInitialSchedules: mockData.data
+        .allInitialSchedules as DistributionInitialPosition[],
+      employer: mockData.data.employer,
+    }
+  }
+
+  condtionsAreNotMetForApplicaiton(
+    conditions: ConditionsDT,
+    debts: DebtsAndSchedulesDT[],
+  ): boolean {
+    return (
+      conditions.maxDebt ||
+      !conditions.taxReturns ||
+      !conditions.vatReturns ||
+      !conditions.citReturns ||
+      !conditions.accommodationTaxReturns ||
+      !conditions.withholdingTaxReturns ||
+      !conditions.wageReturns ||
+      conditions.collectionActions ||
+      !conditions.doNotOwe ||
+      debts.length <= 0
+    )
+  }
+
+  async getInitalSchedule(
+    user: User,
+    disposableIncome: number,
+    scheduleType: string,
+    totalDebtAmount: number,
+  ): Promise<DistributionInitialPosition> {
+    const {
+      distributionInitialPosition,
+      error,
+    } = await this.paymentScheduleApiWithAuth(
+      user,
+    ).distributionInitialPositionnationalIdscheduleTypeGET4({
+      disposableIncome,
+      nationalId: user.nationalId,
+      scheduleType,
+      totalAmount: totalDebtAmount,
+    })
+
+    if (error) {
+      this.logger.error('Error getting initial schedule', error)
+      throw new Error('Error getting initial schedule')
+    }
+    return {
+      ...distributionInitialPosition,
+      scheduleType: distributionInitialPosition.scheduleType as ScheduleType,
+    }
+  }
+
+  async getConditions(auth: User): Promise<ConditionsDT> {
+    const { conditions, error } = await this.paymentScheduleApiWithAuth(
+      auth,
+    ).conditionsnationalIdGET3({
+      nationalId: auth.nationalId,
+    })
+
+    if (error) {
+      this.logger.error('Error getting conditions', error)
+      throw new Error('Error getting conditions')
+    }
+
+    if (!conditions) {
+      throw new Error('No conditions found for nationalId')
+    }
+    return conditions
+  }
+
+  async getDebts(auth: User): Promise<DebtsAndSchedulesDT[]> {
+    const { deptAndSchedules, error } = await this.paymentScheduleApiWithAuth(
+      auth,
+    ).debtsandschedulesnationalIdGET2({
+      nationalId: auth.nationalId,
+    })
+    if (error) {
+      this.logger.error('Error getting debts', error)
+      throw new Error('Error getting debts')
+    }
+    if (!deptAndSchedules) {
+      throw new Error('No debts found for nationalId')
+    }
+    return deptAndSchedules
+  }
+
+  async getCurrentEmployer(
+    auth: User,
+  ): Promise<{
+    name: string
+    nationalId: string
+  }> {
+    const { wagesDeduction, error } = await this.paymentScheduleApiWithAuth(
+      auth,
+    ).wagesdeductionnationalIdGET1({
+      nationalId: auth.nationalId,
+    })
+    if (error) {
+      this.logger.error('Error employer information for nationalId', error)
+      throw new Error('Error employer information for nationalId')
+    }
+
+    if (!wagesDeduction) {
+      throw new Error('No employer found for nationalId')
+    }
+
+    return {
+      name: wagesDeduction.employerName,
+      nationalId: wagesDeduction.employerNationalId,
     }
   }
 }

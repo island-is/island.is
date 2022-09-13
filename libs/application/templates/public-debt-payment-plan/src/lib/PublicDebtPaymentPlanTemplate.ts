@@ -9,7 +9,10 @@ import {
   DefaultEvents,
   ApplicationConfigurations,
   defineTemplateApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
+import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
 
@@ -72,6 +75,11 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                PaymentPlanPrerequisitesApi,
+              ],
             },
           ],
         },

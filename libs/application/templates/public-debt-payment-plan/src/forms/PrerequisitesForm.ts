@@ -19,6 +19,11 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { NO, YES } from '../shared/constants'
 import { PaymentPlanExternalData } from '../types'
 import { Application } from '@island.is/api/schema'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  PaymentPlanPrerequisitesApi,
+} from '../dataProviders'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
@@ -66,26 +71,21 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),
             buildDataProviderItem({
-              id: 'paymentPlanPrerequisites',
+              provider: PaymentPlanPrerequisitesApi,
               title: externalData.labels.paymentPlanTitle,
-              type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
             }),
             buildDataProviderItem({
-              id: 'additionalDataProviderMessage',
-              type: '',
               title: externalData.labels.paymentEmployerTitle,
               subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
