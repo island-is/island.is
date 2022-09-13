@@ -138,10 +138,10 @@ export class CommunicationsService {
     let recipient = form.recipient
 
     const emailConfig = form.recipientFormFieldDecider?.emailConfig
-    const key = input.recipientFormFieldDeciderValue as string
+    const key: string | undefined = input.recipientFormFieldDeciderValue
 
     // The CMS might have a form field which decides what the recipient email address is
-    if (emailConfig && emailConfig[key]) {
+    if (!!key && emailConfig && emailConfig[key as string]) {
       recipient = emailConfig[key]
     }
 
