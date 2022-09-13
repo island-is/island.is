@@ -240,7 +240,6 @@ describe('DelegationsController', () => {
             })
 
             it('should have a an OK return status', () => {
-              console.log(response)
               expect(response.status).toEqual(200)
             })
 
