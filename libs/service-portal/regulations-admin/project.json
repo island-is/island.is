@@ -1,0 +1,30 @@
+{
+  "root": "libs/service-portal/regulations-admin",
+  "sourceRoot": "libs/service-portal/regulations-admin/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/service-portal/regulations-admin/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/service-portal/regulations-admin"],
+      "options": {
+        "jestConfig": "libs/service-portal/regulations-admin/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/regulations-admin/src/**/*.{js,ts,tsx}'"
+      }
+    }
+  },
+  "tags": []
+}

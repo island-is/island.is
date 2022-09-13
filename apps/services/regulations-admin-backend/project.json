@@ -1,0 +1,118 @@
+{
+  "root": "apps/services/regulations-admin-backend",
+  "sourceRoot": "apps/services/regulations-admin-backend/src",
+  "projectType": "application",
+  "prefix": "regulations-admin-backend",
+  "targets": {
+    "build": {
+      "executor": "@anatine/esbuildnx:build",
+      "options": {
+        "outputPath": "dist/apps/services/regulations-admin-backend",
+        "main": "apps/services/regulations-admin-backend/src/main.ts",
+        "tsConfig": "apps/services/regulations-admin-backend/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/regulations-admin-backend/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "apps/services/regulations-admin-backend/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/regulations-admin-backend",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/regulations-admin-backend",
+            "output": "./"
+          }
+        ],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "regulations-admin-backend:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:lint",
+      "options": {
+        "linter": "eslint",
+        "tsConfig": [
+          "apps/services/regulations-admin-backend/tsconfig.app.json",
+          "apps/services/regulations-admin-backend/tsconfig.spec.json"
+        ],
+        "exclude": [
+          "**/node_modules/**",
+          "!apps/services/regulations-admin-backend/**/*"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/regulations-admin-backend"],
+      "options": {
+        "jestConfig": "apps/services/regulations-admin-backend/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "dev-services": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "docker-compose up -d",
+        "cwd": "apps/services/regulations-admin-backend"
+      }
+    },
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/regulations-admin-backend/src/openapi.yaml",
+        "command": "yarn ts-node -P apps/services/regulations-admin-backend/tsconfig.app.json apps/services/regulations-admin-backend/src/buildOpenApi.ts"
+      }
+    },
+    "migrate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/regulations-admin-backend"
+      }
+    },
+    "migrate/generate": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/regulations-admin-backend"
+      }
+    },
+    "seed": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
+        "cwd": "apps/services/regulations-admin-backend"
+      }
+    },
+    "docker-express": {},
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/regulations-admin-backend/src/app/messages/**/*.ts'"
+      }
+    }
+  },
+  "tags": []
+}
