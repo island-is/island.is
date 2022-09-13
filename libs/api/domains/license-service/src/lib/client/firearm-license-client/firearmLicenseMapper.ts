@@ -142,6 +142,18 @@ export const createPkPassDataInput = (
 ) => {
   if (!licenseInfo || !nationalId) return null
 
+  const parseAddress = (address?: string) => {
+    if (!address) return
+
+    const splitArray = address.split(',')
+    return {
+      address: splitArray[0].trim(),
+      zip: splitArray[1].trim(),
+    }
+  }
+
+  const parsedAddress = parseAddress(licenseInfo.address ?? '')
+
   return [
     {
       identifier: 'gildir',
@@ -159,11 +171,11 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'heimilisfang',
-      value: licenseInfo.address ?? '',
+      value: parsedAddress?.address ?? '',
     },
     {
       identifier: 'postnr.',
-      value: 'placeholder',
+      value: parsedAddress?.zip ?? '',
     },
     {
       identifier: 'numer',
