@@ -48,6 +48,7 @@ import {
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
 } from '../utils'
+import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -66,19 +67,16 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           checkboxLabel: dataProvider.dataProviderCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: NationalRegistryUserApi,
               title: dataProvider.nationalRegistryTitle,
               subTitle: dataProvider.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: UserProfileApi,
               title: dataProvider.userProfileTitle,
               subTitle: dataProvider.userProfileSubTitle,
             }),
             buildDataProviderItem({
-              id: 'notification',
               type: undefined,
               title: dataProvider.notificationTitle,
               subTitle: dataProvider.notificationSubTitle,

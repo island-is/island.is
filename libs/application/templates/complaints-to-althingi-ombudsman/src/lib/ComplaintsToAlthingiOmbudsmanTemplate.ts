@@ -15,6 +15,7 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
+import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 const States = {
   draft: 'draft',
@@ -61,6 +62,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
         },

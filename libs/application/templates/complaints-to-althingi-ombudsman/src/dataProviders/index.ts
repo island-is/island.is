@@ -1,4 +1,4 @@
 export {
-  NationalRegistryProvider,
-  UserProfileProvider,
-} from '@island.is/application/data-providers'
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
