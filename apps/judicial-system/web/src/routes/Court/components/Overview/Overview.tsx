@@ -24,6 +24,8 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'
+import { completedCaseStates } from '@island.is/judicial-system/types'
+import InfoCardClosedIndictment from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardClosedIndictment'
 
 const Overview = () => {
   const router = useRouter()
@@ -34,11 +36,15 @@ const Overview = () => {
   const { onOpen } = useFileList({ caseId: workingCase.id })
   const { formatMessage } = useIntl()
 
+  const caseIsClosed = completedCaseStates.includes(workingCase.state)
+
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.JUDGE_OVERVIEW}
+      activeSection={caseIsClosed ? Sections.CASE_CLOSED : Sections.JUDGE}
+      activeSubSection={
+        caseIsClosed ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
+      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -47,7 +53,11 @@ const Overview = () => {
         <PageTitle title={formatMessage(m.title)} />
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          {caseIsClosed ? (
+            <InfoCardClosedIndictment />
+          ) : (
+            <InfoCardActiveIndictment />
+          )}{' '}
         </Box>
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
