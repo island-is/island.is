@@ -80,13 +80,12 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     }
   }, [router?.query?.nr])
 
-  // TODO: think whether this should be in done in backend
-  // const [quotaState, setQuotaState] = useState({
-  //   rateOfShare: 0,
-  //   nextYearQuota: 0,
-  //   nextYearFromQuota: 0,
-  //   allowedCatch: 0,
-  // })
+  const [quotaState, setQuotaState] = useState({
+    rateOfShare: {},
+    nextYearQuota: {},
+    nextYearFromQuota: {},
+    allowedCatch: {},
+  })
 
   const quotaTypeResponse = useQuery<
     { getQuotaTypesForCalendarYear: QuotaType[] },
@@ -127,8 +126,37 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     onCompleted(response) {
       const initialData = response?.getShipStatusForTimePeriod
       if (initialData) {
-        console.log(initialData)
         setData(initialData)
+        setQuotaState({
+          rateOfShare: initialData?.allowedCatchCategories?.reduce(
+            (acc, category) => ({
+              ...acc,
+              [category.id]: category.rateOfShare,
+            }),
+            {},
+          ),
+          allowedCatch: initialData?.allowedCatchCategories?.reduce(
+            (acc, category) => ({
+              ...acc,
+              [category.id]: category.allowedCatch,
+            }),
+            {},
+          ),
+          nextYearFromQuota: initialData?.allowedCatchCategories?.reduce(
+            (acc, category) => ({
+              ...acc,
+              [category.id]: category.nextYearFromQuota,
+            }),
+            {},
+          ),
+          nextYearQuota: initialData?.allowedCatchCategories?.reduce(
+            (acc, category) => ({
+              ...acc,
+              [category.id]: category.nextYearQuota,
+            }),
+            {},
+          ),
+        })
       }
     },
   })
@@ -550,9 +578,18 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                       category.rateOfShare
                     ) : (
                       <input
-                        value={category.rateOfShare}
+                        value={
+                          quotaState?.rateOfShare?.[category.id] ??
+                          category.rateOfShare
+                        }
                         onChange={(ev) => {
-                          // TODO: store changes in state
+                          setQuotaState((prev) => ({
+                            ...prev,
+                            rateOfShare: {
+                              ...prev?.rateOfShare,
+                              [category.id]: ev.target.value,
+                            },
+                          }))
                         }}
                       />
                     )}
@@ -561,16 +598,25 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
               </tr>
               <tr>
                 <td>{n('aNaestaArKvoti', 'Á næsta ár kvóti')}</td>
-                {/* TODO: add input box */}
+
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
                       category.nextYearQuota
                     ) : (
                       <input
-                        value={category.nextYearQuota}
+                        value={
+                          quotaState?.nextYearQuota?.[category.id] ??
+                          category.nextYearQuota
+                        }
                         onChange={(ev) => {
-                          // TODO: store changes in state
+                          setQuotaState((prev) => ({
+                            ...prev,
+                            nextYearQuota: {
+                              ...prev?.nextYearQuota,
+                              [category.id]: ev.target.value,
+                            },
+                          }))
                         }}
                       />
                     )}
@@ -585,9 +631,18 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                       category.nextYearFromQuota
                     ) : (
                       <input
-                        value={category.nextYearFromQuota}
+                        value={
+                          quotaState?.nextYearFromQuota?.[category.id] ??
+                          category.nextYearFromQuota
+                        }
                         onChange={(ev) => {
-                          // TODO: store changes in state
+                          setQuotaState((prev) => ({
+                            ...prev,
+                            nextYearFromQuota: {
+                              ...prev?.nextYearFromQuota,
+                              [category.id]: ev.target.value,
+                            },
+                          }))
                         }}
                       />
                     )}
