@@ -14,4 +14,10 @@ export const hearingArrangements = defineMessages({
     description:
       'Notaður sem texti fyrir val á ákæranda sem mætir fyrir dóm í dómaraflæði í ákærum.',
   },
+  selectDefenderHeading: {
+    id:
+      'judicial.system.core:court_indictments.hearing_arrangements.select_defender_heading',
+    defaultMessage: 'Skipaður verjandi',
+    description: 'Notaður sem texti fyrir val á skipaðan verjanda í ákærum.',
+  },
 })

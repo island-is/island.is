@@ -22,6 +22,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { hearingArrangements as m } from './HearingArrangements.strings'
+import SelectDefender from './SelectDefender'
 
 const HearingArrangements: React.FC = () => {
   const {
@@ -67,6 +68,7 @@ const HearingArrangements: React.FC = () => {
           <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
           <ProsecutorSelection onChange={handleProsecutorChange} />
         </Box>
+        <SelectDefender />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
