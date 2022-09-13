@@ -35,7 +35,6 @@ export class DrivingLicenseApi {
       return null
     }
     const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
-    console.log('LICENSE', license)
     if (skirteini.athugasemdir) {
       const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
         apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,

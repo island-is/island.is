@@ -101,20 +101,6 @@ export const sectionOverview = buildSection({
             return `${district}`
           },
         }),
-
-        buildSubmitField({
-          id: 'submit',
-          title: '',
-          placement: 'footer',
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: 'Senda inn umsókn',
-              type: 'primary',
-            },
-          ],
-        }),
       ],
     }),
   ],

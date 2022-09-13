@@ -5,6 +5,7 @@ export type Events = { type: DefaultEvents.SUBMIT }
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
+  PAYMENT = 'payment',
 }
 export enum Roles {
   APPLICANT = 'applicant',
@@ -25,6 +26,12 @@ export interface PSignFakeData {
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  createCharge = 'createCharge',
 }
 
 export const UPLOAD_ACCEPT = '.jpg, .jpeg, .png'
+
+export type SubmitResponse = {
+  success: boolean
+  orderId?: string
+}

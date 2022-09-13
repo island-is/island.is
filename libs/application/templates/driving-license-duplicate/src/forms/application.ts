@@ -4,6 +4,7 @@ import { sectionDataProviders } from './applicationSections/sectionDataProviders
 import { sectionInformation } from './applicationSections/sectionInformation'
 import { sectionDelivery } from './applicationSections/sectionDelivery'
 import { sectionOverview } from './applicationSections/sectionOverview'
+import { sectionPayment } from './applicationSections/sectionPayment'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -17,6 +18,7 @@ export const getApplication = (): Form => {
       sectionInformation,
       sectionDelivery,
       sectionOverview,
+      sectionPayment,
     ],
   })
 }

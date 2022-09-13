@@ -228,17 +228,70 @@ export const m = defineMessages({
     description: 'Some description',
   },
 
+  /*Payment Section*/
+  proceedToPayment: {
+    id: 'dld.application:payment.proceedToPayment',
+    defaultMessage: 'Greiða',
+    description: 'Some description',
+  },
+  paymentSection: {
+    id: 'dld.application:payment.section',
+    defaultMessage: 'Staðfesting og greiðsla',
+    description: 'Some description',
+  },
+  paymentSectionTitle: {
+    id: 'dld.application:payment.section.title',
+    defaultMessage: 'Greiðsla',
+    description: 'Some description',
+  },
+  paymentAmount: {
+    id: 'dld.application:payment.amount',
+    defaultMessage: 'Til greiðslu',
+    description: 'Some description',
+  },
+  paymentSum: {
+    id: 'dld.application:payment.sum',
+    defaultMessage: 'Samtals',
+    description: 'Some description',
+  },
+  payment: {
+    id: 'dld.application:payment',
+    defaultMessage: 'Ganga frá greiðslu',
+    description: 'Some description',
+  },
+  confirm: {
+    id: 'dld.application:confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Some description',
+  },
+
   /* Congratulation Section */
   congratulationsTitleSuccess: {
     id: 'dld.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um stæðiskort hefur verið móttekin. Þú færð stæðiskortið afhent eftir 3-5 virka daga.',
+      'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteinið pantað. ',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {
     id: 'dld.application:congratulationsTitle',
-    defaultMessage: 'Til hamingju',
+    defaultMessage: 'Umsókn móttekin',
     description: 'Congratulations',
+  },
+  congratulationsApplicationNumber: {
+    id: 'dld.application:congratulationsApplicationNumber',
+    defaultMessage: 'Númer umsóknar',
+    description: 'Congratulations',
+  },
+  congratulationsNextStepsTitle: {
+    id: 'dld.application:congratulations.nextSteps.title',
+    defaultMessage: 'Næstu skref',
+    description: 'Congratulations Next steps title',
+  },
+  congratulationsNextStepsDescription: {
+    id: 'dld.application:congratulations.nextSteps.description#markdown',
+    defaultMessage:
+      '* Þú færð senda tilkynningu á Mínar síður þegar samrit ökuskírteinis er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir. \\n\\n * Mundu að hafa meðferðis löggild skilríki með mynd við afhendingu.',
+    description: 'Congratulations Next steps title',
   },
   errorDataProvider: {
     id: 'dld.application:error.dataProvider',

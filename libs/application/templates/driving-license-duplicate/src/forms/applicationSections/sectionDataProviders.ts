@@ -52,6 +52,11 @@ export const sectionDataProviders = buildSection({
           title: '',
           subTitle: '',
         }),
+        buildDataProviderItem({
+          id: 'payment',
+          type: 'FeeInfoProvider',
+          title: '',
+        }),
       ],
     }),
   ],

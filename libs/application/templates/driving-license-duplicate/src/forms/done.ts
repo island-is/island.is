@@ -1,15 +1,44 @@
-import { buildForm, buildCustomField } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  buildForm,
+  buildCustomField,
+  buildMultiField,
+  buildDescriptionField,
+} from '@island.is/application/core'
+import { Application, Form, FormModes } from '@island.is/application/types'
+import { SubmitResponse } from '../lib/constants'
+import { m } from '../lib/messages'
 
 export const done: Form = buildForm({
-  id: 'done',
-  title: 'Umsókn móttekin',
+  id: 'DrivingLicenseDuplicateApplicationComplete',
+  title: 'Umsókn staðfest',
   mode: FormModes.APPLYING,
   children: [
-    buildCustomField({
-      id: 'overview',
-      component: 'Congratulations',
-      title: 'Umsókn móttekin',
+    buildMultiField({
+      id: 'done',
+      title: 'Umsókn staðfest',
+      children: [
+        buildCustomField({
+          id: 'overview',
+          component: 'Congratulations',
+          title: 'Umsókn móttekin',
+        }),
+        buildDescriptionField({
+          id: 'applicationNr',
+          title: m.congratulationsApplicationNumber,
+          titleVariant: 'h3',
+          description: (application: Application) =>
+            (application.externalData.submitApplication?.data as SubmitResponse)
+              ?.orderId,
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'nextStepsDescription',
+          title: m.congratulationsNextStepsTitle,
+          titleVariant: 'h3',
+          description: m.congratulationsNextStepsDescription,
+          space: 'containerGutter',
+        }),
+      ],
     }),
   ],
 })

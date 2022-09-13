@@ -16,3 +16,6 @@ export const getApplicationInfo = (rights: string): CurrentRightsMessages => {
       return applicationForMessages.B_FULL
   }
 }
+
+export const getCurrencyString = (n: number) =>
+  n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
