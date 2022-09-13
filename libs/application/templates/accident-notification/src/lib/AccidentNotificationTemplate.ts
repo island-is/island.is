@@ -12,6 +12,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
@@ -70,6 +71,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              api: [NationalRegistryUserApi],
             },
           ],
         },
