@@ -82,7 +82,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "outputPath": "apps/services/regulations-admin-backend/src/openapi.yaml",
-        "command": "yarn ts-node -P apps/services/regulations-admin-backend/tsconfig.app.json apps/services/regulations-admin-backend/src/buildOpenApi.ts"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/regulations-admin-backend/tsconfig.app.json apps/services/regulations-admin-backend/src/buildOpenApi.ts"
       }
     },
     "migrate": {
