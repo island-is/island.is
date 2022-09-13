@@ -11,6 +11,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
+import cloneDeep from 'lodash/cloneDeep'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
@@ -23,7 +24,7 @@ export class EstateTemplateService {
   ) {}
 
   stringifyObject(obj: Record<string, unknown>): Record<string, string> {
-    const stringer = structuredClone(obj)
+    const stringer = cloneDeep(obj)
 
     Object.keys(stringer).forEach((key) => {
       if (typeof stringer[key] !== 'object') {
@@ -33,7 +34,8 @@ export class EstateTemplateService {
       }
     })
 
-    return stringer
+    // Assert from object traversal
+    return stringer as Record<string, string>
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
@@ -161,7 +163,8 @@ export class EstateTemplateService {
         'Application submission failed on syslumadur upload data'
       )
     }
-    */
     return { sucess: result.success, id: result.caseNumber }
+    */
+    return { success: 'false', id: '1234' }
   }
 }
