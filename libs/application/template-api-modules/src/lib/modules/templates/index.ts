@@ -1,4 +1,5 @@
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
+import { ReferenceTemplateModule } from './reference-template/reference-template.module'
+import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
 import { DocumentProviderOnboardingModule } from './document-provider-onboarding/document-provider-onboarding.module'
 import { InstitutionCollaborationModule } from './institution-collaboration/institution-collaboration.module'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
@@ -23,7 +24,6 @@ import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/d
 import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
-import { NationalRegistryService } from '../shared/api/national-registry/national-registry.service'
 import { ParentalLeaveService } from './parental-leave/parental-leave.service'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding/document-provider-onboarding.service'
 import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
@@ -47,13 +47,15 @@ import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
 import { PassportService } from './passport/passport.service'
 import { OperatingLicenseService } from './operating-license/operatingLicense.service'
+import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
+import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
-  /*ParentalLeaveModule,
+  ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
@@ -76,7 +78,7 @@ export const modules = [
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
-  FinancialStatementsInaoTemplateModule,*/
+  FinancialStatementsInaoTemplateModule,
 ]
 
 export const services = [
@@ -84,7 +86,7 @@ export const services = [
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,
-  /*ParentalLeaveService,
+  ParentalLeaveService,
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
@@ -105,5 +107,6 @@ export const services = [
   FinancialAidService,
   DrivingSchoolConfirmationService,
   PassportService,
-  OperatingLicenseService,*/
+  OperatingLicenseService,
+  FinancialStatementsInaoTemplateService,
 ]
