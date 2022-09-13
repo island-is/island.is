@@ -16,6 +16,7 @@ export const GET_VEHICLES_SEARCH = gql`
       }
       currentOwner
       currentOwnerAddress
+      currentOwnerIsAnonymous
       useGroup
       regtype
       mass

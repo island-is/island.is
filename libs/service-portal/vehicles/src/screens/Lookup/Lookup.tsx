@@ -27,6 +27,9 @@ import {
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
 import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
+import chunk from 'lodash/chunk'
+
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -68,6 +71,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
     nextInspection,
     currentOwner,
     currentOwnerAddress,
+    currentOwnerIsAnonymous,
     useGroup,
     regtype,
     mass,
@@ -242,92 +246,79 @@ export const Lookup: ServicePortalModuleComponent = () => {
           </Text>
           <TableGrid
             title={type ?? ''}
-            dataArray={[
+            dataArray={chunk(
               [
-                {
+                permno && {
                   title: formatMessage(messages.permno),
-                  value: permno ?? '',
+                  value: permno,
                 },
-                {
+                regno && {
                   title: formatMessage(messages.regno),
-                  value: regno ?? '',
+                  value: regno,
                 },
-              ],
-              [
-                {
+                vin && {
                   title: formatMessage(messages.verno),
-                  value: vin ?? '',
+                  value: vin,
                 },
-                {
+                useGroup && {
                   title: formatMessage(messages.useGroup),
-                  value: useGroup ?? '',
+                  value: useGroup,
                 },
-              ],
-
-              [
-                {
+                regtype && {
                   title: formatMessage(messages.regType),
-                  value: regtype ?? '',
+                  value: regtype,
                 },
-                {
+                currentOwner && {
                   title: formatMessage(messages.owner),
-                  value: currentOwner ?? '',
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwner,
                 },
-              ],
-              [
-                {
+                firstregdate && {
                   title: formatMessage(messages.firstReg),
-                  value: firstregdate ? formatDate(firstregdate) : '',
+                  value: formatDate(firstregdate),
                 },
-                {
+                currentOwnerAddress && {
                   title: formatMessage(messages.address),
-                  value: currentOwnerAddress ?? '',
+                  value: currentOwnerIsAnonymous
+                    ? formatMessage(messages.vehicleNameSecret)
+                    : currentOwnerAddress,
                 },
-              ],
-              [
-                {
+                vehicleStatus && {
                   title: formatMessage(messages.vehicleStatus),
-                  value: vehicleStatus ?? '',
+                  value: vehicleStatus,
                 },
-                {
+                color && {
                   title: formatMessage(messages.color),
-                  value: color ?? '',
+                  value: color,
                 },
-              ],
-              [
-                {
+                nextInspection?.nextinspectiondate && {
                   title: formatMessage(messages.nextInspection),
-                  value:
-                    nextInspection && nextInspection.nextinspectiondate
-                      ? formatDate(nextInspection.nextinspectiondate)
-                      : '',
+                  value: formatDate(nextInspection.nextinspectiondate),
                 },
-                {
+                co && {
                   title: formatMessage(messages.co2),
-                  value: co ? String(co) : '',
+                  value: String(co),
                 },
-              ],
-              [
-                {
+                mass && {
                   title: formatMessage(messages.vehicleWeightLong),
-                  value: mass ? String(mass) : '',
+                  value: String(mass),
                 },
-                {
+                co2Wltp && {
                   title: formatMessage(messages.wltpWeighted),
-                  value: co2Wltp ? String(co2Wltp) : '',
+                  value: String(co2Wltp),
                 },
-              ],
-              [
-                {
+                massLaden && {
                   title: formatMessage(messages.vehicleTotalWeightLong),
-                  value: massLaden ? String(massLaden) : '',
+                  value: String(massLaden),
                 },
-                {
+                weightedco2Wltp && {
                   title: formatMessage(messages.weightedWLTPCo2),
-                  value: weightedco2Wltp ? String(weightedco2Wltp) : '',
+                  value: String(weightedco2Wltp),
                 },
-              ],
-            ]}
+              ].filter((Boolean as unknown) as ExcludesFalse),
+              2,
+            )}
           />
         </>
       )}
