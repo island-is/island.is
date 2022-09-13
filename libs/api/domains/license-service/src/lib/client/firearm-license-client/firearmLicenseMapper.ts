@@ -128,9 +128,9 @@ const parsePropertyForPkpassInput = (properties?: Array<FirearmProperty>) => {
   const propertyString = properties
     .map(
       (property) =>
-        `${property.typeOfFirearm} ${property.name}, hlaupvídd ${property.caliber}, númer ${property.serialNumber}`,
+        `▶︎ ${property.typeOfFirearm} ${property.name}.\r\nHlaupvídd ${property.caliber}.\r\nNúmer ${property.serialNumber}.`,
     )
-    .join('\r\n')
+    .join('\r\n\r\n')
 
   return propertyString
 }
