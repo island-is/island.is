@@ -21,9 +21,8 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import {
-  ApiResponse,
-  EinstaklingarApi,
-  Einstaklingsupplysingar,
+  IndividualDto,
+  NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -81,7 +80,7 @@ export class DelegationsService {
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
     private rskProcuringClient: RskProcuringClient,
-    private personApi: EinstaklingarApi,
+    private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
     private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
@@ -398,6 +397,27 @@ export class DelegationsService {
       })
     }
 
+    const [delegations, needsCheckDelegations] = await Promise.all([
+      Promise.all(delegationPromises),
+      Promise.all(needVerifyDelegationPromises),
+    ])
+
+    // Only check live status, i.e. dead or alive for needsCheckDelegations
+    const {
+      aliveDelegations,
+      deceasedDelegations,
+    } = await this.getLiveStatusFromDelegations(needsCheckDelegations.flat())
+
+    if (deceasedDelegations.length > 0) {
+      // Invalidate all deceased delegations
+      await this.invalidateDelegations(user, deceasedDelegations)
+
+      this.auditService.auditSystem({
+        action: 'deceasedDelegation',
+        resources: deceasedDelegations.map(({ id }) => id).filter(isDefined),
+      })
+    }
+
     return uniqBy(
       [...delegations.flat(), ...aliveDelegations],
       'fromNationalId',
@@ -559,34 +579,32 @@ export class DelegationsService {
         return []
       }
 
-      const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(user))
-        .einstaklingarGetForsja({
-          id: user.nationalId,
-        })
+      const response = await this.nationalRegistryClient.getCustodyChildren(
+        user,
+      )
 
       const distinct = response.filter(
         (r: string, i: number) => response.indexOf(r) === i,
       )
 
       const resultPromises = distinct.map(async (nationalId) =>
-        this.personApi.einstaklingarGetEinstaklingur({
-          id: nationalId,
-        }),
+        this.nationalRegistryClient.getIndividual(nationalId),
       )
 
       const result = await Promise.all(resultPromises)
 
-      return result.map(
-        (p) =>
-          <DelegationDTO>{
-            toNationalId: user.nationalId,
-            fromNationalId: p.kennitala,
-            fromName: p.nafn,
-            type: DelegationType.LegalGuardian,
-            provider: DelegationProvider.NationalRegistry,
-          },
-      )
+      return result
+        .filter((p): p is IndividualDto => p !== null)
+        .map(
+          (p) =>
+            <DelegationDTO>{
+              toNationalId: user.nationalId,
+              fromNationalId: p.nationalId,
+              fromName: p.name,
+              type: DelegationType.LegalGuardian,
+              provider: DelegationProvider.NationalRegistry,
+            },
+        )
     } catch (error) {
       this.logger.error('Error in findAllWards', error)
     }
@@ -666,13 +684,10 @@ export class DelegationsService {
       )
 
       const resultPromises = rp.map(async (representative) =>
-        this.personApi
-          .einstaklingarGetEinstaklingur({
-            id: representative.nationalIdRepresentedPerson,
-          })
-          .then(
-            ({ nafn }) => toDelegationDTO(nafn, representative),
-            () => toDelegationDTO('Óþekkt nafn', representative),
+        this.nationalRegistryClient
+          .getIndividual(representative.nationalIdRepresentedPerson)
+          .then((person) =>
+            toDelegationDTO(person?.name ?? 'Óþekkt nafn', representative),
           ),
       )
 
@@ -850,15 +865,13 @@ export class DelegationsService {
   }
 
   private async getPersonName(nationalId: string) {
-    const person = await this.personApi.einstaklingarGetEinstaklingur({
-      id: nationalId,
-    })
+    const person = await this.nationalRegistryClient.getIndividual(nationalId)
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
-    return person.fulltNafn || person.nafn
+    return person.fullName ?? person.name
   }
 
   /**

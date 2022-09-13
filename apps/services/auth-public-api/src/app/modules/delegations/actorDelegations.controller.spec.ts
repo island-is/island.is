@@ -32,7 +32,7 @@ import {
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ResponseSimple } from '@island.is/clients/rsk/procuring'
 
 const today = new Date('2021-11-12')
@@ -116,13 +116,13 @@ describe('ActorDelegationsController', () => {
         const models = await delegationModel.bulkCreate(
           [
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name],
               today,
             }),
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[1].name],
               today,
@@ -149,7 +149,7 @@ describe('ActorDelegationsController', () => {
         const expectedModel = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[5].name],
               today,
@@ -178,7 +178,7 @@ describe('ActorDelegationsController', () => {
         const expectedModel = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[5].name],
               today,
@@ -209,7 +209,7 @@ describe('ActorDelegationsController', () => {
         const expectedModel = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[5].name],
               today,
@@ -238,7 +238,7 @@ describe('ActorDelegationsController', () => {
         const expectedModel = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[5].name],
               today,
@@ -267,7 +267,7 @@ describe('ActorDelegationsController', () => {
         // Arrange
         await delegationModel.create(
           createDelegation({
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromNationalId: nationalRegistryUser.nationalId,
             toNationalId: user.nationalId,
             scopes: [Scopes[5].name],
             today,
@@ -318,7 +318,7 @@ describe('ActorDelegationsController', () => {
           // Arrange
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[1].name],
               today,
@@ -343,7 +343,7 @@ describe('ActorDelegationsController', () => {
         // Arrange
         await delegationModel.create(
           createDelegation({
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromNationalId: nationalRegistryUser.nationalId,
             toNationalId: user.nationalId,
             scopes: [Scopes[0].name],
             today,
@@ -372,7 +372,7 @@ describe('ActorDelegationsController', () => {
         const model = (
           await delegationModel.create(
             createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
+              fromNationalId: nationalRegistryUser.nationalId,
               toNationalId: user.nationalId,
               scopes: [Scopes[0].name, Scopes[2].name],
               today,
@@ -404,10 +404,10 @@ describe('ActorDelegationsController', () => {
       describe('with legal guardian delegations', () => {
         let getForsja: jest.SpyInstance
         beforeAll(() => {
-          const client = app.get(EinstaklingarApi)
+          const client = app.get(NationalRegistryClientService)
           getForsja = jest
-            .spyOn(client, 'einstaklingarGetForsja')
-            .mockResolvedValue([nationalRegistryUser.kennitala])
+            .spyOn(client, 'getCustodyChildren')
+            .mockResolvedValue([nationalRegistryUser.nationalId])
         })
 
         afterAll(() => {
@@ -417,8 +417,8 @@ describe('ActorDelegationsController', () => {
         it('should return delegations', async () => {
           // Arrange
           const expectedDelegation = {
-            fromName: nationalRegistryUser.nafn,
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromName: nationalRegistryUser.name,
+            fromNationalId: nationalRegistryUser.nationalId,
             provider: 'thjodskra',
             toNationalId: user.nationalId,
             type: 'LegalGuardian',
@@ -478,8 +478,8 @@ describe('ActorDelegationsController', () => {
           getSimple = jest.spyOn(client, 'getSimple').mockResolvedValue({
             companies: [
               {
-                nationalId: nationalRegistryUser.kennitala,
-                name: nationalRegistryUser.nafn,
+                nationalId: nationalRegistryUser.nationalId,
+                name: nationalRegistryUser.name,
               },
             ],
           } as ResponseSimple)
@@ -492,8 +492,8 @@ describe('ActorDelegationsController', () => {
         it('should return delegations', async () => {
           // Arrange
           const expectedDelegation = {
-            fromName: nationalRegistryUser.nafn,
-            fromNationalId: nationalRegistryUser.kennitala,
+            fromName: nationalRegistryUser.name,
+            fromNationalId: nationalRegistryUser.nationalId,
             provider: 'fyrirtaekjaskra',
             toNationalId: user.nationalId,
             type: 'ProcurationHolder',
@@ -574,7 +574,7 @@ describe('ActorDelegationsController', () => {
 
           const pr = await prModel.create({
             nationalIdPersonalRepresentative: user.nationalId,
-            nationalIdRepresentedPerson: nationalRegistryUser.kennitala,
+            nationalIdRepresentedPerson: nationalRegistryUser.nationalId,
             personalRepresentativeTypeCode: prType.code,
             contractId: '1',
             externalUserId: '1',
@@ -617,14 +617,14 @@ describe('ActorDelegationsController', () => {
           it('should have the nationalId of the correct representee', () => {
             expect(
               body.some(
-                (d) => d.fromNationalId === nationalRegistryUser.kennitala,
+                (d) => d.fromNationalId === nationalRegistryUser.nationalId,
               ),
             ).toBeTruthy()
           })
 
           it('should have the name of the correct representee', () => {
             expect(
-              body.some((d) => d.fromName === nationalRegistryUser.nafn),
+              body.some((d) => d.fromName === nationalRegistryUser.name),
             ).toBeTruthy()
           })
 
