@@ -15,6 +15,7 @@ import {
   CaseType,
   isIndictmentCase,
   isInvestigationCase,
+  isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
@@ -196,17 +197,18 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  let investigationPrefix = 'noPrefix'
-  if (type === CaseType.OTHER) {
-    investigationPrefix = 'onlyPrefix'
-  } else if (isInvestigationCase(type)) {
-    investigationPrefix = 'withPrefix'
-  }
+  const caseType = isIndictmentCase(type)
+    ? 'indictmentCase'
+    : isRestrictionCase(type)
+    ? 'restrictionCase'
+    : type === CaseType.OTHER
+    ? 'otherInvestigationCase'
+    : 'investigationCase'
 
   return formatMessage(notifications.prosecutorReceivedByCourt, {
     court,
-    investigationPrefix,
-    courtTypeName: caseTypes[type],
+    caseType,
+    caseTypeName: caseTypes[type],
     courtCaseNumber,
   })
 }
