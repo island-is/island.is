@@ -1,6 +1,12 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { gql } from '@apollo/client'
+import {
+  unitsOfUseFragment,
+  pagingFragment,
+  appraisalFragment,
+  addressFragment,
+} from '@island.is/service-portal/graphql'
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
@@ -20,27 +26,29 @@ import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
 
+export const ownerFragment = gql`
+  fragment Owner on PropertyOwner {
+    name
+    ssn
+    ownership
+    purchaseDate
+    grantDisplay
+  }
+`
+
 export const GET_PROPERTY_OWNERS_QUERY = gql`
   query GetAssetsPropertyOwners($input: GetPagingTypes!) {
     assetsPropertyOwners(input: $input) {
       registeredOwners {
-        name
-        ssn
-        ownership
-        purchaseDate
-        grantDisplay
+        ...Owner
       }
       paging {
-        page
-        pageSize
-        totalPages
-        offset
-        total
-        hasPreviousPage
-        hasNextPage
+        ...Paging
       }
     }
   }
+  ${pagingFragment}
+  ${ownerFragment}
 `
 
 export const GET_SINGLE_PROPERTY_QUERY = gql`
@@ -48,30 +56,14 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
     assetsDetail(input: $input) {
       propertyNumber
       defaultAddress {
-        locationNumber
-        postNumber
-        municipality
-        propertyNumber
-        display
-        displayShort
+        ...Address
       }
       appraisal {
-        activeAppraisal
-        plannedAppraisal
-        activeStructureAppraisal
-        plannedStructureAppraisal
-        activePlotAssessment
-        plannedPlotAssessment
-        activeYear
-        plannedYear
+        ...Appraisal
       }
       registeredOwners {
         registeredOwners {
-          name
-          ssn
-          ownership
-          purchaseDate
-          grantDisplay
+          ...Owner
         }
       }
       land {
@@ -83,36 +75,15 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
       }
       unitsOfUse {
         unitsOfUse {
-          propertyNumber
-          unitOfUseNumber
-          marking
-          usageDisplay
-          displaySize
-          buildYearDisplay
-          fireAssessment
-          explanation
-          appraisal {
-            activeAppraisal
-            plannedAppraisal
-            activeStructureAppraisal
-            plannedStructureAppraisal
-            activePlotAssessment
-            plannedPlotAssessment
-            activeYear
-            plannedYear
-          }
-          address {
-            locationNumber
-            postNumber
-            municipality
-            propertyNumber
-            display
-            displayShort
-          }
+          ...unitsOfUse
         }
       }
     }
   }
+  ${unitsOfUseFragment}
+  ${ownerFragment}
+  ${appraisalFragment}
+  ${addressFragment}
 `
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {

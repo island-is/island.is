@@ -1,5 +1,11 @@
 export { CompanyInfoFragment } from './lib/fragments/companyInfo'
 export { dataFragment } from './lib/fragments/license'
+export {
+  unitsOfUseFragment,
+  pagingFragment,
+  appraisalFragment,
+  addressFragment,
+} from './lib/fragments/assets'
 export * from './lib/queries/getDocument'
 export * from './lib/queries/listDocuments'
 export * from './lib/queries/getOrganizations'

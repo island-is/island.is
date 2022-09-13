@@ -1,5 +1,9 @@
 import React, { FC } from 'react'
 import { gql } from '@apollo/client'
+import {
+  unitsOfUseFragment,
+  pagingFragment,
+} from '@island.is/service-portal/graphql'
 import { useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { m, TableGrid } from '@island.is/service-portal/core'
@@ -12,44 +16,15 @@ export const GET_UNITS_OF_USE_QUERY = gql`
   query GetAssetsUnitsOfUse($input: GetPagingTypes!) {
     assetsUnitsOfUse(input: $input) {
       paging {
-        page
-        pageSize
-        totalPages
-        offset
-        total
-        hasPreviousPage
-        hasNextPage
+        ...Paging
       }
       unitsOfUse {
-        propertyNumber
-        unitOfUseNumber
-        marking
-        usageDisplay
-        displaySize
-        buildYearDisplay
-        fireAssessment
-        explanation
-        appraisal {
-          activeAppraisal
-          plannedAppraisal
-          activeStructureAppraisal
-          plannedStructureAppraisal
-          activePlotAssessment
-          plannedPlotAssessment
-          activeYear
-          plannedYear
-        }
-        address {
-          locationNumber
-          postNumber
-          municipality
-          propertyNumber
-          display
-          displayShort
-        }
+        ...unitsOfUse
       }
     }
   }
+  ${unitsOfUseFragment}
+  ${pagingFragment}
 `
 interface Props {
   units: UnitsOfUseModel
