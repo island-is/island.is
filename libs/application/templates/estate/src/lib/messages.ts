@@ -140,7 +140,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  // Estate members
+  // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
     defaultMessage: 'Erfingjar of erfðaskrá',
@@ -157,6 +157,63 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar',
     description: '',
   },
+  willsAndAgreements: {
+    id: 'es.application:willsAndAgreements',
+    defaultMessage: 'Erfðaskrá og kaupmáli',
+    description: '',
+  },
+  willsInCustody: {
+    id: 'es.application:willsInCustody',
+    defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
+    description: '',
+  },
+  agreements: {
+    id: 'es.application:agreements',
+    defaultMessage: 'Kaupmáli',
+    description: '',
+  },
+  otherWills: {
+    id: 'es.application:otherWills',
+    defaultMessage: 'Vitneskja um aðra erfðaskrá',
+    description: '',
+  },
+  properties: {
+    id: 'es.application:properties',
+    defaultMessage: 'Eignir',
+    description: '',
+  },
+  propertiesDescription: {
+    id: 'es.application:propertiesDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: '',
+  },
+  realEstateAndLand: {
+    id: 'es.application:realEstateAndLand',
+    defaultMessage: 'Fasteignir og lóðir',
+    description: '',
+  },
+  realEstateAndLandDescription: {
+    id: 'es.application:realEstateAndLandDescription',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
+    description: '',
+  },
+  vehicles: {
+    id: 'es.application:vehicles',
+    defaultMessage: 'Farartæki',
+    description: '',
+  },
+  vehiclesDescription: {
+    id: 'es.application:vehiclesDescription',
+    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar',
+    description: '',
+  },
+  acceptDebtsLabel: {
+    id: 'es.application:acceptDebtsLabel',
+    defaultMessage:
+      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um.',
+    description: '',
+  },
 
   // Overview
   overviewTitle: {
@@ -164,10 +221,16 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     description: '',
   },
-  overviewSubtitle: {
+  overviewSubtitleWithNoProperty: {
     id: 'es.application:overviewSubtitle',
     defaultMessage:
       'Þú hefur valið að tilkynna um eignarlaust bú. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
+    description: '',
+  },
+  overviewSubtitleOfficialEstate: {
+    id: 'es.application:overviewSubtitleOfficialEstate',
+    defaultMessage:
+      'Þú hefur valið að tilkynna um opinber skipti. Vinsamlega lesið yfir neðangreindar upplýsingar, uppfærið og staðfestið eftir því sem við á.',
     description: '',
   },
 
