@@ -218,8 +218,8 @@ export const DeilistofnaCalculator = ({
           year: selectedYear.value,
           changes: changeValues.map((change) => ({
             ...change,
-            catchChange: Number(change.catchChange ?? 0),
-            allowedCatchChange: Number(change.allowedCatchChange ?? 0),
+            catchChange: Number(change?.catchChange ?? 0),
+            allowedCatchChange: Number(change?.allowedCatchChange ?? 0),
           })),
         },
       },
@@ -227,6 +227,8 @@ export const DeilistofnaCalculator = ({
   }
 
   const reset = () => {
+    setChanges({})
+    setChangeErrors({})
     const initialData = initialResponse?.data?.getShipStatusForCalendarYear
     if (initialData) {
       const initialCategories = initialData?.allowedCatchCategories ?? []
