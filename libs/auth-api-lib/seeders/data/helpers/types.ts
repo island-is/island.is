@@ -41,7 +41,7 @@ export interface DbClient {
   client_type?: string
   contact_email?: string
   supports_procuring_holders?: boolean
-  supports_delegation?: boolean
+  supports_custom_delegation?: boolean
   supports_legal_guardians?: boolean
   prompt_delegations?: boolean
 }

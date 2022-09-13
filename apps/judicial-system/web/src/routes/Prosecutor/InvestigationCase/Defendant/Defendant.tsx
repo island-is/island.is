@@ -20,7 +20,11 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles, defendant as m } from '@island.is/judicial-system-web/messages'
+import {
+  titles,
+  core,
+  defendant as m,
+} from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseType,
@@ -415,9 +419,9 @@ const Defendant = () => {
             !isDefendantStepValidIC(workingCase, caseType, clientPoliceNumbers)
           }
           nextIsLoading={isCreatingCase}
-          nextButtonText={
-            workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
-          }
+          nextButtonText={formatMessage(
+            workingCase.id === '' ? core.createCase : core.continue,
+          )}
         />
       </FormContentContainer>
     </PageLayout>

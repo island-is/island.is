@@ -531,6 +531,7 @@ export const slices = gql`
   }
 
   fragment GraphCardFields on GraphCard {
+    id
     graphTitle
     graphDescription
     organization
