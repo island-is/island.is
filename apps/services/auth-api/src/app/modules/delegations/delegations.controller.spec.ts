@@ -276,7 +276,7 @@ describe('DelegationsController', () => {
             }  of the valid represented ${
               valid === 1 ? 'person' : 'persons'
             } from nationalRegistryApi`, () => {
-              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(valid)
+              expect(nationalRegistryApiSpy).toHaveBeenCalledTimes(valid * 2)
             })
 
             it('should have the delegation type claims of PersonalRepresentative', () => {
