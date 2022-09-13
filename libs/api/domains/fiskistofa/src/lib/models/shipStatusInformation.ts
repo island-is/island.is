@@ -45,25 +45,17 @@ class AllowedCatchCategory {
   excessCatch?: number
   @Field({ nullable: true })
   unused?: number
-  @Field({ nullable: true })
-  totalAllowedCatch?: number
-  @Field({ nullable: true })
-  rateOfShare?: number
-  @Field({ nullable: true })
-  nextYearQuota?: number
-  @Field({ nullable: true })
-  nextYearFromQuota?: number
 }
 
 @ObjectType()
 class ExtendedAllowedCatchCategory extends AllowedCatchCategory {
-  @Field()
+  @Field({ nullable: true })
   totalAllowedCatch?: number
-  @Field()
+  @Field({ nullable: true })
   rateOfShare?: number
-  @Field()
+  @Field({ nullable: true })
   nextYearQuota?: number
-  @Field()
+  @Field({ nullable: true })
   nextYearFromQuota?: number
 }
 

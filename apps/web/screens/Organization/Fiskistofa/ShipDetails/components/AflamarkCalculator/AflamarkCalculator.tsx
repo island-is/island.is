@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 import {
   Box,
   Button,
@@ -43,7 +44,8 @@ type ChangeErrors = Record<
 >
 
 export const AflamarkCalculator = () => {
-  const shipNumber = 1281
+  const [shipNumber, setShipNumber] = useState<number>(-1)
+  const router = useRouter()
 
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
 
@@ -53,6 +55,16 @@ export const AflamarkCalculator = () => {
     selectedTimePeriod,
     setSelectedTimePeriod,
   ] = useState<TimePeriodOption>(timePeriodOptions[0])
+
+  useEffect(() => {
+    if (
+      router?.query?.nr &&
+      !isNaN(Number(router.query.nr)) &&
+      router.query.nr.length > 0
+    ) {
+      setShipNumber(Number(router.query.nr))
+    }
+  }, [router?.query?.nr])
 
   // TODO: think whether this should be in done in backend
   // const [quotaState, setQuotaState] = useState({
