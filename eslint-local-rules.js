@@ -40,35 +40,60 @@ module.exports = {
         description: 'disallow async module initialisation',
         category: 'Possible Errors',
         recommended: true,
-        url: '',
       },
       messages: {
         noAsyncRegister:
-          'Disallowing async register functions in modules to prevent unexpected startup failures or timeouts.',
+          'Disallowing static async {{ name }} function in modules to prevent unexpected startup failures or timeouts.',
         noAsyncProviderFactory:
           'Disallowing async useFactory in module providers to prevent unexpected startup failures or timeouts.',
+        noReturnPromiseDynamicModule:
+          'Disallowing static async functions with returnType Promise<DynamicModule> in modules to prevent unexpected startup failures or timeouts.',
       },
     },
     schema: [],
     create: function (context) {
-      return {
-        "MethodDefinition[static=true][key.name='register'][value.async=true]": (
+      const nameSymbols = [
+        'register',
+        'forRoot',
+        'forRootAsync',
+        'forFeature',
+        'forFeatureAsync',
+      ]
+
+      const rules = {
+        ...nameSymbols.reduce((rules, name) => {
+          return {
+            ...rules,
+            [`MethodDefinition[static=true][key.name='${name}'][value.async=true]`]: (
+              node,
+            ) => {
+              context.report({
+                node,
+                messageId: 'noAsyncRegister',
+                data: {
+                  name,
+                },
+              })
+            },
+          }
+        }, {}),
+        "MethodDefinition[static=true][value.async=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']": (
           node,
         ) => {
           context.report({
             node,
-            messageId: 'noAsyncRegister',
+            messageId: 'noReturnPromiseDynamicModule',
           })
         },
-        "ObjectExpression[properties.length=2] > Property[key.name='provide'] + Property[key.name='useFactory'][value.async=true]": (
-          node,
-        ) => {
+        "Property[key.name='useFactory'][value.async=true]": (node) => {
           context.report({
             node,
             messageId: 'noAsyncProviderFactory',
           })
         },
       }
+
+      return rules
     },
   },
 }
