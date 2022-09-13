@@ -59,22 +59,22 @@ export const form: Form = buildForm({
             ),
             buildDescriptionField({
               id: 'willsHeader',
-              title: 'Erfðaskrá og kaupmáli',
+              title: m.willsAndAgreements,
               titleVariant: 'h3',
               marginBottom: 'gutter',
             }),
             buildKeyValueField({
-              label: 'Erfðaskrá í vörslu sýslumanns',
+              label: m.willsInCustody,
               value: 'Já',
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Kaupmáli',
+              label: m.agreements,
               value: 'Nei',
               width: 'half',
             }),
             buildKeyValueField({
-              label: 'Vitneskja um aðra erfðaskrá',
+              label: m.otherWills,
               value: 'Nei',
               width: 'half',
             }),
@@ -84,19 +84,18 @@ export const form: Form = buildForm({
     }),
     buildSection({
       id: 'properties',
-      title: 'Eignir',
+      title: m.properties,
       children: [
         buildMultiField({
           id: 'propertiesInfo',
-          title: 'Eignir',
-          description:
-            'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+          title: m.properties,
+          description: m.properties,
           children: [
             buildDescriptionField({
               id: 'propertiesHeader',
-              title: 'Fasteignir og lóðir',
+              title: m.realEstateAndLand,
               titleVariant: 'h3',
-              description: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir',
+              description: m.realEstateAndLandDescription,
             }),
             buildCustomField(
               {
@@ -117,9 +116,9 @@ export const form: Form = buildForm({
             ),
             buildDescriptionField({
               id: 'propertiesHeader',
-              title: 'Farartæki',
+              title: m.vehicles,
               titleVariant: 'h3',
-              description: 'Til dæmis bifreiðar, flugvélar og bátar',
+              description: m.vehiclesDescription,
             }),
             buildCustomField(
               {
@@ -145,8 +144,7 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               options: [
                 {
-                  label:
-                    'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
+                  label: m.acceptDebtsLabel,
                   value: YES,
                 },
               ],
@@ -157,12 +155,12 @@ export const form: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: 'Yfirlit',
+      title: m.overviewTitle,
       children: [
         buildMultiField({
           id: 'overview',
-          title: 'Yfirlit',
-          description: 'Þú hefur valið að tilkynna um eignarlaust dánarbú.',
+          title: m.overviewTitle,
+          description: m.overviewSubtitleWithNoProperty,
           children: [],
         }),
       ],

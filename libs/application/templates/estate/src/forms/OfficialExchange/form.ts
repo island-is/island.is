@@ -28,7 +28,7 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'overview',
           title: m.overviewTitle,
-          description: m.overviewSubtitle,
+          description: m.overviewSubtitleOfficialEstate,
           children: [
             buildDividerField({}),
             buildDescriptionField({
