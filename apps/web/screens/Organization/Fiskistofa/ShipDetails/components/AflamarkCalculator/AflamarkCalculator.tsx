@@ -15,16 +15,20 @@ import type {
   ExtendedAllowedCatchCategory,
   MutationGetUpdatedShipStatusForTimePeriodArgs,
   QueryGetShipStatusForTimePeriodArgs,
+  QuotaType,
+  QueryGetQuotaTypesForTimePeriodArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_AFLAMARK_INFORMATION_FOR_SHIP,
   GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD,
 } from './queries'
 import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
-import { QuotaTypeSelect } from '../QuotaTypeSelect'
 import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './AflamarkCalculator.css'
+import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
+
+const emptyValue = { value: -1, label: '' }
 
 type Changes = Record<
   number,
@@ -54,6 +58,9 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
 
   const n = useNamespace(namespace)
 
+  const [optionsInDropdown, setOptionsInDropdown] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([])
+
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
 
   const [data, setData] = useState<ExtendedShipStatusInformation | null>(null)
@@ -81,6 +88,31 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   //   allowedCatch: 0,
   // })
 
+  const quotaTypeResponse = useQuery<
+    { getQuotaTypesForCalendarYear: QuotaType[] },
+    QueryGetQuotaTypesForTimePeriodArgs
+  >(GET_QUOTA_TYPES_FOR_TIME_PERIOD, {
+    variables: {
+      input: {
+        timePeriod: selectedTimePeriod.value,
+      },
+    },
+    onCompleted(res) {
+      const quotaData = res?.getQuotaTypesForCalendarYear
+      if (!quotaData) return
+      const quotaTypes = quotaData
+        .filter((qt) => qt?.name)
+        .map((qt) => ({
+          value: qt.id,
+          label: qt.name,
+        }))
+      if (selectedOptions.length === 0) {
+        quotaTypes.sort((a, b) => a.label.localeCompare(b.label))
+        setOptionsInDropdown(quotaTypes)
+      }
+    },
+  })
+
   const initialResponse = useQuery<
     { getShipStatusForTimePeriod: ExtendedShipStatusInformation },
     QueryGetShipStatusForTimePeriodArgs
@@ -91,6 +123,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
         timePeriod: selectedTimePeriod.value,
       },
     },
+    fetchPolicy: 'no-cache',
     onCompleted(response) {
       const initialData = response?.getShipStatusForTimePeriod
       if (initialData) {
@@ -99,6 +132,22 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
       }
     },
   })
+
+  useEffect(() => {
+    if (
+      data?.allowedCatchCategories?.length > 0 &&
+      quotaTypeResponse?.data?.getQuotaTypesForCalendarYear?.length > 0
+    ) {
+      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForCalendarYear
+      setOptionsInDropdown(
+        quotaTypes
+          .filter(
+            (t) => !data?.allowedCatchCategories?.find((c) => c?.id === t?.id),
+          )
+          .map((t) => ({ label: t.name, value: t.id })),
+      )
+    }
+  }, [data, quotaTypeResponse])
 
   const validateChanges = () => {
     let valid = true
@@ -127,6 +176,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     { getUpdatedShipStatusForTimePeriod: ExtendedShipStatusInformation },
     MutationGetUpdatedShipStatusForTimePeriodArgs
   >(GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD, {
+    fetchPolicy: 'no-cache',
     onCompleted(response) {
       const mutationData = response?.getUpdatedShipStatusForTimePeriod
       if (mutationData) {
@@ -197,6 +247,32 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     })
   }
 
+  const reset = () => {
+    setChanges({})
+    setChangeErrors({})
+    const initialData = initialResponse?.data?.getShipStatusForTimePeriod
+    if (initialData) {
+      const initialCategories = initialData?.allowedCatchCategories ?? []
+      const codValue = initialCategories.find((c) => c.id === 0)
+      const categories = [
+        codValue,
+        ...initialCategories.filter((c) => c.id !== 0),
+      ]
+      setData({
+        ...initialData,
+        allowedCatchCategories: categories,
+      })
+    }
+    setSelectedOptions((prevSelected) => {
+      setOptionsInDropdown((prevDropdown) => {
+        const updatedDropdown = prevDropdown.concat(prevSelected)
+        updatedDropdown.sort((a, b) => a.label.localeCompare(b.label))
+        return updatedDropdown
+      })
+      return []
+    })
+  }
+
   return (
     <Box margin={6}>
       <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
@@ -213,22 +289,54 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
               }}
             />
           </Box>
-          <QuotaTypeSelect
-            type="aflamark"
-            timePeriod={selectedTimePeriod.value}
-          />
+          <Box className={styles.selectBox} marginBottom={3}>
+            <Select
+              size="sm"
+              label="Bæta við tegund"
+              name="tegund-fiskur-select"
+              options={optionsInDropdown}
+              onChange={(selectedOption: { value: number; label: string }) => {
+                if (
+                  !initialResponse?.data?.getShipStatusForTimePeriod
+                    ?.allowedCatchCategories?.length
+                ) {
+                  return
+                }
+                setSelectedOptions((prev) => prev.concat(selectedOption))
+                setOptionsInDropdown((prev) => {
+                  return prev.filter((o) => o.value !== selectedOption.value)
+                })
+                setData((prev) => {
+                  return {
+                    ...prev,
+                    allowedCatchCategories: prev.allowedCatchCategories
+                      .filter((c) => c.id !== selectedOption.value)
+                      .concat({
+                        name: selectedOption.label,
+                        id: selectedOption.value,
+                        allocation: 0,
+                        allowedCatch: 0,
+                        betweenShips: 0,
+                        betweenYears: 0,
+                        catch: 0,
+                        displacement: 0,
+                        excessCatch: 0,
+                        newStatus: 0,
+                        nextYear: 0,
+                        specialAlloction: 0,
+                        status: 0,
+                        unused: 0,
+                      }),
+                  }
+                })
+              }}
+              value={emptyValue}
+            />
+          </Box>
         </Inline>
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
-            <Button
-              onClick={() => {
-                setData(initialResponse.data.getShipStatusForTimePeriod)
-                setChanges({})
-                setChangeErrors({})
-              }}
-              variant="ghost"
-              size="small"
-            >
+            <Button onClick={reset} variant="ghost" size="small">
               Frumstilla
             </Button>
             <Button
@@ -263,7 +371,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
       )}
 
       {data?.allowedCatchCategories?.length > 0 && (
-        <Box className={styles.tableBox}>
+        <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
