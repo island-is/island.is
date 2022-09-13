@@ -37,6 +37,7 @@ export const estateSchema = z.object({
     assets: asset, // is: fasteignir
     flyers: asset,
     vehicles: asset,
+    ships: asset,
     knowledgeOfOtherWills: z.enum(['yes', 'no']),
     caseNumber: z.string().nonempty(),
     dateOfDeath: z.date(),
