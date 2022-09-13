@@ -43,6 +43,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      bottomSlices {
+        ...AllSlices
+      }
       newsTag {
         id
         title

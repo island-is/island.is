@@ -130,9 +130,16 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
             message={formatMessage(m.propertyCertificateErrorContactSheriff)}
           />
           <Box marginY={5} display="flex">
-            <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
-              <Button as="a">{formatMessage(m.mysites)}</Button>
-            </Link>
+            <Button
+              onClick={() => {
+                window.open(
+                  formatMessage(m.mortgageCertificateInboxLink),
+                  '_blank',
+                )
+              }}
+            >
+              {formatMessage(m.mysites)}
+            </Button>
           </Box>
         </Box>
       ) : (

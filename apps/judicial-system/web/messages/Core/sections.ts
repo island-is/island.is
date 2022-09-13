@@ -219,6 +219,27 @@ export const sections = {
         'Notaður sem texti fyrir Yfirlit úrskurðar skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
   }),
+  indictmentsCourtSection: defineMessages({
+    overview: {
+      id: 'judicial.system.core:sections.indictments_court_section.overview',
+      defaultMessage: 'Yfirlit',
+      description:
+        'Notaður sem texti fyrir Yfirlit skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    receptionAndAssignment: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.reception_and_assignment',
+      defaultMessage: 'Móttaka',
+      description:
+        'Notaður sem texti fyrir Móttaka skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    subpoena: {
+      id: 'judicial.system.core:sections.indictments_court_section.subpoena',
+      defaultMessage: 'Fyrirkall',
+      description:
+        'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+  }),
   extensionSection: defineMessages({
     title: {
       id: 'judicial.system.core:sections.extension_section.title',
