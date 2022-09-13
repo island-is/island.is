@@ -5,8 +5,18 @@ export const selectBox = style({
   width: '250px',
 })
 
+export const crossmark = style({
+  marginLeft: '8px',
+  fontSize: '0.75rem',
+  fontWeight: 'normal',
+})
+
 export const error = style({
   borderColor: theme.color.red400,
+})
+
+export const tagContainer = style({
+  minHeight: '50px',
 })
 
 export const tableBox = style({
