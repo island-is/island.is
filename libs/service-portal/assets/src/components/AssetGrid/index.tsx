@@ -105,7 +105,7 @@ const AssetGrid: FC<Props> = ({ title, units, assetId, locationData }) => {
           justifyContent="center"
           display="flex"
         >
-          <Button variant="text" onClick={paginate}>
+          <Button size="small" variant="text" onClick={paginate}>
             {formatMessage(m.fetchMore)}
           </Button>
         </Box>
