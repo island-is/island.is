@@ -504,6 +504,13 @@ export const slices = gql`
     successText
     aboutYouHeadingText
     questionsHeadingText
+    recipientFormFieldDecider {
+      title
+      placeholder
+      type
+      required
+      options
+    }
   }
 
   fragment StepperFields on Stepper {
@@ -524,6 +531,7 @@ export const slices = gql`
   }
 
   fragment GraphCardFields on GraphCard {
+    id
     graphTitle
     graphDescription
     organization

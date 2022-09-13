@@ -2,13 +2,13 @@ import { defineMessages } from 'react-intl'
 
 export const selectCourtOfficials = defineMessages({
   title: {
-    id: 'judicial.system.core:select_court_officials:title',
+    id: 'judicial.system.core:select_court_officials.title',
     defaultMessage: 'Hver tekur við málinu?',
     description:
       'Notaður sem titill á Hver tekur við málinu? hlutanum á Móttaka og úthlutun skrefi öllum málategundum.',
   },
   tooltip: {
-    id: 'judicial.system.core:select_court_officials:tooltip',
+    id: 'judicial.system.core:select_court_officials.tooltip',
     defaultMessage:
       'Dómari og dómritari sem eru valdir hér eru skráðir á málið og munu fá tilkynningar sendar í tölvupósti. Eingöngu skráður dómari getur undirritað úrskurð.',
     description:
