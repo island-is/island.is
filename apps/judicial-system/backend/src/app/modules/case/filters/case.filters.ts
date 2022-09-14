@@ -6,6 +6,7 @@ import {
   CaseState,
   CaseType,
   hasCaseBeenAppealed,
+  indictmentCases,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -71,7 +72,7 @@ function getBlockedTypes(
     return blockedTypes
   }
 
-  blockedTypes.push(...investigationCases)
+  blockedTypes.push(...indictmentCases, ...investigationCases)
 
   const isPrisonAdmin = institutionType === InstitutionType.PRISON_ADMIN
 

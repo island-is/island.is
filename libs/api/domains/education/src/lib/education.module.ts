@@ -27,14 +27,16 @@ export class EducationModule {
         EducationService,
         {
           provide: 'CONFIG',
-          useFactory: async () => config as Config,
+          useValue: config as Config,
         },
         {
           provide: MMSApi,
-          useFactory: async () => new MMSApi(config.xroad),
+          useValue: new MMSApi(config.xroad),
         },
         {
           provide: NationalRegistryApi,
+          // See method doc for disable reason.
+          // eslint-disable-next-line local-rules/no-async-module-init
           useFactory: async () =>
             NationalRegistryApi.instantiateClass(config.nationalRegistry),
         },

@@ -9,7 +9,7 @@ export const imageAbsolute = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
     md: {
-      top: -252,
+      top: -288,
       display: 'block',
       position: 'absolute',
       right: -55,

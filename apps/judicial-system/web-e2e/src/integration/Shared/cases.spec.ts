@@ -15,9 +15,10 @@ describe(CASES_ROUTE, () => {
   })
 
   it.skip('should have a button that allows me to create a custody and travel ban cases', () => {
-    cy.contains('Stofna nýja kröfu').click()
+    cy.getByTestid('createCaseDropdown').click()
     cy.contains('a', 'Gæsluvarðhald')
     cy.contains('a', 'Farbann')
+    cy.contains('a', 'Rannsóknaheimild')
   })
 
   it.skip('should have a button that allows me to delete cases', () => {
