@@ -492,11 +492,11 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.indictmentsCourtSection.defentantParty),
+          name: formatMessage(sections.indictmentsCourtSection.defendantParty),
           href:
             isReceptionAndAssignmentStepValid(workingCase) &&
             isSubpoenaStepValid(workingCase)
-              ? `${constants.INDICTMENTS_DEFENTANT_PARTY_ROUTE}/${workingCase.id}`
+              ? `${constants.INDICTMENTS_DEFENDANT_PARTY_ROUTE}/${workingCase.id}`
               : undefined,
         },
         {

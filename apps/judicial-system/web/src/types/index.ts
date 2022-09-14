@@ -42,7 +42,7 @@ export enum IndictmentsCourtSubsections {
   JUDGE_OVERVIEW = 0,
   RECEPTION_AND_ASSIGNMENT = 1,
   SUBPEONA = 2,
-  DEFENTANT_PARTY = 3,
+  DEFENDANT_PARTY = 3,
   RULING = 4,
   COURT_RECORD = 5,
   CONFIRMATION = 6,

@@ -212,8 +212,8 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
       },
-      defentantParty: {
-        id: 'judicial.system.core:titles.court.indictments.defentant_party',
+      defendantParty: {
+        id: 'judicial.system.core:titles.court.indictments.defendant_party',
         defaultMessage: 'Málflytjendur - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',

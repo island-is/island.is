@@ -21,7 +21,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { Box } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { defentantParty as m } from './DefentantParty.strings'
+import { defendantParty as m } from './DefendantParty.strings'
 import SelectDefender from './SelectDefender'
 
 const HearingArrangements: React.FC = () => {
@@ -54,12 +54,12 @@ const HearingArrangements: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.DEFENTANT_PARTY}
+      activeSubSection={IndictmentsCourtSubsections.DEFENDANT_PARTY}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       <PageHeader
-        title={formatMessage(titles.court.indictments.defentantParty)}
+        title={formatMessage(titles.court.indictments.defendantParty)}
       />
       <FormContentContainer>
         <PageTitle title={formatMessage(m.title)} />

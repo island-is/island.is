@@ -1,3 +1,3 @@
-import DefentantParty from '@island.is/judicial-system-web/src/routes/Court/Indictments/DefentantParty/DefentantParty'
+import DefendantParty from '@island.is/judicial-system-web/src/routes/Court/Indictments/DefendantParty/DefendantParty'
 
-export default DefentantParty
+export default DefendantParty

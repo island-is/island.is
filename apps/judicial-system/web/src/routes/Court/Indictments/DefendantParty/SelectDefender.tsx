@@ -11,7 +11,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { defentantParty as m } from './DefentantParty.strings'
+import { defendantParty as m } from './DefendantParty.strings'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UpdateCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -62,9 +62,9 @@ const SelectDefender: React.FC = () => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
-            name="defentantRejectsHavingDefender"
+            name="defendantRejectsHavingDefender"
             label={capitalize(
-              formatMessage(m.defentantRejectsHavingDefender, {
+              formatMessage(m.defendantRejectsHavingDefender, {
                 accused: formatMessage(core.indictmentDefendant, {
                   gender: workingCase.defendants[0].gender || 'NONE',
                 }),

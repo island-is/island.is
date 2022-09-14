@@ -239,9 +239,9 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
-    defentantParty: {
+    defendantParty: {
       id:
-        'judicial.system.core:sections.indictments_court_section.defentant_party',
+        'judicial.system.core:sections.indictments_court_section.defendant_party',
       defaultMessage: 'Málflytjendur',
       description:
         'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
