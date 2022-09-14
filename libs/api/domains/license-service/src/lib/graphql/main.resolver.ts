@@ -71,7 +71,13 @@ export class VerifyPkPassInput {
   licenseType!: GenericLicenseType
 
   @Field(() => String)
-  data!: string
+  code!: string
+
+  @Field(() => String)
+  date!: string
+
+  @Field(() => String)
+  passTemplateId!: string
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -166,9 +172,10 @@ export class MainResolver {
       user,
       locale,
       input.licenseType,
-      input.data,
+      input.code,
+      input.date,
+      input.passTemplateId,
     )
-
     return verification
   }
 }

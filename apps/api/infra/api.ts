@@ -19,6 +19,7 @@ import {
   MunicipalitiesFinancialAid,
   Vehicles,
   AdrAndMachine,
+  Firearm,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -112,6 +113,11 @@ export const serviceSetup = (services: {
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
+      SMART_SOLUTIONS_API_URL: {
+        dev: 'https://smartpages-api-dev.smartsolutions.is/graphql',
+        staging: 'https://smartpages-api-dev.smartsolutions.is/graphql',
+        prod: 'https://smartpages-api.smartsolutions.is/graphql',
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -177,6 +183,8 @@ export const serviceSetup = (services: {
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
+      VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
+      RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -187,6 +195,7 @@ export const serviceSetup = (services: {
     })
     .xroad(
       AdrAndMachine,
+      Firearm,
       Base,
       Client,
       HealthInsurance,

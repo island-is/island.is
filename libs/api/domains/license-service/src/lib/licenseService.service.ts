@@ -278,7 +278,9 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
-    data: string,
+    code: string,
+    date: string,
+    passTemplateId: string,
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
 
@@ -288,7 +290,11 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(data)
+      verification = await licenseService.verifyPkPass(
+        code,
+        date,
+        passTemplateId,
+      )
     } else {
       throw new Error(`${licenseType} not supported`)
     }
@@ -298,7 +304,6 @@ export class LicenseServiceService {
         `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
-
     return verification
   }
 }
