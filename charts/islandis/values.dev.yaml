@@ -860,6 +860,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local/api'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -918,6 +919,8 @@ download-service:
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
