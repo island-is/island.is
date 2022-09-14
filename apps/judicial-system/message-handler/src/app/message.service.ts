@@ -18,7 +18,7 @@ export class MessageService {
     private readonly caseDeliveryService: CaseDeliveryService,
   ) {}
 
-  private async handleRulingSignedMessage(caseId: string): Promise<void> {
+  private async handleCaseCompletedMessage(caseId: string): Promise<void> {
     await this.rulingNotificationService.sendRulingNotification(caseId)
     await this.caseDeliveryService.deliverCase(caseId)
   }
@@ -32,7 +32,7 @@ export class MessageService {
 
         switch (message.type) {
           case MessageType.CASE_COMPLETED:
-            return this.handleRulingSignedMessage(message.caseId)
+            return this.handleCaseCompletedMessage(message.caseId)
           default:
             logger.error('Unknown message type', message)
         }
