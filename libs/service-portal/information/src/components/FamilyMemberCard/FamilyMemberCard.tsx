@@ -87,7 +87,7 @@ export const FamilyMemberCard: FC<Props> = ({
     })
   return (
     <ActionCard
-      avatar
+      image={{ type: 'avatar' }}
       heading={title}
       headingVariant="h4"
       text={

@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { ActionCard } from './ActionCard'
-
 export default {
   title: 'Cards/ActionCard',
   component: ActionCard,
@@ -138,9 +137,47 @@ export const ApplicationCardCompletedVariant = () => (
   />
 )
 
-export const Avatar = () => (
+export const ApplicationCardWithLogo = () => (
   <ActionCard
-    avatar
+    image={{ type: 'logo', url: 'https://via.placeholder.com/100' }}
+    date="16/03/2021"
+    heading="Parental Leave"
+    tag={{
+      label: 'Completed',
+      variant: 'blue',
+      outlined: false,
+    }}
+    text="Your application is in progress. Waiting for VMST approval."
+    cta={{
+      label: 'Open application',
+      variant: 'ghost',
+      size: 'small',
+      icon: undefined,
+    }}
+    progressMeter={{
+      active: true,
+      progress: 1,
+      variant: 'blue',
+    }}
+  />
+)
+
+export const WithAvatar = () => (
+  <ActionCard
+    image={{ type: 'avatar' }}
+    heading="Jón Jónsson"
+    text="Kennitala: 010100-0100"
+    cta={{
+      label: 'Skoða upplýsingar',
+      variant: 'text',
+      size: 'small',
+    }}
+  />
+)
+
+export const WithImage = () => (
+  <ActionCard
+    image={{ type: 'image', url: 'https://via.placeholder.com/100' }}
     heading="Jón Jónsson"
     text="Kennitala: 010100-0100"
     cta={{
