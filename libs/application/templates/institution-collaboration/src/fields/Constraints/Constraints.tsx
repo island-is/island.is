@@ -12,7 +12,7 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
 
   const { answers } = application
   const { id } = field
-  console.log(answers)
+
   const getConstraintVal = (constraintId: string) =>
     getValueViaPath(
       answers,
