@@ -83,7 +83,6 @@ export const CemetryEquities = ({
                   CEMETRYEQUITIESANDLIABILITIESIDS.tangible,
                 )
               }
-              onBlur={() => getTotalAssets()}
               backgroundColor="blue"
               currency
             />
@@ -134,7 +133,6 @@ export const CemetryEquities = ({
                 )
               }
               label={formatMessage(m.shortTerm)}
-              onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
               currency
             />

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import { Box } from '@island.is/island-ui/core'
+import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -10,7 +11,7 @@ import { CEMETRYOPERATIONIDS, INPUTCHANGEINTERVAL } from '../../lib/constants'
 
 interface PropTypes {
   getSum: () => void
-  errors: any
+  errors: RecordObject<unknown> | undefined
 }
 
 export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {

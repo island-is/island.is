@@ -1,15 +1,16 @@
 import React, { Fragment } from 'react'
+import { useLocale } from '@island.is/localization'
+import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
+import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
-import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, CEMETRYOPERATIONIDS } from '../../lib/constants'
 interface PropTypes {
   getSum: () => void
-  errors: any
+  errors: RecordObject<unknown> | undefined
 }
 
 export const CemetryExpenses = ({ errors, getSum }: PropTypes): JSX.Element => {

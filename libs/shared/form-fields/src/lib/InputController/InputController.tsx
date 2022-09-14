@@ -69,7 +69,7 @@ export const InputController: FC<Props & TestSupport> = ({
   dataTestId,
   autoComplete,
 }) => {
-  function renderChildInput(c: ChildParams) {
+  function renderChildInput(c: ChildParams & TestSupport) {
     const { value, onChange, ...props } = c
     if (currency) {
       return (

@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { useFieldArray } from 'react-hook-form'
-import { Answer, Application, RecordObject } from '@island.is/application/types'
+import { RecordObject } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -18,12 +18,6 @@ import {
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import * as styles from './CemetryCaretaker.css'
-
-export type ComplaineeField = {
-  name: string
-  nationalId: string
-  role: string
-}
 
 type Props = {
   id: string

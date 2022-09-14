@@ -8,12 +8,13 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
 import { GREATER, LESS, USERTYPE } from '../../../../lib/constants'
+import { getCurrentUserType } from '../../../../lib/utils/helpers'
 
 export const electionInfoSection = buildSection({
   id: 'electionInfo',
   title: m.election,
-  condition: (answers, _externalData) =>
-    getValueViaPath(answers, 'fakeData.options') === USERTYPE.INDIVIDUAL,
+  condition: (answers, externalData) =>
+    getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL,
   children: [
     buildMultiField({
       id: 'election',

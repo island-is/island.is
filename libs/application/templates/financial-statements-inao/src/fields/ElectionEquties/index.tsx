@@ -136,7 +136,6 @@ export const ElectionEquities = (): JSX.Element => {
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.totalEquity)
               }
               label={formatMessage(m.equity)}
-              onBlur={() => getTotalEquity()}
               backgroundColor="blue"
               currency
             />
