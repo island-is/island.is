@@ -77,7 +77,7 @@ const Subpoena: React.FC = () => {
 
     if (hasSentNotification && !courtDateHasChanged) {
       router.push(
-        `${constants.INDICTMENTS_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+        `${constants.INDICTMENTS_DEFENTANT_PARTY_ROUTE}/${workingCase.id}`,
       )
     } else {
       setModalVisible(true)
@@ -138,12 +138,12 @@ const Subpoena: React.FC = () => {
           onPrimaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE)
             router.push(
-              `${constants.INDICTMENTS_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+              `${constants.INDICTMENTS_DEFENTANT_PARTY_ROUTE}/${workingCase.id}`,
             )
           }}
           onSecondaryButtonClick={() => {
             router.push(
-              `${constants.INDICTMENTS_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`,
+              `${constants.INDICTMENTS_DEFENTANT_PARTY_ROUTE}/${workingCase.id}`,
             )
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}

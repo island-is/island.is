@@ -239,12 +239,12 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
-    hearingArrangements: {
+    defentantParty: {
       id:
-        'judicial.system.core:sections.indictments_court_section.hearing_arrangements',
-      defaultMessage: 'Þingfesting',
+        'judicial.system.core:sections.indictments_court_section.defentant_party',
+      defaultMessage: 'Málflytjendur',
       description:
-        'Notaður sem texti fyrir Þingfesting skref í hliðarstiku í ákærum hjá héraðsdómum',
+        'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     courtRecord: {
       id:

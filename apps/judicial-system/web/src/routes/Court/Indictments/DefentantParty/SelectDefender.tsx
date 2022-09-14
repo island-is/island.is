@@ -11,7 +11,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { hearingArrangements as m } from './HearingArrangements.strings'
+import { defentantParty as m } from './DefentantParty.strings'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UpdateCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -27,6 +27,7 @@ const SelectDefender: React.FC = () => {
 
   const clearDefender = useCallback(() => {
     // TODO: getting around typescript to be able to unset defender
+    // should updatee setAndSendToServer to accept UpdateCaseInput
     const updateCaseInput: Omit<UpdateCaseInput, 'id'> = {
       defenderNationalId: null,
       defenderName: null,

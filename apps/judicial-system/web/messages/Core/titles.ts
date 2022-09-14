@@ -212,12 +212,11 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
       },
-      hearingArrangements: {
-        id:
-          'judicial.system.core:titles.court.indictments.hearing_arrangements',
-        defaultMessage: 'Þingfesting - Réttarvörslugátt',
+      defentantParty: {
+        id: 'judicial.system.core:titles.court.indictments.defentant_party',
+        defaultMessage: 'Málflytjendur - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Þingfesting skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',
       },
       courtRecord: {
         id: 'judicial.system.core:titles.court.indictments.court_record',
