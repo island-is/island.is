@@ -31,7 +31,7 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
     cy.getByTestid('defenderNotFound').should('not.exist')
-    cy.get('#defendantRejectsHavingDefender').check()
+    cy.get('#defendantRefusesHavingDefender').check()
     cy.getByTestid('creatable-select-defenderName').should('not.have.value')
     cy.getByTestid('defenderEmail')
       .should('have.value', '')

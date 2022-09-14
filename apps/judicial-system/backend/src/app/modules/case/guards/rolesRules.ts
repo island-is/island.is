@@ -86,6 +86,8 @@ const courtFields: (keyof UpdateCase)[] = [
   'caseModifiedExplanation',
   'rulingModifiedHistory',
   'subpoenaType',
+  'defendantRefusesHavingDefender',
+  'prosecutorId',
 ]
 
 const staffFields: (keyof UpdateCase)[] = [

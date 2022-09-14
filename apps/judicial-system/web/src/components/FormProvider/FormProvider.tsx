@@ -45,6 +45,7 @@ const initialState: Case = {
   state: CaseState.NEW,
   policeCaseNumbers: [],
   defendants: [{ id: '' } as Defendant],
+  defendantRefusesHavingDefender: false,
 }
 
 export const FormContext = createContext<FormProvider>({

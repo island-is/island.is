@@ -23,9 +23,8 @@ const SelectDefender: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
-  const [noDefenderChecked, setNoDefenderChecked] = useState<boolean>(false)
 
-  const clearDefender = useCallback(() => {
+  const onRefuseHavingDefender = useCallback(() => {
     // TODO: getting around typescript to be able to unset defender
     // should updatee setAndSendToServer to accept UpdateCaseInput
     const updateCaseInput: Omit<UpdateCaseInput, 'id'> = {
@@ -33,6 +32,7 @@ const SelectDefender: React.FC = () => {
       defenderName: null,
       defenderEmail: '',
       defenderPhoneNumber: '',
+      defendantRefusesHavingDefender: true,
     }
     setAndSendToServer(
       [
@@ -49,7 +49,9 @@ const SelectDefender: React.FC = () => {
   return workingCase.defendants && workingCase.defendants[0] ? (
     <Box component="section" marginBottom={5}>
       <SectionHeading title={formatMessage(m.selectDefenderHeading)} required />
-      {defenderNotFound && <DefenderNotFound />}
+      {defenderNotFound && !workingCase.defendantRefusesHavingDefender && (
+        <DefenderNotFound />
+      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Text variant="h4">
@@ -62,27 +64,32 @@ const SelectDefender: React.FC = () => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
-            name="defendantRejectsHavingDefender"
+            name="defendantRefusesHavingDefender"
             label={capitalize(
-              formatMessage(m.defendantRejectsHavingDefender, {
+              formatMessage(m.defendantRefusesHavingDefender, {
                 accused: formatMessage(core.indictmentDefendant, {
                   gender: workingCase.defendants[0].gender || 'NONE',
                 }),
               }),
             )}
-            checked={noDefenderChecked}
+            checked={workingCase.defendantRefusesHavingDefender}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.checked) {
-                clearDefender()
+                onRefuseHavingDefender()
+              } else {
+                setAndSendToServer(
+                  [{ defendantRefusesHavingDefender: false, force: true }],
+                  workingCase,
+                  setWorkingCase,
+                )
               }
-              setNoDefenderChecked(event.target.checked)
             }}
             filled
             large
           />
         </Box>
         <DefenderInput
-          disabled={noDefenderChecked}
+          disabled={workingCase.defendantRefusesHavingDefender}
           onDefenderNotFound={setDefenderNotFound}
         />
       </BlueBox>

@@ -33,6 +33,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
+  isDefendantPartyStepValid,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -504,7 +505,8 @@ const useSections = () => {
           name: formatMessage(sections.indictmentsCourtSection.courtRecord),
           href:
             isReceptionAndAssignmentStepValid(workingCase) &&
-            isSubpoenaStepValid(workingCase)
+            isSubpoenaStepValid(workingCase) &&
+            isDefendantPartyStepValid(workingCase)
               ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
               : undefined,
         },

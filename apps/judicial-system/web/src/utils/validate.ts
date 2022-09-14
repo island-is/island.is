@@ -371,6 +371,19 @@ export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
   )
 }
 
+export const isDefendantPartyStepValid = (workingCase: Case) => {
+  return (
+    workingCase.prosecutor &&
+    (workingCase.defendantRefusesHavingDefender ||
+      validate([
+        [workingCase.defenderNationalId, ['empty']],
+        [workingCase.defenderName, ['empty']],
+        [workingCase.defenderEmail, ['email-format']],
+        [workingCase.defenderPhoneNumber, ['phonenumber']],
+      ]).isValid)
+  )
+}
+
 export const isAdminUserFormValid = (user: User) => {
   return (
     user.institution &&

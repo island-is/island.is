@@ -23,6 +23,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { defendantParty as m } from './DefendantParty.strings'
 import SelectDefender from './SelectDefender'
+import { isDefendantPartyStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const HearingArrangements: React.FC = () => {
   const {
@@ -76,6 +77,7 @@ const HearingArrangements: React.FC = () => {
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!isDefendantPartyStepValid(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>
