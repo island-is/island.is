@@ -33,6 +33,7 @@ const ProsecutorSelection: React.FC<Props> = (props) => {
   }, [workingCase.prosecutor])
 
   const { data, loading } = useQuery(ProsecutorSelectionUsersQuery, {
+    fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 

@@ -63,7 +63,13 @@ const SelectDefender: React.FC = () => {
         <Box marginBottom={2}>
           <Checkbox
             name="defentantRejectsHavingDefender"
-            label={'Ákærði óskar eftir einvherju rugli'}
+            label={capitalize(
+              formatMessage(m.defentantRejectsHavingDefender, {
+                accused: formatMessage(core.indictmentDefendant, {
+                  gender: workingCase.defendants[0].gender || 'NONE',
+                }),
+              }),
+            )}
             checked={noDefenderChecked}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.checked) {
