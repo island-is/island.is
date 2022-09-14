@@ -1,18 +1,20 @@
+import * as z from 'zod'
+
 import {
-  DefaultStateLifeCycle,
-  DEPRECATED_DefaultStateLifeCycle,
-} from '@island.is/application/core'
-import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
-  Application,
 } from '@island.is/application/types'
-import * as z from 'zod'
-import { YES, NO } from '../constants'
+import {
+  DEPRECATED_DefaultStateLifeCycle,
+  DefaultStateLifeCycle,
+} from '@island.is/application/core'
+import { NO, YES } from '../constants'
+
 import { institutionApplicationMessages as m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
@@ -43,29 +45,21 @@ const dataSchema = z.object({
   contact: contactSchema,
   hasSecondaryContact: z.enum([YES, NO]),
   secondaryContact: contactSchema.deepPartial(),
-  project: z.object({
-    name: z.string().nonempty(),
-    background: z.string().nonempty(),
-    goals: z.string().nonempty(),
-    scope: z.string().nonempty(),
-    finance: z.string().nonempty(),
-  }),
-  stakeholders: z.string().nonempty(),
   role: z.string().nonempty(),
   otherRoles: z.string().nonempty(),
   constraints: z.object({
-    hasTechnical: z.boolean().optional(),
-    technical: z.string().optional(),
-    hasFinancial: z.boolean().optional(),
-    financial: z.string().optional(),
-    hasTime: z.boolean().optional(),
-    time: z.string().optional(),
-    hasShopping: z.boolean().optional(),
-    shopping: z.string().optional(),
-    hasMoral: z.boolean().optional(),
-    moral: z.string().optional(),
-    hasOther: z.boolean().optional(),
-    other: z.string().optional(),
+    mail: z.boolean().optional(),
+    login: z.string().optional(),
+    straumur: z.boolean().optional(),
+    website: z.string().optional(),
+    apply: z.boolean().optional(),
+    hasApply: z.string().optional(),
+    myPages: z.boolean().optional(),
+    hasMyPages: z.string().optional(),
+    cert: z.boolean().optional(),
+    hasCert: z.string().optional(),
+    consult: z.boolean().optional(),
+    hasConsult: z.string().optional(),
   }),
 })
 enum TEMPLATE_API_ACTIONS {

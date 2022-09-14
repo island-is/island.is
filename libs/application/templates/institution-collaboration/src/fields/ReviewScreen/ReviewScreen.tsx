@@ -1,11 +1,12 @@
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { formatText } from '@island.is/application/core'
-import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Stack, Text, Divider } from '@island.is/island-ui/core'
-import { getValueViaPath } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
-import { institutionApplicationMessages as m } from '../../lib/messages'
+
 import { Attachments } from './attachments'
+import { FieldBaseProps } from '@island.is/application/types'
+import { formatText } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
+import { institutionApplicationMessages as m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -27,38 +28,38 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     secondaryContactPhone,
   ].some((x) => !!x)
 
-  const technicalConstraints = getValueViaPath(
+  const mailConstraints = getValueViaPath(
     application.answers,
-    'constraints.technical',
+    'constraints.mail',
   ) as string
-  const financialConstraints = getValueViaPath(
+  const loginConstraints = getValueViaPath(
     application.answers,
-    'constraints.financial',
+    'constraints.login',
   ) as string
-  const timeConstraints = getValueViaPath(
+  const straumurConstraints = getValueViaPath(
     application.answers,
-    'constraints.time',
+    'constraints.straumur',
   ) as string
-  const shoppingConstraints = getValueViaPath(
+  const websiteConstraints = getValueViaPath(
     application.answers,
-    'constraints.shopping',
+    'constraints.website',
   ) as string
-  const moralConstraints = getValueViaPath(
+  const applyConstraints = getValueViaPath(
     application.answers,
-    'constraints.moral',
+    'constraints.apply',
   ) as string
-  const otherConstraints = getValueViaPath(
+  const myPageConstraints = getValueViaPath(
     application.answers,
-    'constraints.other',
+    'constraints.myPages',
   ) as string
 
   const hasConstraints = [
-    technicalConstraints,
-    financialConstraints,
-    timeConstraints,
-    shoppingConstraints,
-    moralConstraints,
-    otherConstraints,
+    mailConstraints,
+    loginConstraints,
+    straumurConstraints,
+    websiteConstraints,
+    applyConstraints,
+    myPageConstraints,
   ].some((x) => !!x)
 
   return (
@@ -270,77 +271,77 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               )}
             </Text>
-            {technicalConstraints && (
+            {mailConstraints && (
               <>
                 <Box>
                   <Text variant="h5">
                     {formatText(
-                      m.constraints.constraintsTechicalLabel,
+                      m.constraints.constraintsMailLabel,
                       application,
                       formatMessage,
                     )}
                   </Text>
-                  <Text>{technicalConstraints}</Text>
+                  <Text>{mailConstraints}</Text>
                 </Box>
                 <Divider />
               </>
             )}
-            {financialConstraints && (
+            {loginConstraints && (
               <>
                 <Box>
                   <Text variant="h5">
                     {formatText(
-                      m.constraints.constraintsFinancialLabel,
+                      m.constraints.constraintsLoginLabel,
                       application,
                       formatMessage,
                     )}
                   </Text>
-                  <Text>{financialConstraints}</Text>
+                  <Text>{loginConstraints}</Text>
                 </Box>
                 <Divider />
               </>
             )}
-            {moralConstraints && (
+            {straumurConstraints && (
               <>
                 <Box>
                   <Text variant="h5">
                     {formatText(
-                      m.constraints.constraintsMoralLabel,
+                      m.constraints.constraintsStraumurLabel,
                       application,
                       formatMessage,
                     )}
                   </Text>
-                  <Text>{moralConstraints}</Text>
+                  <Text>{straumurConstraints}</Text>
                 </Box>
                 <Divider />
               </>
             )}
-            {timeConstraints && (
+            {websiteConstraints && (
               <>
                 <Box>
                   <Text variant="h5">
                     {formatText(
-                      m.constraints.constraintsTimeLabel,
+                      m.constraints.constraintsWebsiteLabel,
                       application,
                       formatMessage,
                     )}
                   </Text>
-                  <Text>{timeConstraints}</Text>
+                  <Text>{websiteConstraints}</Text>
                 </Box>
                 <Divider />
               </>
             )}
-            {otherConstraints && (
+            {applyConstraints && (
               <>
                 <Box>
                   <Text variant="h5">
                     {formatText(
-                      m.constraints.constraintsOtherLabel,
+                      m.constraints.constraintsApplyingLabel,
                       application,
                       formatMessage,
                     )}
                   </Text>
-                  <Text>{otherConstraints}</Text>
+                  <Text>{applyConstraints}</Text>
                 </Box>
                 <Divider />
               </>
