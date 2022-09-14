@@ -4,6 +4,7 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
+  PkPassVerificationInputData,
 } from '../../licenceService.type'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -64,6 +65,7 @@ export class GenericFirearmLicenseApi
       licenseData = await this.firearmApi.getLicenseData(user)
     } catch (e) {
       this.handleError(e)
+      return null
     }
 
     return licenseData as LicenseData
@@ -91,6 +93,11 @@ export class GenericFirearmLicenseApi
   }
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
+
+    this.logger.debug(JSON.stringify(data))
+
+    if (!data) return null
+
     const inputValues = createPkPassDataInput(
       data.licenseInfo,
       data.properties,
@@ -121,6 +128,8 @@ export class GenericFirearmLicenseApi
   async getPkPassQRCode(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 
+    if (!data) return null
+
     const inputValues = createPkPassDataInput(
       data.licenseInfo,
       data.properties,
@@ -148,18 +157,15 @@ export class GenericFirearmLicenseApi
     )
     return pass ?? null
   }
-  async verifyPkPass(
-    code: string,
-    date: string,
-    passTemplateId: string,
-  ): Promise<PkPassVerification | null> {
+  async verifyPkPass(data: string): Promise<PkPassVerification | null> {
+    const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const payload = {
       dynamicBarcodeData: {
         code,
         date,
-        passTemplateId,
       },
     }
+
     const response = await this.smartApi.verifyPkPass(payload, this.issuer)
 
     if (response?.data) {

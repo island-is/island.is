@@ -16,6 +16,10 @@ export enum GenericLicenseProviderId {
 }
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
+export const PassTemplates: Record<string, GenericLicenseType> = {
+  'dfb706c1-3a78-4518-bf25-cebbf0a93132': GenericLicenseType.FirearmLicense,
+}
+
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
   HasLicense = 'HasLicense',
@@ -156,6 +160,11 @@ export type PkPassVerification = {
   error?: PkPassVerificationError
 }
 
+export type PkPassVerificationInputData = {
+  code: string
+  date: string
+}
+
 /**
  * Interface for client services, fetches generic payload and status from a third party API.
  * Only one license per client to start with.
@@ -173,11 +182,7 @@ export interface GenericLicenseClient<LicenseType> {
 
   getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
 
-  verifyPkPass: (
-    code: string,
-    date: string,
-    passTemplateId: string,
-  ) => Promise<PkPassVerification | null>
+  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'

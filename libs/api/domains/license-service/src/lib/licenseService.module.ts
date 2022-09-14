@@ -84,7 +84,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
     },
     pkpass: true,
-    pkpassVerify: false,
+    pkpassVerify: true,
     timeout: 100,
   },
 ]

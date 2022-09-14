@@ -18,6 +18,7 @@ import {
   GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
+  PassTemplates,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
@@ -277,12 +278,22 @@ export class LicenseServiceService {
   async verifyPkPass(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
-    code: string,
-    date: string,
-    passTemplateId: string,
+    data: string,
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
+
+    const { passTemplateId } = JSON.parse(data)
+
+    let licenseType
+    if (!passTemplateId) {
+      licenseType = GenericLicenseType.DriversLicense
+    } else {
+      if (passTemplateId in PassTemplates) {
+        licenseType = PassTemplates[passTemplateId]
+      } else {
+        throw new Error(`Invalid pass template Id: ${passTemplateId}`)
+      }
+    }
 
     const licenseService = await this.genericLicenseFactory(
       licenseType,
@@ -290,11 +301,7 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(
-        code,
-        date,
-        passTemplateId,
-      )
+      verification = await licenseService.verifyPkPass(data)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
