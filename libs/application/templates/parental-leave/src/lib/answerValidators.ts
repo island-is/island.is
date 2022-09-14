@@ -21,6 +21,7 @@ import {
   NO,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   YES,
 } from '../constants'
@@ -33,6 +34,7 @@ import {
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
+import { ConnectableObservable } from 'rxjs'
 
 const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
@@ -49,6 +51,7 @@ export const VALIDATE_LATEST_PERIOD = 'periods'
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
     const obj = newAnswer as Record<string, Answer>
+    console.log('obj', obj)
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${EMPLOYER}.${path}`)(message)
     const isSelfEmployed = getValueViaPath(
@@ -84,10 +87,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const isSelfEmployed = getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
+    )  
+    const applicationType = getValueViaPath(
+      application.answers,
+      'leaveType.applicationType',
     )
 
     if (
-      isSelfEmployed === YES &&
+      (isSelfEmployed === YES || applicationType === PARENTAL_GRANT_STUDENTS) &&
       isEmpty((obj.attachment as { file: unknown[] }).file)
     ) {
       return buildError(errorMessages.requiredAttachment, 'attachment.file')
