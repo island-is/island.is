@@ -16,17 +16,16 @@ import {
 } from './firearmLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
-  CreatePkPassDataInput,
-  PkPassIssuer,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
   LicenseInfo,
   FirearmApi,
   LicenseData,
 } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
 import { DEFAULT_IMAGE } from './constants'
+import {
+  PassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -108,7 +107,7 @@ export class GenericFirearmLicenseApi
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
+    const payload: PassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: {
@@ -140,7 +139,7 @@ export class GenericFirearmLicenseApi
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
+    const payload: PassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: {
@@ -162,10 +161,8 @@ export class GenericFirearmLicenseApi
     }
 
     const payload = {
-      dynamicBarcodeData: {
-        code,
-        date,
-      },
+      code,
+      date,
     }
 
     const response = await this.smartApi.verifyPkPass(payload)

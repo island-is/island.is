@@ -1,17 +1,20 @@
 import fetch, { Response } from 'node-fetch'
 import type { Logger } from '@island.is/logging'
 import {
-  PassTemplatesResponse,
   UpsertPkPassResponse,
   PassTemplatesDTO,
   PkPassServiceErrorResponse,
   ListPassesDTO,
-  ListPassesResponse,
-  CreatePkPassDataInput,
   VerifyPassResponse,
-  DynamicBarcodeDataInput,
-  PkPassStatus,
 } from './smartSolutions.types'
+import {
+  DynamicBarcodeDataInput,
+  Pass,
+  PassDataInput,
+  PassPageInfo,
+  PassStatus,
+  PassTemplatePageInfo,
+} from '../../gen/schema'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -122,11 +125,11 @@ export class SmartSolutionsApi {
       //return null
     }
 
-    const response = json as ListPassesResponse
+    const response = json as PassPageInfo
 
-    if (response?.data?.passes?.data) {
+    if (response?.data) {
       const passesDTO: ListPassesDTO = {
-        passes: response.data.passes.data,
+        passes: response.data,
       }
       return passesDTO
     }
@@ -152,7 +155,7 @@ export class SmartSolutionsApi {
       }
     `
 
-    const { code, date } = payload.dynamicBarcodeData
+    const { code, date } = payload
 
     const body = {
       query: verifyPkPassMutation,
@@ -224,7 +227,7 @@ export class SmartSolutionsApi {
   }
 
   async upsertPkPass(
-    payload: CreatePkPassDataInput,
+    payload: PassDataInput,
   ): Promise<UpsertPkPassResponse | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
@@ -302,7 +305,10 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPass(payload: CreatePkPassDataInput, nationalId: string) {
+  async generatePkPass(
+    payload: PassDataInput,
+    nationalId: string,
+  ): Promise<Pass | null> {
     const existingPasses = await this.listPkPasses(
       nationalId,
       payload.passTemplateId ?? '',
@@ -312,20 +318,19 @@ export class SmartSolutionsApi {
       existingPasses?.passes &&
       existingPasses.passes.some(
         (p) =>
-          p.status === PkPassStatus.Active ||
-          p.status === PkPassStatus.Unclaimed,
+          p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
       )
 
     if (containsActiveOrUnclaimed) {
       const activePasses = existingPasses?.passes.filter(
-        (p) => p.status === PkPassStatus.Active,
+        (p) => p.status === PassStatus.Active,
       )
       if (activePasses?.length) {
         return activePasses[0]
       }
 
       const unclaimedPasses = existingPasses?.passes.filter(
-        (p) => p.status === PkPassStatus.Unclaimed,
+        (p) => p.status === PassStatus.Unclaimed,
       )
 
       if (unclaimedPasses?.length) {
@@ -352,15 +357,18 @@ export class SmartSolutionsApi {
   }
 
   async generatePkPassQrCode(
-    payload: CreatePkPassDataInput,
+    payload: PassDataInput,
     nationalId: string,
-  ) {
+  ): Promise<string> {
     const pkPass = await this.generatePkPass(payload, nationalId)
 
     return pkPass?.distributionQRCode ?? ''
   }
 
-  async generatePkPassUrl(payload: CreatePkPassDataInput, nationalId: string) {
+  async generatePkPassUrl(
+    payload: PassDataInput,
+    nationalId: string,
+  ): Promise<string> {
     const pkPass = await this.generatePkPass(payload, nationalId)
     return pkPass?.distributionUrl ?? ''
   }
@@ -428,11 +436,11 @@ export class SmartSolutionsApi {
       //return null
     }
 
-    const response = json as PassTemplatesResponse
+    const response = json as PassTemplatePageInfo
 
-    if (response?.data?.passTemplates?.data) {
+    if (response?.data) {
       const passTemplatesDto: PassTemplatesDTO = {
-        passTemplates: response.data.passTemplates.data,
+        passTemplates: response.data,
       }
       return passTemplatesDto
     }

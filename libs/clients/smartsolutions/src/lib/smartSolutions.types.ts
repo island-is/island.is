@@ -1,24 +1,4 @@
-export interface CreatePkPassDataInput {
-  passTemplateId?: string
-  inputFieldValues?: {
-    identifier?: string
-    value?: string
-  }[]
-  thumbnail?: {
-    imageBase64String?: string
-  }
-}
-
-export enum PkPassIssuer {
-  VINNUEFTIRLITID = 'vinnueftirlitid',
-  RIKISLOGREGLUSTJORI = 'rikislogreglustjori',
-}
-
-export interface CreatePkPassDTO {
-  distributionUrl?: string
-  deliveryPageUrl?: string
-  destributionQRCode?: string
-}
+import { Pass, PassTemplate } from '../../gen/schema'
 
 export interface PkPassServiceErrorResponse {
   message?: string
@@ -28,14 +8,14 @@ export interface PkPassServiceErrorResponse {
 export interface ListPassesResponse {
   data: {
     passes: {
-      data: Array<PassDTO>
+      data: Array<Pass>
     }
   }
 }
 
 export interface VerifyPassResponse {
   data: {
-    pass: PassDTO
+    pass: Pass
   }
   errors: {
     message: string
@@ -43,59 +23,21 @@ export interface VerifyPassResponse {
   }[]
 }
 
-export interface DynamicBarcodeDataInput {
-  dynamicBarcodeData: {
-    code: string
-    //iso8601
-    date: string
-  }
-}
-
-export enum PkPassStatus {
-  Expired = 'EXPIRED',
-  Unclaimed = 'UNCLAIMED',
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  Voided = 'VOIDED',
-  DeleteInProcess = 'DELETE_IN_PROCESS',
-}
-
 export interface PassTemplatesDTO {
-  passTemplates: Array<PassTemplateDTO>
-}
-
-export interface PassDTO {
-  distributionUrl: string
-  deliveryPageUrl: string
-  distributionQRCode: string
-  whenCreated: string
-  whenModified: string
-  expirationDate: string
-  expirationTime: string
-  alreadyPaid: boolean
-  passTemplate: PassTemplateDTO
-  id: string
-  status: PkPassStatus
-  inputFieldValues: {
-    passInputField: {
-      identifier: string
-    }
-    value: string
-  }
+  passTemplates: Array<PassTemplate>
 }
 
 export interface ListPassesDTO {
-  passes: Array<PassDTO>
+  passes: Array<Pass>
 }
 
-export interface PassTemplatesResponse {
+export interface ListTemplatesResponse {
   data?: {
-    passTemplates?: {
-      data?: PassTemplateDTO[]
-    }
+    passTemplates?: PassTemplate[]
   }
+  message?: string
+  status?: number
 }
-
 export interface PassTemplateDTO {
   passTemplate: {
     id: string
@@ -105,7 +47,7 @@ export interface PassTemplateDTO {
 
 export interface UpsertPkPassResponse {
   data?: {
-    upsertPass?: PassDTO
+    upsertPass?: Pass
   }
   message?: string
   status?: number
