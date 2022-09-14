@@ -47,7 +47,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
+import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
   const {

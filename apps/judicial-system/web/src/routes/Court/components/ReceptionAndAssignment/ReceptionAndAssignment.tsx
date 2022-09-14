@@ -36,8 +36,8 @@ import { titles } from '@island.is/judicial-system-web/messages'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
+import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type RegistrarSelectOption = ReactSelectOption & { registrar: User }
