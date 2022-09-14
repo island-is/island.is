@@ -38,28 +38,40 @@ const dataSchema = z.object({
   applicant: z.object({
     institution: z.object({
       nationalId: z.string().nonempty(),
-      label: z.string().nonempty(),
+      label: z.string().optional(),
       isat: z.string().optional(),
     }),
   }),
   contact: contactSchema,
   hasSecondaryContact: z.enum([YES, NO]),
   secondaryContact: contactSchema.deepPartial(),
-  role: z.string().nonempty(),
-  otherRoles: z.string().nonempty(),
-  constraints: z.object({
-    mail: z.boolean().optional(),
-    login: z.string().optional(),
-    straumur: z.boolean().optional(),
-    website: z.string().optional(),
-    apply: z.boolean().optional(),
-    hasApply: z.string().optional(),
-    myPages: z.boolean().optional(),
-    hasMyPages: z.string().optional(),
-    cert: z.boolean().optional(),
-    hasCert: z.string().optional(),
-    consult: z.boolean().optional(),
-    hasConsult: z.string().optional(),
+
+  applicantInformation: z.object({
+    constraints: z.object({
+      hasMail: z.boolean().optional(),
+      mail: z.boolean().optional(),
+
+      hasLogin: z.boolean().optional(),
+      login: z.boolean().optional(),
+
+      hasStraumur: z.string().optional(),
+      straumur: z.string().optional(),
+
+      hasWebsite: z.boolean().optional(),
+      website: z.boolean().optional(),
+
+      hasApply: z.string().optional(),
+      apply: z.string().optional(),
+
+      hasMyPages: z.string().optional(),
+      myPages: z.string().optional(),
+
+      hasCert: z.string().optional(),
+      cert: z.string().optional(),
+
+      hasConsult: z.string().optional(),
+      consult: z.string().optional(),
+    }),
   }),
 })
 enum TEMPLATE_API_ACTIONS {
