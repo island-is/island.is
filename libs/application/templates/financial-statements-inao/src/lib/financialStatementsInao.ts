@@ -1,7 +1,4 @@
-import {
-  DEPRECATED_DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { DEPRECATED_DefaultStateLifeCycle } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   ApplicationTemplate,

@@ -3,19 +3,12 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
-import {
-  ABOUTIDS,
-  PARTY,
-  CEMETRY,
-  INDIVIDUAL,
-  USERTYPE,
-} from '../../../../lib/constants'
+import { ABOUTIDS, USERTYPE } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
 
 export const clientInfoSection = buildSection({

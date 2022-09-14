@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 import debounce from 'lodash/debounce'
+import { RecordObject } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
@@ -10,7 +11,7 @@ import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
 
 interface PropTypes {
   getSum: () => void
-  errors: any
+  errors: RecordObject<unknown> | undefined
 }
 
 export const PartyIncome = ({ errors, getSum }: PropTypes): JSX.Element => {

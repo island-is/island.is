@@ -15,7 +15,6 @@ import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import {
   CEMETRYEQUITIESANDLIABILITIESIDS,
-  CEMETRYOPERATIONIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
 } from '../../lib/constants'

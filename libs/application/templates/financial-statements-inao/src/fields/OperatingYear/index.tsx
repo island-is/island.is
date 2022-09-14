@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import subYears from 'date-fns/subYears'
 import { m } from '../../lib/messages'
 import { ABOUTIDS } from '../../lib/constants'
 import * as styles from './styles.css'

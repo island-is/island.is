@@ -4,7 +4,6 @@ import {
   buildSection,
   buildSelectField,
   buildRadioField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
 import { GREATER, LESS, USERTYPE } from '../../../../lib/constants'

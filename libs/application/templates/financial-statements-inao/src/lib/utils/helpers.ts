@@ -39,7 +39,7 @@ export const possibleOperatingYears = () => {
 }
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) => {
-  getValueViaPath(answers, 'fakeData.options') === result
+  return getValueViaPath(answers, 'fakeData.options') === result
 }
 
 export const getCurrentUserType = (

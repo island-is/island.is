@@ -7,14 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import {
-  CEMETRY,
-  GREATER,
-  INDIVIDUAL,
-  USERTYPE,
-  LESS,
-  PARTY,
-} from '../../../lib/constants'
+import { GREATER, USERTYPE, LESS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
 

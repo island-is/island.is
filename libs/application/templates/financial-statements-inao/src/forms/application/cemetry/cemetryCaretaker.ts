@@ -2,11 +2,9 @@ import {
   buildCustomField,
   buildSection,
   buildMultiField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   CARETAKERLIMIT,
-  CEMETRY,
   CEMETRYCARETAKER,
   USERTYPE,
 } from '../../../lib/constants'

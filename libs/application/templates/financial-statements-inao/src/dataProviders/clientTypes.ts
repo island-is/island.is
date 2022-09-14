@@ -1,6 +1,5 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/types'
@@ -8,7 +7,7 @@ import {
 export class ClientTypesProvider extends BasicDataProvider {
   type = 'ClientTypesProvider'
 
-  async provide(application: Application): Promise<any> {
+  async provide(): Promise<any> {
     const query = `
       query FinancialStatementsInaoClientType {
         financialStatementsInaoClientTypes {

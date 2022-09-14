@@ -2,14 +2,10 @@ import {
   buildCustomField,
   buildSection,
   buildSubSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
-  CEMETRY,
   EQUITIESANDLIABILITIESIDS,
-  LESS,
   PARTYOPERATIONIDS,
-  PARTY,
   USERTYPE,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
