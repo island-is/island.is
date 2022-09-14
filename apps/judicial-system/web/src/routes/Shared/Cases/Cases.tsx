@@ -111,7 +111,7 @@ export const Cases: React.FC = () => {
         return c.state !== CaseState.DELETED
       })
 
-      const casesByState = partition(casesWithoutDeleted, (c: Case) => {
+      const [active, past] = partition(casesWithoutDeleted, (c: Case) => {
         return isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED
           ? false
           : isPrisonAdminUser || isPrisonUser
@@ -119,8 +119,8 @@ export const Cases: React.FC = () => {
           : !c.rulingDate
       })
 
-      setActiveCases(casesByState[0])
-      setPastCases(casesByState[1])
+      setActiveCases(active)
+      setPastCases(past)
     }
   }, [
     activeCases,
