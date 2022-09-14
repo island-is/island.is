@@ -36,13 +36,12 @@ interface FetchMiddlewareOptions {
   fetch: MiddlewareAPI
 }
 
-export {
-  Headers,
+export { Headers, Request, Response }
+
+export type {
   HeadersInit,
-  Request,
   RequestInfo,
   RequestInit,
-  Response,
   FetchAPI,
   FetchMiddlewareOptions,
   MiddlewareAPI,
