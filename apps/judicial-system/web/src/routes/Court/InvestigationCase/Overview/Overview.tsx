@@ -6,6 +6,7 @@ import {
   CaseFilesAccordionItem,
   CommentsAccordionItem,
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCard,
   PageLayout,
@@ -15,7 +16,6 @@ import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {

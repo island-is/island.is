@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   IndictmentsProsecutorSubsections,
   Sections,

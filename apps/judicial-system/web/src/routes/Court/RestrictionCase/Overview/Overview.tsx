@@ -11,12 +11,12 @@ import {
   CommentsAccordionItem,
   AccordionListItem,
   InfoCard,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   UploadState,
   useCourtUpload,

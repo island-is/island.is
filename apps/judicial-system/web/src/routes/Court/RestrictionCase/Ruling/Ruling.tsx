@@ -24,6 +24,7 @@ import {
   Decision,
   RulingInput,
   PdfButton,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -52,7 +53,6 @@ import {
   titles,
   ruling,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
   formatDate,

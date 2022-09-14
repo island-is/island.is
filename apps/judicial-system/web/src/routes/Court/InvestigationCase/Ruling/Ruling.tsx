@@ -7,6 +7,7 @@ import {
   CourtCaseInfo,
   Decision,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   PdfButton,
@@ -18,7 +19,6 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   isAcceptingCaseDecision,
   completedCaseStates,

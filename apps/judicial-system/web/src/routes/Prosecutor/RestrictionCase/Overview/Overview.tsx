@@ -28,6 +28,7 @@ import {
   ProsecutorCaseInfo,
   AccordionListItem,
   CaseResubmitModal,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -44,7 +45,6 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'

@@ -37,6 +37,7 @@ import {
   CommentsAccordionItem,
   CaseFilesAccordionItem,
   CaseDates,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -58,7 +59,6 @@ import {
   Divider,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
   formatDate,

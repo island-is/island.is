@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import {
   CourtCaseInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCardActiveIndictment,
   PageHeader,
@@ -17,7 +18,6 @@ import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'

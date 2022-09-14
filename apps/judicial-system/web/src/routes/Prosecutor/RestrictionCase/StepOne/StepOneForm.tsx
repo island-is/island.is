@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 
 import { Text, Input, Box, Tooltip } from '@island.is/island-ui/core'
 import {
+  DefenderInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { accused as m, core } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import {

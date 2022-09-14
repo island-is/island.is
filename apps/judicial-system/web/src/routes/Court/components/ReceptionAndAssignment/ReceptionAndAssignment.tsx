@@ -6,6 +6,7 @@ import { ValueType } from 'react-select'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -16,7 +17,6 @@ import {
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   Case,
   CaseState,

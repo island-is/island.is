@@ -18,6 +18,7 @@ import {
   FormFooter,
   Modal,
   PageLayout,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
@@ -33,7 +34,6 @@ import {
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
