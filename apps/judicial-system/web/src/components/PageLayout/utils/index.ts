@@ -1,3 +1,5 @@
+import { IntlFormatters } from 'react-intl'
+
 import {
   Case,
   CaseDecision,
@@ -6,8 +8,6 @@ import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import { IntlFormatters } from 'react-intl'
-
 import { sections as m } from '@island.is/judicial-system-web/messages'
 
 export const caseResult = (
@@ -23,7 +23,7 @@ export const caseResult = (
     workingCase?.parentCase?.state === CaseState.ACCEPTED
 
   /**
-   * No need to check the parent case state because you can't extend a
+   * No need to check the parent case state because you can't extend
    * travel ban cases, dissmissed or rejected cases
    */
   const isRejected = workingCase?.state === CaseState.REJECTED
