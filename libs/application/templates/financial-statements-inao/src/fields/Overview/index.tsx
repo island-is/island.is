@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -23,6 +23,8 @@ export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
+  const fileName = answers.attachment?.file?.[0]?.name
+
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -92,6 +94,10 @@ export const Overview = ({ application }: FieldBaseProps) => {
             label={m.otherIncome}
             value={formatCurrency(answers.individualIncome?.otherIncome)}
           />
+          <ValueLine
+            label={m.totalIncome}
+            value={formatCurrency(answers.individualIncome?.total)}
+          />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
@@ -109,6 +115,10 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <ValueLine
             label={m.otherCost}
             value={formatCurrency(answers.individualExpense?.otherCost)}
+          />
+          <ValueLine
+            label={m.totalExpenses}
+            value={formatCurrency(answers.individualExpense?.total)}
           />
         </GridColumn>
       </GridRow>
@@ -134,6 +144,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
           </GridColumn>
         ) : null}
       </GridRow>
+      <GridRow>
+        <GridColumn>
+          <ValueLine
+            label={m.totalCapital}
+            value={formatCurrency(answers.capitalNumbers?.total)}
+          />
+        </GridColumn>
+      </GridRow>
       <Divider />
       <Box paddingTop={4} paddingBottom={2}>
         <Text variant="h3" as="h3">
@@ -157,6 +175,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
+            label={m.totalAssets}
+            value={formatCurrency(answers.asset?.total)}
+          />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
             label={m.shortTerm}
             value={formatCurrency(answers.liability?.shortTerm)}
           />
@@ -171,13 +197,31 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <GridRow>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
+            label={m.totalLiabilities}
+            value={formatCurrency(answers.liability?.total)}
+          />
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
             label={m.equity}
             value={formatCurrency(answers.equity?.totalEquity)}
           />
         </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <ValueLine
+            label={m.debtsAndCash}
+            value={formatCurrency(answers.equity?.total)}
+          />
+        </GridColumn>
       </GridRow>
-      <Divider />
-      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+      {fileName ? (
+        <Fragment>
+          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <Divider />
+        </Fragment>
+      ) : null}
       <Divider />
     </Box>
   )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -23,6 +23,7 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
+  const fileName = answers.attachment?.file?.[0]?.name
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -94,6 +95,10 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
             label={m.publicDonations}
             value={formatCurrency(answers.partyIncome?.publicDonations)}
           />
+          <ValueLine
+            label={m.totalIncome}
+            value={formatCurrency(answers.partyIncome?.total)}
+          />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <ValueLine
@@ -103,6 +108,10 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
           <ValueLine
             label={m.otherCost}
             value={formatCurrency(answers.partyExpense?.otherCost)}
+          />
+          <ValueLine
+            label={m.totalExpenses}
+            value={formatCurrency(answers.partyExpense?.total)}
           />
         </GridColumn>
       </GridRow>
@@ -116,14 +125,22 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.electionOffice}
+              label={m.capitalIncome}
               value={formatCurrency(answers.capitalNumbers?.capitalIncome)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.otherCost}
+              label={m.capitalCost}
               value={formatCurrency(answers.capitalNumbers?.capitalCost)}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.totalCapital}
+              value={formatCurrency(answers.capitalNumbers?.total)}
             />
           </GridColumn>
         </GridRow>
@@ -154,6 +171,16 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
+              label={m.totalAssets}
+              value={formatCurrency(answers.asset?.total)}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Box className={columnStyle}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
               label={m.shortTerm}
               value={formatCurrency(answers.liability?.shortTerm)}
             />
@@ -170,15 +197,35 @@ export const PartyOverview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
+              label={m.totalDebts}
+              value={formatCurrency(answers.liability?.total)}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Box className={columnStyle}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
               label={m.equity}
               value={formatCurrency(answers.equity?.totalEquity)}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.debtsAndCash}
+              value={formatCurrency(answers.equity?.total)}
             />
           </GridColumn>
         </GridRow>
       </Box>
       <Divider />
-      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
-      <Divider />
+      {fileName ? (
+        <Fragment>
+          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <Divider />
+        </Fragment>
+      ) : null}
     </Box>
   )
 }

@@ -12,11 +12,11 @@ import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { PartyIncome } from './partyIncome'
 import { PartyExpenses } from './partyExpenses'
-import { PARTYOPERATIONIDS } from '../../lib/constants'
+import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
 export const PartyOperatingIncome = () => {
-  const { getValues, errors, setError } = useFormContext()
+  const { errors } = useFormContext()
 
   const [getTotalIncome, totalIncome] = useTotals(
     PARTYOPERATIONIDS.incomePrefix,
@@ -25,18 +25,6 @@ export const PartyOperatingIncome = () => {
     PARTYOPERATIONIDS.expensePrefix,
   )
   const { formatMessage } = useLocale()
-
-  const checkIfEmpty = (fieldId: string) => {
-    const values = getValues()
-    const [income, id] = fieldId.split('.')
-    const current = values[income][id]
-    if (current === undefined || current.trim().length <= 0) {
-      setError(fieldId, {
-        type: 'error',
-        message: formatMessage(m.errorEmpty),
-      })
-    }
-  }
 
   return (
     <GridContainer>
@@ -67,7 +55,7 @@ export const PartyOperatingIncome = () => {
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
-            name="partyOperatingCost.total"
+            name={OPERATINGCOST.total}
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

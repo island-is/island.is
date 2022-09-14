@@ -1,4 +1,5 @@
 import React from 'react'
+import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import {
   Box,
@@ -12,7 +13,10 @@ import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
-import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
+import {
+  INPUTCHANGEINTERVAL,
+  EQUITIESANDLIABILITIESIDS,
+} from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
 export const ElectionEquities = (): JSX.Element => {
@@ -44,9 +48,11 @@ export const ElectionEquities = (): JSX.Element => {
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.current)
               }
-              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.current)}
               label={formatMessage(m.currentAssets)}
-              onBlur={() => getTotalAssets()}
+              onChange={debounce(() => {
+                getTotalAssets()
+                clearErrors(EQUITIESANDLIABILITIESIDS.current)
+              }, INPUTCHANGEINTERVAL)}
               backgroundColor="blue"
               currency
             />
@@ -59,15 +65,17 @@ export const ElectionEquities = (): JSX.Element => {
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.tangible)
               }
-              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.tangible)}
+              onChange={debounce(() => {
+                getTotalAssets()
+                clearErrors(EQUITIESANDLIABILITIESIDS.tangible)
+              }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.tangibleAssets)}
-              onBlur={() => getTotalAssets()}
               backgroundColor="blue"
               currency
             />
           </Box>
           <Total
-            name="asset.total"
+            name={EQUITIESANDLIABILITIESIDS.assetTotal}
             total={totalAssets}
             label={formatMessage(m.totalAssets)}
           />
@@ -80,13 +88,15 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
-              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)}
+              onChange={debounce(() => {
+                getTotalLiabilities()
+                clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.longTerm)
               }
               label={formatMessage(m.longTerm)}
-              onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
               currency
             />
@@ -95,19 +105,21 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
-              onChange={() => clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)}
+              onChange={debounce(() => {
+                getTotalLiabilities()
+                clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.shortTerm)
               }
               label={formatMessage(m.shortTerm)}
-              onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
               currency
             />
           </Box>
           <Total
-            name="liability.total"
+            name={EQUITIESANDLIABILITIESIDS.totalLiability}
             total={totalLiabilities}
             label={formatMessage(m.totalDebts)}
           />
@@ -115,9 +127,10 @@ export const ElectionEquities = (): JSX.Element => {
             <InputController
               id={EQUITIESANDLIABILITIESIDS.totalEquity}
               name={EQUITIESANDLIABILITIESIDS.totalEquity}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalEquity()
                 clearErrors(EQUITIESANDLIABILITIESIDS.totalEquity)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(errors, EQUITIESANDLIABILITIESIDS.totalEquity)
@@ -130,8 +143,8 @@ export const ElectionEquities = (): JSX.Element => {
           </Box>
           <Total
             name={EQUITIESANDLIABILITIESIDS.totalCash}
-            total={totalEquity - totalLiabilities}
-            label={formatMessage(m.totalExpenses)}
+            total={totalLiabilities - totalEquity}
+            label={formatMessage(m.debtsAndCash)}
           />
         </GridColumn>
       </GridRow>

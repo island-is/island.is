@@ -24,6 +24,8 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
+  const fileName = answers.attachment?.file?.[0]?.name
+
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -93,7 +95,6 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             label={m.otherIncome}
             value={formatCurrency(answers.cemetryIncome?.otherIncome)}
           />
-
           <ValueLine
             label={m.caretaking}
             value={formatCurrency(answers.cemetryIncome?.caretaking)}
@@ -105,6 +106,10 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           <ValueLine
             label={m.graveIncome}
             value={formatCurrency(answers.cemetryIncome?.graveIncome)}
+          />
+          <ValueLine
+            label={m.totalIncome}
+            value={formatCurrency(answers.cemetryIncome?.total)}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
@@ -132,6 +137,10 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             label={m.writtenOffExpense}
             value={formatCurrency(answers.cemetryExpense?.writtenOffExpense)}
           />
+          <ValueLine
+            label={m.totalExpenses}
+            value={formatCurrency(answers.cemetryExpense.total)}
+          />
         </GridColumn>
       </GridRow>
       <Divider />
@@ -151,6 +160,12 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             <ValueLine
               label={m.capitalIncome}
               value={formatCurrency(answers.capitalNumbers?.capitalCost)}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.totalCapital}
+              value={formatCurrency(answers.capitalNumbers?.total)}
             />
           </GridColumn>
         </GridRow>
@@ -175,6 +190,14 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
               />
             </GridColumn>
           </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '6/12']}>
+              <ValueLine
+                label={m.totalAssets}
+                value={formatCurrency(answers.cemetryAsset.total)}
+              />
+            </GridColumn>
+          </GridRow>
 
           <GridRow>
             <GridColumn span={['12/12', '6/12']}>
@@ -187,6 +210,14 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
               <ValueLine
                 label={m.longTerm}
                 value={formatCurrency(answers.cemetryLiability?.longTerm)}
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '6/12']}>
+              <ValueLine
+                label={m.totalLiabilities}
+                value={formatCurrency(answers.cemetryLiability?.total)}
               />
             </GridColumn>
           </GridRow>
@@ -210,6 +241,14 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
             <ValueLine
               label={m.reevaluatePrice}
               value={formatCurrency(answers.cemetryEquity?.reevaluatePrice)}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.totalEquity}
+              value={formatCurrency(answers.cemetryEquity?.total)}
             />
           </GridColumn>
         </GridRow>
@@ -252,8 +291,12 @@ export const CemetryOverview = ({ application }: FieldBaseProps) => {
           })}
         </Fragment>
       ) : null}
-      <FileValueLine label={answers.attachment?.file?.[0]?.name} />
-      <Divider />
+      {fileName ? (
+        <Fragment>
+          <FileValueLine label={answers.attachment?.file?.[0]?.name} />
+          <Divider />
+        </Fragment>
+      ) : null}
     </Box>
   )
 }

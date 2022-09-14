@@ -1,16 +1,6 @@
-import React, { FC, Fragment, useEffect } from 'react'
-import {
-  ArrayField,
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
-import {
-  Application,
-  FormValue,
-  RecordObject,
-} from '@island.is/application/types'
+import React, { FC, useEffect } from 'react'
+import { useFieldArray } from 'react-hook-form'
+import { Answer, Application, RecordObject } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -27,6 +17,7 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
+import * as styles from './CemetryCaretaker.css'
 
 export type ComplaineeField = {
   name: string
@@ -37,17 +28,17 @@ export type ComplaineeField = {
 type Props = {
   id: string
   index: number
-  application: Application
-  field: Partial<ArrayField<ComplaineeField, 'id'>>
+  answers: FinancialStatementsInao
+  handleRemoveCaretaker: (index: number) => void
   errors: RecordObject<unknown> | undefined
 }
 
 const CareTakerRepeaterItem = ({
   id,
   index,
-  application,
+  answers,
   errors,
-  field,
+  handleRemoveCaretaker,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -60,7 +51,7 @@ const CareTakerRepeaterItem = ({
     <GridContainer>
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Box paddingTop={3} paddingRight={2}>
+          <Box position="relative" paddingTop={3} paddingRight={1}>
             <InputController
               id={nameField}
               name={nameField}
@@ -71,7 +62,20 @@ const CareTakerRepeaterItem = ({
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Box paddingTop={3} paddingRight={2}>
+          <Box position="relative" paddingTop={3} paddingRight={1}>
+            {index > 0 && (
+              <Box position="absolute" className={styles.removeFieldButton}>
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={() => {
+                    handleRemoveCaretaker(index)
+                  }}
+                />
+              </Box>
+            )}
             <InputController
               id={nationalIdField}
               name={nationalIdField}
@@ -80,11 +84,7 @@ const CareTakerRepeaterItem = ({
               backgroundColor="blue"
               error={errors && getErrorViaPath(errors, nationalIdField)}
               defaultValue={
-                getValueViaPath(
-                  application.answers,
-                  nationalIdField,
-                  '',
-                ) as string
+                getValueViaPath(answers, nationalIdField, '') as string
               }
             />
           </Box>
@@ -92,7 +92,7 @@ const CareTakerRepeaterItem = ({
       </GridRow>
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          <Box paddingTop={2} paddingRight={2}>
+          <Box paddingTop={2} paddingRight={1}>
             <SelectController
               id={roleField}
               name={roleField}
@@ -101,8 +101,14 @@ const CareTakerRepeaterItem = ({
               backgroundColor="blue"
               error={errors && getErrorViaPath(errors, roleField)}
               options={[
-                { label: 'Skoðunarmaður', value: 'Skoðunarmaður' },
-                { label: 'Stjórnarmaður', value: 'Stjórnarmaður' },
+                {
+                  label: formatMessage(m.cemeteryInspector),
+                  value: 'Skoðunarmaður',
+                },
+                {
+                  label: formatMessage(m.cemeteryBoardMember),
+                  value: 'Stjórnarmaður',
+                },
               ]}
             />
           </Box>
@@ -131,6 +137,8 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
       role: '',
     })
 
+  const handleRemoveCaretaker = (index: number) => remove(index)
+
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
   }, [fields])
@@ -141,9 +149,9 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
         <Box key={field.id}>
           <CareTakerRepeaterItem
             id={id}
-            application={application}
-            field={field}
+            answers={application.answers}
             index={index}
+            handleRemoveCaretaker={handleRemoveCaretaker}
             key={field.id}
             errors={errors}
           />

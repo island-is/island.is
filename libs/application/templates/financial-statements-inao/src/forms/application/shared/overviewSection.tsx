@@ -7,15 +7,16 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
 import {
   CEMETRY,
   GREATER,
   INDIVIDUAL,
+  USERTYPE,
   LESS,
   PARTY,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
+import { getCurrentUserType } from '../../../lib/utils/helpers'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -24,10 +25,9 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overview',
       title: (application) => {
-        if (
-          // @ts-ignore
-          application.externalData?.currentUserType?.data?.code === INDIVIDUAL
-        ) {
+        const answers = application.answers
+        const externalData = application.externalData
+        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -39,10 +39,9 @@ export const overviewSection = buildSection({
         }
       },
       description: (application) => {
-        if (
-          // @ts-ignore
-          application.externalData?.currentUserType?.data?.code === INDIVIDUAL
-        ) {
+        const answers = application.answers
+        const externalData = application.externalData
+        if (getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL) {
           return getValueViaPath(
             application.answers,
             'election.incomeLimit',
@@ -61,9 +60,8 @@ export const overviewSection = buildSection({
           id: 'overviewCemetryField',
           title: '',
           condition: (answers, externalData) => {
-            /* @ts-ignore */
-            const userType = externalData?.currentUserType?.data?.code
-            return userType === CEMETRY
+            const userType = getCurrentUserType(answers, externalData)
+            return userType === USERTYPE.CEMETRY
           },
           doesNotRequireAnswer: true,
           component: 'CemetryOverview',
@@ -71,10 +69,9 @@ export const overviewSection = buildSection({
         buildCustomField({
           id: 'overviewPartyField',
           title: '',
-          condition: (_answers, externalData) => {
-            /* @ts-ignore */
-            const userType = externalData?.currentUserType?.data?.code
-            return userType === PARTY
+          condition: (answers, externalData) => {
+            const userType = getCurrentUserType(answers, externalData)
+            return userType === USERTYPE.PARTY
           },
           doesNotRequireAnswer: true,
           component: 'PartyOverview',
@@ -104,6 +101,7 @@ export const overviewSection = buildSection({
           id: 'submit',
           title: '',
           placement: 'screen',
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,

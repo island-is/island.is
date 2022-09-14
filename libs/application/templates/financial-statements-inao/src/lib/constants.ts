@@ -3,22 +3,39 @@ import { DefaultEvents } from '@island.is/application/types'
 export type Events = { type: DefaultEvents.SUBMIT }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DONE = 'done',
 }
+
 export enum Roles {
   APPLICANT = 'applicant',
 }
 
 export enum ApiActions {
-  getUserClientType = 'getUserClientType',
+  getUserType = 'getUserType',
 }
 
+export const YES = 'yes'
+export const NO = 'no'
 export const GREATER = 'greater'
 export const LESS = 'less'
+export const TOTAL = 'total'
 export const ELECTIONLIMIT = 550000
 export const CARETAKERLIMIT = 300000
+export const INPUTCHANGEINTERVAL = 300
 
+export enum USERTYPE {
+  INDIVIDUAL = '150000000',
+  PARTY = '150000001',
+  CEMETRY = '150000002',
+}
+
+export const INDIVIDUAL = 'individual'
+export const PARTY = 'party'
+export const CEMETRY = 'cemetery'
+
+// input ids
 export const INDIVIDUALOPERATIONIDS = {
   incomePrefix: 'individualIncome',
   expensePrefix: 'individualExpense',
@@ -32,8 +49,8 @@ export const INDIVIDUALOPERATIONIDS = {
   travelCost: 'individualExpense.travelCost',
   otherCost: 'individualExpense.otherCost',
   capitalCost: 'individualExpense.capitalCost',
-  totalIncome: 'individualIncome.totalIncome',
-  totalExpense: 'individualExpense.totalExpense',
+  totalIncome: 'individualIncome.total',
+  totalExpense: 'individualExpense.total',
 }
 
 export const PARTYOPERATIONIDS = {
@@ -63,7 +80,7 @@ export const CEMETRYOPERATIONIDS = {
   capitalIncome: 'cemetryIncome.capitalIncome',
   otherIncome: 'cemetryIncome.otherIncome',
   totalIncome: 'cemetryIncome.total',
-  totalOperation: 'cemetryIncome.totalOperation',
+  totalOperation: 'cemetryRunningCost.totalOperation',
   totalExpense: 'cemetryExpense.total',
   payroll: 'cemetryExpense.payroll',
   funeralCost: 'cemetryExpense.funeralCost',
@@ -75,8 +92,10 @@ export const CEMETRYOPERATIONIDS = {
 }
 
 export const CAPITALNUMBERS = {
+  capitalPrefix: 'capitalNumbers',
   capitalIncome: 'capitalNumbers.capitalIncome',
   capitalCost: 'capitalNumbers.capitalCost',
+  total: 'capitalNumbers.total',
 }
 
 export const CEMETRYCARETAKER = {
@@ -91,6 +110,10 @@ export const ABOUTIDS = {
   applicationType: 'conditionalAbout.applicationType',
 }
 
+export const OPERATINGCOST = {
+  total: 'operatingCost.total',
+}
+
 export const EQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'asset',
   tangible: 'asset.tangible',
@@ -100,9 +123,10 @@ export const EQUITIESANDLIABILITIESIDS = {
   longTerm: 'liability.longTerm',
   shortTerm: 'liability.shortTerm',
   asset: 'liability.asset',
+  totalLiability: 'liability.total',
   equityPrefix: 'equity',
   totalEquity: 'equity.totalEquity',
-  totalCash: 'equity.totalCash',
+  totalCash: 'equity.total',
 }
 
 export const CEMETRYEQUITIESANDLIABILITIESIDS = {
@@ -121,7 +145,3 @@ export const CEMETRYEQUITIESANDLIABILITIESIDS = {
   operationResult: 'cemetryEquity.operationResult',
   equityTotal: 'cemetryEquity.total',
 }
-
-export const INDIVIDUAL = 'individual'
-export const PARTY = 'party'
-export const CEMETRY = 'cemetery'

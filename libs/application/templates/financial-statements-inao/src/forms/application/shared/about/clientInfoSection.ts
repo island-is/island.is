@@ -3,12 +3,20 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../../types/schema'
 import { m } from '../../../../lib/messages'
-import { ABOUTIDS, PARTY, CEMETRY, INDIVIDUAL } from '../../../../lib/constants'
+import {
+  ABOUTIDS,
+  PARTY,
+  CEMETRY,
+  INDIVIDUAL,
+  USERTYPE,
+} from '../../../../lib/constants'
+import { getCurrentUserType } from '../../../../lib/utils/helpers'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -23,22 +31,22 @@ export const clientInfoSection = buildSection({
           id: 'OperatingYear',
           childInputIds: Object.values(ABOUTIDS),
           title: '',
-          condition: (_answers, externalData) => {
-            /* @ts-ignore */
-            const userType = externalData?.currentUserType?.data?.code
-            return userType === CEMETRY || userType === PARTY
+          condition: (answers, externalData) => {
+            const userType = getCurrentUserType(answers, externalData)
+
+            return userType === USERTYPE.CEMETRY || userType === USERTYPE.PARTY
           },
           component: 'OperatingYear',
         }),
         buildTextField({
           id: 'about.nationalId',
           title: (application: Application) => {
-            const userType =
-              /* @ts-ignore */
-              application.externalData?.currentUserType?.data?.code
-            return userType === INDIVIDUAL
+            const answers = application.answers
+            const externalData = application.externalData
+            const userType = getCurrentUserType(answers, externalData)
+            return userType === USERTYPE.INDIVIDUAL
               ? m.candidateNationalId
-              : m.candidateNationalId
+              : m.clientNationalId
           },
           width: 'half',
           format: '######-####',
@@ -47,10 +55,12 @@ export const clientInfoSection = buildSection({
         buildTextField({
           id: 'about.fullName',
           title: (application: Application) => {
-            const userType =
-              /* @ts-ignore */
-              application.externalData?.currentUserType?.data?.code
-            return userType === INDIVIDUAL ? m.candidateFullName : m.clientName
+            const answers = application.answers
+            const externalData = application.externalData
+            const userType = getCurrentUserType(answers, externalData)
+            return userType === USERTYPE.INDIVIDUAL
+              ? m.candidateFullName
+              : m.clientName
           },
           width: 'half',
           defaultValue: (application: Application) => {

@@ -2,38 +2,25 @@ import {
   buildCustomField,
   buildMultiField,
   buildSubSection,
-  buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
-import {
-  CEMETRYOPERATIONIDS,
-  LESS,
-  INDIVIDUALOPERATIONIDS,
-  CAPITALNUMBERS,
-  CEMETRY,
-} from '../../../../lib/constants'
+import { CAPITALNUMBERS } from '../../../../lib/constants'
 import { m } from '../../../../lib/messages'
 
 export const capitalNumberSection = buildSubSection({
   id: 'capitalNumbers',
-  title: m.capitalCost,
+  title: m.capitalNumbers,
   children: [
     buildMultiField({
-      id: 'capitalNumberFields',
-      title: m.capitalCost,
+      id: 'capitalNumber',
+      title: m.capitalNumbers,
       description: m.fillOutAppopriate,
       children: [
-        buildTextField({
-          id: CAPITALNUMBERS.capitalIncome,
-          title: m.capitalIncome,
-          width: 'half',
-          variant: 'currency',
-        }),
-        buildTextField({
-          id: CAPITALNUMBERS.capitalCost,
-          title: m.capitalExpense,
-          width: 'half',
-          variant: 'currency',
+        buildCustomField({
+          id: 'capitalNumberField',
+          title: '',
+          description: '',
+          component: 'CapitalNumbers',
+          childInputIds: Object.values(CAPITALNUMBERS),
         }),
       ],
     }),

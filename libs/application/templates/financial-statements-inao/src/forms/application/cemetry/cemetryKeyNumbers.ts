@@ -3,24 +3,22 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
 import {
-  CEMETRY,
   CEMETRYEQUITIESANDLIABILITIESIDS,
   CEMETRYOPERATIONIDS,
-  CAPITALNUMBERS,
+  USERTYPE,
 } from '../../../lib/constants'
 import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 import { m } from '../../../lib/messages'
+import { getCurrentUserType } from '../../../lib/utils/helpers'
 
 export const cemetryKeyNumbersSection = buildSection({
   id: 'cemetryKeyNumbers',
   title: m.keyNumbers,
-  condition: (_answers, externalData) => {
-    /* @ts-ignore */
-    const userType = externalData?.currentUserType?.data?.code
-    return userType === CEMETRY
+  condition: (answers, externalData) => {
+    const userType = getCurrentUserType(answers, externalData)
+    return userType === USERTYPE.CEMETRY
   },
   children: [
     buildSubSection({
@@ -28,12 +26,12 @@ export const cemetryKeyNumbersSection = buildSection({
       title: m.expensesIncome,
       children: [
         buildMultiField({
-          id: 'cemetryEquitiesAndLiabilities',
+          id: 'cemetryIncomeAndExpense',
           title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
           children: [
             buildCustomField({
-              id: 'cemetryIncome',
+              id: 'cemetryKeyNumbers',
               title: '',
               component: 'CemetryOperation',
               childInputIds: Object.values(CEMETRYOPERATIONIDS),

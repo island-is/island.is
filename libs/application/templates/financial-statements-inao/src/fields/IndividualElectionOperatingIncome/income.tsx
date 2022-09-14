@@ -1,18 +1,27 @@
 import React, { Fragment } from 'react'
+import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { getErrorViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { INDIVIDUALOPERATIONIDS } from '../../lib/constants'
+import {
+  INPUTCHANGEINTERVAL,
+  INDIVIDUALOPERATIONIDS,
+} from '../../lib/constants'
 interface PropTypes {
   getSum: () => void
 }
 
 export const Income = ({ getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { errors } = useFormContext()
+  const { errors, clearErrors } = useFormContext()
+
+  const onInputChange = debounce((fieldId: string) => {
+    getSum()
+    clearErrors(fieldId)
+  }, INPUTCHANGEINTERVAL)
 
   return (
     <Fragment>
@@ -25,7 +34,9 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.corporateDonations)
           }
           label={formatMessage(m.corporateDonation)}
-          onBlur={() => getSum()}
+          onChange={() =>
+            onInputChange(INDIVIDUALOPERATIONIDS.corporateDonations)
+          }
           backgroundColor="blue"
           currency
         />
@@ -39,7 +50,9 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.individualDonations)
           }
           label={formatMessage(m.individualDonations)}
-          onBlur={() => getSum()}
+          onChange={() =>
+            onInputChange(INDIVIDUALOPERATIONIDS.individualDonations)
+          }
           backgroundColor="blue"
           currency
         />
@@ -53,7 +66,9 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.personalDonations)
           }
           label={formatMessage(m.personalDonations)}
-          onBlur={() => getSum()}
+          onChange={() =>
+            onInputChange(INDIVIDUALOPERATIONIDS.personalDonations)
+          }
           backgroundColor="blue"
           currency
         />
@@ -67,7 +82,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
             getErrorViaPath(errors, INDIVIDUALOPERATIONIDS.otherIncome)
           }
           label={formatMessage(m.otherIncome)}
-          onBlur={() => getSum()}
+          onChange={() => onInputChange(INDIVIDUALOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency
         />

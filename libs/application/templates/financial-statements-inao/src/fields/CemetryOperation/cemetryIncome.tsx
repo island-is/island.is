@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
 import { Box } from '@island.is/island-ui/core'
+import debounce from 'lodash/debounce'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { CEMETRYOPERATIONIDS, INPUTCHANGEINTERVAL } from '../../lib/constants'
 
 interface PropTypes {
   getSum: () => void
@@ -16,9 +17,10 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const { clearErrors } = useFormContext()
 
-  const onInputBlur = () => {
+  const onInputChange = debounce((fieldId: string) => {
     getSum()
-  }
+    clearErrors(fieldId)
+  }, INPUTCHANGEINTERVAL)
 
   return (
     <Fragment>
@@ -27,8 +29,7 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={CEMETRYOPERATIONIDS.caretaking}
           name={CEMETRYOPERATIONIDS.caretaking}
           label={formatMessage(m.caretaking)}
-          onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(CEMETRYOPERATIONIDS.caretaking)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.caretaking)}
           backgroundColor="blue"
           currency
           error={
@@ -41,8 +42,7 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={CEMETRYOPERATIONIDS.graveIncome}
           name={CEMETRYOPERATIONIDS.graveIncome}
           label={formatMessage(m.graveIncome)}
-          onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(CEMETRYOPERATIONIDS.graveIncome)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.graveIncome)}
           backgroundColor="blue"
           currency
           error={
@@ -55,12 +55,14 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={CEMETRYOPERATIONIDS.cemetryFundDonations}
           name={CEMETRYOPERATIONIDS.cemetryFundDonations}
           label={formatMessage(m.cemetryFundDonations)}
-          onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(CEMETRYOPERATIONIDS.cemetryFundDonations)}
+          onChange={() =>
+            onInputChange(CEMETRYOPERATIONIDS.cemetryFundDonations)
+          }
           backgroundColor="blue"
           currency
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+            errors &&
+            getErrorViaPath(errors, CEMETRYOPERATIONIDS.cemetryFundDonations)
           }
         />
       </Box>
@@ -69,12 +71,11 @@ export const CemetryIncome = ({ errors, getSum }: PropTypes): JSX.Element => {
           id={CEMETRYOPERATIONIDS.otherIncome}
           name={CEMETRYOPERATIONIDS.otherIncome}
           label={formatMessage(m.otherIncome)}
-          onBlur={() => onInputBlur()}
-          onChange={() => clearErrors(CEMETRYOPERATIONIDS.otherIncome)}
+          onChange={() => onInputChange(CEMETRYOPERATIONIDS.otherIncome)}
           backgroundColor="blue"
           currency
           error={
-            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.graveIncome)
+            errors && getErrorViaPath(errors, CEMETRYOPERATIONIDS.otherIncome)
           }
         />
       </Box>

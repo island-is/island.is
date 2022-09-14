@@ -4,16 +4,16 @@ import {
   buildSection,
   buildSelectField,
   buildRadioField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { INDIVIDUAL, GREATER, LESS } from '../../../../lib/constants'
+import { GREATER, LESS, USERTYPE } from '../../../../lib/constants'
 
 export const electionInfoSection = buildSection({
   id: 'electionInfo',
   title: m.election,
-  condition: (_answers, externalData) =>
-    /* @ts-ignore */
-    externalData?.currentUserType?.data?.code === INDIVIDUAL,
+  condition: (answers, _externalData) =>
+    getValueViaPath(answers, 'fakeData.options') === USERTYPE.INDIVIDUAL,
   children: [
     buildMultiField({
       id: 'election',

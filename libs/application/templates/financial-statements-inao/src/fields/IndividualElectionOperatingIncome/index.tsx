@@ -10,7 +10,7 @@ import { m } from '../../lib/messages'
 import { Income } from './income'
 import { Expenses } from './expenses'
 import { Total } from '../KeyNumbers'
-import { INDIVIDUALOPERATIONIDS } from '../../lib/constants'
+import { INDIVIDUALOPERATIONIDS, OPERATINGCOST } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
 export const IndividualElectionOperatingIncome = (): JSX.Element => {
@@ -51,7 +51,7 @@ export const IndividualElectionOperatingIncome = (): JSX.Element => {
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
-            name="operatingCost.total"
+            name={OPERATINGCOST.total}
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

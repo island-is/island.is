@@ -12,6 +12,6 @@ export const columnStyle = style({
 })
 
 export const starterColumnStyle = style({
-  paddingTop: '1rem',
-  paddingBottom: '0.5rem',
+  paddingTop: '1.5rem',
+  paddingBottom: '1rem',
 })

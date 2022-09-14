@@ -52,8 +52,9 @@ const asset = z.object({
 
 const equity = z.object({
   totalEquity: z.string().refine((x) => !!x, { params: m.required }),
-  totalCash: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
+
 const liability = z.object({
   longTerm: z.string().refine((x) => !!x, { params: m.required }),
   shortTerm: z.string().refine((x) => !!x, { params: m.required }),
@@ -75,28 +76,27 @@ const cemetryEquity = z.object({
 })
 
 const cemetryLiability = z.object({
-  longTerm: z.string(),
-  shortTerm: z.string(),
-  total: z.string(),
+  longTerm: z.string().refine((x) => !!x, { params: m.required }),
+  shortTerm: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const cemetryIncome = z.object({
-  caretaking: z.string(),
-  graveIncome: z.string(),
-  cemetryFundDonations: z.string(),
-  otherIncome: z.string(),
-  totalOperation: z.string(),
+  caretaking: z.string().refine((x) => !!x, { params: m.required }),
+  graveIncome: z.string().refine((x) => !!x, { params: m.required }),
+  cemetryFundDonations: z.string().refine((x) => !!x, { params: m.required }),
+  otherIncome: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })
 
 const cemetryExpense = z.object({
-  payroll: z.string(),
-  funeralCost: z.string(),
-  chapelExpense: z.string(),
-  donationsToOther: z.string(),
-  cemeteryFundExpense: z.string(),
-  otherOperationCost: z.string(),
-  writtenOffExpense: z.string(),
+  payroll: z.string().refine((x) => !!x, { params: m.required }),
+  funeralCost: z.string().refine((x) => !!x, { params: m.required }),
+  chapelExpense: z.string().refine((x) => !!x, { params: m.required }),
+  donationsToOther: z.string().refine((x) => !!x, { params: m.required }),
+  cemeteryFundExpense: z.string().refine((x) => !!x, { params: m.required }),
+  otherOperationCost: z.string().refine((x) => !!x, { params: m.required }),
+  writtenOffExpense: z.string().refine((x) => !!x, { params: m.required }),
   total: z.string(),
 })
 
@@ -120,7 +120,7 @@ const individualIncome = z.object({
   individualDonations: z.string().refine((x) => !!x, { params: m.required }),
   personalDonations: z.string().refine((x) => !!x, { params: m.required }),
   otherIncome: z.string().refine((x) => !!x, { params: m.required }),
-  totalIncome: z.string(),
+  total: z.string(),
 })
 
 const individualExpense = z.object({
@@ -128,12 +128,13 @@ const individualExpense = z.object({
   advertisements: z.string().refine((x) => !!x, { params: m.required }),
   travelCost: z.string().refine((x) => !!x, { params: m.required }),
   otherCost: z.string().refine((x) => !!x, { params: m.required }),
-  totalExpense: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string().refine((x) => !!x, { params: m.required }),
 })
 
 const capitalNumbers = z.object({
   capitalIncome: z.string().refine((x) => !!x, { params: m.required }),
   capitalCost: z.string().refine((x) => !!x, { params: m.required }),
+  total: z.string(),
 })
 
 const operatingCost = z.object({

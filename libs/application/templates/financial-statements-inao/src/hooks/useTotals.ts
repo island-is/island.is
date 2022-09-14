@@ -9,7 +9,6 @@ const useTotals = (key: string): [() => void, number] => {
   const getSum = useCallback(() => {
     const values = getValues()
     const sum = getTotal(values, key)
-
     setTotal(sum)
   }, [key, getValues])
 

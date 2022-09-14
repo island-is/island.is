@@ -2,29 +2,35 @@ import {
   buildCustomField,
   buildSection,
   buildMultiField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   CARETAKERLIMIT,
   CEMETRY,
   CEMETRYCARETAKER,
+  USERTYPE,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { FinancialStatementsInao } from '../../../lib/utils/dataSchema'
+import {
+  currencyStringToNumber,
+  getCurrentUserType,
+} from '../../../lib/utils/helpers'
 
 export const cemetryCaretaker = buildSection({
   id: 'cemetryCaretaker',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
-    /* @ts-ignore */
-    const userType = externalData?.currentUserType?.data?.code
-    if (userType !== CEMETRY) {
+    const userType = getCurrentUserType(answers, externalData)
+    if (userType !== USERTYPE.CEMETRY) {
       return false
     }
     const applicationAnswers = <FinancialStatementsInao>answers
     const currentAssets = applicationAnswers.cemetryAsset?.current
-    const totalIncome = applicationAnswers.cemetryIncome?.total
+    const totalIncome = applicationAnswers.operatingCost?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
-    const isUnderLimit = parseInt(totalIncome, 10) < CARETAKERLIMIT
+    const isUnderLimit = currencyStringToNumber(totalIncome) < CARETAKERLIMIT
+    console.info({ isUnderLimit, longTermDebt, currentAssets })
     return isUnderLimit && currentAssets === '0' && longTermDebt === '0'
   },
   children: [

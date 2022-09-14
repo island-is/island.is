@@ -11,13 +11,13 @@ import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { CemetryIncome } from './cemetryIncome'
 import { CemetryExpenses } from './cemetryExpenses'
-import { CEMETRYOPERATIONIDS } from '../../lib/constants'
+import { CEMETRYOPERATIONIDS, OPERATINGCOST } from '../../lib/constants'
 import { useTotals } from '../../hooks'
 
 export const CemetryOperation = () => {
   const { errors } = useFormContext()
   const { formatMessage } = useLocale()
-  
+
   const [getTotalIncome, totalIncome] = useTotals(
     CEMETRYOPERATIONIDS.prefixIncome,
   )
@@ -32,10 +32,7 @@ export const CemetryOperation = () => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.income)}
           </Text>
-          <CemetryIncome
-            getSum={getTotalIncome}
-            errors={errors}
-          />
+          <CemetryIncome getSum={getTotalIncome} errors={errors} />
           <Total
             name={CEMETRYOPERATIONIDS.totalIncome}
             total={totalIncome}
@@ -46,10 +43,7 @@ export const CemetryOperation = () => {
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
-          <CemetryExpenses
-            getSum={getTotalExpense}
-            errors={errors}
-          />
+          <CemetryExpenses getSum={getTotalExpense} errors={errors} />
           <Total
             name={CEMETRYOPERATIONIDS.totalExpense}
             total={totalExpense}
@@ -60,7 +54,7 @@ export const CemetryOperation = () => {
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
-            name={CEMETRYOPERATIONIDS.totalOperation}
+            name={OPERATINGCOST.total}
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

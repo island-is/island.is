@@ -6,16 +6,28 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import debounce from 'lodash/debounce'
+import { Application } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
-import { CEMETRYEQUITIESANDLIABILITIESIDS } from '../../lib/constants'
+import {
+  CEMETRYEQUITIESANDLIABILITIESIDS,
+  CEMETRYOPERATIONIDS,
+  INPUTCHANGEINTERVAL,
+  OPERATINGCOST,
+} from '../../lib/constants'
 import { useTotals } from '../../hooks'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 
-export const CemetryEquities = (): JSX.Element => {
+export const CemetryEquities = ({
+  application,
+}: {
+  application: Application
+}): JSX.Element => {
+  const answers = application.answers
   const { formatMessage } = useLocale()
   const { clearErrors, errors } = useFormContext()
   const [getTotalAssets, totalAssets] = useTotals(
@@ -46,11 +58,11 @@ export const CemetryEquities = (): JSX.Element => {
                   CEMETRYEQUITIESANDLIABILITIESIDS.current,
                 )
               }
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalAssets()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.current)
-              }
+              }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.currentAssets)}
-              onBlur={() => getTotalAssets()}
               backgroundColor="blue"
               currency
             />
@@ -59,9 +71,10 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.tangible}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.tangible}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalAssets()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.tangible)
-              }
+              }, INPUTCHANGEINTERVAL)}
               label={formatMessage(m.tangibleAssets)}
               error={
                 errors &&
@@ -83,15 +96,16 @@ export const CemetryEquities = (): JSX.Element => {
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
-            {formatMessage(m.expenses)}
+            {formatMessage(m.debtsAndCash)}
           </Text>
           <Box paddingY={1}>
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.longTerm}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.longTerm}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalLiabilities()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.longTerm)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -100,7 +114,6 @@ export const CemetryEquities = (): JSX.Element => {
                 )
               }
               label={formatMessage(m.longTerm)}
-              onBlur={() => getTotalLiabilities()}
               backgroundColor="blue"
               currency
             />
@@ -109,9 +122,10 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.shortTerm}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.shortTerm}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalLiabilities()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.shortTerm)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -134,9 +148,10 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalEquity()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.newYearEquity)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -145,7 +160,6 @@ export const CemetryEquities = (): JSX.Element => {
                 )
               }
               label={formatMessage(m.newYearequity)}
-              onBlur={() => getTotalEquity()}
               backgroundColor="blue"
               currency
             />
@@ -154,9 +168,10 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalEquity()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.reevaluatePrice)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -165,7 +180,6 @@ export const CemetryEquities = (): JSX.Element => {
                 )
               }
               label={formatMessage(m.reevaluatePrice)}
-              onBlur={() => getTotalEquity()}
               backgroundColor="blue"
               currency
             />
@@ -174,9 +188,10 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluateOther}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.reevaluateOther}
-              onChange={() =>
+              onChange={debounce(() => {
+                getTotalEquity()
                 clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.reevaluateOther)
-              }
+              }, INPUTCHANGEINTERVAL)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -185,7 +200,6 @@ export const CemetryEquities = (): JSX.Element => {
                 )
               }
               label={formatMessage(m.reevaluateOther)}
-              onBlur={() => getTotalEquity()}
               backgroundColor="blue"
               currency
             />
@@ -194,9 +208,8 @@ export const CemetryEquities = (): JSX.Element => {
             <InputController
               id={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
               name={CEMETRYEQUITIESANDLIABILITIESIDS.operationResult}
-              onChange={() =>
-                clearErrors(CEMETRYEQUITIESANDLIABILITIESIDS.operationResult)
-              }
+              readOnly
+              defaultValue={getValueViaPath(answers, OPERATINGCOST.total)}
               error={
                 errors &&
                 getErrorViaPath(
@@ -205,7 +218,6 @@ export const CemetryEquities = (): JSX.Element => {
                 )
               }
               label={formatMessage(m.operationResult)}
-              onBlur={() => getTotalEquity()}
               backgroundColor="blue"
               currency
             />
@@ -213,7 +225,7 @@ export const CemetryEquities = (): JSX.Element => {
           <Total
             name={CEMETRYEQUITIESANDLIABILITIESIDS.equityTotal}
             total={totalEquity - totalLiabilities}
-            label={formatMessage(m.totalExpenses)}
+            label={formatMessage(m.totalEquity)}
           />
         </GridColumn>
       </GridRow>

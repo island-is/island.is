@@ -16,6 +16,11 @@ export const m = defineMessages({
     defaultMessage: 'Þjónustuaðili',
     description: 'service provider',
   },
+  continue: {
+    id: 'fsn.application:continue',
+    defaultMessage: 'Áfram',
+    description: 'continue',
+  },
   institutionName: {
     id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
@@ -80,7 +85,7 @@ export const m = defineMessages({
   },
   reviewContact: {
     id: 'fsn.application:reviewContact',
-    defaultMessage: 'Vinsamlega yfirfarið tengiliðaupplýsingar hér að neðan',
+    defaultMessage: 'Vinsamlega yfirfarið upplýsingar um tengilið hér að neðan',
     description: 'Review contact info',
   },
   fullName: {
@@ -225,6 +230,11 @@ export const m = defineMessages({
     defaultMessage: 'Gjöld',
     description: 'expenses',
   },
+  debtsAndCash: {
+    id: 'fsn.application:keyNumbers.debtsAndCash',
+    defaultMessage: 'Skuldir og eigið fé samtals',
+    description: 'Debts and cash',
+  },
   operatingCost: {
     id: 'fsn.application:keyNumbers.operatingCost',
     defaultMessage: 'Rekstrarniðurstaða',
@@ -254,6 +264,16 @@ export const m = defineMessages({
     id: 'fsn.application:totalAssets',
     defaultMessage: 'Eignir samtals',
     description: 'Total assets',
+  },
+  totalCapital: {
+    id: 'fsn.application:totalCapital',
+    defaultMessage: 'Fjármagnsgjöld samtals',
+    description: 'Total capital',
+  },
+  totalEquity: {
+    id: 'fsn.application:totalEquity',
+    defaultMessage: 'Samtals eigið fé',
+    description: 'Total equity',
   },
   keyNumbersIncomeAndExpenses: {
     id: 'fsn.application:keyNumbersIncomeAndExpenses',
@@ -327,7 +347,7 @@ export const m = defineMessages({
   },
   capitalNumbers: {
     id: 'fsn.application:income.capitalNumbers',
-    defaultMessage: 'Fjármagnsgjöld',
+    defaultMessage: 'Fjármagnsliðir',
     description: 'capital numbers',
   },
   electionOffice: {
@@ -390,6 +410,16 @@ export const m = defineMessages({
     defaultMessage:
       'Vinsamlegast skráið inn stjórnar- og skoðunarmenn kirkjugarðsins',
     description: 'Cemetries board and caretakers',
+  },
+  cemeteryBoardMember: {
+    id: 'fsn.application:cemeteryBoardMember',
+    defaultMessage: 'Stjórnarmaður',
+    description: 'Boardmember',
+  },
+  cemeteryInspector: {
+    id: 'fsn.application:cemeteryInspector',
+    defaultMessage: 'Skoðunarmaður',
+    description: 'inspector',
   },
   add: {
     id: 'fsn.application:add',
@@ -524,8 +554,13 @@ export const m = defineMessages({
   },
   uploadAccept: {
     id: 'fsn.application:upload.accept',
-    defaultMessage: 'Eingöng er tekið við skjölum á PDF formi',
+    defaultMessage: 'Eingöngu er tekið við skjölum á PDF formi',
     description: 'Upload financial statements intro',
+  },
+  uploadButtonLabel: {
+    id: 'fsn.application:upload.buttonlabel',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Upload button label',
   },
   confirm: {
     id: 'fsn.application:confirmation',
@@ -565,7 +600,7 @@ export const m = defineMessages({
   overviewReview: {
     id: 'fsn.application:overview.general.name',
     defaultMessage: 'Yfitlit uppgjörs',
-    description: 'Overview title',
+    description: 'Overview review',
   },
   overviewDescription: {
     id: 'fsn.application:overview.general.description',
@@ -627,7 +662,7 @@ export const m = defineMessages({
   },
   nationalIdError: {
     id: 'fsn.application:error.nationalIdError',
-    defaultMessage: 'Kennitala er ekki á réttu orm',
+    defaultMessage: 'Kennitala er ekki á réttu formi',
     description: 'Error message when nationalid is wrong',
   },
 })

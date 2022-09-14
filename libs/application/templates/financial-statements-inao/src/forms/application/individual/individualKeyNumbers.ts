@@ -7,11 +7,12 @@ import {
 } from '@island.is/application/core'
 import {
   EQUITIESANDLIABILITIESIDS,
-  INDIVIDUAL,
   GREATER,
+  USERTYPE,
   INDIVIDUALOPERATIONIDS,
 } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
+import { getCurrentUserType } from '../../../lib/utils/helpers'
 import { capitalNumberSection } from '../shared/keyNumbers/capitalNumbers'
 
 export const individualKeyNumbersSection = buildSection({
@@ -20,9 +21,10 @@ export const individualKeyNumbersSection = buildSection({
   condition: (answers, externalData) => {
     const greaterThanLimit =
       getValueViaPath(answers, 'election.incomeLimit') === GREATER
-    /* @ts-ignore */
-    const userType = externalData?.currentUserType?.data?.code
-    return greaterThanLimit && userType === INDIVIDUAL
+    const isIndividual =
+      getCurrentUserType(answers, externalData) === USERTYPE.INDIVIDUAL
+
+    return greaterThanLimit && isIndividual
   },
   children: [
     buildSubSection({
@@ -47,7 +49,7 @@ export const individualKeyNumbersSection = buildSection({
     capitalNumberSection,
     buildSubSection({
       id: 'keyNumbers.equitiesAndLiabilities',
-      title: m.keyNumbersProperty,
+      title: m.keyNumbersDebt,
       children: [
         buildMultiField({
           id: 'operations.equitiesAndLiabilities',

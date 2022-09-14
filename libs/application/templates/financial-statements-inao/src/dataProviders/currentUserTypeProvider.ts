@@ -1,3 +1,4 @@
+import { FinancialStatementsInaoClientType } from '@island.is/api/schema'
 import {
   BasicDataProvider,
   Application,
@@ -9,13 +10,14 @@ import { CEMETRY, INDIVIDUAL, PARTY } from '../lib/constants'
 export class CurrentUserTypeProvider extends BasicDataProvider {
   type = 'CurrentUserTypeProvider'
 
-  async provide(application: Application): Promise<any> {
+  async provide(
+    application: Application,
+  ): Promise<FinancialStatementsInaoClientType> {
     const query = `
       query FinancialStatementsInaoClientType {
         financialStatementsInaoCurrentUserClientType {
-          clientTypeId
-          name
-          code
+          value
+          label
         }
       }
     `
