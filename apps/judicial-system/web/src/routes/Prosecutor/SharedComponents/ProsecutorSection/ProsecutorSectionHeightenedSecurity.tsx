@@ -103,13 +103,13 @@ const ProsecutorSectionHeightenedSecurity: React.FC = () => {
           secondaryButtonText={formatMessage(
             strings.accessModalSecondaryButtonText,
           )}
-          handlePrimaryButtonClick={async () => {
+          onPrimaryButtonClick={async () => {
             if (substituteProsecutor) {
               await setProsecutor(substituteProsecutor)
               router.push(constants.CASES_ROUTE)
             }
           }}
-          handleSecondaryButtonClick={() => {
+          onSecondaryButtonClick={() => {
             setIsProsecutorAccessModalVisible(false)
           }}
         />

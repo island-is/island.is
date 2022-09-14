@@ -29,9 +29,11 @@ import {
   CaseFileState,
   CaseOrigin,
   CaseState,
+  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
+import { caseTypes } from '@island.is/judicial-system/formatters'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
@@ -282,7 +284,10 @@ export class CaseService {
   private async uploadCaseFilesPdfToCourt(theCase: Case): Promise<void> {
     try {
       if (theCase.caseFiles && theCase.caseFiles.length > 0) {
-        const caseFilesPdf = await getCasefilesPdfAsString(theCase)
+        const caseFilesPdf = await getCasefilesPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
 
         if (!this.config.production) {
           writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
@@ -950,16 +955,17 @@ export class CaseService {
 
   async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
     try {
-      await this.refreshFormatMessage()
-
-      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+      const pdf = await this.getRequestPdf(theCase)
 
       await this.courtService.createRequest(
         user,
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumbers.join(', ')}`,
+        this.formatMessage(courtUpload.requestFileName, {
+          caseType: caseTypes[theCase.type],
+          date: '',
+        }),
         pdf,
       )
     } catch (error) {
@@ -987,8 +993,10 @@ export class CaseService {
       true,
     )) as Case
 
-    // No need to wait
-    this.uploadRequestPdfToCourt(updatedCase, user)
+    if (!isIndictmentCase(theCase.type)) {
+      // No need to wait
+      this.uploadRequestPdfToCourt(updatedCase, user)
+    }
 
     return updatedCase
   }
