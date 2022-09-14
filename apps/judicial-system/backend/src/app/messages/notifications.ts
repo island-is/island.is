@@ -154,7 +154,7 @@ export const notifications = {
   prosecutorReceivedByCourt: {
     id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
     defaultMessage:
-      '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
+      '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} withIndictmentPrefix {ákæru} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
     description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
   },
   prosecutorCourtDateEmail: defineMessages({
@@ -166,18 +166,27 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti sem tilgreinir að dómstól hefur staðfest fyrirtökutíma',
     },
+    sheduledIndictmentCase: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.scheduled_indictment_case',
+      defaultMessage:
+        '{court} boðar til þingfestingar í máli {courtCaseNumber}.',
+      description:
+        'Notaður sem texti í pósti sem tilgreinir að dómstól boði til þingfestingar',
+    },
     courtDate: {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
       defaultMessage:
-        'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
+        '{isIndictment, select, true {Þingfesting} other {Fyrirtaka}} mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
     subject: {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
-      defaultMessage: 'Fyrirtaka í máli: {courtCaseNumber}',
+      defaultMessage:
+        '{isIndictment, select, true {Þingfesting} other {Fyrirtaka}} í máli: {courtCaseNumber}',
       description:
         'Notaður sem titil á  pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },
@@ -188,6 +197,14 @@ export const notifications = {
         '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} other {<br /><br />{defenderText}.}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur',
+    },
+    bodyIndictments: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.body_indictments',
+      defaultMessage:
+        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}',
+      description:
+        'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur í ákærum',
     },
   }),
   signedRuling: defineMessages({
