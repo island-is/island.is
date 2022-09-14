@@ -2,8 +2,8 @@ import request from 'supertest'
 import * as faker from 'faker'
 
 import {
-  EinstaklingarApi,
-  Einstaklingsupplysingar,
+  IndividualDto,
+  NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import {
   CompanyAddressType,
@@ -31,13 +31,10 @@ function mocked<T extends (...args: any) => any>(value: T) {
 }
 
 const mockNationalRegistry = (
-  einstaklingarApi: EinstaklingarApi,
-  data: Einstaklingsupplysingar,
+  nationalRegistryApi: NationalRegistryClientService,
+  data: IndividualDto,
 ) => {
-  mocked(einstaklingarApi.einstaklingarGetEinstaklingurRaw).mockResolvedValue({
-    value: () => Promise.resolve(data),
-    raw: { status: 200 } as Response,
-  })
+  mocked(nationalRegistryApi.getIndividual).mockResolvedValue(data)
 }
 
 function createCompany(): CompanyExtendedInfo {
@@ -126,31 +123,8 @@ describe('UserProfileController', () => {
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockRejectedValue({ status: 404 })
         mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
-        ).mockRejectedValue({ status: 404 })
-
-        // Act
-        const res = await server.get(path).expect(200)
-
-        // Assert
-        expect(res.body).toEqual({})
-        expect(errorLog).toHaveBeenCalledTimes(0)
-      })
-
-      it('with 204 response from natreg should return no claims', async () => {
-        // Arrange
-        const errorLog = jest
-          .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
-          .mockImplementation()
-        mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
-        ).mockRejectedValue({ status: 404 })
-        mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
-        ).mockResolvedValue({
-          value: () => Promise.reject('JSON ERROR'),
-          raw: { status: 204 } as Response,
-        })
+          app.get(NationalRegistryClientService).getIndividual,
+        ).mockResolvedValue(null)
 
         // Act
         const res = await server.get(path).expect(200)
@@ -169,7 +143,7 @@ describe('UserProfileController', () => {
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockRejectedValue(new Error('500'))
         mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
+          app.get(NationalRegistryClientService).getIndividual,
         ).mockRejectedValue(new Error('500'))
 
         // Act
@@ -184,41 +158,41 @@ describe('UserProfileController', () => {
         // Arrange
         const userProfile = createUserProfile()
         const individual = createNationalRegistryUser({
-          kynkodi: faker.random.arrayElement(['1', '3']),
+          genderCode: faker.random.arrayElement(['1', '3']),
         })
         mocked(
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockResolvedValue(userProfile)
-        mockNationalRegistry(app.get(EinstaklingarApi), individual)
+        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const domicile = individual.logheimili!
+        const domicile = individual.legalDomicile!
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const address = individual.adsetur!
+        const address = individual.residence!
         const expected = {
           address: {
-            formatted: `${address.heiti}\n${address.postnumer} ${address.stadur}\nÍsland`,
-            locality: address.stadur,
-            postalCode: address.postnumer,
-            streetAddress: address.heiti,
+            formatted: `${address.streetAddress}\n${address.postalCode} ${address.locality}\nÍsland`,
+            locality: address.locality,
+            postalCode: address.postalCode,
+            streetAddress: address.streetAddress,
             country: 'Ísland',
           },
-          birthdate: individual.faedingardagur.toISOString().split('T')[0],
+          birthdate: individual.birthdate.toISOString().split('T')[0],
           legalDomicile: {
-            formatted: `${domicile.heiti}\n${domicile.postnumer} ${domicile.stadur}\nÍsland`,
-            streetAddress: domicile.heiti,
-            postalCode: domicile.postnumer,
-            locality: domicile.stadur,
+            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nÍsland`,
+            streetAddress: domicile.streetAddress,
+            postalCode: domicile.postalCode,
+            locality: domicile.locality,
             country: 'Ísland',
           },
           email: userProfile.email,
           emailVerified: userProfile.emailVerified,
-          familyName: individual.kenninafn,
+          familyName: individual.familyName,
           gender: 'male',
-          givenName: individual.eiginnafn,
+          givenName: individual.givenName,
           locale: userProfile.locale,
-          middleName: individual.millinafn,
-          name: individual.nafn,
+          middleName: individual.middleName,
+          name: individual.name,
           phoneNumber: userProfile.mobilePhoneNumber,
           phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
           picture: userProfile.profileImageUrl,
@@ -234,17 +208,17 @@ describe('UserProfileController', () => {
       it('should return domicile as address if residence is missing', async () => {
         // Arrange
         const individual = createNationalRegistryUser()
-        individual.adsetur = null
-        mockNationalRegistry(app.get(EinstaklingarApi), individual)
+        individual.residence = null
+        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const domicile = individual.logheimili!
+        const domicile = individual.legalDomicile!
         const expected = {
           address: {
-            formatted: `${domicile.heiti}\n${domicile.postnumer} ${domicile.stadur}\nÍsland`,
-            locality: domicile.stadur,
-            postalCode: domicile.postnumer,
-            streetAddress: domicile.heiti,
+            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nÍsland`,
+            locality: domicile.locality,
+            postalCode: domicile.postalCode,
+            streetAddress: domicile.streetAddress,
           },
         }
 
@@ -258,8 +232,8 @@ describe('UserProfileController', () => {
       it('should support female gender', async () => {
         // Arrange
         const individual = createNationalRegistryUser()
-        individual.kynkodi = faker.random.arrayElement(['2', '4'])
-        mockNationalRegistry(app.get(EinstaklingarApi), individual)
+        individual.genderCode = faker.random.arrayElement(['2', '4'])
+        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
         const expected = {
           gender: 'female',
         }
@@ -274,8 +248,8 @@ describe('UserProfileController', () => {
       it('should support non-binary gender', async () => {
         // Arrange
         const individual = createNationalRegistryUser()
-        individual.kynkodi = faker.random.arrayElement(['7', '8'])
-        mockNationalRegistry(app.get(EinstaklingarApi), individual)
+        individual.genderCode = faker.random.arrayElement(['7', '8'])
+        mockNationalRegistry(app.get(NationalRegistryClientService), individual)
         const expected = {
           gender: 'non-binary',
         }

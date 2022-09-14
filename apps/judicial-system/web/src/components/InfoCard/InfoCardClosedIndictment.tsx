@@ -1,11 +1,7 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 
@@ -13,20 +9,12 @@ import InfoCard from './InfoCard'
 import { infoCardActiveIndictment as m } from './InfoCard.strings'
 import { FormContext } from '../FormProvider/FormProvider'
 
-const InfoCardActiveIndictment: React.FC = () => {
+const InfoCardClosedIndictment: React.FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   return (
     <InfoCard
       data={[
-        {
-          title: formatMessage(m.indictmentCreated),
-          value: formatDate(workingCase.created, 'PP'),
-        },
-        {
-          title: formatMessage(m.prosecutor),
-          value: `${workingCase.creatingProsecutor?.institution?.name}`,
-        },
         {
           title: formatMessage(core.policeCaseNumber),
           value: workingCase.policeCaseNumbers.map((n) => (
@@ -34,8 +22,24 @@ const InfoCardActiveIndictment: React.FC = () => {
           )),
         },
         {
+          title: formatMessage(core.courtCaseNumber),
+          value: workingCase.courtCaseNumber,
+        },
+        {
+          title: formatMessage(core.prosecutor),
+          value: `${workingCase.creatingProsecutor?.institution?.name}`,
+        },
+        {
           title: formatMessage(core.court),
           value: workingCase.court?.name,
+        },
+        {
+          title: formatMessage(m.prosecutor),
+          value: workingCase.creatingProsecutor?.name,
+        },
+        {
+          title: formatMessage(core.judge),
+          value: workingCase.judge?.name,
         },
         {
           title: formatMessage(m.offence),
@@ -60,4 +64,4 @@ const InfoCardActiveIndictment: React.FC = () => {
   )
 }
 
-export default InfoCardActiveIndictment
+export default InfoCardClosedIndictment

@@ -6,95 +6,22 @@
  */
 
 export interface NationalRegistryClientAddress {
-  /**
-   * Street name
-   * @type {string}
-   */
-  heiti: string
-
-  /**
-   * Postal code
-   * @type {string}
-   */
-  postnumer?: string | null
-
-  /**
-   * Location
-   * @type {string}
-   */
-  stadur?: string | null
-
-  /**
-   * Municipality number - definition can be looked up using resources in "Lyklar"
-   * @type {string}
-   */
-  sveitarfelagsnumer?: string | null
+  streetAddress: string
+  postalCode: string | null
+  locality: string | null
+  municipalityNumber: string | null
 }
 
 export interface NationalRegistryClientPerson {
-  /**
-   * NationalId
-   * @type {string}
-   */
-  kennitala: string
-
-  /**
-   * Legal name
-   * @type {string}
-   */
-  nafn: string
-
-  /**
-   * First name
-   * @type {string}
-   */
-  eiginnafn?: string | null
-
-  /**
-   * Middle name
-   * @type {string}
-   */
-  millinafn?: string | null
-
-  /**
-   * Surname
-   * @type {string}
-   */
-  kenninafn?: string | null
-
-  /**
-   * Full name
-   * @type {string}
-   */
-  fulltNafn?: string | null
-
-  /**
-   * Gender code - definition can be looked up using resources in "Lyklar"
-   * @type {string}
-   */
-  kynkodi: string
-
-  /**
-   * Details can be found at: https://www.skra.is/thjonusta/einstaklingar/eg-i-thjodskra/bannmerking-aetlad-einstaklingum/
-   * @type {boolean}
-   */
-  bannmerking: boolean
-
-  /**
-   * Date of birth
-   * @type {Date}
-   */
-  faedingardagur: Date
-
-  /**
-   * Information about legal domicile
-   * @type {NationalRegistryClientAddress}
-   */
-  logheimili?: NationalRegistryClientAddress | null
-
-  /**
-   * Information about residence
-   * @type {NationalRegistryClientAddress}
-   */
-  adsetur?: NationalRegistryClientAddress | null
+  nationalId: string
+  name: string
+  givenName: string | null
+  middleName: string | null
+  familyName: string | null
+  fullName: string | null
+  genderCode: string
+  exceptionFromDirectMarketing: boolean
+  birthdate: Date
+  legalDomicile: NationalRegistryClientAddress | null
+  residence: NationalRegistryClientAddress | null
 }

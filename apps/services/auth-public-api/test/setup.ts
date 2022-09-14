@@ -9,8 +9,8 @@ import {
 } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
-  EinstaklingarApi,
-  Einstaklingsupplysingar,
+  NationalRegistryClientService,
+  IndividualDto,
 } from '@island.is/clients/national-registry-v2'
 import {
   ApiScope,
@@ -47,7 +47,7 @@ export interface ClientSetupOptions {
 interface SetupOptions {
   user: User
   userName: string
-  nationalRegistryUser: Einstaklingsupplysingar
+  nationalRegistryUser: IndividualDto
   scopes?: ScopeSetupOptions[]
   client?: ClientSetupOptions
 }
@@ -110,7 +110,7 @@ export const setupWithAuth = async ({
     appModule: AppModule,
     override: (builder: TestingModuleBuilder) =>
       builder
-        .overrideProvider(EinstaklingarApi)
+        .overrideProvider(NationalRegistryClientService)
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
         .overrideProvider(RskProcuringClient)
         .useValue(RskProcuringClientMock)
