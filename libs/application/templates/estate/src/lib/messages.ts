@@ -211,7 +211,7 @@ export const m = defineMessages({
   acceptDebtsLabel: {
     id: 'es.application:acceptDebtsLabel',
     defaultMessage:
-      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um.',
+      'Ég samþykki að taka yfir áhvílandi skuldir á þessu farartæki sem vitneskja er um',
     description: '',
   },
 
@@ -235,7 +235,7 @@ export const m = defineMessages({
   },
 
   // Done
-  officialExchangeDoneTitle: {
+  doneTitle: {
     id: 'es.application:officialExchangeDoneTitle',
     defaultMessage: 'Tilkynning móttekin',
     description: '',

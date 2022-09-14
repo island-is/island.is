@@ -1,18 +1,21 @@
 import {
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
+  buildDividerField,
   buildForm,
   buildKeyValueField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
-import { Application, Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
-import { format as formatNationalId } from 'kennitala'
-import { YES } from '../../lib/constants'
+import { NO, YES } from '../../lib/constants'
+import format from 'date-fns/format'
+import { estateMembersFields } from './externalDataFields/estateMembersFields'
+import { propertiesFields } from './externalDataFields/propertiesFields'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -31,54 +34,7 @@ export const form: Form = buildForm({
           id: 'estateMembersInfo',
           title: m.estateMembersTitle,
           description: m.estateMembersSubtitle,
-          children: [
-            buildDescriptionField({
-              id: 'estateMembersHeader',
-              title: m.estateMembers,
-              titleVariant: 'h3',
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estateMembersCards',
-                component: 'Cards',
-              },
-              {
-                cards: ({ externalData }: Application) =>
-                  (
-                    (externalData.syslumennOnEntry.data as any)?.estate
-                      .estateMembers ?? []
-                  ).map((member: any) => ({
-                    title: member.name,
-                    description: [
-                      formatNationalId(member.nationalId),
-                      member.relation,
-                    ],
-                  })),
-              },
-            ),
-            buildDescriptionField({
-              id: 'willsHeader',
-              title: m.willsAndAgreements,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.willsInCustody,
-              value: 'Já',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.agreements,
-              value: 'Nei',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.otherWills,
-              value: 'Nei',
-              width: 'half',
-            }),
-          ],
+          children: estateMembersFields,
         }),
       ],
     }),
@@ -89,59 +45,15 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'propertiesInfo',
           title: m.properties,
-          description: m.properties,
+          description: m.propertiesDescription,
           children: [
-            buildDescriptionField({
-              id: 'propertiesHeader',
-              title: m.realEstateAndLand,
-              titleVariant: 'h3',
-              description: m.realEstateAndLandDescription,
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estateAssetsCards',
-                component: 'Cards',
-              },
-              {
-                cards: ({ externalData }: Application) =>
-                  (
-                    (externalData.syslumennOnEntry.data as any)?.estate
-                      .assets ?? []
-                  ).map((asset: any) => ({
-                    title: asset.description,
-                    description: [asset.assetNumber],
-                  })),
-              },
-            ),
-            buildDescriptionField({
-              id: 'propertiesHeader',
-              title: m.vehicles,
-              titleVariant: 'h3',
-              description: m.vehiclesDescription,
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estateVehicleCards',
-                component: 'Cards',
-              },
-              {
-                cards: ({ externalData }: Application) =>
-                  (
-                    (externalData.syslumennOnEntry.data as any)?.estate
-                      .vehicles ?? []
-                  ).map((asset: any) => ({
-                    title: asset.description,
-                    description: [asset.assetNumber],
-                  })),
-              },
-            ),
+            ...propertiesFields,
             buildCheckboxField({
               id: 'acceptDebts',
               title: '',
-              defaultValue: '',
+              defaultValue: NO,
               backgroundColor: 'white',
+              large: false,
               options: [
                 {
                   label: m.acceptDebtsLabel,
@@ -161,7 +73,107 @@ export const form: Form = buildForm({
           id: 'overview',
           title: m.overviewTitle,
           description: m.overviewSubtitleWithNoProperty,
-          children: [],
+          children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewDeceasedHeader',
+              title: m.theDeceased,
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'deceasedName',
+              title: m.name,
+              titleVariant: 'h4',
+              marginBottom: 'gutter',
+              width: 'half',
+              description: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) => (data as any)?.estate.nameOfDeceased,
+            }),
+            buildDescriptionField({
+              id: 'deceasedNationalId',
+              title: m.nationalId,
+              titleVariant: 'h4',
+              marginBottom: 'gutter',
+              width: 'half',
+              description: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) => (data as any)?.estate.nationalIdOfDeceased,
+            }),
+            buildDescriptionField({
+              id: 'deceasedDeathDate',
+              title: m.deathDate,
+              titleVariant: 'h4',
+              marginBottom: 'gutter',
+              width: 'half',
+              description: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) =>
+                format(
+                  new Date((data as any)?.estate.dateOfDeath),
+                  'dd/MM/yyyy',
+                ),
+            }),
+            buildDescriptionField({
+              id: 'deceasedAddress',
+              title: m.address,
+              titleVariant: 'h4',
+              marginBottom: 'gutter',
+              width: 'half',
+              description: ({
+                externalData: {
+                  syslumennOnEntry: { data },
+                },
+              }) => (data as any)?.estate.address ?? 'La la Land 123', // TODO: address this with API about getting lögheimili',
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'space2',
+              title: '',
+              space: 'gutter',
+            }),
+            ...estateMembersFields,
+            buildDescriptionField({
+              id: 'space3',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'space4',
+              title: '',
+              space: 'gutter',
+            }),
+            ...propertiesFields,
+            buildKeyValueField({
+              label: m.acceptDebtsLabel,
+              value: ({ answers: { acceptDebts } }) => acceptDebts as string,
+            }),
+            buildSubmitField({
+              id: 'estateWithNoProperty.submit',
+              title: '',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn tilkynningu',
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),

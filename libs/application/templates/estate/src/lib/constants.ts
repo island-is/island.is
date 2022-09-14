@@ -1,17 +1,7 @@
 import { DefaultEvents } from '@island.is/application/types'
 
-export const YES = 'yes'
-export const NO = 'no'
-
-type FakeCurrentLicense = 'none' | 'temp'
-type YesOrNo = 'yes' | 'no'
-
-export interface DrivingLicenseFakeData {
-  useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
-  currentLicense?: FakeCurrentLicense
-  healthRemarks?: YesOrNo
-}
+export const YES = 'Já'
+export const NO = 'Nei'
 
 export const States = {
   prerequisites: 'prerequisites',

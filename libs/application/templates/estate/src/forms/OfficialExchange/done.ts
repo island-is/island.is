@@ -9,7 +9,7 @@ export const done: Form = buildForm({
   children: [
     buildDescriptionField({
       id: 'officialExchangeDone#markdown',
-      title: m.officialExchangeDoneTitle,
+      title: m.doneTitle,
       description: m.officialExchangeDoneSubtitle,
     }),
   ],
