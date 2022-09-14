@@ -1,9 +1,6 @@
 import fetch, { Response } from 'node-fetch'
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  PkPassIssuer,
   PassTemplatesResponse,
   UpsertPkPassResponse,
   PassTemplatesDTO,
@@ -15,46 +12,27 @@ import {
   DynamicBarcodeDataInput,
   PkPassStatus,
 } from './smartSolutions.types'
-import { ConfigType } from '@nestjs/config'
-import { SmartSolutionsClientConfig } from './smartsolutionsApi.config'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
-@Injectable()
+export interface SmartSolutionsConfig {
+  apiKey: string
+  apiUrl: string
+}
+
 export class SmartSolutionsApi {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(SmartSolutionsClientConfig.KEY)
-    private config: ConfigType<typeof SmartSolutionsClientConfig>,
+    private readonly logger: Logger,
+    private config: SmartSolutionsConfig,
   ) {}
 
-  private getApiKey(issuer: PkPassIssuer) {
-    return this.config.pkPassApiKeys.veApiKey
-
-    switch (issuer) {
-      case PkPassIssuer.RIKISLOGREGLUSTJORI:
-        return this.config.pkPassApiKeys.rlsApiKey
-      case PkPassIssuer.VINNUEFTIRLITID:
-        return this.config.pkPassApiKeys.veApiKey
-      default:
-        return
-    }
-  }
-
-  private fetchUrl(payload: string, issuer: PkPassIssuer): Promise<Response> {
-    const apiKey = this.getApiKey(issuer)
-
-    if (!apiKey) {
-      throw new ForbiddenException('Missing apikey')
-    }
-
-    return fetch(this.config.pkPassApiUrl, {
+  private fetchUrl(payload: string): Promise<Response> {
+    return fetch(this.config.apiUrl, {
       method: 'POST',
       headers: {
-        'X-API-KEY': apiKey,
+        'X-API-KEY': this.config.apiKey,
         'Content-Type': 'application/json',
       },
-      timeout: this.config.timeout,
       body: payload,
     })
   }
@@ -62,7 +40,6 @@ export class SmartSolutionsApi {
   async listPkPasses(
     queryId: string,
     passTemplateId: string,
-    issuer: PkPassIssuer,
   ): Promise<ListPassesDTO | null> {
     const listPassesQuery = `
       query ListPasses {
@@ -99,7 +76,7 @@ export class SmartSolutionsApi {
     })
 
     try {
-      res = await this.fetchUrl(graphql, issuer)
+      res = await this.fetchUrl(graphql)
     } catch (e) {
       this.logger.warn('Unable to retrieve pk passes', {
         exception: e,
@@ -159,7 +136,6 @@ export class SmartSolutionsApi {
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
-    issuer: PkPassIssuer,
   ): Promise<VerifyPassResponse | null> {
     const verifyPkPassMutation = `
       mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
@@ -191,7 +167,7 @@ export class SmartSolutionsApi {
     let res: Response | null = null
 
     try {
-      res = await this.fetchUrl(JSON.stringify(body), issuer)
+      res = await this.fetchUrl(JSON.stringify(body))
     } catch (e) {
       this.logger.warn('Unable to verify pass', {
         exception: e,
@@ -211,7 +187,6 @@ export class SmartSolutionsApi {
       const responseErrors: PkPassServiceErrorResponse = {}
       try {
         const json = await res.json()
-        this.logger.debug(json)
         responseErrors.message = json?.message ?? undefined
         responseErrors.status = json?.status ?? undefined
         responseErrors.data = json?.data ?? undefined
@@ -250,7 +225,6 @@ export class SmartSolutionsApi {
 
   async upsertPkPass(
     payload: CreatePkPassDataInput,
-    issuer: PkPassIssuer,
   ): Promise<UpsertPkPassResponse | null> {
     const createPkPassMutation = `
       mutation UpsertPass($inputData: PassDataInput!) {
@@ -272,7 +246,7 @@ export class SmartSolutionsApi {
     let res: Response | null = null
 
     try {
-      res = await this.fetchUrl(JSON.stringify(body), issuer)
+      res = await this.fetchUrl(JSON.stringify(body))
     } catch (e) {
       this.logger.warn('Unable to upsert pkpass', {
         exception: e,
@@ -328,15 +302,10 @@ export class SmartSolutionsApi {
     return null
   }
 
-  async generatePkPass(
-    payload: CreatePkPassDataInput,
-    nationalId: string,
-    issuer: PkPassIssuer,
-  ) {
+  async generatePkPass(payload: CreatePkPassDataInput, nationalId: string) {
     const existingPasses = await this.listPkPasses(
       nationalId,
       payload.passTemplateId ?? '',
-      issuer,
     )
 
     const containsActiveOrUnclaimed =
@@ -364,7 +333,7 @@ export class SmartSolutionsApi {
       }
     }
 
-    const response = await this.upsertPkPass(payload, issuer)
+    const response = await this.upsertPkPass(payload)
 
     if (response?.data?.upsertPass) {
       return response?.data?.upsertPass
@@ -385,24 +354,18 @@ export class SmartSolutionsApi {
   async generatePkPassQrCode(
     payload: CreatePkPassDataInput,
     nationalId: string,
-    issuer: PkPassIssuer,
   ) {
-    const pkPass = await this.generatePkPass(payload, nationalId, issuer)
+    const pkPass = await this.generatePkPass(payload, nationalId)
 
-    this.logger.debug(JSON.stringify(pkPass))
     return pkPass?.distributionQRCode ?? ''
   }
 
-  async generatePkPassUrl(
-    payload: CreatePkPassDataInput,
-    nationalId: string,
-    issuer: PkPassIssuer,
-  ) {
-    const pkPass = await this.generatePkPass(payload, nationalId, issuer)
+  async generatePkPassUrl(payload: CreatePkPassDataInput, nationalId: string) {
+    const pkPass = await this.generatePkPass(payload, nationalId)
     return pkPass?.distributionUrl ?? ''
   }
 
-  async listTemplates(issuer: PkPassIssuer): Promise<PassTemplatesDTO | null> {
+  async listTemplates(): Promise<PassTemplatesDTO | null> {
     const listTemplatesQuery = {
       query: `
         query passTemplateQuery {
@@ -419,7 +382,7 @@ export class SmartSolutionsApi {
     let res: Response | null = null
 
     try {
-      res = await this.fetchUrl(JSON.stringify(listTemplatesQuery), issuer)
+      res = await this.fetchUrl(JSON.stringify(listTemplatesQuery))
     } catch (e) {
       this.logger.warn('Unable to retrieve pk pass templates', {
         exception: e,

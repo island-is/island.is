@@ -282,6 +282,10 @@ export class LicenseServiceService {
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
 
+    if (!data) {
+      throw new Error(`Missing input data`)
+    }
+
     const { passTemplateId } = JSON.parse(data)
 
     let licenseType

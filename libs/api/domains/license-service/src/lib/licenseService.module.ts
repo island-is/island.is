@@ -15,7 +15,6 @@ import {
   FirearmLicenseClientModule,
 } from '@island.is/clients/firearm-license'
 import {
-  PkPassIssuer,
   SmartSolutionsApi,
   SmartSolutionsClientModule,
 } from '@island.is/clients/smartsolutions'
@@ -32,22 +31,26 @@ import {
   VinnuvelaApi,
   AdrAndMachineLicenseClientModule,
 } from '@island.is/clients/adr-and-machine-license'
-
-export interface Config {
+export interface PkPassConfig {
+  apiKey: string
+  apiUrl: string
+  secretKey?: string
+  cacheKey?: string
+  cacheTokenExpiryDelta?: string
+  authRetries?: string
+}
+export interface DriversLicenseConfig {
   xroad: {
     baseUrl: string
     clientId: string
     path: string
     secret: string
   }
-  pkpass: {
-    apiKey: string
-    apiUrl: string
-    secretKey: string
-    cacheKey: string
-    cacheTokenExpiryDelta: string
-    authRetries: string
-  }
+  pkpass: PkPassConfig
+}
+export interface Config {
+  firearmLicense: PkPassConfig
+  driversLicense: DriversLicenseConfig
 }
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
@@ -117,7 +120,6 @@ export class LicenseServiceModule {
             adrApi: AdrApi,
             machineApi: VinnuvelaApi,
             firearmApi: FirearmApi,
-            smartApi: SmartSolutionsApi,
           ) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
@@ -125,8 +127,8 @@ export class LicenseServiceModule {
             switch (type) {
               case GenericLicenseType.DriversLicense:
                 return new GenericDrivingLicenseApi(
-                  config,
                   logger,
+                  config.driversLicense,
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
@@ -137,14 +139,13 @@ export class LicenseServiceModule {
                 return new GenericFirearmLicenseApi(
                   logger,
                   firearmApi,
-                  smartApi,
-                  PkPassIssuer.RIKISLOGREGLUSTJORI,
+                  new SmartSolutionsApi(logger, config.firearmLicense),
                 )
               default:
                 return null
             }
           },
-          inject: [AdrApi, VinnuvelaApi, FirearmApi, SmartSolutionsApi],
+          inject: [AdrApi, VinnuvelaApi, FirearmApi],
         },
       ],
       exports: [LicenseServiceService],

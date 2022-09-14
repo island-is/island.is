@@ -26,6 +26,7 @@ import {
   LicenseData,
 } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
+import { DEFAULT_IMAGE } from './constants'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -36,7 +37,6 @@ export class GenericFirearmLicenseApi
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
     private smartApi: SmartSolutionsApi,
-    private issuer: PkPassIssuer,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
@@ -68,6 +68,7 @@ export class GenericFirearmLicenseApi
       return null
     }
 
+    this.logger.debug(JSON.stringify(licenseData))
     return licenseData as LicenseData
   }
 
@@ -94,8 +95,6 @@ export class GenericFirearmLicenseApi
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 
-    this.logger.debug(JSON.stringify(data))
-
     if (!data) return null
 
     const inputValues = createPkPassDataInput(
@@ -106,7 +105,6 @@ export class GenericFirearmLicenseApi
 
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
-    const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
     if (!inputValues) return null
     //Fetch template from api?
@@ -114,20 +112,20 @@ export class GenericFirearmLicenseApi
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: {
-        imageBase64String: parsedImage,
+        imageBase64String: image
+          ? image.substring(image.indexOf(',') + 1).trim()
+          : DEFAULT_IMAGE,
       },
     }
 
     const pass = await this.smartApi.generatePkPassUrl(
       payload,
       format(user.nationalId),
-      this.issuer,
     )
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
-
     if (!data) return null
 
     const inputValues = createPkPassDataInput(
@@ -146,19 +144,23 @@ export class GenericFirearmLicenseApi
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: {
-        imageBase64String: parsedImage,
+        imageBase64String: parsedImage ?? DEFAULT_IMAGE,
       },
     }
 
     const pass = await this.smartApi.generatePkPassQrCode(
       payload,
       format(user.nationalId),
-      this.issuer,
     )
     return pass ?? null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
+
+    if (!code || !date) {
+      return null
+    }
+
     const payload = {
       dynamicBarcodeData: {
         code,
@@ -166,7 +168,7 @@ export class GenericFirearmLicenseApi
       },
     }
 
-    const response = await this.smartApi.verifyPkPass(payload, this.issuer)
+    const response = await this.smartApi.verifyPkPass(payload)
 
     if (response?.data) {
       return { valid: true, data: JSON.stringify(response.data) }

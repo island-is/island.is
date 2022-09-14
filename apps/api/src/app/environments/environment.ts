@@ -116,6 +116,11 @@ const prodConfig = () => ({
     cacheTokenExpiryDelta: process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA,
     authRetries: process.env.PKPASS_AUTH_RETRIES,
   },
+  pkpassv2: {
+    vePkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    rlsPkPassApiKey: process.env.RLS_PKPASS_API_KEY,
+  },
+  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
     defaultNamespace: '@island.is/api',
     groupName: process.env.AUDIT_GROUP_NAME,
@@ -273,9 +278,14 @@ const devConfig = () => ({
       process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
     authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
+  pkpassv2: {
+    vePkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    rlsPkPassApiKey: process.env.VE_PKPASS_API_KEY,
+  },
   audit: {
     defaultNamespace: '@island.is/api',
   },
+  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:

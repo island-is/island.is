@@ -67,7 +67,6 @@ import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-mac
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
-import { SmartSolutionsClientConfig } from '@island.is/clients/smartsolutions'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -218,19 +217,25 @@ const autoSchemaFile = environment.production
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
-      xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
-        path: environment.drivingLicense.v1.xroadPath!,
-        secret: environment.drivingLicense.secret!,
+      firearmLicense: {
+        apiKey: environment.pkpassv2.rlsPkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
       },
-      pkpass: {
-        apiKey: environment.pkpass.apiKey!,
-        apiUrl: environment.pkpass.apiUrl!,
-        secretKey: environment.pkpass.secretKey!,
-        cacheKey: environment.pkpass.cacheKey!,
-        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-        authRetries: environment.pkpass.authRetries!,
+      driversLicense: {
+        xroad: {
+          baseUrl: environment.xroad.baseUrl!,
+          clientId: environment.xroad.clientId!,
+          path: environment.drivingLicense.v1.xroadPath!,
+          secret: environment.drivingLicense.secret!,
+        },
+        pkpass: {
+          apiKey: environment.pkpass.apiKey!,
+          apiUrl: environment.pkpass.apiUrl!,
+          secretKey: environment.pkpass.secretKey!,
+          cacheKey: environment.pkpass.cacheKey!,
+          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
+          authRetries: environment.pkpass.authRetries!,
+        },
       },
     }),
     PaymentScheduleModule.register({
@@ -262,7 +267,6 @@ const autoSchemaFile = environment.production
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
-        SmartSolutionsClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
