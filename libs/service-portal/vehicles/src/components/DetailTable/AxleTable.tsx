@@ -15,11 +15,11 @@ const AxleTable = ({ axles, tyres }: PropTypes) => {
   const { formatMessage } = useLocale()
 
   const tyreArray: string[] = []
-  tyres?.axle1 && tyreArray.push(tyres?.axle1)
-  tyres?.axle2 && tyreArray.push(tyres?.axle2)
-  tyres?.axle3 && tyreArray.push(tyres?.axle3)
-  tyres?.axle4 && tyreArray.push(tyres?.axle4)
-  tyres?.axle5 && tyreArray.push(tyres?.axle5)
+  tyreArray.push(tyres?.axle1 ?? '')
+  tyreArray.push(tyres?.axle2 ?? '')
+  tyreArray.push(tyres?.axle3 ?? '')
+  tyreArray.push(tyres?.axle4 ?? '')
+  tyreArray.push(tyres?.axle5 ?? '')
 
   return (
     <Box marginBottom={4} marginTop="containerGutter">
