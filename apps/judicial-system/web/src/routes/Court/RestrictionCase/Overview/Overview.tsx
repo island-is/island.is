@@ -49,6 +49,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
+
 import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview: React.FC = () => {

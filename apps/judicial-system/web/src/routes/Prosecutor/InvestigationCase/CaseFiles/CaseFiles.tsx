@@ -32,9 +32,9 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
+import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 
 export const CaseFiles: React.FC = () => {
