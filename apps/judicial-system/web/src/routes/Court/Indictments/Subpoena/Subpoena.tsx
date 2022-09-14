@@ -138,7 +138,7 @@ const Subpoena: React.FC = () => {
           title={formatMessage(strings.modalTitle)}
           onPrimaryButtonClick={() => {
             router.push(
-              `${constants.INVESTIGATION_CASE_RULING_ROUTE}/${workingCase.id}`,
+              `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
             )
           }}
           onSecondaryButtonClick={() => {
