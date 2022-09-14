@@ -221,16 +221,19 @@ const renderSlices = (
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice, index) => (
-        <SliceMachine
-          key={slice.id}
-          slice={slice}
-          namespace={namespace}
-          slug={slug}
-          renderedOnOrganizationSubpage={true}
-          marginBottom={index === slices.length - 1 ? 5 : 0}
-        />
-      ))
+      return slices.map((slice, index) => {
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={slug}
+            renderedOnOrganizationSubpage={true}
+            marginBottom={index === slices.length - 1 ? 5 : 0}
+            params={{ renderLifeEventPagesAsProfileCards: true }}
+          />
+        )
+      })
   }
 }
 

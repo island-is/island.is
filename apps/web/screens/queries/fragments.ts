@@ -561,6 +561,11 @@ export const slices = gql`
         url
         title
       }
+      thumbnail {
+        url
+        title
+      }
+      intro
     }
   }
 

@@ -141,7 +141,13 @@ const renderSlice = (
     case 'MailingListSignupSlice':
       return <MailingListSignupSlice slice={slice} namespace={namespace} />
     case 'LifeEventPageListSlice':
-      return <LifeEventPageListSlice slice={slice} />
+      return (
+        <LifeEventPageListSlice
+          slice={slice}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
