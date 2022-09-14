@@ -38,8 +38,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import PoliceCaseNumbers, {
   usePoliceCaseNumbers,
-} from '../SharedComponents/PoliceCaseNumbers/PoliceCaseNumbers'
-import DefendantInfo from '../SharedComponents/DefendantInfo/DefendantInfo'
+} from '../components/PoliceCaseNumbers/PoliceCaseNumbers'
+import DefendantInfo from '../components/DefendantInfo/DefendantInfo'
 
 const Defendant: React.FC = () => {
   const {

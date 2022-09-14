@@ -40,9 +40,9 @@ import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
+import RequestCourtDate from '../../components/RequestCourtDate/RequestCourtDate'
+import SelectCourt from '../../components/SelectCourt/SelectCourt'
+import ProsecutorSectionHeightenedSecurity from '../../components/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
 
 const HearingArrangements = () => {
   const router = useRouter()

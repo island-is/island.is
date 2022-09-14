@@ -38,10 +38,10 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import SelectCourt from '../../components/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import ProsecutorSectionHeightenedSecurity from '../../SharedComponents/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
+import RequestCourtDate from '../../components/RequestCourtDate/RequestCourtDate'
+import ProsecutorSectionHeightenedSecurity from '../../components/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 export const HearingArrangements: React.FC = () => {

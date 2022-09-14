@@ -37,7 +37,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 
 import PoliceCaseFiles, {
   PoliceCaseFileCheck,
-} from '../../SharedComponents/PoliceCaseFiles/PoliceCaseFiles'
+} from '../../components/PoliceCaseFiles/PoliceCaseFiles'
 
 export const StepFive: React.FC = () => {
   const {

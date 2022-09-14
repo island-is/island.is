@@ -53,7 +53,7 @@ import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+import CopyLinkForDefenderButton from '../../components/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
 
 export const Overview: React.FC = () => {
   const [modal, setModal] = useState<
