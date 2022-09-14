@@ -28,6 +28,8 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
         rateOfShare
         nextYearQuota
         nextYearFromQuota
+        percentNextYearQuota
+        percentNextYearFromQuota
       }
     }
   }

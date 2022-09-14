@@ -8,6 +8,7 @@ import {
   Inline,
   LoadingDots,
   Select,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import type {
@@ -24,11 +25,15 @@ import {
 } from './queries'
 import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
 import { useNamespace } from '@island.is/web/hooks'
-
-import * as styles from './AflamarkCalculator.css'
 import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
 
+import * as styles from './AflamarkCalculator.css'
+
 const emptyValue = { value: -1, label: '' }
+
+const isNumber = (val: string | string[]) => {
+  return !isNaN(Number(val)) && val?.length > 0
+}
 
 type Changes = Record<
   number,
@@ -71,11 +76,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   ] = useState<TimePeriodOption>(timePeriodOptions[0])
 
   useEffect(() => {
-    if (
-      router?.query?.nr &&
-      !isNaN(Number(router.query.nr)) &&
-      router.query.nr.length > 0
-    ) {
+    if (router?.query?.nr && isNumber(router.query.nr)) {
       setShipNumber(Number(router.query.nr))
     }
   }, [router?.query?.nr])
@@ -88,7 +89,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   })
 
   const quotaTypeResponse = useQuery<
-    { getQuotaTypesForCalendarYear: QuotaType[] },
+    { getQuotaTypesForTimePeriod: QuotaType[] },
     QueryGetQuotaTypesForTimePeriodArgs
   >(GET_QUOTA_TYPES_FOR_TIME_PERIOD, {
     variables: {
@@ -97,7 +98,8 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
       },
     },
     onCompleted(res) {
-      const quotaData = res?.getQuotaTypesForCalendarYear
+      console.log(res)
+      const quotaData = res?.getQuotaTypesForTimePeriod
       if (!quotaData) return
       const quotaTypes = quotaData
         .filter((qt) => qt?.name)
@@ -164,9 +166,9 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   useEffect(() => {
     if (
       data?.allowedCatchCategories?.length > 0 &&
-      quotaTypeResponse?.data?.getQuotaTypesForCalendarYear?.length > 0
+      quotaTypeResponse?.data?.getQuotaTypesForTimePeriod?.length > 0
     ) {
-      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForCalendarYear
+      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForTimePeriod
       setOptionsInDropdown(
         quotaTypes
           .filter(
@@ -267,8 +269,10 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
           timePeriod: selectedTimePeriod.value,
           changes: changeValues.map((change) => ({
             ...change,
-            catchChange: Number(change.catchChange ?? 0),
-            allowedCatchChange: Number(change.allowedCatchChange ?? 0),
+            catchChange: Math.round(Number(change.catchChange ?? 0)),
+            allowedCatchChange: Math.round(
+              Number(change.allowedCatchChange ?? 0),
+            ),
           })),
         },
       },
@@ -376,6 +380,67 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
             </Button>
           </Inline>
         </Box>
+      </Box>
+
+      <Box className={styles.tagContainer}>
+        <Inline alignY="center" space={2}>
+          {selectedOptions.map((o) => (
+            <Tag
+              onClick={() => {
+                setSelectedOptions((prevSelected) =>
+                  prevSelected.filter((prev) => prev.value !== o.value),
+                )
+                setOptionsInDropdown((prevDropdown) => {
+                  const updatedDropdown = prevDropdown.concat(o)
+                  updatedDropdown.sort((a, b) => a.label.localeCompare(b.label))
+                  return updatedDropdown
+                })
+                setData((prev) => ({
+                  ...prev,
+                  allowedCatchCategories: prev?.allowedCatchCategories?.filter(
+                    (c) => c?.id !== o.value,
+                  ),
+                }))
+              }}
+              key={o.value}
+            >
+              <Box flexDirection="row" alignItems="center">
+                {o.label}
+                <span className={styles.crossmark}>&#10005;</span>
+              </Box>
+            </Tag>
+          ))}
+          {selectedOptions.length > 0 && (
+            <Button
+              onClick={() => {
+                setSelectedOptions((prevSelected) => {
+                  setData((prev) => {
+                    const selectedIds = prevSelected.map((s) => s.value)
+                    return {
+                      ...prev,
+                      allowedCatchCategories: prev?.allowedCatchCategories?.filter(
+                        (c) => !selectedIds.includes(c?.id),
+                      ),
+                    }
+                  })
+                  setOptionsInDropdown((prevDropdown) => {
+                    const updatedDropdown = prevDropdown.concat(prevSelected)
+                    updatedDropdown.sort((a, b) =>
+                      a.label.localeCompare(b.label),
+                    )
+                    return updatedDropdown
+                  })
+                  return []
+                })
+              }}
+              variant="text"
+              size="small"
+              colorScheme="default"
+            >
+              Hreinsa allt
+            </Button>
+          )}
+        </Inline>
       </Box>
 
       <Box
@@ -558,7 +623,9 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
               </tr>
 
               <tr>
-                <td className={styles.visualSeparationLine}>Heildaraflamark</td>
+                <td className={styles.visualSeparationLine}>
+                  {n('heildaraflamark', 'Heildaraflamark')}
+                </td>
                 {data?.allowedCatchCategories?.map((category) => (
                   <td
                     className={styles.visualSeparationLine}
@@ -571,7 +638,6 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
 
               <tr>
                 <td>{n('hlutdeild', 'Hlutdeild')}</td>
-
                 {data?.allowedCatchCategories?.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
@@ -583,6 +649,40 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                           category.rateOfShare
                         }
                         onChange={(ev) => {
+                          setChanges((prevChanges) => {
+                            const totalAllowedCatch = data?.allowedCatchCategories?.find(
+                              (c) => c?.id === category.id,
+                            )?.totalAllowedCatch
+                            if (
+                              !isNumber(ev.target.value) ||
+                              totalAllowedCatch === undefined
+                            ) {
+                              return prevChanges
+                            }
+
+                            const newRateOfShare = Number(ev.target.value) / 100
+
+                            const newAllowedCatch =
+                              newRateOfShare * totalAllowedCatch
+
+                            const prevAllowedCatch = data?.allowedCatchCategories?.find(
+                              (c) => c?.id === category.id,
+                            )?.allocation
+
+                            const newAllowedCatchChange =
+                              newAllowedCatch - prevAllowedCatch
+
+                            return {
+                              ...prevChanges,
+                              [category.id]: {
+                                ...prevChanges?.[category.id],
+                                id: category.id,
+                                allowedCatchChange: String(
+                                  Math.round(newAllowedCatchChange * 100) / 100,
+                                ),
+                              },
+                            }
+                          })
                           setQuotaState((prev) => ({
                             ...prev,
                             rateOfShare: {
@@ -636,13 +736,15 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                           category.nextYearFromQuota
                         }
                         onChange={(ev) => {
-                          setQuotaState((prev) => ({
-                            ...prev,
-                            nextYearFromQuota: {
-                              ...prev?.nextYearFromQuota,
-                              [category.id]: ev.target.value,
-                            },
-                          }))
+                          setQuotaState((prev) => {
+                            return {
+                              ...prev,
+                              nextYearFromQuota: {
+                                ...prev?.nextYearFromQuota,
+                                [category.id]: ev.target.value,
+                              },
+                            }
+                          })
                         }}
                       />
                     )}

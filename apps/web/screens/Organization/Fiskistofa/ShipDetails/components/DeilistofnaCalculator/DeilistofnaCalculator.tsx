@@ -13,7 +13,6 @@ import {
   AllowedCatchCategory,
   MutationGetUpdatedShipStatusForCalendarYearArgs,
   QueryGetQuotaTypesForCalendarYearArgs,
-  QueryGetQuotaTypesForTimePeriodArgs,
   QueryGetShipStatusForCalendarYearArgs,
   QuotaType,
   ShipStatusInformation,
