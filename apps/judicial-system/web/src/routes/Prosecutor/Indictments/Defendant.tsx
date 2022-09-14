@@ -36,10 +36,11 @@ import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDef
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers, {
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
   usePoliceCaseNumbers,
-} from '../components/PoliceCaseNumbers/PoliceCaseNumbers'
-import { DefendantInfo } from '../components'
+} from '../components'
 
 const Defendant: React.FC = () => {
   const {
