@@ -58,4 +58,9 @@ export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as Table } from './Table/Table'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { default as UserProvider } from './UserProvider/UserProvider'
-export { default as ViewportProvider } from './ViewportProvider/ViewportProvider'
+export {
+  ViewportProvider,
+  ViewportContext,
+} from './ViewportProvider/ViewportProvider'
+
+export type { Rect } from './ViewportProvider/ViewportProvider'
