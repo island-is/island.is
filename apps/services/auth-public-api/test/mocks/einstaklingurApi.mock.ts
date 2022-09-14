@@ -1,22 +1,22 @@
-import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
+import {
+  NationalRegistryClientService,
+  IndividualDto,
+} from '@island.is/clients/national-registry-v2'
 
 export const createMockEinstaklingurApi = (
-  nationalRegistryUser: Einstaklingsupplysingar = createNationalRegistryUser(),
+  nationalRegistryUser: IndividualDto = createNationalRegistryUser(),
 ) => {
-  class MockEinstaklingarApi {
-    withMiddleware() {
-      return this
-    }
-
-    einstaklingarGetEinstaklingur() {
+  class MockNationalRegistryClientService
+    implements Partial<NationalRegistryClientService> {
+    getIndividual() {
       return Promise.resolve(nationalRegistryUser)
     }
 
-    einstaklingarGetForsja(): string[] {
-      return []
+    getCustodyChildren() {
+      return Promise.resolve([])
     }
   }
 
-  return new MockEinstaklingarApi()
+  return new MockNationalRegistryClientService()
 }

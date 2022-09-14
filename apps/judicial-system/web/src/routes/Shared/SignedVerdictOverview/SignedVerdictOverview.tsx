@@ -42,7 +42,10 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Text,
@@ -492,7 +495,7 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={2}
+      activeSection={Sections.CASE_CLOSED}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -749,7 +752,9 @@ export const SignedVerdictOverview: React.FC = () => {
                     >
                       {formatMessage(m.signButton)}
                     </Button>
-                  ) : null)}
+                  ) : isRestrictionCase(workingCase.type) ? null : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
               </PdfButton>
               {user?.role !== UserRole.STAFF && (
                 <PdfButton

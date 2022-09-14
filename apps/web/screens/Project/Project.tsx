@@ -23,7 +23,6 @@ import {
 import {
   Box,
   BreadCrumbItem,
-  Breadcrumbs,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
@@ -129,9 +128,6 @@ const ProjectPage: Screen<PageProps> = ({
       >
         {!!subpage && (
           <Box marginBottom={1}>
-            <Box marginBottom={3}>
-              <Breadcrumbs items={breadCrumbs} />
-            </Box>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
