@@ -622,7 +622,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+      'Héraðsdómur Reykjavíkur hefur móttekið ákæru sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
 })
