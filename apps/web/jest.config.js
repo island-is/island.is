@@ -1,5 +1,6 @@
 module.exports = {
   preset: '../../jest.preset.js',
+  globals: { fetch, Response, Request },
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
     '^.+\\.[tj]sx?$': [
