@@ -13,6 +13,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  SelectSubpoenaType,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -21,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
-import SelectSubpoenaType from '@island.is/judicial-system-web/src/components/SelectSubpoenaType/SelectSubpoenaType'
 import {
   NotificationType,
   SubpoenaType,

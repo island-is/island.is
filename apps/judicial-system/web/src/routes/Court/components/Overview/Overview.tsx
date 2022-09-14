@@ -8,6 +8,7 @@ import {
   FormContext,
   FormFooter,
   InfoCardActiveIndictment,
+  InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -22,7 +23,6 @@ import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { completedCaseStates } from '@island.is/judicial-system/types'
-import InfoCardClosedIndictment from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardClosedIndictment'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { overview as m } from './Overview.strings'

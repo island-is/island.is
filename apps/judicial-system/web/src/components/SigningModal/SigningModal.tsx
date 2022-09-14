@@ -122,7 +122,7 @@ export const getSuccessText = (
       })
 }
 
-const SigningModal: React.FC<SigningModalProps> = ({
+export const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   requestRulingSignature,
   requestRulingSignatureResponse,
@@ -215,5 +215,3 @@ const SigningModal: React.FC<SigningModalProps> = ({
     />
   )
 }
-
-export default SigningModal

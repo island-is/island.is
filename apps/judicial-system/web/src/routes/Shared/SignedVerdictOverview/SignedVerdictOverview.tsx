@@ -38,6 +38,11 @@ import {
   CaseFilesAccordionItem,
   CaseDates,
   FormContext,
+  MarkdownWrapper,
+  RestrictionTags,
+  SignedDocument,
+  useRequestRulingSignature,
+  SigningModal,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -64,18 +69,12 @@ import {
   formatDate,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
   signedVerdictOverview as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
-import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'

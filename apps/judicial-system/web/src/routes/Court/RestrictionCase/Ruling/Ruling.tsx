@@ -25,6 +25,8 @@ import {
   RulingInput,
   PdfButton,
   FormContext,
+  useRequestRulingSignature,
+  SigningModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -60,9 +62,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import * as constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(

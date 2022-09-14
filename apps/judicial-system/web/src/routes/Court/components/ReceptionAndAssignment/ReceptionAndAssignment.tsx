@@ -9,6 +9,7 @@ import {
   FormContext,
   FormFooter,
   PageLayout,
+  SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
@@ -32,7 +33,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
-import SelectCourtOfficials from '@island.is/judicial-system-web/src/components/SelectCourtOfficials/SelectCourtOfficials'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 

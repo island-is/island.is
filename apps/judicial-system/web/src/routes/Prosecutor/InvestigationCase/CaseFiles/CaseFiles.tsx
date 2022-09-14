@@ -8,6 +8,7 @@ import {
   PageLayout,
   ParentCaseFiles,
   FormContext,
+  MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -31,7 +32,6 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'

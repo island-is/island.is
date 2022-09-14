@@ -9,6 +9,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
@@ -34,7 +35,6 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import {
   UploadState,
   useCourtUpload,
