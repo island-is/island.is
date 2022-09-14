@@ -50,16 +50,10 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:lint",
+      "executor": "@nrwl/linter:eslint",
       "options": {
-        "linter": "eslint",
-        "tsConfig": [
-          "apps/services/regulations-admin-backend/tsconfig.app.json",
-          "apps/services/regulations-admin-backend/tsconfig.spec.json"
-        ],
-        "exclude": [
-          "**/node_modules/**",
-          "!apps/services/regulations-admin-backend/**/*"
+        "lintFilePatterns": [
+          "apps/services/regulations-admin-backend/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
