@@ -5,6 +5,7 @@ import router from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseQuery,
   DropdownMenu,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
@@ -26,7 +27,6 @@ import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'

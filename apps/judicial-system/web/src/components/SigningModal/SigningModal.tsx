@@ -26,7 +26,7 @@ import {
   RequestRulingSignatureMutationMutation,
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
-import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
+import RequestRulingSignatureMutation from './requestRulingSignatureGql'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
   return (

@@ -12,8 +12,8 @@ import {
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, LimitedAccessCaseData } from '../../types'
-import { CaseQuery } from './caseGql'
-import { LimitedAccessCaseQuery } from './limitedAccessCaseGql'
+import LimitedAccessCaseQuery from './limitedAccessCaseGql'
+import CaseQuery from './caseGql'
 
 type ProviderState =
   | 'fetch'
