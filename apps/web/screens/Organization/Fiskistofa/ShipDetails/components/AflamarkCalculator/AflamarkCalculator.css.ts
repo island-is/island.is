@@ -10,6 +10,16 @@ export const tableBox = style({
   minWidth: '100%',
 })
 
+export const crossmark = style({
+  marginLeft: '8px',
+  fontSize: '0.75rem',
+  fontWeight: 'normal',
+})
+
+export const tagContainer = style({
+  minHeight: '50px',
+})
+
 export const tableContainer = style({
   border: '1px solid #CCDFFF',
 

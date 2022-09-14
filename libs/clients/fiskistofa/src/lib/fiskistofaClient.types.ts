@@ -66,6 +66,12 @@ export interface AllowedCatchCategory {
 
   /** afNaestaAriKvoti - Magn sem skip tekur af næsta ári af fisktegund fyrir tímabil út frá kvóta */
   nextYearFromQuota?: number
+
+  /** prosentaANaestaArKvoti - Föst prósenta sem skip þarf að setja á næsta ár af fisktegund fyrir tímabil út frá kvóta */
+  percentNextYearQuota?: number
+
+  /** prosentaAfNaestaArKvoti - Föst prósenta sem skip þarf að setja af næsta ári af fisktegund fyrir tímabil út frá kvóta */
+  percentNextYearFromQuota?: number
 }
 
 export interface AllowedCatchForShip {
