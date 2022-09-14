@@ -19,7 +19,7 @@ export const FiskistofaClientConfig = defineConfig({
     return {
       url: env.required('FISKISTOFA_API_URL'),
       fetch: {
-        timeout: env.optionalJSON('FISKISTOFA_API_TIMEOUT') ?? 10000,
+        timeout: env.optionalJSON('FISKISTOFA_API_TIMEOUT') ?? 20000,
       },
       // TODO: add to AWS env
       accessTokenServiceClientSecret: env.required(
