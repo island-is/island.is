@@ -166,7 +166,9 @@ export const Overview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.join(', '),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               ...(workingCase.courtCaseNumber
                 ? [
@@ -254,14 +256,25 @@ export const Overview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
@@ -420,8 +433,8 @@ export const Overview: React.FC = () => {
               caseType: workingCase.type,
             })}
             text={modalText}
-            handleClose={() => router.push(constants.CASES_ROUTE)}
-            handleSecondaryButtonClick={() => {
+            onClose={() => router.push(constants.CASES_ROUTE)}
+            onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
             errorMessage={

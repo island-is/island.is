@@ -59,6 +59,8 @@
 /libs/air-discount-scheme/                                                                          @island-is/juni
 /libs/application/templates/p-sign/                                                                 @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission                  @island-is/juni
+/libs/application/templates/marriage-conditions/                                                    @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission     @island-is/juni
 /libs/message-queue/                                                                                @island-is/juni
 /libs/application/templates/example-payment/                                                        @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions            @island-is/juni
@@ -151,6 +153,7 @@
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
 /apps/services/contentful-entry-tagger/                                                             @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
+/apps/web/screens/Project/                                                                          @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
 /apps/web/components/ChatPanel/                                                                     @island-is/stefna
 /apps/web/components/Form/                                                                          @island-is/stefna
