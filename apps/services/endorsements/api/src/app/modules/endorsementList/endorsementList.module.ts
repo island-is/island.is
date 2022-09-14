@@ -25,10 +25,10 @@ export interface Config {
     EndorsementListService,
     {
       provide: NationalRegistryApi,
+      // See method doc for disable reason.
+      // eslint-disable-next-line local-rules/no-async-module-init
       useFactory: async () =>
-        await NationalRegistryApi.instantiateClass(
-          environment.nationalRegistry,
-        ),
+        NationalRegistryApi.instantiateClass(environment.nationalRegistry),
     },
   ],
   exports: [EndorsementListService],
