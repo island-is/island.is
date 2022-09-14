@@ -39,7 +39,11 @@ import { theme } from '@island.is/island-ui/theme'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { DefendantInfo, PoliceCaseNumbers } from '../../components'
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
+  usePoliceCaseNumbers,
+} from '../../components'
 
 const Defendant = () => {
   const router = useRouter()
