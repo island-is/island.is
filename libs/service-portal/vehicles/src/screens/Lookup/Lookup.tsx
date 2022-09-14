@@ -268,21 +268,21 @@ export const Lookup: ServicePortalModuleComponent = () => {
                   title: formatMessage(messages.regType),
                   value: regtype,
                 },
-                currentOwner && {
+                {
                   title: formatMessage(messages.owner),
                   value: currentOwnerIsAnonymous
                     ? formatMessage(messages.vehicleNameSecret)
-                    : currentOwner,
+                    : currentOwner ?? '',
                 },
                 firstregdate && {
                   title: formatMessage(messages.firstReg),
                   value: formatDate(firstregdate),
                 },
-                currentOwnerAddress && {
+                {
                   title: formatMessage(messages.address),
                   value: currentOwnerIsAnonymous
                     ? formatMessage(messages.vehicleNameSecret)
-                    : currentOwnerAddress,
+                    : currentOwnerAddress ?? '',
                 },
                 vehicleStatus && {
                   title: formatMessage(messages.vehicleStatus),
