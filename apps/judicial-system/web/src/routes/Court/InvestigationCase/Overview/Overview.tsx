@@ -47,7 +47,7 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import DraftConclusionModal from '../../components/DraftConclusionModal/DraftConclusionModal'
 
 const Overview = () => {
   const {
@@ -173,14 +173,25 @@ const Overview = () => {
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <>
