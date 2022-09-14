@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
@@ -11,10 +12,9 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { GenderValue } from '../entities/dto/user-profile.dto'
-import { UserProfileDTO } from '../entities/dto/user-profile.dto'
-import { AddressDTO } from '../entities/dto/address.dto'
-import { FetchError } from '@island.is/clients/middlewares'
+import type { GenderValue } from './dto/user-profile.dto'
+import { UserProfileDTO } from './dto/user-profile.dto'
+import { AddressDTO } from './dto/address.dto'
 
 interface Address extends NationalRegistryAddress {
   country?: string

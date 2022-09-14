@@ -57,7 +57,6 @@ export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
 export * from './lib/entities/dto/paged-rows.dto'
 export * from './lib/entities/dto/domain.dto'
-export * from './lib/entities/dto/user-profile.dto'
 
 // Services
 export * from './lib/services/clients.service'
@@ -69,7 +68,6 @@ export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
 export * from './lib/services/delegations.service'
 export * from './lib/services/delegationScope.service'
-export * from './lib/services/user-profile.service'
 
 // Types
 export * from './lib/types/delegationDirection'
