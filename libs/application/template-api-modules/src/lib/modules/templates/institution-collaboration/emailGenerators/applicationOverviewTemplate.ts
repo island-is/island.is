@@ -1,7 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { messages } from '@island.is/application/templates/institution-collaboration'
 import { dedent } from 'ts-dedent'
+import { getValueViaPath } from '@island.is/application/core'
+import { messages } from '@island.is/application/templates/institution-collaboration'
 
 export const applicationOverviewTemplate = (
   application: Application,
@@ -51,34 +51,43 @@ export const applicationOverviewTemplate = (
   const projectRole = getValueViaPath(application.answers, 'role')
   const projectOtherRoles = getValueViaPath(application.answers, 'otherRoles')
 
-  const technicalConstraints = getValueViaPath(
+  const mailConstraints = getValueViaPath(
     application.answers,
-    'constraints.technical',
-  ) as boolean
-  const financialConstraints = getValueViaPath(
-    application.answers,
-    'constraints.financial',
-  ) as boolean
-  const timeConstraints = getValueViaPath(
-    application.answers,
-    'constraints.time',
+    'constraints.mail',
   ) as boolean
 
-  const moralConstraints = getValueViaPath(
+  const loginConstraints = getValueViaPath(
     application.answers,
-    'constraints.moral',
+    'constraints.login',
   ) as boolean
-  const otherConstraints = getValueViaPath(
+
+  const straumurConstraints = getValueViaPath(
     application.answers,
-    'constraints.other',
+    'constraints.straumur',
+  ) as boolean
+
+  const websiteConstraints = getValueViaPath(
+    application.answers,
+    'constraints.website',
+  ) as boolean
+
+  const applyConstraints = getValueViaPath(
+    application.answers,
+    'constraints.apply',
+  ) as boolean
+
+  const myPageConstraints = getValueViaPath(
+    application.answers,
+    'constraints.myPages',
   ) as boolean
 
   const hasConstraints = [
-    technicalConstraints,
-    financialConstraints,
-    timeConstraints,
-    moralConstraints,
-    otherConstraints,
+    mailConstraints,
+    loginConstraints,
+    straumurConstraints,
+    websiteConstraints,
+    applyConstraints,
+    myPageConstraints,
   ].some((x) => !!x)
 
   return dedent(`
@@ -166,47 +175,56 @@ export const applicationOverviewTemplate = (
   }
 
   ${
-    technicalConstraints
+    mailConstraints
       ? `<p>
-  <b>${messages.constraints.constraintsTechicalLabel.defaultMessage}</b> </br>
-  ${technicalConstraints}
+  <b>${messages.constraints.constraintsMailLabel.defaultMessage}</b> </br>
+  ${mailConstraints}
   </p>`
       : ''
   }
 
   ${
-    financialConstraints
+    loginConstraints
       ? `<p>
-  <b>${messages.constraints.constraintsFinancialLabel.defaultMessage}</b> </br>
-  ${financialConstraints}
+  <b>${messages.constraints.constraintsLoginLabel.defaultMessage}</b> </br>
+  ${loginConstraints}
   </p>`
       : ''
   }
 
   
   ${
-    moralConstraints
+    straumurConstraints
       ? `<p>
-  <b>${messages.constraints.constraintsMoralLabel.defaultMessage}</b> </br>
-  ${moralConstraints}
+  <b>${messages.constraints.constraintsStraumurLabel.defaultMessage}</b> </br>
+  ${straumurConstraints}
   </p>`
       : ''
   }
 
   ${
-    timeConstraints
+    websiteConstraints
       ? `<p>
-  <b>${messages.constraints.constraintsTimeLabel.defaultMessage}</b> </br>
-  ${timeConstraints}
+  <b>${messages.constraints.constraintsWebsiteLabel.defaultMessage}</b> </br>
+  ${websiteConstraints}
   </p>`
       : ''
   }
 
   ${
-    otherConstraints
+    applyConstraints
       ? `<p>
-  <b>${messages.constraints.constraintsOtherLabel.defaultMessage}</b> </br>
-  ${otherConstraints}
+  <b>${messages.constraints.constraintsApplyingLabel.defaultMessage}</b> </br>
+  ${applyConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    myPageConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsmyPagesLabel.defaultMessage}</b> </br>
+  ${myPageConstraints}
   </p>`
       : ''
   }
