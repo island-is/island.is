@@ -2,8 +2,7 @@ import {
   employerFormMessages,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
-import { coreMessages } from '@island.is/application/core'
-import { FixtureUser } from '../../../lib/types'
+import { coreMessages } from '@island.is/application/core/messages'
 import { getFakeUser } from '../../../support/utils'
 import fakeUsers from '../../../fixtures/applications/users.json'
 import { label } from '../../../lib/i18n-messages'
@@ -31,7 +30,7 @@ describe('Parental leave', () => {
 
   beforeEach(() => {
     cy.idsLogin({
-      phoneNumber: fakeUser.mobile,
+      phoneNumber: fakeUser.phoneNumber,
       baseUrl: Cypress.config('baseUrl'),
       urlPath: '/umsoknir/faedingarorlof',
     })
@@ -165,10 +164,9 @@ describe('Parental leave', () => {
     cy.findByRole('region', {
       name: label(parentalLeaveFormMessages.employer.title),
     })
-      .findByRole('textbox', {
-        name: label(parentalLeaveFormMessages.employer.email),
-      })
-      .type(employerEmail)
+    cy.findByRole('textbox', {
+      name: label(parentalLeaveFormMessages.employer.email),
+    }).type(employerEmail)
     proceed()
 
     cy.findByRole('heading', {

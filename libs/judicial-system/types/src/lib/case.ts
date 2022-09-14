@@ -119,6 +119,11 @@ export enum SessionArrangements {
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
 }
 
+export enum SubpoenaType {
+  ARREST_SUMMONS = 'ARREST_SUMMONS',
+  ABSENCE_SUMMONS = 'ABSENCE_SUMMONS',
+}
+
 export interface Case {
   id: string
   created: string
@@ -201,6 +206,7 @@ export interface Case {
   rulingModifiedHistory?: string
   caseResentExplanation?: string
   seenByDefender?: string
+  subpoenaType?: SubpoenaType
 }
 
 export type CreateCase = Pick<
@@ -275,6 +281,7 @@ export interface UpdateCase
     | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'seenByDefender'
+    | 'subpoenaType'
   > {
   type?: CaseType
   state?: CaseState

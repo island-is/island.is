@@ -10,7 +10,6 @@ import {
   CaseState,
   CaseType,
   Defendant,
-  isInvestigationCase,
   isCourtRole,
 } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
@@ -23,7 +22,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { Table } from '@island.is/judicial-system-web/src/components'
-import { core, requests } from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 
 import {
   displayCaseType,
@@ -32,6 +31,7 @@ import {
 } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
+import { cases as m } from './Cases.strings'
 
 interface Props {
   cases: Case[]
@@ -80,9 +80,7 @@ const DurationDate = ({ date }: { date: string | null }) => {
 
   return (
     <Text fontWeight={'medium'} variant="small">
-      {`${formatMessage(
-        requests.sections.pastRequests.table.headers.duration,
-      )} ${date}`}
+      {`${formatMessage(m.pastRequests.table.headers.duration)} ${date}`}
     </Text>
   )
 }
@@ -98,9 +96,7 @@ const PastCases: React.FC<Props> = (props) => {
   const pastCasesColumns = useMemo(() => {
     const prColumns = [
       {
-        Header: formatMessage(
-          requests.sections.pastRequests.table.headers.caseNumber,
-        ),
+        Header: formatMessage(m.pastRequests.table.headers.caseNumber),
         accessor: 'courtCaseNumber' as keyof Case,
         Cell: (row: {
           row: {
@@ -152,9 +148,7 @@ const PastCases: React.FC<Props> = (props) => {
       },
 
       {
-        Header: formatMessage(
-          requests.sections.pastRequests.table.headers.type,
-        ),
+        Header: formatMessage(m.pastRequests.table.headers.type),
         accessor: 'type' as keyof Case,
         Cell: (row: {
           row: {
@@ -183,9 +177,7 @@ const PastCases: React.FC<Props> = (props) => {
       },
 
       {
-        Header: formatMessage(
-          requests.sections.pastRequests.table.headers.state,
-        ),
+        Header: formatMessage(m.pastRequests.table.headers.state),
         accessor: 'state' as keyof Case,
         disableSortBy: true,
         Cell: (row: {
@@ -201,7 +193,7 @@ const PastCases: React.FC<Props> = (props) => {
             formatMessage,
             row.row.original.state,
             user?.role ? isCourtRole(user.role) : false,
-            isInvestigationCase(row.row.original.type),
+            row.row.original.type,
             row.row.original.isValidToDateInThePast,
           )
 
@@ -213,9 +205,7 @@ const PastCases: React.FC<Props> = (props) => {
         },
       },
       {
-        Header: formatMessage(
-          requests.sections.pastRequests.table.headers.duration,
-        ),
+        Header: formatMessage(m.pastRequests.table.headers.duration),
         accessor: 'rulingDate' as keyof Case,
         disableSortBy: true,
         Cell: (row: {

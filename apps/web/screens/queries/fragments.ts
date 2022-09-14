@@ -37,6 +37,7 @@ export const slices = gql`
       tags
       link
     }
+    hasBorderAbove
   }
 
   fragment MailingListSignupFields on MailingListSignupSlice {
@@ -503,6 +504,13 @@ export const slices = gql`
     successText
     aboutYouHeadingText
     questionsHeadingText
+    recipientFormFieldDecider {
+      title
+      placeholder
+      type
+      required
+      options
+    }
   }
 
   fragment StepperFields on Stepper {
@@ -523,6 +531,7 @@ export const slices = gql`
   }
 
   fragment GraphCardFields on GraphCard {
+    id
     graphTitle
     graphDescription
     organization
@@ -537,6 +546,37 @@ export const slices = gql`
       contentType
       width
       height
+    }
+  }
+
+  fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
+    id
+    title
+    lifeEventPageList {
+      id
+      title
+      shortTitle
+      slug
+      tinyThumbnail {
+        url
+        title
+      }
+    }
+  }
+
+  fragment SidebarCardFields on SidebarCard {
+    title
+    contentString
+    type
+    image {
+      url
+      title
+      width
+      height
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -572,6 +612,8 @@ export const slices = gql`
     ...FormFields
     ...StepperFields
     ...GraphCardFields
+    ...LifeEventPageListSliceFields
+    ...SidebarCardFields
   }
 
   fragment AllSlices on Slice {
