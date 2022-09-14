@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { GridColumn, GridRow, ProfileCard } from '@island.is/island-ui/core'
 import { FormatMessage, useLocale } from '@island.is/localization'

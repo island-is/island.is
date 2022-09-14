@@ -241,8 +241,14 @@ export const m = defineMessages({
     description: '',
   },
   officialExchangeDoneSubtitle: {
-    id: 'es.application:officialExchangeDoneSubtitle',
+    id: 'es.application:officialExchangeDoneSubtitle#markdown',
     defaultMessage: 'Sýslumaður hefur móttekið beiðni þína um opinber skipti.',
+    description: '',
+  },
+  estateWithNoPropertySubtitle: {
+    id: 'es.application:estateWithNoPropertySubtitle#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið yfirlýsingu þína um eignarlaust dánarbú. Hún verður nú yfirfarin og staðfesting á eignarleysi í kjölfar sent í pósthólf þitt á Ísland.is',
     description: '',
   },
 
