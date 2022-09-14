@@ -51,7 +51,7 @@ export const form: Form = buildForm({
             buildCheckboxField({
               id: 'acceptDebts',
               title: '',
-              defaultValue: NO,
+              defaultValue: [],
               backgroundColor: 'white',
               large: false,
               options: [
@@ -108,7 +108,8 @@ export const form: Form = buildForm({
             ...propertiesFields,
             buildKeyValueField({
               label: m.acceptDebtsLabel,
-              value: ({ answers: { acceptDebts } }) => acceptDebts as string,
+              value: ({ answers: { acceptDebts } }) =>
+                (acceptDebts as string[]).includes(YES) ? YES : NO,
             }),
             buildSubmitField({
               id: 'estateWithNoProperty.submit',

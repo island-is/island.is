@@ -23,7 +23,6 @@ export const announcerInfo = buildSection({
           readOnly: true,
           width: 'half',
           defaultValue: ({ externalData }: Application) => {
-            console.log(externalData)
             return externalData.nationalRegistry?.data.fullName
           },
         }),
