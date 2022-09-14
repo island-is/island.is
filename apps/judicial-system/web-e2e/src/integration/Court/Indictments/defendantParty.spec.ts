@@ -22,6 +22,7 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
     // should set the default prosecutor as the user who created the case
     cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
 
+    cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('creatable-select-defenderName')
       .click()
       .find('input')
@@ -31,6 +32,8 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
     cy.getByTestid('defenderNotFound').should('not.exist')
+    cy.getByTestid('continueButton').should('be.enabled')
+
     cy.get('#defendantRefusesHavingDefender').check()
     cy.getByTestid('creatable-select-defenderName').should('not.have.value')
     cy.getByTestid('defenderEmail')
@@ -39,5 +42,9 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
     cy.getByTestid('defenderPhoneNumber')
       .should('have.value', '')
       .should('be.disabled')
+    cy.getByTestid('continueButton').should('be.enabled')
+
+    cy.get('#defendantRefusesHavingDefender').uncheck()
+    cy.getByTestid('continueButton').should('be.disabled')
   })
 })
