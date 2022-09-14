@@ -2,7 +2,6 @@ import {
   buildDescriptionField,
   buildDividerField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -11,6 +10,7 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
+import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 
 export const form: Form = buildForm({
   id: 'officialExchange',
@@ -41,31 +41,7 @@ export const form: Form = buildForm({
               title: '',
               space: 'gutter',
             }),
-            buildKeyValueField({
-              label: m.name,
-              value: 'Jóna Jónsdóttir',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              value: '190841-2409',
-              width: 'half',
-            }),
-            buildDescriptionField({
-              id: 'space1',
-              title: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.deathDate,
-              value: '05.02.2022',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.address,
-              value: 'Bolholt 6, 105 Reykjavík',
-              width: 'half',
-            }),
+            ...deceasedInfoFields,
             buildSubmitField({
               id: 'officialExchange.submit',
               title: '',

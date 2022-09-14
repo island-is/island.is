@@ -4,6 +4,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { EstateAsset, EstateRegistrant } from '@island.is/clients/syslumenn'
 
 export const propertiesFields = [
   buildDescriptionField({
@@ -21,12 +22,13 @@ export const propertiesFields = [
     },
     {
       cards: ({ externalData }: Application) =>
-        ((externalData.syslumennOnEntry.data as any)?.estate.assets ?? []).map(
-          (asset: any) => ({
-            title: asset.description,
-            description: [asset.assetNumber],
-          }),
-        ),
+        (
+          (externalData.syslumennOnEntry.data as { estate: EstateRegistrant })
+            ?.estate.assets ?? []
+        ).map((asset: EstateAsset) => ({
+          title: asset.description,
+          description: [asset.assetNumber],
+        })),
     },
   ),
   buildDescriptionField({
@@ -45,10 +47,11 @@ export const propertiesFields = [
     {
       cards: ({ externalData }: Application) =>
         (
-          (externalData.syslumennOnEntry.data as any)?.estate.vehicles ?? []
-        ).map((asset: any) => ({
-          title: asset.description,
-          description: [asset.assetNumber],
+          (externalData.syslumennOnEntry.data as { estate: EstateRegistrant })
+            ?.estate.vehicles ?? []
+        ).map((vehicle: EstateAsset) => ({
+          title: vehicle.description,
+          description: [vehicle.assetNumber],
         })),
     },
   ),

@@ -3,24 +3,13 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildKeyValueField,
   buildRadioField,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import format from 'date-fns/format'
-import { format as formatKennitala } from 'kennitala'
-
-function isEstateRegistrant(
-  data: string | number | boolean | object | undefined,
-): data is { estate: EstateRegistrant } {
-  return (
-    (data as { estate: EstateRegistrant }).estate.nameOfDeceased !== undefined
-  )
-}
+import { deceasedInfoFields } from './sharedSections/deceasedInfoFields'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -37,50 +26,7 @@ export const Prerequisites: Form = buildForm({
           title: m.prerequisitesTitle,
           description: m.prerequisitesSubtitle,
           children: [
-            buildKeyValueField({
-              label: m.name,
-              value: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) =>
-                isEstateRegistrant(data) ? data.estate.nameOfDeceased : '',
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              value: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) =>
-                isEstateRegistrant(data)
-                  ? formatKennitala(data.estate.nationalIdOfDeceased)
-                  : '',
-              width: 'half',
-            }),
-            buildDescriptionField({
-              id: 'space',
-              space: 'gutter',
-              title: '',
-            }),
-            buildKeyValueField({
-              label: m.address,
-              value: 'La la Land 123', // TODO: address this with API about getting lögheimili
-              width: 'half',
-            }),
-            buildKeyValueField({
-              label: m.deathDate,
-              value: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) =>
-                isEstateRegistrant(data)
-                  ? format(new Date(data.estate.dateOfDeath), 'dd/MM/yyyy')
-                  : m.deathDateNotRegistered,
-              width: 'half',
-            }),
+            ...deceasedInfoFields,
             buildDescriptionField({
               id: 'space1',
               space: 'gutter',

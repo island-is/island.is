@@ -13,9 +13,9 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { NO, YES } from '../../lib/constants'
-import format from 'date-fns/format'
 import { estateMembersFields } from './externalDataFields/estateMembersFields'
 import { propertiesFields } from './externalDataFields/propertiesFields'
+import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -81,58 +81,7 @@ export const form: Form = buildForm({
               titleVariant: 'h3',
               marginBottom: 'gutter',
             }),
-            buildDescriptionField({
-              id: 'deceasedName',
-              title: m.name,
-              titleVariant: 'h4',
-              marginBottom: 'gutter',
-              width: 'half',
-              description: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) => (data as any)?.estate.nameOfDeceased,
-            }),
-            buildDescriptionField({
-              id: 'deceasedNationalId',
-              title: m.nationalId,
-              titleVariant: 'h4',
-              marginBottom: 'gutter',
-              width: 'half',
-              description: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) => (data as any)?.estate.nationalIdOfDeceased,
-            }),
-            buildDescriptionField({
-              id: 'deceasedDeathDate',
-              title: m.deathDate,
-              titleVariant: 'h4',
-              marginBottom: 'gutter',
-              width: 'half',
-              description: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) =>
-                format(
-                  new Date((data as any)?.estate.dateOfDeath),
-                  'dd/MM/yyyy',
-                ),
-            }),
-            buildDescriptionField({
-              id: 'deceasedAddress',
-              title: m.address,
-              titleVariant: 'h4',
-              marginBottom: 'gutter',
-              width: 'half',
-              description: ({
-                externalData: {
-                  syslumennOnEntry: { data },
-                },
-              }) => (data as any)?.estate.address ?? 'La la Land 123', // TODO: address this with API about getting lögheimili',
-            }),
+            ...deceasedInfoFields,
             buildDescriptionField({
               id: 'space1',
               title: '',

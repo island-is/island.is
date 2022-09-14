@@ -22,14 +22,14 @@ export const dataCollection = buildSection({
           subTitle: m.deceasedInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          id: '',
-          type: '',
+          id: 'nationalRegistry',
+          type: 'NationalRegistryProvider',
           title: m.personalInfoProviderTitle,
           subTitle: m.personalInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          id: '',
-          type: '',
+          id: 'userProfile',
+          type: 'UserProfileProvider',
           title: m.settingsInfoProviderTitle,
           subTitle: m.settingsInfoProviderSubtitle,
         }),
