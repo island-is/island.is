@@ -492,6 +492,17 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
+          name: formatMessage(
+            sections.indictmentsCourtSection.hearingArrangements,
+          ),
+          href:
+            isReceptionAndAssignmentStepValid(workingCase) &&
+            isSubpoenaStepValid(workingCase)
+              ? `${constants.INDICTMENTS_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
           name: formatMessage(sections.indictmentsCourtSection.courtRecord),
           href:
             isReceptionAndAssignmentStepValid(workingCase) &&

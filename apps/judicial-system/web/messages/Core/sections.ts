@@ -239,6 +239,13 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
+    hearingArrangements: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.hearing_arrangements',
+      defaultMessage: 'Þingfesting',
+      description:
+        'Notaður sem texti fyrir Þingfesting skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
     courtRecord: {
       id:
         'judicial.system.core:sections.indictments_court_section.court_record',

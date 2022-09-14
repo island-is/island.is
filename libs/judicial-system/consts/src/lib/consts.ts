@@ -228,6 +228,8 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
+export const INDICTMENTS_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/akaera/thingfesting'
 /* COURT ROUTES END */
 
 // Feedback

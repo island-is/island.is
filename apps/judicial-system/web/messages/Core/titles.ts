@@ -1,3 +1,10 @@
+    hearingArrangements: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.hearing_arrangements',
+      defaultMessage: 'Þingfesting',
+      description:
+        'Notaður sem texti fyrir Þingfesting skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const titles = {
@@ -204,6 +211,13 @@ export const titles = {
         defaultMessage: 'Fyrirkall - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
+      },
+      hearingArrangements: {
+        id:
+          'judicial.system.core:titles.court.indictments.hearing_arrangements',
+        defaultMessage: 'Þingfesting - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Þingfesting skjá hjá dómstólum í ákærum',
       },
       courtRecord: {
         id: 'judicial.system.core:titles.court.indictments.court_record',
