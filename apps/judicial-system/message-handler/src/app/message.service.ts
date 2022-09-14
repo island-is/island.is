@@ -31,7 +31,7 @@ export class MessageService {
         logger.debug('Handling message', message)
 
         switch (message.type) {
-          case MessageType.RULING_SIGNED:
+          case MessageType.CASE_COMPLETED:
             return this.handleRulingSignedMessage(message.caseId)
           default:
             logger.error('Unknown message type', message)

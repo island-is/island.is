@@ -866,7 +866,7 @@ export class CaseService {
             // No need to wait for this to complete
             this.uploadSignedRulingPdf(theCase, user, signedPdf).finally(() => {
               this.queueService.add({
-                type: MessageType.RULING_SIGNED,
+                type: MessageType.CASE_COMPLETED,
                 caseId: theCase.id,
               })
             })
