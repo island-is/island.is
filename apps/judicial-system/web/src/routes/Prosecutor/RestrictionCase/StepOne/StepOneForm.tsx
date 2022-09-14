@@ -19,10 +19,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import PoliceCaseNumbers, {
+import {
+  DefendantInfo,
+  PoliceCaseNumbers,
   usePoliceCaseNumbers,
-} from '../../components/PoliceCaseNumbers/PoliceCaseNumbers'
-import DefendantInfo from '../../components/DefendantInfo/DefendantInfo'
+} from '../../components'
 
 interface Props {
   workingCase: Case

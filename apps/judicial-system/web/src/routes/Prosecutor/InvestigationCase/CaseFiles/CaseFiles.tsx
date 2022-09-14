@@ -35,9 +35,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import PoliceCaseFiles, {
-  PoliceCaseFileCheck,
-} from '../../components/PoliceCaseFiles/PoliceCaseFiles'
+import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
 
 export const CaseFiles: React.FC = () => {
   const {

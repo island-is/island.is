@@ -27,11 +27,11 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 
-import * as styles from './PoliceCaseFiles.css'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
-import { PoliceCaseFilesMessageBox } from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import * as styles from './PoliceCaseFiles.css'
 
-export interface PoliceCaseFilesData {
+interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean

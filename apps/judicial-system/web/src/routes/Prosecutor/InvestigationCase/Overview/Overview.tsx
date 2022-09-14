@@ -52,7 +52,7 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import CopyLinkForDefenderButton from '../../components/CopyLinkForDefenderButton/CopyLinkForDefenderButton'
+import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const router = useRouter()

@@ -36,13 +36,15 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import * as constants from '@island.is/judicial-system/consts'
 
-import SelectCourt from '../../components/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
-import RequestCourtDate from '../../components/RequestCourtDate/RequestCourtDate'
-import ProsecutorSectionHeightenedSecurity from '../../components/ProsecutorSection/ProsecutorSectionHeightenedSecurity'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  RequestCourtDate,
+  SelectCourt,
+  ProsecutorSectionHeightenedSecurity,
+} from '../../components'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()

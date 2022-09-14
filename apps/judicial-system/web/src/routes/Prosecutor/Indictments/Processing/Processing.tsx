@@ -28,8 +28,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import ProsecutorSection from '../../components/ProsecutorSection/ProsecutorSection'
-import SelectCourt from '../../components/SelectCourt/SelectCourt'
+import { ProsecutorSection, SelectCourt } from '../../components'
 
 const Processing: React.FC = () => {
   const {
