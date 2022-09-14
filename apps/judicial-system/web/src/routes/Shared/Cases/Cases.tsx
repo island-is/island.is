@@ -112,11 +112,13 @@ export const Cases: React.FC = () => {
       })
 
       const [active, past] = partition(casesWithoutDeleted, (c: Case) => {
-        return isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED
-          ? false
-          : isPrisonAdminUser || isPrisonUser
-          ? !c.isValidToDateInThePast && c.rulingDate
-          : !c.rulingDate
+        if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
+          return false
+        } else if (isPrisonAdminUser || isPrisonUser) {
+          return !c.isValidToDateInThePast && c.rulingDate
+        } else {
+          return !c.rulingDate
+        }
       })
 
       setActiveCases(active)
