@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
@@ -36,6 +37,8 @@ export const caseResult = (
   } else if (isAccepted) {
     if (isInvestigationCase(caseType)) {
       return formatMessage(m.caseResults.investigationAccepted)
+    } else if (isIndictmentCase(caseType)) {
+      return formatMessage(m.caseResults.indictmentClosed)
     } else {
       const isAlternativeTravelBan =
         workingCase.state === CaseState.ACCEPTED &&

@@ -356,14 +356,6 @@ export const sections = {
       defaultMessage: 'Niðurstaða',
       description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
     },
-    // TODO: Remove rejected
-    rejected: {
-      id: 'judicial.system.core:sections.case_results.rejected',
-      defaultMessage:
-        'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
-      description:
-        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
-    },
     rejectedV2: {
       id: 'judicial.system.core:sections.case_results.rejected_v2',
       defaultMessage:
@@ -376,6 +368,12 @@ export const sections = {
       defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er samþykkt',
+    },
+    indictmentClosed: {
+      id: 'judicial.system.core:sections.case_results.indictment_closed',
+      defaultMessage: 'Máli lokið',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar máli er lokið',
     },
   }),
 }
