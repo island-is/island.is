@@ -22,6 +22,8 @@ export class RegulationsAdminModule {
         RegulationsAdminApi,
         {
           provide: RegulationsService,
+          // See method doc for disable reason.
+          // eslint-disable-next-line local-rules/no-async-module-init
           useFactory: async () =>
             new RegulationsService({
               url: config.regulationsApiUrl,

@@ -15,6 +15,8 @@ import { environment } from '../../../environments'
     DraftRegulationCancelService,
     {
       provide: RegulationsService,
+      // See method doc for disable reason.
+      // eslint-disable-next-line local-rules/no-async-module-init
       useFactory: async () =>
         new RegulationsService({ url: environment.regulationsApiUrl }),
     },
