@@ -1,9 +1,7 @@
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'lodash/isEqual'
 import React, { useState } from 'react'
-import { gql } from '@apollo/client'
-
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,

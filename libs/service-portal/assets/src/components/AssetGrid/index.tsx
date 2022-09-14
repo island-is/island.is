@@ -1,10 +1,9 @@
 import React, { FC } from 'react'
-import { gql } from '@apollo/client'
 import {
   unitsOfUseFragment,
   pagingFragment,
 } from '@island.is/service-portal/graphql'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, gql } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { m, TableGrid } from '@island.is/service-portal/core'
 import { Query, UnitsOfUseModel, PropertyLocation } from '@island.is/api/schema'

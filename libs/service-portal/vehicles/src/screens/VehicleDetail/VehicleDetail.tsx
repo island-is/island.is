@@ -1,9 +1,7 @@
 import isNumber from 'lodash/isNumber'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { gql } from '@apollo/client'
-
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import {
   Query,
   VehiclesCurrentOwnerInfo,

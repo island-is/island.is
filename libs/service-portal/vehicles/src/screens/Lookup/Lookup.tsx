@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { gql } from '@apollo/client'
-
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Accordion,

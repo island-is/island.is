@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { gql } from '@apollo/client'
 import {
   unitsOfUseFragment,
   pagingFragment,
@@ -8,7 +7,7 @@ import {
   addressFragment,
 } from '@island.is/service-portal/graphql'
 import { defineMessage } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
