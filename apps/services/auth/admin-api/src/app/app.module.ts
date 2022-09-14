@@ -10,7 +10,6 @@ import {
   DelegationConfig,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { ClaimsModule } from './modules/claims/claims.module'
 import { environment } from '../environments'
 import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
@@ -29,7 +28,6 @@ import { PersonalRepresentativeModule } from './modules/personal-representative/
     ClientsModule,
     ResourcesModule,
     GrantTypesModule,
-    ClaimsModule,
     AccessModule,
     IdpProviderModule,
     TranslationModule,

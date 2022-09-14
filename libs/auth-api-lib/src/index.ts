@@ -1,5 +1,4 @@
 // Models
-export * from './lib/entities/models/claim.model'
 export * from './lib/entities/models/client-allowed-cors-origin.model'
 export * from './lib/entities/models/client-allowed-scope.model'
 export * from './lib/entities/models/client-grant-type.model'
@@ -65,7 +64,6 @@ export * from './lib/services/clients.service'
 export * from './lib/services/grant-types.service'
 export * from './lib/services/grants.service'
 export * from './lib/services/resources.service'
-export * from './lib/services/claims.service'
 export * from './lib/services/access.service'
 export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
@@ -89,6 +87,7 @@ export * from './lib/translation/models/language.model'
 export * from './lib/user-identities/user-identities.module'
 export * from './lib/user-identities/user-identities.service'
 export * from './lib/user-identities/dto/user-identity.dto'
+export * from './lib/user-identities/models/claim.model'
 export * from './lib/user-identities/models/user-identity.model'
 
 // Config

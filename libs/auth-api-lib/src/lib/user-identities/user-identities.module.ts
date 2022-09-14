@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { UserIdentity } from './models/user-identity.model'
-import { Claim } from '../entities/models/claim.model'
+import { Claim } from './models/claim.model'
 import { UserIdentitiesService } from './user-identities.service'
 
 @Module({
