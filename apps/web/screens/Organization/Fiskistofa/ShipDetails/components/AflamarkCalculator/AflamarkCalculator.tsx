@@ -98,7 +98,6 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
       },
     },
     onCompleted(res) {
-      console.log(res)
       const quotaData = res?.getQuotaTypesForTimePeriod
       if (!quotaData) return
       const quotaTypes = quotaData
@@ -282,6 +281,36 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   const reset = () => {
     setChanges({})
     setChangeErrors({})
+    setQuotaState({
+      rateOfShare: initialResponse?.data?.getShipStatusForTimePeriod?.allowedCatchCategories?.reduce(
+        (acc, category) => ({
+          ...acc,
+          [category.id]: category.rateOfShare,
+        }),
+        {},
+      ),
+      allowedCatch: initialResponse?.data?.getShipStatusForTimePeriod?.allowedCatchCategories?.reduce(
+        (acc, category) => ({
+          ...acc,
+          [category.id]: category.allowedCatch,
+        }),
+        {},
+      ),
+      nextYearFromQuota: initialResponse?.data?.getShipStatusForTimePeriod?.allowedCatchCategories?.reduce(
+        (acc, category) => ({
+          ...acc,
+          [category.id]: category.nextYearFromQuota,
+        }),
+        {},
+      ),
+      nextYearQuota: initialResponse?.data?.getShipStatusForTimePeriod?.allowedCatchCategories?.reduce(
+        (acc, category) => ({
+          ...acc,
+          [category.id]: category.nextYearQuota,
+        }),
+        {},
+      ),
+    })
     const initialData = initialResponse?.data?.getShipStatusForTimePeriod
     if (initialData) {
       const initialCategories = initialData?.allowedCatchCategories ?? []
@@ -369,14 +398,14 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
             <Button onClick={reset} variant="ghost" size="small">
-              Frumstilla
+              {n('reset', 'Frumstilla')}
             </Button>
             <Button
               disabled={Object.keys(changes).length === 0}
               onClick={calculate}
               size="small"
             >
-              Reikna
+              {n('calculate', 'Reikna')}
             </Button>
           </Inline>
         </Box>
@@ -644,6 +673,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                       category.rateOfShare
                     ) : (
                       <input
+                        type="text"
                         value={
                           quotaState?.rateOfShare?.[category.id] ??
                           category.rateOfShare
@@ -672,6 +702,46 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                             const newAllowedCatchChange =
                               newAllowedCatch - prevAllowedCatch
 
+                            setQuotaState((prev) => {
+                              const percentNextYearQuota =
+                                (data?.allowedCatchCategories?.find(
+                                  (c) => c?.id === category.id,
+                                )?.percentNextYearQuota ?? 0) / 100
+
+                              const percentNextYearFromQuota =
+                                (data?.allowedCatchCategories?.find(
+                                  (c) => c?.id === category.id,
+                                )?.percentNextYearFromQuota ?? 0) / 100
+
+                              return {
+                                ...prev,
+                                rateOfShare: {
+                                  ...prev?.rateOfShare,
+                                  [category.id]: ev.target.value,
+                                },
+                                nextYearQuota: {
+                                  ...prev?.nextYearQuota,
+                                  [category.id]: String(
+                                    Math.round(
+                                      percentNextYearQuota *
+                                        newAllowedCatch *
+                                        100,
+                                    ) / 100,
+                                  ),
+                                },
+                                nextYearFromQuota: {
+                                  ...prev?.nextYearFromQuota,
+                                  [category.id]: String(
+                                    Math.round(
+                                      percentNextYearFromQuota *
+                                        newAllowedCatch *
+                                        100,
+                                    ) / 100,
+                                  ),
+                                },
+                              }
+                            })
+
                             return {
                               ...prevChanges,
                               [category.id]: {
@@ -683,13 +753,6 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                               },
                             }
                           })
-                          setQuotaState((prev) => ({
-                            ...prev,
-                            rateOfShare: {
-                              ...prev?.rateOfShare,
-                              [category.id]: ev.target.value,
-                            },
-                          }))
                         }}
                       />
                     )}
