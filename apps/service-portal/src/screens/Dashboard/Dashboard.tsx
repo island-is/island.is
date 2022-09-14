@@ -116,6 +116,7 @@ export const Dashboard: FC<{}> = () => {
   const isLegalGuardian = delegationTypes.includes(
     AuthDelegationType.LegalGuardian,
   )
+
   useEffect(() => {
     PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
   }, [location])
