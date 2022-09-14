@@ -1,10 +1,3 @@
-    hearingArrangements: {
-      id:
-        'judicial.system.core:sections.indictments_court_section.hearing_arrangements',
-      defaultMessage: 'Þingfesting',
-      description:
-        'Notaður sem texti fyrir Þingfesting skref í hliðarstiku í ákærum hjá héraðsdómum',
-    },
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const titles = {
