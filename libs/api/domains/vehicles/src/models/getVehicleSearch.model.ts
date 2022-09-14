@@ -27,7 +27,7 @@ export class VehiclesVehicleSearch {
   color?: string
 
   @Field({ nullable: true })
-  firstRegDate?: string
+  firstregdate?: string
 
   @Field({ nullable: true })
   latestregistration?: string
@@ -45,7 +45,7 @@ export class VehiclesVehicleSearch {
   useGroup?: string
 
   @Field({ nullable: true })
-  regType?: string
+  regtype?: string
 
   @Field({ nullable: true })
   mass?: number

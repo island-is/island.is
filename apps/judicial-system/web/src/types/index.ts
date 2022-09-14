@@ -38,6 +38,16 @@ export enum IndictmentsProsecutorSubsections {
   OVERVIEW = 3,
 }
 
+export enum IndictmentsCourtSubsections {
+  JUDGE_OVERVIEW = 0,
+  RECEPTION_AND_ASSIGNMENT = 1,
+  SUBPEONA = 2,
+  HEARING_ARRANGEMENTS = 3,
+  RULING = 4,
+  COURT_RECORD = 5,
+  CONFIRMATION = 6,
+}
+
 export type ReactSelectOption = {
   label: string
   value: string | number

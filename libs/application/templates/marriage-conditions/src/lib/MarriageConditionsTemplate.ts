@@ -131,10 +131,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
-              formLoader: () =>
-                import('../forms/spouseConfirmation').then((val) =>
-                  Promise.resolve(val.spouseConfirmation),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                return import('../forms/spouseConfirmation').then((val) =>
+                  Promise.resolve(
+                    val.spouseConfirmation({
+                      allowFakeData:
+                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                    }),
+                  ),
+                )
+              },
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
