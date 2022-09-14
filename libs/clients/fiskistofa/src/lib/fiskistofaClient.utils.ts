@@ -40,6 +40,8 @@ const mapAllowedCatchCategory = (
   rateOfShare: category?.hlutdeild,
   nextYearQuota: category?.aNaestaArKvoti,
   nextYearFromQuota: category?.afNaestaAriKvoti,
+  percentNextYearQuota: category?.prosentaANaestaArKvoti,
+  percentNextYearFromQuota: category?.prosentaAfNaestaAriKvoti,
 })
 
 export const mapAllowedCatchForShip = (
