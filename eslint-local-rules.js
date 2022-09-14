@@ -77,7 +77,7 @@ module.exports = {
             },
           }
         }, {}),
-        "MethodDefinition[static=true][value.async=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']": (
+        "MethodDefinition[static=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']": (
           node,
         ) => {
           context.report({
