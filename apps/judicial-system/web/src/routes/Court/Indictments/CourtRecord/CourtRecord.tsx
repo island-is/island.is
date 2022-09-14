@@ -119,7 +119,7 @@ const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`} // TODO: Add previous url when it is ready
+          previousUrl={`${constants.INDICTMENTS_DEFENDANT_PARTY_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}

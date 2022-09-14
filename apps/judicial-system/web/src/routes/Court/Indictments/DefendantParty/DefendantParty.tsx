@@ -75,7 +75,7 @@ const HearingArrangements: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(core.continue)}
-          nextUrl={`${constants.CASES_ROUTE}`} // TODO: Add correct URL
+          nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
         />
       </FormContentContainer>
     </PageLayout>
