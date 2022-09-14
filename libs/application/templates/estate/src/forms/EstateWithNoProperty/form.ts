@@ -118,7 +118,7 @@ export const form: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda inn tilkynningu',
+                  name: m.submitApplication,
                   type: 'primary',
                 },
               ],

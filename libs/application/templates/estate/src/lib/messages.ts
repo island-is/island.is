@@ -234,6 +234,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Submit
+  submitApplication: {
+    id: 'es.application:submitApplication',
+    defaultMessage: 'Senda inn tilkynningu',
+    description: '',
+  },
+
   // Done
   doneTitle: {
     id: 'es.application:officialExchangeDoneTitle',
