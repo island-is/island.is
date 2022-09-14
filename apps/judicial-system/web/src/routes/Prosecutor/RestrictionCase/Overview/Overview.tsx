@@ -27,6 +27,7 @@ import {
   CaseFileList,
   ProsecutorCaseInfo,
   AccordionListItem,
+  CaseResubmitModal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -50,7 +51,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 import * as styles from './Overview.css'
 import CopyLinkForDefenderButton from '../../SharedComponents/CopyLinkForDefenderButton/CopyLinkForDefenderButton'

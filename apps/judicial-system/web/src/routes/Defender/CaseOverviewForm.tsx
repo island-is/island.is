@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
+  CaseDates,
   FormContentContainer,
   InfoCard,
   PdfButton,
@@ -34,7 +35,6 @@ import {
   defenderCaseOverview,
 } from '@island.is/judicial-system-web/messages'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
-import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 

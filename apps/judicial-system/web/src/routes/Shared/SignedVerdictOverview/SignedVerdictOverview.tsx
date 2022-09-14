@@ -36,6 +36,7 @@ import {
   RulingAccordionItem,
   CommentsAccordionItem,
   CaseFilesAccordionItem,
+  CaseDates,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -68,7 +69,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
-import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
 import SigningModal, {
   useRequestRulingSignature,
