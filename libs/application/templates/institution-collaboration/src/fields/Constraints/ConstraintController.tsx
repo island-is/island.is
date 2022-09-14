@@ -1,22 +1,24 @@
-import React, { FC, useState } from 'react'
+import { Box, Checkbox, Input, Stack } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Stack, Input, Checkbox } from '@island.is/island-ui/core'
+import React, { FC, useState } from 'react'
 
 interface Props {
   id: string
   checkboxId: string
   label: string
   placeholder?: string
-  defaultValue: boolean
+  defaultValue?: boolean
+  extraText?: boolean
 }
-
 const ConstraintController: FC<Props> = ({
   id,
   checkboxId,
   label,
   placeholder,
   defaultValue,
+  extraText,
 }) => {
+
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
   return (
@@ -42,18 +44,21 @@ const ConstraintController: FC<Props> = ({
           }}
         />
       </Box>
-      {isChecked && (
-        <Input
-          placeholder={placeholder}
-          backgroundColor="blue"
-          type="text"
-          name={id}
-          id={id}
-          label={label}
-          textarea
-          ref={register}
-        />
-      )}
+      {isChecked &&
+        (extraText && (
+          <Input
+            placeholder={placeholder}
+            backgroundColor="blue"
+            type="text"
+            name={id}
+            id={id}
+            label={label}
+            textarea
+            rows={5}
+            maxLength={250}
+            ref={register}
+          />
+        ))}
     </Stack>
   )
 }

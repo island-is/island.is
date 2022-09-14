@@ -187,97 +187,96 @@ export const institutionApplicationMessages = {
       description: 'Section label',
     },
     subSectionLabel: {
-      id: 'ia.application:project.subSection.label',
+      id: 'ia.application:service.subSection.label',
       defaultMessage: 'Upplýsingar um verkefnið',
       description: 'Sub section label',
     },
     sectionTitle: {
-      id: 'ia.application:project.section.title',
-      defaultMessage: 'Verkefnið',
+      id: 'ia.application:service.section.title',
+      defaultMessage: 'Þjónusta',
       description: 'Section title',
     },
 
     sectionDescription: {
-      id: 'ia.application:project.section.description',
-      defaultMessage:
-        'Hér er hægt að fara í forsöguna og almennt lýsa þeirri hugmynd sem liggur að baki verkefninu.',
+      id: 'ia.application:service.section.description',
+      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef`,
       description: 'Section description',
     },
     informationSubtitle: {
-      id: 'ia.application:project.information.subTitle',
+      id: 'ia.application:service.information.subTitle',
       defaultMessage: 'Upplýsingar um verkefnið',
       description: 'Subtitle for project information formfields',
     },
     nameLabel: {
-      id: 'ia.application:project.name.label',
+      id: 'ia.application:service.name.label',
       defaultMessage: 'Heiti verkefnis',
       description: 'Form label for project name formfield',
     },
     backgroundLabel: {
-      id: 'ia.application:project.background.label',
+      id: 'ia.application:service.background.label',
       defaultMessage: 'Bakgrunnur verkefnis',
       description: 'Form label for project background formfield',
     },
     backgroundPlaceholder: {
-      id: 'ia.application:project.background.placeholder',
+      id: 'ia.application:service.background.placeholder',
       defaultMessage: 'Hver er forsaga og umfang verkefnisins í gófum dráttum?',
       description: 'Placeholder for project background formfield',
     },
     goalsLabel: {
-      id: 'ia.application:project.goals.label',
+      id: 'ia.application:service.goals.label',
       defaultMessage: 'Markmið verkefnis, ávinningur og markhópur',
       description: 'Form label for project goals formfield',
     },
     goalsPlaceholder: {
-      id: 'ia.application:project.goals.placeholder',
+      id: 'ia.application:service.goals.placeholder',
       defaultMessage:
         'Hvað á að leysa með verkefninu? Hver er ávinningurinn og fyrir hvern? Hér væri gott að nota tölfræði ef hún liggur fyrir.',
       description: 'Placeholder for project goals formfield',
     },
     scopeLabel: {
-      id: 'ia.application:project.scope.label',
+      id: 'ia.application:service.scope.label',
       defaultMessage: 'Umfang (e. Scope) verkefins',
       description: 'Form label for project scope formfield',
     },
     scopePlaceholder: {
-      id: 'ia.application:project.scope.placeholder',
+      id: 'ia.application:service.scope.placeholder',
       defaultMessage:
         'Hverjar eru grófar útlínur verkefnisins? Hvað telst hluti af því og hvað ekki?',
       description: 'Placeholder for project scope formfield',
     },
     financeLabel: {
-      id: 'ia.application:project.finance.label',
+      id: 'ia.application:service.finance.label',
       defaultMessage: 'Fjármögnun',
       description: 'Form label for project finance formfield',
     },
     financePlaceholder: {
-      id: 'ia.application:project.finance.placeholder',
+      id: 'ia.application:service.finance.placeholder',
       defaultMessage: 'Hvert er framlag stofnunarinnar?',
       description: 'Placeholder for project finance formfield',
     },
     attachmentsSubtitle: {
-      id: 'ia.application:project.attachment.subTitle',
+      id: 'ia.application:service.attachment.subTitle',
       defaultMessage: 'Fylgiskjöl',
       description: 'Subtitle for project attachment formfields',
     },
     attachmentsDescription: {
-      id: 'ia.application:project.attachment.description',
+      id: 'ia.application:service.attachment.description',
       defaultMessage:
         'Ef búið er að útbúa þarfagreiningu fyrir verkefnið eða önnur skjöl sem þú vilt koma á framfæri. ',
       description: 'Description for project attachment formfields',
     },
     attachmentsUploadHeader: {
-      id: 'ia.application:project.attachment.uploadHeader',
+      id: 'ia.application:service.attachment.uploadHeader',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
       description: 'Upload header for project attachment formfields',
     },
     attachmentsUploadDescription: {
-      id: 'ia.application:project.attachment.uploadDescription',
+      id: 'ia.application:service.attachment.uploadDescription',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
       description: 'Upload description for project attachment formfields',
     },
     attachmentsUploadButtonLabel: {
-      id: 'ia.application:project.attachment.uploadButtonLabel',
+      id: 'ia.application:service.attachment.uploadButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Button label for uploading project attachment',
     },
@@ -301,58 +300,94 @@ export const institutionApplicationMessages = {
       description: 'Section description',
     },
 
-    constraintsTechicalLabel: {
-      id: 'ia.application:applicant.constraints.technical.label',
-      defaultMessage: 'Tæknileg umgjörð',
+    constraintsMailLabel: {
+      id: 'ia.application:applicant.constraints.mail.label',
+      defaultMessage: 'Pósthólf',
       description: 'Form label for constraints technical formfield',
     },
-    constraintsTechicalPlaceholder: {
-      id: 'ia.application:applicant.constraints.technical.placeholder',
+    constraintsMailPlaceholder: {
+      id: 'ia.application:applicant.constraints.mail.placeholder',
       defaultMessage: 's.s. upplýsingatæknistefna ríkisins eða stofnunarinnar',
       description: 'Form placeholder for constraints technical formfield',
     },
-    constraintsFinancialLabel: {
-      id: 'ia.application:applicant.constraints.financial.label',
-      defaultMessage: 'Fjárhagslegar takmarkanir',
+    constraintsLoginLabel: {
+      id: 'ia.application:applicant.constraints.login',
+      defaultMessage: 'Innskráningarþjónusta',
       description: 'Form label for constraints financial formfield',
     },
-    constraintsFinancialPlaceholder: {
-      id: 'ia.application:applicant.constraints.financial.placeholder',
+    constraintsLoginPlaceholder: {
+      id: 'ia.application:applicant.constraints.login.placeholder',
       defaultMessage:
         's.s. takmörkun á útlögðum kostnaði, heildarkostnaði verkefnisins eða skorður um val á byrgjum.',
       description: 'Form placeholder for constraints financial formfield',
     },
-    constraintsTimeLabel: {
-      id: 'ia.application:applicant.constraints.time.label',
-      defaultMessage: 'Tímarammi',
-      description: 'Form label for constraints time formfield',
-    },
-    constraintsTimePlaceholder: {
-      id: 'ia.application:applicant.constraints.time.placeholder',
-      defaultMessage:
-        's.s. þörf á því að vinna verkefni innan ákveðins tímabils eða dagsetningar sem þarf að taka tillit til.',
-      description: 'Form placeholder for constraints time formfield',
-    },
-    constraintsMoralLabel: {
-      id: 'ia.application:applicant.constraints.moral.label',
-      defaultMessage: 'Lagalegar- og siðferðilegar skorður',
+    constraintsStraumurLabel: {
+      id: 'ia.application:applicant.constraints.straumur.label',
+      defaultMessage: 'Straumurinn',
       description: 'Form label for constraints moral formfield',
     },
-    constraintsMoralPlaceholder: {
-      id: 'ia.application:applicant.constraints.moral.placeholder',
+    constraintsStraumurPlaceholder: {
+      id: 'ia.application:applicant.constraints.straumur.placeholder',
       defaultMessage:
         's.s lög og reglur sem stofnunin starfar eftir sem taka þarf tillit til eða siðferðileg atriði um meðhöndlun og vinnslu upplýsinga.',
       description: 'Form placeholder for constraints moral formfield',
     },
-    constraintsOtherLabel: {
-      id: 'ia.application:applicant.constraints.other.label',
-      defaultMessage: 'Önnur atriði',
+    constraintsWebsiteLabel: {
+      id: 'ia.application:applicant.constraints.website.label',
+      defaultMessage: 'Vefsíða stofnunar',
+      description: 'Form label for constraints time formfield',
+    },
+    constraintsWebsitePlaceholder: {
+      id: 'ia.application:applicant.constraints.website.placeholder',
+      defaultMessage:
+        's.s. þörf á því að vinna verkefni innan ákveðins tímabils eða dagsetningar sem þarf að taka tillit til.',
+      description: 'Form placeholder for constraints time formfield',
+    },
+    constraintsApplyingLabel: {
+      id: 'ia.application:applicant.constraints.applying.label',
+      defaultMessage: 'Umsóknarkerfi',
       description: 'Form label for constraints other formfield',
     },
-    constraintsOtherPlaceholder: {
-      id: 'ia.application:applicant.constraints.other.placeholder',
+    constraintsApplyingPlaceholder: {
+      id: 'ia.application:applicant.constraints.applying.placeholder',
       defaultMessage:
-        'Eru önnur atriði sem munu hafa áhrif á framkvæmd eða skipulag verkefnisins?',
+        'Stutt lýsing',
+      description: 'Form placeholder for constraints other formfield',
+    },
+
+    constraintsmyPagesLabel: {
+      id: 'ia.application:applicant.constraints.myPages.label',
+      defaultMessage: 'Mínar síður',
+      description: 'Form label for constraints other formfield',
+    },
+    constraintsmyPagesPlaceholder: {
+      id: 'ia.application:applicant.constraints.myPages.placeholder',
+      defaultMessage:
+        'Stutt lýsing',
+      description: 'Form placeholder for constraints other formfield',
+    },
+
+    constraintsCertLabel: {
+      id: 'ia.application:applicant.constraints.cert.label',
+      defaultMessage: 'Skírteini',
+      description: 'Form label for constraints other formfield',
+    },
+    constraintsCertPlaceholder: {
+      id: 'ia.application:applicant.constraints.cert.placeholder',
+      defaultMessage:
+        'Stutt lýsing',
+      description: 'Form placeholder for constraints other formfield',
+    },
+
+    constraintsConsultLabel: {
+      id: 'ia.application:applicant.constraints.consult.label',
+      defaultMessage: 'Ráðgjöf',
+      description: 'Form label for constraints other formfield',
+    },
+    constraintsConsultPlaceholder: {
+      id: 'ia.application:applicant.constraints.consult.placeholder',
+      defaultMessage:
+        'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
   }),
