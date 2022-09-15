@@ -371,7 +371,7 @@ export const isSubpoenaStepValid = (workingCase: Case, courtDate?: string) => {
   )
 }
 
-export const isDefendantPartyStepValid = (workingCase: Case) => {
+export const isprosecutorAndDefenderStepValid = (workingCase: Case) => {
   return (
     workingCase.prosecutor &&
     (workingCase.defendantWaivesRightToCounsel ||

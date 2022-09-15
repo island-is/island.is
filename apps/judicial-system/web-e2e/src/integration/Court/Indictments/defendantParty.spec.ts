@@ -1,9 +1,9 @@
-import { INDICTMENTS_DEFENDANT_PARTY_ROUTE } from '@island.is/judicial-system/consts'
+import { INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import { makeCourt, mockCase, makeProsecutor, intercept } from '../../../utils'
 
-describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
+describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(CaseType.MURDER)
     const caseDataAddition = {
@@ -15,7 +15,7 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.visit(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/test_id`)
+    cy.visit(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/test_id`)
   })
 
   it('should validate the form', () => {

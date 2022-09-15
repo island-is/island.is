@@ -11,7 +11,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { defendantParty as m } from './DefendantParty.strings'
+import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UpdateCaseInput } from '@island.is/judicial-system-web/src/graphql/schema'

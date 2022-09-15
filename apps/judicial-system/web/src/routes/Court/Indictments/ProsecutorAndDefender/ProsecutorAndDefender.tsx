@@ -21,9 +21,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import { Box } from '@island.is/island-ui/core'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { defendantParty as m } from './DefendantParty.strings'
+import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
 import SelectDefender from './SelectDefender'
-import { isDefendantPartyStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { isprosecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 const HearingArrangements: React.FC = () => {
   const {
@@ -55,12 +55,12 @@ const HearingArrangements: React.FC = () => {
     <PageLayout
       workingCase={workingCase}
       activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.DEFENDANT_PARTY}
+      activeSubSection={IndictmentsCourtSubsections.PROSECUTOR_AND_DEFENDER}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       <PageHeader
-        title={formatMessage(titles.court.indictments.defendantParty)}
+        title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
       />
       <FormContentContainer>
         <PageTitle title={formatMessage(m.title)} />
@@ -77,7 +77,7 @@ const HearingArrangements: React.FC = () => {
           nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isDefendantPartyStepValid(workingCase)}
+          nextIsDisabled={!isprosecutorAndDefenderStepValid(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>
