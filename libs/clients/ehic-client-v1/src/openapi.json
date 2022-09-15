@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "European Health Insurance card service (EHIC) - Island.is",
+    "title": "ehic",
     "version": "1.0"
   },
   "servers": [
@@ -28,12 +28,9 @@
             "name": "applicantnationalids",
             "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "type": "string"
             }
           }
         ],
@@ -177,16 +174,44 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Server Error"
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TempPDFCardResponseDTO"
+                }
+              }
+            }
           }
         }
       }
@@ -194,17 +219,9 @@
   },
   "components": {
     "schemas": {
-      "CardStatusResponseDTO": {
+      "CardInfoDTO": {
         "type": "object",
         "properties": {
-          "applicantNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "isInsured": {
-            "type": "boolean",
-            "nullable": true
-          },
           "cardNumber": {
             "type": "string",
             "nullable": true
@@ -231,6 +248,27 @@
           },
           "comment": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CardStatusResponseDTO": {
+        "type": "object",
+        "properties": {
+          "applicantNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isInsured": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardInfoDTO"
+            },
             "nullable": true
           }
         },
@@ -271,6 +309,25 @@
         "enum": [0, 1, 2, 3, 4, 5, 6],
         "type": "integer",
         "format": "int32"
+      },
+      "TempPDFCardResponseDTO": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     }
   }
