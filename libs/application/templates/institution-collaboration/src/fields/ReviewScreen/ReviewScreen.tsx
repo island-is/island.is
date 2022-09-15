@@ -151,30 +151,28 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
 
   //#endregion Services Text
 
-  console.log(servicesTextArr)
-
   function getServiceDescriptionStack(
     title: string,
     serviceName: string,
     description: string,
   ) {
     return (
-      <Stack space={1}>
-        {/* constraints information */}
-        <Text variant="h5">
-          {title} - {serviceName}
-        </Text>
-
-        <Text>{description}</Text>
-
+      <>
+        <Box>
+          {/* constraints information */}
+          <Text variant="h5">
+            {title} - {serviceName}
+          </Text>
+          <Text>{description}</Text>
+        </Box>
         <Divider />
-      </Stack>
+      </>
     )
   }
 
   function getServicesTextOutput(): string {
     let text = ''
-    for (let i = 0; i < servicesTextArr.length; i++) {
+    for (let i = 0; i < servicesTextArr?.length; i++) {
       text += servicesTextArr[i]
       if (i !== servicesTextArr.length - 1) {
         text += ', '
@@ -323,91 +321,88 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </>
           )}
-        </Stack>
+          {servicesTextArr?.length > 0 && (
+            <>
+              <Box>
+                {/* constraints information */}
+                <Text variant="h5">
+                  {formatText(
+                    m.constraints.sectionTitle,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
 
-        {servicesTextArr.length > 0 && (
-          <Stack space={2}>
-            {/* constraints information */}
+                <Text>{getServicesTextOutput()}</Text>
+              </Box>
+              <Divider />
+            </>
+          )}
+          {applyConstraintsText?.length > 0 &&
+            getServiceDescriptionStack(
+              formatText(
+                m.constraints.constraintsApplyingPlaceholder,
+                application,
+                formatMessage,
+              ),
+              formatText(
+                m.constraints.constraintsApplyingLabel,
+                application,
+                formatMessage,
+              ),
+              applyConstraintsText,
+            )}
+          {myPagesConstraintsText?.length > 0 &&
+            getServiceDescriptionStack(
+              formatText(
+                m.constraints.constraintsmyPagesPlaceholder,
+                application,
+                formatMessage,
+              ),
+              formatText(
+                m.constraints.constraintsmyPagesLabel,
+                application,
+                formatMessage,
+              ),
+              myPagesConstraintsText,
+            )}
+          {certConstraintsText?.length > 0 &&
+            getServiceDescriptionStack(
+              formatText(
+                m.constraints.constraintsCertPlaceholder,
+                application,
+                formatMessage,
+              ),
+              formatText(
+                m.constraints.constraintsCertLabel,
+                application,
+                formatMessage,
+              ),
+              certConstraintsText,
+            )}
+          {consultConstraintsText?.length > 0 &&
+            getServiceDescriptionStack(
+              formatText(
+                m.constraints.constraintsConsultPlaceholder,
+                application,
+                formatMessage,
+              ),
+              formatText(
+                m.constraints.constraintsConsultLabel,
+                application,
+                formatMessage,
+              ),
+              consultConstraintsText,
+            )}
+          <Box>
+            {/* terms of service*/}
             <Text variant="h5">
               {formatText(
-                m.constraints.sectionTitle,
+                m.review.termsOfServiceLabel,
                 application,
                 formatMessage,
               )}
             </Text>
-
-            <Text>{getServicesTextOutput()}</Text>
-
-            <Divider />
-          </Stack>
-        )}
-
-        {applyConstraintsText.length > 0 &&
-          getServiceDescriptionStack(
-            formatText(
-              m.constraints.constraintsApplyingPlaceholder,
-              application,
-              formatMessage,
-            ),
-            formatText(
-              m.constraints.constraintsApplyingLabel,
-              application,
-              formatMessage,
-            ),
-            applyConstraintsText,
-          )}
-        {myPagesConstraintsText.length > 0 &&
-          getServiceDescriptionStack(
-            formatText(
-              m.constraints.constraintsmyPagesPlaceholder,
-              application,
-              formatMessage,
-            ),
-            formatText(
-              m.constraints.constraintsmyPagesLabel,
-              application,
-              formatMessage,
-            ),
-            myPagesConstraintsText,
-          )}
-        {certConstraintsText.length > 0 &&
-          getServiceDescriptionStack(
-            formatText(
-              m.constraints.constraintsCertPlaceholder,
-              application,
-              formatMessage,
-            ),
-            formatText(
-              m.constraints.constraintsCertLabel,
-              application,
-              formatMessage,
-            ),
-            certConstraintsText,
-          )}
-        {consultConstraintsText.length > 0 &&
-          getServiceDescriptionStack(
-            formatText(
-              m.constraints.constraintsConsultPlaceholder,
-              application,
-              formatMessage,
-            ),
-            formatText(
-              m.constraints.constraintsConsultLabel,
-              application,
-              formatMessage,
-            ),
-            consultConstraintsText,
-          )}
-        <Stack space={2}>
-          {/* terms of service*/}
-          <Text variant="h5">
-            {formatText(
-              m.review.termsOfServiceLabel,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <Box>
             <Text>
               {formatText(
                 m.review.termsOfServiceText,
