@@ -223,11 +223,11 @@ export class ApplicationController {
       if (
         templateTypeToIsReady[application.typeId] &&
         templates[application.typeId] !== undefined &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
-          nationalId,
+          user,
           templates[application.typeId],
-        ))
+        )
       ) {
         filteredApplications.push(application)
         continue
@@ -249,11 +249,11 @@ export class ApplicationController {
           user,
           applicationTemplate,
         )) &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
-          nationalId,
+          user,
           applicationTemplate,
-        ))
+        )
       ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
