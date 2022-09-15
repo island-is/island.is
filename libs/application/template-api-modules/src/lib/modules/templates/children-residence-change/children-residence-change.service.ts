@@ -11,8 +11,15 @@ import {
   formatDate,
   childrenResidenceInfo,
 } from '@island.is/application/templates/family-matters-core/utils'
-import { Override } from '@island.is/application/templates/family-matters-core/types'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import {
+  Child,
+  ChildrenResidenceChangeNationalRegistry,
+  Override,
+} from '@island.is/application/templates/family-matters-core/types'
+import {
+  CRCApplication,
+  noChildren,
+} from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -25,6 +32,8 @@ import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -42,9 +51,93 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
+    private nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
     this.s3 = new S3()
+  }
+
+  async nationalRegistry({
+    auth,
+  }: props): Promise<ChildrenResidenceChangeNationalRegistry> {
+    const response = await this.nationalRegistryApi.getNationalRegistryPerson(
+      auth.nationalId,
+      auth,
+    )
+
+    if (!response) {
+      throw new TemplateApiError(
+        {
+          title: 'Gögn úr þjóðskrá fundust ekki',
+          summary:
+            'Engin skráning úr þjóðskrá fannst á kennitölunni ' +
+            auth.nationalId,
+        },
+        400,
+      )
+    }
+
+    const childrenResponse = await this.nationalRegistryApi.getChildrenCustodyInformation(
+      auth.nationalId,
+      auth,
+    )
+
+    if (!childrenResponse) {
+      throw new TemplateApiError(
+        {
+          title: noChildren.title,
+          summary: noChildren.description,
+        },
+        400,
+      )
+    }
+
+    const { fullName, nationalId, address } = response
+
+    const children: Child[] = childrenResponse.map((child) => {
+      const {
+        fullName,
+        nationalId,
+        address,
+        otherParent,
+        livesWithApplicant,
+        livesWithBothParents,
+      } = child
+
+      const newOtherParent = {
+        address: {
+          postalCode: otherParent?.address?.postalCode ?? '',
+          city: otherParent?.address?.city ?? '',
+          streetName: otherParent?.address?.city ?? '',
+        },
+        fullName: otherParent?.fullName ?? '',
+        nationalId: otherParent?.nationalId ?? '',
+      }
+
+      return {
+        fullName: fullName,
+        nationalId: nationalId ?? '',
+        address: {
+          postalCode: address?.postalCode ?? '',
+          city: address?.city ?? '',
+          streetName: address?.city ?? '',
+        },
+        livesWithApplicant: livesWithApplicant ?? false,
+        livesWithBothParents: livesWithBothParents ?? false,
+        otherParent: newOtherParent,
+      }
+    })
+
+    return {
+      fullName,
+      nationalId,
+      address: {
+        postalCode: address?.postalCode ?? '',
+        city: address?.city ?? '',
+        streetName: address?.city ?? '',
+      },
+      children,
+    }
   }
 
   async submitApplication({ application }: props) {

@@ -22,7 +22,6 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
-import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 

@@ -8,12 +8,14 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, stateLabels } from './messages'
+import { ChildrenResidentChangeNationalRegistryApi } from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -74,6 +76,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              delete: true,
               read: 'all',
               write: {
                 answers: [
@@ -87,8 +90,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'residenceChangeReason',
                   'approveChildSupportTerms',
                 ],
-                externalData: ['userProfile', 'nationalRegistry'],
+                externalData: ['UserProfile.userProfile', 'nationalRegistry'],
               },
+              api: [ChildrenResidentChangeNationalRegistryApi, UserProfileApi],
             },
           ],
         },

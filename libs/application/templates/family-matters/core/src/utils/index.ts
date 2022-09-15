@@ -5,7 +5,12 @@ import enGB from 'date-fns/locale/en-GB'
 import sortBy from 'lodash/sortBy'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import kennitala from 'kennitala'
-import { Address, Child, NationalRegistry, Person } from '../types'
+import {
+  Address,
+  Child,
+  ChildrenResidenceChangeNationalRegistry,
+  Person,
+} from '../types'
 
 export const formatSsn = (ssn: string) => {
   return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
@@ -35,7 +40,7 @@ const extractParentInfo = ({
   address,
   fullName,
   nationalId,
-}: NationalRegistry | Person): ChildrenResidenceInfo => {
+}: ChildrenResidenceChangeNationalRegistry | Person): ChildrenResidenceInfo => {
   return {
     nationalId,
     address,
@@ -44,7 +49,7 @@ const extractParentInfo = ({
 }
 
 export const childrenResidenceInfo = (
-  applicant: NationalRegistry,
+  applicant: ChildrenResidenceChangeNationalRegistry,
   selectedChildren: string[],
 ): {
   current: ChildrenResidenceInfo

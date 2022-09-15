@@ -1,3 +1,7 @@
+import { defineTemplateApi } from '@island.is/application/types'
+
 export { UserProfileProvider } from '@island.is/application/data-providers'
-export { MockNationalRegistryProvider } from './MockNationalRegistryProvider'
-export { NationalRegistryProvider } from './NationalRegistryProvider'
+
+export const ChildrenResidentChangeNationalRegistryApi = defineTemplateApi({
+  action: 'nationalRegistry',
+})

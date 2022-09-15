@@ -20,14 +20,14 @@ export interface Person {
 
 export interface Child {
   nationalId: string
-  livesWithApplicant: boolean
-  livesWithBothParents: boolean
+  livesWithApplicant?: boolean
+  livesWithBothParents?: boolean
   fullName: string
   otherParent: Person
   custodyParents?: string[]
 }
 
-export interface NationalRegistry extends Person {
+export interface ChildrenResidenceChangeNationalRegistry extends Person {
   children: Child[]
 }
 
@@ -40,7 +40,7 @@ export interface UserInfo {
 
 export interface ExternalData {
   nationalRegistry: {
-    data: NationalRegistry
+    data: ChildrenResidenceChangeNationalRegistry
     date: string
   }
   userProfile: {
