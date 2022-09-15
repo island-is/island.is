@@ -20,10 +20,11 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
   }
 
   const disableSecondaryContact = () => {
+    console.log('setting undefined')
     setValue('hasSecondaryContact', NO)
-    setValue(`${id}.name`, undefined)
-    setValue(`${id}.phoneNumber`, undefined)
-    setValue(`${id}.email`, undefined)
+    setValue(`${id}.name`, '')
+    setValue(`${id}.phoneNumber`, '')
+    setValue(`${id}.email`, '')
   }
 
   return isEnabled ? (

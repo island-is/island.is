@@ -21,18 +21,18 @@ const ConstraintController: FC<Props> = ({
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
   const [textValue, setTextValue] = useState('')
-  const [updated, setUpdated] = useState<string[]>([])
 
-  useEffect(() => {
-    if (!isChecked) {
-      console.log('deleting')
-
-      const box = document.getElementById(id) as HTMLInputElement
-      if (box) {
-        box.value = ''
-      }
+  function shouldClearText(value: boolean) {
+    if (!value) {
+      setValue(id, '')
+      setTextValue('')
+      // // Update straight away
+      // const textArea = document.getElementById(id) as HTMLInputElement | null
+      // if (textArea) {
+      //   textArea.value = ''
+      // }
     }
-  }, [isChecked])
+  }
 
   return (
     <Stack space={2}>
@@ -47,7 +47,7 @@ const ConstraintController: FC<Props> = ({
                   onChange(e.target.checked)
                   setValue(checkboxId as string, e.target.checked)
                   setIsChecked(e.target.checked)
-                  setTextValue('')
+                  shouldClearText(e.target.checked)
                 }}
                 checked={value}
                 name={checkboxId}
