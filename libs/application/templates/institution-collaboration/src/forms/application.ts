@@ -47,6 +47,7 @@ export const application: Form = buildForm({
             buildTextField({
               id: 'contact.institutionemail',
               title: m.applicant.contactInstitutionEmailLabel,
+              variant: 'email',
               backgroundColor: 'blue',
               required: true,
               defaultValue: '',

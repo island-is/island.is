@@ -178,13 +178,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
           <Divider />
-          <Text variant="h4">
-            {formatText(
-              m.applicant.contactSubtitle,
-              application,
-              formatMessage,
-            )}
-          </Text>
           <Box>
             <Text variant="h5">
               {formatText(
