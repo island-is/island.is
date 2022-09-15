@@ -4,14 +4,13 @@ import { useIntl } from 'react-intl'
 import { client } from '../../../graphql/client'
 import { VERIFY_PKPASS_MUTATION } from '../../../graphql/queries/verify-pkpass.mutation'
 
-export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
+export const DriverLicenseScanResult = ({ data, onLoad, isExpired, backgroundColor, title, hasNoData }: any) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>()
   const [name, setName] = useState<string>()
   const [nationalId, setNationalId] = useState<string>()
   const [photo, setPhoto] = useState<string>()
-  const [birthDate, setBirthDate] = useState<string>()
   const intl = useIntl()
 
   useEffect(() => {
@@ -24,7 +23,6 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
         mutation: VERIFY_PKPASS_MUTATION,
         variables: {
           input: {
-            licenseType: 'DriversLicense',
             data,
           },
         },
@@ -38,9 +36,9 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
           setLoading(false)
         } else {
           const { data, valid, error: smartError } = res.data.verifyPkPass
+
           if (!valid && smartError) {
             setError(true)
-
             setErrorMessage(
               intl.formatMessage(
                 { id: 'licenseScanDetail.errorCodeMessage' },
@@ -83,6 +81,7 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
 
   return (
     <ScanResultCard
+      title={title}
       loading={loading}
       isExpired={isExpired}
       error={error}
@@ -91,6 +90,8 @@ export const DriverLicenseScanResult = ({ data, onLoad, isExpired }: any) => {
       nationalId={nationalId}
       licenseNumber={driverLicenseNumber}
       photo={photo}
+      backgroundColor={backgroundColor}
+      hasNoData={hasNoData}
     />
   )
 }

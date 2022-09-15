@@ -113,7 +113,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     }
 
     if (type === Constants.BarCodeType.pdf417) {
-      if (!data.includes('TGLJZW')) {
+      if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
         invalidTimeout.current = setTimeout(() => {
           setInvalid(false)
         }, 2000)
@@ -221,7 +221,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
             : hasPermission === false
             ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
             : invalid
-            ? intl.formatMessage({ id: 'licenseScanner.invalidBarcode' })
+            ? intl.formatMessage({ id: 'licenseScannerDetail.invalidBarcode' })
             : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
         </Bubble>
       </View>

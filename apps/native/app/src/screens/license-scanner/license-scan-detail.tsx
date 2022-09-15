@@ -15,6 +15,7 @@ import { useIntl } from 'react-intl'
 enum ScanResult {
   COVID_CERTIFICATE,
   DRIVER_LICENSE,
+  FIREARM_LICENSE,
   UNKNOWN,
 }
 
@@ -35,8 +36,12 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
     try {
       if (type === Constants.BarCodeType.pdf417) {
         const parsed = JSON.parse(data)
+
         if (parsed?.TGLJZW) {
           setScanResult(ScanResult.DRIVER_LICENSE)
+        }
+        if (parsed?.passTemplateId === 'dfb706c1-3a78-4518-bf25-cebbf0a93132') {
+          setScanResult(ScanResult.FIREARM_LICENSE)
         }
       }
       // else if (type === Constants.BarCodeType.qr) {
@@ -53,6 +58,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
     <View style={{ flex: 1, padding: 16 }}>
       {isExpired === true ? (
         <ScanResultCard
+          title={intl.formatMessage({ id: 'licenseScannerResult.driverLicenseTitle'})}
           loading={false}
           isExpired={isExpired}
           error={true}
@@ -63,7 +69,16 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
       ) : (
         <>
           {scanResult === ScanResult.DRIVER_LICENSE && (
-            <DriverLicenseScanResult data={data} onLoad={setLoaded} />
+            <DriverLicenseScanResult data={data} onLoad={setLoaded} title={intl.formatMessage({ id: 'licenseScannerResult.driverLicenseTitle'})} />
+          )}
+          {scanResult === ScanResult.FIREARM_LICENSE && (
+            <DriverLicenseScanResult
+              data={data}
+              onLoad={setLoaded}
+              backgroundColor="blue"
+              title={intl.formatMessage({ id: 'licenseScannerResult.firarmsLicenseTitle'})}
+              hasNoData={true}
+            />
           )}
           {/* {scanResult === ScanResult.COVID_CERTIFICATE && (
             <CovidCertificateScanResult data={data} onLoad={setLoaded} />

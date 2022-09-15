@@ -2,6 +2,7 @@ import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
 import agencyLogo from '../../assets/card/agency-logo.png'
+import coatOfArms from '../../assets/card/logo-coat-of-arms.png'
 import danger from '../../../../island-ui/src/assets/card/danger.png'
 import success from '../../../../island-ui/src/assets/card/checkmark.png'
 import backgroundPink from '../../../../island-ui/src/assets/card/okuskirteini.png'
@@ -15,10 +16,10 @@ const Host = styled.View`
   overflow: hidden;
 `
 
-const Header = styled.View`
+const Header = styled.View<{ hasNoData?: boolean }>`
   flex-direction: row;
   align-items: center;
-  padding: 24px 24px 14px 24px;
+  padding: ${({hasNoData}) => hasNoData ? '24px' : '24px 24px 14px 24px'};
 `
 
 const Subtitle = styled.View`
@@ -162,18 +163,21 @@ interface ScanResultCardProps {
   valid?: boolean
   isExpired?: boolean
   errorMessage?: string
+  title: string
   nationalId?: string
   name?: string
   licenseNumber?: string
   photo?: string
   data?: Array<{ key: string; value: any }>
   backgroundColor?: 'pink' | 'blue'
+  hasNoData?: boolean;
 }
 
 export function ScanResultCard(props: ScanResultCardProps) {
   const {
     error,
     errorMessage,
+    title,
     valid,
     isExpired,
     loading,
@@ -182,6 +186,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
     photo,
     data,
     backgroundColor = 'pink',
+    hasNoData = false,
   } = props
   const intl = useIntl()
   const background =
@@ -190,10 +195,10 @@ export function ScanResultCard(props: ScanResultCardProps) {
   return (
     <Host>
       <Background source={background} resizeMode="stretch" />
-      <Header>
+      <Header hasNoData={hasNoData}>
         <Detail>
           <Title>
-            {intl.formatMessage({ id: 'licenseScannerResult.title' })}
+            {title}
           </Title>
           <Subtitle>
             <SubtitleIcon>
@@ -219,7 +224,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
             </SubtitleText>
           </Subtitle>
         </Detail>
-        <Logo source={agencyLogo} />
+        <Logo source={hasNoData ? coatOfArms : agencyLogo} resizeMode="contain" />
       </Header>
       {error ? (
         <ErrorContent>
@@ -258,7 +263,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
             </LabelGroup>
           </Left>
         </ErrorContent>
-      ) : (
+      ) : !hasNoData ? (
         <>
           <Splitter />
 
@@ -310,7 +315,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
             </Left>
           </Content>
         </>
-      )}
+      ) : null}
     </Host>
   )
 }
