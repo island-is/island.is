@@ -2,18 +2,18 @@ import {
   RESTRICTION_CASE_MODIFY_RULING_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
-
 import {
-  intercept,
-  makeCourt,
-  makeJudge,
-  makeRestrictionCase,
-} from '../../../utils'
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+
+import { intercept, makeCourt, makeJudge, mockCase } from '../../../utils'
 
 describe('Signed verdict overview - Court - Accepted restriction cases', () => {
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
@@ -74,7 +74,7 @@ describe('Signed verdict overview - Court - Accepted restriction cases', () => {
 
 describe('Signed verdict overview - Court - Not the assigned judge', () => {
   beforeEach(() => {
-    const caseData = makeRestrictionCase()
+    const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),

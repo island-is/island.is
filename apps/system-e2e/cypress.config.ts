@@ -30,6 +30,10 @@ export default defineConfig({
       if (testEnvironment !== 'local') {
         config.env.cognito = getCognitoCredentials()
       }
+      if (!process.env.BASE_URL_PREFIX) {
+        process.env.BASE_URL_PREFIX = ''
+      }
+      config.env.basePrefix = process.env.BASE_URL_PREFIX
       const { baseUrl, authUrl } = getEnvironmentUrls(testEnvironment)
       config.env.testEnvironment = testEnvironment
       config.env.authUrl = authUrl

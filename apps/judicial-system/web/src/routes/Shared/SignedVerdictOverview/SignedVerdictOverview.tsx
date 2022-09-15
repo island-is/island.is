@@ -42,7 +42,10 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Box,
   Text,
@@ -492,7 +495,7 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={2}
+      activeSection={Sections.CASE_CLOSED}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -576,7 +579,9 @@ export const SignedVerdictOverview: React.FC = () => {
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.join(', '),
+                value: workingCase.policeCaseNumbers.map((n) => (
+                  <Text key={n}>{n}</Text>
+                )),
               },
               {
                 title: formatMessage(core.courtCaseNumber),
@@ -616,14 +621,25 @@ export const SignedVerdictOverview: React.FC = () => {
                   ]
                 : []),
             ]}
-            defendants={workingCase.defendants ?? []}
+            defendants={
+              workingCase.defendants
+                ? {
+                    title: capitalize(
+                      formatMessage(core.defendant, {
+                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                      }),
+                    ),
+                    items: workingCase.defendants,
+                  }
+                : undefined
+            }
             defender={{
               name: workingCase.defenderName ?? '',
               defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
-            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -736,7 +752,7 @@ export const SignedVerdictOverview: React.FC = () => {
                     >
                       {formatMessage(m.signButton)}
                     </Button>
-                  ) : (
+                  ) : isRestrictionCase(workingCase.type) ? null : (
                     <Text>{formatMessage(m.unsignedDocument)}</Text>
                   ))}
               </PdfButton>
@@ -889,7 +905,7 @@ export const SignedVerdictOverview: React.FC = () => {
           primaryButtonText={formatMessage(
             m.sections.shareCaseModal.buttonClose,
           )}
-          handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
+          onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}
       <AnimatePresence exitBeforeEnter>
@@ -947,7 +963,7 @@ export const SignedVerdictOverview: React.FC = () => {
               ? formatMessage(m.sections.courtRecordSignatureModal.closeButon)
               : ''
           }
-          handlePrimaryButtonClick={() => {
+          onPrimaryButtonClick={() => {
             setRequestCourtRecordSignatureResponse(undefined)
             setCourtRecordSignatureConfirmationResponse(undefined)
           }}
