@@ -60,7 +60,7 @@ export const m = defineMessages({
   },
   dataCollectionMaritalStatusTitle: {
     id: 'mac.application:dataCollectionMaritalStatusTitle',
-    defaultMessage: 'Hjúskaparvottorð',
+    defaultMessage: 'Hjúskaparstöðuvottorð',
     description: 'Marital Status',
   },
   dataCollectionMaritalStatusDescription: {
@@ -393,6 +393,12 @@ export const m = defineMessages({
   applicationOverview: {
     id: 'mac.application:applicationOverview',
     defaultMessage: 'Yfirlit umsóknar',
+    description: '',
+  },
+  overviewFooterText: {
+    id: 'mac.application:overviewFooterText',
+    defaultMessage:
+      'Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr. 31/1993.',
     description: '',
   },
 
