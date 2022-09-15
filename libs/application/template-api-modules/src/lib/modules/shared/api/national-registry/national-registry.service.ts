@@ -44,6 +44,17 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
+          summary:
+            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        },
+        400,
+      )
+    }
+
     return result
   }
 
@@ -67,6 +78,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           streetAddress: person.legalDomicile.streetAddress,
           postalCode: person.legalDomicile.postalCode,
           locality: person.legalDomicile.locality,
+          city: person.legalDomicile.locality,
           municipalityCode: person.legalDomicile.municipalityNumber,
         },
         genderCode: person.genderCode,

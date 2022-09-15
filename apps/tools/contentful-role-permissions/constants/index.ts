@@ -26,7 +26,7 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'sidebarCard',
   'sliceConnectedComponent',
   'twoColumnText',
-  'mailingListSignup',
+  'emailSignup',
   'bigBulletList',
   'districts',
   'iconBullet',

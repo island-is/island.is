@@ -1,4 +1,4 @@
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 import {
   Box,
@@ -28,13 +28,13 @@ export const Dashboard = () => {
   const { md } = useBreakpoint()
   const topNavigation = useNavigation(TOP_NAVIGATION)
   const bottomNavigation = useNavigation(BOTTOM_NAVIGATION)
-  const navigationItem = useSingleNavigationItem(
+  const { navigationItem } = useSingleNavigationItem(
     TOP_NAVIGATION,
     BOTTOM_NAVIGATION,
   )
 
   if (navigationItem && navigationItem.path) {
-    return <Redirect to={navigationItem.path} />
+    return <Navigate to={navigationItem.path} replace />
   }
 
   const renderNavItem = (item: PortalNavigationItem, index: number) => (

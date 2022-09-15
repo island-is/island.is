@@ -17,7 +17,7 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import { DelegationDTO, MeDelegationsServiceInterface } from '../services/types'
+import { DelegationDTO, MeDelegationsServiceInterface } from './types'
 import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()

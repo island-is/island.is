@@ -2,7 +2,8 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { RadioButton } from '@island.is/island-ui/core'
-import { Case, SubpoenaType } from '@island.is/judicial-system/types'
+import { SubpoenaType } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import BlueBox from '../BlueBox/BlueBox'
 import { selectSubpoenaType as strings } from './SelectSubpoenaType.strings'

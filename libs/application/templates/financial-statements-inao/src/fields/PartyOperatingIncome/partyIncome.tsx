@@ -5,7 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../lib/constants'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
@@ -26,22 +26,42 @@ export const PartyIncome = ({
   getSum,
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors, setValue } = useFormContext()
-
+  const { clearErrors, getValues, setValue } = useFormContext()
   useEffect(() => {
+    const values = getValues()
+
+    const contributionsFromTheTreasury = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.contributionsFromTheTreasury,
+    )
+    const parliamentaryPartySupport = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.parliamentaryPartySupport,
+    )
+    const municipalContributions = getValueViaPath(
+      values,
+      PARTYOPERATIONIDS.municipalContributions,
+    )
+
     if (data?.financialStatementsInaoTaxInfo) {
-      setValue(
-        PARTYOPERATIONIDS.contributionsFromTheTreasury,
-        data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
-      )
-      setValue(
-        PARTYOPERATIONIDS.parliamentaryPartySupport,
-        data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
-      )
-      setValue(
-        PARTYOPERATIONIDS.municipalContributions,
-        data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
-      )
+      if (!contributionsFromTheTreasury) {
+        setValue(
+          PARTYOPERATIONIDS.contributionsFromTheTreasury,
+          data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
+        )
+      }
+      if (!parliamentaryPartySupport) {
+        setValue(
+          PARTYOPERATIONIDS.parliamentaryPartySupport,
+          data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
+        )
+      }
+      if (!municipalContributions) {
+        setValue(
+          PARTYOPERATIONIDS.municipalContributions,
+          data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
+        )
+      }
     }
     getSum()
   }, [data, getSum, setValue])

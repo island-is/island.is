@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { PropertyTable } from './PropertyTable'
-import { PropertyDetail } from '../../../types/schema'
+import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'

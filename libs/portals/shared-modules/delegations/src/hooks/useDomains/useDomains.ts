@@ -7,7 +7,7 @@ import {
   ISLAND_DOMAIN,
 } from '../../constants/domain'
 import { usePortalMeta, useQueryParam } from '@island.is/portals/core'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { isDefined, storageFactory } from '@island.is/shared/utils'
 import { useAuthDomainsQuery } from './useDomains.generated'
 
@@ -19,7 +19,7 @@ export type DomainOption = {
 }
 
 /**
- * This domain hook is used to fetch domains list for cuttent user as well as handle selection of the domain,
+ * This domain hook is used to fetch domains list for current user as well as handle selection of the domain,
  * either in query string or session storage.
  *
  * The priority is the following:
@@ -33,7 +33,7 @@ export type DomainOption = {
 export const useDomains = (includeDefaultOption = true) => {
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { portalType } = usePortalMeta()
   const defaultPortalDomain =
     portalType === 'admin' ? ADMIN_ISLAND_DOMAIN : ISLAND_DOMAIN
@@ -89,7 +89,9 @@ export const useDomains = (includeDefaultOption = true) => {
 
     if (currentDomain && currentDomain !== displayNameQueryParam) {
       query.set('domain', name)
-      history.replace(`${location.pathname}?${query.toString()}`)
+      navigate(`${location.pathname}?${query.toString()}`, {
+        replace: true,
+      })
     }
   }
 

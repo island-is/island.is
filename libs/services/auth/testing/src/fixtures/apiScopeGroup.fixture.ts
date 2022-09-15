@@ -17,13 +17,14 @@ export const createApiScopeGroup = ({
   description,
   order,
   domainName,
-}: CreateApiScopeGroupOptions): CreateApiScopeGroup => {
+}: CreateApiScopeGroupOptions): Required<CreateApiScopeGroup> => {
   return {
     id: id ?? faker.datatype.uuid(),
     name: name ?? faker.random.word(),
-    domainName,
+    domainName: domainName ?? faker.random.word(),
     order: order ?? 0,
     displayName: displayName ?? faker.random.word(),
     description: description ?? faker.lorem.sentence(),
+    apiScopes: [],
   }
 }

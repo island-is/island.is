@@ -187,6 +187,11 @@ export const information = {
         defaultMessage: 'Bæta við meðeiganda',
         description: 'Co-owner add label',
       },
+      error: {
+        id: 'ta.tvo.application:information.labels.coOwner.error',
+        defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
+        description: 'Co-owner error message',
+      },
     }),
     operator: defineMessages({
       title: {

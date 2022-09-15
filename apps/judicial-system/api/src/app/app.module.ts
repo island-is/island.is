@@ -18,9 +18,11 @@ import {
   FeatureModule,
   PoliceModule,
   DefendantModule,
+  IndictmentCountModule,
   fileModuleConfig,
 } from './modules'
 import { ConfigModule } from '@nestjs/config'
+import { CaseListModule } from './modules/caseList/caseList.module'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -48,7 +50,9 @@ const autoSchemaFile = environment.production
     AuthModule,
     UserModule,
     CaseModule,
+    CaseListModule,
     DefendantModule,
+    IndictmentCountModule,
     FileModule,
     InstitutionModule,
     FeatureModule,

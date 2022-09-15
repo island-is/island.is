@@ -4,6 +4,6 @@ import { DisabilityLicenseService } from './disabilityLicenseClient.service'
 
 @Module({
   providers: [DisabilityLicenseApiProvider, DisabilityLicenseService],
-  exports: [DisabilityLicenseApiProvider, DisabilityLicenseService],
+  exports: [DisabilityLicenseService],
 })
 export class DisabilityLicenseClientModule {}

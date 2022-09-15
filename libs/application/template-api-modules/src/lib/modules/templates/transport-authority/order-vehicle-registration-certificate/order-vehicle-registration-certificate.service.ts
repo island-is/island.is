@@ -31,7 +31,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
         application.id,
         SAMGONGUSTOFA_NATIONAL_ID,
         chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.vehicle?.plate }],
+        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
       return result
     } catch (exeption) {
@@ -66,7 +66,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     }
 
     const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
-    const permno = answers?.vehicle?.plate
+    const permno = answers?.pickVehicle?.plate
 
     // Submit the application
     await this.vehiclePrintingClient.requestRegistrationCardPrint(auth, permno)

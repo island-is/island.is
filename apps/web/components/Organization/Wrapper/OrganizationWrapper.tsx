@@ -31,9 +31,10 @@ import {
   Sticky,
   SidebarShipSearchInput,
   Webreader,
+  SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useFeatureFlag } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -44,27 +45,31 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
-import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
-import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
-import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
-import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme'
+import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
-import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
-import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme'
+import { FiskistofaFooter } from './Themes/FiskistofaTheme'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { RikislogmadurHeader } from './Themes/RikislogmadurTheme/RikislogmadurHeader'
-import { RikislogmadurFooter } from './Themes/RikislogmadurTheme/RikislogmadurFooter'
-import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme/LandskjorstjornHeader'
+import { RikislogmadurHeader } from './Themes/RikislogmadurTheme'
+import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
+import { LandskjorstjornHeader } from './Themes/LandkjorstjornTheme'
 import {
   FjarsyslaRikisinsHeader,
   FjarsyslaRikisinsFooter,
 } from './Themes/FjarsyslaRikisinsTheme'
+import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { HeilbrigdisstofnunSudurlandsHeader } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
+import { TryggingastofnunHeader } from './Themes/TryggingastofnunTheme'
+import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -98,9 +103,9 @@ interface HeaderProps {
 export const lightThemes = [
   'digital_iceland',
   'default',
-  'landlaeknir',
   'fiskistofa',
   'landing_page',
+  'tryggingastofnun',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -123,12 +128,15 @@ export const footerEnabled = [
   'landskjorstjorn',
 
   'hsn',
+  'hsu',
 
   'rikislogmadur',
   'office-of-the-attorney-general-civil-affairs',
 
   'fjarsyslan',
   'the-financial-management-authority',
+
+  'sak',
 ]
 
 export const getThemeConfig = (
@@ -141,7 +149,11 @@ export const getThemeConfig = (
     footerVersion = 'organization'
   }
 
-  if (theme === 'sjukratryggingar' || theme === 'rikislogmadur')
+  if (
+    theme === 'sjukratryggingar' ||
+    theme === 'rikislogmadur' ||
+    theme === 'tryggingastofnun'
+  )
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
@@ -180,6 +192,12 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
           organizationPage={organizationPage}
         />
       )
+    case 'hsu':
+      return (
+        <HeilbrigdisstofnunSudurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
     case 'landlaeknir':
       return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
@@ -192,6 +210,10 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return null
     case 'fjarsysla-rikisins':
       return <FjarsyslaRikisinsHeader organizationPage={organizationPage} />
+    case 'tryggingastofnun':
+      return <TryggingastofnunHeader organizationPage={organizationPage} />
+    case 'sak':
+      return <SAkHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -265,7 +287,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     () => JSON.parse(organization?.namespace?.fields ?? '{}'),
     [],
   )
-  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
@@ -277,18 +298,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
-          questionsAndAnswersText={n(
-            'questionsAndAnswers',
-            'Spurningar og svör',
-          )}
-          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
+          namespace={namespace}
         />
       )
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter footerItems={organization.footerItems} />
+        <SjukratryggingarFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'utlendingastofnun':
@@ -313,25 +333,43 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter footerItems={organization.footerItems} />
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'hsn':
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
+          namespace={namespace}
+        />
+      )
+      break
+    case 'hsu':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunSudurlandsFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
         />
       )
       break
     case 'fiskistofa':
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
-        <FiskistofaFooter footerItems={organization.footerItems} />
+        <FiskistofaFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
-        <LandskjorstjornFooter footerItems={organization.footerItems} />
+        <LandskjorstjornFooter
+          footerItems={organization.footerItems}
+          namespace={namespace}
+        />
       )
       break
     case 'rikislogmadur':
@@ -344,14 +382,27 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'sak':
+    case 'sjukrahusid-akureyri':
+    case 'akureyri-hospital':
+      OrganizationFooterComponent = (
+        <SAkFooter
+          title={organization.title}
+          footerItems={organization.footerItems}
+          logo={organization.logo?.url}
+        />
+      )
+      break
     case 'fjarsysla-rikisins':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
           footerItems={organization.footerItems}
           logo={organization.logo?.url}
+          namespace={namespace}
         />
       )
+      break
   }
 
   return OrganizationFooterComponent
@@ -452,6 +503,8 @@ const renderConnectedComponent = (slice) => {
       return (
         <SidebarShipSearchInput key={slice?.id} namespace={slice?.json ?? {}} />
       )
+    case 'OrganizationSearchBox':
+      return <SearchBox key={slice?.id} {...slice?.json} />
     default:
       return null
   }

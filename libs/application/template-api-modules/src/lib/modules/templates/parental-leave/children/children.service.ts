@@ -124,10 +124,13 @@ export class ChildrenService {
     }
 
     if (children.length <= 0 && existingApplications.length <= 0) {
-      throw new TemplateApiError(
-        parentalLeaveFormMessages.shared.childrenError,
-        500,
-      )
+      // Instead of throwing error, ask applicant questions
+      // father without mother application
+
+      return {
+        children: [],
+        existingApplications: [],
+      }
     }
 
     return {
@@ -147,6 +150,19 @@ export class ChildrenService {
     ) as YesOrNo
 
     if (useApplication === NO) {
+      const useNoPrimaryParent = getValueViaPath(
+        application.answers,
+        'mock.noPrimaryParent',
+        NO,
+      ) as YesOrNo
+
+      if (useNoPrimaryParent === YES) {
+        return {
+          children: [],
+          existingApplications: [],
+        }
+      }
+
       const children = getChildrenFromMockData(application)
 
       if (!children.hasRights) {

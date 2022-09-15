@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/minarsidur/",
         "outputPath": "dist/apps/service-portal",
-        "index": "apps/service-portal/src/index.src.html",
+        "index": "apps/service-portal/src/index.html",
         "main": "apps/service-portal/src/Main.tsx",
         "polyfills": "apps/service-portal/src/polyfills.ts",
         "tsConfig": "apps/service-portal/tsconfig.app.json",
@@ -27,6 +27,7 @@
         "production": {
           "optimization": true,
           "outputHashing": "all",
+          "index": "apps/service-portal/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
@@ -41,18 +42,23 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
-    "serve": {
+    "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src",
-          "yarn nx run service-portal:serveReal"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
         ]
       }
     },
-    "serveReal": {
+    "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "service-portal:build"
@@ -61,7 +67,13 @@
         "production": {
           "buildTarget": "service-portal:build:production"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -105,5 +117,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:portals-mypages"]
 }

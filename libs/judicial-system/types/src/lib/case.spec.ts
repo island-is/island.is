@@ -43,11 +43,6 @@ describe('Case Type', () => {
     expect(isRestrictionCase(type)).toBe(false)
     expect(isInvestigationCase(type)).toBe(true)
   })
-
-  it('should not categorize undefined', () => {
-    expect(isRestrictionCase(undefined)).toBe(false)
-    expect(isInvestigationCase(undefined)).toBe(false)
-  })
 })
 
 describe('isAppealed', () => {

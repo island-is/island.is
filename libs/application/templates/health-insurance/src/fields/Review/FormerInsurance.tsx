@@ -12,7 +12,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
-  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
@@ -26,6 +25,7 @@ import {
   requireConfirmationOfResidency,
   extractKeyFromStringObject,
 } from '../../healthInsuranceUtils'
+import { FileUploadController } from '@island.is/application/ui-components'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,
@@ -90,16 +90,34 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           />
           <GridRow>
             <GridColumn span="12/12">
+              {
+                // One country to register the json value.
+                // Other country to display the country name for the user.
+              }
+              <Box display="none">
+                <Input
+                  id="formerInsurance.country"
+                  name="formerInsurance.country"
+                  label={formatText(
+                    m.formerInsuranceCountry,
+                    application,
+                    formatMessage,
+                  )}
+                  ref={register}
+                  disabled={true}
+                  backgroundColor="white"
+                  value={defaultValues.country}
+                />
+              </Box>
               <Input
-                id="formerInsurance.country"
-                name="formerInsurance.country"
+                id="country"
+                name="country"
                 label={formatText(
                   m.formerInsuranceCountry,
                   application,
                   formatMessage,
                 )}
-                ref={register}
-                disabled={!isEditable}
+                disabled={true}
                 backgroundColor="white"
                 value={extractKeyFromStringObject(
                   defaultValues.country,

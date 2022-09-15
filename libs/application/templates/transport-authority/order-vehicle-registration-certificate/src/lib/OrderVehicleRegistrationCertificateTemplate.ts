@@ -11,18 +11,32 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application } from './messages'
+import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { OrderVehicleRegistrationCertificateSchema } from './dataSchema'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
+
+const determineMessageFromApplicationAnswers = (application: Application) => {
+  const plate = getValueViaPath(
+    application.answers,
+    'pickVehicle.plate',
+    undefined,
+  ) as string | undefined
+  return {
+    name: applicationMessage.name,
+    value: plate ? `- ${plate}` : '',
+  }
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -30,12 +44,19 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE,
-  name: application.name,
-  institution: application.institutionName,
+  name: determineMessageFromApplicationAnswers,
+  institution: applicationMessage.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.OrderVehicleRegistrationCertificate.translation,
   ],
   dataSchema: OrderVehicleRegistrationCertificateSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+      featureFlag:
+        Features.transportAuthorityOrderVehicleRegistrationCertificateDelegations,
+    },
+  ],
   featureFlag: Features.transportAuthorityOrderVehicleRegistrationCertificate,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -46,7 +67,7 @@ const template: ApplicationTemplate<
           status: 'draft',
           actionCard: {
             tag: {
-              label: application.actionCardDraft,
+              label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
           },
@@ -73,7 +94,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],
@@ -90,7 +111,7 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             tag: {
-              label: application.actionCardPayment,
+              label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
           },
@@ -128,7 +149,7 @@ const template: ApplicationTemplate<
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
-              label: application.actionCardDone,
+              label: applicationMessage.actionCardDone,
               variant: 'blueberry',
             },
           },

@@ -29,7 +29,7 @@ interface UserDropdownProps {
   onLogout?: () => void
   onSwitchUser: (nationalId: string) => void
   fullscreen: boolean
-
+  showActorButton: boolean
   showDropdownLanguage: boolean
 }
 
@@ -40,6 +40,7 @@ export const UserDropdown = ({
   onSwitchUser,
   onLogout,
   fullscreen,
+  showActorButton,
   showDropdownLanguage,
 }: UserDropdownProps) => {
   const { formatMessage } = useLocale()
@@ -130,7 +131,11 @@ export const UserDropdown = ({
           <Divider />
 
           <Box paddingTop={2}>
-            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+            <UserDelegations
+              user={user}
+              onSwitchUser={onSwitchUser}
+              showActorButton={showActorButton}
+            />
           </Box>
 
           {(!isDelegation || isProcurationHolder) && (

@@ -5,17 +5,22 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 import {
   DEFENDER_ROUTE,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   NotificationType,
   CaseType,
   CaseState,
+  Recipient,
+  IndictmentSubtype,
 } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
-import { Case } from '../../../case/models/case.model'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { User } from '../../../user'
+import { Case } from '../../../case'
+import { Institution } from '../../../institution/institution.model'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
@@ -29,10 +34,11 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notification: SendInternalNotificationDto,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send ready for court notifications', () => {
+describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
+  const userId = uuid()
   const caseId = uuid()
   const policeCaseNumber = uuid()
   const courtId = uuid()
@@ -56,8 +62,9 @@ describe('InternalNotificationController - Send ready for court notifications', 
     defenderEmail: 'saul@dummy.is',
     sendRequestToDefender: true,
   } as Case
-  const notification = { type: NotificationType.READY_FOR_COURT }
+  const notification = { userId, type: NotificationType.READY_FOR_COURT }
   const courtMobileNumber = uuid()
+
   let mockEmailService: EmailService
   let mockSmsService: SmsService
   let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
@@ -84,7 +91,12 @@ describe('InternalNotificationController - Send ready for court notifications', 
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -217,6 +229,152 @@ describe('InternalNotificationController - Send ready for court notifications', 
           attachments: undefined,
         }),
       )
+    })
+  })
+})
+
+describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {
+  const userId = uuid()
+  const notification = { userId, type: NotificationType.READY_FOR_COURT }
+
+  let mockEmailService: EmailService
+  let mockNotificationConfig: ConfigType<typeof notificationModuleConfig>
+  let mockNotificationModel: typeof Notification
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    const {
+      emailService,
+      notificationConfig,
+      notificationModel,
+      internalNotificationController,
+    } = await createTestingNotificationModule()
+
+    mockEmailService = emailService
+    mockNotificationModel = notificationModel
+    mockNotificationConfig = notificationConfig
+
+    givenWhenThen = async (caseId, theCase, notification) => {
+      const then = {} as Then
+
+      await internalNotificationController
+        .sendCaseNotification(
+          caseId,
+          { id: userId } as User,
+          theCase,
+          notification,
+        )
+        .then((result) => (then.result = result))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe('indictment notification with single indictment subtype', () => {
+    const caseId = uuid()
+    const policeCaseNumbers = [uuid()]
+    const court = {
+      name: 'Héraðsdómur Reykjavíkur',
+      notificationEmail: 'domur@domur.is',
+    } as Institution
+    const prosecutor = {
+      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
+    } as User
+
+    const theCase = ({
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      policeCaseNumbers,
+      indictmentSubtypes: {
+        [policeCaseNumbers[0]]: [IndictmentSubtype.MURDER],
+      },
+      court,
+      prosecutor,
+    } as unknown) as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notification)
+    })
+
+    it('should send email to court', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Héraðsdómur Reykjavíkur',
+              address: court.notificationEmail,
+            },
+          ],
+          subject: 'Ákæra tilbúin til afgreiðslu',
+          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
+        }),
+      )
+      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+        caseId,
+        type: NotificationType.READY_FOR_COURT,
+        recipients: [
+          { success: true, address: court.notificationEmail },
+        ] as Recipient[],
+      })
+    })
+  })
+
+  describe('indictment notification with multiple indictment subtype', () => {
+    const caseId = uuid()
+    const policeCaseNumbers = [uuid(), uuid()]
+    const court = {
+      name: 'Héraðsdómur Reykjavíkur',
+      notificationEmail: 'domur@domur.is',
+    } as Institution
+    const prosecutor = {
+      institution: { name: 'Lögreglan á höfuðborgarsvæðinu' },
+    } as User
+
+    const theCase = ({
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      state: CaseState.RECEIVED,
+      policeCaseNumbers,
+      indictmentSubtypes: {
+        [policeCaseNumbers[0]]: [
+          IndictmentSubtype.MURDER,
+          IndictmentSubtype.LOOTING,
+        ],
+        [policeCaseNumbers[1]]: [
+          IndictmentSubtype.MURDER,
+          IndictmentSubtype.THEFT,
+        ],
+      },
+      court,
+      prosecutor,
+    } as unknown) as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notification)
+    })
+
+    it('should send email to court', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Héraðsdómur Reykjavíkur',
+              address: court.notificationEmail,
+            },
+          ],
+          subject: 'Ákæra tilbúin til afgreiðslu',
+          html: `Lögreglan á höfuðborgarsvæðinu hefur sent inn nýja ákæru. Ákæran varðar eftirfarandi brot: manndráp, gripdeild og þjófnaður. Ákæran og öll skjöl málsins eru <a href="${mockNotificationConfig.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${caseId}">aðgengileg í Réttarvörslugátt.</a>`,
+        }),
+      )
+      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+        caseId,
+        type: NotificationType.READY_FOR_COURT,
+        recipients: [
+          { success: true, address: court.notificationEmail },
+        ] as Recipient[],
+      })
     })
   })
 })

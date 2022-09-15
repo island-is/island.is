@@ -11,7 +11,14 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { NO, MANUAL, ParentalRelations, YES, SINGLE } from '../constants'
+import {
+  NO,
+  YES,
+  MANUAL,
+  SINGLE,
+  SPOUSE,
+  ParentalRelations,
+} from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
@@ -24,7 +31,6 @@ import {
   calculatePeriodLengthInMonths,
   applicantIsMale,
   getOtherParentName,
-  removeCountryCode,
   getSpouse,
   isEligibleForParentalLeave,
   getPeriodIndex,
@@ -39,7 +45,10 @@ import {
   getAvailableRightsInDays,
   getAvailablePersonalRightsInMonths,
   getAdditionalSingleParentRightsInDays,
+  allowOtherParentToUsePersonalAllowance,
   getAvailablePersonalRightsSingleParentInMonths,
+  isParentWithoutBirthParent,
+  isNotEligibleForParentWithoutBirthParent,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -102,6 +111,41 @@ describe('getExpectedDateOfBirth', () => {
               },
             ],
             existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirth(application)
+
+    expect(res).toEqual('2021-05-17')
+  })
+
+  it('should return the selected child expected DOB when the child is as noPrimaryChildren', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        noPrimaryChildren: {
+          data: {
+            children: {
+              hasRights: true,
+              remainingDays: 180,
+              parentalRelation: ParentalRelations.secondary,
+              expectedDateOfBirth: '2021-05-17',
+              primaryParentNationalRegistryId: '',
+            },
           },
           date: new Date(),
           status: 'success',
@@ -1100,6 +1144,37 @@ describe('getApplicationExternalData', () => {
   })
 })
 
+describe('ParentWithOutBirthParent', () => {
+  it('should return true if question one and two are answeres YES and thrid question answered NO', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'yes',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isParentWithoutBirthParent(application.answers)).toBe(true)
+  })
+
+  it('should return true if either question one and two are answeres NO and/or thrid question answered YES', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(
+      true,
+    )
+  })
+})
+
 describe('requiresOtherParentApproval', () => {
   it('should return false when conditions not met', () => {
     const application = buildApplication()
@@ -1185,6 +1260,23 @@ describe('getOtherParentId', () => {
     }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+
+  it('should not return other parent id if where is no primary parent birth date', () => {
+    const expectedId = ''
+
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+
+    expect(getOtherParentId(application)).toBe(expectedId)
   })
 })
 
@@ -1385,28 +1477,23 @@ describe('applicantIsMale', () => {
   })
 })
 
-describe('removeCountryCode', () => {
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '+3541234567',
+test.each([
+  { parentRelation: '', expected: false },
+  { parentRelation: SPOUSE, expected: true },
+  { parentRelation: SINGLE, expected: false },
+  { parentRelation: 'some bogus value', expected: false },
+])(
+  'it should return true if the otherParent is SPOUSE otherwise false',
+  ({ parentRelation, expected }) => {
+    const application = buildApplication({
+      answers: {
+        otherParentObj: {
+          chooseOtherParent: parentRelation,
+        },
+      },
+    })
+    expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
+      expected,
     )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it('should return the last 7 digits of the phone number', () => {
-    const application = buildApplication()
-    set(
-      application.externalData,
-      'userProfile.data.mobilePhoneNumber',
-      '003541234567',
-    )
-    expect(removeCountryCode(application)).toEqual('1234567')
-  })
-  it("should return null if phone number wouldn't exist", () => {
-    const application = buildApplication()
-    set(application.externalData, 'userProfile', null)
-    expect(removeCountryCode(application)).toEqual(undefined)
-  })
-})
+  },
+)

@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { useNamespace } from '@island.is/web/hooks'
 
 import * as styles from './Footer.css'
@@ -37,6 +38,8 @@ export const Footer: FC<Props> = ({
   namespace,
 }) => {
   const n = useNamespace(namespace)
+  const onlineChatLink = n('onlineChatLink', '')
+
   return (
     <Hidden print={true}>
       <Box as="footer" position="relative" background="blueberry100">
@@ -67,42 +70,70 @@ export const Footer: FC<Props> = ({
                   </Box>
                 </GridColumn>
               </GridRow>
-              {(contactLink || phone) && (
+              {(contactLink || phone || onlineChatLink) && (
                 <GridRow>
                   <GridColumn
                     span={['12/12', '12/12', '7/12']}
                     paddingBottom={6}
                   >
                     <Stack space={2}>
-                      {contactLink && (
-                        <>
-                          <Text variant="h4">
-                            {n(
-                              'doYouHaveAQuestion',
-                              'Ertu með ábendingu eða spurningu?',
-                            )}
+                      <Text variant="h4">
+                        {n(
+                          'doYouHaveAQuestion',
+                          'Ertu með ábendingu eða spurningu?',
+                        )}
+                      </Text>
+                      {onlineChatLink && (
+                        <LinkContext.Provider
+                          value={{
+                            linkRenderer: (href, children) => (
+                              <Link
+                                href="" // Skip using href since we want the page to load via window.open() so the web chat will load correctly
+                                color="blue600"
+                                underline="normal"
+                                underlineVisibility="always"
+                                onClick={() =>
+                                  window.open(
+                                    href,
+                                    shouldLinkOpenInNewWindow(href)
+                                      ? '_target'
+                                      : '_self',
+                                  )
+                                }
+                              >
+                                {children}
+                              </Link>
+                            ),
+                          }}
+                        >
+                          <Text color={'blue600'}>
+                            <a href={onlineChatLink}>
+                              {n('onlineChat', 'Netspjall')}
+                            </a>
                           </Text>
-                          <LinkContext.Provider
-                            value={{
-                              linkRenderer: (href, children) => (
-                                <Link
-                                  href={href}
-                                  color="blue600"
-                                  underline="normal"
-                                  underlineVisibility="always"
-                                >
-                                  {children}
-                                </Link>
-                              ),
-                            }}
-                          >
-                            <Text color={'blue600'}>
-                              <a href={contactLink}>
-                                {n('sendUsALine', 'Sendu okkur línu')}
-                              </a>
-                            </Text>
-                          </LinkContext.Provider>
-                        </>
+                        </LinkContext.Provider>
+                      )}
+                      {contactLink && (
+                        <LinkContext.Provider
+                          value={{
+                            linkRenderer: (href, children) => (
+                              <Link
+                                href={href}
+                                color="blue600"
+                                underline="normal"
+                                underlineVisibility="always"
+                              >
+                                {children}
+                              </Link>
+                            ),
+                          }}
+                        >
+                          <Text color={'blue600'}>
+                            <a href={contactLink}>
+                              {n('sendUsALine', 'Sendu okkur línu')}
+                            </a>
+                          </Text>
+                        </LinkContext.Provider>
                       )}
                       {phone && (
                         <LinkContext.Provider

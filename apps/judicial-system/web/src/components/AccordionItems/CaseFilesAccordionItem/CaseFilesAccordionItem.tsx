@@ -6,14 +6,16 @@ import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
-  Case,
   CaseState,
   completedCaseStates,
   isCourtRole,
+} from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
+import {
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'
@@ -37,7 +39,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
     const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
 
     const canProsecutorOpen =
-      user.role === UserRole.PROSECUTOR &&
+      user.role === UserRole.Prosecutor &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const canCourtRoleOpen =
@@ -110,7 +112,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         caseId={workingCase.id}
         files={workingCase.caseFiles ?? []}
         canOpenFiles={canCaseFilesBeOpened()}
-        hideIcons={user?.role === UserRole.PROSECUTOR}
+        hideIcons={user?.role === UserRole.Prosecutor}
         handleRetryClick={(id: string) =>
           workingCase.caseFiles &&
           uploadFilesToCourt([

@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/feature-flags"]
     }
   },
-  "tags": []
+  "tags": ["lib:js", "scope:js"]
 }

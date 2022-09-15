@@ -332,18 +332,28 @@ export class CmsElasticsearchService {
   ): Promise<SupportQNA[]> {
     const query = {
       types: ['webQNA'],
-      tags: [
-        { type: 'organization', key: input.organization },
-      ] as elasticTagField[],
+      tags: [] as elasticTagField[],
       sort: [{ popularityScore: { order: SortDirection.DESC } }] as sortRule[],
       size: input.size,
     }
 
-    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.subCategory) {
+      query.tags.push({ type: 'subcategory', key: input.subCategory })
+    }
+
+    const supportqnasResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
-    return articlesResponse.hits.hits.map<SupportQNA>((response) =>
+    return supportqnasResponse.hits.hits.map((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
   }

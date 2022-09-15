@@ -244,7 +244,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsInfoLabel',
       defaultMessage:
-        'Hafðu samband við Persónuvernd ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
+        'Hafðu samband við Persónuvernd símleiðis eða í tölvupósti ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
       description:
         'Notifies the user that he should contact DPA if they want to send in images or videos',
     },

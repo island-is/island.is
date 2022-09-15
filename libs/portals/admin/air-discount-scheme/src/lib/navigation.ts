@@ -9,4 +9,15 @@ export const airDiscountSchemeNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.airDiscountSchemeDescription,
+  children: [
+    {
+      name: m.overview,
+      path: AirDiscountSchemePaths.Root,
+      activeIfExact: true,
+    },
+    {
+      name: m.createDiscount,
+      path: AirDiscountSchemePaths.CreateDiscount,
+    },
+  ],
 }

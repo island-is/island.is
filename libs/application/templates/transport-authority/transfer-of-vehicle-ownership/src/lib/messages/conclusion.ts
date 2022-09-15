@@ -110,18 +110,13 @@ export const conclusion = {
     },
     operator: {
       id: 'ta.tvo.application:conclusion.rejected.operator',
-      defaultMessage: `umboðsmaður kaupanda`,
+      defaultMessage: `umráðamaður kaupanda`,
       description: 'Operator label',
     },
     startNewApplication: {
       id: 'ta.tvo.application:conclusion.rejected.startNewApplication',
       defaultMessage: `Hefja nýja umsókn`,
       description: 'Start new application label',
-    },
-    myPages: {
-      id: 'ta.tvo.application:conclusion.rejected.myPages',
-      defaultMessage: `Mínar síður`,
-      description: 'My pages label',
     },
   }),
 }

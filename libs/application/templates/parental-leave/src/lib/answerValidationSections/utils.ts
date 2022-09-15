@@ -1,7 +1,6 @@
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
 import addMonths from 'date-fns/addMonths'
-import addDays from 'date-fns/addDays'
 import isValid from 'date-fns/isValid'
 import {
   AnswerValidationError,
@@ -23,6 +22,7 @@ import {
   usageMinMonths,
 } from '../../config'
 import { errorMessages } from '../messages'
+import { calculatePeriodLength } from '../directorateOfLabour.utils'
 
 import { Period } from '../../types'
 import { MessageDescriptor } from 'react-intl'
@@ -236,7 +236,7 @@ export const validatePeriod = (
       )
     }
 
-    if (endDateValue < addDays(startDateValue, minPeriodDays - 1)) {
+    if (calculatePeriodLength(startDateValue, endDateValue) < 14) {
       return buildError(
         useLength === YES ? 'endDateDuration' : 'endDate',
         errorMessages.periodsEndDateMinimumPeriod,

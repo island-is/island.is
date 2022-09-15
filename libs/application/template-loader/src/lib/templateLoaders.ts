@@ -23,6 +23,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>
     import('@island.is/application/templates/login-service'),
+  [ApplicationTypes.INHERITANCE_REPORT]: () =>
+    import('@island.is/application/templates/inheritance-report'),
   [ApplicationTypes.INSTITUTION_COLLABORATION]: () =>
     import('@island.is/application/templates/institution-collaboration'),
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
@@ -100,6 +102,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: () =>
     import(
       '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
+    ),
+  [ApplicationTypes.DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR]: () =>
+    import(
+      '@island.is/application/templates/driving-license-book-update-instructor'
     ),
 }
 

@@ -1,5 +1,13 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
+const extraAnnotations = {
+  'nginx.ingress.kubernetes.io/proxy-buffer-size': '16k',
+  'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+  'nginx.ingress.kubernetes.io/proxy-buffers-number': '4',
+  'nginx.ingress.kubernetes.io/server-snippet':
+    'client_header_buffer_size 16k; large_client_header_buffers 4 16k;',
+}
+
 export const serviceSetup = (services: {
   adsApi: ServiceBuilder<'air-discount-scheme-api'>
 }): ServiceBuilder<'air-discount-scheme-web'> => {
@@ -40,14 +48,12 @@ export const serviceSetup = (services: {
         },
         extraAnnotations: {
           dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            ...extraAnnotations,
             'nginx.ingress.kubernetes.io/configuration-snippet':
               'rewrite /$ https://beta.dev01.devland.is/loftbru; rewrite /en$ https://beta.dev01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
           staging: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            ...extraAnnotations,
             'nginx.ingress.kubernetes.io/configuration-snippet':
               'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
@@ -65,4 +71,5 @@ export const serviceSetup = (services: {
     })
     .readiness('/readiness')
     .liveness('/liveness')
+    .grantNamespaces('nginx-ingress-external', 'islandis')
 }

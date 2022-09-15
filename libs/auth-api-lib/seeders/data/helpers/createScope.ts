@@ -41,6 +41,11 @@ interface ScopeOptions {
    * Adds this scope as `allowedScopes` for the specified clients.
    */
   addToClients?: Array<string>
+
+  /**
+   * Configures which claims the scope requires. Defaults to `nationalId`.
+   */
+  claims?: Array<string>
 }
 
 const getScopeFields = (options: ScopeOptions): DbScope => ({
@@ -74,6 +79,18 @@ export const createScope = (options: ScopeOptions) => async (
     'api_scope',
     [scope],
     () => `creating scope ${scope.name}`,
+  )
+
+  const claims = options.claims ?? ['nationalId']
+  await safeBulkInsert(
+    queryInterface,
+    'api_scope_user_claim',
+    claims.map((claim) => ({
+      api_scope_name: scope.name,
+      claim_name: claim,
+    })),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    ({ claim_name }) => `linking scope ${scope.name} to claim ${claim_name}`,
   )
 
   await safeBulkInsert(

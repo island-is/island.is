@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/judicial-system/auth"]
     }
   },
-  "tags": []
+  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]
 }

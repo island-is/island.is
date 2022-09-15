@@ -2,11 +2,10 @@
 const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
-const { createSecureHeaders } = require('next-secure-headers')
-
+const path = process.env.NODE_ENV === 'production' ? '/samradsgatt' : ''
 module.exports = withNx(
   withVanillaExtract({
-    basePath: '/samradsgatt',
+    basePath: path,
     presets: ['next/babel'],
   }),
 )

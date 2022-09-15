@@ -132,10 +132,10 @@ export class DefendantService {
       defendant.nationalId.replace('-', '').length !== 10
     ) {
       // TODO: Uncomment when we are ready to send notifications
-      // await this.messageService.sendMessageToQueue({
+      // await this.messageService.sendMessagesToQueue([{
       //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
       //   caseId: theCase.id,
-      // })
+      // }])
 
       return { delivered: true }
     }
@@ -153,7 +153,7 @@ export class DefendantService {
         return { delivered: true }
       })
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })

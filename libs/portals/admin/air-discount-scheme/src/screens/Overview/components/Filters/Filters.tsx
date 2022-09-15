@@ -15,6 +15,8 @@ import {
   Button,
   Input,
   Select,
+  Columns,
+  Column,
 } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import {
@@ -79,9 +81,9 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
             </Stack>
+            <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Flug</Text>
-              <Divider weight="alternate" />
               <Controller
                 name="airline"
                 defaultValue=""
@@ -127,9 +129,9 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
             </Stack>
+            <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Einstaklingur</Text>
-              <Divider weight="alternate" />
               <Controller
                 name="nationalId"
                 defaultValue=""
@@ -144,9 +146,9 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 )}
               />
             </Stack>
+            <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Notandi</Text>
-              <Divider weight="alternate" />
               <Controller
                 name="postalCode"
                 defaultValue=""
@@ -160,32 +162,38 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                   />
                 )}
               />
-              <Controller
-                name="age.from"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
+              <Columns space={[1, 2, 2, 1]}>
+                <Column>
+                  <Controller
                     name="age.from"
-                    label="Aldur frá"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
+                    defaultValue=""
+                    render={({ onChange, value }) => (
+                      <Input
+                        name="age.from"
+                        label="Aldur frá"
+                        size="xs"
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="age.to"
-                defaultValue=""
-                render={({ onChange, value }) => (
-                  <Input
+                </Column>
+                <Column>
+                  <Controller
                     name="age.to"
-                    label="Aldur til"
-                    size="xs"
-                    value={value}
-                    onChange={onChange}
+                    defaultValue=""
+                    render={({ onChange, value }) => (
+                      <Input
+                        name="age.to"
+                        label="Aldur til"
+                        size="xs"
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
                   />
-                )}
-              />
+                </Column>
+              </Columns>
               <Controller
                 name="gender"
                 defaultValue=""
@@ -209,9 +217,9 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
                 options={[{ value: 'true', label: 'Handvirkur kóði' }]}
               />
             </Stack>
+            <Divider weight="purple200" />
             <Stack space={2}>
               <Text variant="h5">Fjármál</Text>
-              <Divider weight="alternate" />
               <CheckboxController id="state" options={financialStateOptions} />
             </Stack>
             <Box paddingTop={2}>

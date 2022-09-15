@@ -14,16 +14,19 @@ import {
   Text,
   LinkV2,
 } from '@island.is/island-ui/core'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  UserRole,
-  Case,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
-import { Sections } from '@island.is/judicial-system-web/src/types'
+  Sections,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -32,20 +35,6 @@ import Skeleton from '../Skeleton/Skeleton'
 import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
 import { stepValidationsType } from '../../utils/formHelper'
-
-interface PageProps {
-  children: ReactNode
-  workingCase?: Case
-  activeSection?: number
-  isLoading: boolean
-  notFound: boolean
-  isExtension?: boolean
-  showSidepanel?: boolean
-  // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
-  activeSubSection?: number
-  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
-  isValid?: boolean
-}
 
 export interface RouteSection {
   name: string
@@ -120,6 +109,79 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
   )
 }
 
+interface SidePanelProps {
+  user: User | undefined
+  workingCase?: Case
+  activeSection?: number
+  activeSubSection?: number
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
+  isValid?: boolean
+}
+
+const SidePanel: React.FC<SidePanelProps> = ({
+  user,
+  isValid,
+  onNavigationTo,
+  activeSection,
+  workingCase,
+  activeSubSection,
+}) => {
+  const { getSections } = useSections(isValid, onNavigationTo)
+  const { formatMessage } = useIntl()
+  // Remove the extension parts of the formstepper if the user is not applying for an extension
+  const sections =
+    activeSection === Sections.EXTENSION ||
+    activeSection === Sections.JUDGE_EXTENSION
+      ? getSections(workingCase, user)
+      : getSections(workingCase, user).filter((_, index) => index <= 2)
+
+  return (
+    <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
+      <div className={styles.formStepperContainer}>
+        <Box marginLeft={[0, 0, 2]}>
+          <Box marginBottom={7} display={['none', 'none', 'block']}>
+            <Logo defaultInstitution={workingCase?.court?.name} />
+          </Box>
+          <Box marginBottom={6}>
+            <Text variant="h3" as="h3">
+              {formatMessage(
+                workingCase && isIndictmentCase(workingCase.type)
+                  ? formStepperSections.indictmentTitle
+                  : formStepperSections.title,
+                { caseType: workingCase?.type },
+              )}
+            </Text>
+          </Box>
+          <FormStepperV2
+            sections={sections.map((section, index) => (
+              <DisplaySection
+                key={`${section.name}-${index}`}
+                section={section}
+                index={index}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+            ))}
+          />
+        </Box>
+      </div>
+    </GridColumn>
+  )
+}
+interface PageProps {
+  children: ReactNode
+  workingCase?: Case
+  activeSection?: number
+  isLoading: boolean
+  notFound: boolean
+  isExtension?: boolean
+  showSidepanel?: boolean
+  // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
+  activeSubSection?: number
+  onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
+  isValid?: boolean
+}
+
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
   children,
@@ -132,14 +194,9 @@ const PageLayout: React.FC<PageProps> = ({
   isValid,
 }) => {
   const { user } = useContext(UserContext)
-  const { getSections } = useSections(isValid, onNavigationTo)
+
   const { formatMessage } = useIntl()
   // Remove the extension parts of the formstepper if the user is not applying for an extension
-  const sections =
-    activeSection === Sections.EXTENSION ||
-    activeSection === Sections.JUDGE_EXTENSION
-      ? getSections(workingCase, user)
-      : getSections(workingCase, user).filter((_, index) => index <= 2)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -150,26 +207,26 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertTitle)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.ADMIN
+        user?.role === UserRole.Admin
           ? formatMessage(pageLayout.adminRole.alertMessage)
-          : user?.role === UserRole.DEFENDER
+          : user?.role === UserRole.Defender
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        user?.role === UserRole.Defender
           ? undefined
           : {
               href:
-                user?.role === UserRole.ADMIN
+                user?.role === UserRole.Admin
                   ? constants.USERS_ROUTE
                   : constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
@@ -196,36 +253,14 @@ const PageLayout: React.FC<PageProps> = ({
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
-              <div className={styles.formStepperContainer}>
-                <Box marginLeft={[0, 0, 2]}>
-                  <Box marginBottom={7} display={['none', 'none', 'block']}>
-                    <Logo defaultInstitution={workingCase?.court?.name} />
-                  </Box>
-                  <Box marginBottom={6}>
-                    <Text variant="h3" as="h3">
-                      {formatMessage(
-                        isIndictmentCase(workingCase?.type)
-                          ? formStepperSections.indictmentTitle
-                          : formStepperSections.title,
-                        { caseType: workingCase?.type },
-                      )}
-                    </Text>
-                  </Box>
-                  <FormStepperV2
-                    sections={sections.map((section, index) => (
-                      <DisplaySection
-                        key={`${section.name}-${index}`}
-                        section={section}
-                        index={index}
-                        activeSection={activeSection}
-                        activeSubSection={activeSubSection}
-                      />
-                    ))}
-                  />
-                </Box>
-              </div>
-            </GridColumn>
+            <SidePanel
+              user={user}
+              isValid={isValid}
+              onNavigationTo={onNavigationTo}
+              activeSection={activeSection}
+              workingCase={workingCase}
+              activeSubSection={activeSubSection}
+            />
           )}
         </GridRow>
       </GridContainer>

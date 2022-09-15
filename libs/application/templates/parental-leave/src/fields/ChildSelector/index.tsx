@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import get from 'lodash/get'
 import format from 'date-fns/format'
 
@@ -24,7 +24,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { selectedChild } = useApplicationAnswers(application)
 
   const { children, existingApplications } = get(
@@ -56,7 +56,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
   })
 
   const selectExistingApplication = (id: string) => {
-    history.push(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
+    navigate(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
   }
 
   const formatDateOfBirth = (value: string) =>

@@ -54,6 +54,18 @@ export const m = defineMessages({
     defaultMessage:
       'Hér birtast upplýsingar um skoptvopnaleyfið þitt ásamt skotvopnum skráð í þinni eigu.',
   },
+  disabilityLicense: {
+    id: 'sp.license:disability-license',
+    defaultMessage: 'Örorkuskírteini',
+  },
+  yourDisabilityicense: {
+    id: 'sp.license:your-disability-license',
+    defaultMessage: 'Örorkuskírteinið þitt',
+  },
+  disabilityLicenseDescription: {
+    id: 'sp.license:disability-license-description',
+    defaultMessage: 'Hér birtast upplýsingar um örorkuskírteinið þitt.',
+  },
   machineLicense: {
     id: 'sp.license:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',

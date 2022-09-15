@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
 import { CourtService } from '../../../court'
+import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -16,6 +17,9 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver court record to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
@@ -36,7 +40,7 @@ describe('InternalCaseController - Deliver court record to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCourtRecordToCourt(caseId, theCase)
+        .deliverCourtRecordToCourt(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -70,6 +74,7 @@ describe('InternalCaseController - Deliver court record to court', () => {
 
     it('should create a court record at court', async () => {
       expect(mockCourtService.createCourtRecord).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,

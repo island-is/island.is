@@ -1,15 +1,29 @@
-import { style } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const container = style({
+const baseContainer = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'spaceBetween',
   width: '290px',
   height: theme.headerHeight.large,
   marginLeft: theme.spacing[5],
-  boxShadow: `inset 1px 0 0 0 ${theme.color.blue200}, inset -1px 0 0 0 ${theme.color.blue200}`,
+})
+
+export const container = styleVariants({
+  normal: [
+    baseContainer,
+    {
+      boxShadow: `inset 1px 0 0 0 ${theme.color.blue200}, inset -1px 0 0 0 ${theme.color.blue200}`,
+    },
+  ],
+  skipRightBorder: [
+    baseContainer,
+    {
+      boxShadow: `inset 1px 0 0 0 ${theme.color.blue200}`,
+    },
+  ],
 })
 
 export const menuButton = style({

@@ -20,7 +20,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
     options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
-  const permno = answers?.vehicle?.plate
+  const permno = answers?.pickVehicle?.plate
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
   if (!permno) throw new Error('Permno was undefined')

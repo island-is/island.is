@@ -10,9 +10,6 @@ const getAirlinesAvailableForCSVDownload = (filters: FlightLegsFilters) =>
     (airline) => !filters.airline?.value || filters.airline?.value === airline,
   )
 
-export const isCSVAvailable = (filters: FlightLegsFilters) =>
-  getAirlinesAvailableForCSVDownload(filters).length > 0
-
 export const downloadCSV = (
   flightLegs: FlightLeg[],
   filters: FlightLegsFilters,

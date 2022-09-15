@@ -2,7 +2,6 @@ import format from 'date-fns/format'
 import React, { useEffect, useState } from 'react'
 
 import { useMutation } from '@apollo/client'
-import { ExportAsCSV } from '@island.is/application/ui-components'
 import {
   Box,
   Button,
@@ -19,6 +18,7 @@ import { IntroHeader } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { PAGE_SIZE, pages, paginate } from '../pagination'
 import { SendEmailPdf } from '../queries'
+import { ExportAsCSV } from '@island.is/shared/components'
 
 const formatDate = (date: string) => {
   try {

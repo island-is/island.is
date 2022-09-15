@@ -51,12 +51,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import { courtRecord as m } from './CourtRecord.strings'
 
 const CourtRecord: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
+  )
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
@@ -95,7 +92,7 @@ const CourtRecord: React.FC = () => {
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       const transitionSuccessful = await transitionCase(
-        workingCase,
+        workingCase.id,
         CaseTransition.ACCEPT,
       )
 
@@ -140,18 +137,15 @@ const CourtRecord: React.FC = () => {
       try {
         if (file.id) {
           await remove(file.id)
-          setWorkingCase((prev) => ({
-            ...prev,
-            caseFiles: prev.caseFiles?.filter(
-              (caseFile) => caseFile.id !== file.id,
-            ),
-          }))
+          setDisplayFiles((prev) => {
+            return prev.filter((caseFile) => caseFile.id !== file.id)
+          })
         }
       } catch {
         toast.error(formatMessage(errors.general))
       }
     },
-    [formatMessage, remove, setWorkingCase],
+    [formatMessage, remove],
   )
 
   const handleRetry = useCallback(

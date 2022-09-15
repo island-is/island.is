@@ -28,11 +28,13 @@ export enum ParentalRelations {
 
 export enum ApiModuleActions {
   assignOtherParent = 'assignOtherParent',
+  assignEmployers = 'assignEmployers',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
   validateApplication = 'validateApplication',
   notifyApplicantOfRejectionFromEmployer = 'notifyApplicantOfRejectionFromEmployer',
+  setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
 }
 
 export enum StartDateOptions {
@@ -63,7 +65,9 @@ export enum States {
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
-  ADDITIONAL_DOCUMENT_REQUIRED = 'additionalDocumentRequired',
+  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
+  INREVIEW_ADDITIONAL_DOCUMENTS_REQUIRED = 'inReviewAdditionalDocumentsRequired',
+
   APPROVED = 'approved',
   CLOSED = 'closed',
 
@@ -95,6 +99,7 @@ export enum AnswerValidationConstants {
   // the repeater sends all the periods saved in 'periods'
   // to this validator, which will validate the latest one
   VALIDATE_LATEST_PERIOD = 'periods',
+  EMPLOYERS = 'employers',
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'

@@ -1,18 +1,29 @@
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import React, { FC, useEffect, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
+  FishingLicenseListOptions,
   FishingLicenseShip as Ship,
 } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
-import { fishingLicense, shipSelection } from '../../lib/messages'
+import { fishingLicense } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { FishingLicenseEnum } from '../../types'
+import {
+  AREAS_FIELD_ID,
+  AREA_FIELD_ID,
+  ATTACHMENTS_FIELD_ID,
+  ATTACHMENT_INFO_FIELD_ID,
+  DATE_CONSTRAINTS_FIELD_ID,
+  RAILNET_FIELD_ID,
+  ROENET_FIELD_ID,
+} from '../../utils/fields'
 
 export const FishingLicense: FC<FieldBaseProps> = ({
   application,
@@ -20,9 +31,13 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
-  const [chargeType, setChargeType] = useState<string>('')
-
+  const { register, getValues, setValue } = useFormContext()
+  const selectedChargeType = getValueViaPath(
+    application.answers,
+    'fishingLicense.license',
+    '',
+  ) as string
+  const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -44,8 +59,37 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   })
 
   const ship = ships[parseInt(shipIndex)]
-  const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
-  const hasDeprivations = ship.deprivations.length > 0
+
+  // Updates areas for answer object for current license
+  const handleAreaChange = (areas: FishingLicenseListOptions[]) => {
+    setValue(AREAS_FIELD_ID, areas)
+  }
+
+  // Updates areas for answer object for current license
+  const handleDateConstraintChange = (
+    dateFrom?: string | null,
+    dateTo?: string | null,
+  ) => {
+    setValue(DATE_CONSTRAINTS_FIELD_ID, { dateFrom, dateTo })
+  }
+
+  // Updates attachment info for answer object for current license
+  const handleAttatchmentInfoChange = (info: string) => {
+    setValue(ATTACHMENT_INFO_FIELD_ID, info)
+  }
+
+  // setup extra fields, i.e. areas and attachment info for application
+  // based on selected application for current license
+  const initializeExtraFields = (licenseCode: string) => {
+    const selectedLicense = data?.fishingLicenses?.find(
+      ({ fishingLicenseInfo }: FishingLicenseSchema) =>
+        fishingLicenseInfo.code === licenseCode,
+    ) as FishingLicenseSchema
+    if (selectedLicense) {
+      handleAreaChange(selectedLicense.areas || [])
+      handleAttatchmentInfoChange(selectedLicense.attachmentInfo || '')
+    }
+  }
 
   const handleOnSelect = (value: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
@@ -53,9 +97,45 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         fishingLicenseInfo.code === value,
     ) as FishingLicenseSchema
 
-    if (selectedLicense)
+    if (selectedLicense) {
       setChargeType(selectedLicense.fishingLicenseInfo.chargeType)
+      handleAreaChange(selectedLicense.areas || [])
+      handleAttatchmentInfoChange(selectedLicense.attachmentInfo || '')
+      handleDateConstraintChange(
+        selectedLicense.dateRestriction?.dateFrom || null,
+        selectedLicense.dateRestriction?.dateTo || null,
+      )
+    }
   }
+
+  // If charge type is set to unknown initially the front-end signals error
+  // And nullifies the selected charge type so user cannot continue
+  useEffect(() => {
+    if (selectedChargeType === FishingLicenseEnum.UNKNOWN) {
+      setValue(`${field.id}.license`, null)
+    }
+    initializeExtraFields(selectedChargeType)
+  }, [])
+
+  // Reinitialize license type when user changes charge type
+  // If any values are not undefined in this step where they should be
+  // User cannot proceed, so this fixes the problem of user getting stuck
+  // after navigating here from the next step after inputting values there
+  useEffect(() => {
+    if (getValues(AREA_FIELD_ID) !== undefined) {
+      setValue(AREA_FIELD_ID, undefined)
+    }
+    if (getValues(RAILNET_FIELD_ID) !== undefined) {
+      setValue(RAILNET_FIELD_ID, undefined)
+    }
+    if (getValues(ROENET_FIELD_ID) !== undefined) {
+      setValue(ROENET_FIELD_ID, undefined)
+    }
+    if (getValues(ATTACHMENTS_FIELD_ID) !== undefined) {
+      setValue(ATTACHMENTS_FIELD_ID, undefined)
+    }
+  }, [chargeType])
+
   return (
     <>
       <Box marginBottom={3}>
@@ -98,13 +178,16 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   return {
                     value: fishingLicenseInfo.code,
                     label:
-                      fishingLicenseInfo.code === 'catchMark'
-                        ? formatMessage(fishingLicense.labels.catchMark)
-                        : formatMessage(fishingLicense.labels.hookCatchLimit),
+                      formatMessage(
+                        fishingLicense.labels[fishingLicenseInfo.code],
+                      ) || '',
                     tooltip:
-                      fishingLicenseInfo.code === 'catchMark'
-                        ? formatMessage(fishingLicense.tooltips.catchMark)
-                        : formatMessage(fishingLicense.tooltips.hookCatchLimit),
+                      fishingLicenseInfo.code !== 'hookCatchLimit' &&
+                      fishingLicenseInfo.code !== 'catchMark'
+                        ? ''
+                        : formatMessage(
+                            fishingLicense.tooltips[fishingLicenseInfo.code],
+                          ),
                   }
                 })}
             />
@@ -120,29 +203,21 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   fishingLicenseInfo.code === 'unknown'
                 )
                   return null
+                const warningTitle = formatMessage(
+                  fishingLicense.warningMessageTitle.licenseForbidden,
+                )
+                const warningText = formatMessage(
+                  fishingLicense.warningMessageDescription.licenseForbidden,
+                )
+                const licenseName =
+                  formatMessage(
+                    fishingLicense.labels[fishingLicenseInfo.code],
+                  ) || ''
                 return (
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
-                      title={
-                        fishingLicenseInfo.code === 'catchMark'
-                          ? formatMessage(
-                              fishingLicense.warningMessageTitle.catchMark,
-                            )
-                          : formatMessage(
-                              fishingLicense.warningMessageTitle.hookCatchLimit,
-                            )
-                      }
-                      description={
-                        fishingLicenseInfo.code === 'catchMark'
-                          ? formatMessage(
-                              fishingLicense.warningMessageDescription
-                                .catchMark,
-                            )
-                          : formatMessage(
-                              fishingLicense.warningMessageDescription
-                                .hookCatchLimit,
-                            )
-                      }
+                      title={`${warningTitle} ${licenseName}`}
+                      description={`${warningText} ${licenseName}`}
                       reasons={reasons}
                     />
                   </Box>
