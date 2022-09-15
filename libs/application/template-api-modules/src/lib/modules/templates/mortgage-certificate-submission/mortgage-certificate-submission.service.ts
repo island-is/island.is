@@ -223,4 +223,8 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       hasSentRequest: true,
     }
   }
+
+  async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
+    return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
+  }
 }

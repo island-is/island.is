@@ -75,13 +75,4 @@ export class AssetsXRoadResolver {
       input.limit,
     )
   }
-
-  @Query(() => PropertyOverviewWithDetail, { nullable: true })
-  @Audit()
-  async assetsOverviewWithDetail(
-    @Args('input') input: GetMultiPropertyInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.assetsXRoadService.getRealEstatesWithDetail(user, input.cursor)
-  }
 }
