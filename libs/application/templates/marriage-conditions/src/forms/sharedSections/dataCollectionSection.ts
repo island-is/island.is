@@ -40,6 +40,12 @@ export const dataCollectionSection = buildSection({
           title: m.dataCollectionMaritalStatusTitle,
           subTitle: m.dataCollectionMaritalStatusDescription,
         }),
+        buildDataProviderItem({
+          id: 'districtCommissioners',
+          type: 'DistrictsProvider',
+          title: '',
+          subTitle: '',
+        }),
       ],
     }),
   ],

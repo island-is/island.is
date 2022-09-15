@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildMultiField,
   buildCustomField,
   buildTextField,
@@ -260,6 +258,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
                     width: 'half',
+                    defaultValue: (application: Application) =>
+                      console.log(application),
                   }),
                   buildDescriptionField({
                     id: 'space',
