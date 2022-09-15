@@ -289,7 +289,7 @@ export const institutionApplicationMessages = {
     },
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
-      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
+      defaultMessage: 'Þjónustur sem sóst er eftir',
       description: 'Section title',
     },
 
@@ -350,8 +350,7 @@ export const institutionApplicationMessages = {
     },
     constraintsApplyingPlaceholder: {
       id: 'ia.application:applicant.constraints.applying.placeholder',
-      defaultMessage:
-        'Stutt lýsing',
+      defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
 
@@ -362,8 +361,7 @@ export const institutionApplicationMessages = {
     },
     constraintsmyPagesPlaceholder: {
       id: 'ia.application:applicant.constraints.myPages.placeholder',
-      defaultMessage:
-        'Stutt lýsing',
+      defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
 
@@ -374,8 +372,7 @@ export const institutionApplicationMessages = {
     },
     constraintsCertPlaceholder: {
       id: 'ia.application:applicant.constraints.cert.placeholder',
-      defaultMessage:
-        'Stutt lýsing',
+      defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
 
@@ -386,8 +383,7 @@ export const institutionApplicationMessages = {
     },
     constraintsConsultPlaceholder: {
       id: 'ia.application:applicant.constraints.consult.placeholder',
-      defaultMessage:
-        'Stutt lýsing',
+      defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
   }),
