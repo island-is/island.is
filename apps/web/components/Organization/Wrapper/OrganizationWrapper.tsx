@@ -52,6 +52,7 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import * as styles from './OrganizationWrapper.css'
 
@@ -275,7 +276,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
       break
     case 'landskjorstjorn':
       OrganizationFooterComponent = (
-        <LandskjorStjornFooter footerItems={organization.footerItems} />
+        <LandskjorstjornFooter footerItems={organization.footerItems} />
       )
       break
   }
