@@ -6,12 +6,12 @@ import {
   PkPassServiceErrorResponse,
   ListPassesDTO,
   VerifyPassResponse,
+  ListPassesResponse,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
   Pass,
   PassDataInput,
-  PassPageInfo,
   PassStatus,
   PassTemplatePageInfo,
 } from '../../gen/schema'
@@ -125,11 +125,11 @@ export class SmartSolutionsApi {
       //return null
     }
 
-    const response = json as PassPageInfo
+    const response = json as ListPassesResponse
 
-    if (response?.data) {
+    if (response?.data?.passes?.data) {
       const passesDTO: ListPassesDTO = {
-        passes: response.data,
+        data: response.data.passes.data,
       }
       return passesDTO
     }
@@ -143,14 +143,13 @@ export class SmartSolutionsApi {
     const verifyPkPassMutation = `
       mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
         updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
-          id
-          validFrom
-          expirationDate
-          expirationTime
           status
-          whenCreated
-          whenModified
-          alreadyPaid
+          inputFieldValues {
+            passInputField {
+              identifier
+            }
+            value
+          }
         }
       }
     `
@@ -172,7 +171,7 @@ export class SmartSolutionsApi {
     try {
       res = await this.fetchUrl(JSON.stringify(body))
     } catch (e) {
-      this.logger.warn('Unable to verify pass', {
+      this.logger.warn('Unable to verify pk pass', {
         exception: e,
         category: LOG_CATEGORY,
       })
@@ -191,7 +190,6 @@ export class SmartSolutionsApi {
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
         responseErrors.data = json?.data ?? undefined
       } catch {
         // noop
@@ -203,7 +201,12 @@ export class SmartSolutionsApi {
         category: LOG_CATEGORY,
         ...responseErrors,
       })
-      return null
+      return {
+        valid: false,
+        error: {
+          message: responseErrors.message,
+        },
+      }
     }
 
     let json: unknown
@@ -217,10 +220,14 @@ export class SmartSolutionsApi {
       //return null
     }
 
+    this.logger.debug(JSON.stringify(json))
     const response = json as VerifyPassResponse
 
     if (response) {
-      return response
+      return {
+        valid: true,
+        data: response.data,
+      }
     }
 
     return null
@@ -313,23 +320,24 @@ export class SmartSolutionsApi {
       nationalId,
       payload.passTemplateId ?? '',
     )
+    this.logger.debug(JSON.stringify(existingPasses))
 
     const containsActiveOrUnclaimed =
-      existingPasses?.passes &&
-      existingPasses.passes.some(
+      existingPasses?.data &&
+      existingPasses?.data.some(
         (p) =>
           p.status === PassStatus.Active || p.status === PassStatus.Unclaimed,
       )
 
     if (containsActiveOrUnclaimed) {
-      const activePasses = existingPasses?.passes.filter(
+      const activePasses = existingPasses?.data.filter(
         (p) => p.status === PassStatus.Active,
       )
       if (activePasses?.length) {
         return activePasses[0]
       }
 
-      const unclaimedPasses = existingPasses?.passes.filter(
+      const unclaimedPasses = existingPasses?.data.filter(
         (p) => p.status === PassStatus.Unclaimed,
       )
 
@@ -340,8 +348,8 @@ export class SmartSolutionsApi {
 
     const response = await this.upsertPkPass(payload)
 
-    if (response?.data?.upsertPass) {
-      return response?.data?.upsertPass
+    if (response?.data) {
+      return response?.data
     }
 
     this.logger.warn(
@@ -440,7 +448,7 @@ export class SmartSolutionsApi {
 
     if (response?.data) {
       const passTemplatesDto: PassTemplatesDTO = {
-        passTemplates: response.data,
+        data: response.data,
       }
       return passTemplatesDto
     }

@@ -5,36 +5,34 @@ export interface PkPassServiceErrorResponse {
   status?: number
   data?: unknown
 }
-export interface ListPassesResponse {
-  data: {
-    passes: {
-      data: Array<Pass>
-    }
+
+export interface VerifyPassResponse {
+  valid: boolean
+  data?: {
+    updateStatusOnPassWithDynamicBarcode: Pass
+  }
+  error?: {
+    message?: string
+    data?: string
   }
 }
 
-export interface VerifyPassResponse {
-  data: {
-    pass: Pass
+export interface ListPassesResponse {
+  data?: {
+    passes?: ListPassesDTO
   }
-  errors: {
-    message: string
-    path: string
-  }[]
 }
 
 export interface PassTemplatesDTO {
-  passTemplates: Array<PassTemplate>
+  data: Array<PassTemplate>
 }
 
 export interface ListPassesDTO {
-  passes: Array<Pass>
+  data: Array<Pass>
 }
 
 export interface ListTemplatesResponse {
-  data?: {
-    passTemplates?: PassTemplate[]
-  }
+  data?: PassTemplate[]
   message?: string
   status?: number
 }
@@ -46,9 +44,7 @@ export interface PassTemplateDTO {
 }
 
 export interface UpsertPkPassResponse {
-  data?: {
-    upsertPass?: Pass
-  }
+  data: Pass
   message?: string
   status?: number
 }

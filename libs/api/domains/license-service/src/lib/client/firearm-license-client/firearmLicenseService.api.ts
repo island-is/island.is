@@ -4,6 +4,7 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
+  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import type { Logger } from '@island.is/logging'
@@ -66,8 +67,6 @@ export class GenericFirearmLicenseApi
       this.handleError(e)
       return null
     }
-
-    this.logger.debug(JSON.stringify(licenseData))
     return licenseData as LicenseData
   }
 
@@ -110,11 +109,11 @@ export class GenericFirearmLicenseApi
     const payload: PassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      thumbnail: {
-        imageBase64String: image
-          ? image.substring(image.indexOf(',') + 1).trim()
-          : DEFAULT_IMAGE,
-      },
+      thumbnail: image
+        ? {
+            imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
+          }
+        : null,
     }
 
     const pass = await this.smartApi.generatePkPassUrl(
@@ -160,26 +159,79 @@ export class GenericFirearmLicenseApi
       return null
     }
 
-    const payload = {
-      code,
-      date,
+    const result = await this.smartApi.verifyPkPass({ code, date })
+
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
+      return null
     }
 
-    const response = await this.smartApi.verifyPkPass(payload)
+    let error: PkPassVerificationError | undefined
 
-    if (response?.data) {
-      return { valid: true, data: JSON.stringify(response.data) }
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.message)
+      } catch {
+        //Nothing
+      }
+
+      error = {
+        status: '0',
+        message: data,
+        data: JSON.stringify(result.error) ?? '',
+      }
+
+      return {
+        valid: false,
+        data: undefined,
+        error,
+      }
+    }
+    let response: Record<string, string | null> | undefined = undefined
+
+    /*HERE we should compare fetch the firearm license using the national id of the
+      user being scanned, NOT the logged in user, but this is impossible as it stands!
+      TO_DO: Implement that!
+
+      const nationalIdFromPkPass = result.data.pass.inputFieldValues
+      .find((i) => i.passInputField.identifier === 'kt')
+      ?.value?.replace('-', '')
+
+      if (nationalIdFromPkPass) {
+        const license await this.fetchLicenseData(nationalIdFromPkPass)
+        // and then compare to verify that the licenses sync up
+      }
+    */
+
+    //In the meantime we'll just return the pkpass values in the response
+
+    const pass = result?.data?.updateStatusOnPassWithDynamicBarcode
+    if (pass) {
+      const nationalId =
+        pass.inputFieldValues?.find((i) => i.passInputField.identifier === 'kt')
+          ?.value ?? ''
+      const name =
+        pass.inputFieldValues?.find(
+          (i) => i.passInputField.identifier === 'nafn',
+        )?.value ?? ''
+
+      const rawData = JSON.stringify(pass)
+
+      response = {
+        nationalId: nationalId.replace('-', ''),
+        name,
+        rawData,
+      }
     }
 
-    const firstError = response?.errors?.[0]
-    //Take the first error for now
     return {
-      valid: false,
-      error: {
-        message: firstError?.message ?? '',
-        data: firstError ? JSON.stringify(firstError) : '',
-        status: '',
-      },
+      valid: result.valid,
+      data: response ? JSON.stringify(response) : undefined,
+      error,
     }
   }
 }
