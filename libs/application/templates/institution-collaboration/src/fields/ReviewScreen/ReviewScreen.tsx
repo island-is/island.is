@@ -174,7 +174,12 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {getValueViaPath(application.answers, 'contact.institutionEmail') as string}
+              {
+                getValueViaPath(
+                  application.answers,
+                  'contact.institutionEmail',
+                ) as string
+              }
             </Text>
           </Box>
           <Divider />
@@ -279,23 +284,36 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </>
           )}
-        </Stack>
-
-        {servicesTextArr.length > 0 && (
-          <Stack space={3}>
-            {/* constraints information */}
+          {servicesTextArr.length > 0 && (
+            <Box>
+              <Text variant="h5">
+                {formatText(
+                  m.applicant.contactPhoneLabel,
+                  application,
+                  formatMessage,
+                )}
+              </Text>
+              <Text>{getServicesTextOutput()}</Text>
+            </Box>
+          )}
+          <Divider/>
+           <Box>
             <Text variant="h5">
               {formatText(
-                m.constraints.sectionTitle,
+                m.review.subSectionTitle,
                 application,
                 formatMessage,
               )}
             </Text>
-            <Box>
-              <Text>{getServicesTextOutput()}</Text>
-            </Box>
-          </Stack>
-        )}
+            <Text>
+              {formatText(
+                m.review.subSectionDescription,
+                application,
+                formatMessage,
+              )}
+            </Text>
+          </Box>
+        </Stack>
       </Stack>
     </Box>
   )

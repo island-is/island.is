@@ -292,6 +292,7 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Þjónustur sem sótt er eftir',
       description: 'Sub section label',
     },
+    
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
       defaultMessage: 'Þjónustur sem sóst er eftir',
@@ -445,13 +446,23 @@ export const institutionApplicationMessages = {
     },
     sectionTitle: {
       id: 'ia.application:review.section.title',
-      defaultMessage: 'Verkefnið',
+      defaultMessage: 'Yfirlit og staðfesting umsóknar',
       description: 'Section title',
     },
     sectionDescription: {
       id: 'ia.application:review.section.description',
       defaultMessage:
         'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá Stafrænu Íslandi ef umsóknin er skýr og hnitmiðuð.',
+      description: 'Section description',
+    },
+    subSectionTitle: {
+      id: 'ia.application:review.section.termsTitle',
+      defaultMessage: 'Skilmálar',
+      description: 'Section title',
+    },
+    subSectionDescription: {
+      id: 'ia.application:review.section.termsDescription',
+      defaultMessage: 'Þegar þjónustur Stafræns Íslands eru innleiddar og notaðar þá gilda þjónustuskilmálar viðkomandi kerfis/þjónustu',
       description: 'Section description',
     },
     submitButtonLabel: {
@@ -490,6 +501,7 @@ export const institutionApplicationMessages = {
       description: 'Third information sentence, in bullet list',
     },
   }),
+
   approved: defineMessages({
     sectionTitle: {
       id: 'ia.application:approved.section.title',
