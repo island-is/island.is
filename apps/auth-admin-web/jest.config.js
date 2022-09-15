@@ -1,6 +1,5 @@
 module.exports = {
   preset: '../../jest.preset.js',
-  globals: { fetch, Response, Request },
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
