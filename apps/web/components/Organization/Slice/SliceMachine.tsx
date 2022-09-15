@@ -91,6 +91,7 @@ const fullWidthSlices = [
   'TimelineSlice',
   'LogoListSlice',
   'MailingListSignupSlice',
+  'LifeEventPageListSlice',
 ]
 
 const renderSlice = (

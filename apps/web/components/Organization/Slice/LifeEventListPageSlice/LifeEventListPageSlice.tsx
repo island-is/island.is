@@ -38,7 +38,7 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
 
   if (renderLifeEventPagesAsProfileCards) {
     return (
-      <Box className={styles.profileCardContainer}>
+      <Box className={styles.profileCardContainer} marginLeft={[0, 0, 0, 0, 6]}>
         {slice.lifeEventPageList?.map((page) => {
           return (
             <ProfileCard
@@ -46,9 +46,9 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
               variant="title-above"
               size="small"
               title={page.shortTitle || page.title}
-              description={truncateText(page.intro)}
+              description={page.shortIntro || truncateText(page.intro)}
               link={{
-                text: n('profileCardSeeMore', 'Nánar um vöru'),
+                text: page.seeMoreText || n('profileCardSeeMore', 'Sjá nánar'),
                 url: linkResolver(
                   'digitalicelandservicesdetailpage',
                   [page.slug],
