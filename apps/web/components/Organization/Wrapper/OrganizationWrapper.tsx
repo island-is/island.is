@@ -273,6 +273,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
+    case 'landskjorstjorn':
+      OrganizationFooterComponent = (
+        <LandskjorStjornFooter footerItems={organization.footerItems} />
+      )
+      break
   }
 
   return OrganizationFooterComponent
