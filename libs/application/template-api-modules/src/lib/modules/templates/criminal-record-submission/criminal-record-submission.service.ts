@@ -17,6 +17,9 @@ import {
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { info } from 'kennitala'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core/messages'
 
 @Injectable()
 export class CriminalRecordSubmissionService extends BaseTemplateApiService {
@@ -143,5 +146,24 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
         )
         return undefined
       })
+  }
+
+  async validateCriminalRecord({ auth }: TemplateApiModuleActionProps) {
+    // Validate applicants age
+    const minAge = 15
+    const { age } = info(auth.nationalId)
+    if (age < minAge) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
+          summary: coreErrorMessages.couldNotAssignApplicationErrorDescription,
+        },
+        400,
+      )
+    }
+
+    return await this.criminalRecordService.validateCriminalRecord(
+      auth.nationalId,
+    )
   }
 }
