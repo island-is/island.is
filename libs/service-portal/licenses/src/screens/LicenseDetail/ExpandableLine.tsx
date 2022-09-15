@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useState, useRef } from 'react'
+
 import {
   Box,
   Divider,
@@ -60,6 +61,9 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
       ? ['1/1', '1/1', '3/12']
       : '1/1'
   console.log(data.length)
+  const descriptionLength = description ? description.length : 0
+  const showExpandButton = descriptionLength >= 200
+
   return (
     <>
       <Box paddingBottom={3} paddingTop={3}>
@@ -118,7 +122,7 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
               </GridColumn>
             )
           })}
-          {description && (
+          {showExpandButton && (
             <GridColumn span={['5/12', '5/12', '5/12', '2/12']}>
               <Box
                 display="flex"
@@ -153,12 +157,14 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
         </GridRow>
 
         <AnimateHeight
-          className={expanded ? styles.animatedContent : undefined}
+          className={
+            expanded || !showExpandButton ? styles.animatedContent : undefined
+          }
           onAnimationEnd={(props: { newHeight: number }) =>
             handleAnimationEnd(props.newHeight)
           }
           duration={300}
-          height={expanded ? 'auto' : 0}
+          height={expanded || !showExpandButton ? 'auto' : 0}
         >
           <Text>{description}</Text>
           {isDriversLicense && (

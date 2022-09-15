@@ -33,37 +33,32 @@ export const parseMachineLicensePayload = (
   const data: Array<GenericLicenseDataField> = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Skírteini nr. ',
+      label: 'Númer skírteinis',
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '1. Fullt nafn',
+      label: 'Fullt nafn',
       value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '2. Kennitala',
-      value: license.kennitala ?? '',
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '3. Útgáfustaður',
+      label: 'Útgáfustaður',
       value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4. Útgáfudagur',
+      label: 'Útgáfudagur',
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '5. Gildir til.',
+      label: 'Gildir til',
       value: 'Sjá réttindi',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '6. Ökuskírteini nr',
+      label: 'Ökuskírteinisnúmer',
       value: license.okuskirteinisNumer ?? '',
     },
     {
@@ -74,7 +69,7 @@ export const parseMachineLicensePayload = (
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
           name: field.flokkur ?? '',
-          label: field.fulltHeiti ?? field.stuttHeiti ?? '',
+          description: field.fulltHeiti ?? field.stuttHeiti ?? '',
           fields: parseVvrRights(field),
         })),
     },

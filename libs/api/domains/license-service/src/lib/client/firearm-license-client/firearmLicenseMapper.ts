@@ -23,40 +23,30 @@ export const parseFirearmLicensePayload = (
   if (!licenseInfo) return null
 
   const data: Array<GenericLicenseDataField> = [
+    licenseInfo.licenseNumber && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Númer skírteinis',
+      value: licenseInfo.licenseNumber,
+    },
     licenseInfo.name && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Nafn einstaklings',
+      label: 'Fullt nafn',
       value: licenseInfo.name,
-    },
-    licenseInfo.ssn && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Kennitala',
-      value: licenseInfo.ssn,
-    },
-    licenseInfo.expirationDate && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Gildistími',
-      value: formatDateString(licenseInfo.expirationDate) ?? '',
     },
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
       value: formatDateString(licenseInfo.issueDate) ?? '',
     },
-    licenseInfo.licenseNumber && {
+    licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Númer skírteinis',
-      value: licenseInfo.licenseNumber,
+      label: 'Gildir til',
+      value: formatDateString(licenseInfo.expirationDate) ?? '',
     },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
       value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
-    },
-    licenseInfo.address && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Heimilisfang',
-      value: licenseInfo.address,
     },
     licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
@@ -82,6 +72,10 @@ export const parseFirearmLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(licenseData),
+    metadata: {
+      expired: false,
+      licenseNumber: '123',
+    },
   }
 }
 

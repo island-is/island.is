@@ -31,6 +31,8 @@ import {
   getTypeFromPath,
 } from '../../utils/dataMapper'
 import { isExpired, toDate } from '../../utils/dateUtils'
+import isValid from 'date-fns/isValid'
+
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
@@ -125,8 +127,9 @@ const DataFields = ({
                   title={field.name ?? ''}
                   label={field.label ?? ''}
                   renderContent={
+                    field.value &&
                     field.label?.toLowerCase().includes('gildir til') &&
-                    field.value
+                    isValid(new Date(field.value))
                       ? () => (
                           <Box display="flex" alignItems="center">
                             <Text>

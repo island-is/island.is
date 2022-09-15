@@ -438,6 +438,7 @@ enum LicenseType {
   HuntingLicense = 'HuntingLicense',
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
+  FirearmLicense = 'FirearmLicense',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
@@ -489,7 +490,8 @@ export const getTitleAndLogo = (type: string) => {
         title: m.machineLicense,
         logo: './assets/images/adr_machine.svg',
       }
-    case LicenseType.HuntingLicense:
+
+    case LicenseType.FirearmLicense:
       return {
         title: m.firearmLicense,
         logo: './assets/images/island.svg',
@@ -514,7 +516,7 @@ export const getPathFromType = (type: string) => {
     case LicenseType.DriversLicense:
       return LicenseTypePath.okurettindi
       break
-    case LicenseType.HuntingLicense:
+    case LicenseType.FirearmLicense:
       return LicenseTypePath.skotvopnaleyfi
       break
     case LicenseType.MachineLicense:
@@ -535,7 +537,7 @@ export const getTypeFromPath = (path: string) => {
       return LicenseType.DriversLicense
       break
     case LicenseTypePath.skotvopnaleyfi:
-      return LicenseType.HuntingLicense
+      return LicenseType.FirearmLicense
       break
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
