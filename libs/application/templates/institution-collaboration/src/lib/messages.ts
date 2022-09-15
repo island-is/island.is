@@ -52,7 +52,7 @@ export const institutionApplicationMessages = {
       description: 'Subtitle for contact formfields',
     },
     contactInstitutionEmailLabel: {
-      id: 'ia.application:applicant.contact.institutionemail.label',
+      id: 'ia.application:applicant.contact.InstitutionEmailLabel.label',
       defaultMessage: 'Aðalnetfang stofnunar',
       description: 'Form label for contact institution email formfield',
     },
