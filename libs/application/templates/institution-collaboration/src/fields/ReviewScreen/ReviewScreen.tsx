@@ -60,6 +60,28 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     'constraints.hasConsult',
   ) as string
 
+  const applyConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.apply',
+  ) as string
+
+  const myPagesConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.myPages',
+  ) as string
+
+  const certConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.cert',
+  ) as string
+
+  const consultConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.consult',
+  ) as string
+
+  console.log(applyConstraintsText)
+
   //#region Services Text
   const servicesTextArr: string[] = []
   mailConstraints &&
@@ -131,6 +153,25 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
 
   console.log(servicesTextArr)
 
+  function getServiceDescriptionStack(
+    title: string,
+    serviceName: string,
+    description: string,
+  ) {
+    return (
+      <Stack space={1}>
+        {/* constraints information */}
+        <Text variant="h5">
+          {title} - {serviceName}
+        </Text>
+
+        <Text>{description}</Text>
+
+        <Divider />
+      </Stack>
+    )
+  }
+
   function getServicesTextOutput(): string {
     let text = ''
     for (let i = 0; i < servicesTextArr.length; i++) {
@@ -174,7 +215,12 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {getValueViaPath(application.answers, 'contact.institutionEmail') as string}
+              {
+                getValueViaPath(
+                  application.answers,
+                  'contact.institutionEmail',
+                ) as string
+              }
             </Text>
           </Box>
           <Divider />
@@ -224,7 +270,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Divider />
           {hasSecondaryContact && (
             <>
-              <Divider />
               <Text variant="h4">
                 {formatText(
                   m.applicant.secondaryContactSubtitle,
@@ -234,16 +279,15 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               </Text>
               {secondaryContactName && (
                 <>
-                  <Box>
-                    <Text variant="h5">
-                      {formatText(
-                        m.applicant.contactNameLabel,
-                        application,
-                        formatMessage,
-                      )}
-                    </Text>
-                    <Text>{secondaryContactName}</Text>
-                  </Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.applicant.contactNameLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{secondaryContactName}</Text>
+
                   <Divider />
                 </>
               )}
@@ -282,7 +326,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
         </Stack>
 
         {servicesTextArr.length > 0 && (
-          <Stack space={3}>
+          <Stack space={2}>
             {/* constraints information */}
             <Text variant="h5">
               {formatText(
@@ -291,11 +335,88 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 formatMessage,
               )}
             </Text>
-            <Box>
-              <Text>{getServicesTextOutput()}</Text>
-            </Box>
+
+            <Text>{getServicesTextOutput()}</Text>
+
+            <Divider />
           </Stack>
         )}
+
+        {applyConstraintsText.length > 0 &&
+          getServiceDescriptionStack(
+            formatText(
+              m.constraints.constraintsApplyingPlaceholder,
+              application,
+              formatMessage,
+            ),
+            formatText(
+              m.constraints.constraintsApplyingLabel,
+              application,
+              formatMessage,
+            ),
+            applyConstraintsText,
+          )}
+        {myPagesConstraintsText.length > 0 &&
+          getServiceDescriptionStack(
+            formatText(
+              m.constraints.constraintsmyPagesPlaceholder,
+              application,
+              formatMessage,
+            ),
+            formatText(
+              m.constraints.constraintsmyPagesLabel,
+              application,
+              formatMessage,
+            ),
+            myPagesConstraintsText,
+          )}
+        {certConstraintsText.length > 0 &&
+          getServiceDescriptionStack(
+            formatText(
+              m.constraints.constraintsCertPlaceholder,
+              application,
+              formatMessage,
+            ),
+            formatText(
+              m.constraints.constraintsCertLabel,
+              application,
+              formatMessage,
+            ),
+            certConstraintsText,
+          )}
+        {consultConstraintsText.length > 0 &&
+          getServiceDescriptionStack(
+            formatText(
+              m.constraints.constraintsConsultPlaceholder,
+              application,
+              formatMessage,
+            ),
+            formatText(
+              m.constraints.constraintsConsultLabel,
+              application,
+              formatMessage,
+            ),
+            consultConstraintsText,
+          )}
+        <Stack space={2}>
+          {/* terms of service*/}
+          <Text variant="h5">
+            {formatText(
+              m.review.termsOfServiceLabel,
+              application,
+              formatMessage,
+            )}
+          </Text>
+          <Box>
+            <Text>
+              {formatText(
+                m.review.termsOfServiceText,
+                application,
+                formatMessage,
+              )}
+            </Text>
+          </Box>
+        </Stack>
       </Stack>
     </Box>
   )
