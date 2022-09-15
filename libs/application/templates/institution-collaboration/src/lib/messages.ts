@@ -40,7 +40,7 @@ export const institutionApplicationMessages = {
     sectionApplicantDescription: {
       id: 'ia.application:applicant.section.applicantDescription',
       defaultMessage:
-        'Stofnun eða ráðuneyti sem sækist eftir samstarfi við Stafrænt Ísland og málefnasvið sem verkefnið tilheyrir. ',
+        'Stofnun eða ráðuneyti sem sækir um samstarf við Stafrænt Ísland og upplýsingar um tengilið(i)',
       description: 'Section description',
     },
 
@@ -544,6 +544,64 @@ export const institutionApplicationMessages = {
       defaultMessage:
         'Við munum fara yfir umsóknina og sendum á þig svör innan tíðar. Við verðum í sambandi ef okkur vantar frekari upplýsingar. ',
       description: 'Section title',
+    },
+  }),
+
+  urls: defineMessages({
+    allServices: {
+      id: 'ia.application:url.all',
+      defaultMessage: '/s/stafraent-island/thjonusta',
+      description: 'Url',
+    },
+    mailService: {
+      id: 'ia.application:url.mail',
+      defaultMessage: '/s/stafraent-island/thjonusta/postholf',
+      description: 'Url',
+    },
+    loginService: {
+      id: 'ia.application:url.login',
+      defaultMessage: '/s/stafraent-island/thjonusta/innskraning-fyrir-alla',
+      description: 'Url',
+    },
+    myPageService: {
+      id: 'ia.application:url.mypage',
+      defaultMessage: '/s/stafraent-island/thjonusta/minar-sidur',
+      description: 'Url',
+    },
+    certificateService: {
+      id: 'ia.application:url.certificate',
+      defaultMessage: '/s/stafraent-island/thjonusta/skirteini',
+      description: 'Url',
+    },
+    straumurService: {
+      id: 'ia.application:url.straumur',
+      defaultMessage: '/s/stafraent-island/thjonusta/straumurinn',
+      description: 'Url',
+    },
+    applyService: {
+      id: 'ia.application:url.apply',
+      defaultMessage: '/s/stafraent-island/thjonusta/umsoknarkerfi',
+      description: 'Url',
+    },
+    authorityService: {
+      id: 'ia.application:url.authority',
+      defaultMessage: '/s/stafraent-island/thjonusta/umbodskerfi',
+      description: 'Url',
+    },
+    webService: {
+      id: 'ia.application:url.web',
+      defaultMessage: '/s/stafraent-island/thjonusta/vefur-stofnana',
+      description: 'Url',
+    },
+    appService: {
+      id: 'ia.application:url.app',
+      defaultMessage: '/s/stafraent-island/thjonusta/app',
+      description: 'Url',
+    },
+    islandService: {
+      id: 'ia.application:url.island',
+      defaultMessage: '/s/stafraent-island/thjonusta/island-is',
+      description: 'Url',
     },
   }),
 }
