@@ -19,6 +19,9 @@ export class GenericLicenseDataField {
   @Field({ nullable: true, description: 'Name of data field' })
   name?: string
 
+  @Field({ nullable: true, description: 'Description of field' })
+  description?: string
+
   @Field({ nullable: true, description: 'Label of data field' })
   label?: string
 

@@ -27,7 +27,7 @@ export type EditLink = {
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
-  renderContent?: () => JSX.Element
+  renderContent?: () => JSX.Element | undefined
   loading?: boolean
   warning?: boolean
   labelColumnSpan?: GridColumnProps['span']

@@ -7,6 +7,8 @@ import {
 } from '../../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
+
 export const parseDrivingLicensePayload = (
   licenses: GenericDrivingLicenseResponse[],
 ): GenericUserLicensePayload | null => {
@@ -26,53 +28,37 @@ export const parseDrivingLicensePayload = (
   // see: https://www.samgongustofa.is/umferd/nam-og-rettindi/skirteini-og-rettindi/okurettindi-og-skirteini/
   const data = [
     // We don't get the name split into two from the API, combine
-
+    {
+      name: 'Grunnupplýsingar ökuskírteinis',
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Númer skírteinis',
+      value: (license?.id ?? '').toString(),
+    },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'Grunnupplýsingar ökuskírteinis',
-      label: '2. Eiginnafn 1. Kenninafn',
+      label: 'Fullt nafn',
       value: license.nafn,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '3. Fæðingardagur og fæðingarstaður',
-      value: [
-        birthday ? new Date(birthday).toISOString() : null,
-        license.faedingarStadurHeiti ?? null,
-      ]
-        .filter(Boolean)
-        .join(' '),
+      label: 'Útgefandi',
+      value: license.nafnUtgafustadur,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4a. Útgáfudagur',
+      label: 'Útgáfudagur',
       value: license.utgafuDagsetning
         ? new Date(license.utgafuDagsetning).toISOString()
         : '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4b. Lokadagur',
+      label: 'Gildir til',
       value: license.gildirTil ? new Date(license.gildirTil).toISOString() : '',
     },
     {
-      type: GenericLicenseDataFieldType.Value,
-      label: '4c. Nafn útgefanda',
-      value: license.nafnUtgafustadur,
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '4d. Kennitala',
-      value: license.kennitala,
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '5. Númer',
-      value: (license?.id ?? '').toString(),
-    },
-    {
       type: GenericLicenseDataFieldType.Group,
-      label: '9. Réttindaflokkar',
+      label: 'Réttindaflokkar',
       fields: (license.rettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: (field.nr ?? '').trim(),
@@ -92,12 +78,12 @@ export const parseDrivingLicensePayload = (
               ? new Date(field.utgafuDags).toISOString()
               : '',
           },
-          {
+          field.aths && {
             type: GenericLicenseDataFieldType.Value,
             label: 'Athugasemd',
             value: field.aths,
           },
-        ],
+        ].filter((Boolean as unknown) as ExcludesFalse),
       })),
     },
   ]

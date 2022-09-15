@@ -24,9 +24,10 @@ interface Props {
   data: GenericLicenseDataField[]
   title: string
   type?: string
+  description?: string
 }
 
-const ExpandableLine: FC<Props> = ({ data, title, type }) => {
+const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
   const ref = useRef<HTMLDivElement>(null)
@@ -54,17 +55,19 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
   const isDriversLicense = type === GenericLicenseType.DriversLicense
   const columnSpan: ResponsiveProp<GridColumns> =
     data.length > 0
-      ? ['1/1', '1/1', '4/12']
+      ? ['1/1', '1/1', '2/12']
       : data.length === 3
       ? ['1/1', '1/1', '3/12']
       : '1/1'
-
+  console.log(data.length)
   return (
     <>
       <Box paddingBottom={3} paddingTop={3}>
         <GridRow>
           <GridColumn
-            span={isDriversLicense ? ['1/1', '1/1', '1/1', '2/12'] : columnSpan}
+            span={
+              data.length === 3 ? ['1/1', '1/1', '1/1', '2/12'] : columnSpan
+            }
           >
             <Box display="flex" alignItems={'center'}>
               <Text variant="h5" as="span" lineHeight="lg">
@@ -89,38 +92,45 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
           </GridColumn>
           {data.map((item) => {
             return (
-              item.label && (
-                <GridColumn
-                  span={[
-                    isDriversLicense ? '8/12' : '1/1',
-                    isDriversLicense ? '8/12' : '1/1',
-                    isDriversLicense ? '8/12' : '1/1',
-                    '3/12',
-                  ]}
-                  key={`expandable-item-${item.label}`}
-                >
-                  <Box display="flex" alignItems="center" height="full">
-                    <Text variant="default">{item.label}</Text>
-                    <Box marginLeft={1} />
-                    <Text variant="default" fontWeight="semiBold">
-                      {String(item.value ?? '')
-                        .split(' ')
-                        .map((part) =>
-                          isJSONDate(part)
-                            ? format(+new Date(part).getTime(), dateFormat.is)
-                            : part,
-                        )
-                        .join(' ')}
-                    </Text>
-                  </Box>
-                </GridColumn>
-              )
+              <GridColumn
+                span={[
+                  data.length === 3 ? '8/12' : '1/1',
+                  data.length === 3 ? '8/12' : '1/1',
+                  data.length === 3 ? '8/12' : '1/1',
+                  '4/12',
+                ]}
+                key={`expandable-item-${item.label}`}
+              >
+                <Box display="flex" alignItems="center" height="full">
+                  <Text variant="default">{item.label}</Text>
+                  <Box marginLeft={1} />
+                  <Text variant="default" fontWeight="semiBold">
+                    {String(item.value ?? '')
+                      .split(' ')
+                      .map((part) =>
+                        isJSONDate(part)
+                          ? format(+new Date(part).getTime(), dateFormat.is)
+                          : part,
+                      )
+                      .join(' ')}
+                  </Text>
+                </Box>
+              </GridColumn>
             )
           })}
-
-          {isDriversLicense && (
-            <GridColumn span={['4/12', '4/12', '4/12', '1/12']}>
-              <Box display="flex" justifyContent="flexEnd" alignItems="center">
+          {description && (
+            <GridColumn span={['5/12', '5/12', '5/12', '2/12']}>
+              <Box
+                display="flex"
+                justifyContent={[
+                  'flexStart',
+                  'flexStart',
+                  'flexStart',
+                  'flexEnd',
+                ]}
+                marginTop={[2, 2, 2, 0]}
+                alignItems="center"
+              >
                 <FocusableBox
                   borderRadius="circle"
                   background="blue100"
@@ -141,20 +151,22 @@ const ExpandableLine: FC<Props> = ({ data, title, type }) => {
             </GridColumn>
           )}
         </GridRow>
-        {isDriversLicense && (
-          <AnimateHeight
-            className={expanded ? styles.animatedContent : undefined}
-            onAnimationEnd={(props: { newHeight: number }) =>
-              handleAnimationEnd(props.newHeight)
-            }
-            duration={300}
-            height={expanded ? 'auto' : 0}
-          >
+
+        <AnimateHeight
+          className={expanded ? styles.animatedContent : undefined}
+          onAnimationEnd={(props: { newHeight: number }) =>
+            handleAnimationEnd(props.newHeight)
+          }
+          duration={300}
+          height={expanded ? 'auto' : 0}
+        >
+          <Text>{description}</Text>
+          {isDriversLicense && (
             <Box ref={ref} className={styles.text}>
               {title && ReactHtmlParser(mapCategory(title.trim()).text ?? '')}
             </Box>
-          </AnimateHeight>
-        )}
+          )}
+        </AnimateHeight>
       </Box>
       <Divider />
     </>

@@ -11,6 +11,7 @@ import {
   Text,
   AlertBanner,
   Button,
+  Icon,
 } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -29,7 +30,7 @@ import {
   getLicenseDetailHeading,
   getTypeFromPath,
 } from '../../utils/dataMapper'
-
+import { isExpired, toDate } from '../../utils/dateUtils'
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
     type
@@ -41,11 +42,13 @@ const dataFragment = gql`
       name
       label
       value
+      description
       fields {
         type
         name
         label
         value
+        description
       }
     }
   }
@@ -88,6 +91,10 @@ const GenericLicenseQuery = gql`
   ${dataFragment}
 `
 
+const checkLicenseExpired = (date?: string) => {
+  if (!date) return false
+  return isExpired(new Date(), new Date(date))
+}
 const DataFields = ({
   fields,
   licenseType,
@@ -97,6 +104,8 @@ const DataFields = ({
   licenseType?: string
   pkPass?: boolean
 }) => {
+  const { formatMessage } = useLocale()
+
   if (!fields || fields.length === 0) {
     return null
   }
@@ -115,6 +124,60 @@ const DataFields = ({
                 <UserInfoLine
                   title={field.name ?? ''}
                   label={field.label ?? ''}
+                  renderContent={
+                    field.label?.toLowerCase().includes('gildir til') &&
+                    field.value
+                      ? () => (
+                          <Box display="flex" alignItems="center">
+                            <Text>
+                              {toDate(
+                                new Date(field.value ?? '')
+                                  .getTime()
+                                  .toString(),
+                              )}
+                            </Text>
+                            <Box
+                              marginLeft={2}
+                              display="flex"
+                              flexDirection="row"
+                              alignItems="center"
+                              textAlign="center"
+                            >
+                              <Box
+                                marginRight={1}
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                textAlign="center"
+                              >
+                                <Icon
+                                  icon={
+                                    checkLicenseExpired(
+                                      field.value ?? undefined,
+                                    )
+                                      ? 'closeCircle'
+                                      : 'checkmarkCircle'
+                                  }
+                                  color={
+                                    checkLicenseExpired(
+                                      field.value ?? undefined,
+                                    )
+                                      ? 'red600'
+                                      : 'mint600'
+                                  }
+                                  type="filled"
+                                />
+                              </Box>
+                              <Text variant="eyebrow">
+                                {checkLicenseExpired(field.value ?? undefined)
+                                  ? formatMessage(m.isExpired)
+                                  : formatMessage(m.isValid)}
+                              </Text>
+                            </Box>
+                          </Box>
+                        )
+                      : undefined
+                  }
                   content={String(field.value ?? '')
                     .split(' ')
                     .map((part) =>
@@ -132,8 +195,9 @@ const DataFields = ({
             )}
             {field.type === 'Category' && (
               <ExpandableLine
-                title={field.name + ' ' + field.label ?? ''}
+                title={[field.name, field.label].filter(Boolean).join(' ')}
                 data={field.fields ?? []}
+                description={field.description ?? undefined}
                 type={licenseType}
               />
             )}
