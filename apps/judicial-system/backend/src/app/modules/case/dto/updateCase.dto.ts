@@ -348,5 +348,5 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly defendantRefusesHavingDefender?: boolean
+  readonly defendantWaivesRightToCounsel?: boolean
 }

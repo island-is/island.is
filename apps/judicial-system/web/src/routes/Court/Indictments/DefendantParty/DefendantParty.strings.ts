@@ -21,9 +21,9 @@ export const defendantParty = defineMessages({
     description: 'Notaður sem texti fyrir val á skipaðan verjanda í ákærum.',
   },
 
-  defendantRefusesHavingDefender: {
+  defendantWaivesRightToCounsel: {
     id:
-      'judicial.system.core:court_indictments.defendant_party.defendant_rejects_having_defender',
+      'judicial.system.core:court_indictments.defendant_party.defendant_waives_right_to_counsel',
     defaultMessage: '{accused} óskar ekki eftir að sér sé skipaður verjandi',
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',

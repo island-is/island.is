@@ -137,7 +137,7 @@ export const mockCase = (type: CaseType): Case => {
         address: mockAddress,
       },
     ],
-    defendantRefusesHavingDefender: false,
+    defendantWaivesRightToCounsel: false,
   }
 }
 

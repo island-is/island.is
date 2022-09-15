@@ -34,7 +34,7 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
     cy.getByTestid('defenderNotFound').should('not.exist')
     cy.getByTestid('continueButton').should('be.enabled')
 
-    cy.get('#defendantRefusesHavingDefender').check()
+    cy.get('#defendantWaivesRightToCounsel').check()
     cy.getByTestid('creatable-select-defenderName').should('not.have.value')
     cy.getByTestid('defenderEmail')
       .should('have.value', '')
@@ -44,7 +44,7 @@ describe(`${INDICTMENTS_DEFENDANT_PARTY_ROUTE}/:id`, () => {
       .should('be.disabled')
     cy.getByTestid('continueButton').should('be.enabled')
 
-    cy.get('#defendantRefusesHavingDefender').uncheck()
+    cy.get('#defendantWaivesRightToCounsel').uncheck()
     cy.getByTestid('continueButton').should('be.disabled')
   })
 })

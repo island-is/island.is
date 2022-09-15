@@ -154,7 +154,7 @@ export const UpdateCaseMutation = gql`
       origin
       seenByDefender
       subpoenaType
-      defendantRefusesHavingDefender
+      defendantWaivesRightToCounsel
     }
   }
 `

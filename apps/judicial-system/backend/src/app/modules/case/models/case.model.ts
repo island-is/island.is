@@ -912,5 +912,5 @@ export class Case extends Model {
     defaultValue: false,
   })
   @ApiProperty()
-  defendantRefusesHavingDefender!: boolean
+  defendantWaivesRightToCounsel!: boolean
 }

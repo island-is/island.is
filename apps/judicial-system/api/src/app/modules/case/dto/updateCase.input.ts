@@ -279,5 +279,5 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly defendantRefusesHavingDefender?: boolean
+  readonly defendantWaivesRightToCounsel?: boolean
 }

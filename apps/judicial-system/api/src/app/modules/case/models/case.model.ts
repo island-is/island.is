@@ -271,5 +271,5 @@ export class Case implements TCase {
   readonly subpoenaType?: SubpoenaType
 
   @Field(() => Boolean)
-  readonly defendantRefusesHavingDefender!: boolean
+  readonly defendantWaivesRightToCounsel!: boolean
 }

@@ -32,7 +32,7 @@ const SelectDefender: React.FC = () => {
       defenderName: null,
       defenderEmail: '',
       defenderPhoneNumber: '',
-      defendantRefusesHavingDefender: true,
+      defendantWaivesRightToCounsel: true,
     }
     setAndSendToServer(
       [
@@ -49,7 +49,7 @@ const SelectDefender: React.FC = () => {
   return workingCase.defendants && workingCase.defendants[0] ? (
     <Box component="section" marginBottom={5}>
       <SectionHeading title={formatMessage(m.selectDefenderHeading)} required />
-      {defenderNotFound && !workingCase.defendantRefusesHavingDefender && (
+      {defenderNotFound && !workingCase.defendantWaivesRightToCounsel && (
         <DefenderNotFound />
       )}
       <BlueBox>
@@ -64,21 +64,21 @@ const SelectDefender: React.FC = () => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
-            name="defendantRefusesHavingDefender"
+            name="defendantWaivesRightToCounsel"
             label={capitalize(
-              formatMessage(m.defendantRefusesHavingDefender, {
+              formatMessage(m.defendantWaivesRightToCounsel, {
                 accused: formatMessage(core.indictmentDefendant, {
                   gender: workingCase.defendants[0].gender || 'NONE',
                 }),
               }),
             )}
-            checked={workingCase.defendantRefusesHavingDefender}
+            checked={workingCase.defendantWaivesRightToCounsel}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               if (event.target.checked) {
                 onRefuseHavingDefender()
               } else {
                 setAndSendToServer(
-                  [{ defendantRefusesHavingDefender: false, force: true }],
+                  [{ defendantWaivesRightToCounsel: false, force: true }],
                   workingCase,
                   setWorkingCase,
                 )
@@ -89,7 +89,7 @@ const SelectDefender: React.FC = () => {
           />
         </Box>
         <DefenderInput
-          disabled={workingCase.defendantRefusesHavingDefender}
+          disabled={workingCase.defendantWaivesRightToCounsel}
           onDefenderNotFound={setDefenderNotFound}
         />
       </BlueBox>

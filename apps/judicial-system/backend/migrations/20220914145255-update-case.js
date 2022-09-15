@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
         'case',
-        'defendant_refuses_having_defender',
+        'defendant_waives_right_to_counsel',
         {
           type: Sequelize.BOOLEAN,
           defaultValue: false,
@@ -18,7 +18,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('case', 'defendant_refuses_having_defender', {
+      queryInterface.removeColumn('case', 'defendant_waives_right_to_counsel', {
         transaction: t,
       }),
     )

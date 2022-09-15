@@ -155,7 +155,7 @@ const CaseQuery = gql`
       origin
       seenByDefender
       subpoenaType
-      defendantRefusesHavingDefender
+      defendantWaivesRightToCounsel
     }
   }
 `
