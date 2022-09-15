@@ -50,7 +50,6 @@ export const LandskjorstjornFooter = ({
                         color="white"
                         variant="small"
                         marginBottom={1}
-                        lineHeight={'lg'}
                       >
                         {children}
                       </Text>
@@ -71,19 +70,14 @@ export const LandskjorstjornFooter = ({
           </Hidden>
           {footerItems.slice(1).map((item, index) => (
             <GridColumn key={index}>
-              <Box marginLeft={2}>
+              <Box marginLeft={index === 0 ? [2, 0] : 2} marginRight={8}>
                 <Text fontWeight="semiBold" color="white" marginBottom={2}>
                   {item.title}
                 </Text>
                 {richText(item.content as SliceType[], {
                   renderNode: {
                     [BLOCKS.PARAGRAPH]: (_node, children) => (
-                      <Text
-                        color="white"
-                        variant="medium"
-                        marginBottom={2}
-                        lineHeight={'lg'}
-                      >
+                      <Text color="white" variant="medium" marginBottom={2}>
                         {children}
                       </Text>
                     ),
