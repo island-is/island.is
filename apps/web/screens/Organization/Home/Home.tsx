@@ -80,6 +80,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
                   ? digitalIcelandDetailPageLinkType
                   : undefined,
             }}
+            renderedOnOrganizationSubpage={false}
           />
         )
       })}

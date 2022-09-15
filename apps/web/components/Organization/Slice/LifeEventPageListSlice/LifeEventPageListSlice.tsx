@@ -12,14 +12,6 @@ import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './LifeEventPageListSlice.css'
 
-const MAX_DESCRIPTION_LENGTH = 120
-
-const truncateText = (text: string) => {
-  if (text.length > MAX_DESCRIPTION_LENGTH)
-    return text.slice(0, MAX_DESCRIPTION_LENGTH) + '...'
-  return text
-}
-
 interface LifeEventPageListSliceProps {
   slice: LifeEventPageListSliceSchema
   namespace: Record<string, string>
@@ -46,7 +38,7 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
               variant="title-above"
               size="small"
               title={page.shortTitle || page.title}
-              description={page.shortIntro || truncateText(page.intro)}
+              description={page.shortIntro || page.intro}
               link={{
                 text: page.seeMoreText || n('profileCardSeeMore', 'Sjá nánar'),
                 url: linkResolver(
