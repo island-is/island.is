@@ -206,13 +206,13 @@ export const institutionApplicationMessages = {
     },
     sectionTitle: {
       id: 'ia.application:service.section.title',
-      defaultMessage: 'Þjónusta',
+      defaultMessage: 'Þjónustur',
       description: 'Section title',
     },
 
     sectionDescription: {
       id: 'ia.application:service.section.description',
-      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef`,
+      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef Stafræns Ísland.`,
       description: 'Section description',
     },
     informationSubtitle: {
@@ -550,7 +550,7 @@ export const institutionApplicationMessages = {
   urls: defineMessages({
     allServices: {
       id: 'ia.application:url.all',
-      defaultMessage: '/s/stafraent-island/thjonusta',
+      defaultMessage: 'https://island.is/s/stafraent-island/thjonusta',
       description: 'Url',
     },
     mailService: {
@@ -560,47 +560,55 @@ export const institutionApplicationMessages = {
     },
     loginService: {
       id: 'ia.application:url.login',
-      defaultMessage: '/s/stafraent-island/thjonusta/innskraning-fyrir-alla',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/innskraning-fyrir-alla',
       description: 'Url',
     },
     myPageService: {
       id: 'ia.application:url.mypage',
-      defaultMessage: '/s/stafraent-island/thjonusta/minar-sidur',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/minar-sidur',
       description: 'Url',
     },
     certificateService: {
       id: 'ia.application:url.certificate',
-      defaultMessage: '/s/stafraent-island/thjonusta/skirteini',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/skirteini',
       description: 'Url',
     },
     straumurService: {
       id: 'ia.application:url.straumur',
-      defaultMessage: '/s/stafraent-island/thjonusta/straumurinn',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/straumurinn',
       description: 'Url',
     },
     applyService: {
       id: 'ia.application:url.apply',
-      defaultMessage: '/s/stafraent-island/thjonusta/umsoknarkerfi',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/umsoknarkerfi',
       description: 'Url',
     },
     authorityService: {
       id: 'ia.application:url.authority',
-      defaultMessage: '/s/stafraent-island/thjonusta/umbodskerfi',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/umbodskerfi',
       description: 'Url',
     },
     webService: {
       id: 'ia.application:url.web',
-      defaultMessage: '/s/stafraent-island/thjonusta/vefur-stofnana',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/vefur-stofnana',
       description: 'Url',
     },
     appService: {
       id: 'ia.application:url.app',
-      defaultMessage: '/s/stafraent-island/thjonusta/app',
+      defaultMessage: '/https://island.iss/stafraent-island/thjonusta/app',
       description: 'Url',
     },
     islandService: {
       id: 'ia.application:url.island',
-      defaultMessage: '/s/stafraent-island/thjonusta/island-is',
+      defaultMessage:
+        'https://island.is/s/stafraent-island/thjonusta/island-is',
       description: 'Url',
     },
   }),
