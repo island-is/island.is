@@ -132,7 +132,7 @@ export class ApplicationService {
               ...(actor
                 ? [
                     { applicant: nationalId },
-                    { assignees: { [Op.contains]: [nationalId] } },
+                    { applicantActors: { [Op.contains]: [actor] } },
                   ]
                 : [{ applicant: { [Op.eq]: nationalId } }]),
               ...[{ assignees: { [Op.contains]: [nationalId] } }],
