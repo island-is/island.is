@@ -36,6 +36,14 @@ export const institutionApplicationMessages = {
         'Stofnun eða ráðuneyti sem sækist eftir samstarfi við Stafrænt Ísland og málefnasvið sem verkefnið tilheyrir. ',
       description: 'Section description',
     },
+
+    sectionApplicantDescription: {
+      id: 'ia.application:applicant.section.applicantDescription',
+      defaultMessage:
+        'Stofnun eða ráðuneyti sem sækist eftir samstarfi við Stafrænt Ísland og málefnasvið sem verkefnið tilheyrir. ',
+      description: 'Section description',
+    },
+
     institutionSubtitle: {
       id: 'ia.application:applicant.institution.subTitle',
       defaultMessage: 'Hvaða ráðuneyti eða stofnun sækir um samstarf?',
@@ -292,7 +300,7 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Þjónustur sem sótt er eftir',
       description: 'Sub section label',
     },
-    
+
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
       defaultMessage: 'Þjónustur sem sóst er eftir',
@@ -449,6 +457,17 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Yfirlit og staðfesting umsóknar',
       description: 'Section title',
     },
+    sectionReviewTitle: {
+      id: 'ia.application:review.sectionReview.title',
+      defaultMessage: 'Yfirlit og staðfesting umsóknar',
+      description: 'Section title',
+    },
+    sectionReviewDescription: {
+      id: 'ia.application:review.sectionReview.description',
+      defaultMessage:
+        'Vinsamlegast yfirfarið neðangreindar upplýsingar fyrir umsókn um samstarf við Stafrænt Ísland',
+      description: 'Section description',
+    },
     sectionDescription: {
       id: 'ia.application:review.section.description',
       defaultMessage:
@@ -462,7 +481,8 @@ export const institutionApplicationMessages = {
     },
     subSectionDescription: {
       id: 'ia.application:review.section.termsDescription',
-      defaultMessage: 'Þegar þjónustur Stafræns Íslands eru innleiddar og notaðar þá gilda þjónustuskilmálar viðkomandi kerfis/þjónustu',
+      defaultMessage:
+        'Þegar þjónustur Stafræns Íslands eru innleiddar og notaðar þá gilda þjónustuskilmálar viðkomandi kerfis/þjónustu',
       description: 'Section description',
     },
     submitButtonLabel: {

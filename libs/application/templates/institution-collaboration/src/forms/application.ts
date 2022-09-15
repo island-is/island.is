@@ -27,7 +27,7 @@ export const application: Form = buildForm({
         buildMultiField({
           id: 'applicantInformation',
           title: m.applicant.sectionTitle,
-          description: m.applicant.sectionDescription,
+          description: m.applicant.sectionApplicantDescription,
           children: [
             buildCustomField(
               {
@@ -155,8 +155,8 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'applicationReviewSection.applicationReview',
-          title: m.review.sectionTitle,
-          description: m.review.sectionDescription,
+          title: m.review.sectionReviewTitle,
+          description: m.review.sectionReviewDescription,
           children: [
             buildCustomField({
               id: 'reviewScreen',
