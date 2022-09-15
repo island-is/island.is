@@ -1,4 +1,4 @@
-# TESTING WALK THROUGH
+# TESTING WALKTHROUGH
 
 Welcome to testing. Jump to the section you need below.
 

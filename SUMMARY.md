@@ -92,7 +92,7 @@
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
 - [OpenAPI](handbook/repository/openapi.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
-- [TESTING WALK THROUGH](handbook/repository/system-e2e.md)
+- [TESTING WALKTHROUGH](handbook/repository/system-e2e.md)
 - [Workspace Settings](handbook/repository/workspace-settings.md)
 
 ## Apps
