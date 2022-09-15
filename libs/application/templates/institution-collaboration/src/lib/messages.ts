@@ -51,6 +51,11 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Upplýsingar tengiliðs',
       description: 'Subtitle for contact formfields',
     },
+    contactInstitutionEmailLabel: {
+      id: 'ia.application:applicant.contact.institutionemail.label',
+      defaultMessage: 'Aðalnetfang stofnunar',
+      description: 'Form label for contact institution email formfield',
+    },
     contactNameLabel: {
       id: 'ia.application:applicant.contact.name.label',
       defaultMessage: 'Nafn',
@@ -284,7 +289,7 @@ export const institutionApplicationMessages = {
   constraints: defineMessages({
     subSectionLabel: {
       id: 'ia.application:constraints.subSection.label',
-      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
+      defaultMessage: 'Þjónustur sem sótt er eftir',
       description: 'Sub section label',
     },
     sectionTitle: {
