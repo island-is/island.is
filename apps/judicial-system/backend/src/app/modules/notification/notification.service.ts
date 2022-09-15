@@ -22,6 +22,7 @@ import {
   isRestrictionCase,
   SessionArrangements,
   User,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
@@ -699,11 +700,14 @@ export class NotificationService {
     ]
 
     if (
+      theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
-        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON) &&
-      theCase.defenderEmail
+        (isInvestigationCase(theCase.type) &&
+          theCase.sessionArrangements &&
+          [
+            SessionArrangements.ALL_PRESENT,
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+          ].includes(theCase.sessionArrangements)))
     ) {
       promises.push(
         ...this.sendCourtDateEmailNotificationToDefender(theCase, user),
@@ -848,9 +852,12 @@ export class NotificationService {
     if (
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
-        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
+        (isInvestigationCase(theCase.type) &&
+          theCase.sessionArrangements &&
+          [
+            SessionArrangements.ALL_PRESENT,
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+          ].includes(theCase.sessionArrangements)))
     ) {
       this.sendRulingEmailNotificationToDefender(theCase)
     }

@@ -1,10 +1,16 @@
 export { CompanyInfoFragment } from './lib/fragments/companyInfo'
+export { dataFragment } from './lib/fragments/license'
+export {
+  unitsOfUseFragment,
+  pagingFragment,
+  appraisalFragment,
+  addressFragment,
+} from './lib/fragments/assets'
 export * from './lib/queries/getDocument'
 export * from './lib/queries/listDocuments'
 export * from './lib/queries/getOrganizations'
 export * from './lib/queries/getMenu'
 export * from './lib/queries/getUserProfile'
-export * from './lib/queries/getUserProfileStatus'
 export * from './lib/queries/getCustomerRecords'
 export * from './lib/queries/getCustomerChargeType'
 export * from './lib/mutations/createUserProfile'

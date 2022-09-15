@@ -205,6 +205,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
       },
+      courtRecord: {
+        id: 'judicial.system.core:titles.court.indictments.court_record',
+        defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Þingbók og dómur úrskurðar skjá hjá dómstólum í ákærum',
+      },
     }),
   },
   defender: {
