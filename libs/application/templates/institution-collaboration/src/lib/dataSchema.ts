@@ -6,7 +6,7 @@ export const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email().nonempty(),
   phoneNumber: z.string().nonempty(),
-  institutionemail: z.string().nonempty(),
+  institutionEmail: z.string().email().nonempty(),
 })
 
 export const dataSchema = z.object({

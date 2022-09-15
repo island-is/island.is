@@ -174,7 +174,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {getValueViaPath(application.answers, 'contact.institutionemail') as string}
+              {getValueViaPath(application.answers, 'contact.institutionEmail') as string}
             </Text>
           </Box>
           <Divider />
