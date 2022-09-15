@@ -117,8 +117,14 @@ const prodConfig = () => ({
     authRetries: process.env.PKPASS_AUTH_RETRIES,
   },
   pkpassv2: {
-    vePkPassApiKey: process.env.VE_PKPASS_API_KEY,
-    rlsPkPassApiKey: process.env.RLS_PKPASS_API_KEY,
+    rls: {
+      firearmLicensePassTemplateId:
+        process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+      pkPassApiKey: process.env.RLS_PKPASS_API_KEY,
+    },
+    ve: {
+      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    },
   },
   smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
@@ -279,8 +285,14 @@ const devConfig = () => ({
     authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
   pkpassv2: {
-    vePkPassApiKey: process.env.VE_PKPASS_API_KEY,
-    rlsPkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    rls: {
+      firearmLicensePassTemplateId:
+        process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    },
+    ve: {
+      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
+    },
   },
   audit: {
     defaultNamespace: '@island.is/api',

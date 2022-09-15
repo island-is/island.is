@@ -21,6 +21,7 @@ const LOG_CATEGORY = 'smartsolutions'
 export interface SmartSolutionsConfig {
   apiKey: string
   apiUrl: string
+  passTemplateId?: string
 }
 
 export class SmartSolutionsApi {
@@ -40,15 +41,19 @@ export class SmartSolutionsApi {
     })
   }
 
-  async listPkPasses(
-    queryId: string,
-    passTemplateId: string,
-  ): Promise<ListPassesDTO | null> {
+  async listPkPasses(queryId: string): Promise<ListPassesDTO | null> {
+    if (!this.config.passTemplateId) {
+      this.logger.warn('Missing pass template id!', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
     const listPassesQuery = `
       query ListPasses {
         passes(
           search: { query: "${queryId}" },
-          passTemplateId: "${passTemplateId}",
+          passTemplateId: "${this.config.passTemplateId}",
           order: { column: WHEN_MODIFIED, dir: DESC }
           ) {
           data {
@@ -220,7 +225,6 @@ export class SmartSolutionsApi {
       //return null
     }
 
-    this.logger.debug(JSON.stringify(json))
     const response = json as VerifyPassResponse
 
     if (response) {
@@ -316,11 +320,7 @@ export class SmartSolutionsApi {
     payload: PassDataInput,
     nationalId: string,
   ): Promise<Pass | null> {
-    const existingPasses = await this.listPkPasses(
-      nationalId,
-      payload.passTemplateId ?? '',
-    )
-    this.logger.debug(JSON.stringify(existingPasses))
+    const existingPasses = await this.listPkPasses(nationalId)
 
     const containsActiveOrUnclaimed =
       existingPasses?.data &&

@@ -34,6 +34,7 @@ import {
 export interface PkPassConfig {
   apiKey: string
   apiUrl: string
+  passTemplateId?: string
   secretKey?: string
   cacheKey?: string
   cacheTokenExpiryDelta?: string

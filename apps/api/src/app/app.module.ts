@@ -218,8 +218,9 @@ const autoSchemaFile = environment.production
     }),
     LicenseServiceModule.register({
       firearmLicense: {
-        apiKey: environment.pkpassv2.rlsPkPassApiKey!,
+        apiKey: environment.pkpassv2.rls.pkPassApiKey!,
         apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.pkpassv2.rls.firearmLicensePassTemplateId!,
       },
       driversLicense: {
         xroad: {
