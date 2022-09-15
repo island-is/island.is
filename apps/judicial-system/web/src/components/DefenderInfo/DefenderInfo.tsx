@@ -1,13 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  AlertMessage,
-  Box,
-  Checkbox,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
 
 import {
   Case,
