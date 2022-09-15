@@ -1,7 +1,5 @@
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
-
-import { Attachments } from './attachments'
+import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatText } from '@island.is/application/core'
 import { getValueViaPath } from '@island.is/application/core'
@@ -30,46 +28,124 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
 
   const mailConstraints = getValueViaPath(
     application.answers,
-    'constraints.mail',
+    'constraints.hasMail',
   ) as string
   const loginConstraints = getValueViaPath(
     application.answers,
-    'constraints.login',
+    'constraints.hasLogin',
   ) as string
   const straumurConstraints = getValueViaPath(
     application.answers,
-    'constraints.straumur',
+    'constraints.hasStraumur',
   ) as string
   const websiteConstraints = getValueViaPath(
     application.answers,
-    'constraints.website',
+    'constraints.hasWebsite',
   ) as string
   const applyConstraints = getValueViaPath(
     application.answers,
-    'constraints.apply',
+    'constraints.hasApply',
   ) as string
   const myPageConstraints = getValueViaPath(
     application.answers,
-    'constraints.myPages',
+    'constraints.hasMyPages',
+  ) as string
+  const certConstraint = getValueViaPath(
+    application.answers,
+    'constraints.hasCert',
+  ) as string
+  const consultContraint = getValueViaPath(
+    application.answers,
+    'constraints.hasConsult',
   ) as string
 
-  const hasConstraints = [
-    mailConstraints,
-    loginConstraints,
-    straumurConstraints,
-    websiteConstraints,
-    applyConstraints,
-    myPageConstraints,
-  ].some((x) => !!x)
+  //#region Services Text
+  const servicesTextArr: string[] = []
+  mailConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsMailLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  loginConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsLoginLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  straumurConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsStraumurLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  websiteConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsWebsiteLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  applyConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsApplyingLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  myPageConstraints &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsmyPagesLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  certConstraint &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsCertLabel,
+        application,
+        formatMessage,
+      ),
+    )
+  consultContraint &&
+    servicesTextArr.push(
+      formatText(
+        m.constraints.constraintsConsultLabel,
+        application,
+        formatMessage,
+      ),
+    )
+
+  //#endregion Services Text
+
+  console.log(servicesTextArr)
+
+  function getServicesTextOutput(): string {
+    let text = ''
+    for (let i = 0; i < servicesTextArr.length; i++) {
+      text += servicesTextArr[i]
+      if (i !== servicesTextArr.length - 1) {
+        text += ', '
+      }
+    }
+    return text
+  }
 
   return (
     <Box marginTop={4}>
       <Stack space={7}>
         <Stack space={3}>
           {/* contact information */}
-          <Text variant="h2">
-            {formatText(m.applicant.sectionTitle, application, formatMessage)}
-          </Text>
           <Box>
             <Text variant="h5">
               {formatText(
@@ -196,204 +272,22 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </>
           )}
         </Stack>
-        <Stack space={3}>
-          {/* project information */}
-          <Text variant="h2">
-            {formatText(m.project.sectionTitle, application, formatMessage)}
-          </Text>
-          <Box>
-            <Text variant="h5">
-              {formatText(m.project.nameLabel, application, formatMessage)}
-            </Text>
-            <Text>
-              {getValueViaPath(application.answers, 'project.name') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                m.project.backgroundLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {
-                getValueViaPath(
-                  application.answers,
-                  'project.background',
-                ) as string
-              }
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(m.project.goalsLabel, application, formatMessage)}
-            </Text>
 
-            <Text>
-              {getValueViaPath(application.answers, 'project.goals') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(m.project.scopeLabel, application, formatMessage)}
-            </Text>
-            <Text>
-              {getValueViaPath(application.answers, 'project.scope') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(m.project.financeLabel, application, formatMessage)}
-            </Text>
-            <Text>
-              {
-                getValueViaPath(
-                  application.answers,
-                  'project.finance',
-                ) as string
-              }
-            </Text>
-          </Box>
-        </Stack>
-        {hasConstraints && (
+        {servicesTextArr.length > 0 && (
           <Stack space={3}>
             {/* constraints information */}
-            <Text variant="h2">
+            <Text variant="h5">
               {formatText(
                 m.constraints.sectionTitle,
                 application,
                 formatMessage,
               )}
             </Text>
-            {mailConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsMailLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{mailConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
-            {loginConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsLoginLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{loginConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
-            {straumurConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsStraumurLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{straumurConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
-            {websiteConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsWebsiteLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{websiteConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
-            {applyConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsApplyingLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{applyConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
+            <Box>
+              <Text>{getServicesTextOutput()}</Text>
+            </Box>
           </Stack>
         )}
-        <Stack space={3}>
-          {/* stakeholders information */}
-          <Text variant="h2">
-            {formatText(
-              m.stakeholders.sectionTitle,
-              application,
-              formatMessage,
-            )}
-          </Text>
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                m.stakeholders.stakeholdersLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {getValueViaPath(application.answers, 'stakeholders') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(m.stakeholders.roleLabel, application, formatMessage)}
-            </Text>
-            <Text>
-              {getValueViaPath(application.answers, 'role') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                m.stakeholders.otherRolesLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {getValueViaPath(application.answers, 'otherRoles') as string}
-            </Text>
-          </Box>
-          <Divider />
-          <Attachments application={application} />
-        </Stack>
       </Stack>
     </Box>
   )
