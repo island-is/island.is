@@ -459,6 +459,17 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Staðfesta Umsókn',
       description: 'Button label for submitting application',
     },
+    termsOfServiceLabel: {
+      id: 'ia.application:review.termsOfServiceLabel',
+      defaultMessage: 'Skilmálar',
+      description: 'Terms of service label for submitting application',
+    },
+    termsOfServiceText: {
+      id: 'ia.application:review.termsOfServiceText',
+      defaultMessage:
+        'Þegar þjónustur Stafræns Íslands eru innleiddar og notaðar þá gilda þjónustuskilmálar viðkomandi kerfis/þjónustu',
+      description: 'Terms of service for submitting application',
+    },
   }),
   confirmation: defineMessages({
     sectionLabel: {
