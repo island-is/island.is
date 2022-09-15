@@ -44,8 +44,9 @@ export const application: Form = buildForm({
               title: m.applicant.institutionLabel,
               setLabelToDataSchema: true,
             }),
+
             buildTextField({
-              id: 'contact.institutionemail',
+              id: 'contact.institutionEmail',
               title: m.applicant.contactInstitutionEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
