@@ -10,8 +10,6 @@ Here you write documentation.
 
 There is none, this is the Wild Barren West 🤠
 
-If you _really_ want to see how your changes look before merging your PR, get fuk'd, you can't. At least according to the documentation available here 🙄
-
 ## Code owners and maintainers
 
 - [Core](https://github.com/orgs/island-is/teams/core/members)
