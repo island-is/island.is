@@ -93,6 +93,29 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         ],
         description: m.userInfoDescription,
       },
+
+      // Reglugerðir vinnusvæði
+      {
+        name: m.regulationAdmin,
+        path: ServicePortalPath.RegulationsAdminRoot,
+        icon: {
+          type: 'outline',
+          icon: 'settings',
+        },
+        children: [
+          // {
+          //   name: m.regulationAdminEdit,
+          //   path: ServicePortalPath.RegulationsAdminEdit,
+          //   navHide: true,
+          // },
+          // // Laterz...
+          // {
+          //   name: m.regulationAdminMinistries,
+          //   path: ServicePortalPath.RegulationsAdminMinistries,
+          // },
+        ],
+      },
+
       // Mín skírteini
       {
         name: m.licenses,
