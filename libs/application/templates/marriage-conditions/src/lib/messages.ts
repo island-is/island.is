@@ -462,6 +462,12 @@ export const m = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorDataProviderMaritalStatus: {
+    id: 'mac.application:error.daterrorDataProviderMaritalStatusaProvider',
+    defaultMessage:
+      'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn.',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
   actionCardDoneTag: {
     id: 'mac.application:actionCard.done',
     defaultMessage: 'Móttekin',

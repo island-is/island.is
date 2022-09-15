@@ -64,7 +64,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
       ...(allowFakeData ? [fakeDataSection] : []),
       dataCollectionSection,
       buildSection({
-        id: 'infoWitnesses',
+        id: 'marriageSides',
         title: m.informationSectionTitle,
         children: [
           buildSubSection({
@@ -77,7 +77,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 children: [
                   buildDescriptionField({
                     id: 'header1',
-                    title: m.informationWitness1,
+                    title: m.informationSpouse1,
                     titleVariant: 'h4',
                   }),
                   buildTextField({
@@ -131,7 +131,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   }),
                   buildDescriptionField({
                     id: 'header2',
-                    title: m.informationWitness2,
+                    title: m.informationSpouse2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
