@@ -93,6 +93,7 @@ export const application: Form = buildForm({
               id: 'secondaryContact',
               title: m.applicant.secondaryContactSubtitle,
               component: 'SecondaryContact',
+              doesNotRequireAnswer: true,
             }),
             buildTextField({
               id: 'secondaryContact.name',
@@ -103,6 +104,7 @@ export const application: Form = buildForm({
                 comparator: Comparators.EQUALS,
                 value: YES,
               },
+              defaultValue: '',
             }),
             buildTextField({
               id: 'secondaryContact.phoneNumber',
@@ -110,6 +112,7 @@ export const application: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
+              defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
                 comparator: Comparators.EQUALS,
@@ -121,6 +124,7 @@ export const application: Form = buildForm({
               title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
+              defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
                 comparator: Comparators.EQUALS,
