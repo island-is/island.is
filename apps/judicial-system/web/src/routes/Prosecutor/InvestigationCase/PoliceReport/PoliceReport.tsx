@@ -1,7 +1,10 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { FormContext, PageLayout } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
   Sections,
