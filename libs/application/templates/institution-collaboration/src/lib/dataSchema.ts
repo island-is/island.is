@@ -26,7 +26,7 @@ export const dataSchema = z.object({
   contact: contactSchema,
 
   hasSecondaryContact: z.enum([YES, NO]),
-  secondaryContact: secondaryContactSchema,
+  secondaryContact: secondaryContactSchema.partial(),
 
   applicantInformation: z.object({
     constraints: z.object({
@@ -56,3 +56,5 @@ export const dataSchema = z.object({
     }),
   }),
 })
+
+console.log(dataSchema)

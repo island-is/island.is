@@ -25,7 +25,7 @@ const ConstraintController: FC<Props> = ({
   function shouldClearText(value: boolean) {
     if (!value) {
       setValue(id, '')
-      setTextValue('')
+      // setTextValue('')
       // // Update straight away
       // const textArea = document.getElementById(id) as HTMLInputElement | null
       // if (textArea) {
@@ -60,7 +60,7 @@ const ConstraintController: FC<Props> = ({
       </Box>
       {isChecked && extraText && (
         <Input
-          onChange={(e) => setTextValue(e.target.value)}
+          // onChange={(e) => setTextValue(e.target.value)}
           placeholder={placeholder}
           backgroundColor="blue"
           type="text"
@@ -71,7 +71,8 @@ const ConstraintController: FC<Props> = ({
           rows={5}
           maxLength={250}
           ref={register}
-          value={textValue}
+          defaultValue=""
+          // value={textValue}
         />
       )}
     </Stack>
