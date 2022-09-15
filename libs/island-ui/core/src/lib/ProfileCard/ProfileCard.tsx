@@ -39,7 +39,7 @@ export interface ProfileCardProps {
   }
 
   /**
-   * Choose a where to place the title
+   * Choose where to place the title
    */
   variant?: 'default' | 'title-above'
 }
