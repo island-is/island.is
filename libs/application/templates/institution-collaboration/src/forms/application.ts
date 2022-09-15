@@ -44,6 +44,14 @@ export const application: Form = buildForm({
               title: m.applicant.institutionLabel,
               setLabelToDataSchema: true,
             }),
+            buildTextField({
+              id: 'contact.institutionemail',
+              title: m.applicant.contactInstitutionEmailLabel,
+              backgroundColor: 'blue',
+              required: true,
+              defaultValue: '',
+            }),
+
             buildCustomField(
               {
                 id: 'applicant.contactSubtitle',
@@ -61,6 +69,7 @@ export const application: Form = buildForm({
               required: true,
               defaultValue: '',
             }),
+
             buildTextField({
               id: 'contact.phoneNumber',
               title: m.applicant.contactPhoneLabel,
