@@ -1,4 +1,5 @@
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatText } from '@island.is/application/core'
@@ -164,6 +165,19 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
           <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(
+                m.applicant.contactInstitutionEmailLabel,
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'contact.institutionemail') as string}
+            </Text>
+          </Box>
+          <Divider />
           <Text variant="h4">
             {formatText(
               m.applicant.contactSubtitle,
@@ -214,6 +228,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               }
             </Text>
           </Box>
+          <Divider />
           {hasSecondaryContact && (
             <>
               <Divider />

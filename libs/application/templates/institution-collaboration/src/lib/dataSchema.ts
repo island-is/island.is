@@ -1,10 +1,12 @@
 import * as z from 'zod'
+
 import { NO, YES } from '../constants'
 
 export const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email().nonempty(),
   phoneNumber: z.string().nonempty(),
+  institutionemail: z.string().nonempty(),
 })
 
 export const dataSchema = z.object({
