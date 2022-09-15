@@ -23,6 +23,7 @@ import {
   SessionArrangements,
   User,
   isInvestigationCase,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
@@ -1079,10 +1080,12 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const courtWasNotified = await this.existsRevokableNotification(
-      theCase.id,
-      this.getCourtMobileNumbers(theCase.courtId),
-    )
+    const courtWasNotified =
+      !isIndictmentCase(theCase.type) &&
+      (await this.existsRevokableNotification(
+        theCase.id,
+        this.getCourtMobileNumbers(theCase.courtId),
+      ))
 
     if (courtWasNotified) {
       promises.push(this.sendRevokedSmsNotificationToCourt(theCase))
@@ -1100,10 +1103,12 @@ export class NotificationService {
       promises.push(this.sendRevokedEmailNotificationToPrison(theCase))
     }
 
-    const defenderWasNotified = await this.existsRevokableNotification(
-      theCase.id,
-      theCase.defenderEmail,
-    )
+    const defenderWasNotified =
+      !isIndictmentCase(theCase.type) &&
+      (await this.existsRevokableNotification(
+        theCase.id,
+        theCase.defenderEmail,
+      ))
 
     if (defenderWasNotified && theCase.defenderEmail) {
       promises.push(this.sendRevokedEmailNotificationToDefender(theCase))
