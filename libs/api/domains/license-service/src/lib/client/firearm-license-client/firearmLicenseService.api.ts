@@ -187,11 +187,9 @@ export class GenericFirearmLicenseApi
 
       return {
         valid: false,
-        data: undefined,
         error,
       }
     }
-    let response: Record<string, string | null> | undefined = undefined
 
     /*HERE we should compare fetch the firearm license using the national id of the
       user being scanned, NOT the logged in user, but this is impossible as it stands!
@@ -207,30 +205,8 @@ export class GenericFirearmLicenseApi
       }
     */
 
-    //In the meantime we'll just return the pkpass values in the response
-
-    const pass = result?.data?.updateStatusOnPassWithDynamicBarcode
-    if (pass) {
-      const nationalId =
-        pass.inputFieldValues?.find((i) => i.passInputField.identifier === 'kt')
-          ?.value ?? ''
-      const name =
-        pass.inputFieldValues?.find(
-          (i) => i.passInputField.identifier === 'nafn',
-        )?.value ?? ''
-
-      const rawData = JSON.stringify(pass)
-
-      response = {
-        nationalId: nationalId.replace('-', ''),
-        name,
-        rawData,
-      }
-    }
-
     return {
       valid: result.valid,
-      data: response ? JSON.stringify(response) : undefined,
       error,
     }
   }
