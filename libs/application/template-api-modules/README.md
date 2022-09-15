@@ -151,7 +151,7 @@ See documentation on how to add a new template api [above](#getting-started)
 
 ## 2. Set up your dataprovider definitions
 
-Make your definitions available to your Template
+Create your definition in your template lib (eg. `libs/application/templates/your-applicatoin/src/dataProviders/index.ts`) and make your definitions available to your Templates' state
 
 ```typescript
 import { defineTemplateApi } from '@island.is/application/types'
@@ -276,7 +276,7 @@ export class SomeService extends BaseTemplateApiService {
     super(ApplicationTypes.SOME_APPLICATION)
   }
 
-  async getMyData({
+  async someAction({
     params,
   }: TemplateApiModuleActionProps<MyParameterType>): Promise<SomeData> {
     const myId = params?.id
