@@ -58,17 +58,17 @@ export const institutionApplicationMessages = {
     },
     contactNameLabel: {
       id: 'ia.application:applicant.contact.name.label',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Nafn tengiliðs',
       description: 'Form label for contact name formfield',
     },
     contactPhoneLabel: {
       id: 'ia.application:applicant.contact.phone.label',
-      defaultMessage: 'Símanúmer',
+      defaultMessage: 'Símanúmer tengiliðs',
       description: 'Form label for contact phone formfield',
     },
     contactEmailLabel: {
       id: 'ia.application:applicant.contact.email.label',
-      defaultMessage: 'Netfang',
+      defaultMessage: 'Netfang tengiliðs',
       description: 'Form label for contact email formfield',
     },
     contactAddButtonLabel: {
