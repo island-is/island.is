@@ -11,6 +11,11 @@ export const applicationOverviewTemplate = (
     'applicant.institution.label',
   )
 
+  const institutionEmail = getValueViaPath(
+    application.answers,
+    'applicant.institutionEmail',
+  )
+
   const contactName = getValueViaPath(application.answers, 'contact.name')
   const contactEmail = getValueViaPath(application.answers, 'contact.email')
   const contactPhone = getValueViaPath(
@@ -36,49 +41,44 @@ export const applicationOverviewTemplate = (
     secondaryContactPhone,
   ].some((x) => !!x)
 
-  const projectName = getValueViaPath(application.answers, 'project.name')
-  const projectGoal = getValueViaPath(application.answers, 'project.goals')
-  const projectScope = getValueViaPath(application.answers, 'project.scope')
-  const projectFinance = getValueViaPath(application.answers, 'project.finance')
-  const projectBackground = getValueViaPath(
-    application.answers,
-    'project.background',
-  )
-  const projectStakeholders = getValueViaPath(
-    application.answers,
-    'stakeholders',
-  )
-  const projectRole = getValueViaPath(application.answers, 'role')
-  const projectOtherRoles = getValueViaPath(application.answers, 'otherRoles')
-
   const mailConstraints = getValueViaPath(
     application.answers,
-    'constraints.mail',
+    'constraints.hasMail',
   ) as boolean
 
   const loginConstraints = getValueViaPath(
     application.answers,
-    'constraints.login',
+    'constraints.hasLogin',
   ) as boolean
 
   const straumurConstraints = getValueViaPath(
     application.answers,
-    'constraints.straumur',
+    'constraints.hasStraumur',
   ) as boolean
 
   const websiteConstraints = getValueViaPath(
     application.answers,
-    'constraints.website',
+    'constraints.hasWebsite',
   ) as boolean
 
   const applyConstraints = getValueViaPath(
     application.answers,
-    'constraints.apply',
+    'constraints.hasApply',
   ) as boolean
 
   const myPageConstraints = getValueViaPath(
     application.answers,
-    'constraints.myPages',
+    'constraints.hasMyPages',
+  ) as boolean
+
+  const certConstraints = getValueViaPath(
+    application.answers,
+    'constraints.hasCert',
+  ) as boolean
+
+  const consultConstraints = getValueViaPath(
+    application.answers,
+    'constraints.hasConsult',
   ) as boolean
 
   const hasConstraints = [
@@ -88,6 +88,8 @@ export const applicationOverviewTemplate = (
     websiteConstraints,
     applyConstraints,
     myPageConstraints,
+    certConstraints,
+    consultConstraints,
   ].some((x) => !!x)
 
   return dedent(`
@@ -146,27 +148,6 @@ export const applicationOverviewTemplate = (
 
 
   <h3>${messages.project.sectionTitle.defaultMessage}</h3>
-  <p>
-    <b>${messages.project.nameLabel.defaultMessage}</b> </br>
-    ${projectName}
-  </p>
-  <p>
-    <b>${messages.project.backgroundLabel.defaultMessage}</b> </br>
-    ${projectBackground}
-  </p>
-  <p>
-    <b>${messages.project.goalsLabel.defaultMessage}</b> </br>
-    ${projectGoal}
-  </p>
-  <p>
-    <b>${messages.project.scopeLabel.defaultMessage}</b> </br>
-    ${projectScope}
-  </p>
-  <p>
-    <b>${messages.project.financeLabel.defaultMessage}</b> </br>
-    ${projectFinance}
-  </p>
-
 
   ${
     hasConstraints
@@ -192,7 +173,7 @@ export const applicationOverviewTemplate = (
       : ''
   }
 
-  
+
   ${
     straumurConstraints
       ? `<p>
@@ -228,21 +209,5 @@ export const applicationOverviewTemplate = (
   </p>`
       : ''
   }
-
-  
-  <h3>${messages.stakeholders.sectionTitle.defaultMessage}</h3>
-  <p>
-    <b>${messages.stakeholders.stakeholdersLabel.defaultMessage}</b> </br>
-    ${projectStakeholders}
-  </p>
-  <p>
-    <b>${messages.stakeholders.roleLabel.defaultMessage}</b> </br>
-    ${projectRole}
-  </p>
-  <p>
-    <b>${messages.stakeholders.otherRolesLabel.defaultMessage}</b> </br>
-    ${projectOtherRoles}
-  </p>
-
   `)
 }

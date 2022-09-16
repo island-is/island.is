@@ -80,7 +80,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     'constraints.consult',
   ) as string
 
-  console.log(applyConstraintsText)
+  const textArr = getServicesArray(application)
 
   //#region Services Text
   const servicesTextArr: string[] = []

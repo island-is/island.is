@@ -24,29 +24,24 @@ export class InstitutionCollaborationService {
   ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const attachments = await this.prepareAttachments(application)
+    // const attachments = await this.prepareAttachments(application)
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
         generateApplicationEmail(
           props,
-          this.institutionConfig.applicationSenderName,
-          this.institutionConfig.applicationSenderEmail,
-          this.institutionConfig.applicationRecipientName,
-          this.institutionConfig.applicationRecipientEmail,
-          attachments,
+          'Sender Name',
+          'unnarb@gmail.com',
+          'test recipient name',
+          'unnarb@gmail.com',
+          [],
         ),
       application,
     )
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
-        generateConfirmationEmail(
-          props,
-          this.institutionConfig.applicationSenderName,
-          this.institutionConfig.applicationSenderEmail,
-          attachments,
-        ),
+        generateConfirmationEmail(props, 'Sender Name', 'unnarb@gmail.com', []),
       application,
     )
   }
