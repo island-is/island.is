@@ -2,9 +2,11 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
+import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseQuery,
   DropdownMenu,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
@@ -26,7 +28,6 @@ import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import type { Case } from '@island.is/judicial-system/types'
@@ -106,26 +107,22 @@ export const Cases: React.FC = () => {
 
   useEffect(() => {
     if (resCases && !activeCases) {
-      // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
 
-      setActiveCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? !c.isValidToDateInThePast && c.rulingDate
-            : !c.rulingDate
-        }),
-      )
+      const [active, past] = partition(casesWithoutDeleted, (c: Case) => {
+        if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
+          return false
+        } else if (isPrisonAdminUser || isPrisonUser) {
+          return !c.isValidToDateInThePast && c.rulingDate
+        } else {
+          return !c.rulingDate
+        }
+      })
 
-      setPastCases(
-        casesWithoutDeleted.filter((c: Case) => {
-          return isPrisonAdminUser || isPrisonUser
-            ? c.isValidToDateInThePast && c.rulingDate
-            : c.rulingDate
-        }),
-      )
+      setActiveCases(active)
+      setPastCases(past)
     }
   }, [
     activeCases,

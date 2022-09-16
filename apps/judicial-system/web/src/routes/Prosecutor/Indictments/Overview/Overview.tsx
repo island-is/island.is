@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
 
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCardActiveIndictment,
   Modal,
