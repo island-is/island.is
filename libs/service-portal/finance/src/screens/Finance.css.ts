@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const dateFilter = style({
@@ -17,3 +17,20 @@ export const openCal = style({
 export const openLowerCal = style({
   paddingTop: '165px',
 })
+
+export const accordionBox = style({})
+export const accordionBoxSingle = style({})
+
+globalStyle(
+  `${accordionBox} .island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '30px !important',
+  },
+)
+
+globalStyle(
+  `${accordionBoxSingle} .island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '20px !important',
+  },
+)

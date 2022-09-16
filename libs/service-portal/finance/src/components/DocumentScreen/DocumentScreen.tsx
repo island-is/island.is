@@ -198,7 +198,7 @@ const DocumentScreen: FC<Props> = ({
                       iconVariant="small"
                     >
                       <Box
-                        className={cn({
+                        className={cn(styles.accordionBoxSingle, {
                           [styles.openCal]: openCal?.top,
                           [styles.openLowerCal]: openCal?.lower,
                         })}

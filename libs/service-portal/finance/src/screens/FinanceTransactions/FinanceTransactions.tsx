@@ -236,7 +236,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                         iconVariant="small"
                       >
                         <Box
-                          className={cn({
+                          className={cn(styles.accordionBox, {
                             [styles.openCal]: openCal?.top,
                             [styles.openLowerCal]: openCal?.lower,
                           })}

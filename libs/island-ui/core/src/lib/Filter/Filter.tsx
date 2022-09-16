@@ -45,7 +45,7 @@ export interface FilterProps {
   /** Swap input and filter button locations */
   reverse?: boolean
 
-  /** Popover flip can be disabled */
+  /** Allow popover to flip upwards */
   popoverFlip?: boolean
 }
 
