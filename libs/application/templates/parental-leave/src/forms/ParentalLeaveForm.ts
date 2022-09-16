@@ -76,28 +76,30 @@ export const ParentalLeaveForm: Form = buildForm({
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
         buildSubSection({
-          id: 'leaveType',
-          title: 'Veldu umsókn',
+          id: 'applicationType',
+          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           children: [
-            buildAsyncSelectField({
-              title: 'Veldu umsókn',
-              id: 'leaveType.applicationType',
-              isSearchable: true,
-              placeholder:
-                parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
-              loadOptions: async ({ apolloClient }) => {
-                return await Promise.resolve([
-                  { label: 'Fæðingarorlof', value: PARENTAL_LEAVE },
-                  {
-                    label: 'Fæðingarstyrkur - utan vinnumarkaðar',
-                    value: PARENTAL_GRANT,
-                  },
-                  {
-                    label: 'Fæðingarstyrkur - námsmenn',
-                    value: PARENTAL_GRANT_STUDENTS,
-                  },
-                ])
-              },
+            buildRadioField({
+              id: 'applicationType.option',
+              title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+              description: 'veldu tegund umsóknar.. þarf að laga þennan texta',
+              options: [
+                {
+                  value: PARENTAL_LEAVE,
+                  label: parentalLeaveFormMessages.shared.applicationParentalLeaveTitle, 
+                  subLabel: parentalLeaveFormMessages.shared.applicationParentalLeaveSubTitle.defaultMessage as string,
+                },
+                {
+                  value: PARENTAL_GRANT,
+                  label: parentalLeaveFormMessages.shared.applicationParentalGrantUnemployedTitle, 
+                  subLabel: parentalLeaveFormMessages.shared.applicationParentalGrantUnemployedSubTitle.defaultMessage as string,
+                },
+                {
+                  value: PARENTAL_GRANT_STUDENTS,
+                  label: parentalLeaveFormMessages.shared.applicationParentalGrantStudentTitle,
+                  subLabel: parentalLeaveFormMessages.shared.applicationParentalGrantStudentSubTitle.defaultMessage as string,
+                },
+              ],
             }),
           ],
         }),
@@ -234,17 +236,17 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildAsyncSelectField({
                   condition: (answers) =>
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
                   dataTestId: `pension-fund`,
                   placeholder:
-                    parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
+                    parentalLeaveFormMessages.share.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
@@ -264,10 +266,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   condition: (answers) =>
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   component: 'UseUnion',
                   id: 'useUnion',
                   title: parentalLeaveFormMessages.shared.unionName,
@@ -278,10 +280,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) =>
                     answers.useUnion === YES &&
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -307,10 +309,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   condition: (answers) =>
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   component: 'UsePrivatePensionFund',
                   id: 'usePrivatePensionFund',
                   title:
@@ -323,10 +325,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) =>
                     answers.usePrivatePensionFund === YES &&
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -353,10 +355,10 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) =>
                     answers.usePrivatePensionFund === YES &&
                     (answers as {
-                      leaveType: {
-                        applicationType: string
+                      applicationType: {
+                        option: string
                       }
-                    })?.leaveType?.applicationType === PARENTAL_LEAVE,
+                    })?.applicationType?.option === PARENTAL_LEAVE,
                   id: 'payments.privatePensionFundPercentage',
                   dataTestId: 'private-pension-fund-ratio',
                   title:
@@ -485,10 +487,10 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           condition: (answers) =>
             (answers as {
-              leaveType: {
-                applicationType: string
+              applicationType: {
+                option: string
               }
-            })?.leaveType?.applicationType === PARENTAL_LEAVE,
+            })?.applicationType?.option === PARENTAL_LEAVE,
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [

@@ -23,7 +23,7 @@ const createBaseApplication = (): Application => ({
   answers: {
     someAnswer: 'someValue',
     selectedChild: '0',
-    leaveType: { applicationType: 'parentalLeave' },
+    applicationType: { option: 'parentalLeave' },
   },
   assignees: [],
   applicant: '',

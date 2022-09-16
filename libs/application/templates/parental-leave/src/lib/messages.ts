@@ -114,6 +114,55 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'These applications could be for already born children, or an application made by you or the other parent for parental leave for your unborn child.',
     },
+    applicationTypeTitle: {
+      id: 'pl.application:applicationType.title',
+      defaultMessage:
+        'Tegund umsóknar',
+      description:
+        'Type of application',
+    },
+    applicationParentalLeaveTitle: {
+      id: 'pl.application:applicationParentalLeave.title',
+      defaultMessage:
+        'Fæðingarorlof - almenn umsókn',
+      description:
+        'Parental Leave - general application',
+    },
+    applicationParentalLeaveSubTitle: {
+      id: 'pl.application:applicationParentalLeave.subtitle',
+      defaultMessage:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+      description:
+        'Fæðingarorlof er fyrir foreldra á innlendum vinnumarkaði sem eru starfsmenn og/eða sjálfstætt starfandi.',
+    },
+    applicationParentalGrantUnemployedTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.title',
+      defaultMessage:
+        'Fæðingarstyrkur - utan vinnumarkaðar',
+      description:
+        'Parental Leave - general application',
+    },
+    applicationParentalGrantUnemployedSubTitle: {
+      id: 'pl.application:applicationParentalGrantUnemployed.subtitle',
+      defaultMessage:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem er utan vinnumarkaðar eða í minna en 25% starfi öðlast rétt til fæðingarstyrks',
+    },
+    applicationParentalGrantStudentTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.title',
+      defaultMessage:
+        'Fæðingarstyrkur – námsmenn',
+      description:
+        'Parental Grant - students',
+    },
+    applicationParentalGrantStudentSubTitle: {
+      id: 'pl.application:applicationParentalGrantStudent.subtitle',
+      defaultMessage:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
+      description:
+        'Foreldri sem uppfyllir skilyrði um fullt nám öðlast rétt til fæðingarstyrks',
+    },
     otherParentSubSection: {
       id: 'pl.application:otherParent.subSection',
       defaultMessage: 'Hitt foreldrið',

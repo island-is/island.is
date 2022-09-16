@@ -2,7 +2,7 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES, MANUAL, SPOUSE, TransferRightsOption } from '../constants'
+import { NO, YES, MANUAL, SPOUSE, TransferRightsOption, PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE } from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
@@ -23,6 +23,9 @@ const PersonalAllowance = z
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().nonempty(),
+  applicationType: z.object({
+    option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(

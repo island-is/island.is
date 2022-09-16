@@ -122,7 +122,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const applicationType = getValueViaPath(
       application.answers,
-      'leaveType.applicationType',
+      'applicationType.option',
     )
 
     if (applicationType === PARENTAL_LEAVE) {
