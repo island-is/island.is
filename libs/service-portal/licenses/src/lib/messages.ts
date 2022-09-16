@@ -47,11 +47,12 @@ export const m = defineMessages({
   },
   yourFirearmLicense: {
     id: 'sp.license:your-firearm-license',
-    defaultMessage: 'Skotvoplaleyfið þitt',
+    defaultMessage: 'Skotvopnaleyfið þitt',
   },
   firearmLicenseDescription: {
     id: 'sp.license:firearm-license-description',
-    defaultMessage: 'Hér birtast upplýsingar um skoptvopnaleyfið þitt.',
+    defaultMessage:
+      'Hér birtast upplýsingar um skoptvopnaleyfið þitt ásamt skotvopnum skráð í þinni eigu.',
   },
   machineLicense: {
     id: 'sp.license:machine-license',

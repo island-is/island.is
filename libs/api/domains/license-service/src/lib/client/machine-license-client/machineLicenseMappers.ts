@@ -69,6 +69,7 @@ export const parseMachineLicensePayload = (
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
           name: field.flokkur ?? '',
+          label: field.fulltHeiti ?? field.stuttHeiti ?? '',
           description: field.fulltHeiti ?? field.stuttHeiti ?? '',
           fields: parseVvrRights(field),
         })),

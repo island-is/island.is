@@ -19,14 +19,24 @@ export class GenericLicenseDataField {
   @Field({ nullable: true, description: 'Name of data field' })
   name?: string
 
-  @Field({ nullable: true, description: 'Description of field' })
-  description?: string
-
   @Field({ nullable: true, description: 'Label of data field' })
   label?: string
 
   @Field({ nullable: true, description: 'Value of data field' })
   value?: string
+
+  @Field({
+    nullable: true,
+    description: 'Same as value, used in service portal',
+  })
+  description?: string
+
+  @Field({
+    nullable: true,
+    description: 'Hide from service portal',
+    defaultValue: false,
+  })
+  hideFromServicePortal?: boolean
 
   @Field(() => [GenericLicenseDataField], {
     nullable: true,

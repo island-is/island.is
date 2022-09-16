@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -12,6 +12,8 @@ import {
   AlertBanner,
   Button,
   Icon,
+  Table as T,
+  Pagination,
 } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -39,18 +41,21 @@ const dataFragment = gql`
     name
     label
     value
+    hideFromServicePortal
     fields {
       type
       name
       label
       value
       description
+      hideFromServicePortal
       fields {
         type
         name
         label
         value
         description
+        hideFromServicePortal
       }
     }
   }
@@ -82,6 +87,7 @@ const GenericLicenseQuery = gql`
         rawData
         metadata {
           licenseNumber
+          expired
           links {
             label
             value
@@ -100,13 +106,13 @@ const checkLicenseExpired = (date?: string) => {
 const DataFields = ({
   fields,
   licenseType,
-  pkPass,
 }: {
   fields: GenericLicenseDataField[]
   licenseType?: string
-  pkPass?: boolean
 }) => {
   const { formatMessage } = useLocale()
+  const [page, setPage] = useState(1)
+  const pageSize = 15
 
   if (!fields || fields.length === 0) {
     return null
@@ -118,6 +124,7 @@ const DataFields = ({
   return (
     <>
       {fields.map((field, i) => {
+        if (field.hideFromServicePortal) return undefined
         return (
           <React.Fragment key={i}>
             {field.type === 'Value' && (
@@ -128,7 +135,8 @@ const DataFields = ({
                   label={field.label ?? ''}
                   renderContent={
                     field.value &&
-                    field.label?.toLowerCase().includes('gildir til') &&
+                    (field.label?.toLowerCase().includes('gildir til') ||
+                      field.label?.toLowerCase().includes('gildistími')) &&
                     isValid(new Date(field.value))
                       ? () => (
                           <Box display="flex" alignItems="center">
@@ -198,7 +206,11 @@ const DataFields = ({
             )}
             {field.type === 'Category' && (
               <ExpandableLine
-                title={[field.name, field.label].filter(Boolean).join(' ')}
+                title={
+                  field.description
+                    ? field.name ?? ''
+                    : [field.name, field.label].filter(Boolean).join(' ')
+                }
                 data={field.fields ?? []}
                 description={field.description ?? undefined}
                 type={licenseType}
@@ -219,6 +231,74 @@ const DataFields = ({
                   fields={field.fields ?? []}
                   licenseType={licenseType}
                 />
+              </>
+            )}
+            {field.type === 'Table' && (
+              <>
+                <Text
+                  variant="eyebrow"
+                  color="purple400"
+                  paddingBottom={2}
+                  paddingTop={7}
+                >
+                  {field.label}
+                </Text>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      {/* Double mapping needed to get to nested header and values */}
+                      {field.fields?.map((x, xIndex) => {
+                        return x?.fields?.map((y, yIndex) => {
+                          return (
+                            xIndex === 0 && (
+                              <T.HeadData
+                                key={`license-table-head-item-${xIndex}-${yIndex}`}
+                              >
+                                {y.label}
+                              </T.HeadData>
+                            )
+                          )
+                        })
+                      })}
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {field.fields
+                      ?.slice((page - 1) * pageSize, page * pageSize)
+                      .map((x, xIndex) => {
+                        return (
+                          <T.Row key={`license-table-item-row-${xIndex}`}>
+                            {x.fields?.map((y, yIndex) => {
+                              return (
+                                <T.Data
+                                  key={`license-table-item-${xIndex}-${yIndex}`}
+                                >
+                                  {y.value}
+                                </T.Data>
+                              )
+                            })}
+                          </T.Row>
+                        )
+                      })}
+                  </T.Body>
+                </T.Table>
+                {field.fields && field.fields.length > pageSize && (
+                  <Box marginY={3}>
+                    <Pagination
+                      page={page}
+                      totalPages={Math.round(field.fields.length / pageSize)}
+                      renderLink={(page, className, children) => (
+                        <Box
+                          cursor="pointer"
+                          className={className}
+                          onClick={() => setPage(page)}
+                        >
+                          {children}
+                        </Box>
+                      )}
+                    />
+                  </Box>
+                )}
               </>
             )}
           </React.Fragment>
@@ -264,6 +344,7 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
     )
   }
 
+  const expired = genericLicense?.payload?.metadata.expired
   return (
     <>
       <Box marginBottom={5}>
@@ -284,44 +365,42 @@ const LicenseDetail: ServicePortalModuleComponent = () => {
 
       {!error && !queryLoading && (
         <>
-          {genericLicense?.payload?.metadata.links && (
-            <Box
-              display="flex"
-              flexDirection={['column', 'row']}
-              alignItems={['flexStart', 'center']}
-              marginBottom={2}
-            >
-              {genericLicense?.license.pkpass && licenseType && (
-                <>
-                  <PkPass licenseType={licenseType} />
-                  <Box marginX={[0, 1]} marginY={[1, 0]} />
-                </>
-              )}
-              {genericLicense?.payload?.metadata.links.map((link, index) => {
-                return (
-                  <a
-                    href={link.value}
-                    target="_blank"
-                    rel="noreferrer"
-                    key={licenseType + '_link_' + index}
+          <Box
+            display="flex"
+            flexDirection={['column', 'row']}
+            alignItems={['flexStart', 'center']}
+            marginBottom={2}
+          >
+            {!expired && genericLicense?.license.pkpass && licenseType && (
+              <>
+                <PkPass licenseType={licenseType} />
+                <Box marginX={[0, 1]} marginY={[1, 0]} />
+              </>
+            )}
+            {genericLicense?.payload?.metadata?.links?.map((link, index) => {
+              return (
+                <a
+                  href={link.value}
+                  target="_blank"
+                  rel="noreferrer"
+                  key={licenseType + '_link_' + index}
+                >
+                  <Button
+                    variant="utility"
+                    size="small"
+                    icon="open"
+                    iconType="outline"
                   >
-                    <Button
-                      variant="utility"
-                      size="small"
-                      icon="open"
-                      iconType="outline"
-                    >
-                      {link.label}
-                    </Button>
-                  </a>
-                )
-              })}
-            </Box>
-          )}
+                    {link.label}
+                  </Button>
+                </a>
+              )
+            })}
+          </Box>
+
           <DataFields
             fields={genericLicense?.payload?.data ?? []}
             licenseType={licenseType}
-            pkPass={genericLicense?.license.pkpass}
           />
         </>
       )}

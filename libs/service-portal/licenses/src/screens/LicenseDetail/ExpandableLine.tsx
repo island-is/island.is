@@ -54,25 +54,19 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
     str && !!str.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
 
   const isDriversLicense = type === GenericLicenseType.DriversLicense
+  const dataLenghtThree = data.length === 3
   const columnSpan: ResponsiveProp<GridColumns> =
     data.length > 0
-      ? ['1/1', '1/1', '2/12']
-      : data.length === 3
-      ? ['1/1', '1/1', '3/12']
+      ? ['1/1', '1/1', '1/1', '2/12']
+      : dataLenghtThree
+      ? ['1/1', '1/1', '1/1', '3/12']
       : '1/1'
-  console.log(data.length)
-  const descriptionLength = description ? description.length : 0
-  const showExpandButton = descriptionLength >= 200
 
   return (
     <>
       <Box paddingBottom={3} paddingTop={3}>
         <GridRow>
-          <GridColumn
-            span={
-              data.length === 3 ? ['1/1', '1/1', '1/1', '2/12'] : columnSpan
-            }
-          >
+          <GridColumn span={columnSpan}>
             <Box display="flex" alignItems={'center'}>
               <Text variant="h5" as="span" lineHeight="lg">
                 {title}
@@ -98,14 +92,24 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
             return (
               <GridColumn
                 span={[
-                  data.length === 3 ? '8/12' : '1/1',
-                  data.length === 3 ? '8/12' : '1/1',
-                  data.length === 3 ? '8/12' : '1/1',
-                  '4/12',
+                  dataLenghtThree ? '8/12' : '1/1',
+                  dataLenghtThree ? '8/12' : '1/1',
+                  dataLenghtThree ? '8/12' : '1/1',
+                  '3/12',
                 ]}
                 key={`expandable-item-${item.label}`}
               >
-                <Box display="flex" alignItems="center" height="full">
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  height="full"
+                  justifyContent={[
+                    'flexStart',
+                    'flexStart',
+                    'flexStart',
+                    'center',
+                  ]}
+                >
                   <Text variant="default">{item.label}</Text>
                   <Box marginLeft={1} />
                   <Text variant="default" fontWeight="semiBold">
@@ -122,8 +126,14 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
               </GridColumn>
             )
           })}
-          {showExpandButton && (
-            <GridColumn span={['5/12', '5/12', '5/12', '2/12']}>
+          {isDriversLicense && (
+            <GridColumn
+              span={
+                dataLenghtThree
+                  ? ['5/12', '5/12', '5/12', '1/12']
+                  : ['5/12', '5/12', '5/12', '4/12']
+              }
+            >
               <Box
                 display="flex"
                 justifyContent={[
@@ -158,13 +168,13 @@ const ExpandableLine: FC<Props> = ({ data, title, type, description }) => {
 
         <AnimateHeight
           className={
-            expanded || !showExpandButton ? styles.animatedContent : undefined
+            expanded || !isDriversLicense ? styles.animatedContent : undefined
           }
           onAnimationEnd={(props: { newHeight: number }) =>
             handleAnimationEnd(props.newHeight)
           }
           duration={300}
-          height={expanded || !showExpandButton ? 'auto' : 0}
+          height={expanded || !isDriversLicense ? 'auto' : 0}
         >
           <Text>{description}</Text>
           {isDriversLicense && (

@@ -34,6 +34,7 @@ export enum GenericLicenseDataFieldType {
   Group = 'Group',
   Category = 'Category',
   Value = 'Value',
+  Table = 'Table',
 }
 
 export enum GenericUserLicensePkPassStatus {
@@ -77,6 +78,7 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }
 
@@ -94,7 +96,6 @@ export type GenericUserLicenseMetadata = {
 export type GenericUserLicensePayload = {
   data: Array<GenericLicenseDataField>
   rawData: unknown
-
   metadata?: GenericUserLicenseMetadata
 }
 

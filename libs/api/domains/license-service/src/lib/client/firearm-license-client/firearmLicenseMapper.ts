@@ -11,6 +11,7 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
+import isAfter from 'date-fns/isAfter'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
@@ -36,17 +37,17 @@ export const parseFirearmLicensePayload = (
     licenseInfo.issueDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Útgáfudagur',
-      value: formatDateString(licenseInfo.issueDate) ?? '',
+      value: licenseInfo.issueDate ?? '',
     },
     licenseInfo.expirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildir til',
-      value: formatDateString(licenseInfo.expirationDate) ?? '',
+      value: licenseInfo.expirationDate ?? '',
     },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
-      value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
+      value: licenseInfo.collectorLicenseExpirationDate ?? '',
     },
     licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
@@ -55,13 +56,25 @@ export const parseFirearmLicensePayload = (
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
         label: categories?.[`Flokkur ${qualification}`] ?? '',
+        description: categories?.[`Flokkur ${qualification}`] ?? '',
       })),
     },
-    properties && {
+    properties?.properties && {
       type: GenericLicenseDataFieldType.Group,
       label: 'Skotvopn í eigu leyfishafa',
+      hideFromServicePortal: true,
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
+        fields: parseProperties(property)?.filter(
+          (Boolean as unknown) as ExcludesFalse,
+        ),
+      })),
+    },
+    properties?.properties && {
+      type: GenericLicenseDataFieldType.Table,
+      label: 'Skotvopn í eigu leyfishafa',
+      fields: (properties.properties ?? []).map((property) => ({
+        type: GenericLicenseDataFieldType.Value,
         fields: parseProperties(property)?.filter(
           (Boolean as unknown) as ExcludesFalse,
         ),
@@ -73,8 +86,10 @@ export const parseFirearmLicensePayload = (
     data,
     rawData: JSON.stringify(licenseData),
     metadata: {
-      expired: false,
-      licenseNumber: '123',
+      expired: licenseInfo.expirationDate
+        ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
+        : null,
+      licenseNumber: licenseInfo.licenseNumber ?? '',
     },
   }
 }

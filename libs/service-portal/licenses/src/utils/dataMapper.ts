@@ -468,6 +468,12 @@ export const getLicenseDetailHeading = (type: string) => {
         text: m.machineLicenseDescription,
       }
       break
+    case LicenseType.FirearmLicense:
+      return {
+        title: m.yourFirearmLicense,
+        text: m.firearmLicenseDescription,
+      }
+      break
     default:
       return {
         title: m.license,
@@ -479,7 +485,7 @@ export const getLicenseDetailHeading = (type: string) => {
 export const getTitleAndLogo = (type: string) => {
   switch (type) {
     case LicenseType.DriversLicense:
-      return { title: m.drivingLicense, logo: './assets/images/island.svg' }
+      return { title: m.drivingLicense, logo: './assets/images/rls.svg' }
     case LicenseType.AdrLicense:
       return {
         title: m.ADRLicense,
@@ -494,7 +500,7 @@ export const getTitleAndLogo = (type: string) => {
     case LicenseType.FirearmLicense:
       return {
         title: m.firearmLicense,
-        logo: './assets/images/island.svg',
+        logo: './assets/images/rls.svg',
       }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
