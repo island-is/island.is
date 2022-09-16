@@ -9,28 +9,28 @@ import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { DelegationConfig } from '../config/DelegationConfig'
-import { IdentityResource } from '../entities/models/identity-resource.model'
-import { ApiScope } from '../entities/models/api-scope.model'
-import { ApiResource } from '../entities/models/api-resource.model'
-import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
-import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
-import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
-import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
-import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
-import { IdentityResourcesDTO } from '../entities/dto/identity-resources.dto'
-import { ApiScopesDTO } from '../entities/dto/api-scopes.dto'
-import { ApiResourcesDTO } from '../entities/dto/api-resources.dto'
+import { IdentityResource } from './models/identity-resource.model'
+import { ApiScope } from './models/api-scope.model'
+import { ApiResource } from './models/api-resource.model'
+import { ApiResourceScope } from './models/api-resource-scope.model'
+import { IdentityResourceUserClaim } from './models/identity-resource-user-claim.model'
+import { ApiResourceSecret } from './models/api-resource-secret.model'
+import { ApiResourceUserClaim } from './models/api-resource-user-claim.model'
+import { ApiScopeUserClaim } from './models/api-scope-user-claim.model'
+import { IdentityResourcesDTO } from './dto/identity-resources.dto'
+import { ApiScopesDTO } from './dto/api-scopes.dto'
+import { ApiResourcesDTO } from './dto/api-resources.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
-import { ApiResourceSecretDTO } from '../entities/dto/api-resource-secret.dto'
-import { ApiResourceAllowedScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
+import { ApiResourceSecretDTO } from './dto/api-resource-secret.dto'
+import { ApiResourceAllowedScopeDTO } from './dto/api-resource-allowed-scope.dto'
 import { UserClaimDTO } from '../entities/dto/user-claim.dto'
-import { ApiScopeGroupDTO } from '../entities/dto/api-scope-group.dto'
-import { ApiScopeGroup } from '../entities/models/api-scope-group.model'
+import { ApiScopeGroupDTO } from './dto/api-scope-group.dto'
+import { ApiScopeGroup } from './models/api-scope-group.model'
 import { uuid } from 'uuidv4'
-import { Domain } from '../entities/models/domain.model'
+import { Domain } from './models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
-import { DomainDTO } from '../entities/dto/domain.dto'
+import { DomainDTO } from './dto/domain.dto'
 import { TranslationService } from '../translation/translation.service'
 
 @Injectable()
@@ -374,6 +374,22 @@ export class ResourcesService {
       where: scopeNames ? whereOptions : undefined,
       include: [ApiScopeUserClaim, ApiScopeGroup],
     })
+  }
+
+  /** Finds available scopes for AdminUI to select allowed scopes */
+  async findScopesAvailableForClients(): Promise<ApiScope[]> {
+    const identityResources = (await this.identityResourceModel.findAll({
+      where: { archived: null },
+    })) as unknown
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        archived: null,
+      },
+    })
+    const arrJoined: ApiScope[] = []
+    arrJoined.push(...apiScopes)
+    arrJoined.push(...(identityResources as ApiScope[]))
+    return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   /** Gets Api scopes with Explicit Delegation Grant */

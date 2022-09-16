@@ -12,8 +12,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { Delegation } from './delegation.model'
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
-import { ApiScope } from './api-scope.model'
-import { IdentityResource } from './identity-resource.model'
+import { ApiScope } from '../../resources/models/api-scope.model'
+import { IdentityResource } from '../../resources/models/identity-resource.model'
 
 @Table({
   tableName: 'delegation_scope',

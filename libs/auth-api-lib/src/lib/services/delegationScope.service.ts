@@ -8,8 +8,8 @@ import {
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
 import { Op } from 'sequelize'
-import { ApiScope } from '../entities/models/api-scope.model'
-import { IdentityResource } from '../entities/models/identity-resource.model'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { IdentityResource } from '../resources/models/identity-resource.model'
 import startOfDay from 'date-fns/startOfDay'
 import {
   PersonalRepresentative,

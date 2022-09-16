@@ -28,8 +28,8 @@ import {
   Domain,
   IdentityResource,
   IdentityResourceUserClaim,
-  ResourcesService,
   TranslationModule,
+  ResourcesModule,
 } from '@island.is/auth-api-lib'
 import {
   PersonalRepresentative,
@@ -87,13 +87,13 @@ const delegationAuthConfig: AuthConfig = environment.auth
     NationalRegistryClientModule,
     FeatureFlagModule,
     ProblemModule,
+    ResourcesModule,
     TranslationModule,
   ],
   controllers: [ActorDelegationsController, MeDelegationsController],
   providers: [
     DelegationsService,
     DelegationScopeService,
-    ResourcesService,
     PersonalRepresentativeService,
     {
       provide: DELEGATIONS_AUTH_CONFIG,

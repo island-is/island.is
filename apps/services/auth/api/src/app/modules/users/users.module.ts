@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { UserIdentitiesController } from './user-identities.controller'
 import { UserIdentitiesModule } from '@island.is/auth-api-lib'
 

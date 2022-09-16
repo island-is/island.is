@@ -26,8 +26,8 @@ import {
   Domain,
   IdentityResource,
   IdentityResourceUserClaim,
-  ResourcesService,
   TranslationModule,
+  ResourcesModule,
 } from '@island.is/auth-api-lib'
 import {
   PersonalRepresentative,
@@ -49,6 +49,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
 
 @Module({
   imports: [
+    ResourcesModule,
     SequelizeModule.forFeature([
       ApiResource,
       ApiResourceScope,
@@ -87,7 +88,6 @@ const delegationAuthConfig: AuthConfig = environment.auth
     DelegationsService,
     DelegationScopeService,
     PersonalRepresentativeService,
-    ResourcesService,
     {
       provide: DELEGATIONS_AUTH_CONFIG,
       useValue: delegationAuthConfig,

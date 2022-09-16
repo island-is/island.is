@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
-import { DelegationScope } from './delegation-scope.model'
+import { DelegationScope } from '../../entities/models/delegation-scope.model'
 import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
 
 @Table({

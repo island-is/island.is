@@ -3,30 +3,28 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { ClientDTO } from '../entities/dto/client.dto'
-import { ClientUpdateDTO } from '../entities/dto/client-update.dto'
-import { ClientIdpRestrictionDTO } from '../entities/dto/client-idp-restriction.dto'
-import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
-import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
-import { ClientClaim } from '../entities/models/client-claim.model'
-import { ClientGrantType } from '../entities/models/client-grant-type.model'
-import { ClientIdpRestrictions } from '../entities/models/client-idp-restrictions.model'
-import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
-import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
-import { ClientSecret } from '../entities/models/client-secret.model'
-import { Client } from '../entities/models/client.model'
-import { ClientAllowedCorsOriginDTO } from '../entities/dto/client-allowed-cors-origin.dto'
-import { ClientRedirectUriDTO } from '../entities/dto/client-redirect-uri.dto'
-import { ClientGrantTypeDTO } from '../entities/dto/client-grant-type.dto'
-import { ClientAllowedScopeDTO } from '../entities/dto/client-allowed-scope.dto'
-import { ClientClaimDTO } from '../entities/dto/client-claim.dto'
-import { ClientPostLogoutRedirectUriDTO } from '../entities/dto/client-post-logout-redirect-uri.dto'
-import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
-import { IdentityResource } from '../entities/models/identity-resource.model'
-import { ApiScope } from '../entities/models/api-scope.model'
-import { IdpProvider } from '../entities/models/idp-provider.model'
+
+import { ClientDTO } from './dto/client.dto'
+import { ClientUpdateDTO } from './dto/client-update.dto'
+import { ClientIdpRestrictionDTO } from './dto/client-idp-restriction.dto'
+import { ClientAllowedCorsOrigin } from './models/client-allowed-cors-origin.model'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
+import { ClientClaim } from './models/client-claim.model'
+import { ClientGrantType } from './models/client-grant-type.model'
+import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
+import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
+import { ClientRedirectUri } from './models/client-redirect-uri.model'
+import { ClientSecret } from './models/client-secret.model'
+import { Client } from './models/client.model'
+import { ClientAllowedCorsOriginDTO } from './dto/client-allowed-cors-origin.dto'
+import { ClientRedirectUriDTO } from './dto/client-redirect-uri.dto'
+import { ClientGrantTypeDTO } from './dto/client-grant-type.dto'
+import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'
+import { ClientClaimDTO } from './dto/client-claim.dto'
+import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
+import { ClientSecretDTO } from './dto/client-secret.dto'
 
 @Injectable()
 export class ClientsService {
@@ -47,14 +45,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
-    @InjectModel(IdpProvider)
-    private idpProvider: typeof IdpProvider,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
-    @InjectModel(ApiScope)
-    private apiScopeModel: typeof ApiScope,
-    @InjectModel(IdentityResource)
-    private identityResourceModel: typeof IdentityResource,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -536,27 +528,5 @@ export class ClientsService {
         value: clientSecret.value,
       },
     })
-  }
-
-  /** Finds available scopes for AdminUI to select allowed scopes */
-  async findAvailabeScopes(): Promise<ApiScope[]> {
-    const identityResources = (await this.identityResourceModel.findAll({
-      where: { archived: null },
-    })) as unknown
-    const apiScopes = await this.apiScopeModel.findAll({
-      where: {
-        archived: null,
-      },
-    })
-    const arrJoined: ApiScope[] = []
-    arrJoined.push(...apiScopes)
-    arrJoined.push(...(identityResources as ApiScope[]))
-    return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  /** Finds available idp restrictions */
-  async findAllIdpRestrictions(): Promise<IdpProvider[] | null> {
-    const idpRestrictions = await this.idpProvider.findAll()
-    return idpRestrictions
   }
 }

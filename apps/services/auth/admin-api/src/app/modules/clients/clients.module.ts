@@ -1,22 +1,13 @@
 import { Module } from '@nestjs/common'
 import { ClientsController } from './clients.controller'
 import {
-  Client,
-  ClientAllowedScope,
-  ClientAllowedCorsOrigin,
-  ClientPostLogoutRedirectUri,
-  ClientRedirectUri,
-  ClientIdpRestrictions,
-  ClientSecret,
-  ClientGrantType,
-  ClientsService,
-  ClientClaim,
-  ApiScope,
-  IdentityResource,
   AccessService,
   IdpProvider,
-  ApiScopeUserAccess,
+  IdpProviderService,
+  ClientsModule as AuthClientsModule,
+  ResourcesModule as AuthResourcesModule,
   ApiScopeUser,
+  ApiScopeUserAccess,
 } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpRestrictionController } from './idp-restriction.controller'
@@ -30,23 +21,9 @@ import { ClientSecretController } from './client-secret.controller'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      Client,
-      ClientAllowedScope,
-      ClientAllowedCorsOrigin,
-      ClientPostLogoutRedirectUri,
-      ClientRedirectUri,
-      ClientIdpRestrictions,
-      ClientSecret,
-      ClientPostLogoutRedirectUri,
-      ClientGrantType,
-      ClientClaim,
-      ApiScope,
-      IdentityResource,
-      IdpProvider,
-      ApiScopeUserAccess,
-      ApiScopeUser,
-    ]),
+    AuthClientsModule,
+    AuthResourcesModule,
+    SequelizeModule.forFeature([IdpProvider, ApiScopeUser, ApiScopeUserAccess]),
   ],
   controllers: [
     ClientsController,
@@ -59,6 +36,6 @@ import { ClientSecretController } from './client-secret.controller'
     ClientPostLogoutRedirectUriController,
     ClientSecretController,
   ],
-  providers: [ClientsService, AccessService],
+  providers: [IdpProviderService, AccessService],
 })
 export class ClientsModule {}

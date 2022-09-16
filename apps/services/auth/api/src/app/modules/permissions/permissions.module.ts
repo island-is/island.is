@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import {
   AccessService,
-  ResourcesService,
   ApiScope,
   IdentityResource,
   IdentityResourceUserClaim,
@@ -16,11 +15,13 @@ import {
   ApiScopeGroup,
   Domain,
   TranslationModule,
+  ResourcesModule,
 } from '@island.is/auth-api-lib'
 import { PermissionsController } from './permissions.controller'
 
 @Module({
   imports: [
+    ResourcesModule,
     SequelizeModule.forFeature([
       IdentityResource,
       IdentityResourceUserClaim,
@@ -38,6 +39,6 @@ import { PermissionsController } from './permissions.controller'
     TranslationModule,
   ],
   controllers: [PermissionsController],
-  providers: [AccessService, ResourcesService],
+  providers: [AccessService],
 })
 export class PermissionsModule {}

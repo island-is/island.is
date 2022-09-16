@@ -10,7 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiScope } from '../../../entities/models/api-scope.model'
+import { ApiScope } from '../../../resources/models/api-scope.model'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 
 @Table({

@@ -36,16 +36,16 @@ import {
   DelegationType,
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
-import { ApiScope } from '../entities/models/api-scope.model'
-import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
-import { Client } from '../entities/models/client.model'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { Client } from '../clients/models/client.model'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
 import { PersonalRepresentativeService } from '../personal-representative'
 import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
-import { ResourcesService } from './resources.service'
+import { ResourcesService } from '../resources/resources.service'
 
 type ClientDelegationInfo = Pick<
   Client,
