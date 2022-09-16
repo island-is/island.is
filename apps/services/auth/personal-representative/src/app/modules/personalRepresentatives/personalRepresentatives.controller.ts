@@ -5,7 +5,7 @@ import {
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativeService,
   PaginationWithNationalIdsDto,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,

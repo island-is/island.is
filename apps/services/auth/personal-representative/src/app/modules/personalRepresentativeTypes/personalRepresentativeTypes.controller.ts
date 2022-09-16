@@ -1,10 +1,9 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
-  PersonalRepresentativeType,
   PersonalRepresentativeTypeDTO,
   PaginatedPersonalRepresentativeTypeDto,
   PersonalRepresentativeTypeService,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,

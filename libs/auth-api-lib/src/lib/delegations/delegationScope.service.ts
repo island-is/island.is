@@ -1,19 +1,18 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
+import startOfDay from 'date-fns/startOfDay'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import { ScopeType, UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
-import { Op } from 'sequelize'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
-import startOfDay from 'date-fns/startOfDay'
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeScopePermission,
-} from '@island.is/auth-api-lib/personal-representative'
+import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
+import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
+import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
+import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
 
 @Injectable()
 export class DelegationScopeService {

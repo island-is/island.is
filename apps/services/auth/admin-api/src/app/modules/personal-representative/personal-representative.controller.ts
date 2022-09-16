@@ -2,12 +2,10 @@ import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib/personal-representative'
-import {
   PaginatedPersonalRepresentativeRightTypeDto,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import {
   BadRequestException,
   Body,

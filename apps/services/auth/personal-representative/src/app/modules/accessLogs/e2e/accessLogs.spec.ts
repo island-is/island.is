@@ -10,7 +10,7 @@ import { TestApp } from '@island.is/testing/nest'
 import {
   PersonalRepresentativeAccess,
   PersonalRepresentativeAccessDTO,
-} from '@island.is/auth-api-lib/personal-representative'
+} from '@island.is/auth-api-lib'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
 
