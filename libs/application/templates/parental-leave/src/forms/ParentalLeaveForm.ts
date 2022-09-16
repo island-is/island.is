@@ -423,7 +423,7 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildCustomField({
               component: 'SelfEmployed',
-              id: 'employer.isSelfEmployed',
+              id: 'isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
             }),
@@ -434,10 +434,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) =>
                 (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed === YES,
+                  isSelfEmployed: string
+                })?.isSelfEmployed === YES,
               children: [
                 buildFileUploadField({
                   id: 'employer.selfEmployed.file',
@@ -461,10 +459,8 @@ export const ParentalLeaveForm: Form = buildForm({
               description: parentalLeaveFormMessages.employer.description,
               condition: (answers) =>
                 (answers as {
-                  employer: {
-                    isSelfEmployed: string
-                  }
-                })?.employer?.isSelfEmployed !== YES,
+                  isSelfEmployed: string
+                })?.isSelfEmployed !== YES,
               children: [
                 buildTextField({
                   title: parentalLeaveFormMessages.employer.email,
