@@ -6,7 +6,6 @@ export const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email().nonempty(),
   phoneNumber: z.string().nonempty(),
-  institutionEmail: z.string().email().nonempty(),
 })
 
 export const dataSchema = z.object({
@@ -16,24 +15,26 @@ export const dataSchema = z.object({
       label: z.string().nonempty(),
       isat: z.string().optional(),
     }),
+    institutionEmail: z.string().email().nonempty(),
   }),
   contact: contactSchema,
+
   hasSecondaryContact: z.enum([YES, NO]),
   secondaryContact: contactSchema.deepPartial(),
 
   applicantInformation: z.object({
     constraints: z.object({
       hasMail: z.boolean().optional(),
-      mail: z.boolean().optional(),
+      // mail: z.boolean().optional(),
 
       hasLogin: z.boolean().optional(),
-      login: z.boolean().optional(),
+      // login: z.boolean().optional(),
 
       hasStraumur: z.string().optional(),
-      straumur: z.string().optional(),
+      //straumur: z.string().optional(),
 
       hasWebsite: z.boolean().optional(),
-      website: z.boolean().optional(),
+      // website: z.boolean().optional(),
 
       hasApply: z.string().optional(),
       apply: z.string().optional(),
