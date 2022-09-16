@@ -270,7 +270,6 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
     })
     set(base, 'answers.selectedChild', '0')
@@ -292,7 +291,6 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
     })
     set(base, 'answers.selectedChild', '0')
@@ -351,7 +349,6 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
       genderCode: '0',
     })
@@ -379,7 +376,6 @@ describe('getRightsCode', () => {
       spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
-        familyRelation: 'spouse',
       },
       genderCode: '1',
     })
