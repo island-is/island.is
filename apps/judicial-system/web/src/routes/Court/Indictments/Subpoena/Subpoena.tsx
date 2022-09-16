@@ -3,26 +3,25 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import CourtArrangements, {
+  SelectSubpoenaType,
   useCourtArrangements,
-} from '@island.is/judicial-system-web/src/components/CourtArrangements'
+} from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
-import SelectSubpoenaType from '@island.is/judicial-system-web/src/components/SelectSubpoenaType/SelectSubpoenaType'
 import {
   NotificationType,
   SubpoenaType,

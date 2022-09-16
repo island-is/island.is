@@ -6,22 +6,21 @@ import {
   CourtCaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  SigningModal,
+  useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import SigningModal, {
-  useRequestRulingSignature,
-} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
   titles,
