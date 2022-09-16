@@ -87,7 +87,7 @@ export class ApplicationController {
   })
   async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    
+
     let currentApplicationId
     try {
       currentApplicationId = await this.applicationService.getCurrentApplicationId(

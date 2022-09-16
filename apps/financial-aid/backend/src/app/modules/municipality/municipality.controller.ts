@@ -59,9 +59,7 @@ export class MunicipalityController {
 
     let municipality
     try {
-      municipality = await this.municipalityService.findByMunicipalityId(
-        id,
-      )
+      municipality = await this.municipalityService.findByMunicipalityId(id)
     } catch (e) {
       this.logger.error(
         'Municipality controller: Failed getting municipality by id',
