@@ -6,12 +6,12 @@ import {
   buildKeyValueField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 export const sectionOverview = buildSection({
   id: 'overview',

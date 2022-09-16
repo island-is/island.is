@@ -5,7 +5,7 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import { m } from '../lib/messages'
 import { getApplicationInfo } from '../lib/utils'
 

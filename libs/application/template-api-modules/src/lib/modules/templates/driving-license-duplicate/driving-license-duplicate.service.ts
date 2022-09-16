@@ -25,7 +25,7 @@ export class DrivingLicenseDuplicateService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const chargeItemCode = 'AY116'
+    const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,

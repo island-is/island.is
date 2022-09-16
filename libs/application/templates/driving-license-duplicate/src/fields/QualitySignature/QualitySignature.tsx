@@ -12,7 +12,7 @@ interface QualitySignatureData {
   application: Application
 }
 
-const signature: FC<QualitySignatureData> = ({
+const Signature: FC<QualitySignatureData> = ({
   qualitySignature,
   application,
 }: QualitySignatureData) => {
@@ -35,7 +35,7 @@ const signature: FC<QualitySignatureData> = ({
 
 const QualitySignature: FC<FieldBaseProps> = ({ application }) => {
   const { qualitySignature } = useQualitySignature(application)
-  const img = signature({ qualitySignature, application })
+  const img = Signature({ qualitySignature, application })
   return (
     <Box marginTop={4} marginBottom={3} width="full">
       {qualitySignature ? img : <SkeletonLoader height={242} width={191} />}

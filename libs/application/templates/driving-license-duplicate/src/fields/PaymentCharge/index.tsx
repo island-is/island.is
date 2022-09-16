@@ -12,7 +12,7 @@ import { useFormContext } from 'react-hook-form'
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const chargeCode = 'AY116'
+  const chargeCode = 'AY110'
   const chargeItems = getValueViaPath(
     application.externalData,
     'payment.data',

@@ -6,8 +6,10 @@ import {
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 import { m } from '../lib/messages'
 
-const CHARGE_ITEM_CODES = ['AY116']
+//TODO: change to correct code once its available on DEV
+const CHARGE_ITEM_CODES = ['AY110']
 
+// eslint-disable-next-line local-rules/disallow-kennitalas
 const SYSLUMADUR_NATIONAL_ID = '6509142520'
 
 export class FeeInfoProvider extends PaymentCatalogProvider {

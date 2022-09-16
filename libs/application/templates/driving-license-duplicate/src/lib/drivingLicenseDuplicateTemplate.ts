@@ -12,6 +12,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
+import { Features } from '@island.is/feature-flags'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -33,6 +34,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   name: 'Samrit',
   dataSchema: dataSchema,
   readyForProduction: true,
+  featureFlag: Features.drivingLicenseDuplicate,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

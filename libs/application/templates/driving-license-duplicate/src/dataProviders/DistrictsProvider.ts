@@ -25,18 +25,14 @@ export class DistrictsProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors?.length > 0) {
-          return this.handleError(response.errors[0])
+          return Promise.reject({ reason: response.errors[0] })
         }
 
         return Promise.resolve(
           response.data.getSyslumennDistrictCommissionersAgencies,
         )
       })
-      .catch((error) => this.handleError(error))
-  }
-
-  handleError(_error: any) {
-    return Promise.reject({})
+      .catch((error) => Promise.reject({ reason: error }))
   }
 
   onProvideError(): FailedDataProviderResult {

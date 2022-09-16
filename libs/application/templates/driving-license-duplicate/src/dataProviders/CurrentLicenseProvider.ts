@@ -1,7 +1,5 @@
-import { getValueViaPath } from '@island.is/application/core'
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/types'
@@ -15,9 +13,7 @@ export interface CurrentLicenseProviderResult {
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
 
-  async provide(
-    application: Application,
-  ): Promise<CurrentLicenseProviderResult> {
+  async provide(): Promise<CurrentLicenseProviderResult> {
     const query = `
       query LicenseQuery {
         drivingLicense {
@@ -60,7 +56,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       }),
     )
     return {
-      categories: !!categories ? categories : null,
+      categories: categories ? categories : null,
       expires: response.data?.drivingLicense?.expires,
     }
   }
