@@ -1,5 +1,6 @@
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 
+import { ConsoleLogger } from '@nestjs/common'
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatText } from '@island.is/application/core'
@@ -223,7 +224,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Box>
             <Text variant="h5">
               {formatText(
-                m.applicant.contactNameLabel,
+                m.review.sectionNameLabel,
                 application,
                 formatMessage,
               )}
@@ -236,7 +237,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Box>
             <Text variant="h5">
               {formatText(
-                m.applicant.contactEmailLabel,
+                m.review.sectionEmailLabel,
                 application,
                 formatMessage,
               )}
@@ -249,7 +250,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
           <Box>
             <Text variant="h5">
               {formatText(
-                m.applicant.contactPhoneLabel,
+                m.review.sectionPhoneLabel,
                 application,
                 formatMessage,
               )}
@@ -277,7 +278,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 <>
                   <Text variant="h5">
                     {formatText(
-                      m.applicant.contactNameLabel,
+                      m.review.sectionNameLabel,
                       application,
                       formatMessage,
                     )}
@@ -292,7 +293,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   <Box>
                     <Text variant="h5">
                       {formatText(
-                        m.applicant.contactEmailLabel,
+                        m.review.sectionEmailLabel,
                         application,
                         formatMessage,
                       )}
@@ -307,7 +308,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   <Box>
                     <Text variant="h5">
                       {formatText(
-                        m.applicant.contactPhoneLabel,
+                        m.review.sectionPhoneLabel,
                         application,
                         formatMessage,
                       )}
@@ -325,7 +326,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 {/* constraints information */}
                 <Text variant="h5">
                   {formatText(
-                    m.constraints.sectionTitle,
+                    m.review.sectionServicesLabel,
                     application,
                     formatMessage,
                   )}
@@ -409,6 +410,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
           </Box>
+          {application?.state === 'approved' && <Box marginBottom={8} />}
         </Stack>
       </Stack>
     </Box>

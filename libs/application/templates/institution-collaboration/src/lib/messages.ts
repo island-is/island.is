@@ -66,19 +66,20 @@ export const institutionApplicationMessages = {
     },
     contactNameLabel: {
       id: 'ia.application:applicant.contact.name.label',
-      defaultMessage: 'Nafn tengiliðs',
+      defaultMessage: 'Nafn',
       description: 'Form label for contact name formfield',
     },
     contactPhoneLabel: {
       id: 'ia.application:applicant.contact.phone.label',
-      defaultMessage: 'Símanúmer tengiliðs',
+      defaultMessage: 'Símanúmer',
       description: 'Form label for contact phone formfield',
     },
     contactEmailLabel: {
       id: 'ia.application:applicant.contact.email.label',
-      defaultMessage: 'Netfang tengiliðs',
+      defaultMessage: 'Netfang',
       description: 'Form label for contact email formfield',
     },
+
     contactAddButtonLabel: {
       id: 'ia.application:applicant.contact.addButtonLabel',
       defaultMessage: 'Bæta við tengilið',
@@ -204,6 +205,7 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Upplýsingar um verkefnið',
       description: 'Sub section label',
     },
+
     sectionTitle: {
       id: 'ia.application:service.section.title',
       defaultMessage: 'Þjónustur',
@@ -297,13 +299,12 @@ export const institutionApplicationMessages = {
   constraints: defineMessages({
     subSectionLabel: {
       id: 'ia.application:constraints.subSection.label',
-      defaultMessage: 'Þjónustur sem sótt er eftir',
+      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Sub section label',
     },
-
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
-      defaultMessage: 'Þjónustur sem sóst er eftir',
+      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Section title',
     },
 
@@ -474,6 +475,28 @@ export const institutionApplicationMessages = {
         'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá Stafrænu Íslandi ef umsóknin er skýr og hnitmiðuð.',
       description: 'Section description',
     },
+
+    sectionNameLabel: {
+      id: 'ia.application:review.name.label',
+      defaultMessage: 'Nafn tengiliðs',
+      description: 'Form label for contact name formfield',
+    },
+    sectionPhoneLabel: {
+      id: 'ia.application:review.phone.label',
+      defaultMessage: 'Símanúmer tengiliðs',
+      description: 'Form label for contact phone formfield',
+    },
+    sectionEmailLabel: {
+      id: 'ia.application:review.email.label',
+      defaultMessage: 'Netfang tengiliðs',
+      description: 'Form label for contact email formfield',
+    },
+    sectionServicesLabel: {
+      id: 'ia.application:review.services.label',
+      defaultMessage: 'Þjónustur sem sótt er um',
+      description: 'Sub section label',
+    },
+
     subSectionTitle: {
       id: 'ia.application:review.section.termsTitle',
       defaultMessage: 'Skilmálar',
@@ -530,6 +553,24 @@ export const institutionApplicationMessages = {
       defaultMessage:
         'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið island@island.is',
       description: 'Third information sentence, in bullet list',
+    },
+    sectionConfirmationBulletFirst: {
+      id: 'ia.application:confirmation.section.infoBullet.first',
+      defaultMessage: 'Umsóknin er formlega móttekin.',
+      description: 'First information sentence, in confirmation bullet list',
+    },
+    sectionConfirmationBulletSecond: {
+      id: 'ia.application:confirmation.section.infoBullet.second',
+      defaultMessage:
+        'Umsóknir eru teknar fyrir mánðarlega og verður verkefnastjóri Stafræns Íslands í sambandi, sem fer yfir verkefnið með ykkur og næstu skref.',
+      description: 'Second information sentence, in confirmation bullet list',
+    },
+
+    sectionConfirmationtBulletThird: {
+      id: 'ia.application:confirmation.section.infoBullet.third',
+      defaultMessage:
+        'Fyrir frekari upplýsingar er hægt að hafa samband á netfangið island@island.is',
+      description: 'Third information sentence, in confirmation bullet list',
     },
   }),
 
