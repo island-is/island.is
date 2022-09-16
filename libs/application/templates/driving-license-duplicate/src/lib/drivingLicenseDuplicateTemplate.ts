@@ -31,7 +31,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
-  name: 'Samrit',
+  name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: true,
   featureFlag: Features.drivingLicenseDuplicate,

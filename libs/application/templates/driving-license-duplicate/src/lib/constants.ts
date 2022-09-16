@@ -18,8 +18,6 @@ export enum Roles {
 
 export const YES = 'yes'
 export const NO = 'no'
-export const SEND_HOME = 'sendHome'
-export const PICK_UP = 'pickUp'
 
 type YesOrNo = 'yes' | 'no'
 
@@ -32,8 +30,6 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
 }
-
-export const UPLOAD_ACCEPT = '.jpg, .jpeg, .png'
 
 export type SubmitResponse = {
   success: boolean

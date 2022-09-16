@@ -8,7 +8,7 @@ import { sectionPayment } from './applicationSections/sectionPayment'
 
 export const getApplication = (): Form => {
   return buildForm({
-    id: 'PMarkApplicationDraftForm',
+    id: 'DrivingLicenseDuplicateDraftForm',
     title: '',
     mode: FormModes.APPLYING,
     renderLastScreenButton: true,

@@ -1,6 +1,6 @@
 import { applicationForMessages } from './messages'
 import { MessageDescriptor } from 'react-intl'
-import { ExternalData, FormValue } from '@island.is/application/types'
+import { ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
 type CurrentRightsMessages = {

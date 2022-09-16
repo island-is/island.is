@@ -24,12 +24,12 @@ export class QualityPhotoResolver {
     @CurrentUser() user: User,
   ): Promise<String | null> {
     return hasQualityPhoto
-      ? this.drivingLicenseService.getQualityPhotoUri('1511982449') //(user.nationalId)
+      ? this.drivingLicenseService.getQualityPhotoUri(user.nationalId)
       : Promise.resolve(null)
   }
 
   @Query(() => QualityPhoto)
   drivingLicenseQualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto('1511982449') //(user.nationalId)
+    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
   }
 }

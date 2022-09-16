@@ -25,6 +25,7 @@ export class DrivingLicenseDuplicateService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -61,24 +62,7 @@ export class DrivingLicenseDuplicateService {
       }
     }
 
-    // let result
-    // try {
-    //   result = await this.createLicense(nationalId, answers)
-    // } catch (e) {
-    //   this.log('error', 'Creating license failed', {
-    //     e,
-    //     applicationFor: answers.applicationFor,
-    //     jurisdiction: answers.juristictionId,
-    //   })
-
-    //   throw e
-    // }
-
-    // if (!result.success) {
-    //   throw new Error(`Application submission failed (${result.errorMessage})`)
-    // }
-
-    // TODO: SUBMIT
+    // TODO: SUBMIT functionality once the police update their api
 
     return {
       success: true,

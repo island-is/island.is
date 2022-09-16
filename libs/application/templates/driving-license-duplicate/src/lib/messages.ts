@@ -29,8 +29,8 @@ export const applicationForMessages = {
 export const m = defineMessages({
   applicationTitle: {
     id: 'dld.application:applicationTitle',
-    defaultMessage: 'Umsókn um samrit',
-    description: 'Application for P-Sign',
+    defaultMessage: 'Samrit ökuskírteins',
+    description: 'Application for driving license duplicate title',
   },
   /* Data Collection Section */
   dataCollectionTitle: {
