@@ -45,6 +45,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import AxleTable from '../../components/DetailTable/AxleTable'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -309,6 +310,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           title={technicalArr.header.title}
           mt
         />
+      )}
+      {technicalInfo?.axles && technicalInfo.tyres && (
+        <AxleTable axles={technicalInfo?.axles} tyres={technicalInfo?.tyres} />
       )}
 
       {operators &&
