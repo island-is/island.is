@@ -168,6 +168,7 @@ const DocumentScreen: FC<Props> = ({
               labelClearAll={formatMessage(m.clearAllFilters)}
               labelOpen={formatMessage(m.openFilter)}
               labelClose={formatMessage(m.closeFilter)}
+              popoverFlip={false}
               filterInput={
                 <FilterInput
                   placeholder={formatMessage(m.searchPlaceholder)}
