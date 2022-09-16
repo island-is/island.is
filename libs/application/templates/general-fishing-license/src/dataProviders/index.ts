@@ -3,6 +3,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
+export { IdentityApi } from '@island.is/application/types'
 const FISKISTOFA_NATIONAL_ID = '6608922069'
 
 export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configure(

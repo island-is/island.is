@@ -190,6 +190,7 @@
     "nest-aws": "libs/nest/aws",
     "nest-config": "libs/nest/config",
     "nest-feature-flags": "libs/nest/feature-flags",
+    "nest-identity": "libs/nest/identity",
     "nest-pagination": "libs/nest/pagination",
     "nest-problem": "libs/nest/problem",
     "nest-sequelize": "libs/nest/sequelize",

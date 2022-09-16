@@ -112,6 +112,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }
 
   private isParent(person: ISLFjolskyldan): boolean {
-    return ['1', '2', '7'].includes(person.Kyn)
+    return ['1', '2'].includes(person.Kyn)
   }
 }
