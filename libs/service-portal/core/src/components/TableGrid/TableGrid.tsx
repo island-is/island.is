@@ -9,7 +9,7 @@ interface TableItem {
 }
 
 interface Props {
-  dataArray: Array<Array<TableItem | undefined | null | ''>>
+  dataArray: Array<Array<TableItem | null | undefined | ''>>
   title?: string
   subtitle?: string
   mt?: boolean

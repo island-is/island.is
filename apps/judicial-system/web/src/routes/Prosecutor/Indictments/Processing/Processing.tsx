@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   IndictmentsProsecutorSubsections,
   Sections,
@@ -28,8 +28,7 @@ import CommentsInput from '@island.is/judicial-system-web/src/components/Comment
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import * as constants from '@island.is/judicial-system/consts'
 
-import ProsecutorSection from '../../SharedComponents/ProsecutorSection/ProsecutorSection'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import { ProsecutorSection, SelectCourt } from '../../components'
 
 const Processing: React.FC = () => {
   const {

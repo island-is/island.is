@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import {
   Box,
   GridColumn,
@@ -30,24 +30,25 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   getThemeConfig,
-  OrganizationSlice,
+  SliceMachine,
   OrganizationWrapper,
   SliceDropdown,
   Form,
   OneColumnTextSlice,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { Locale } from 'locale'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
-  namespace: Query['getNamespace']
+  namespace: Record<string, string>
+  locale: Locale
 }
 
 const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
@@ -82,6 +83,7 @@ const SubPage: Screen<SubPageProps> = ({
   organizationPage,
   subpage,
   namespace,
+  locale,
 }) => {
   const router = useRouter()
 
@@ -118,11 +120,15 @@ const SubPage: Screen<SubPageProps> = ({
       breadcrumbItems={[
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage').href,
+          href: linkResolver('homepage', [], locale).href,
         },
         {
           title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          href: linkResolver(
+            'organizationpage',
+            [organizationPage.slug],
+            locale,
+          ).href,
         },
       ]}
       navigationData={{
@@ -212,19 +218,19 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
-  namespace: Namespace,
-  organizationPageSlug: string,
+  namespace: Record<string, string>,
+  slug: string,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => (
-        <OrganizationSlice
+        <SliceMachine
           key={slice.id}
           slice={slice}
           namespace={namespace}
-          organizationPageSlug={organizationPageSlug}
+          slug={slug}
           renderedOnOrganizationSubpage={true}
           marginBottom={index === slices.length - 1 ? 5 : 0}
         />
@@ -295,6 +301,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    locale: locale as Locale,
     ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
