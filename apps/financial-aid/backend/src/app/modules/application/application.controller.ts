@@ -98,6 +98,7 @@ export class ApplicationController {
         'Application controller: Failed getting current application',
         e,
       )
+      throw e
     }
 
     if (currentApplicationId === null) {

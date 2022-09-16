@@ -65,6 +65,7 @@ export class MunicipalityController {
         'Municipality controller: Failed getting municipality by id',
         e,
       )
+      throw e
     }
 
     if (!municipality) {

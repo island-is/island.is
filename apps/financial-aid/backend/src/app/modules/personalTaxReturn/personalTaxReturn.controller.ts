@@ -54,6 +54,7 @@ export class PersonalTaxReturnController {
         'PersonalTaxReturn controller: Failed getting personal tax return',
         e,
       )
+      throw e
     }
   }
 
@@ -82,6 +83,7 @@ export class PersonalTaxReturnController {
         'PersonalTaxReturn controller: Failed direct tax payments',
         e,
       )
+      throw e
     }
   }
 }
