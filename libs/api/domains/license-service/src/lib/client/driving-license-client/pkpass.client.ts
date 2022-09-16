@@ -303,7 +303,7 @@ export class PkPassClient {
     const response = json as PkPassServiceDriversLicenseResponse
 
     if (response.status === 1 && response.data) {
-      return response as PkPassServiceDriversLicenseResponse
+      return json as PkPassServiceDriversLicenseResponse
     }
 
     return null

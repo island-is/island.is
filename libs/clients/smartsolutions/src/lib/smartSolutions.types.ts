@@ -1,9 +1,12 @@
 import { Pass, PassTemplate } from '../../gen/schema'
 
-export interface PkPassServiceErrorResponse {
-  message?: string
-  status?: number
-  data?: unknown
+export interface VerifyPassResult {
+  valid: boolean
+  data?: string
+  name?: string
+  nationalId?: string
+  photo?: string
+  error?: PkPassVerifyError
 }
 
 export interface VerifyPassResponse {
@@ -11,10 +14,10 @@ export interface VerifyPassResponse {
   data?: {
     updateStatusOnPassWithDynamicBarcode: Pass
   }
-  error?: {
-    message?: string
-    data?: string
-  }
+  errors?: {
+    message: string
+    path: string
+  }[]
 }
 
 export interface ListPassesResponse {
@@ -48,3 +51,30 @@ export interface UpsertPkPassResponse {
   message?: string
   status?: number
 }
+export interface PkPassVerifyError {
+  /**
+   * HTTP status code from the service.
+   * Needed while `status` was always the same, use `serviceError.status` for
+   * error reported by API.
+   */
+  statusCode: number
+  serviceError?: PkPassServiceErrorResponse
+}
+
+export interface PkPassServiceErrorResponse {
+  message?: string
+  status?: PkPassServiceVerifyPassStatusCode
+  data?: unknown
+}
+
+export type PkPassServiceVerifyPassStatusCode =
+  /** License OK */
+  | 1
+  /** License expired */
+  | 2
+  /** No license info found */
+  | 3
+  /** Request contains some field errors */
+  | 4
+  /** Unknown error */
+  | 99

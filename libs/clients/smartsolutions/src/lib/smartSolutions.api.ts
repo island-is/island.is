@@ -7,6 +7,8 @@ import {
   ListPassesDTO,
   VerifyPassResponse,
   ListPassesResponse,
+  VerifyPassResult,
+  PkPassServiceVerifyPassStatusCode,
 } from './smartSolutions.types'
 import {
   DynamicBarcodeDataInput,
@@ -15,6 +17,7 @@ import {
   PassStatus,
   PassTemplatePageInfo,
 } from '../../gen/schema'
+import { ErrorMessageToStatusCodeMap } from './utils'
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'smartsolutions'
 
@@ -144,7 +147,7 @@ export class SmartSolutionsApi {
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
-  ): Promise<VerifyPassResponse | null> {
+  ): Promise<VerifyPassResult | null> {
     const verifyPkPassMutation = `
       mutation UpdateStatusOnPassWithDynamicBarcode($dynamicBarcodeData: DynamicBarcodeDataInput!) {
         updateStatusOnPassWithDynamicBarcode(dynamicBarcodeData: $dynamicBarcodeData) {
@@ -159,15 +162,10 @@ export class SmartSolutionsApi {
       }
     `
 
-    const { code, date } = payload
-
     const body = {
       query: verifyPkPassMutation,
       variables: {
-        dynamicBarcodeData: {
-          code,
-          date,
-        },
+        dynamicBarcodeData: payload,
       },
     }
 
@@ -189,27 +187,30 @@ export class SmartSolutionsApi {
       })
       return null
     }
-
     if (!res.ok) {
       const responseErrors: PkPassServiceErrorResponse = {}
       try {
         const json = await res.json()
         responseErrors.message = json?.message ?? undefined
         responseErrors.data = json?.data ?? undefined
+        responseErrors.status = json?.status ?? undefined
       } catch {
         // noop
       }
+      if (!responseErrors.status) {
+        this.logger.warn('Expected 200 or 400 status for pkpass verification', {
+          status: res.status,
+          statusText: res.statusText,
+          category: LOG_CATEGORY,
+          ...responseErrors,
+        })
+      }
 
-      this.logger.warn('Expected 200 status for pkpass verification', {
-        status: res.status,
-        statusText: res.statusText,
-        category: LOG_CATEGORY,
-        ...responseErrors,
-      })
       return {
         valid: false,
         error: {
-          message: responseErrors.message,
+          statusCode: res.status,
+          serviceError: responseErrors,
         },
       }
     }
@@ -222,18 +223,52 @@ export class SmartSolutionsApi {
         exception: e,
         category: LOG_CATEGORY,
       })
-      //return null
+      return null
     }
 
     const response = json as VerifyPassResponse
-
-    if (response) {
+    if (!response.errors) {
       return {
         valid: true,
-        data: response.data,
       }
     }
 
+    const resError = response.errors[0]
+    this.logger.debug(JSON.stringify(resError))
+    const mappedError =
+      resError.message in ErrorMessageToStatusCodeMap
+        ? (ErrorMessageToStatusCodeMap[
+            resError.message
+          ] as PkPassServiceVerifyPassStatusCode)
+        : (99 as PkPassServiceVerifyPassStatusCode)
+
+    if (mappedError) {
+      const responseErrors: PkPassServiceErrorResponse = {}
+
+      if (!payload.code || !payload.date) {
+        const errorMessage = 'Request contains some field errors'
+
+        responseErrors.message = errorMessage
+        responseErrors.data = JSON.stringify(res) ?? undefined
+        responseErrors.status =
+          (ErrorMessageToStatusCodeMap[
+            errorMessage
+          ] as PkPassServiceVerifyPassStatusCode) ??
+          (99 as PkPassServiceVerifyPassStatusCode)
+      } else {
+        responseErrors.message = resError.message ?? undefined
+        responseErrors.data = JSON.stringify(res) ?? undefined
+        responseErrors.status = mappedError ?? undefined
+      }
+
+      return {
+        valid: false,
+        error: {
+          statusCode: res.status,
+          serviceError: responseErrors,
+        },
+      }
+    }
     return null
   }
 

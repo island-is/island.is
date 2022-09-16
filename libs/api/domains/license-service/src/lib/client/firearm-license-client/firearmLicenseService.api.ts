@@ -154,11 +154,6 @@ export class GenericFirearmLicenseApi
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-
-    if (!code || !date) {
-      return null
-    }
-
     const result = await this.smartApi.verifyPkPass({ code, date })
 
     if (!result) {
@@ -174,19 +169,26 @@ export class GenericFirearmLicenseApi
       let data = ''
 
       try {
-        data = JSON.stringify(result.error.message)
+        data = JSON.stringify(result.error.serviceError?.data)
       } catch {
-        //Nothing
+        // noop
       }
 
+      // Is there a status code from the service?
+      const serviceErrorStatus = result.error.serviceError?.status
+
+      // Use status code, or http status code from serivce, or "0" for unknown
+      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+
       error = {
-        status: '0',
-        message: data,
-        data: JSON.stringify(result.error) ?? '',
+        status: status.toString(),
+        message: result.error.serviceError?.message || 'Unknown error',
+        data,
       }
 
       return {
         valid: false,
+        data: undefined,
         error,
       }
     }
