@@ -1,5 +1,5 @@
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
@@ -30,29 +30,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      COMPLETED_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/krafa/yfirlit/',
-        staging: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/',
-        prod: 'https://rettarvorslugatt.island.is/krafa/yfirlit/',
-      },
-      PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/krafa/stadfesta/',
-        staging:
-          'https://judicial-system.staging01.devland.is/krafa/stadfesta/',
-        prod: 'https://rettarvorslugatt.island.is/krafa/stadfesta/',
-      },
-      PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL: {
-        dev:
-          'https://judicial-system.dev01.devland.is/krafa/rannsoknarheimild/stadfesta/',
-        staging:
-          'https://judicial-system.staging01.devland.is/krafa/rannsoknarheimild/stadfesta/',
-        prod:
-          'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
-      },
-      DEFENDER_CASE_OVERVIEW_URL: {
-        dev: 'https://judicial-system.dev01.devland.is/verjandi/',
-        staging: 'https://judicial-system.staging01.devland.is/verjandi/',
-        prod: 'https://rettarvorslugatt.island.is/verjandi/',
+      CLIENT_URL: {
+        dev: ref((h) => `https://judicial-system.${h.env.domain}`),
+        staging: ref((h) => `https://judicial-system.${h.env.domain}`),
+        prod: 'https://rettarvorslugatt.island.is',
       },
       SQS_QUEUE_NAME: 'sqs-judicial-system',
       SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
