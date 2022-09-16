@@ -1586,6 +1586,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
