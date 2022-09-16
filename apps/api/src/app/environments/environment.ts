@@ -112,19 +112,14 @@ const prodConfig = () => ({
     apiKey: process.env.PKPASS_API_KEY,
     apiUrl: process.env.PKPASS_API_URL,
     secretKey: process.env.PKPASS_SECRET_KEY,
-    cacheKey: process.env.PKPASS_CACHE_KEY,
-    cacheTokenExpiryDelta: process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA,
-    authRetries: process.env.PKPASS_AUTH_RETRIES,
+    cacheKey: process.env.PKPASS_CACHE_KEY ?? 'smartsolution:apitoken',
+    cacheTokenExpiryDelta:
+      process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
+    authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
-  pkpassv2: {
-    rls: {
-      firearmLicensePassTemplateId:
-        process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
-      pkPassApiKey: process.env.RLS_PKPASS_API_KEY,
-    },
-    ve: {
-      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-    },
+  firearmLicense: {
+    firearmLicensePassTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
   },
   smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
@@ -284,20 +279,14 @@ const devConfig = () => ({
       process.env.PKPASS_CACHE_TOKEN_EXPIRY_DELTA ?? '2000',
     authRetries: process.env.PKPASS_AUTH_RETRIES ?? '1',
   },
-  pkpassv2: {
-    rls: {
-      firearmLicensePassTemplateId:
-        process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
-      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-    },
-    ve: {
-      pkPassApiKey: process.env.VE_PKPASS_API_KEY,
-    },
+  firearmLicense: {
+    firearmLicensePassTemplateId: process.env.FIREARM_LICENSE_PASS_TEMPLATE_ID,
+    pkPassApiKey: process.env.VE_PKPASS_API_KEY,
   },
+  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   audit: {
     defaultNamespace: '@island.is/api',
   },
-  smartSolutionsApiUrl: process.env.SMART_SOLUTIONS_API_URL,
   paymentSchedule: {
     xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
