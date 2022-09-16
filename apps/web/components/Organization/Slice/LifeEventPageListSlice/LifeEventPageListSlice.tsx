@@ -1,10 +1,4 @@
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  ProfileCard,
-} from '@island.is/island-ui/core'
+import { Box, ProfileCard } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
 import type { LifeEventPageListSlice as LifeEventPageListSliceSchema } from '@island.is/web/graphql/schema'
 import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
@@ -56,24 +50,17 @@ export const LifeEventPageListSlice: React.FC<LifeEventPageListSliceProps> = ({
   }
 
   return (
-    <GridContainer>
-      <GridRow>
-        {slice.lifeEventPageList?.map((page) => (
-          <GridColumn span={['1/1', '1/1', '1/1', '1/1', '1/2']} key={page.id}>
-            <Box marginBottom={3}>
-              <IconTitleCard
-                heading={page.shortTitle || page.title}
-                imgSrc={page.tinyThumbnail?.url}
-                alt={page.tinyThumbnail?.title}
-                href={
-                  linkResolver(anchorPageLinkType, [page.slug], activeLocale)
-                    .href
-                }
-              />
-            </Box>
-          </GridColumn>
-        ))}
-      </GridRow>
-    </GridContainer>
+    <Box className={styles.lifeEventCardContainer}>
+      {slice.lifeEventPageList?.map((page) => (
+        <IconTitleCard
+          heading={page.shortTitle || page.title}
+          imgSrc={page.tinyThumbnail?.url}
+          alt={page.tinyThumbnail?.title}
+          href={
+            linkResolver(anchorPageLinkType, [page.slug], activeLocale).href
+          }
+        />
+      ))}
+    </Box>
   )
 }
