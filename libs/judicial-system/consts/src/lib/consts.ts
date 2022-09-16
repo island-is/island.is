@@ -161,6 +161,7 @@ export const USERS_ROUTE = '/notendur'
 export const CREATE_USER_ROUTE = '/notendur/nyr'
 export const CHANGE_USER_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/krafa/akaera/yfirlit'
 
 export const CREATE_RESTRICTION_CASE_ROUTE = '/krafa/ny/gaesluvardhald'
 export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
@@ -226,6 +227,7 @@ export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
+export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
 // Feedback

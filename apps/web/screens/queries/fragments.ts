@@ -421,6 +421,7 @@ export const slices = gql`
       ...AssetFields
     }
     dividerOnTop
+    showTitle
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -504,6 +505,13 @@ export const slices = gql`
     successText
     aboutYouHeadingText
     questionsHeadingText
+    recipientFormFieldDecider {
+      title
+      placeholder
+      type
+      required
+      options
+    }
   }
 
   fragment StepperFields on Stepper {

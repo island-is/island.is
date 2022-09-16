@@ -8,6 +8,7 @@ import {
   PageLayout,
   FormContentContainer,
   ProsecutorCaseInfo,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   RestrictionCaseProsecutorSubsections,
@@ -19,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'

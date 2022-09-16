@@ -779,6 +779,9 @@ export interface IFormFields {
 
   /** Questions Heading text */
   questionsHeadingText?: string | undefined
+
+  /** Recipient Form Field Decider */
+  recipientFormFieldDecider?: IFormField | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -813,6 +816,9 @@ export interface IFormFieldFields {
 
   /** Options */
   options?: string[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
@@ -1888,6 +1894,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2787,9 +2796,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined
