@@ -46,7 +46,7 @@ export class MunicipalitiesFinancialAidResolver {
       return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
         user,
       )
-    } catch(e) {
+    } catch (e) {
       this.logger.error(`municipalitiesFinancialAidCurrentApplication`, e)
     }
     return null
@@ -94,7 +94,7 @@ export class MunicipalitiesFinancialAidResolver {
       return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
         user,
       )
-    } catch(e) {
+    } catch (e) {
       this.logger.error(`municipalitiesDirectTaxPayments`, e)
     }
     return {}
