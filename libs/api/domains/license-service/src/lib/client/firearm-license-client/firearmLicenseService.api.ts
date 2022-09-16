@@ -4,6 +4,7 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
+  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import type { Logger } from '@island.is/logging'
@@ -16,16 +17,16 @@ import {
 } from './firearmLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
-  CreatePkPassDataInput,
-  PkPassIssuer,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
   LicenseInfo,
   FirearmApi,
   LicenseData,
 } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
+import { DEFAULT_IMAGE } from './constants'
+import {
+  PassDataInput,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -36,7 +37,6 @@ export class GenericFirearmLicenseApi
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
     private smartApi: SmartSolutionsApi,
-    private issuer: PkPassIssuer,
   ) {}
 
   private handleError(error: Partial<FetchError>): unknown {
@@ -67,7 +67,6 @@ export class GenericFirearmLicenseApi
       this.handleError(e)
       return null
     }
-
     return licenseData as LicenseData
   }
 
@@ -94,8 +93,6 @@ export class GenericFirearmLicenseApi
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 
-    this.logger.debug(JSON.stringify(data))
-
     if (!data) return null
 
     const inputValues = createPkPassDataInput(
@@ -106,28 +103,27 @@ export class GenericFirearmLicenseApi
 
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
-    const parsedImage = image?.substring(image.indexOf(',') + 1).trim() ?? ''
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
+    const payload: PassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      thumbnail: {
-        imageBase64String: parsedImage,
-      },
+      thumbnail: image
+        ? {
+            imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
+          }
+        : null,
     }
 
     const pass = await this.smartApi.generatePkPassUrl(
       payload,
       format(user.nationalId),
-      this.issuer,
     )
     return pass ?? null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
-
     if (!data) return null
 
     const inputValues = createPkPassDataInput(
@@ -142,45 +138,80 @@ export class GenericFirearmLicenseApi
 
     if (!inputValues) return null
     //Fetch template from api?
-    const payload: CreatePkPassDataInput = {
+    const payload: PassDataInput = {
       passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
-      thumbnail: {
-        imageBase64String: parsedImage,
-      },
+      thumbnail: image
+        ? {
+            imageBase64String: parsedImage ?? DEFAULT_IMAGE,
+          }
+        : null,
     }
 
     const pass = await this.smartApi.generatePkPassQrCode(
       payload,
       format(user.nationalId),
-      this.issuer,
     )
     return pass ?? null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
-    const payload = {
-      dynamicBarcodeData: {
-        code,
-        date,
-      },
+    const result = await this.smartApi.verifyPkPass({ code, date })
+
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
+      return null
     }
 
-    const response = await this.smartApi.verifyPkPass(payload, this.issuer)
+    let error: PkPassVerificationError | undefined
 
-    if (response?.data) {
-      return { valid: true, data: JSON.stringify(response.data) }
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.serviceError?.data)
+      } catch {
+        // noop
+      }
+
+      // Is there a status code from the service?
+      const serviceErrorStatus = result.error.serviceError?.status
+
+      // Use status code, or http status code from serivce, or "0" for unknown
+      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+
+      error = {
+        status: status.toString(),
+        message: result.error.serviceError?.message || 'Unknown error',
+        data,
+      }
+
+      return {
+        valid: false,
+        data: undefined,
+        error,
+      }
     }
 
-    const firstError = response?.errors?.[0]
-    //Take the first error for now
+    /*HERE we should compare fetch the firearm license using the national id of the
+      user being scanned, NOT the logged in user, but this is impossible as it stands!
+      TO_DO: Implement that!
+
+      const nationalIdFromPkPass = result.data.pass.inputFieldValues
+      .find((i) => i.passInputField.identifier === 'kt')
+      ?.value?.replace('-', '')
+
+      if (nationalIdFromPkPass) {
+        const license await this.fetchLicenseData(nationalIdFromPkPass)
+        // and then compare to verify that the licenses sync up
+      }
+    */
+
     return {
-      valid: false,
-      error: {
-        message: firstError?.message ?? '',
-        data: firstError ? JSON.stringify(firstError) : '',
-        status: '',
-      },
+      valid: result.valid,
+      error,
     }
   }
 }

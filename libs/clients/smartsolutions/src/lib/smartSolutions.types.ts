@@ -1,101 +1,44 @@
-export interface CreatePkPassDataInput {
-  passTemplateId?: string
-  inputFieldValues?: {
-    identifier?: string
-    value?: string
-  }[]
-  thumbnail?: {
-    imageBase64String?: string
-  }
-}
+import { Pass, PassTemplate } from '../../gen/schema'
 
-export enum PkPassIssuer {
-  VINNUEFTIRLITID = 'vinnueftirlitid',
-  RIKISLOGREGLUSTJORI = 'rikislogreglustjori',
-}
-
-export interface CreatePkPassDTO {
-  distributionUrl?: string
-  deliveryPageUrl?: string
-  destributionQRCode?: string
-}
-
-export interface PkPassServiceErrorResponse {
-  message?: string
-  status?: number
-  data?: unknown
-}
-export interface ListPassesResponse {
-  data: {
-    passes: {
-      data: Array<PassDTO>
-    }
-  }
+export interface VerifyPassResult {
+  valid: boolean
+  data?: string
+  name?: string
+  nationalId?: string
+  photo?: string
+  error?: PkPassVerifyError
 }
 
 export interface VerifyPassResponse {
-  data: {
-    pass: PassDTO
+  valid: boolean
+  data?: {
+    updateStatusOnPassWithDynamicBarcode: Pass
   }
-  errors: {
+  errors?: {
     message: string
     path: string
   }[]
 }
 
-export interface DynamicBarcodeDataInput {
-  dynamicBarcodeData: {
-    code: string
-    //iso8601
-    date: string
+export interface ListPassesResponse {
+  data?: {
+    passes?: ListPassesDTO
   }
-}
-
-export enum PkPassStatus {
-  Expired = 'EXPIRED',
-  Unclaimed = 'UNCLAIMED',
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-  Voided = 'VOIDED',
-  DeleteInProcess = 'DELETE_IN_PROCESS',
 }
 
 export interface PassTemplatesDTO {
-  passTemplates: Array<PassTemplateDTO>
-}
-
-export interface PassDTO {
-  distributionUrl: string
-  deliveryPageUrl: string
-  distributionQRCode: string
-  whenCreated: string
-  whenModified: string
-  expirationDate: string
-  expirationTime: string
-  alreadyPaid: boolean
-  passTemplate: PassTemplateDTO
-  id: string
-  status: PkPassStatus
-  inputFieldValues: {
-    passInputField: {
-      identifier: string
-    }
-    value: string
-  }
+  data: Array<PassTemplate>
 }
 
 export interface ListPassesDTO {
-  passes: Array<PassDTO>
+  data: Array<Pass>
 }
 
-export interface PassTemplatesResponse {
-  data?: {
-    passTemplates?: {
-      data?: PassTemplateDTO[]
-    }
-  }
+export interface ListTemplatesResponse {
+  data?: PassTemplate[]
+  message?: string
+  status?: number
 }
-
 export interface PassTemplateDTO {
   passTemplate: {
     id: string
@@ -104,9 +47,34 @@ export interface PassTemplateDTO {
 }
 
 export interface UpsertPkPassResponse {
-  data?: {
-    upsertPass?: PassDTO
-  }
+  data: Pass
   message?: string
   status?: number
 }
+export interface PkPassVerifyError {
+  /**
+   * HTTP status code from the service.
+   * Needed while `status` was always the same, use `serviceError.status` for
+   * error reported by API.
+   */
+  statusCode: number
+  serviceError?: PkPassServiceErrorResponse
+}
+
+export interface PkPassServiceErrorResponse {
+  message?: string
+  status?: PkPassServiceVerifyPassStatusCode
+  data?: unknown
+}
+
+export type PkPassServiceVerifyPassStatusCode =
+  /** License OK */
+  | 1
+  /** License expired */
+  | 2
+  /** No license info found */
+  | 3
+  /** Request contains some field errors */
+  | 4
+  /** Unknown error */
+  | 99
