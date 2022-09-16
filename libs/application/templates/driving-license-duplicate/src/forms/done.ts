@@ -17,11 +17,18 @@ export const done: Form = buildForm({
       id: 'done',
       title: 'Umsókn staðfest',
       children: [
-        buildCustomField({
-          id: 'overview',
-          component: 'Congratulations',
-          title: 'Umsókn móttekin',
-        }),
+        buildCustomField(
+          {
+            id: 'congratulationsAlert',
+            title: '',
+            component: 'Alert',
+          },
+          {
+            title: m.congratulationsTitle,
+            type: 'success',
+            message: m.congratulationsTitleSuccess,
+          },
+        ),
         buildDescriptionField({
           id: 'applicationNr',
           title: m.congratulationsApplicationNumber,

@@ -132,6 +132,51 @@ export const m = defineMessages({
     description: 'Some description',
   },
 
+  /* rejected Section */
+  rejected: {
+    id: 'dld.application:rejected',
+    defaultMessage: 'Hafnað',
+    description: 'rejected title',
+  },
+  rejectedSubtitle: {
+    id: 'dld.application:rejected.sectionSubtitle',
+    defaultMessage:
+      'Þú hefur því miður ekkert til að sækja um. Hér fyrir neðan getur þú séð hvaða ökuréttindi þú ert með og hvað það er sem þig vantar til að geta haldið áfram umsókn þinni. ',
+    description: 'rejected section title',
+  },
+  rejectedTitle: {
+    id: 'dld.application:rejected.title',
+    defaultMessage: 'Þú hefur ekkert til að sækja um',
+    description: 'rejected title',
+  },
+  requirementsTitle: {
+    id: 'dld.application:rejected.requirementsTitle',
+    defaultMessage: 'Það sem vantar fyrir umsókn',
+    description: 'Some description',
+  },
+  rejectedSignatureTitle: {
+    id: 'dld.application:rejected.signature.title',
+    defaultMessage: 'Undirskrift ekki til á skrá',
+    description: 'Some description',
+  },
+  rejectedSignatureMessage: {
+    id: 'dld.application:rejected.signature.message',
+    defaultMessage:
+      'Undirskrift ekki til í ökuskírteinaskrá og þarf því að koma til Sýslumanns og skrifa undir.',
+    description: 'Some description',
+  },
+  rejectedImageTitle: {
+    id: 'dld.application:rejected.image.title',
+    defaultMessage: 'Ljósmynd í ökuskírteini ekki gæðamerkt',
+    description: 'Some description',
+  },
+  rejectedImageMessage: {
+    id: 'dld.application:rejected.image.message',
+    defaultMessage:
+      'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Some description',
+  },
+
   /* Applicant - used in information and overview sections */
   applicantsName: {
     id: 'dld.application:applicantsName',

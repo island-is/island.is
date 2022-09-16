@@ -1,5 +1,7 @@
 import { applicationForMessages } from './messages'
 import { MessageDescriptor } from 'react-intl'
+import { ExternalData, FormValue } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 
 type CurrentRightsMessages = {
   title: MessageDescriptor
@@ -19,3 +21,15 @@ export const getApplicationInfo = (rights: string): CurrentRightsMessages => {
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
+
+export const requirementsMet = (externalData: ExternalData): boolean => {
+  const photo = getValueViaPath(
+    externalData,
+    'qualityPhoto.data.hasQualityPhoto',
+  )
+  const signature = getValueViaPath(
+    externalData,
+    'qualitySignature.data.hasQualitySignature',
+  )
+  return !!photo && !!signature
+}

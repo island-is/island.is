@@ -19,7 +19,7 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
     ) ?? null
 
   if (!currentLicense || !currentLicense.categories) {
-    throw new Error('no existing application - should not happen')
+    throw new Error('no existing license - should not happen')
   }
 
   return (

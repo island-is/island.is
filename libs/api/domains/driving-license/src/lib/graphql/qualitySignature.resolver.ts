@@ -24,12 +24,12 @@ export class QualitySignatureResolver {
     @CurrentUser() user: User,
   ): Promise<String | null> {
     return hasQualitySignature
-      ? this.drivingLicenseService.getQualitySignatureUri('1511982449') //user.nationalId)
+      ? this.drivingLicenseService.getQualitySignatureUri('1511982449') //(user.nationalId)
       : Promise.resolve(null)
   }
 
   @Query(() => QualitySignature)
   drivingLicenseQualitySignature(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualitySignature('1511982449') //user.nationalId)
+    return this.drivingLicenseService.getQualitySignature('1511982449') //(user.nationalId)
   }
 }

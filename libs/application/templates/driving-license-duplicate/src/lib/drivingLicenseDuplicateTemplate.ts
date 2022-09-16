@@ -67,6 +67,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
       [States.PAYMENT]: {
@@ -112,6 +113,22 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
+      },
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          progress: 1,
+          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/declined').then((val) => val.declined),
               read: 'all',
             },
           ],

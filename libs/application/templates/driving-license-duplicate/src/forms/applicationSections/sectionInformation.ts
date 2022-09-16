@@ -11,6 +11,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
 import { HasQualitySignatureData } from '../../fields/QualitySignature/hooks/useQualitySignature'
+import { requirementsMet } from '../../lib/utils'
 
 export const sectionInformation = buildSection({
   id: 'information',
@@ -20,6 +21,7 @@ export const sectionInformation = buildSection({
       id: 'list',
       title: m.informationTitle,
       description: m.informationSubtitle,
+      condition: (_, externalData) => requirementsMet(externalData),
       children: [
         buildTextField({
           id: 'name',
@@ -48,11 +50,18 @@ export const sectionInformation = buildSection({
           title: '',
           component: 'CurrentLicense',
         }),
-        buildCustomField({
-          id: 'qualityAlert',
-          title: '',
-          component: 'QualityAlert',
-        }),
+        buildCustomField(
+          {
+            id: 'qualityAlert',
+            title: '',
+            component: 'Alert',
+          },
+          {
+            heading: m.signatureAndImage,
+            type: 'info',
+            message: m.signatureAndImageAlert,
+          },
+        ),
         buildDescriptionField({
           id: 'information.signatureTitle',
           title: m.signature,
@@ -90,6 +99,12 @@ export const sectionInformation = buildSection({
           },
         }),
       ],
+    }),
+    buildCustomField({
+      condition: (_, externalData) => !requirementsMet(externalData),
+      title: 'SubmitAndDecline',
+      component: 'SubmitAndDecline',
+      id: 'SubmitAndDecline',
     }),
   ],
 })

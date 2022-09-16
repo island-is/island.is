@@ -3,11 +3,13 @@ import { DefaultEvents } from '@island.is/application/types'
 export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.REJECT }
 
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
   PAYMENT = 'payment',
+  DECLINED = 'declined',
 }
 export enum Roles {
   APPLICANT = 'applicant',
