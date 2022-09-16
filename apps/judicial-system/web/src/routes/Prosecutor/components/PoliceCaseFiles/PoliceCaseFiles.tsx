@@ -20,16 +20,18 @@ import {
   LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
-import { SectionHeading } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 
-import * as styles from './PoliceCaseFiles.css'
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
-import { PoliceCaseFilesMessageBox } from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import * as styles from './PoliceCaseFiles.css'
 
-export interface PoliceCaseFilesData {
+interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
