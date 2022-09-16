@@ -1,6 +1,6 @@
 import { Box, Checkbox, Input, Stack } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 
 interface Props {
   id: string
@@ -20,19 +20,12 @@ const ConstraintController: FC<Props> = ({
 }) => {
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
-  const [textValue, setTextValue] = useState('')
-  const [updated, setUpdated] = useState<string[]>([])
 
-  useEffect(() => {
-    if (!isChecked) {
-      console.log('deleting')
-
-      const box = document.getElementById(id) as HTMLInputElement
-      if (box) {
-        box.value = ''
-      }
+  function clearTextArea(value: boolean) {
+    if (!value) {
+      setValue(id as string, '')
     }
-  }, [isChecked])
+  }
 
   return (
     <Stack space={2}>
@@ -47,7 +40,7 @@ const ConstraintController: FC<Props> = ({
                   onChange(e.target.checked)
                   setValue(checkboxId as string, e.target.checked)
                   setIsChecked(e.target.checked)
-                  setTextValue('')
+                  clearTextArea(e.target.checked)
                 }}
                 checked={value}
                 name={checkboxId}
@@ -60,9 +53,9 @@ const ConstraintController: FC<Props> = ({
       </Box>
       {isChecked && extraText && (
         <Input
-          onChange={(e) => setTextValue(e.target.value)}
           placeholder={placeholder}
           backgroundColor="blue"
+          required={isChecked}
           type="text"
           name={id}
           id={id}
@@ -71,7 +64,6 @@ const ConstraintController: FC<Props> = ({
           rows={5}
           maxLength={250}
           ref={register}
-          value={textValue}
         />
       )}
     </Stack>

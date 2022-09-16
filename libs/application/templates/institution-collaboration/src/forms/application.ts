@@ -1,14 +1,11 @@
 import { Comparators, Form, FormModes } from '@island.is/application/types'
-import { FILE_SIZE_LIMIT, YES } from '../constants'
+import { YES } from '../constants'
 import {
-  buildCheckboxField,
   buildCompanySearchField,
   buildCustomField,
-  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubSection,
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
@@ -46,7 +43,7 @@ export const application: Form = buildForm({
             }),
 
             buildTextField({
-              id: 'contact.institutionEmail',
+              id: 'applicant.institutionEmail',
               title: m.applicant.contactInstitutionEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
