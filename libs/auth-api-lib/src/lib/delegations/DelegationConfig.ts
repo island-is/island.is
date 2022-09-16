@@ -2,7 +2,7 @@ import * as z from 'zod'
 
 import { ApiScope, AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-import { DelegationType } from '../entities/dto/delegation.dto'
+import { DelegationType } from './dto/delegation.dto'
 
 const customScopeRuleSchema = z.array(
   z.object({
@@ -32,13 +32,14 @@ const schema = z.object({
   // Configures special rules affecting when specific scopes can be granted to other
   // users in custom delegations.
   customScopeRules: customScopeRuleSchema,
+  userInfoUrl: z.string(),
 })
 
-export const DelegationConfig = defineConfig({
+export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
   name: 'DelegationConfig',
   schema,
   load: (env) => ({
-    customScopeRules: (env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
+    customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
         scopeName: AuthScope.writeDelegations,
         onlyForDelegationType: ['ProcurationHolder'],
@@ -51,6 +52,11 @@ export const DelegationConfig = defineConfig({
         scopeName: ApiScope.company,
         onlyForDelegationType: ['ProcurationHolder'],
       },
-    ]) as z.infer<typeof customScopeRuleSchema>,
+    ],
+    userInfoUrl:
+      env.required(
+        'IDENTITY_SERVER_ISSUER_URL',
+        'https://identity-server.dev01.devland.is',
+      ) + '/connect/userinfo',
   }),
 })

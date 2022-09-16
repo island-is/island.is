@@ -1,12 +1,9 @@
 import { uuid } from 'uuidv4'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import {
-  ScopeType,
-  UpdateDelegationScopeDTO,
-} from '../entities/dto/delegation-scope.dto'
-import { DelegationScope } from '../entities/models/delegation-scope.model'
-import { Delegation } from '../entities/models/delegation.model'
+import { ScopeType, UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
 import { Op } from 'sequelize'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { IdentityResource } from '../resources/models/identity-resource.model'
@@ -16,7 +13,7 @@ import {
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
-} from '../personal-representative'
+} from '@island.is/auth-api-lib/personal-representative'
 
 @Injectable()
 export class DelegationScopeService {

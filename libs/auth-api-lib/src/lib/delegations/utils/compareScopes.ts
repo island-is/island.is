@@ -1,4 +1,4 @@
-import { DelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
+import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
 
 /**
  * Comparator function for DelegationScopeDTO that

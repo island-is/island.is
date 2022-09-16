@@ -14,8 +14,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
-import { DelegationScope } from '../../entities/models/delegation-scope.model'
-import { PersonalRepresentativeScopePermission } from '../../personal-representative/entities/models/personal-representative-scope-permission.model'
+import { DelegationScope } from '../../delegations/models/delegation-scope.model'
+import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
 import { Optional } from 'sequelize/types'
 
 interface ModelAttributes {

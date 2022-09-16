@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common'
 import { ResourcesController } from './resources.controller'
-import {
-  ResourcesModule as AuthResourcesModule,
-  TranslationModule,
-} from '@island.is/auth-api-lib'
+import { ResourcesModule as AuthResourcesModule } from '@island.is/auth-api-lib'
 
 @Module({
-  imports: [AuthResourcesModule, TranslationModule],
+  imports: [AuthResourcesModule],
   controllers: [ResourcesController],
   providers: [],
 })

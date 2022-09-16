@@ -1,11 +1,10 @@
-import { IdpProvider, IdpProviderService } from '@island.is/auth-api-lib'
+import { IdpProviderModule as AuthIdpProviderModule } from '@island.is/auth-api-lib'
 import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpProviderController } from './idp-provider.controller'
 
 @Module({
-  imports: [SequelizeModule.forFeature([IdpProvider])],
+  imports: [AuthIdpProviderModule],
   controllers: [IdpProviderController],
-  providers: [IdpProviderService],
+  providers: [],
 })
 export class IdpProviderModule {}

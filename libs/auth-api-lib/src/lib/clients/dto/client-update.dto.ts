@@ -1,3 +1,3 @@
-import { ClientBaseDTO } from '../../entities/dto/base/client-base.dto'
+import { ClientBaseDTO } from './base/client-base.dto'
 
 export class ClientUpdateDTO extends ClientBaseDTO {}

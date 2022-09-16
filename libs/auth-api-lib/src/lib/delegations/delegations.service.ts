@@ -13,7 +13,7 @@ import { Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
 
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
-import type { AuthConfig, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
@@ -27,23 +27,23 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import { DelegationConfig } from '../config/DelegationConfig'
-import { UpdateDelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
+import { DelegationConfig } from './DelegationConfig'
+import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import {
   CreateDelegationDTO,
   DelegationDTO,
   DelegationProvider,
   DelegationType,
   UpdateDelegationDTO,
-} from '../entities/dto/delegation.dto'
+} from './dto/delegation.dto'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
-import { DelegationScope } from '../entities/models/delegation-scope.model'
-import { Delegation } from '../entities/models/delegation.model'
-import { PersonalRepresentativeService } from '../personal-representative'
-import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
-import { DelegationValidity } from '../types/delegationValidity'
+import { DelegationScope } from './models/delegation-scope.model'
+import { Delegation } from './models/delegation.model'
+import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
+import { DelegationValidity } from './types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from '../resources/resources.service'
 
@@ -54,8 +54,6 @@ type ClientDelegationInfo = Pick<
   | 'supportsProcuringHolders'
   | 'supportsPersonalRepresentatives'
 >
-
-export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
 export class DelegationsService {
@@ -68,8 +66,6 @@ export class DelegationsService {
     private clientModel: typeof Client,
     @InjectModel(ClientAllowedScope)
     private clientAllowedScopeModel: typeof ClientAllowedScope,
-    @Inject(DELEGATIONS_AUTH_CONFIG)
-    private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(DelegationConfig.KEY)
@@ -697,14 +693,11 @@ export class DelegationsService {
   }
 
   private async getUserName(user: User) {
-    const response = await this.authFetch(
-      `${this.authConfig.issuer}/connect/userinfo`,
-      {
-        headers: {
-          Authorization: user.authorization,
-        },
+    const response = await this.authFetch(this.delegationConfig.userInfoUrl, {
+      headers: {
+        Authorization: user.authorization,
       },
-    )
+    })
     const userinfo = (await response.json()) as { name: string }
     return userinfo.name
   }

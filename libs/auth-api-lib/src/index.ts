@@ -1,36 +1,37 @@
-// Models
-export * from './lib/grant-type/models/grant-type.model'
-export * from './lib/entities/models/grants.model'
-export * from './lib/entities/models/idp-provider.model'
-export * from './lib/entities/models/delegation.model'
-export * from './lib/entities/models/delegation.model'
-export * from './lib/entities/models/delegation-scope.model'
+// Core module
+export * from './lib/core/sequelizeConfig.service'
+export * from './lib/core/types/paged-rows.dto'
 
-// DTO's
-export * from './lib/entities/dto/grant.dto'
-export * from './lib/entities/dto/active.dto'
-export * from './lib/entities/dto/idp-provider.dto'
-export * from './lib/grant-type/dto/grant-type.dto'
-export * from './lib/entities/dto/user-claim.dto'
-export * from './lib/entities/dto/delegation-scope.dto'
-export * from './lib/entities/dto/delegation.dto'
-export * from './lib/entities/dto/paged-rows.dto'
+// Grants module
+export * from './lib/grants/grants.module'
+export * from './lib/grants/grants.service'
+export * from './lib/grants/dto/grant.dto'
+export * from './lib/grants/models/grants.model'
 
-// Services
-export * from './lib/services/grants.service'
-export * from './lib/resources/resource-access.service'
-export * from './lib/services/sequelizeConfig.service'
-export * from './lib/services/idp-provider.service'
-export * from './lib/services/delegations.service'
-export * from './lib/services/delegationScope.service'
+// Idp Provider module
+export * from './lib/idp-provider/idp-provider.module'
+export * from './lib/idp-provider/idp-provider.service'
+export * from './lib/idp-provider/models/idp-provider.model'
+export * from './lib/idp-provider/dto/idp-provider.dto'
 
-// Types
-export * from './lib/types/delegationDirection'
-export * from './lib/types/delegationValidity'
+// Delegation module
+export * from './lib/delegations/delegations.module'
+export * from './lib/delegations/delegations.service'
+export * from './lib/delegations/delegationScope.service'
+export * from './lib/delegations/types/delegationDirection'
+export * from './lib/delegations/types/delegationValidity'
+export * from './lib/delegations/dto/delegation-scope.dto'
+export * from './lib/delegations/dto/delegation.dto'
+export * from './lib/delegations/models/delegation.model'
+export * from './lib/delegations/models/delegation.model'
+export * from './lib/delegations/models/delegation-scope.model'
+export * from './lib/delegations/DelegationConfig'
+export * from './lib/delegations/utils/compareScopes'
 
 // Resources module
 export * from './lib/resources/resources.module'
 export * from './lib/resources/resources.service'
+export * from './lib/resources/resource-access.service'
 export * from './lib/resources/models/api-resource.model'
 export * from './lib/resources/models/api-resource-scope.model'
 export * from './lib/resources/models/api-resource-secret.model'
@@ -53,6 +54,7 @@ export * from './lib/resources/dto/api-resource-secret.dto'
 export * from './lib/resources/dto/api-resource-allowed-scope.dto'
 export * from './lib/resources/dto/identity-resources.dto'
 export * from './lib/resources/dto/domain.dto'
+export * from './lib/resources/dto/user-claim.dto'
 
 // Clients module
 export * from './lib/clients/clients.module'
@@ -90,16 +92,15 @@ export * from './lib/user-identities/user-identities.module'
 export * from './lib/user-identities/user-identities.service'
 export * from './lib/user-identities/dto/claim.dto'
 export * from './lib/user-identities/dto/user-identity.dto'
+export * from './lib/user-identities/dto/active.dto'
 export * from './lib/user-identities/models/claim.model'
 export * from './lib/user-identities/models/user-identity.model'
 
 // Grant Type Module
 export * from './lib/grant-type/grant-type.module'
 export * from './lib/grant-type/grant-type.service'
+export * from './lib/grant-type/dto/grant-type.dto'
+export * from './lib/grant-type/models/grant-type.model'
 
-// Config
-//export * as DbConfig from './lib/config/sequelize.config.js'
-export * from './lib/config/DelegationConfig'
-
-// Utils
-export * from './lib/utils/compareScopes'
+// Personal Representative Module
+export * from './lib/personal-representative'

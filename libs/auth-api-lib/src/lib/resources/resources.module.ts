@@ -16,12 +16,12 @@ import { IdentityResourceUserClaim } from './models/identity-resource-user-claim
 import { ApiScopeUserClaim } from './models/api-scope-user-claim.model'
 import { ApiResourceUserClaim } from './models/api-resource-user-claim.model'
 import { ApiResourceSecret } from './models/api-resource-secret.model'
-import { Delegation } from '../entities/models/delegation.model'
-import { DelegationScope } from '../entities/models/delegation-scope.model'
-import { PersonalRepresentativeScopePermission } from '../personal-representative/entities/models/personal-representative-scope-permission.model'
-import { PersonalRepresentative } from '../personal-representative/entities/models/personal-representative.model'
-import { PersonalRepresentativeRight } from '../personal-representative/entities/models/personal-representative-right.model'
-import { PersonalRepresentativeRightType } from '../personal-representative/entities/models/personal-representative-right-type.model'
+import { Delegation } from '../delegations/models/delegation.model'
+import { DelegationScope } from '../delegations/models/delegation-scope.model'
+import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
+import { PersonalRepresentative } from '../personal-representative/models/personal-representative.model'
+import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
+import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeDTO } from '../dto/personal-representative.dto'
+import { PersonalRepresentativeDTO } from './personal-representative.dto'
 
 export class PaginatedPersonalRepresentativeDto {
   @ApiProperty()
