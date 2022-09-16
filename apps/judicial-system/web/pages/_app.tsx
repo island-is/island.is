@@ -8,14 +8,14 @@ import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
 import { ToastContainer } from '@island.is/island-ui/core'
 
 import { client } from '../graphql'
-import FormProvider from '../src/components/FormProvider/FormProvider'
 import {
   UserProvider,
   FeatureProvider,
   ServiceInterruptionBanner,
+  FormProvider,
+  ViewportProvider,
+  Header as HeaderContainer,
 } from '../src/components'
-import HeaderContainer from '../src/components/Header/Header'
-import ViewportProvider from '../src/components/ViewportProvider/ViewportProvider'
 
 const getTranslationStrings = (apolloClient: typeof client) => {
   if (!apolloClient) {

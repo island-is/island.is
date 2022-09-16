@@ -51,7 +51,7 @@ export const useCourtArrangements = (workingCase: Case) => {
   }
 }
 
-const CourtArrangements: React.FC<Props> = (props) => {
+export const CourtArrangements: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
@@ -101,5 +101,3 @@ const CourtArrangements: React.FC<Props> = (props) => {
     </BlueBox>
   )
 }
-
-export default CourtArrangements
