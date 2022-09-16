@@ -7,6 +7,8 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  HasTechingRightsApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -60,8 +62,12 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
               ],
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['teachingRights', 'nationalRegistry'],
+                externalData: [
+                  'DrivingLicense.getHasTeachingRights',
+                  'NationalRegistry.getUser',
+                ],
               },
+              api: [HasTechingRightsApi, NationalRegistryUserApi],
             },
           ],
         },
