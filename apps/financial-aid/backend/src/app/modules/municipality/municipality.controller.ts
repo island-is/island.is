@@ -53,9 +53,7 @@ export class MunicipalityController {
     description: 'Gets municipality by id',
   })
   async getById(@Param('id') id: string): Promise<MunicipalityModel> {
-    this.logger.debug(
-      'PersonalTaxReturn controller: Getting personal tax return',
-    )
+    this.logger.debug('Municipality controller: Getting municipality by id')
 
     let municipality
     try {
