@@ -443,9 +443,71 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'fileUpload.attachment',
-              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
+              title: (answers) => {
+                const isSelfEmployed =
+                  (answers.answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+
+                if (!isSelfEmployed) {
+                  return parentalLeaveFormMessages.selfEmployed.attachmentTitle
+                }
+
+                // const isStudent = answers.answers as {}
+
+                // if (isStudent) {
+                //   return parentalLeaveFormMessages.attachement.studentTitle
+                // }
+
+                // const isFatherWithoutMother = answers.answers as {}
+
+                // if (isFatherWithoutMother) {
+                //   return parentalLeaveFormMessages.attachement.fatherWithoutMotherTitle
+                // }
+
+                // const isPermanentFosterCare = answers.answers as {}
+
+                // if (isPermanentFosterCare) {
+                //   return parentalLeaveFormMessages.attachement.permanentFostercareTitle
+                // }
+
+                return parentalLeaveFormMessages.attachement.genericTitle
+              },
+              description: (answers) => {
+                const isSelfEmployed =
+                  (answers.answers as {
+                    employer: {
+                      isSelfEmployed: string
+                    }
+                  })?.employer?.isSelfEmployed === YES
+
+                if (!isSelfEmployed) {
+                  return parentalLeaveFormMessages.selfEmployed
+                    .attachmentDescription
+                }
+
+                // const isStudent = answers.answers as {}
+
+                // if (isStudent) {
+                // return parentalLeaveFormMessages.attachement.studentDescription
+                // }
+
+                // const isFatherWithoutMother = answers.answers as {}
+
+                // if (isFatherWithoutMother) {
+                // return parentalLeaveFormMessages.attachement.fatherWithoutMotherDescription
+                // }
+
+                // const isPermanentFosterCare = answers.answers as {}
+
+                // if (isPermanentFosterCare) {
+                // return parentalLeaveFormMessages.attachement.permanentFostercareDescription
+                // }
+
+                return parentalLeaveFormMessages.attachement.genericDescription
+              },
               children: [
                 buildFileUploadField({
                   id: 'fileUpload.attachment.file',
