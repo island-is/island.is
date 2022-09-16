@@ -25,7 +25,6 @@ import {
   applicantIsMale,
   getOtherParentName,
   removeCountryCode,
-  getSpouseDeprecated,
   getSpouse,
   getOtherParentOptions,
   isEligibleForParentalLeave,
@@ -215,13 +214,6 @@ describe('getAvailableRightsInMonths', () => {
     const res = getAvailableRightsInMonths(application)
 
     expect(res).toBe(6)
-  })
-})
-
-describe('getSpouseDeprecated', () => {
-  it('should return undefined without spouse', () => {
-    const application = buildApplication()
-    expect(getSpouseDeprecated(application)).toEqual(undefined)
   })
 })
 
