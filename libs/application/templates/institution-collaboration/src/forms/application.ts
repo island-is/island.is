@@ -135,7 +135,7 @@ export const application: Form = buildForm({
         buildMultiField({
           id: 'applicantInformation',
           title: m.service.sectionTitle,
-          description: m.service.sectionDescription,
+          // description: m.service.sectionDescription,
           children: [
             buildCustomField({
               id: 'constraints',
