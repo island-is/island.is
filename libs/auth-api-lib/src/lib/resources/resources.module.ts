@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ResourcesService } from './resources.service'
+import { ResourceAccessService } from './resource-access.service'
 import { TranslationModule } from '../translation/translation.module'
 import { Domain } from './models/domain.model'
 import { IdentityResource } from './models/identity-resource.model'
 import { ApiScope } from './models/api-scope.model'
 import { ApiResource } from './models/api-resource.model'
 import { ApiScopeGroup } from './models/api-scope-group.model'
+import { ApiScopeUser } from './models/api-scope-user.model'
+import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
 import { ApiResourceScope } from './models/api-resource-scope.model'
 import { IdentityResourceUserClaim } from './models/identity-resource-user-claim.model'
 import { ApiScopeUserClaim } from './models/api-scope-user-claim.model'
@@ -29,6 +32,8 @@ import { PersonalRepresentativeRightType } from '../personal-representative/enti
       ApiScope,
       ApiResource,
       ApiScopeGroup,
+      ApiScopeUser,
+      ApiScopeUserAccess,
       ApiResourceScope,
       IdentityResourceUserClaim,
       ApiScopeUserClaim,
@@ -42,7 +47,7 @@ import { PersonalRepresentativeRightType } from '../personal-representative/enti
       PersonalRepresentative,
     ]),
   ],
-  providers: [ResourcesService],
-  exports: [ResourcesService],
+  providers: [ResourcesService, ResourceAccessService],
+  exports: [ResourcesService, ResourceAccessService],
 })
 export class ResourcesModule {}

@@ -3,15 +3,15 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Op } from 'sequelize'
-import { ApiScopeUser } from '../resources/models/api-scope-user.model'
-import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
-import { ApiScopeUserDTO } from '../resources/dto/api-scope-user.dto'
-import { ApiScopeUserUpdateDTO } from '../resources/dto/api-scope-user-update.dto'
-import { ApiScopeUserAccessDTO } from '../resources/dto/api-scope-user-access.dto'
+import { ApiScopeUser } from './models/api-scope-user.model'
+import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
+import { ApiScopeUserDTO } from './dto/api-scope-user.dto'
+import { ApiScopeUserUpdateDTO } from './dto/api-scope-user-update.dto'
+import { ApiScopeUserAccessDTO } from './dto/api-scope-user-access.dto'
 import { throwError } from 'rxjs'
 
 @Injectable()
-export class AccessService {
+export class ResourceAccessService {
   constructor(
     @InjectModel(ApiScopeUser)
     private apiScopeUser: typeof ApiScopeUser,

@@ -19,7 +19,7 @@ export * from './lib/entities/dto/paged-rows.dto'
 // Services
 export * from './lib/services/grant-types.service'
 export * from './lib/services/grants.service'
-export * from './lib/services/access.service'
+export * from './lib/resources/resource-access.service'
 export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
 export * from './lib/services/delegations.service'

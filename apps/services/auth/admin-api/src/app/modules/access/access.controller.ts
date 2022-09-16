@@ -1,5 +1,5 @@
 import {
-  AccessService,
+  ResourceAccessService,
   ApiScopeUserDTO,
   ApiScopeUser,
   ApiScopeUserUpdateDTO,
@@ -43,7 +43,7 @@ const namespace = `${environment.audit.defaultNamespace}/access`
 @Audit({ namespace })
 export class AccessController {
   constructor(
-    private readonly accessService: AccessService,
+    private readonly accessService: ResourceAccessService,
     private readonly auditService: AuditService,
   ) {}
 

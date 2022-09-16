@@ -1,5 +1,5 @@
 import {
-  AccessService,
+  ResourceAccessService,
   ResourcesService,
   ApiScope,
 } from '@island.is/auth-api-lib'
@@ -24,7 +24,7 @@ import {
 @Controller('permissions')
 export class PermissionsController {
   constructor(
-    private readonly accessService: AccessService,
+    private readonly accessService: ResourceAccessService,
     private readonly resourcesService: ResourcesService,
   ) {}
 
