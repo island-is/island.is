@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
-import { GrantType } from '../../entities/models/grant-type.model'
+import { GrantType } from '../../grant-type/models/grant-type.model'
 
 @Table({
   tableName: 'client_grant_type',

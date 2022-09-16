@@ -1,5 +1,5 @@
 // Models
-export * from './lib/entities/models/grant-type.model'
+export * from './lib/grant-type/models/grant-type.model'
 export * from './lib/entities/models/grants.model'
 export * from './lib/entities/models/idp-provider.model'
 export * from './lib/entities/models/delegation.model'
@@ -10,14 +10,13 @@ export * from './lib/entities/models/delegation-scope.model'
 export * from './lib/entities/dto/grant.dto'
 export * from './lib/entities/dto/active.dto'
 export * from './lib/entities/dto/idp-provider.dto'
-export * from './lib/entities/dto/grant-type.dto'
+export * from './lib/grant-type/dto/grant-type.dto'
 export * from './lib/entities/dto/user-claim.dto'
 export * from './lib/entities/dto/delegation-scope.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/paged-rows.dto'
 
 // Services
-export * from './lib/services/grant-types.service'
 export * from './lib/services/grants.service'
 export * from './lib/resources/resource-access.service'
 export * from './lib/services/sequelizeConfig.service'
@@ -93,6 +92,10 @@ export * from './lib/user-identities/dto/claim.dto'
 export * from './lib/user-identities/dto/user-identity.dto'
 export * from './lib/user-identities/models/claim.model'
 export * from './lib/user-identities/models/user-identity.model'
+
+// Grant Type Module
+export * from './lib/grant-type/grant-type.module'
+export * from './lib/grant-type/grant-type.service'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
