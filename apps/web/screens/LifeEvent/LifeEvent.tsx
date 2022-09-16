@@ -36,6 +36,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { Locale } from 'locale'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -49,6 +50,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   locale,
 }) => {
   useContentfulId(id)
+  useLocalLinkTypeResolver()
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
@@ -69,7 +72,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
 
     // If we're viewing the digital iceland services we need to change the breadcrumbs
-    if (linkResolver('digitalicelandservices').href === overviewUrl) {
+    if (
+      linkResolver('digitalicelandservices', [], locale).href === overviewUrl
+    ) {
       items.push({
         title: n('digitalIceland', 'Stafrænt Ísland'),
         href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
