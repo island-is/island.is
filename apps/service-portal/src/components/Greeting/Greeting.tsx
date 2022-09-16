@@ -32,6 +32,7 @@ const Greeting: FC<{}> = () => {
           ? styles.greetingContainerRelative
           : styles.greetingContainer
       }
+      marginTop={4}
     >
       <GridColumn span={['12/12', '7/12']}>
         <Box marginTop={[2, 3, 4]} data-testid="greeting">
@@ -45,7 +46,7 @@ const Greeting: FC<{}> = () => {
               ? formatMessage(m.eveningGreeting)
               : formatMessage(m.dayGreeting)}
           </Text>
-          <Text variant="h1" as="h1" marginBottom={1}>
+          <Text variant="h2" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
@@ -73,7 +74,7 @@ const Greeting: FC<{}> = () => {
             height="full"
             display="flex"
             justifyContent="center"
-            alignItems="center"
+            alignItems="flexStart"
           >
             <img
               src={`./assets/images/${
