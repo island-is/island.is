@@ -812,20 +812,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -1003,20 +1004,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/AflamarkSkipsBreytingarDTO"
+                "$ref": "#/components/schemas/AflamarkSkipsBreytingar"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -1035,6 +1037,112 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AflamarkSkipsBreyttDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/stadaskips/{skipnumer}/fiskveidiar/{fiskveidiar}/kvoti/breytt": {
+      "post": {
+        "tags": ["StadaSkips"],
+        "summary": "Skilar breyttum gögnum um kvótareiknisdálka eftir því hverju er óskað eftir að breyta.",
+        "parameters": [
+          {
+            "name": "skipnumer",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "fiskveidiar",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AflamarkSkipsKvotaParams"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AflamarkSkipsKvotaParamsDTO"
                 }
               }
             }
@@ -1423,21 +1531,22 @@
   },
   "components": {
     "schemas": {
-      "AflamarkSkipsBreytingarDTO": {
+      "AflamarkSkipsBreytingar": {
+        "required": ["breytingarFisktegundar"],
         "type": "object",
         "properties": {
           "breytingarFisktegundar": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AflamarkSkipsBreytingarParamsDTO"
+              "$ref": "#/components/schemas/AflamarkSkipsBreytingarParams"
             },
-            "description": "Listi með upplýsingum um breytingar fyrir tiltekið nr. kvótategundar.",
-            "nullable": true
+            "description": "Listi með upplýsingum um breytingar fyrir tiltekið númer kvótategundar."
           }
         },
         "additionalProperties": false
       },
-      "AflamarkSkipsBreytingarParamsDTO": {
+      "AflamarkSkipsBreytingarParams": {
+        "required": ["aflabreyting", "aflamarksbreyting", "kvotategund"],
         "type": "object",
         "properties": {
           "kvotategund": {
@@ -1469,6 +1578,104 @@
             },
             "description": "Listi aflamarkstegunda eftir beytta stöðu.",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsKvotaParams": {
+        "required": ["kvotategund"],
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Númer kvótategundar sem skal breyta.",
+            "format": "int32"
+          },
+          "hlutdeildBreytt": {
+            "type": "number",
+            "description": "Magn heildaraflamarks (Kg) fyrir kvótategund.",
+            "format": "float"
+          },
+          "uthlutadAflamarkBreytt": {
+            "type": "integer",
+            "description": "Úthlutað aflamark sem skal breyta í Kg.",
+            "format": "int32"
+          },
+          "aNaestaArKvotiBreytt": {
+            "type": "integer",
+            "description": "Breyting á magni (Kg) sem skal flytja yfir á næsta ár.",
+            "format": "int32"
+          },
+          "afNaestaAriKvotiBreytt": {
+            "type": "integer",
+            "description": "Breyting á magni (Kg) sem skal taka af næsta ári.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AflamarkSkipsKvotaParamsDTO": {
+        "type": "object",
+        "properties": {
+          "kvotategund": {
+            "type": "integer",
+            "description": "Númer kvótategundar sem skal breyta.",
+            "format": "int32"
+          },
+          "heildarAflamark": {
+            "type": "integer",
+            "description": "Magn heildaraflamarks fyrir kvótategund.",
+            "format": "int32"
+          },
+          "hlutdeildBreytt": {
+            "type": "number",
+            "description": "Breytt hlutdeild fyrir kvótategund.",
+            "format": "float"
+          },
+          "uthlutadAflamarkBreytt": {
+            "type": "integer",
+            "description": "Breytt úthlutað aflamark (Kg) fyrir kvótategund.",
+            "format": "int32"
+          },
+          "aNaestaArKvotiBreytt": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem leyfilegt er að setja á næsta ár.",
+            "format": "int32"
+          },
+          "afNaestaAriKvotiBreytt": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem er leyfilegt að taka af næsta ári.",
+            "format": "int32"
+          },
+          "prosenta_aflamark_fra": {
+            "type": "integer",
+            "description": "Prósenta sem er leyfilegt að flytja frá fyrir kvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
+            "format": "int32"
+          },
+          "prosenta_aflamark_til": {
+            "type": "integer",
+            "description": "Prósenta sem er leyfilegt að flytja til fyrirkvótategund (Gefið í heiltölu, 25 => 0,25 eða 25%).",
+            "format": "int32"
+          },
+          "aNaestaArAflamark": {
+            "type": "integer",
+            "description": "Breytt magn (Kg) sem er sett á næsta ár skv. aflamarksreikni.",
+            "format": "int32"
+          },
+          "nyStada": {
+            "type": "integer",
+            "description": "Ný staða kvótategundar tekið tillit til afla og tilfærslu.",
+            "format": "int32"
+          },
+          "umframafli": {
+            "type": "integer",
+            "description": "Breyttur umframafli miðað við breyttar niðurstöður kvótaParams.",
+            "format": "int32"
+          },
+          "onotad": {
+            "type": "integer",
+            "description": "Breytt ónotað miðað við breyttar niðurstöður kvótaParams.",
+            "format": "int32"
           }
         },
         "additionalProperties": false

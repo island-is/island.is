@@ -12,7 +12,7 @@ export interface ShipInformation {
   timePeriod: string
 }
 
-export interface AllowedCatchCategory {
+export interface CatchQuotaCategory {
   /** kvotategund - Auðkenni fisktegundar */
   id?: number
 
@@ -32,7 +32,7 @@ export interface AllowedCatchCategory {
   betweenShips?: number
 
   /** aflamark - Magn aflamarks skips fyrir fisktegund (uthlutun, serstok_uthlutun, milli_ara, milli_skipa lagt saman) */
-  allowedCatch?: number
+  catchQuota?: number
 
   /** afli - Magn af fisktegund sem skipið hefur raunverulega veitt á tímabilinu */
   catch?: number
@@ -56,10 +56,10 @@ export interface AllowedCatchCategory {
   unused?: number
 
   /** heildarAflaMark - Magn heildaraflamarks tiltekinnar fisktegundar á tímabilinu */
-  totalAllowedCatch?: number
+  totalCatchQuota?: number
 
   /** hlutdeild - Hlutfall hlutdeildar sem skip á í fisktegund á tímabilinu. (0,5 => 0,5%) */
-  rateOfShare?: number
+  quotaShare?: number
 
   /** ANaestaArKvoti - Magn sem skip setur yfir á næsta ár af fisktegund fyrir tímabil út frá kvóta */
   nextYearQuota?: number
@@ -74,11 +74,11 @@ export interface AllowedCatchCategory {
   percentNextYearFromQuota?: number
 }
 
-export interface AllowedCatchForShip {
+export interface ShipStatus {
   /** skipUpplysingar */
   shipInformation: ShipInformation
   /** aflamarkstegundir */
-  allowedCatchCategories: AllowedCatchCategory[]
+  catchQuotaCategories: CatchQuotaCategory[]
 }
 
 /** Kvótategund */

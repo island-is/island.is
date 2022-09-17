@@ -2,21 +2,18 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class CategoryChange {
-  // kvotategund (Auðkenni fisktegundar)
   @Field()
   id!: number
 
-  // aflabreyting
   @Field()
   catchChange!: number
 
-  // aflamarksbreyting
   @Field()
-  allowedCatchChange!: number
+  catchQuotaChange!: number
 }
 
 @InputType()
-export class GetUpdatedShipStatusForTimePeriodInput {
+export class UpdateShipStatusForTimePeriodInput {
   @Field()
   shipNumber!: number
 

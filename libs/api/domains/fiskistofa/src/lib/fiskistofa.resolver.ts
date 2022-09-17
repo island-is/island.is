@@ -5,8 +5,9 @@ import { GetQuotaTypesForTimePeriodInput } from './dto/getQuotaTypesForTimePerio
 import { GetShipsInput } from './dto/getShips.input'
 import { GetShipStatusForCalendarYearInput } from './dto/getShipStatusForCalendarYear.input'
 import { GetShipStatusForTimePeriodInput } from './dto/getShipStatusForTimePeriod.input'
-import { GetUpdatedShipStatusForCalendarYearInput } from './dto/getUpdatedShipStatusForCalendarYear.input'
-import { GetUpdatedShipStatusForTimePeriodInput } from './dto/getUpdatedShipStatusForTimePeriod.input'
+import { UpdateShipQuotaStatusForTimePeriodInput } from './dto/updateShipQuotaStatusForTimePeriod.input'
+import { UpdateShipStatusForCalendarYearInput } from './dto/updateShipStatusForCalendarYear.input'
+import { UpdateShipStatusForTimePeriodInput } from './dto/updateShipStatusForTimePeriod.input'
 import { QuotaType } from './models/quotaType'
 import { ShipBasicInfo } from './models/shipBasicInfo'
 import {
@@ -34,10 +35,20 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Mutation(() => ExtendedShipStatusInformationUpdate)
-  getUpdatedShipStatusForTimePeriod(
-    @Args('input') input: GetUpdatedShipStatusForTimePeriodInput,
+  updateShipStatusForTimePeriod(
+    @Args('input') input: UpdateShipStatusForTimePeriodInput,
   ) {
-    return this.fiskistofaClientService.getUpdatedShipStatusForTimePeriod(input)
+    return this.fiskistofaClientService.updateShipStatusForTimePeriod(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [ShipBasicInfo])
+  updateShipQuotaStatusForTimePeriod(
+    @Args('input') input: UpdateShipQuotaStatusForTimePeriodInput,
+  ) {
+    return this.fiskistofaClientService.updateShipQuotaStatusForTimePeriod(
+      input,
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -50,12 +61,10 @@ export class FiskistofaResolver {
 
   @Directive(cacheControlDirective())
   @Mutation(() => ShipStatusInformation)
-  getUpdatedShipStatusForCalendarYear(
-    @Args('input') input: GetUpdatedShipStatusForCalendarYearInput,
+  updateShipStatusForCalendarYear(
+    @Args('input') input: UpdateShipStatusForCalendarYearInput,
   ) {
-    return this.fiskistofaClientService.getUpdatedShipStatusForCalendarYear(
-      input,
-    )
+    return this.fiskistofaClientService.updateShipStatusForCalendarYear(input)
   }
 
   @Directive(cacheControlDirective())

@@ -16,7 +16,7 @@ class Ship {
 }
 
 @ObjectType()
-class AllowedCatchCategory {
+class CatchQuotaCategory {
   @Field({ nullable: true })
   id?: number
   @Field()
@@ -30,7 +30,7 @@ class AllowedCatchCategory {
   @Field({ nullable: true })
   betweenShips?: number
   @Field({ nullable: true })
-  allowedCatch?: number
+  catchQuota?: number
   @Field({ nullable: true })
   catch?: number
   @Field({ nullable: true })
@@ -48,11 +48,11 @@ class AllowedCatchCategory {
 }
 
 @ObjectType()
-class ExtendedAllowedCatchCategory extends AllowedCatchCategory {
+class ExtendedCatchQuotaCategory extends CatchQuotaCategory {
   @Field({ nullable: true })
-  totalAllowedCatch?: number
+  totalCatchQuota?: number
   @Field({ nullable: true })
-  rateOfShare?: number
+  quotaShare?: number
   @Field({ nullable: true })
   nextYearQuota?: number
   @Field({ nullable: true })
@@ -68,8 +68,8 @@ export class ShipStatusInformation {
   @Field(() => Ship, { nullable: true })
   shipInformation?: Ship
 
-  @Field(() => [AllowedCatchCategory], { nullable: true })
-  allowedCatchCategories?: AllowedCatchCategory[]
+  @Field(() => [CatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: CatchQuotaCategory[]
 }
 
 @ObjectType()
@@ -77,8 +77,8 @@ export class ExtendedShipStatusInformation {
   @Field(() => Ship, { nullable: true })
   shipInformation?: Ship
 
-  @Field(() => [ExtendedAllowedCatchCategory], { nullable: true })
-  allowedCatchCategories?: ExtendedAllowedCatchCategory[]
+  @Field(() => [ExtendedCatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: ExtendedCatchQuotaCategory[]
 }
 
 @ObjectType()
@@ -86,6 +86,6 @@ export class ExtendedShipStatusInformationUpdate {
   @Field(() => Ship, { nullable: true })
   shipInformation?: Ship
 
-  @Field(() => [AllowedCatchCategory], { nullable: true })
-  allowedCatchCategories?: AllowedCatchCategory[]
+  @Field(() => [CatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: CatchQuotaCategory[]
 }

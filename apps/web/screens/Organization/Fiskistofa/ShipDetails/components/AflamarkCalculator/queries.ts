@@ -9,14 +9,14 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
         name
         timePeriod
       }
-      allowedCatchCategories {
+      catchQuotaCategories {
         id
         name
         allocation
         specialAlloction
         betweenYears
         betweenShips
-        allowedCatch
+        catchQuota
         catch
         status
         displacement
@@ -24,8 +24,8 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
         nextYear
         excessCatch
         unused
-        totalAllowedCatch
-        rateOfShare
+        totalCatchQuota
+        quotaShare
         nextYearQuota
         nextYearFromQuota
         percentNextYearQuota
@@ -36,24 +36,24 @@ export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
 `
 
 export const GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD = gql`
-  mutation GetUpdatedShipStatusForTimePeriod(
-    $input: GetUpdatedShipStatusForTimePeriodInput!
+  mutation UpdateShipStatusForTimePeriod(
+    $input: UpdateShipStatusForTimePeriodInput!
   ) {
-    getUpdatedShipStatusForTimePeriod(input: $input) {
+    updateShipStatusForTimePeriod(input: $input) {
       shipInformation {
         id
         shipNumber
         name
         timePeriod
       }
-      allowedCatchCategories {
+      catchQuotaCategories {
         id
         name
         allocation
         specialAlloction
         betweenYears
         betweenShips
-        allowedCatch
+        catchQuota
         catch
         status
         displacement

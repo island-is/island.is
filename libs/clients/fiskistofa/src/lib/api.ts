@@ -13,13 +13,14 @@ import {
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest,
   V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest,
   V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest,
+  V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest,
 } from '../../gen/fetch'
 import { FiskistofaClientConfig } from './fiskistofaClient.config'
 import {
-  mapAllowedCatchForShip,
-  mapChangedAllowedCatchForShip,
+  mapShipStatusForTimePeriod,
+  mapShipStatusForCalendarYear,
   mapQuotaType,
-} from './fiskistofaClient.utils'
+} from './utils'
 
 @Injectable()
 export class FiskistofaApi {
@@ -95,13 +96,35 @@ export class FiskistofaApi {
     )
   }
 
-  async getUpdatedShipStatusForTimePeriod(
+  async updateShipStatusForTimePeriod(
     params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest,
   ) {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPost(
       params,
     )
-    return mapAllowedCatchForShip(data)
+    return mapShipStatusForTimePeriod(data)
+  }
+
+  async updateShipQuotaStatusForTimePeriod(
+    params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest,
+  ) {
+    const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPost(
+      params,
+    )
+    return {
+      nextYearCatchQuoate: data?.aNaestaArAflamark,
+      nextYearQuota: data?.aNaestaArKvotiBreytt,
+      nextYearFromQuota: data?.afNaestaAriKvotiBreytt,
+      totalCatchQuota: data?.heildarAflamark,
+      quotaShare: data?.hlutdeildBreytt,
+      id: data?.kvotategund,
+      newStatus: data?.nyStada,
+      unused: data?.onotad,
+      percentCatchQuotaFrom: data?.prosentaAflamarkFra,
+      percentCatchQuoateTo: data?.prosentaAflamarkTil,
+      excessCatch: data?.umframafli,
+      allocatedCatchQuota: data?.uthlutadAflamarkBreytt,
+    }
   }
 
   async getShipStatusForTimePeriod(
@@ -110,7 +133,7 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerFiskveidiarFiskveidiarGet(
       params,
     )
-    return mapAllowedCatchForShip(data)
+    return mapShipStatusForTimePeriod(data)
   }
 
   async getShipStatusForCalendarYear(
@@ -119,16 +142,16 @@ export class FiskistofaApi {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarGet(
       params,
     )
-    return mapChangedAllowedCatchForShip(data)
+    return mapShipStatusForCalendarYear(data)
   }
 
-  async getUpdatedShipStatusForCalendarYear(
+  async updateShipStatusForCalendarYear(
     params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
   ) {
     const data = await this.stadaSkipsApi?.v1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPost(
       params,
     )
-    return mapChangedAllowedCatchForShip(data)
+    return mapShipStatusForCalendarYear(data)
   }
 
   async getQuotaTypesForTimePeriod(
