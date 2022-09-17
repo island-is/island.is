@@ -6,11 +6,7 @@ import type {
   AflamarkTegundirByTimabilDTO,
   FisktegundDTO,
 } from '../../gen/fetch'
-import type {
-  AllowedCatchCategory,
-  AllowedCatchForShip,
-  ShipInformation,
-} from './fiskiStofaClient.types'
+import type { CatchQuotaCategory, ShipStatus, ShipInformation } from './types'
 
 const mapShipInformation = (info?: AflamarkSkipsUpplDTO): ShipInformation => ({
   id: info?.einkenni ?? '',
@@ -19,16 +15,16 @@ const mapShipInformation = (info?: AflamarkSkipsUpplDTO): ShipInformation => ({
   timePeriod: info?.timabil ?? '',
 })
 
-const mapAllowedCatchCategory = (
+const mapCatchQuotaCategoryForTimePeriod = (
   category: AflamarkstegundirDTO,
-): AllowedCatchCategory => ({
+): CatchQuotaCategory => ({
   id: category?.kvotategund,
   name: category?.kvotategundHeiti ?? '',
   allocation: category?.uthlutun,
   specialAlloction: category?.serstokUthlutun,
   betweenYears: category?.milliAra,
   betweenShips: category?.milliSkipa,
-  allowedCatch: category?.aflamark,
+  catchQuota: category?.aflamark,
   catch: category?.afli,
   status: category?.stada,
   displacement: category?.tilfaersla,
@@ -36,33 +32,33 @@ const mapAllowedCatchCategory = (
   nextYear: category?.aNaestaAr,
   excessCatch: category?.umframafli,
   unused: category?.onotad,
-  totalAllowedCatch: category?.heildarAflaMark,
-  rateOfShare: category?.hlutdeild,
+  totalCatchQuota: category?.heildarAflaMark,
+  quotaShare: category?.hlutdeild,
   nextYearQuota: category?.aNaestaArKvoti,
   nextYearFromQuota: category?.afNaestaAriKvoti,
   percentNextYearQuota: category?.prosentaANaestaArKvoti,
   percentNextYearFromQuota: category?.prosentaAfNaestaAriKvoti,
 })
 
-export const mapAllowedCatchForShip = (
+export const mapShipStatusForTimePeriod = (
   info?: AflamarkSkipsUpphafDTO,
-): AllowedCatchForShip => ({
+): ShipStatus => ({
   shipInformation: mapShipInformation(info?.skipUpplysingar),
-  allowedCatchCategories: (info?.aflamarkstegundir ?? []).map(
-    mapAllowedCatchCategory,
+  catchQuotaCategories: (info?.aflamarkstegundir ?? []).map(
+    mapCatchQuotaCategoryForTimePeriod,
   ),
 })
 
-const mapChangedAllowedCatchCategory = (
+const mapCatchQuotaCategoryForCalendarYear = (
   category: AflamarkstegundirDTO,
-): AllowedCatchCategory => ({
+): CatchQuotaCategory => ({
   id: category?.kvotategund,
   name: category?.kvotategundHeiti ?? '',
   allocation: category?.uthlutun,
   specialAlloction: category?.serstokUthlutun,
   betweenYears: category?.milliAra,
   betweenShips: category?.milliSkipa,
-  allowedCatch: category?.aflamark,
+  catchQuota: category?.aflamark,
   catch: category?.afli,
   status: category?.stada,
   displacement: category?.tilfaersla,
@@ -72,12 +68,12 @@ const mapChangedAllowedCatchCategory = (
   unused: category?.onotad,
 })
 
-export const mapChangedAllowedCatchForShip = (
+export const mapShipStatusForCalendarYear = (
   info?: AflamarkSkipsBreyttDTO,
-): AllowedCatchForShip => ({
+): ShipStatus => ({
   shipInformation: mapShipInformation(info?.skipUppl),
-  allowedCatchCategories: (info?.aflamarkstegundir ?? []).map(
-    mapChangedAllowedCatchCategory,
+  catchQuotaCategories: (info?.aflamarkstegundir ?? []).map(
+    mapCatchQuotaCategoryForCalendarYear,
   ),
 })
 

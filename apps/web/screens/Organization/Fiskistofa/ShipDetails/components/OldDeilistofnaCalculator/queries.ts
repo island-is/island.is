@@ -31,7 +31,7 @@ export const GET_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
   }
 `
 
-export const UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
+export const GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
   mutation UpdateShipStatusForCalendarYear(
     $input: UpdateShipStatusForCalendarYearInput!
   ) {

@@ -9,14 +9,20 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver } from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { Locale } from 'locale'
+import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
 import { AflamarkCalculator } from './components/AflamarkCalculator'
 import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
+
+const TAB_OPTIONS = [
+  { label: 'Reiknivél aflamarks', value: 'aflamark' },
+  { label: 'Reiknivél deilistofna', value: 'deilistofn' },
+] as const
 
 interface ShipDetailsProps {
   locale: Locale
@@ -24,23 +30,12 @@ interface ShipDetailsProps {
 }
 
 const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
-  const tabs = useMemo(
-    () => [
-      {
-        label: 'Reiknivél aflamarks',
-        content: <AflamarkCalculator namespace={namespace} />,
-        id: 'aflamark',
-      },
-      {
-        label: 'Reiknivél deilistofna',
-        content: <DeilistofnaCalculator namespace={namespace} />,
-        id: 'deilistofn',
-      },
-    ],
-    [],
-  )
+  const router = useRouter()
 
-  const [selectedTab, setSelectedTab] = useState(tabs[0])
+  const n = useNamespace(namespace)
+  const [selectedTab, setSelectedTab] = useState<typeof TAB_OPTIONS[number]>(
+    TAB_OPTIONS[0],
+  )
 
   const breadcrumbItems = [
     {
@@ -53,25 +48,33 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
     },
   ]
 
+  const shipNumber = useMemo(() => {
+    const nr = router?.query?.nr
+    if (nr && typeof nr === 'string' && !isNaN(Number(nr))) {
+      return Number(nr)
+    }
+    return null
+  }, [])
+
   return (
     <>
       <GridContainer>
         <Breadcrumbs items={breadcrumbItems} />
         <Box marginTop={3} marginBottom={3}>
           <Inline alignY="center" space={5}>
-            {tabs.map((tab) => {
-              const isSelected = selectedTab.id === tab.id
+            {TAB_OPTIONS.map((tab) => {
+              const isSelected = selectedTab.value === tab.value
               return (
                 <Box
                   cursor="pointer"
                   onClick={() => setSelectedTab(tab)}
-                  key={tab.id}
+                  key={tab.value}
                 >
                   <Text
                     fontWeight={isSelected ? 'semiBold' : undefined}
                     color={isSelected ? 'blue400' : undefined}
                   >
-                    {tab.label}
+                    {n(tab.value, tab.label)}
                   </Text>
                 </Box>
               )
@@ -79,7 +82,13 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
           </Inline>
         </Box>
       </GridContainer>
-      {selectedTab.content}
+
+      {selectedTab.value === 'aflamark' && shipNumber && (
+        <AflamarkCalculator namespace={namespace} />
+      )}
+      {selectedTab.value === 'deilistofn' && shipNumber && (
+        <DeilistofnaCalculator shipNumber={shipNumber} namespace={namespace} />
+      )}
     </>
   )
 }

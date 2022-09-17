@@ -1,39 +1,35 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 import {
-  Box,
-  Button,
   Inline,
   LoadingDots,
+  Box,
+  Button,
   Select,
-  Tag,
   Text,
+  Tag,
 } from '@island.is/island-ui/core'
-import type {
-  ExtendedShipStatusInformation,
-  ExtendedCatchQuotaCategory,
-  MutationUpdateShipStatusForTimePeriodArgs,
-  QueryGetShipStatusForTimePeriodArgs,
-  QuotaType,
-  QueryGetQuotaTypesForTimePeriodArgs,
-} from '@island.is/web/graphql/schema'
 import {
-  GET_AFLAMARK_INFORMATION_FOR_SHIP,
-  GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD,
+  CatchQuotaCategory,
+  MutationUpdateShipStatusForCalendarYearArgs,
+  QueryGetQuotaTypesForCalendarYearArgs,
+  QueryGetShipStatusForCalendarYearArgs,
+  QuotaType,
+  ShipStatusInformation,
+} from '@island.is/web/graphql/schema'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  GET_SHIP_STATUS_FOR_TIME_PERIOD,
+  GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR,
 } from './queries'
-import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
+import { getYearOptions, YearOption } from '../../utils'
+import { useRouter } from 'next/router'
 import { useNamespace } from '@island.is/web/hooks'
-import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
+import { GET_QUOTA_TYPES_FOR_CALENDAR_YEAR } from '../QuotaTypeSelect/queries'
 
-import * as styles from './AflamarkCalculator.css'
+import * as styles from './DeilistofnaCalculator.css'
 
 const emptyValue = { value: -1, label: '' }
-
-const isNumber = (val: string | string[]) => {
-  return !isNaN(Number(val)) && val?.length > 0
-}
 
 type Changes = Record<
   number,
@@ -53,52 +49,88 @@ type ChangeErrors = Record<
   }
 >
 
-interface AflamarkCalculatorProps {
+interface DeilistofnaCalculatorProps {
   namespace: Record<string, string>
 }
 
-export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
-  const [shipNumber, setShipNumber] = useState<number>(-1)
+export const OldDeilistofnaCalculator = ({
+  namespace,
+}: DeilistofnaCalculatorProps) => {
   const router = useRouter()
+  const yearOptions = useMemo(() => getYearOptions(), [])
+
+  const shipNumber = useMemo<number | null>(() => {
+    if (
+      router?.query?.nr &&
+      !isNaN(Number(router.query.nr)) &&
+      router.query.nr.length > 0
+    ) {
+      return Number(router.query.nr)
+    }
+    return null
+  }, [router?.query?.nr])
 
   const n = useNamespace(namespace)
 
-  const [optionsInDropdown, setOptionsInDropdown] = useState([])
-  const [selectedOptions, setSelectedOptions] = useState([])
+  const [data, setData] = useState<ShipStatusInformation | null>(null)
 
-  const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
+  const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
 
-  const [data, setData] = useState<ExtendedShipStatusInformation | null>(null)
+  const [fetchShipStatus, initialResponse] = useLazyQuery<
+    { getShipStatusForCalendarYear: ShipStatusInformation },
+    QueryGetShipStatusForCalendarYearArgs
+  >(GET_SHIP_STATUS_FOR_TIME_PERIOD, {
+    fetchPolicy: 'no-cache',
+    onCompleted(response) {
+      const initialData = response?.getShipStatusForCalendarYear
+      if (initialData) {
+        const initialCategories = initialData?.catchQuotaCategories ?? []
+        const codValue = initialCategories.find((c) => c.id === 0)
+        const categories = [
+          codValue,
+          ...initialCategories.filter((c) => c.id !== 0),
+        ]
+        setData({
+          ...initialData,
+          catchQuotaCategories: categories,
+        })
+      }
+    },
+  })
 
-  const [
-    selectedTimePeriod,
-    setSelectedTimePeriod,
-  ] = useState<TimePeriodOption>(timePeriodOptions[0])
-
-  useEffect(() => {
-    if (router?.query?.nr && isNumber(router.query.nr)) {
-      setShipNumber(Number(router.query.nr))
-    }
-  }, [router?.query?.nr])
-
-  const [quotaState, setQuotaState] = useState({
-    quotaShare: {},
-    nextYearQuota: {},
-    nextYearFromQuota: {},
-    catchQuota: {},
+  const [fetchUpdatedShipStatus, updatedResponse] = useMutation<
+    { updateShipStatusForCalendarYear: ShipStatusInformation },
+    MutationUpdateShipStatusForCalendarYearArgs
+  >(GET_UPDATED_SHIP_STATUS_FOR_CALENDAR_YEAR, {
+    fetchPolicy: 'no-cache',
+    onCompleted(response) {
+      const mutationData = response?.updateShipStatusForCalendarYear
+      if (mutationData) {
+        const initialCategories = mutationData?.catchQuotaCategories ?? []
+        const codValue = initialCategories.find((c) => c.id === 0)
+        const categories = [
+          codValue,
+          ...initialCategories.filter((c) => c.id !== 0),
+        ]
+        setData({
+          ...mutationData,
+          catchQuotaCategories: categories,
+        })
+      }
+    },
   })
 
   const quotaTypeResponse = useQuery<
-    { getQuotaTypesForTimePeriod: QuotaType[] },
-    QueryGetQuotaTypesForTimePeriodArgs
-  >(GET_QUOTA_TYPES_FOR_TIME_PERIOD, {
+    { getQuotaTypesForCalendarYear: QuotaType[] },
+    QueryGetQuotaTypesForCalendarYearArgs
+  >(GET_QUOTA_TYPES_FOR_CALENDAR_YEAR, {
     variables: {
       input: {
-        timePeriod: selectedTimePeriod.value,
+        year: selectedYear.value,
       },
     },
     onCompleted(res) {
-      const quotaData = res?.getQuotaTypesForTimePeriod
+      const quotaData = res?.getQuotaTypesForCalendarYear
       if (!quotaData) return
       const quotaTypes = quotaData
         .filter((qt) => qt?.name)
@@ -113,61 +145,12 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     },
   })
 
-  const initialResponse = useQuery<
-    { getShipStatusForTimePeriod: ExtendedShipStatusInformation },
-    QueryGetShipStatusForTimePeriodArgs
-  >(GET_AFLAMARK_INFORMATION_FOR_SHIP, {
-    variables: {
-      input: {
-        shipNumber,
-        timePeriod: selectedTimePeriod.value,
-      },
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted(response) {
-      const initialData = response?.getShipStatusForTimePeriod
-      if (initialData) {
-        setData(initialData)
-        setQuotaState({
-          quotaShare: initialData?.catchQuotaCategories?.reduce(
-            (acc, category) => ({
-              ...acc,
-              [category.id]: category.quotaShare,
-            }),
-            {},
-          ),
-          catchQuota: initialData?.catchQuotaCategories?.reduce(
-            (acc, category) => ({
-              ...acc,
-              [category.id]: category.catchQuota,
-            }),
-            {},
-          ),
-          nextYearFromQuota: initialData?.catchQuotaCategories?.reduce(
-            (acc, category) => ({
-              ...acc,
-              [category.id]: category.nextYearFromQuota,
-            }),
-            {},
-          ),
-          nextYearQuota: initialData?.catchQuotaCategories?.reduce(
-            (acc, category) => ({
-              ...acc,
-              [category.id]: category.nextYearQuota,
-            }),
-            {},
-          ),
-        })
-      }
-    },
-  })
-
   useEffect(() => {
     if (
       data?.catchQuotaCategories?.length > 0 &&
-      quotaTypeResponse?.data?.getQuotaTypesForTimePeriod?.length > 0
+      quotaTypeResponse?.data?.getQuotaTypesForCalendarYear?.length > 0
     ) {
-      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForTimePeriod
+      const quotaTypes = quotaTypeResponse.data.getQuotaTypesForCalendarYear
       setOptionsInDropdown(
         quotaTypes
           .filter(
@@ -177,6 +160,27 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
       )
     }
   }, [data, quotaTypeResponse])
+
+  const getFieldDifference = (
+    category: CatchQuotaCategory,
+    fieldName: string,
+  ) => {
+    const a = updatedResponse?.data?.updateShipStatusForCalendarYear?.catchQuotaCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+    const b = initialResponse?.data?.getShipStatusForCalendarYear?.catchQuotaCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+
+    if (!a || !b) return undefined
+
+    return a - b
+  }
+
+  const [changes, setChanges] = useState<Changes>({})
+  const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
+  const [optionsInDropdown, setOptionsInDropdown] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([])
 
   const validateChanges = () => {
     let valid = true
@@ -198,75 +202,20 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     return valid
   }
 
-  const [mutate, mutationResponse] = useMutation<
-    { updateShipStatusForTimePeriod: ExtendedShipStatusInformation },
-    MutationUpdateShipStatusForTimePeriodArgs
-  >(GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD, {
-    fetchPolicy: 'no-cache',
-    onCompleted(response) {
-      const mutationData = response?.updateShipStatusForTimePeriod
-      if (mutationData) {
-        const categories = []
-        for (const category of data?.catchQuotaCategories ?? []) {
-          const extendedCategory = {
-            ...category,
-            ...mutationData.catchQuotaCategories?.find(
-              (c) => c.id === category.id,
-            ),
-          }
-          // Make sure that category with id 0 stays at the front
-          if (extendedCategory.id === 0) {
-            categories.unshift(extendedCategory)
-          } else {
-            categories.push(extendedCategory)
-          }
-        }
-        setData({
-          shipInformation: mutationData.shipInformation,
-          catchQuotaCategories: categories,
-        })
-      }
-    },
-  })
-
-  const loading = initialResponse.loading || mutationResponse.loading
-  const error = initialResponse.error
-
-  const [changes, setChanges] = useState<Changes>({})
-  const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
-
-  const getFieldDifference = (
-    category: ExtendedCatchQuotaCategory,
-    fieldName: string,
-  ) => {
-    const a = mutationResponse?.data?.updateShipStatusForTimePeriod?.catchQuotaCategories?.find(
-      (c) => c.id === category.id,
-    )?.[fieldName]
-    const b = initialResponse?.data?.getShipStatusForTimePeriod?.catchQuotaCategories?.find(
-      (c) => c.id === category.id,
-    )?.[fieldName]
-
-    if (!a || !b) return undefined
-
-    return a - b
-  }
-
   const calculate = () => {
     const changeValues = Object.values(changes)
-
     if (!validateChanges()) {
       return
     }
-
-    mutate({
+    fetchUpdatedShipStatus({
       variables: {
         input: {
           shipNumber,
-          timePeriod: selectedTimePeriod.value,
+          year: selectedYear.value,
           changes: changeValues.map((change) => ({
             ...change,
-            catchChange: Math.round(Number(change.catchChange ?? 0)),
-            catchQuotaChange: Math.round(Number(change.catchQuotaChange ?? 0)),
+            catchChange: Number(change?.catchChange ?? 0),
+            catchQuotaChange: Number(change?.catchQuotaChange ?? 0),
           })),
         },
       },
@@ -276,37 +225,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
   const reset = () => {
     setChanges({})
     setChangeErrors({})
-    setQuotaState({
-      quotaShare: initialResponse?.data?.getShipStatusForTimePeriod?.catchQuotaCategories?.reduce(
-        (acc, category) => ({
-          ...acc,
-          [category.id]: category.quotaShare,
-        }),
-        {},
-      ),
-      catchQuota: initialResponse?.data?.getShipStatusForTimePeriod?.catchQuotaCategories?.reduce(
-        (acc, category) => ({
-          ...acc,
-          [category.id]: category.catchQuota,
-        }),
-        {},
-      ),
-      nextYearFromQuota: initialResponse?.data?.getShipStatusForTimePeriod?.catchQuotaCategories?.reduce(
-        (acc, category) => ({
-          ...acc,
-          [category.id]: category.nextYearFromQuota,
-        }),
-        {},
-      ),
-      nextYearQuota: initialResponse?.data?.getShipStatusForTimePeriod?.catchQuotaCategories?.reduce(
-        (acc, category) => ({
-          ...acc,
-          [category.id]: category.nextYearQuota,
-        }),
-        {},
-      ),
-    })
-    const initialData = initialResponse?.data?.getShipStatusForTimePeriod
+    const initialData = initialResponse?.data?.getShipStatusForCalendarYear
     if (initialData) {
       const initialCategories = initialData?.catchQuotaCategories ?? []
       const codValue = initialCategories.find((c) => c.id === 0)
@@ -329,19 +248,30 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
     })
   }
 
+  const loading = initialResponse.loading || updatedResponse.loading
+  const error = initialResponse.error || updatedResponse.error
+
   return (
     <Box margin={6}>
       <Box display={['block', 'block', 'flex']} justifyContent="spaceBetween">
-        <Inline space={3} flexWrap="wrap">
+        <Inline space={3}>
           <Box className={styles.selectBox}>
             <Select
               size="sm"
-              label="Tímabil"
-              name="timabil-select"
-              options={timePeriodOptions}
-              value={selectedTimePeriod}
-              onChange={(timePeriod) => {
-                setSelectedTimePeriod(timePeriod as TimePeriodOption)
+              label="Ár"
+              name="year-select"
+              options={yearOptions}
+              value={selectedYear}
+              onChange={(newYear) => {
+                fetchShipStatus({
+                  variables: {
+                    input: {
+                      shipNumber: shipNumber,
+                      year: (newYear as YearOption).value,
+                    },
+                  },
+                })
+                setSelectedYear(newYear as YearOption)
               }}
             />
           </Box>
@@ -353,7 +283,7 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
               options={optionsInDropdown}
               onChange={(selectedOption: { value: number; label: string }) => {
                 if (
-                  !initialResponse?.data?.getShipStatusForTimePeriod
+                  !initialResponse?.data?.getShipStatusForCalendarYear
                     ?.catchQuotaCategories?.length
                 ) {
                   return
@@ -390,16 +320,13 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
             />
           </Box>
         </Inline>
+
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3}>
             <Button onClick={reset} variant="ghost" size="small">
               {n('reset', 'Frumstilla')}
             </Button>
-            <Button
-              disabled={Object.keys(changes).length === 0}
-              onClick={calculate}
-              size="small"
-            >
+            <Button onClick={calculate} size="small">
               {n('calculate', 'Reikna')}
             </Button>
           </Inline>
@@ -475,19 +402,21 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
         <LoadingDots />
       </Box>
 
-      {!data?.catchQuotaCategories?.length && !loading && !error && (
+      {!loading && !data && !error && (
         <Box width="full" textAlign="center">
-          <Text>Engar niðurstöður fundust</Text>
+          <Text>{n('noResultsFound', 'Engar niðurstöður fundust')}</Text>
         </Box>
       )}
 
       {error && (
         <Box width="full" textAlign="center">
-          <Text>Villa kom upp við að sækja aflamarksupplýsingar</Text>
+          <Text>
+            {n('deilistofnaError', 'Villa kom upp við að sækja deilistofna')}
+          </Text>
         </Box>
       )}
 
-      {data?.catchQuotaCategories?.length > 0 && (
+      {data?.catchQuotaCategories && (
         <Box marginTop={3} className={styles.tableBox}>
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
@@ -642,170 +571,6 @@ export const AflamarkCalculator = ({ namespace }: AflamarkCalculatorProps) => {
                 <td>{n('onotad', 'Ónotað')}</td>
                 {data?.catchQuotaCategories?.map((category) => (
                   <td key={category.name}>{category.unused}</td>
-                ))}
-              </tr>
-
-              <tr>
-                <td className={styles.visualSeparationLine}>
-                  {n('heildaraflamark', 'Heildaraflamark')}
-                </td>
-                {data?.catchQuotaCategories?.map((category) => (
-                  <td
-                    className={styles.visualSeparationLine}
-                    key={category.name}
-                  >
-                    {category.totalCatchQuota}
-                  </td>
-                ))}
-              </tr>
-
-              <tr>
-                <td>{n('hlutdeild', 'Hlutdeild')}</td>
-                {data?.catchQuotaCategories?.map((category) => (
-                  <td key={category.name}>
-                    {category.id === 0 ? (
-                      category.quotaShare
-                    ) : (
-                      <input
-                        type="text"
-                        value={
-                          quotaState?.quotaShare?.[category.id] ??
-                          category.quotaShare
-                        }
-                        onChange={(ev) => {
-                          setChanges((prevChanges) => {
-                            const totalCatchQuota = data?.catchQuotaCategories?.find(
-                              (c) => c?.id === category.id,
-                            )?.totalCatchQuota
-                            if (
-                              !isNumber(ev.target.value) ||
-                              totalCatchQuota === undefined
-                            ) {
-                              return prevChanges
-                            }
-
-                            const newRateOfShare = Number(ev.target.value) / 100
-
-                            const newCatchQuota =
-                              newRateOfShare * totalCatchQuota
-
-                            const prevCatchQuota = data?.catchQuotaCategories?.find(
-                              (c) => c?.id === category.id,
-                            )?.allocation
-
-                            const newCatchQuotaChange =
-                              newCatchQuota - prevCatchQuota
-
-                            setQuotaState((prev) => {
-                              const percentNextYearQuota =
-                                (data?.catchQuotaCategories?.find(
-                                  (c) => c?.id === category.id,
-                                )?.percentNextYearQuota ?? 0) / 100
-
-                              const percentNextYearFromQuota =
-                                (data?.catchQuotaCategories?.find(
-                                  (c) => c?.id === category.id,
-                                )?.percentNextYearFromQuota ?? 0) / 100
-
-                              return {
-                                ...prev,
-                                quotaShare: {
-                                  ...prev?.quotaShare,
-                                  [category.id]: ev.target.value,
-                                },
-                                nextYearQuota: {
-                                  ...prev?.nextYearQuota,
-                                  [category.id]: String(
-                                    Math.round(
-                                      percentNextYearQuota *
-                                        newCatchQuota *
-                                        100,
-                                    ) / 100,
-                                  ),
-                                },
-                                nextYearFromQuota: {
-                                  ...prev?.nextYearFromQuota,
-                                  [category.id]: String(
-                                    Math.round(
-                                      percentNextYearFromQuota *
-                                        newCatchQuota *
-                                        100,
-                                    ) / 100,
-                                  ),
-                                },
-                              }
-                            })
-
-                            return {
-                              ...prevChanges,
-                              [category.id]: {
-                                ...prevChanges?.[category.id],
-                                id: category.id,
-                                catchQuotaChange: String(
-                                  Math.round(newCatchQuotaChange * 100) / 100,
-                                ),
-                              },
-                            }
-                          })
-                        }}
-                      />
-                    )}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td>{n('aNaestaArKvoti', 'Á næsta ár kvóti')}</td>
-
-                {data?.catchQuotaCategories?.map((category) => (
-                  <td key={category.name}>
-                    {category.id === 0 ? (
-                      category.nextYearQuota
-                    ) : (
-                      <input
-                        value={
-                          quotaState?.nextYearQuota?.[category.id] ??
-                          category.nextYearQuota
-                        }
-                        onChange={(ev) => {
-                          setQuotaState((prev) => ({
-                            ...prev,
-                            nextYearQuota: {
-                              ...prev?.nextYearQuota,
-                              [category.id]: ev.target.value,
-                            },
-                          }))
-                        }}
-                      />
-                    )}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td>{n('afNaestaArKvoti', 'Af næsta ár kvóti')}</td>
-                {data?.catchQuotaCategories?.map((category) => (
-                  <td key={category.name}>
-                    {category.id === 0 ? (
-                      category.nextYearFromQuota
-                    ) : (
-                      <input
-                        value={
-                          quotaState?.nextYearFromQuota?.[category.id] ??
-                          category.nextYearFromQuota
-                        }
-                        onChange={(ev) => {
-                          setQuotaState((prev) => {
-                            return {
-                              ...prev,
-                              nextYearFromQuota: {
-                                ...prev?.nextYearFromQuota,
-                                [category.id]: ev.target.value,
-                              },
-                            }
-                          })
-                        }}
-                      />
-                    )}
-                  </td>
                 ))}
               </tr>
             </tbody>
