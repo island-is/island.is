@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMachine } from '@xstate/react'
+import cn from 'classnames'
 import {
   Box,
   Button,
@@ -11,8 +12,27 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { machine } from './machine'
 import { getYearOptions, YearOption } from '../../utils'
+import { CatchQuotaCategory } from '@island.is/web/graphql/schema'
 
 import * as styles from './DeilistofnaCalculator.css'
+
+type Changes = Record<
+  number,
+  {
+    id: number
+    catchChange: string | undefined
+    catchQuotaChange: string | undefined
+  }
+>
+
+type ChangeErrors = Record<
+  number,
+  {
+    id: number
+    catchChange: boolean
+    catchQuotaChange: boolean
+  }
+>
 
 interface DeilistofnaCalculatorProps {
   namespace: Record<string, string>
@@ -25,6 +45,8 @@ export const DeilistofnaCalculator = ({
 }: DeilistofnaCalculatorProps) => {
   const yearOptions = useMemo(() => getYearOptions(), [])
   const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
+  const [changes, setChanges] = useState<Changes>({})
+  const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
   const n = useNamespace(namespace)
 
   const [state, send] = useMachine(machine)
@@ -41,25 +63,87 @@ export const DeilistofnaCalculator = ({
     })
   }, [shipNumber, selectedYear.value])
 
-  const reset = () => {}
-  const calculate = () => {}
+  const reset = () => {
+    send({
+      type: 'GET_DATA',
+      variables: {
+        input: {
+          shipNumber,
+          year: selectedYear.value,
+        },
+      },
+    })
+    setChanges({})
+    setChangeErrors({})
+  }
+
+  const validateChanges = () => {
+    let valid = true
+    const errors = {}
+    for (const change of Object.values(changes)) {
+      if (isNaN(Number(change?.catchChange)) && change?.catchChange) {
+        valid = false
+        errors[change?.id] = { ...errors[change?.id], catchChange: true }
+      }
+      if (isNaN(Number(change?.catchQuotaChange)) && change?.catchQuotaChange) {
+        valid = false
+        errors[change?.id] = {
+          ...errors[change?.id],
+          catchQuotaChange: true,
+        }
+      }
+    }
+    setChangeErrors(errors)
+    return valid
+  }
+
+  const calculate = () => {
+    if (!validateChanges()) {
+      return
+    }
+    const changeValues = Object.values(changes)
+    send({
+      type: 'UPDATE_DATA',
+      variables: {
+        input: {
+          shipNumber,
+          year: selectedYear.value,
+          changes: changeValues.map((change) => ({
+            ...change,
+            catchChange: Number(change?.catchChange ?? 0),
+            catchQuotaChange: Number(change?.catchQuotaChange ?? 0),
+          })),
+        },
+      },
+    })
+  }
 
   const loading =
     state.matches('getting data') || state.matches('updating data')
 
-  const quotaTypes = useMemo(() => {
-    const categoryIds = (state.context.data?.catchQuotaCategories ?? []).map(
-      (c) => c.id,
-    )
-    const types = state.context.quotaTypes
-      .filter((qt) => !categoryIds.includes(qt.id)) // Remove all quota types that are already in the category list
-      .map((qt) => ({
+  const getFieldDifference = (
+    category: CatchQuotaCategory,
+    fieldName: string,
+  ) => {
+    const current = state.context.data?.catchQuotaCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+    const initial = state.context.initialData?.catchQuotaCategories?.find(
+      (c) => c.id === category.id,
+    )?.[fieldName]
+
+    if (!current || !initial) return undefined
+    return current - initial
+  }
+
+  const quotaTypes = useMemo(
+    () =>
+      state.context.quotaTypes.map((qt) => ({
         label: qt.name,
         value: qt.id,
-      }))
-    types.sort((a, b) => a.label.localeCompare(b.label)) // Order the types in ascending name order
-    return types
-  }, [state.context.quotaTypes])
+      })),
+    [state.context.quotaTypes],
+  )
 
   return (
     <Box margin={6}>
@@ -71,6 +155,7 @@ export const DeilistofnaCalculator = ({
         <Inline space={3}>
           <Box className={styles.selectBox}>
             <Select
+              disabled={loading}
               size="sm"
               label="Ár"
               name="year-select"
@@ -83,20 +168,36 @@ export const DeilistofnaCalculator = ({
           </Box>
           <Box className={styles.selectBox} marginBottom={3}>
             <Select
+              disabled={loading}
               size="sm"
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
               options={quotaTypes}
+              onChange={(selectedOption: { value: number; label: string }) => {
+                send({
+                  type: 'ADD_CATEGORY',
+                  category: selectedOption,
+                })
+              }}
             />
           </Box>
         </Inline>
 
         <Box marginTop={[3, 3, 0]}>
           <Inline alignY="center" space={3} flexWrap="nowrap">
-            <Button onClick={reset} variant="ghost" size="small">
+            <Button
+              onClick={reset}
+              variant="ghost"
+              size="small"
+              disabled={loading}
+            >
               {n('reset', 'Frumstilla')}
             </Button>
-            <Button onClick={calculate} size="small">
+            <Button
+              onClick={calculate}
+              size="small"
+              disabled={loading || Object.values(changes).length === 0}
+            >
               {n('calculate', 'Reikna')}
             </Button>
           </Inline>
@@ -160,12 +261,13 @@ export const DeilistofnaCalculator = ({
               <tr>
                 <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
                 {/* TODO: keep track of difference from initial aflamark to what it is now */}
-                {/* {state.context.data.catchQuotaCategories.map((category) => (
+                {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
                       getFieldDifference(category, 'catchQuota')
                     ) : (
                       <input
+                        disabled={loading}
                         onKeyDown={(ev) => {
                           if (ev.key === 'Enter') calculate()
                         }}
@@ -190,7 +292,7 @@ export const DeilistofnaCalculator = ({
                       />
                     )}
                   </td>
-                ))} */}
+                ))}
               </tr>
               <tr>
                 <td>{n('aflamark', 'Aflamark')}</td>
@@ -211,10 +313,11 @@ export const DeilistofnaCalculator = ({
                   return (
                     <td key={category.name}>
                       {/* TODO: keep track of difference from initial afli to what it is now */}
-                      {/* {category.id === 0 ? (
+                      {category.id === 0 ? (
                         getFieldDifference(category, 'catch')
                       ) : (
                         <input
+                          disabled={loading}
                           onKeyDown={(ev) => {
                             if (ev.key === 'Enter') calculate()
                           }}
@@ -237,7 +340,7 @@ export const DeilistofnaCalculator = ({
                             })
                           }}
                         />
-                      )} */}
+                      )}
                     </td>
                   )
                 })}
