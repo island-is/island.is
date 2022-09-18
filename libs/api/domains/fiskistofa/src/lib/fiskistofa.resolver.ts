@@ -8,6 +8,7 @@ import { GetShipStatusForTimePeriodInput } from './dto/getShipStatusForTimePerio
 import { UpdateShipQuotaStatusForTimePeriodInput } from './dto/updateShipQuotaStatusForTimePeriod.input'
 import { UpdateShipStatusForCalendarYearInput } from './dto/updateShipStatusForCalendarYear.input'
 import { UpdateShipStatusForTimePeriodInput } from './dto/updateShipStatusForTimePeriod.input'
+import { QuotaStatus } from './models/quotaStatus'
 import { QuotaType } from './models/quotaType'
 import { ShipBasicInfo } from './models/shipBasicInfo'
 import {
@@ -42,7 +43,7 @@ export class FiskistofaResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [ShipBasicInfo])
+  @Mutation(() => QuotaStatus)
   updateShipQuotaStatusForTimePeriod(
     @Args('input') input: UpdateShipQuotaStatusForTimePeriodInput,
   ) {

@@ -112,7 +112,7 @@ export class FiskistofaApi {
       params,
     )
     return {
-      nextYearCatchQuoate: data?.aNaestaArAflamark,
+      nextYearCatchQuota: data?.aNaestaArAflamark,
       nextYearQuota: data?.aNaestaArKvotiBreytt,
       nextYearFromQuota: data?.afNaestaAriKvotiBreytt,
       totalCatchQuota: data?.heildarAflamark,
@@ -121,7 +121,7 @@ export class FiskistofaApi {
       newStatus: data?.nyStada,
       unused: data?.onotad,
       percentCatchQuotaFrom: data?.prosentaAflamarkFra,
-      percentCatchQuoateTo: data?.prosentaAflamarkTil,
+      percentCatchQuotaTo: data?.prosentaAflamarkTil,
       excessCatch: data?.umframafli,
       allocatedCatchQuota: data?.uthlutadAflamarkBreytt,
     }

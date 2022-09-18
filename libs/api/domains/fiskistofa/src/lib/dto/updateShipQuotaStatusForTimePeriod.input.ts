@@ -5,17 +5,17 @@ class QuotaCategoryChange {
   @Field()
   id!: number
 
-  @Field()
-  nextYearFromQuota!: number
+  @Field({ nullable: true })
+  nextYearFromQuota?: number
 
-  @Field()
-  nextYearQuota!: number
+  @Field({ nullable: true })
+  nextYearQuota?: number
 
-  @Field()
-  quotaShare!: number
+  @Field({ nullable: true })
+  quotaShare?: number
 
-  @Field()
-  allocatedCatchQuota!: number
+  @Field({ nullable: true })
+  allocatedCatchQuota?: number
 }
 
 @InputType()
