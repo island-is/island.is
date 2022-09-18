@@ -65,3 +65,24 @@ export const UPDATE_SHIP_STATUS_FOR_TIME_PERIOD = gql`
     }
   }
 `
+
+export const UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD = gql`
+  mutation UpdateShipQuotaStatusForTimePeriod(
+    $input: UpdateShipQuotaStatusForTimePeriodInput!
+  ) {
+    updateShipQuotaStatusForTimePeriod(input: $input) {
+      nextYearCatchQuota
+      nextYearQuota
+      nextYearFromQuota
+      totalCatchQuota
+      quotaShare
+      id
+      newStatus
+      unused
+      percentCatchQuotaFrom
+      percentCatchQuotaTo
+      excessCatch
+      allocatedCatchQuota
+    }
+  }
+`

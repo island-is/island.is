@@ -55,15 +55,7 @@ export const DeilistofnaCalculator = ({
   const [state, send] = useMachine(machine)
 
   useEffect(() => {
-    send({
-      type: 'GET_DATA',
-      variables: {
-        input: {
-          shipNumber,
-          year: selectedYear.value,
-        },
-      },
-    })
+    reset()
   }, [shipNumber, selectedYear.value])
 
   const reset = () => {

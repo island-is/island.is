@@ -9,11 +9,14 @@ import {
   QuotaType,
   Ship,
   ShipStatusInformation,
+  MutationUpdateShipQuotaStatusForTimePeriodArgs,
+  QuotaStatus,
 } from '@island.is/web/graphql/schema'
 import { createMachine, assign } from 'xstate'
 import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
 import {
   GET_SHIP_STATUS_FOR_TIME_PERIOD,
+  UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
   UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
 } from './queries'
 
@@ -49,13 +52,11 @@ const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
 
 interface QuotaData {
   id: number
-  name: string
   totalCatchQuota?: number
   quotaShare?: number
   nextYearQuota?: number
   nextYearFromQuota?: number
-  percentNextYearQuota?: number
-  percentNextYearFromQuota?: number
+  allocatedCatchQuota?: number
 }
 
 interface Context {
@@ -81,7 +82,7 @@ type UPDATE_GENERAL_DATA_EVENT = {
 
 type UPDATE_QUOTA_DATA_EVENT = {
   type: 'UPDATE_QUOTA_DATA'
-  variables: MutationUpdateShipStatusForTimePeriodArgs
+  variables: MutationUpdateShipQuotaStatusForTimePeriodArgs
 }
 
 type ADD_CATEGORY_EVENT = {
@@ -265,7 +266,10 @@ export const machine = createMachine<Context, Event, State>(
           },
           onError: {
             target: 'error',
-            actions: assign(() => ({ errorOccured: true })),
+            actions: assign((context, event) => {
+              console.log(event)
+              return { errorOccured: true }
+            }),
           },
         },
       },
@@ -326,7 +330,6 @@ export const machine = createMachine<Context, Event, State>(
         for (const category of getShipStatusForTimePeriod.catchQuotaCategories) {
           quotaData.push({
             id: category.id,
-            name: category.name,
             totalCatchQuota: category.totalCatchQuota,
             quotaShare: category.quotaShare,
             nextYearQuota: category.nextYearQuota,
@@ -374,7 +377,58 @@ export const machine = createMachine<Context, Event, State>(
           updatedData: updateShipStatusForTimePeriod,
         }
       },
-      updateQuotaData: async (context, event: UPDATE_QUOTA_DATA_EVENT) => {},
+      updateQuotaData: async (context, event: UPDATE_QUOTA_DATA_EVENT) => {
+        const {
+          data: { updateShipQuotaStatusForTimePeriod },
+        } = await context.apolloClient.mutate<{
+          updateShipQuotaStatusForTimePeriod: QuotaStatus
+        }>({
+          mutation: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
+          variables: event.variables,
+        })
+
+        const data = {
+          ...context.data,
+        }
+
+        const serverQuotaData = updateShipQuotaStatusForTimePeriod
+
+        data.catchQuotaCategories = data.catchQuotaCategories.map(
+          (category) => {
+            if (category.id === serverQuotaData.id) {
+              return {
+                ...category,
+                unused: serverQuotaData.unused,
+                newStatus: serverQuotaData.newStatus,
+                quotaShare: serverQuotaData.quotaShare,
+                totalCatchQuota: serverQuotaData.totalCatchQuota,
+                nextYearFromQuota: serverQuotaData.nextYearFromQuota,
+                nextYearQuota: serverQuotaData.nextYearQuota,
+              }
+            }
+            return category
+          },
+        )
+
+        const quotaData = context.quotaData.map((qd) => {
+          if (qd.id === serverQuotaData.id) {
+            return {
+              id: serverQuotaData.id,
+              totalCatchQuota: serverQuotaData.totalCatchQuota,
+              quotaShare: serverQuotaData.quotaShare,
+              nextYearQuota: serverQuotaData.nextYearQuota,
+              nextYearFromQuota: serverQuotaData.nextYearFromQuota,
+              allocatedCatchQuota: serverQuotaData.allocatedCatchQuota,
+            }
+          }
+          return qd
+        })
+
+        return {
+          data,
+          quotaData,
+        }
+      },
     },
   },
 )
