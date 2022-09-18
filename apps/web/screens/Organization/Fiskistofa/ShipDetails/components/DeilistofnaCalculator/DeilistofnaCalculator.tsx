@@ -84,15 +84,52 @@ export const DeilistofnaCalculator = ({
     let valid = true
     const errors = {}
     for (const change of Object.values(changes)) {
+      // The catchChange needs to be numeric
       if (isNaN(Number(change?.catchChange)) && change?.catchChange) {
         valid = false
         errors[change?.id] = { ...errors[change?.id], catchChange: true }
       }
+
+      // The catchQuotaChange needs to be numeric
       if (isNaN(Number(change?.catchQuotaChange)) && change?.catchQuotaChange) {
         valid = false
         errors[change?.id] = {
           ...errors[change?.id],
           catchQuotaChange: true,
+        }
+      }
+
+      if (!valid) continue
+
+      const category = state.context.data?.catchQuotaCategories?.find(
+        (c) => c.id === change?.id,
+      )
+
+      // If the change is a very small negative value that surpasses the absolute value then we've got an error
+      if (category) {
+        const selectedQuotaTypeIds = state.context.selectedQuotaTypes.map(
+          (qt) => qt.id,
+        )
+        const categoryWasAddedByUser = selectedQuotaTypeIds.includes(change?.id)
+
+        // If the category was added by the user than any number less than 0 will cause an error
+        const catchValue = categoryWasAddedByUser ? 0 : category.catch
+        const catchQuotaValue = categoryWasAddedByUser ? 0 : category.catchQuota
+
+        const catchDifference = catchValue + Number(change.catchChange)
+        const catchQuotaDifference =
+          catchQuotaValue + Number(change.catchQuotaChange)
+
+        if (catchDifference < 0) {
+          valid = false
+          errors[change?.id] = { ...errors[change?.id], catchChange: true }
+        }
+        if (catchQuotaDifference < 0) {
+          valid = false
+          errors[change?.id] = {
+            ...errors[change?.id],
+            catchQuotaChange: true,
+          }
         }
       }
     }
@@ -239,23 +276,14 @@ export const DeilistofnaCalculator = ({
         </Inline>
       </Box>
 
-      <Box
-        width="full"
-        textAlign="center"
-        style={{
-          visibility: loading ? 'visible' : 'hidden',
-        }}
-      >
-        <LoadingDots />
-      </Box>
-
-      {state.matches('error') && (
-        <Box width="full" textAlign="center">
+      <Box className={styles.minHeightBox} width="full" textAlign="center">
+        {loading && <LoadingDots />}
+        {state.matches('error') && (
           <Text>
             {n('deilistofnaError', 'Villa kom upp við að sækja gögn')}
           </Text>
-        </Box>
-      )}
+        )}
+      </Box>
 
       {state.context.data?.catchQuotaCategories?.length > 0 && (
         <Box marginTop={3} className={styles.tableBox}>

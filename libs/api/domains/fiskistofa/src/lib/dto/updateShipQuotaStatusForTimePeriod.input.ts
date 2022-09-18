@@ -26,6 +26,6 @@ export class UpdateShipQuotaStatusForTimePeriodInput {
   @Field()
   timePeriod!: string
 
-  @Field(() => [QuotaCategoryChange])
-  change!: QuotaCategoryChange[]
+  @Field(() => QuotaCategoryChange)
+  change!: QuotaCategoryChange
 }
