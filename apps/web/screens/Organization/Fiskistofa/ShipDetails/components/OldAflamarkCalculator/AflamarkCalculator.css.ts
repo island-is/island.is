@@ -5,32 +5,19 @@ export const selectBox = style({
   width: '250px',
 })
 
+export const tableBox = style({
+  overflow: 'scroll',
+  minWidth: '100%',
+})
+
 export const crossmark = style({
   marginLeft: '8px',
   fontSize: '0.75rem',
   fontWeight: 'normal',
 })
 
-export const error = style({
-  borderColor: theme.color.red400,
-})
-
 export const tagContainer = style({
   minHeight: '50px',
-  marginTop: '16px',
-})
-
-export const visualSeparationLine = style({
-  borderTop: '1px solid #CCDFFF',
-})
-
-export const minHeightBox = style({
-  minHeight: '30px',
-})
-
-export const tableBox = style({
-  overflow: 'scroll',
-  minWidth: '100%',
 })
 
 export const tableContainer = style({
@@ -47,6 +34,14 @@ export const tableContainer = style({
 
 export const tableHead = style({
   backgroundColor: '#E6F2FB',
+})
+
+export const visualSeparationLine = style({
+  borderTop: '1px solid #CCDFFF',
+})
+
+export const error = style({
+  borderColor: theme.color.red400,
 })
 
 globalStyle(`${tableContainer} th`, {

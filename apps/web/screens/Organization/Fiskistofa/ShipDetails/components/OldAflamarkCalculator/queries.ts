@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
+export const GET_AFLAMARK_INFORMATION_FOR_SHIP = gql`
   query GetShipStatusForTimePeriod($input: GetShipStatusForTimePeriodInput!) {
     getShipStatusForTimePeriod(input: $input) {
       shipInformation {
@@ -35,7 +35,7 @@ export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
   }
 `
 
-export const UPDATE_SHIP_STATUS_FOR_TIME_PERIOD = gql`
+export const GET_UPDATED_SHIP_STATUS_FOR_TIME_PERIOD = gql`
   mutation UpdateShipStatusForTimePeriod(
     $input: UpdateShipStatusForTimePeriodInput!
   ) {

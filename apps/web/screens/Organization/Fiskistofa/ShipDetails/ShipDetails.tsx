@@ -84,7 +84,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
       </GridContainer>
 
       {selectedTab.value === 'aflamark' && shipNumber && (
-        <AflamarkCalculator namespace={namespace} />
+        <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
       )}
       {selectedTab.value === 'deilistofn' && shipNumber && (
         <DeilistofnaCalculator shipNumber={shipNumber} namespace={namespace} />
