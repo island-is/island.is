@@ -17,6 +17,11 @@ export const error = style({
 
 export const tagContainer = style({
   minHeight: '50px',
+  marginTop: '16px',
+})
+
+export const minHeightBox = style({
+  minHeight: '30px',
 })
 
 export const tableBox = style({

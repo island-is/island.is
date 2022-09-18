@@ -30,10 +30,13 @@ export class FiskistofaClientService {
       this.api.initialize()
       return callback(this.api)
     } catch (error) {
-      if (error instanceof FetchError && error.status === 401) {
-        this.api.initialize(true)
-        return callback(this.api)
+      if (error instanceof FetchError) {
+        if (error.status === 401) {
+          this.api.initialize(true)
+          return callback(this.api)
+        }
       }
+      throw error
     }
   }
 
@@ -61,14 +64,14 @@ export class FiskistofaClientService {
   ) {
     const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest = {
       aflamarkSkipsKvotaParams: {
-        kvotategund: 1,
-        afNaestaAriKvotiBreytt: 1,
-        aNaestaArKvotiBreytt: 1,
-        hlutdeildBreytt: 1,
-        uthlutadAflamarkBreytt: 1,
+        kvotategund: input.change.id,
+        afNaestaAriKvotiBreytt: input.change.nextYearFromQuota,
+        aNaestaArKvotiBreytt: input.change.nextYearQuota,
+        hlutdeildBreytt: input.change.quotaShare,
+        uthlutadAflamarkBreytt: input.change.allocatedCatchQuota,
       },
-      fiskveidiar: '',
-      skipnumer: 1281,
+      fiskveidiar: input.timePeriod,
+      skipnumer: input.shipNumber,
     }
     return this.wrapper((api) => api.updateShipQuotaStatusForTimePeriod(params))
   }
