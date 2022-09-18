@@ -35,6 +35,8 @@ export const getYearOptions = () => {
 export interface TimePeriodOption {
   label: string
   value: string
+  startYear: number
+  endYear: number
 }
 
 export const generateTimePeriodOptions = () => {
@@ -55,6 +57,8 @@ export const generateTimePeriodOptions = () => {
     timePeriods.push({
       label: `${lastTwoDigits}/${lastTwoDigitsPlusOne}`,
       value: `${lastTwoDigits}${lastTwoDigitsPlusOne}`,
+      startYear: year,
+      endYear: year + 1,
     })
   }
 

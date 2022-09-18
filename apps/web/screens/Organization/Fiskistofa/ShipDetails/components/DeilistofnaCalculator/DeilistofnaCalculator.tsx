@@ -197,7 +197,7 @@ export const DeilistofnaCalculator = ({
             <Select
               disabled={loading}
               size="sm"
-              label="Ár"
+              label={n('year', 'Ár')}
               name="year-select"
               options={yearOptions}
               value={selectedYear}
@@ -244,6 +244,11 @@ export const DeilistofnaCalculator = ({
           </Inline>
         </Box>
       </Box>
+
+      <Text variant="small">
+        {n('calendarYear', 'Almanaksárið')} 01.01.{selectedYear.label} - 31.12.
+        {selectedYear.label}
+      </Text>
 
       <Box className={styles.tagContainer}>
         <Inline alignY="center" space={3}>

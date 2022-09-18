@@ -2,22 +2,28 @@ import { ApolloClient } from '@apollo/client'
 import initApollo from '@island.is/web/graphql/client'
 import {
   CatchQuotaCategory,
-  MutationUpdateShipStatusForCalendarYearArgs,
-  QueryGetShipStatusForCalendarYearArgs,
+  ExtendedCatchQuotaCategory,
+  ExtendedShipStatusInformation,
+  MutationUpdateShipStatusForTimePeriodArgs,
+  QueryGetShipStatusForTimePeriodArgs,
   QuotaType,
   Ship,
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
 import { createMachine, assign } from 'xstate'
-import { GET_QUOTA_TYPES_FOR_CALENDAR_YEAR } from '../QuotaTypeSelect/queries'
+import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
 import {
-  GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
-  UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
+  GET_SHIP_STATUS_FOR_TIME_PERIOD,
+  UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
 } from './queries'
 
 type ContextData = {
   shipInformation?: Ship
-  catchQuotaCategories?: Array<CatchQuotaCategory & { timestamp?: number }>
+  catchQuotaCategories?: Array<
+    Omit<CatchQuotaCategory | ExtendedCatchQuotaCategory, '__typename'> & {
+      timestamp?: number
+    }
+  >
 }
 
 /** Mutates a category list by sorting it an name ascending order */
@@ -41,10 +47,22 @@ const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   }
 }
 
+interface QuotaData {
+  id: number
+  name: string
+  totalCatchQuota?: number
+  quotaShare?: number
+  nextYearQuota?: number
+  nextYearFromQuota?: number
+  percentNextYearQuota?: number
+  percentNextYearFromQuota?: number
+}
+
 interface Context {
   data: ContextData | null
   initialData: ContextData | null
   updatedData: ContextData | null
+  quotaData: QuotaData[]
   quotaTypes: QuotaType[]
   selectedQuotaTypes: QuotaType[]
   errorOccured: boolean
@@ -53,12 +71,17 @@ interface Context {
 
 type GET_DATA_EVENT = {
   type: 'GET_DATA'
-  variables: QueryGetShipStatusForCalendarYearArgs
+  variables: QueryGetShipStatusForTimePeriodArgs
 }
 
-type UPDATE_DATA_EVENT = {
-  type: 'UPDATE_DATA'
-  variables: MutationUpdateShipStatusForCalendarYearArgs
+type UPDATE_GENERAL_DATA_EVENT = {
+  type: 'UPDATE_GENERAL_DATA'
+  variables: MutationUpdateShipStatusForTimePeriodArgs
+}
+
+type UPDATE_QUOTA_DATA_EVENT = {
+  type: 'UPDATE_QUOTA_DATA'
+  variables: MutationUpdateShipStatusForTimePeriodArgs
 }
 
 type ADD_CATEGORY_EVENT = {
@@ -77,15 +100,17 @@ type REMOVE_ALL_CATEGORIES_EVENT = {
 
 type Event =
   | GET_DATA_EVENT
-  | UPDATE_DATA_EVENT
+  | UPDATE_GENERAL_DATA_EVENT
+  | UPDATE_QUOTA_DATA_EVENT
   | ADD_CATEGORY_EVENT
   | REMOVE_CATEGORY_EVENT
   | REMOVE_ALL_CATEGORIES_EVENT
 
 type State =
   | { value: 'idle'; context: Context }
-  | { value: 'getting data'; context: Context }
-  | { value: 'updating data'; context: Context }
+  | { value: 'getting general data'; context: Context }
+  | { value: 'updating general data'; context: Context }
+  | { value: 'updating quota data'; context: Context }
   | { value: 'error'; context: Context }
 
 export const machine = createMachine<Context, Event, State>(
@@ -95,6 +120,7 @@ export const machine = createMachine<Context, Event, State>(
       data: null,
       initialData: null,
       updatedData: null,
+      quotaData: [],
       quotaTypes: [],
       selectedQuotaTypes: [],
       errorOccured: false,
@@ -105,7 +131,8 @@ export const machine = createMachine<Context, Event, State>(
       idle: {
         on: {
           GET_DATA: 'getting data',
-          UPDATE_DATA: 'updating data',
+          UPDATE_GENERAL_DATA: 'updating general data',
+          UPDATE_QUOTA_DATA: 'updating quota data',
           REMOVE_ALL_CATEGORIES: {
             actions: assign((context) => {
               const selectedQuotaTypesIds = context.selectedQuotaTypes.map(
@@ -210,9 +237,25 @@ export const machine = createMachine<Context, Event, State>(
           },
         },
       },
-      'updating data': {
+      'updating general data': {
         invoke: {
-          src: 'updateData',
+          src: 'updateGeneralData',
+          onDone: {
+            target: 'idle',
+            actions: assign((_context, event) => ({
+              ...event.data,
+              errorOccured: false,
+            })),
+          },
+          onError: {
+            target: 'error',
+            actions: assign(() => ({ errorOccured: true })),
+          },
+        },
+      },
+      'updating quota data': {
+        invoke: {
+          src: 'updateQuotaData',
           onDone: {
             target: 'idle',
             actions: assign((_context, event) => ({
@@ -229,7 +272,8 @@ export const machine = createMachine<Context, Event, State>(
       error: {
         on: {
           GET_DATA: 'getting data',
-          UPDATE_DATA: 'updating data',
+          UPDATE_GENERAL_DATA: 'updating general data',
+          UPDATE_QUOTA_DATA: 'updating quota data',
         },
       },
     },
@@ -239,67 +283,79 @@ export const machine = createMachine<Context, Event, State>(
       getData: async (context, event: GET_DATA_EVENT) => {
         const [
           {
-            data: { getShipStatusForCalendarYear },
+            data: { getShipStatusForTimePeriod },
           },
           {
-            data: { getQuotaTypesForCalendarYear },
+            data: { getQuotaTypesForTimePeriod },
           },
         ] = await Promise.all([
           context.apolloClient.query<{
-            getShipStatusForCalendarYear: ShipStatusInformation
+            getShipStatusForTimePeriod: ExtendedShipStatusInformation
           }>({
-            query: GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
+            query: GET_SHIP_STATUS_FOR_TIME_PERIOD,
             variables: event.variables,
             fetchPolicy: 'no-cache',
           }),
           context.apolloClient.query<{
-            getQuotaTypesForCalendarYear: QuotaType[]
+            getQuotaTypesForTimePeriod: QuotaType[]
           }>({
-            query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
+            query: GET_QUOTA_TYPES_FOR_TIME_PERIOD,
             variables: {
               input: {
-                year: event.variables.input.year,
+                timePeriod: event.variables.input.timePeriod,
               },
             },
           }),
         ])
 
-        orderCategories(getShipStatusForCalendarYear.catchQuotaCategories)
+        orderCategories(getShipStatusForTimePeriod.catchQuotaCategories)
 
-        const categoryIds = getShipStatusForCalendarYear.catchQuotaCategories.map(
+        const categoryIds = getShipStatusForTimePeriod.catchQuotaCategories.map(
           (c) => c.id,
         )
 
         // Remove all quota types that are already in the category list
-        const quotaTypes = getQuotaTypesForCalendarYear.filter(
+        const quotaTypes = getQuotaTypesForTimePeriod.filter(
           (qt) => !categoryIds.includes(qt.id),
         )
         // Order the types in ascending name order
         quotaTypes.sort((a, b) => a.name.localeCompare(b.name))
 
+        const quotaData = []
+
+        for (const category of getShipStatusForTimePeriod.catchQuotaCategories) {
+          quotaData.push({
+            id: category.id,
+            name: category.name,
+            totalCatchQuota: category.totalCatchQuota,
+            quotaShare: category.quotaShare,
+            nextYearQuota: category.nextYearQuota,
+            nextYearFromQuota: category.nextYearFromQuota,
+          })
+        }
+
         return {
-          data: getShipStatusForCalendarYear,
-          initialData: getShipStatusForCalendarYear,
+          data: getShipStatusForTimePeriod,
+          initialData: getShipStatusForTimePeriod,
           quotaTypes,
           selectedQuotaTypes: [],
+          quotaData,
         }
       },
-      updateData: async (context, event: UPDATE_DATA_EVENT) => {
+      updateGeneralData: async (context, event: UPDATE_GENERAL_DATA_EVENT) => {
         const {
-          data: { updateShipStatusForCalendarYear },
+          data: { updateShipStatusForTimePeriod },
         } = await context.apolloClient.query<{
-          updateShipStatusForCalendarYear: ShipStatusInformation
+          updateShipStatusForTimePeriod: ShipStatusInformation
         }>({
-          query: UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
+          query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
           variables: event.variables,
           fetchPolicy: 'no-cache',
         })
-
         const categories: ContextData['catchQuotaCategories'] = []
-
         // We want to keep the ordering of the categories the user has added
         for (const category of context.data.catchQuotaCategories) {
-          const categoryFromServer = updateShipStatusForCalendarYear.catchQuotaCategories.find(
+          const categoryFromServer = updateShipStatusForTimePeriod.catchQuotaCategories.find(
             (c) => c.id === category.id,
           )
           if (categoryFromServer) {
@@ -311,16 +367,14 @@ export const machine = createMachine<Context, Event, State>(
             categories.push(category)
           }
         }
-
         orderCategories(categories)
-
-        updateShipStatusForCalendarYear.catchQuotaCategories = categories
-
+        updateShipStatusForTimePeriod.catchQuotaCategories = categories
         return {
-          data: updateShipStatusForCalendarYear,
-          updatedData: updateShipStatusForCalendarYear,
+          data: updateShipStatusForTimePeriod,
+          updatedData: updateShipStatusForTimePeriod,
         }
       },
+      updateQuotaData: async (context, event: UPDATE_QUOTA_DATA_EVENT) => {},
     },
   },
 )
