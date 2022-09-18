@@ -7,6 +7,7 @@ import {
   Inline,
   LoadingDots,
   Select,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
@@ -15,6 +16,8 @@ import { getYearOptions, YearOption } from '../../utils'
 import { CatchQuotaCategory } from '@island.is/web/graphql/schema'
 
 import * as styles from './DeilistofnaCalculator.css'
+
+const emptyValue = { value: -1, label: '' }
 
 type Changes = Record<
   number,
@@ -169,6 +172,7 @@ export const DeilistofnaCalculator = ({
           <Box className={styles.selectBox} marginBottom={3}>
             <Select
               disabled={loading}
+              value={emptyValue}
               size="sm"
               label={n('addType', 'Bæta við tegund')}
               name="tegund-fiskur-select"
@@ -202,6 +206,37 @@ export const DeilistofnaCalculator = ({
             </Button>
           </Inline>
         </Box>
+      </Box>
+
+      <Box className={styles.tagContainer}>
+        <Inline alignY="center" space={3}>
+          {state.context.selectedQuotaTypes.map((quotaType) => (
+            <Tag
+              onClick={() =>
+                send({
+                  type: 'REMOVE_CATEGORY',
+                  categoryId: quotaType.id,
+                })
+              }
+              key={quotaType.id}
+            >
+              <Box flexDirection="row" alignItems="center" flexWrap="nowrap">
+                {quotaType.name}
+                <span className={styles.crossmark}>&#10005;</span>
+              </Box>
+            </Tag>
+          ))}
+          {state.context.selectedQuotaTypes.length > 0 && (
+            <Button
+              onClick={() => send({ type: 'REMOVE_ALL_CATEGORIES' })}
+              variant="text"
+              size="small"
+              colorScheme="default"
+            >
+              {n('clearAll', 'Hreinsa allt')}
+            </Button>
+          )}
+        </Inline>
       </Box>
 
       <Box

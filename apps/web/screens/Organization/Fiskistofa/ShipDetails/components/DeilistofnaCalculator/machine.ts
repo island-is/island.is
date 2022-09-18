@@ -41,6 +41,8 @@ const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   }
 }
 
+// TODO: show error message (add code to backend to return error message)
+
 interface Context {
   data: ContextData | null
   initialData: ContextData | null
@@ -66,7 +68,21 @@ type ADD_CATEGORY_EVENT = {
   category: { label: string; value: number }
 }
 
-type Event = GET_DATA_EVENT | UPDATE_DATA_EVENT | ADD_CATEGORY_EVENT
+type REMOVE_CATEGORY_EVENT = {
+  type: 'REMOVE_CATEGORY'
+  categoryId: number
+}
+
+type REMOVE_ALL_CATEGORIES_EVENT = {
+  type: 'REMOVE_ALL_CATEGORIES'
+}
+
+type Event =
+  | GET_DATA_EVENT
+  | UPDATE_DATA_EVENT
+  | ADD_CATEGORY_EVENT
+  | REMOVE_CATEGORY_EVENT
+  | REMOVE_ALL_CATEGORIES_EVENT
 
 type State =
   | { value: 'idle'; context: Context }
@@ -92,6 +108,54 @@ export const machine = createMachine<Context, Event, State>(
         on: {
           GET_DATA: 'getting data',
           UPDATE_DATA: 'updating data',
+          REMOVE_ALL_CATEGORIES: {
+            actions: assign((context) => {
+              const selectedQuotaTypesIds = context.selectedQuotaTypes.map(
+                (qt) => qt.id,
+              )
+              const categories = context.data.catchQuotaCategories.filter(
+                (c) => !selectedQuotaTypesIds.includes(c.id),
+              )
+              return {
+                selectedQuotaTypes: [],
+                quotaTypes: context.quotaTypes
+                  .concat(context.selectedQuotaTypes)
+                  .sort((a, b) => a.name.localeCompare(b.name)),
+                data: { ...context.data, catchQuotaCategories: categories },
+              }
+            }),
+          },
+          REMOVE_CATEGORY: {
+            actions: assign((context, event) => {
+              const quotaTypes = [...context.quotaTypes]
+
+              const category = context.selectedQuotaTypes.find(
+                (qt) => qt.id === event.categoryId,
+              )
+
+              // Move the selected quota type category back into the quota type array
+              if (
+                category &&
+                !quotaTypes.map((qt) => qt.id).includes(category.id)
+              ) {
+                quotaTypes.push(category)
+                quotaTypes.sort((a, b) => a.name.localeCompare(b.name))
+              }
+
+              return {
+                data: {
+                  ...context.data,
+                  catchQuotaCategories: context.data.catchQuotaCategories.filter(
+                    (c) => c.id !== event.categoryId,
+                  ),
+                },
+                quotaTypes,
+                selectedQuotaTypes: context.selectedQuotaTypes.filter(
+                  (qt) => qt.id !== event.categoryId,
+                ),
+              }
+            }),
+          },
           ADD_CATEGORY: {
             actions: assign((context, event) => {
               const categories = context.data.catchQuotaCategories
