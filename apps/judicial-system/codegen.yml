@@ -24,7 +24,7 @@ generates:
       - typescript-operations
       - typescript-react-apollo
     config:
-      withHooks: true
+      withHooks: false
       withHOC: false
       withComponent: false
       avoidOptionals:
