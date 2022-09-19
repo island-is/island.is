@@ -9,6 +9,10 @@ import {
   CourtCaseInfo,
   FormContentContainer,
   Modal,
+  useCourtArrangements,
+  CourtArrangements,
+  DefenderInfo,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -21,17 +25,12 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import {
   rcHearingArrangements as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import CourtArrangements, {
-  useCourtArrangements,
-} from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import * as constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {

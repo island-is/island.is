@@ -5,10 +5,14 @@ import { useRouter } from 'next/router'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { User } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { BlueBox, Modal } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  FormContext,
+  Modal,
+} from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import ProsecutorSelection from './ProsecutorSelection'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'

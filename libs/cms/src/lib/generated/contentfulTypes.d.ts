@@ -1592,6 +1592,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1900,6 +1903,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2801,9 +2807,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined

@@ -6,9 +6,9 @@ import { useQuery } from '@apollo/client'
 import { Select } from '@island.is/island-ui/core'
 import { User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { strings } from './ProsecutorSelection.strings'
 import { ProsecutorSelectionUsersQuery } from './prosecutorSelectionUsersGql'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 
 type ProsecutorSelectOption = ReactSelectOption & { prosecutor: User }
 
