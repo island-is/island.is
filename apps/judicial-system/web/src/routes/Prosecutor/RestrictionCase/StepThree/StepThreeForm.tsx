@@ -214,7 +214,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       workingCase.type,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       nextRequestedCustodyRestrictions,
                     )
                   }}
@@ -245,7 +245,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         force: true,
                       },
                       nextCaseType,
-                      workingCase.requestedCourtDate,
+                      workingCase.requestedValidToDate,
                       workingCase.requestedCustodyRestrictions,
                     )
                   }}
