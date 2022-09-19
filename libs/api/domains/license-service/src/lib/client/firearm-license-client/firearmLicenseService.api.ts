@@ -22,7 +22,6 @@ import {
   LicenseData,
 } from '@island.is/clients/firearm-license'
 import { format } from 'kennitala'
-import { DEFAULT_IMAGE } from './constants'
 import {
   PassDataInput,
   SmartSolutionsApi,
@@ -145,7 +144,7 @@ export class GenericFirearmLicenseApi
       inputFieldValues: inputValues,
       thumbnail: image
         ? {
-            imageBase64String: parsedImage ?? DEFAULT_IMAGE,
+            imageBase64String: parsedImage ?? '',
           }
         : null,
     }
