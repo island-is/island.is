@@ -8,11 +8,11 @@ import { ContractRejectedContainer } from '../components'
 const ContractRejected = ({ application }: CRCFieldBaseProps) => {
   const { answers, externalData } = application
   const selectedChildren = getSelectedChildrenFromExternalData(
-    externalData.nationalRegistry.data.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
 
-  const otherParentName = selectedChildren[0].otherParent.fullName
+  const otherParentName = selectedChildren[0]?.otherParent?.fullName || ''
   return (
     <ContractRejectedContainer>
       <DescriptionText

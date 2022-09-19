@@ -8,14 +8,17 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
 import { application, stateDescriptions, stateLabels } from './messages'
-import { ChildrenResidentChangeNationalRegistryApi } from '../dataProviders'
+import {
+  ChildrenCustodyInformationApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -90,9 +93,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'residenceChangeReason',
                   'approveChildSupportTerms',
                 ],
-                externalData: ['UserProfile.userProfile', 'nationalRegistry'],
+                externalData: [
+                  'UserProfile.userProfile',
+                  'NationalRegistry.nationalRegistry',
+                  'NationalRegistry.childrenCustodyInformation',
+                ],
               },
-              api: [ChildrenResidentChangeNationalRegistryApi, UserProfileApi],
+              api: [
+                ChildrenCustodyInformationApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },
@@ -301,9 +312,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           externalData,
           answers,
         } = (context.application as unknown) as CRCApplication
-        const applicant = externalData.nationalRegistry.data
+        const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
-          applicant.children,
+          children,
           answers.selectedChildren,
         )
         const otherParent = selectedChildren[0].otherParent
@@ -312,7 +323,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.nationalId],
+            assignees: [otherParent?.nationalId ?? ''],
           },
         }
       }),

@@ -46,15 +46,22 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
   const durationDate = selectDuration?.date
   const reason = residenceChangeReason
   const childrenAppliedFor = getSelectedChildrenFromExternalData(
-    applicant.children,
+    application.externalData.childrenCustodyInformation.data,
     selectedChildren,
   )
   const childResidenceInfo = childrenResidenceInfo(
     applicant,
+    application.externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   const currentParent = childResidenceInfo.current
+  if (currentParent === null) {
+    throw new Error('Cannot Render Pdf Current parent is null')
+  }
   const futureParent = childResidenceInfo.future
+  if (futureParent === null) {
+    throw new Error('Cannot Render Pdf Future parent is null')
+  }
 
   const doc = newDocument()
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -87,7 +94,7 @@ export async function generateResidenceChangePdf(application: CRCApplication) {
 
   addSubheader('Núverandi lögheimilisforeldri skv. Þjóðskrá Íslands', doc)
   addValue(
-    `${currentParent.parentName}, ${formatSsn(currentParent.nationalId)}`,
+    `${currentParent?.parentName}, ${formatSsn(currentParent.nationalId)}`,
     doc,
   )
   addValue(
