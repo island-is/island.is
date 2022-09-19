@@ -415,26 +415,10 @@ export class CaseService {
     }
   }
 
-  private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
-    return this.awsS3Service
-      .getObject(`generated/${theCase.id}/ruling.pdf`)
-      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
-      .catch(() => {
-        // The signed ruling should have been delivered to the court
-        // either directly to the court system or via email
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { caseId: theCase.id },
-        )
-
-        return true
-      })
-  }
-
   private async deliverIndictmentRulingToCourt(
     theCase: Case,
   ): Promise<boolean> {
-    const res = await this.fileService
+    return this.fileService
       .getAllCaseFiles(theCase.id)
       .then((caseFiles) =>
         caseFiles.find(
@@ -482,8 +466,22 @@ export class CaseService {
 
         return false
       })
-    this.logger.info('uploading ruling to court', { res })
-    return res
+  }
+
+  private async deliverSignedRulingToCourt(theCase: Case): Promise<boolean> {
+    return this.awsS3Service
+      .getObject(`generated/${theCase.id}/ruling.pdf`)
+      .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
+      .catch(() => {
+        // The signed ruling should have been delivered to the court
+        // either directly to the court system or via email
+        this.logger.info(
+          `The ruling for case ${theCase.id} was not found in AWS S3`,
+          { caseId: theCase.id },
+        )
+
+        return true
+      })
   }
 
   private async deliverRulingToCourt(theCase: Case): Promise<boolean> {
@@ -492,8 +490,64 @@ export class CaseService {
       : this.deliverSignedRulingToCourt(theCase)
   }
 
-  private deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
-    return this.uploadCourtRecordPdfToCourt(theCase)
+  private async deliverIndictmentCourtRecortToCourt(
+    theCase: Case,
+  ): Promise<boolean> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then((caseFiles) =>
+        caseFiles.find(
+          (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+      .then(async (caseFile) => {
+        if (!caseFile) {
+          throw new Error(
+            `Failed to find the court record for case ${theCase.id} in the database`,
+          )
+        }
+
+        if (!caseFile.key) {
+          throw new Error(
+            `Missing AWS S3 key for the court record of case ${theCase.id}`,
+          )
+        }
+
+        const title = this.formatMessage(courtUpload.courtRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
+
+        return this.awsS3Service
+          .getObject(caseFile.key)
+          .then((buffer) =>
+            this.courtService.createDocument(
+              theCase.id,
+              theCase.courtId ?? '',
+              theCase.courtCaseNumber ?? '',
+              title,
+              caseFile.name.replace(/^.+\./, `${title}.`),
+              caseFile.type,
+              buffer,
+            ),
+          )
+          .then(() => true)
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to upload the court record for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  private async deliverCourtRecordToCourt(theCase: Case): Promise<boolean> {
+    return isIndictmentCase(theCase.type)
+      ? this.deliverIndictmentCourtRecortToCourt(theCase)
+      : Boolean(theCase.rulingModifiedHistory) || // court record did not change
+          this.uploadCourtRecordPdfToCourt(theCase)
   }
 
   private async deliverCaseFilesToCourt(theCase: Case): Promise<boolean> {
@@ -1173,10 +1227,9 @@ export class CaseService {
 
     const rulingDeliveredToCourt = await this.deliverRulingToCourt(theCase)
 
-    const courtRecordDeliveredToCourt =
-      !isIndictmentCase(theCase.type) &&
-      (Boolean(theCase.rulingModifiedHistory) || // court record did not change
-        (await this.deliverCourtRecordToCourt(theCase)))
+    const courtRecordDeliveredToCourt = await this.deliverCourtRecordToCourt(
+      theCase,
+    )
 
     const caseFilesDeliveredToCourt =
       !isIndictmentCase(theCase.type) &&
