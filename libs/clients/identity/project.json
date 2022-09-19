@@ -1,19 +1,19 @@
 {
-  "root": "libs/nest/identity",
-  "sourceRoot": "libs/nest/identity/src",
+  "root": "libs/clients/identity",
+  "sourceRoot": "libs/clients/identity/src",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/nest/identity/**/*.ts"]
+        "lintFilePatterns": ["libs/clients/identity/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/identity"],
+      "outputs": ["coverage/libs/clients/identity"],
       "options": {
-        "jestConfig": "libs/nest/identity/jest.config.js",
+        "jestConfig": "libs/clients/identity/jest.config.js",
         "passWithNoTests": true
       }
     }

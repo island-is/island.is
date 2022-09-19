@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'nest-identity',
+  displayName: 'clients-identity',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/nest/identity',
+  coverageDirectory: '../../../coverage/libs/clients/identity',
 }

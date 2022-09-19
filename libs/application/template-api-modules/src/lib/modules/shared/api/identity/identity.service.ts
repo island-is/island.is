@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { IdentityService } from '@island.is/nest/identity'
+import { IdentityService } from '@island.is/clients-identity'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
