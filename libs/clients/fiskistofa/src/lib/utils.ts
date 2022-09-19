@@ -15,7 +15,6 @@ const mapShipInformation = (info?: AflamarkSkipsUpplDTO): ShipInformation => ({
   timePeriod: info?.timabil ?? '',
 })
 
-// TODO: Add "Úthlutað aflamark" -> allocatedCatchQuota once the backend returns it
 const mapCatchQuotaCategoryForTimePeriod = (
   category: AflamarkstegundirDTO,
 ): CatchQuotaCategory => ({
@@ -39,6 +38,7 @@ const mapCatchQuotaCategoryForTimePeriod = (
   nextYearFromQuota: category?.afNaestaAriKvoti,
   percentNextYearQuota: category?.prosentaANaestaArKvoti,
   percentNextYearFromQuota: category?.prosentaAfNaestaAriKvoti,
+  allocatedCatchQuota: category?.uthlutadAflamarkKvoti,
 })
 
 export const mapShipStatusForTimePeriod = (

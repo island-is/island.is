@@ -14,6 +14,7 @@ import { ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
 import { machine } from './machine'
+import { numberFormatter } from '../../utils'
 
 import * as styles from './AflamarkCalculator.css'
 
@@ -259,7 +260,6 @@ export const AflamarkCalculator = ({
   }
 
   useEffect(() => {
-    console.log(state.context.quotaData)
     if (state.context.quotaData) {
       setQuotaChange(
         state.context.quotaData.reduce((acc, val) => {
@@ -287,7 +287,7 @@ export const AflamarkCalculator = ({
     )?.[fieldName]
 
     if (!current || !initial) return undefined
-    return current - initial
+    return numberFormatter.format(current - initial)
   }
 
   const quotaTypes = useMemo(
@@ -418,25 +418,33 @@ export const AflamarkCalculator = ({
               <tr>
                 <td>{n('uthlutun', 'Úthlutun')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.allocation}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.allocation)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.specialAlloction}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.specialAlloction)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('milliAra', 'Milli ára')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.betweenYears}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.betweenYears)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('milliSkipa', 'Milli skipa')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.betweenShips}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.betweenShips)}
+                  </td>
                 ))}
               </tr>
               <tr>
@@ -477,13 +485,17 @@ export const AflamarkCalculator = ({
               <tr>
                 <td>{n('aflamark', 'Aflamark')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.catchQuota}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.catchQuota)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('afli', 'Afli')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.catch}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.catch)}
+                  </td>
                 ))}
               </tr>
               <tr>
@@ -527,37 +539,49 @@ export const AflamarkCalculator = ({
               <tr>
                 <td>{n('stada', 'Staða')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.status}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.status)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('tilfaersla', 'Tilfærsla')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.displacement}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.displacement)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('nyStada', 'Ný staða')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.newStatus}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.newStatus)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('aNaestaAr', 'Á næsta ár')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.nextYear}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.nextYear)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('umframafli', 'Umframafli')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.excessCatch}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.excessCatch)}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <td>{n('onotad', 'Ónotað')}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
-                  <td key={category.name}>{category.unused}</td>
+                  <td key={category.name}>
+                    {numberFormatter.format(category.unused)}
+                  </td>
                 ))}
               </tr>
 
@@ -567,14 +591,14 @@ export const AflamarkCalculator = ({
                 </td>
                 {state.context.quotaData.map((category) => (
                   <td className={styles.visualSeparationLine} key={category.id}>
-                    {category.totalCatchQuota}
+                    {numberFormatter.format(category.totalCatchQuota)}
                   </td>
                 ))}
               </tr>
 
               {/* TODO: add server value */}
               <tr>
-                <td>{n('uthlutadAflamark', 'Úthlutað aflamark')}</td>
+                <td>{n('aaetladAflamark', 'Áætlað aflamark')}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (
@@ -669,7 +693,7 @@ export const AflamarkCalculator = ({
               </tr>
 
               <tr>
-                <td>{n('afNaestaArKvoti', 'Af næsta ár kvóti')}</td>
+                <td>{n('afNaestaArKvoti', 'Af næsta ári kvóti')}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (

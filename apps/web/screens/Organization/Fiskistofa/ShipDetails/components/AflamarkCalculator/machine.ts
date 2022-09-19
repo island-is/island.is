@@ -13,12 +13,12 @@ import {
   QuotaStatus,
 } from '@island.is/web/graphql/schema'
 import { createMachine, assign } from 'xstate'
-import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../QuotaTypeSelect/queries'
+import { GET_QUOTA_TYPES_FOR_TIME_PERIOD } from '../../queries'
 import {
   GET_SHIP_STATUS_FOR_TIME_PERIOD,
   UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
   UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
-} from './queries'
+} from '../../queries'
 
 type ContextData = {
   shipInformation?: Ship
@@ -32,7 +32,7 @@ type ContextData = {
 /** Mutates a category list by sorting it an name ascending order */
 const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   // Ascending order by name
-  categories.sort((a, b) => a.name.localeCompare(b.name))
+  categories.sort((a, b) => a.id - b.id)
 
   // If there's a timestamp we want to use that to order the categories
   categories.sort((a, b) => {
@@ -266,8 +266,7 @@ export const machine = createMachine<Context, Event, State>(
           },
           onError: {
             target: 'error',
-            actions: assign((context, event) => {
-              console.log(event)
+            actions: assign(() => {
               return { errorOccured: true }
             }),
           },
@@ -334,6 +333,7 @@ export const machine = createMachine<Context, Event, State>(
             quotaShare: category.quotaShare,
             nextYearQuota: category.nextYearQuota,
             nextYearFromQuota: category.nextYearFromQuota,
+            allocatedCatchQuota: category.allocatedCatchQuota,
           })
         }
 

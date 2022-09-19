@@ -61,6 +61,8 @@ class ExtendedCatchQuotaCategory extends CatchQuotaCategory {
   percentNextYearQuota?: number
   @Field({ nullable: true })
   percentNextYearFromQuota?: number
+  @Field({ nullable: true })
+  allocatedCatchQuota?: number
 }
 
 @ObjectType()

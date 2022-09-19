@@ -1804,6 +1804,11 @@
             "description": "hlutfall hlutdeildar sem skip á í fisktegund á tímabilinu. (0,5 => 0,5%).",
             "format": "float"
           },
+          "uthlutadAflamarkKvoti": {
+            "type": "integer",
+            "description": "Úthlutað aflamark birt sem kvóti. Sama tala og uthlutun hér að ofan.",
+            "format": "int32"
+          },
           "aNaestaArKvoti": {
             "type": "integer",
             "description": "Magn sem skip setur yfir á næsta ár af fisktegund fyrir tímabil út frá kvóta.",
