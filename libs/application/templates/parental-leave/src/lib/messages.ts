@@ -654,8 +654,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     screenDescription: {
       id: 'pl.application:selectChild.screenDescription',
-      defaultMessage: 'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
-      description: 'Below you can see a list with your children. Please select a child to apply for.',
+      defaultMessage:
+        'Hér má sjá lista yfir börnin þín. Vinsamlegast veldu barn til að sækja um.',
+      description:
+        'Below you can see a list with your children. Please select a child to apply for.',
     },
     activeApplications: {
       id: 'pl.application:selectChild.activeApplications',
@@ -891,8 +893,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage: 'Þú getur valið um að byrja fæðingarorlof á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.',
-      description: 'Please note, that your rights end 24 months after the date of birth.',
+      defaultMessage:
+        'Þú getur valið um að byrja fæðingarorlof á áætluðum fæðingardegi, frá raunverulegum fæðingardegi eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins.',
+      description:
+        'Please note, that your rights end 24 months after the date of birth.',
     },
     estimatedDateOfBirthOption: {
       id: 'pl.application:periods.first.period.estimatedDateOfBirth',
