@@ -1,12 +1,11 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { formatText } from '@island.is/application/core'
 import {
   CustomField,
   FieldBaseProps,
   DefaultEvents,
 } from '@island.is/application/types'
-import { Box, Button, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
