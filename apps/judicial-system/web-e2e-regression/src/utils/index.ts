@@ -1,6 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
 
 import { CreateCaseMutation } from '../graphql/schema'
 
