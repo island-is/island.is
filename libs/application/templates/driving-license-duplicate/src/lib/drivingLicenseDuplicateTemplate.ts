@@ -103,7 +103,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: pruneAfter(thirtyDays),
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -123,7 +123,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          lifecycle: DEPRECATED_DefaultStateLifeCycle,
+          lifecycle: pruneAfter(thirtyDays),
           roles: [
             {
               id: Roles.APPLICANT,

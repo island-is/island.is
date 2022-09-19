@@ -9,8 +9,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
-import { m } from '../lib/messages'
-import { MessageDescriptor } from 'react-intl'
 
 interface Props extends FieldBaseProps {
   field: CustomField

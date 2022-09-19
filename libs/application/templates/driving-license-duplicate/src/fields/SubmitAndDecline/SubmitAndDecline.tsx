@@ -9,7 +9,6 @@ import {
 import { Box, Button, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { m } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   field: CustomField
