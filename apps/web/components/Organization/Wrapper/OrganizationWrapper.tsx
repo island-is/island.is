@@ -105,6 +105,8 @@ export const footerEnabled = [
 
   'fiskistofa',
   'directorate-of-fisheries',
+
+  'landskjorstjorn',
 ]
 
 export const getThemeConfig = (
