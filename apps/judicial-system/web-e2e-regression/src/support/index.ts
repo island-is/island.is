@@ -17,8 +17,6 @@
 // load type definitions that come with Cypress module
 /// <reference types="cypress" />
 
-import { UserRole } from '@island.is/judicial-system/types'
-
 import './commands'
 
 Cypress.on('uncaught:exception', () => {
