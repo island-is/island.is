@@ -559,20 +559,20 @@ export const institutionApplicationMessages = {
         'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið island@island.is',
       description: 'Third information sentence, in bullet list',
     },
-    sectionConfirmationBulletFirst: {
-      id: 'ia.application:confirmation.section.infoBullet.first',
+    sectionConfirmBulletFirst: {
+      id: 'ia.application:confirm.section.infoBullet.first',
       defaultMessage: 'Umsóknin er formlega móttekin.',
       description: 'First information sentence, in confirmation bullet list',
     },
-    sectionConfirmationBulletSecond: {
-      id: 'ia.application:confirmation.section.infoBullet.second',
+    sectionConfirmBulletSecond: {
+      id: 'ia.application:confirm.section.infoBullet.second',
       defaultMessage:
         'Umsóknir eru teknar fyrir mánðarlega og verður verkefnastjóri Stafræns Íslands í sambandi, sem fer yfir verkefnið með ykkur og næstu skref.',
       description: 'Second information sentence, in confirmation bullet list',
     },
 
-    sectionConfirmationtBulletThird: {
-      id: 'ia.application:confirmation.section.infoBullet.third',
+    sectionConfirmBulletThird: {
+      id: 'ia.application:confirm.section.infoBullet.third',
       defaultMessage:
         'Fyrir frekari upplýsingar er hægt að hafa samband á netfangið island@island.is',
       description: 'Third information sentence, in confirmation bullet list',

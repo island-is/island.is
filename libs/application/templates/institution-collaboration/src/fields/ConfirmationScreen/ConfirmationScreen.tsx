@@ -16,21 +16,21 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
         <BulletList>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmationBulletFirst,
+              m.confirmation.sectionConfirmBulletFirst,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmationBulletSecond,
+              m.confirmation.sectionConfirmBulletSecond,
               application,
               formatMessage,
             )}
           </Bullet>
           <Bullet>
             {formatText(
-              m.confirmation.sectionConfirmationtBulletThird,
+              m.confirmation.sectionConfirmBulletThird,
               application,
               formatMessage,
             )}
