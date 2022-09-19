@@ -1,11 +1,5 @@
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 import faker from 'faker'
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
-import {
-  CreateCaseMutation,
-  TransitionCaseInput,
-  UpdateCaseInput,
-} from '../graphql/schema'
 
 import {
   Case,
@@ -19,17 +13,7 @@ import {
   CaseOrigin,
   CaseFile,
   CaseFileState,
-  CaseTransition,
-  UpdateCase,
 } from '@island.is/judicial-system/types'
-import { INDICTMENTS_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-
-const cache = new InMemoryCache()
-const client = new ApolloClient({
-  cache,
-  uri: 'http://localhost:3333/api/graphql',
-  name: 'judicial-system-web-e2e-client',
-})
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
@@ -125,70 +109,6 @@ export const aliasMutation = (
   if (hasOperationName(req, operationName)) {
     req.alias = `gql${operationName}Mutation`
   }
-}
-
-export const loginAndCreateCase = (
-  type: CaseType,
-  policeCaseNumbers: string[],
-) => {
-  return cy
-    .visit('http://localhost:4200/api/auth/login?nationalId=0000000009')
-    .then(() =>
-      client.mutate<CreateCaseMutation>({
-        mutation: gql`
-          mutation CreateCase($input: CreateCaseInput!) {
-            createCase(input: $input) {
-              id
-              defendants {
-                id
-              }
-            }
-          }
-        `,
-        fetchPolicy: 'no-cache',
-        variables: {
-          input: {
-            type,
-            description: 'Test',
-            policeCaseNumbers,
-            defenderName: 'Test',
-            defenderNationalId: '0000000000',
-            defenderEmail: 'ivaro@kolibri.is',
-            defenderPhoneNumber: '0000000',
-            sendRequestToDefender: false,
-            leadInvestigator: 'asd',
-          },
-        },
-      }),
-    )
-    .then((res) => {
-      return cy
-        .wrap(res)
-        .should('have.property', 'data')
-        .then(() => {
-          return res.data?.createCase?.id || ''
-        })
-    })
-}
-
-export const transitionCase = (caseId: string, transition: CaseTransition) => {
-  client.mutate({
-    mutation: gql`
-      mutation TransitionCaseMutation($input: TransitionCaseInput!) {
-        transitionCase(input: $input) {
-          state
-        }
-      }
-    `,
-    variables: {
-      input: {
-        id: caseId,
-        transition,
-        modified: new Date().toISOString(),
-      },
-    },
-    fetchPolicy: 'no-cache',
-  })
 }
 
 export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`

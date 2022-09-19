@@ -5,7 +5,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
 
-import { transitionCase, loginAndCreateCase } from '../../../../utils'
+import { transitionCase, loginAndCreateCase } from '../../../utils'
 
 describe(CREATE_INDICTMENT_ROUTE, () => {
   let caseId = ''

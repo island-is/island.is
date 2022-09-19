@@ -2,9 +2,9 @@ import {
   CREATE_INDICTMENT_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
+import { CaseTransition } from '@island.is/judicial-system/types'
 
-import { transitionCase } from '../../../../utils'
+import { transitionCase } from '../../../utils'
 
 describe('Create indictment', () => {
   let caseId = ''
