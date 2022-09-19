@@ -56,6 +56,9 @@ export const slices = gql`
     categories
     buttonText
     signupUrl
+    image {
+      ...ImageFields
+    }
   }
 
   fragment StoryFields on StorySlice {
