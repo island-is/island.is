@@ -596,65 +596,65 @@ export const institutionApplicationMessages = {
   urls: defineMessages({
     allServices: {
       id: 'ia.application:url.all',
-      defaultMessage: 'https://island.is/s/stafraent-island/thjonusta',
+      defaultMessage: 'https://island.is/s/stafraent-island/thjonustur',
       description: 'Url',
     },
     mailService: {
       id: 'ia.application:url.mail',
-      defaultMessage: '/s/stafraent-island/thjonusta/postholf',
+      defaultMessage: '/s/stafraent-island/thjonustur/postholf',
       description: 'Url',
     },
     loginService: {
       id: 'ia.application:url.login',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/innskraning-fyrir-alla',
+        'https://island.is/s/stafraent-island/thjonustur/innskraning-fyrir-alla',
       description: 'Url',
     },
     myPageService: {
       id: 'ia.application:url.mypage',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/minar-sidur',
+        'https://island.is/s/stafraent-island/thjonustur/minar-sidur',
       description: 'Url',
     },
     certificateService: {
       id: 'ia.application:url.certificate',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/skirteini',
+        'https://island.is/s/stafraent-island/thjonustur/skirteini',
       description: 'Url',
     },
     straumurService: {
       id: 'ia.application:url.straumur',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/straumurinn',
+        'https://island.is/s/stafraent-island/thjonustur/straumurinn',
       description: 'Url',
     },
     applyService: {
       id: 'ia.application:url.apply',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/umsoknarkerfi',
+        'https://island.is/s/stafraent-island/thjonustur/umsoknarkerfi',
       description: 'Url',
     },
     authorityService: {
       id: 'ia.application:url.authority',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/umbodskerfi',
+        'https://island.is/s/stafraent-island/thjonustur/umbodskerfi',
       description: 'Url',
     },
     webService: {
       id: 'ia.application:url.web',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/vefur-stofnana',
+        'https://island.is/s/stafraent-island/thjonustur/vefur-stofnana',
       description: 'Url',
     },
     appService: {
       id: 'ia.application:url.app',
-      defaultMessage: '/https://island.iss/stafraent-island/thjonusta/app',
+      defaultMessage: '/https://island.iss/stafraent-island/thjonustur/app',
       description: 'Url',
     },
     islandService: {
       id: 'ia.application:url.island',
       defaultMessage:
-        'https://island.is/s/stafraent-island/thjonusta/island-is',
+        'https://island.is/s/stafraent-island/thjonustur/island-is',
       description: 'Url',
     },
   }),
