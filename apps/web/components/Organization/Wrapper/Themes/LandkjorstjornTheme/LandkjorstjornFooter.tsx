@@ -20,7 +20,6 @@ interface LandskjorstjornFooterProps {
 export const LandskjorstjornFooter = ({
   footerItems,
 }: LandskjorstjornFooterProps) => {
-  console.log(footerItems)
   return (
     <footer
       className={styles.container}
