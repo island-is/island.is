@@ -25,16 +25,9 @@ export const dataSchema = z.object({
   applicantInformation: z.object({
     constraints: z.object({
       hasMail: z.boolean().optional(),
-      // mail: z.boolean().optional(),
-
       hasLogin: z.boolean().optional(),
-      // login: z.boolean().optional(),
-
       hasStraumur: z.string().optional(),
-      //straumur: z.string().optional(),
-
       hasWebsite: z.boolean().optional(),
-      // website: z.boolean().optional(),
 
       hasApply: z.string().optional(),
       apply: z.string().optional(),

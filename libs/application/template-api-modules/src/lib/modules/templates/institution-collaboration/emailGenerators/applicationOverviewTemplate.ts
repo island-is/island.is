@@ -120,7 +120,6 @@ export const applicationOverviewTemplate = (
   ].some((x) => !!x)
 
   //  #region Services Text
-  // TODO: Move in shared lib
   const servicesTextArr: string[] = []
   mailConstraints &&
     servicesTextArr.push(
