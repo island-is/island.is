@@ -214,7 +214,12 @@ export const institutionApplicationMessages = {
 
     sectionDescription: {
       id: 'ia.application:service.section.description',
-      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef Stafræns Ísland.`,
+      defaultMessage: `Þú getur nálgast nánar helstu upplýsingar um þjónustur á vef Stafræns Ísland. `,
+      description: 'Section description',
+    },
+    sectionDescriptionLink: {
+      id: 'ia.application:service.section.descriptionlink',
+      defaultMessage: `Sjá nánar. `,
       description: 'Section description',
     },
     informationSubtitle: {
