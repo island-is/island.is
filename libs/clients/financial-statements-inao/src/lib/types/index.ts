@@ -8,3 +8,19 @@ export type Election = {
   name: string
   electionDate: Date
 }
+
+export type FinancialType = {
+  numericValue: number
+  financialTypeId: string
+}
+
+export type KeyValue = {
+  key: number
+  value: number
+}
+
+export enum ClientTypes {
+  Individual = 150000000,
+  PoliticalParty = 150000001,
+  Cemetery = 150000002,
+}
