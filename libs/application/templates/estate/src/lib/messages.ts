@@ -53,6 +53,11 @@ export const m = defineMessages({
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: '',
   },
+  dataCollectionCheckbox: {
+    id: 'es.application:dataCollectionCheckbox',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
+    description: '',
+  },
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -89,6 +94,11 @@ export const m = defineMessages({
   theDeceased: {
     id: 'es.application:theDeceased',
     defaultMessage: 'Hinn látni',
+    description: '',
+  },
+  nameOfTheDeceased: {
+    id: 'es.application:nameOfTheDeceased',
+    defaultMessage: 'Nafn hins látna',
     description: '',
   },
   deathDate: {
@@ -143,7 +153,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar of erfðaskrá',
+    defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
   estateMembersSubtitle: {

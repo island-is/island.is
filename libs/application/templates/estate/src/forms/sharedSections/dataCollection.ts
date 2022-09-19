@@ -13,7 +13,7 @@ export const dataCollection = buildSection({
       id: 'approveExternalData',
       title: m.dataCollectionTitle,
       subTitle: m.dataCollectionSubtitle,
-      checkboxLabel: '',
+      checkboxLabel: m.dataCollectionCheckbox,
       dataProviders: [
         buildDataProviderItem({
           id: '',

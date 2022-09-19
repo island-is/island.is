@@ -9,7 +9,7 @@ import { format as formatKennitala } from 'kennitala'
 
 export const deceasedInfoFields = [
   buildKeyValueField({
-    label: m.name,
+    label: m.nameOfTheDeceased,
     value: ({
       externalData: {
         syslumennOnEntry: { data },
