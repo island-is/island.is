@@ -3,8 +3,6 @@
   "sourceRoot": "apps/judicial-system/web-e2e-regression/src",
   "projectType": "application",
   "targets": {
-    "e2e": {},
-    "e2e-ci": {},
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
