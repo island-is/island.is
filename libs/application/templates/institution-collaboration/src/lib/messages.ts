@@ -322,7 +322,7 @@ export const institutionApplicationMessages = {
 
     constraintsMailLabel: {
       id: 'ia.application:applicant.constraints.mail.label',
-      defaultMessage: 'Pósthólf',
+      defaultMessage: 'Stafrænt Pósthólf',
       description: 'Form label for constraints technical formfield',
     },
     constraintsMailPlaceholder: {
@@ -332,7 +332,7 @@ export const institutionApplicationMessages = {
     },
     constraintsLoginLabel: {
       id: 'ia.application:applicant.constraints.login',
-      defaultMessage: 'Innskráningarþjónusta',
+      defaultMessage: 'Innskráning fyrir alla',
       description: 'Form label for constraints financial formfield',
     },
     constraintsLoginPlaceholder: {
@@ -354,7 +354,7 @@ export const institutionApplicationMessages = {
     },
     constraintsWebsiteLabel: {
       id: 'ia.application:applicant.constraints.website.label',
-      defaultMessage: 'Vefsíða stofnunar',
+      defaultMessage: 'Vefir stofnana',
       description: 'Form label for constraints time formfield',
     },
     constraintsWebsitePlaceholder: {
