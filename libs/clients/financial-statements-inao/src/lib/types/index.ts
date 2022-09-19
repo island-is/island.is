@@ -19,6 +19,11 @@ export type KeyValue = {
   value: number
 }
 
+export type Config = {
+  key: string
+  value: number
+}
+
 export enum ClientTypes {
   Individual = 150000000,
   PoliticalParty = 150000001,

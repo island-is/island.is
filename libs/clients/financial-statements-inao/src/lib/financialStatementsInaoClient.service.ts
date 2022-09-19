@@ -7,7 +7,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import type { Client, Election, FinancialType, KeyValue } from './types'
+import type { Client, Config, Election, FinancialType, KeyValue } from './types'
 import { ClientTypes } from './types'
 import { lookup } from './utils/lookup'
 
@@ -342,5 +342,23 @@ export class FinancialStatementsInaoClientService {
       this.logger.error('Failed to upload financial statement.', error)
     }
     return false
+  }
+
+  async getConfig(): Promise<Config[]> {
+    const select = '$select=star_key,star_value'
+    const url = `${this.basePath}/star_configs?${select}`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data || !data.value) return []
+
+    const config: Config[] = data.value.map((x: any) => {
+      return <Config>{
+        key: x.star_key,
+        value: x.star_value,
+      }
+    })
+
+    return config
   }
 }

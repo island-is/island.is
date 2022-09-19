@@ -17,6 +17,7 @@ import { InaoClientFinancialLimitInput } from './dto/clientFinancialLimit.input'
 import { InaoPersonalElectionFinancialStatementInput } from './dto/personalElectionFinancialStatement.input'
 import { InaoCemeteryFinancialStatementInput } from './dto/cemeteryFinancialStatement.input'
 import { InaoPoliticalPartyFinancialStatementInput } from './dto/politicalPartyFinancialStatement.input'
+import { Config } from './models/config.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -51,6 +52,11 @@ export class FinancialStatementsInaoResolver {
       input.clientType,
       input.year,
     )
+  }
+
+  @Query(() => [Config])
+  async financialStatementsInaoConfig() {
+    return this.financialStatementsService.getConfig()
   }
 
   @Mutation(() => Boolean)
