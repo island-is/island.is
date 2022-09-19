@@ -1,0 +1,7 @@
+export { NationalRegistryProvider } from '@island.is/application/data-providers'
+export { UserProfileProvider } from '@island.is/application/data-providers'
+export { DistrictsProvider } from './DistrictsProvider'
+export { QualityPhotoProvider } from './QualityPhotoProvider'
+export { QualitySignatureProvider } from './QualitySignatureProvider'
+export { CurrentLicenseProvider } from './CurrentLicenseProvider'
+export { FeeInfoProvider } from './FeeInfoProvider'
