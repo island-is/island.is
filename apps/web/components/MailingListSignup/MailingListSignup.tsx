@@ -3,12 +3,15 @@ import { useFormik } from 'formik'
 import { Box, NewsletterSignup } from '@island.is/island-ui/core'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import {
+  Image,
   MailchimpSubscribeMutation,
   MailchimpSubscribeMutationVariables,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useMutation } from '@apollo/client/react'
 import { MAILING_LIST_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
+
+import * as styles from './MailingListSignup.css'
 
 type FormState = {
   type: 'default' | 'error' | 'success'
@@ -28,6 +31,7 @@ interface MailingListSignupProps {
   placeholder?: string
   buttonText: string
   signupID: string
+  image?: Image
 }
 
 export const MailingListSignup: React.FC<MailingListSignupProps> = ({
@@ -39,6 +43,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   placeholder,
   buttonText,
   signupID,
+  image,
 }) => {
   const n = useNamespace(namespace)
   const [status, setStatus] = useState<FormState>({
@@ -46,7 +51,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
     message: '',
   })
 
-  const [subscribeToMailchimp, { data: result, loading, error }] = useMutation<
+  const [subscribeToMailchimp] = useMutation<
     MailchimpSubscribeMutation,
     MailchimpSubscribeMutationVariables
   >(MAILING_LIST_SIGNUP_MUTATION)
@@ -109,7 +114,14 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
   }, [status.type, formik.values.email])
 
   return (
-    <Box background="blue100" paddingX={[2, 2, 8]} paddingY={[2, 2, 6]}>
+    <Box
+      display="flex"
+      flexDirection="row"
+      background="blue100"
+      paddingX={[2, 2, 8]}
+      paddingY={[2, 2, 6]}
+    >
+      {image?.url && <img className={styles.image} src={image.url} alt="" />}
       <NewsletterSignup
         id={id}
         name="email"

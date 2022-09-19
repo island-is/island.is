@@ -42,6 +42,9 @@ export class VehiclesVehicleSearch {
   currentOwnerAddress?: string
 
   @Field({ nullable: true })
+  currentOwnerIsAnonymous?: boolean
+
+  @Field({ nullable: true })
   useGroup?: string
 
   @Field({ nullable: true })
