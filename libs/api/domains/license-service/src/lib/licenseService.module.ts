@@ -53,6 +53,8 @@ export interface DriversLicenseConfig {
 export interface LicenseServiceConfig {
   firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
+  adrLicense: PkPassConfig
+  machineLicense: PkPassConfig
 }
 
 export type LicenseServiceConfigV2 = Omit<
@@ -143,9 +145,17 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(logger, adrApi)
+                return new GenericAdrLicenseApi(
+                  logger,
+                  adrApi,
+                  new SmartSolutionsApi(logger, config.adrLicense),
+                )
               case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(logger, machineApi)
+                return new GenericMachineLicenseApi(
+                  logger,
+                  machineApi,
+                  new SmartSolutionsApi(logger, config.machineLicense),
+                )
               case GenericLicenseType.FirearmLicense:
                 return new GenericFirearmLicenseApi(
                   logger,
