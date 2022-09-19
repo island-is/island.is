@@ -1,10 +1,14 @@
 import {
   CREATE_INDICTMENT_ROUTE,
-  INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { CaseTransition, CaseType } from '@island.is/judicial-system/types'
+
+import { transitionCase } from '../../../../utils'
 
 describe('Create indictment', () => {
+  let caseId = ''
+
   before(() => {
     cy.visit('http://localhost:4200/api/auth/login?nationalId=0000000009')
     cy.intercept(
@@ -14,6 +18,10 @@ describe('Create indictment', () => {
         req.reply({ fixture: 'nationalRegistryPersonResponse' })
       },
     ).as('getPersonByNationalId')
+  })
+
+  after(() => {
+    transitionCase(caseId, CaseTransition.DELETE)
   })
 
   it('should be able to create a case', () => {
@@ -48,7 +56,8 @@ describe('Create indictment', () => {
     cy.getByTestid('continueButton').click()
     cy.url().should('contain', INDICTMENTS_PROCESSING_ROUTE)
 
-    cy.getByTestid('continueButton').click()
-    cy.url().should('contain', INDICTMENTS_CASE_FILES_ROUTE)
+    cy.window().then((win) => {
+      caseId = win.location.pathname.split('/')[4]
+    })
   })
 })
