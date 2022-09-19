@@ -234,7 +234,6 @@ export class SmartSolutionsApi {
     }
 
     const resError = response.errors[0]
-    this.logger.debug(JSON.stringify(resError))
     const mappedError =
       resError.message in ErrorMessageToStatusCodeMap
         ? (ErrorMessageToStatusCodeMap[
@@ -339,7 +338,7 @@ export class SmartSolutionsApi {
         exception: e,
         category: LOG_CATEGORY,
       })
-      //return null
+      return null
     }
 
     const response = json as UpsertPkPassResponse
@@ -402,18 +401,18 @@ export class SmartSolutionsApi {
   async generatePkPassQrCode(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     const pkPass = await this.generatePkPass(payload, nationalId)
 
-    return pkPass?.distributionQRCode ?? ''
+    return pkPass?.distributionQRCode ?? null
   }
 
   async generatePkPassUrl(
     payload: PassDataInput,
     nationalId: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     const pkPass = await this.generatePkPass(payload, nationalId)
-    return pkPass?.distributionUrl ?? ''
+    return pkPass?.distributionUrl ?? null
   }
 
   async listTemplates(): Promise<PassTemplatesDTO | null> {
