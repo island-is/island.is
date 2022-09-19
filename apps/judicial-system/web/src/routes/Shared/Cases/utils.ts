@@ -8,6 +8,7 @@ import {
   CaseState,
   CaseType,
   isIndictmentCase,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
@@ -34,7 +35,7 @@ export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   state: CaseState,
   isCourtRole: boolean,
-  isInvestigationCase?: boolean,
+  caseType: CaseType,
   isValidToDateInThePast?: boolean,
   courtDate?: string,
 ): { color: TagVariant; text: string } => {
@@ -52,12 +53,12 @@ export const mapCaseStateToTagVariant = (
         ? { color: 'mint', text: formatMessage(m.tags.scheduled) }
         : { color: 'blueberry', text: formatMessage(m.tags.received) }
     case CaseState.ACCEPTED:
-      return isValidToDateInThePast
+      return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(m.tags.inactive) }
         : {
             color: 'blue',
             text: formatMessage(
-              isInvestigationCase ? m.tags.accepted : m.tags.active,
+              isInvestigationCase(caseType) ? m.tags.accepted : m.tags.active,
             ),
           }
 

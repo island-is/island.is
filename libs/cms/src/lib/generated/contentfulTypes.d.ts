@@ -779,6 +779,9 @@ export interface IFormFields {
 
   /** Questions Heading text */
   questionsHeadingText?: string | undefined
+
+  /** Recipient Form Field Decider */
+  recipientFormFieldDecider?: IFormField | undefined
 }
 
 export interface IForm extends Entry<IFormFields> {
@@ -813,6 +816,9 @@ export interface IFormFieldFields {
 
   /** Options */
   options?: string[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IFormField extends Entry<IFormFieldFields> {
@@ -1278,6 +1284,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1292,6 +1301,9 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1315,7 +1327,7 @@ export interface ILifeEventPageListSliceFields {
   /** Title */
   title?: string | undefined
 
-  /** Life Event Page List */
+  /** List */
   lifeEventPageList?: ILifeEventPage[] | undefined
 }
 
@@ -1580,6 +1592,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -1888,6 +1903,9 @@ export interface IOneColumnTextFields {
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
+
+  /** Show Title */
+  showTitle?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2210,6 +2228,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -2220,6 +2239,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
@@ -2787,9 +2807,6 @@ export interface IStepFields {
 
   /** Subtitle */
   subtitle?: Document | undefined
-
-  /** Options */
-  options?: Record<string, any> | undefined
 
   /** Config */
   config?: Record<string, any> | undefined
