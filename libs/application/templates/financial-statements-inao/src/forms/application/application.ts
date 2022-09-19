@@ -17,7 +17,7 @@ import { cemetryKeyNumbersSection } from './cemetry/cemetryKeyNumbers'
 import { partyKeyNumbersSection } from './party/partyKeyNumbers'
 import { individualKeyNumbersSection } from './individual/individualKeyNumbers'
 import { electionInfoSection } from './shared/electionInfo/electionInfo'
-import { cemetryCaretaker } from './cemetry/cemetryCareTaker'
+import { sectionCemetryCaretaker } from './cemetry/sectionCemetryCaretaker'
 import { fakeDataSection } from '../prerequisites/fakeDataSection'
 import {
   currencyStringToNumber,
@@ -75,7 +75,7 @@ export const getApplication = (allowFakeData = false): Form => {
       electionInfoSection,
       individualKeyNumbersSection,
       cemetryKeyNumbersSection,
-      cemetryCaretaker,
+      sectionCemetryCaretaker,
       partyKeyNumbersSection,
       buildSection({
         id: 'documents',

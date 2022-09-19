@@ -10,12 +10,12 @@ import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { m } from '../../../lib/messages'
-import { Total } from '../../KeyNumbers'
-import { CAPITALNUMBERS, INPUTCHANGEINTERVAL } from '../../../lib/constants'
+import { m } from '../../lib/messages'
+import { Total } from '../KeyNumbers'
+import { CAPITALNUMBERS, INPUTCHANGEINTERVAL } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
 
-export const CapitalNumbers = () => {
+export const KeyNumbersCapital = () => {
   const { formatMessage } = useLocale()
   const [totalCapital, setTotalCapital] = useState(0)
   const { clearErrors, errors, getValues } = useFormContext()

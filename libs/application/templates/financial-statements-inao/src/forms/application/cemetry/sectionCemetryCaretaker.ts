@@ -15,7 +15,7 @@ import {
   getCurrentUserType,
 } from '../../../lib/utils/helpers'
 
-export const cemetryCaretaker = buildSection({
+export const sectionCemetryCaretaker = buildSection({
   id: 'cemetryCaretaker',
   title: m.cemeteryCaretakers,
   condition: (answers, externalData) => {
@@ -28,7 +28,6 @@ export const cemetryCaretaker = buildSection({
     const totalIncome = applicationAnswers.operatingCost?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm
     const isUnderLimit = currencyStringToNumber(totalIncome) < CARETAKERLIMIT
-    console.info({ isUnderLimit, longTermDebt, currentAssets })
     return isUnderLimit && currentAssets === '0' && longTermDebt === '0'
   },
   children: [

@@ -19,7 +19,7 @@ export const capitalNumberSection = buildSubSection({
           id: 'capitalNumberField',
           title: '',
           description: '',
-          component: 'CapitalNumbers',
+          component: 'KeyNumbersCapital',
           childInputIds: Object.values(CAPITALNUMBERS),
         }),
       ],
