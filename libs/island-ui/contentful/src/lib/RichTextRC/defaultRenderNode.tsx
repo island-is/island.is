@@ -1,4 +1,3 @@
-import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
@@ -8,6 +7,7 @@ import {
   Blockquote,
   ResponsiveSpace,
   Box,
+  Table as T,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import * as styles from './RichText.css'
@@ -142,6 +142,21 @@ export const defaultRenderNode: RenderNode = {
       <hr />
     </Box>
   ),
+  [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
+  [BLOCKS.TABLE_ROW]: (_node, children) => {
+    if (
+      (children as { nodeType: string }[])?.every(
+        (childNode) => childNode?.nodeType === BLOCKS.TABLE_HEADER_CELL,
+      )
+    ) {
+      return <T.Head>{children}</T.Head>
+    }
+    return <T.Row>{children}</T.Row>
+  },
+  [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
+    <T.HeadData>{children}</T.HeadData>
+  ),
+  [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),

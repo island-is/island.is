@@ -370,50 +370,6 @@ const technicalInfoArray = (
           title: formatMessage(messages.carryingCapacity),
           value: displayWithUnit(data.carryingCapacity?.toString(), 'kg'),
         },
-        data.axleTotalWeight?.toString() && {
-          title: formatMessage(messages.axleTotalWeight),
-          value: displayWithUnit(data.axleTotalWeight?.toString(), 'kg'),
-        },
-        data.tyres?.axle1 && {
-          title: formatMessage(messages.axle),
-          value: '1',
-        },
-        data.tyres?.axle1 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle1,
-        },
-        data.tyres?.axle2 && {
-          title: formatMessage(messages.axle),
-          value: '2',
-        },
-        data.tyres?.axle2 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle2,
-        },
-        data.tyres?.axle3 && {
-          title: formatMessage(messages.axle),
-          value: '3',
-        },
-        data.tyres?.axle3 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle3,
-        },
-        data.tyres?.axle4 && {
-          title: formatMessage(messages.axle),
-          value: '4',
-        },
-        data.tyres?.axle4 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle4,
-        },
-        data.tyres?.axle5 && {
-          title: formatMessage(messages.axle),
-          value: '5',
-        },
-        data.tyres?.axle5 && {
-          title: formatMessage(messages.axleWheel),
-          value: data.tyres.axle5,
-        },
       ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),

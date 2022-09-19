@@ -31,14 +31,16 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
     >
       <GridContainer>
         <Box {...boxProps}>
-          <Text
-            variant="h2"
-            as="h2"
-            id={'sliceTitle-' + slice.id}
-            paddingBottom={2}
-          >
-            {slice.title}
-          </Text>
+          {slice.showTitle && (
+            <Text
+              variant="h2"
+              as="h2"
+              id={'sliceTitle-' + slice.id}
+              paddingBottom={2}
+            >
+              {slice.title}
+            </Text>
+          )}
           {richText(slice.content as SliceType[])}
           {slice.link && slice.link.url && (
             <Link href={slice.link.url}>

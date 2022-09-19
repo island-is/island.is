@@ -56,6 +56,9 @@ export const slices = gql`
     categories
     buttonText
     signupUrl
+    image {
+      ...ImageFields
+    }
   }
 
   fragment StoryFields on StorySlice {
@@ -421,6 +424,7 @@ export const slices = gql`
       ...AssetFields
     }
     dividerOnTop
+    showTitle
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -561,6 +565,11 @@ export const slices = gql`
         url
         title
       }
+      thumbnail {
+        url
+        title
+      }
+      intro
     }
   }
 

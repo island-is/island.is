@@ -61,6 +61,14 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  digitalicelandservices: {
+    is: '/s/stafraent-island/thjonustur',
+    en: '/en/o/digital-iceland/island-services',
+  },
+  digitalicelandservicesdetailpage: {
+    is: '/s/stafraent-island/thjonustur/[slug]',
+    en: '/en/o/digital-iceland/island-services/[slug]',
+  },
   organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
