@@ -147,8 +147,8 @@ export const createPkPassDataInput = (
 
     const splitArray = address.split(',')
     return {
-      address: splitArray[0].trim(),
-      zip: splitArray[1].trim(),
+      address: splitArray[0].trim() ?? '',
+      zip: splitArray[1].trim() ?? '',
     }
   }
 
