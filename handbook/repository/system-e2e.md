@@ -114,26 +114,26 @@ web/                      (app name)
 
 ## 🗃️ Spec files
 
-A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with a description of what scenario each test case is testing. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `afterEach`. You shouldn’t _rely_ on `after*` ever running, and you should prepare your environment every time _before_ each test. For example:
+A spec file should have only one description (`test.describe`) of what part of an app is being tested. Therein can be one or more test cases (`test`) with a description of what scenario each test case is testing. Setup and teardown can be done in `test.beforeAll`, `test.beforeEach`, `test.afterAll`, and `test.afterEach`. You shouldn’t _rely_ on `after*` ever running, and you should prepare your environment every time _before_ each test. For example:
 
 ```jsx
-describe('Overview part of banking app', () => {
-  before(() => {
+test.describe('Overview part of banking app', () => {
+  test.beforeAll(() => {
     // Create/clear database
     // Seed database
   })
-  beforeEach(() => {
+  test.beforeEach(() => {
     // Log in
     // Basic state reset, e.g. clear inbox
   })
 
-  it('should get paid', () => {
+  test('should get paid', () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
   })
 
   /** NOTE: there is no guarantee this will run */
-  after(() => {
+  test.afterAll(() => {
     // Tear down database
     // Log out
   })
@@ -159,7 +159,7 @@ Fixtures can be any JSON object (in `.json` files) or a typed TypeScript object 
 
 If you want to mock a scenario where the back-end returns a specific object/reply, you can use `page.route` to catch the back-end call and either modify the request/response or return something custom.
 
-For example, if you want to simulate a GraphQL error from user-profile you could add the following to your test case (`test(...)`) or `beforeAll`/`beforeEach`:
+For example, if you want to simulate a GraphQL error from user-profile you could add the following to your test case (`test(...)`) or `test.beforeAll`/`test.beforeEach`:
 
 ```jsx
 // ...
