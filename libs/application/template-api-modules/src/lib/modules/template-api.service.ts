@@ -28,6 +28,7 @@ import {
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  DrivingLicenseDuplicateService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -75,6 +76,7 @@ export class TemplateAPIService {
     private readonly passportService: PassportService,
     private readonly operatingLicenseService: OperatingLicenseService,
     private readonly financialStatementsInaoService: FinancialStatementsInaoTemplateService,
+    private readonly drivingLicenseDuplicateService: DrivingLicenseDuplicateService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -105,7 +107,8 @@ export class TemplateAPIService {
       | MortgageCertificateSubmissionService
       | PassportService
       | OperatingLicenseService
-      | FinancialStatementsInaoTemplateService,
+      | FinancialStatementsInaoTemplateService
+      | DrivingLicenseDuplicateService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -261,6 +264,11 @@ export class TemplateAPIService {
       case ApplicationTypes.FINANCIAL_STATEMENTS_INAO:
         return this.tryRunningActionOnService(
           this.financialStatementsInaoService,
+          action,
+        )
+      case ApplicationTypes.DRIVING_LICENSE_DUPLICATE:
+        return this.tryRunningActionOnService(
+          this.drivingLicenseDuplicateService,
           action,
         )
     }
