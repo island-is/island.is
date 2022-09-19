@@ -421,6 +421,7 @@ export const slices = gql`
       ...AssetFields
     }
     dividerOnTop
+    showTitle
   }
 
   fragment AccordionSliceFields on AccordionSlice {
