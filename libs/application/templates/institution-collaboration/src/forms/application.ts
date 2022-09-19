@@ -1,5 +1,4 @@
 import { Comparators, Form, FormModes } from '@island.is/application/types'
-import { YES } from '../constants'
 import {
   buildCompanySearchField,
   buildCustomField,
@@ -10,6 +9,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 
+import { YES } from '../constants'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const application: Form = buildForm({
@@ -95,6 +95,7 @@ export const application: Form = buildForm({
               id: 'secondaryContact.name',
               title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
+              defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
                 comparator: Comparators.EQUALS,
@@ -107,6 +108,7 @@ export const application: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
+              defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
                 comparator: Comparators.EQUALS,
@@ -118,6 +120,7 @@ export const application: Form = buildForm({
               title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
+              defaultValue: '',
               condition: {
                 questionId: 'hasSecondaryContact',
                 comparator: Comparators.EQUALS,
@@ -132,17 +135,10 @@ export const application: Form = buildForm({
       id: 'serviceSection',
       title: m.service.sectionLabel,
       children: [
-        buildMultiField({
-          id: 'applicantInformation',
-          title: m.service.sectionTitle,
-          // description: m.service.sectionDescription,
-          children: [
-            buildCustomField({
-              id: 'constraints',
-              title: '',
-              component: 'Constraints',
-            }),
-          ],
+        buildCustomField({
+          id: 'constraints',
+          title: '',
+          component: 'Constraints',
         }),
       ],
     }),
