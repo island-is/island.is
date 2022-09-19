@@ -9,7 +9,7 @@ interface Props {
   message: string
 }
 
-export const PoliceCaseFilesMessageBox: React.FC<Props> = (props) => {
+const PoliceCaseFilesMessageBox: React.FC<Props> = (props) => {
   const { icon, iconColor, message } = props
 
   return (
@@ -21,3 +21,5 @@ export const PoliceCaseFilesMessageBox: React.FC<Props> = (props) => {
     </Box>
   )
 }
+
+export default PoliceCaseFilesMessageBox

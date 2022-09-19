@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
+
 import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
   GetSignedUrlQueryQuery,
   GetSignedUrlQueryQueryVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
 
 interface Parameters {
   caseId: string
