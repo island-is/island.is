@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { AuthMiddleware, User, Auth } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
 
 import { ApiResponse, EinstaklingarApi } from '../../gen/fetch'
 import { formatIndividualDto, IndividualDto } from './types/individual.dto'
@@ -15,6 +16,18 @@ import {
 import { FamilyDto, formatFamilyDto } from './types/family.dto'
 import { BirthplaceDto, formatBirthplaceDto } from './types/birthplace.dto'
 import { CitizenshipDto, formatCitizenshipDto } from './types/citizenship.dto'
+
+const MODERN_IGNORED_STATUS = 204
+
+// Need to handle some legacy status codes. As of 2022-09-09:
+const LEGACY_IGNORED_STATUSES = [
+  // Future compatible.
+  204,
+  // /forsja and other endpoints in development.
+  400,
+  // /forsja in production at least.
+  404,
+]
 
 @Injectable()
 export class NationalRegistryClientService {
@@ -100,23 +113,30 @@ export class NationalRegistryClientService {
   private async handleLegacyMissingData<T>(
     promise: Promise<ApiResponse<T>>,
   ): Promise<T | null> {
-    const response = await promise
-    // Need to handle some legacy status codes. As of 2022-09-09:
-    if (
-      response.raw.status === 204 || // Future compatible.
-      response.raw.status === 400 || // /forsja and other endpoints in development.
-      response.raw.status === 404 //    /forsja in production at least.
-    ) {
-      return null
-    }
-    return response.value()
+    return promise.then(
+      (response) => {
+        if (LEGACY_IGNORED_STATUSES.includes(response.raw.status)) {
+          return null
+        }
+        return response.value()
+      },
+      (error) => {
+        if (
+          error instanceof FetchError &&
+          LEGACY_IGNORED_STATUSES.includes(error.status)
+        ) {
+          return null
+        }
+        throw error
+      },
+    )
   }
 
   private async handleModernMissingData<T>(
     promise: Promise<ApiResponse<T>>,
   ): Promise<T | null> {
     const response = await promise
-    if (response.raw.status === 204) {
+    if (response.raw.status === MODERN_IGNORED_STATUS) {
       return null
     }
     return response.value()
