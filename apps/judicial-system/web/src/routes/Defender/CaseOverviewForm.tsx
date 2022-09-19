@@ -10,9 +10,13 @@ import {
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
+  CaseDates,
   FormContentContainer,
   InfoCard,
+  MarkdownWrapper,
   PdfButton,
+  RestrictionTags,
+  SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -33,10 +37,6 @@ import {
   core,
   defenderCaseOverview,
 } from '@island.is/judicial-system-web/messages'
-import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
-import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 
 interface Props {
   workingCase: Case
@@ -150,7 +150,9 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
           data={[
             {
               title: formatMessage(core.policeCaseNumber),
-              value: workingCase.policeCaseNumbers.join(', '),
+              value: workingCase.policeCaseNumbers.map((n) => (
+                <Text key={n}>{n}</Text>
+              )),
             },
             {
               title: formatMessage(core.courtCaseNumber),
@@ -190,14 +192,25 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                 ]
               : []),
           ]}
-          defendants={workingCase.defendants ?? []}
+          defendants={
+            workingCase.defendants
+              ? {
+                  title: capitalize(
+                    formatMessage(core.defendant, {
+                      suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
+                    }),
+                  ),
+                  items: workingCase.defendants,
+                }
+              : undefined
+          }
           defender={{
             name: workingCase.defenderName ?? '',
             defenderNationalId: workingCase.defenderNationalId,
+            sessionArrangement: workingCase.sessionArrangements,
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
-          sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
       {completedCaseStates.includes(workingCase.state) && (
@@ -244,11 +257,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                       signatory={workingCase.courtRecordSignatory.name}
                       signingDate={workingCase.courtRecordSignatureDate}
                     />
-                  ) : (
-                    <Text>
-                      {formatMessage(defenderCaseOverview.unsignedDocument)}
-                    </Text>
-                  )}
+                  ) : null}
                 </PdfButton>
                 <PdfButton
                   renderAs="row"

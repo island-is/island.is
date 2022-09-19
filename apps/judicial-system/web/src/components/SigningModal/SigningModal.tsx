@@ -26,7 +26,7 @@ import {
   RequestRulingSignatureMutationMutation,
   RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
-import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
+import RequestRulingSignatureMutation from './requestRulingSignatureGql'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
   return (
@@ -122,7 +122,7 @@ export const getSuccessText = (
       })
 }
 
-const SigningModal: React.FC<SigningModalProps> = ({
+export const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   requestRulingSignature,
   requestRulingSignatureResponse,
@@ -189,7 +189,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
           ? 'Loka glugga'
           : 'Reyna aftur'
       }
-      handlePrimaryButtonClick={() => {
+      onPrimaryButtonClick={() => {
         if (navigateOnClose) {
           router.push(
             `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
@@ -197,7 +197,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         }
         onClose()
       }}
-      handleSecondaryButtonClick={async () => {
+      onSecondaryButtonClick={async () => {
         if (signingProgress === 'success') {
           if (navigateOnClose) {
             router.push(
@@ -215,5 +215,3 @@ const SigningModal: React.FC<SigningModalProps> = ({
     />
   )
 }
-
-export default SigningModal

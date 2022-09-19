@@ -1,7 +1,13 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  unitsOfUseFragment,
+  pagingFragment,
+  appraisalFragment,
+  addressFragment,
+} from '@island.is/service-portal/graphql'
 import { defineMessage } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery, useLazyQuery, gql } from '@apollo/client'
 import { Query, PropertyOwner } from '@island.is/api/schema'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
@@ -15,13 +21,69 @@ import AssetLoader from '../../components/AssetLoader'
 import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { ownersArray } from '../../utils/createUnits'
 import { messages } from '../../lib/messages'
-import {
-  GET_SINGLE_PROPERTY_QUERY,
-  GET_PROPERTY_OWNERS_QUERY,
-} from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 import { TableGrid, TableUnits } from '@island.is/service-portal/core'
+
+export const ownerFragment = gql`
+  fragment Owner on PropertyOwner {
+    name
+    ssn
+    ownership
+    purchaseDate
+    grantDisplay
+  }
+`
+
+export const GET_PROPERTY_OWNERS_QUERY = gql`
+  query GetAssetsPropertyOwners($input: GetPagingTypes!) {
+    assetsPropertyOwners(input: $input) {
+      registeredOwners {
+        ...Owner
+      }
+      paging {
+        ...Paging
+      }
+    }
+  }
+  ${pagingFragment}
+  ${ownerFragment}
+`
+
+export const GET_SINGLE_PROPERTY_QUERY = gql`
+  query GetSingleRealEstateQuery($input: GetRealEstateInput!) {
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        ...Address
+      }
+      appraisal {
+        ...Appraisal
+      }
+      registeredOwners {
+        registeredOwners {
+          ...Owner
+        }
+      }
+      land {
+        landNumber
+        landAppraisal
+        useDisplay
+        area
+        areaUnit
+      }
+      unitsOfUse {
+        unitsOfUse {
+          ...unitsOfUse
+        }
+      }
+    }
+  }
+  ${unitsOfUseFragment}
+  ${ownerFragment}
+  ${appraisalFragment}
+  ${addressFragment}
+`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
