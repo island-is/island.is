@@ -34,14 +34,13 @@ export interface Config {
     path: string
     secret: string
   }
-  pkpass: {
-    apiKey: string
-    apiUrl: string
-    secretKey: string
-    cacheKey: string
-    cacheTokenExpiryDelta: string
-    authRetries: string
-  }
+  pkpass: PkPassConfig
+}
+export interface Config {
+  firearmLicense: PkPassConfig
+  driversLicense: DriversLicenseConfig
+  adrLicense: PkPassConfig
+  machineLicense: PkPassConfig
 }
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
@@ -113,9 +112,19 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(logger, adrApi, smartApi)
+                return new GenericAdrLicenseApi(
+                  logger,
+                  adrApi,
+                  new SmartSolutionsApi(logger, config.adrLicense),
+                )
               case GenericLicenseType.MachineLicense:
                 return new GenericMachineLicenseApi(
+                  logger,
+                  machineApi,
+                  new SmartSolutionsApi(logger, config.machineLicense),
+                )
+              case GenericLicenseType.FirearmLicense:
+                return new GenericFirearmLicenseApi(
                   logger,
                   machineApi,
                   smartApi,
