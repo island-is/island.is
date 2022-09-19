@@ -51,7 +51,7 @@ describe(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('courtCaseNumber').type('S-1/2021').blur()
     cy.getByTestid('inputErrorMessage').contains(
-      `Dæmi: S-1234/${new Date().getFullYear()}`,
+      `Dæmi: R-1234/${new Date().getFullYear()}`,
     )
 
     // continue button enabled when form becomes valid
