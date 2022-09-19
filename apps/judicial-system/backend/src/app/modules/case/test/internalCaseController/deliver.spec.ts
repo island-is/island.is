@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import {
+  CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   CaseState,
@@ -14,7 +15,7 @@ import {
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtService } from '../../../court'
 import { PoliceService } from '../../../police'
-import { FileService } from '../../../file'
+import { CaseFile, FileService } from '../../../file'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -364,6 +365,59 @@ describe('InternalCaseController - Deliver', () => {
         policeCaseNumbers,
         [defendantNationalId],
         caseConclusion,
+      )
+    })
+  })
+
+  describe('create ruling for indictment', () => {
+    const caseId = uuid()
+    const courtId = uuid()
+    const courtCaseNumber = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.THEFT,
+      courtId,
+      courtCaseNumber,
+    } as Case
+    const type = uuid()
+    const key = uuid()
+    const suffix = uuid()
+    const name = `${uuid()}.${suffix}`
+    const caseFile = {
+      type,
+      category: CaseFileCategory.RULING,
+      key,
+      name,
+    } as CaseFile
+    const pdf = Buffer.from('test ruling')
+
+    beforeEach(async () => {
+      const mockGetAllCaseFiles = mockFileService.getAllCaseFiles as jest.Mock
+      mockGetAllCaseFiles.mockResolvedValueOnce([caseFile])
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(pdf)
+
+      const then = await givenWhenThen(caseId, theCase)
+      console.log(then)
+    })
+
+    it('should get all case files', async () => {
+      expect(mockFileService.getAllCaseFiles).toHaveBeenCalledWith(caseId)
+    })
+
+    it('should get the ruling from S3', async () => {
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(key)
+    })
+
+    it('should create a ruling at court for indictment', async () => {
+      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        caseId,
+        courtId,
+        courtCaseNumber,
+        'test',
+        `test.${suffix}`,
+        type,
+        pdf,
       )
     })
   })
