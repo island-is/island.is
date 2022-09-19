@@ -507,6 +507,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //   },
       // },
       [States.APPROVED]: {
+        entry: 'assignToVMST',
         meta: {
           name: States.APPROVED,
           actionCard: {
@@ -715,6 +716,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
+        entry: 'assignToVMST',
         exit: 'clearTemp',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -731,6 +733,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EditsInReview),
                 ),
               read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
               write: 'all',
             },
           ],
