@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IMailingListSignup } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class MailingListSignupSlice {
@@ -45,6 +46,9 @@ export class MailingListSignupSlice {
 
   @Field()
   signupUrl!: string
+
+  @Field(() => Image, { nullable: true })
+  image?: Image
 }
 
 export const mapMailingListSignup = ({
@@ -66,4 +70,5 @@ export const mapMailingListSignup = ({
   categories: JSON.stringify(fields.categories) ?? '',
   buttonText: fields.buttonText ?? '',
   signupUrl: fields.signupUrl ?? '',
+  image: fields.image ? mapImage(fields.image) : undefined,
 })
