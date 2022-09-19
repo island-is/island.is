@@ -1,4 +1,4 @@
-# TESTING WALKTHROUGH
+# Testing
 
 Welcome to testing. Jump to the section you need below.
 
@@ -25,10 +25,9 @@ However, not all projects support this, or are incomplete in this setup. If this
 
 Playwright can be started in several ways. Using utility scripts, in container, on remote (dev), etc.
 
-<aside>
+{% hint style="info" %}
 💡 Add `TEST_ENVIRONMENT=dev` to the bottom of your `.env.secret` file to test against the live [dev-web](https://beta.dev01.devland.is/). Valid values are `local` (default), `dev`, `staging`, and `prod` to test the respective live environment.
-
-</aside>
+{% endhint %}
 
 - Utility script
   - Get help: `./scripts/local-e2e.sh --help`
@@ -39,7 +38,9 @@ Playwright can be started in several ways. Using utility scripts, in container, 
   - `yarn playwright install`
   - `yarn playwright test --project <path/to/your/app>`
 
+{% hint style="info" %}
 You can append to the `test` command the path/name of your test case `yarn playwright test <path/to/spec/file>` to only test a specific spec.
+{% endhint %}
 
 # ✍️ Writing tests
 
@@ -200,7 +201,7 @@ await page.waitForFunction(async () => {
 
 ## 🫀 500: Internal Server Error
 
-A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error isn’t from your code, ignore it for now… We don’t know what’s going on 🤷
+A 500 error can occur randomly. If the error is coming from your app or code you worked on, you have earned yourself a debug day. If the error isn’t from your code, ignore it for now. We don’t know what’s going on 🤷
 
 ## 💀 Error: ESOCKETTIMEDOUT
 
