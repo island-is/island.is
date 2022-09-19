@@ -5,7 +5,7 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DistrictCommissionerAgencies } from '../../types/schema'
+import { DistrictCommissionerAgencies } from '@island.is/api/schema'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',

@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser } from '../../types/schema'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import format from 'date-fns/format'

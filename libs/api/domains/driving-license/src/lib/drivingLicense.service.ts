@@ -314,13 +314,9 @@ export class DrivingLicenseService {
     const image = await this.drivingLicenseApi.getQualityPhoto({
       nationalId,
     })
-    const qualityPhoto =
-      image?.data && image?.data.length > 0
-        ? `data:image/jpeg;base64,${image?.data.substr(
-            1,
-            image.data.length - 2,
-          )}`
-        : null
+    const qualityPhoto = image?.data?.length
+      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
+      : null
 
     return qualityPhoto
   }
@@ -343,13 +339,9 @@ export class DrivingLicenseService {
     const image = await this.drivingLicenseApi.getQualitySignature({
       nationalId,
     })
-    const qualitySignature =
-      image?.data && image?.data.length > 0
-        ? `data:image/jpeg;base64,${image?.data.substr(
-            1,
-            image.data.length - 2,
-          )}`
-        : null
+    const qualitySignature = image?.data?.length
+      ? `data:image/jpeg;base64,${image?.data.substr(1, image.data.length - 2)}`
+      : null
 
     return qualitySignature
   }

@@ -4,7 +4,7 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { Eligibility, DrivingLicense } from '../types/schema'
+import { Eligibility, DrivingLicense } from '@island.is/api/schema'
 
 export interface CurrentLicenseProviderResult {
   categories: Eligibility[] | null
@@ -45,7 +45,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
       return Promise.reject({ error: response.errors })
     }
     const categories = (response.data?.drivingLicense?.categories ?? []).map(
-      (category) => ({
+      (category: Eligibility) => ({
         ...category,
         name:
           category.name === 'B'
