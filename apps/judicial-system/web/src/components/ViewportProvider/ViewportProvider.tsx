@@ -44,5 +44,3 @@ export const ViewportProvider: React.FC = ({ children }) => {
     </ViewportContext.Provider>
   )
 }
-
-export default ViewportProvider
