@@ -51,7 +51,7 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
     message: '',
   })
 
-  const [subscribeToMailchimp, { data: result, loading, error }] = useMutation<
+  const [subscribeToMailchimp] = useMutation<
     MailchimpSubscribeMutation,
     MailchimpSubscribeMutationVariables
   >(MAILING_LIST_SIGNUP_MUTATION)
