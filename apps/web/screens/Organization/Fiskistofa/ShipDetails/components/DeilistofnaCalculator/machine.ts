@@ -9,11 +9,11 @@ import {
   ShipStatusInformation,
 } from '@island.is/web/graphql/schema'
 import { createMachine, assign } from 'xstate'
-import { GET_QUOTA_TYPES_FOR_CALENDAR_YEAR } from '../QuotaTypeSelect/queries'
+import { GET_QUOTA_TYPES_FOR_CALENDAR_YEAR } from '../../queries'
 import {
   GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
   UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
-} from './queries'
+} from '../../queries'
 
 type ContextData = {
   shipInformation?: Ship
@@ -23,7 +23,7 @@ type ContextData = {
 /** Mutates a category list by sorting it an name ascending order */
 const orderCategories = (categories: ContextData['catchQuotaCategories']) => {
   // Ascending order by name
-  categories.sort((a, b) => a.name.localeCompare(b.name))
+  categories.sort((a, b) => a.id - b.id)
 
   // If there's a timestamp we want to use that to order the categories
   categories.sort((a, b) => {

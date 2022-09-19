@@ -72,6 +72,9 @@ export interface CatchQuotaCategory {
 
   /** prosentaAfNaestaArKvoti - Föst prósenta sem skip þarf að setja af næsta ári af fisktegund fyrir tímabil út frá kvóta */
   percentNextYearFromQuota?: number
+
+  /** Úthlutað/Áætlað aflamark */
+  allocatedCatchQuota?: number
 }
 
 export interface ShipStatus {

@@ -69,7 +69,7 @@ globalStyle(`${tableContainer}:not(th:nth-child(1))`, {
 
 globalStyle(`${tableContainer} td`, {
   padding: '8px',
-  fontSize: '14px',
+  fontSize: '16px',
 })
 
 globalStyle(`${tableContainer} tr td:nth-child(1)`, {
@@ -77,9 +77,9 @@ globalStyle(`${tableContainer} tr td:nth-child(1)`, {
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
   textAlign: 'left',
-  width: '120px',
-  minWidth: '120px',
-  maxWidth: '120px',
+  width: '140px',
+  minWidth: '140px',
+  maxWidth: '140px',
   left: '0px',
   zIndex: 1,
 })
@@ -87,9 +87,9 @@ globalStyle(`${tableContainer} tr td:nth-child(1)`, {
 globalStyle(`${tableContainer} tr th:nth-child(1)`, {
   borderRight: '1px solid #CCDFFF',
   position: 'sticky',
-  width: '120px',
-  minWidth: '120px',
-  maxWidth: '120px',
+  width: '140px',
+  minWidth: '140px',
+  maxWidth: '140px',
   left: '0px',
   zIndex: 1,
   background: '#E6F2FB',
@@ -103,7 +103,7 @@ globalStyle(`${tableContainer} tr td:nth-child(2)`, {
   width: '180px',
   minWidth: '180px',
   maxWidth: '180px',
-  left: '120px',
+  left: '140px',
   zIndex: 1,
 })
 
@@ -114,6 +114,6 @@ globalStyle(`${tableContainer} tr th:nth-child(2)`, {
   width: '180px',
   minWidth: '180px',
   maxWidth: '180px',
-  left: '120px',
+  left: '140px',
   zIndex: 1,
 })

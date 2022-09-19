@@ -64,3 +64,5 @@ export const generateTimePeriodOptions = () => {
 
   return timePeriods.reverse()
 }
+
+export const numberFormatter = new Intl.NumberFormat('de-DE')
