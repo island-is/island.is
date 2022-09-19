@@ -5,7 +5,7 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, Inject } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
 import {
@@ -27,11 +27,14 @@ import {
   GetSignedUrlInput,
   SpouseEmailInput,
 } from './dto'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MunicipalitiesFinancialAidResolver {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private municipalitiesFinancialAidService: MunicipalitiesFinancialAidService,
   ) {}
 
@@ -39,9 +42,14 @@ export class MunicipalitiesFinancialAidResolver {
   async municipalitiesFinancialAidCurrentApplication(
     @CurrentUser() user: User,
   ): Promise<string | null> {
-    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
-      user,
-    )
+    try {
+      return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
+        user,
+      )
+    } catch (e) {
+      this.logger.error(`municipalitiesFinancialAidCurrentApplication`, e)
+    }
+    return null
   }
 
   @Query(() => MunicipalityModel, { nullable: true })
@@ -50,10 +58,15 @@ export class MunicipalitiesFinancialAidResolver {
     input: MunicipalityInput,
     @CurrentUser() user: User,
   ): Promise<MunicipalityModel | null> {
-    return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
-      user,
-      input,
-    )
+    try {
+      return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
+        user,
+        input,
+      )
+    } catch (e) {
+      this.logger.error(`municipalitiesFinancialAidMunicipality`, e)
+    }
+    return null
   }
 
   @Query(() => PersonalTaxReturnResponse)
@@ -62,19 +75,29 @@ export class MunicipalitiesFinancialAidResolver {
     input: PersonalTaxReturnInput,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
-    return await this.municipalitiesFinancialAidService.personalTaxReturnForFinancialAId(
-      user,
-      input.id,
-    )
+    try {
+      return await this.municipalitiesFinancialAidService.personalTaxReturnForFinancialAId(
+        user,
+        input.id,
+      )
+    } catch (e) {
+      this.logger.error(`municipalitiesPersonalTaxReturn`, e)
+    }
+    return {}
   }
 
   @Query(() => DirectTaxPaymentsResponse)
   async municipalitiesDirectTaxPayments(
     @CurrentUser() user: User,
   ): Promise<DirectTaxPaymentsResponse> {
-    return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
-      user,
-    )
+    try {
+      return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
+        user,
+      )
+    } catch (e) {
+      this.logger.error(`municipalitiesDirectTaxPayments`, e)
+    }
+    return {}
   }
 
   @Mutation(() => SignedUrlModel)

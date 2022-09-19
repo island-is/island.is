@@ -43,6 +43,7 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import AxleTable from '../../components/DetailTable/AxleTable'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -422,6 +423,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           title={technicalArr.header.title}
           mt
         />
+      )}
+      {technicalInfo?.axles && technicalInfo.tyres && (
+        <AxleTable axles={technicalInfo?.axles} tyres={technicalInfo?.tyres} />
       )}
 
       {operators &&
