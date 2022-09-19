@@ -109,6 +109,10 @@ export class ApplicationAccessService {
           return false
         }
       }
+      // application doesnt allow delegation and user is acting on behalf of applicant
+      else {
+        return false
+      }
     }
 
     const currentUserRole = template.mapUserToRole(nationalId, application)
