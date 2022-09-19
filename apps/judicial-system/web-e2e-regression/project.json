@@ -17,13 +17,7 @@
         }
       }
     },
-    "e2e-ci": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "cypressConfig": "apps/judicial-system/web-e2e-regression/cypress.config.ts",
-        "command": "yarn e2e-ci -n judicial-system-web-e2e-regression -c -d dist/apps/judicial-system/web"
-      }
-    },
+    "e2e-ci": {},
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
