@@ -23,6 +23,7 @@ export enum Features {
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
   estateApplication = 'isEstateApplicationEnabled',
+  drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

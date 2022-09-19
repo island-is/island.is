@@ -25,6 +25,7 @@ import { PassportModule } from './passport/passport.module'
 import { OperatingLicenseModule } from './operating-license/operatingLicense.module'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { EstateTemplateModule } from './estate/estate.module'
+import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -54,6 +55,7 @@ export const modules = [
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
   EstateTemplateModule,
+  DrivingLicenseDuplicateModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -83,3 +85,4 @@ export { PassportService } from './passport/passport.service'
 export { OperatingLicenseService } from './operating-license/operatingLicense.service'
 export { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 export { EstateTemplateService } from './estate/estate.service'
+export { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'

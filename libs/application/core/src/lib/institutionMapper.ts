@@ -45,4 +45,6 @@ export const institutionMapper = {
   [ApplicationTypes.OPERATING_LCENSE]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.MARRIAGE_CONDITIONS]: InstitutionTypes.SYSLUMENN,
   [ApplicationTypes.ESTATE]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]:
+    InstitutionTypes.RIKISLOGREGLUSTJORI,
 }

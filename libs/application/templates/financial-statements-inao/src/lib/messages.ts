@@ -139,7 +139,7 @@ export const m = defineMessages({
     description: 'statement',
   },
   electionDeclare: {
-    id: 'fsn.application:electionStatementLaw',
+    id: 'fsn.application:electionStatementDeclare',
     defaultMessage:
       'Ég lýsi því hér með yfir að viðlögðum drengskap að hvorki heildartekjur né heildarkostnaður vegna framboðs míns í kjörinu voru hærri en kr.',
     description: 'statement',
@@ -578,7 +578,7 @@ export const m = defineMessages({
     description: 'Participated in election',
   },
   overview: {
-    id: 'fsn.application:overview.general.sectionTitle',
+    id: 'fsn.application:overview.general.overview',
     defaultMessage: 'Yfirferð',
     description: 'Overview section title',
   },
@@ -593,12 +593,12 @@ export const m = defineMessages({
     description: 'Overview correct',
   },
   overviewTitle: {
-    id: 'fsn.application:overview.general.name',
+    id: 'fsn.application:overview.general.title',
     defaultMessage: 'Yfitlit uppgjörs',
     description: 'Overview title',
   },
   overviewReview: {
-    id: 'fsn.application:overview.general.name',
+    id: 'fsn.application:overview.general.review',
     defaultMessage: 'Yfitlit uppgjörs',
     description: 'Overview review',
   },
