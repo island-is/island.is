@@ -11,15 +11,8 @@ import {
   formatDate,
   childrenResidenceInfo,
 } from '@island.is/application/templates/family-matters-core/utils'
-import {
-  Child,
-  ChildrenResidenceChangeNationalRegistry,
-  Override,
-} from '@island.is/application/templates/family-matters-core/types'
-import {
-  CRCApplication,
-  noChildren,
-} from '@island.is/application/templates/children-residence-change'
+import { Override } from '@island.is/application/templates/family-matters-core/types'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -33,7 +26,6 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { TemplateApiError } from '@island.is/nest/problem'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -57,89 +49,6 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     this.s3 = new S3()
   }
 
-  async nationalRegistry({
-    auth,
-  }: props): Promise<ChildrenResidenceChangeNationalRegistry> {
-    const response = await this.nationalRegistryApi.getNationalRegistryPerson(
-      auth.nationalId,
-      auth,
-    )
-
-    if (!response) {
-      throw new TemplateApiError(
-        {
-          title: 'Gögn úr þjóðskrá fundust ekki',
-          summary:
-            'Engin skráning úr þjóðskrá fannst á kennitölunni ' +
-            auth.nationalId,
-        },
-        400,
-      )
-    }
-
-    const childrenResponse = await this.nationalRegistryApi.getChildrenCustodyInformation(
-      auth.nationalId,
-      auth,
-    )
-
-    if (!childrenResponse) {
-      throw new TemplateApiError(
-        {
-          title: noChildren.title,
-          summary: noChildren.description,
-        },
-        400,
-      )
-    }
-
-    const { fullName, nationalId, address } = response
-
-    const children: Child[] = childrenResponse.map((child) => {
-      const {
-        fullName,
-        nationalId,
-        address,
-        otherParent,
-        livesWithApplicant,
-        livesWithBothParents,
-      } = child
-
-      const newOtherParent = {
-        address: {
-          postalCode: otherParent?.address?.postalCode ?? '',
-          city: otherParent?.address?.city ?? '',
-          streetName: otherParent?.address?.city ?? '',
-        },
-        fullName: otherParent?.fullName ?? '',
-        nationalId: otherParent?.nationalId ?? '',
-      }
-
-      return {
-        fullName: fullName,
-        nationalId: nationalId ?? '',
-        address: {
-          postalCode: address?.postalCode ?? '',
-          city: address?.city ?? '',
-          streetName: address?.city ?? '',
-        },
-        livesWithApplicant: livesWithApplicant ?? false,
-        livesWithBothParents: livesWithBothParents ?? false,
-        otherParent: newOtherParent,
-      }
-    })
-
-    return {
-      fullName,
-      nationalId,
-      address: {
-        postalCode: address?.postalCode ?? '',
-        city: address?.city ?? '',
-        streetName: address?.city ?? '',
-      },
-      children,
-    }
-  }
-
   async submitApplication({ application }: props) {
     const { answers, externalData } = application
     const { nationalRegistry } = externalData
@@ -151,7 +60,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const fileContent = file.Body as Buffer
 
     const selectedChildren = getSelectedChildrenFromExternalData(
-      applicant.children,
+      externalData.childrenCustodyInformation.data,
       answers.selectedChildren,
     )
 
@@ -159,9 +68,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
 
     const childResidenceInfo = childrenResidenceInfo(
       applicant,
+      externalData.childrenCustodyInformation.data,
       answers.selectedChildren,
     )
-    const currentAddress = childResidenceInfo.current.address
+    const currentAddress = childResidenceInfo?.current?.address
 
     if (!fileContent) {
       throw new Error('File content was undefined')
@@ -179,11 +89,15 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       ssn: applicant.nationalId,
       phoneNumber: answers.parentA.phoneNumber,
       email: answers.parentA.email,
-      homeAddress: applicant.address.streetName,
-      postalCode: applicant.address.postalCode,
-      city: applicant.address.city,
+      homeAddress: applicant?.address?.streetName ?? '',
+      postalCode: applicant?.address?.postalCode ?? '',
+      city: applicant.address?.locality ?? '',
       signed: true,
       type: PersonType.Plaintiff,
+    }
+
+    if (!otherParent) {
+      throw new Error('Parent B was undefined')
     }
 
     const parentB: Person = {
@@ -191,9 +105,9 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       ssn: otherParent.nationalId,
       phoneNumber: answers.parentB.phoneNumber,
       email: answers.parentB.email,
-      homeAddress: otherParent.address.streetName,
-      postalCode: otherParent.address.postalCode,
-      city: otherParent.address.city,
+      homeAddress: otherParent.address?.streetName || '',
+      postalCode: otherParent.address?.postalCode || '',
+      city: otherParent.address?.locality || '',
       signed: true,
       type: PersonType.CounterParty,
     }
@@ -202,9 +116,9 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       return {
         name: child.fullName,
         ssn: child.nationalId,
-        homeAddress: currentAddress.streetName,
-        postalCode: currentAddress.postalCode,
-        city: currentAddress.city,
+        homeAddress: currentAddress?.streetName || '',
+        postalCode: currentAddress?.postalCode || '',
+        city: currentAddress?.locality || '',
         signed: false,
         type: PersonType.Child,
       }
@@ -220,6 +134,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
         durationType === 'temporary' && durationDate
           ? formatDate({ date: durationDate, formatter: 'dd.MM.yyyy' })
           : durationType,
+    }
+
+    if (!childResidenceInfo.future?.address?.postalCode) {
+      throw new Error('Future residence postal code was not found')
     }
 
     const syslumennData = syslumennDataFromPostalCode(

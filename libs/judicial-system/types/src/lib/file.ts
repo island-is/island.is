@@ -42,6 +42,8 @@ export enum CaseFileState {
 }
 
 export enum CaseFileCategory {
+  COURT_RECORD = 'COURT_RECORD',
+  RULING = 'RULING',
   COVER_LETTER = 'COVER_LETTER',
   INDICTMENT = 'INDICTMENT',
   CRIMINAL_RECORD = 'CRIMINAL_RECORD',

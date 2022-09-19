@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Child } from '../../types'
 import { DescriptionText, InfoBanner } from '../../components'
 import { sortChildrenByAge } from '../../utils'
+import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 
 const shouldBeDisabled = (
-  children: Child[],
-  childOption: Child,
+  children: ApplicantChildCustodyInformation[],
+  childOption: ApplicantChildCustodyInformation,
   selectedChildren?: string[],
 ) => {
   if (childOption.livesWithBothParents || !childOption.otherParent) {
@@ -33,7 +33,7 @@ const shouldBeDisabled = (
 
 interface Props {
   id: string
-  children: Child[]
+  children: ApplicantChildCustodyInformation[]
   translations: {
     title: MessageDescriptor
     description: MessageDescriptor
@@ -48,7 +48,7 @@ interface Props {
 }
 
 const checkboxInfoText = (
-  child: Child,
+  child: ApplicantChildCustodyInformation,
   formatMessage: IntlFormatters['formatMessage'],
   translations: Props['translations'],
 ) => {

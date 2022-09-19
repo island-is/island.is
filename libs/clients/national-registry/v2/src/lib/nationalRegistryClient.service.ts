@@ -1,235 +1,150 @@
 import { Injectable } from '@nestjs/common'
-import * as kennitala from 'kennitala'
+
+import { AuthMiddleware, User, Auth } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 
-import { EinstaklingarApi } from '../../gen/fetch'
+import { ApiResponse, EinstaklingarApi } from '../../gen/fetch'
 import { formatIndividualDto, IndividualDto } from './types/individual.dto'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Residence } from './types/residence'
-import { Spouse } from './types/spouse'
-import { Birthplace } from './types/birthplace'
-import { NationalRegistryPerson } from './types/nationalRegistryPerson'
-import { NationalRegistryClientPerson } from 'national-registry-client'
-import { Citizenship } from './types/citizenship'
-import { FamilyMemberInfo } from './types/familyMemberInfo'
+import {
+  CohabitationDto,
+  formatCohabitationDto,
+} from './types/cohabitation.dto'
+import {
+  formatResidenceHistoryEntryDto,
+  ResidenceHistoryEntryDto,
+} from './types/residence-history-entry.dto'
+import { FamilyDto, formatFamilyDto } from './types/family.dto'
+import { BirthplaceDto, formatBirthplaceDto } from './types/birthplace.dto'
+import { CitizenshipDto, formatCitizenshipDto } from './types/citizenship.dto'
+
+const MODERN_IGNORED_STATUS = 204
+
+// Need to handle some legacy status codes. As of 2022-09-09:
+const LEGACY_IGNORED_STATUSES = [
+  // Future compatible.
+  204,
+  // /forsja and other endpoints in development.
+  400,
+  // /forsja in production at least.
+  404,
+]
 
 @Injectable()
 export class NationalRegistryClientService {
-  constructor(private nationalRegistryApi: EinstaklingarApi) {}
-
-  nationalRegistryApiWithAuth(auth: Auth) {
-    return this.nationalRegistryApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private handle404(error: FetchError) {
-    if (error.status === 404) {
-      return undefined
-    }
-    throw error
-  }
-
-  private handle400(error: FetchError) {
-    if (error.status === 400) {
-      return undefined
-    }
-    throw error
-  }
+  constructor(private individualApi: EinstaklingarApi) {}
 
   async getIndividual(nationalId: string): Promise<IndividualDto | null> {
-    const response = await this.nationalRegistryApi
-      .einstaklingarGetEinstaklingurRaw({
+    const individual = await this.handleModernMissingData(
+      this.individualApi.einstaklingarGetEinstaklingurRaw({
         id: nationalId,
-      })
-      .catch(this.handleError)
-
-    const individual =
-      response === null || response.raw.status === 204
-        ? null
-        : await response.value()
+      }),
+    )
 
     return formatIndividualDto(individual)
   }
 
-  private handleError(error: FetchError): null {
-    if (error.status === 404) {
-      return null
-    }
-    throw error
-  }
-
-  async getNationalRegistryResidenceHistory(
-    user: User,
-    nationalId: string,
-  ): Promise<Residence[] | undefined> {
-    const historyList = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetBuseta({ id: nationalId })
-      .catch(this.handle404)
-
-    return historyList?.map((heimili) => ({
-      address: {
-        city: heimili.stadur,
-        postalCode: heimili.postnumer,
-        streetName: heimili.heimilisfang,
-        municipalityCode: heimili.sveitarfelagsnumer,
-      },
-      houseIdentificationCode: heimili.huskodi,
-      realEstateNumber: heimili.fasteignanumer,
-      country: heimili.landakodi,
-      dateOfChange: heimili.breytt,
-    }))
-  }
-
-  async getNationalRegistryPerson(
-    nationalId: string,
-    auth: Auth,
-  ): Promise<NationalRegistryPerson | undefined> {
-    const response = await this.nationalRegistryApiWithAuth(auth)
-      .einstaklingarGetEinstaklingurRaw({ id: nationalId })
-      .catch(this.handle404)
-
-    // 2022-03-08: For some reason, the API now returns "204 No Content" when nationalId doesn't exist.
-    // Should remove this after they've fixed their API to return "404 Not Found".
-    const person: NationalRegistryClientPerson | undefined =
-      response === undefined || response.raw.status === 204
-        ? undefined
-        : await response.value()
-
-    return (
-      person && {
-        nationalId: person.kennitala,
-        fullName: person.nafn,
-        age: kennitala.info(person.kennitala).age,
-        address: person.logheimili && {
-          streetName: person.logheimili.heiti,
-          postalCode: person.logheimili.postnumer,
-          city: person.logheimili.stadur,
-          municipalityCode: person.logheimili.sveitarfelagsnumer,
-        },
-        genderCode: person.kynkodi,
-      }
+  async getCustodyChildren(parentUser: User): Promise<string[]> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi
+        .withMiddleware(new AuthMiddleware(parentUser))
+        .einstaklingarGetForsjaRaw({ id: parentUser.nationalId }),
     )
+    return response || []
   }
 
-  async getChildrenCustodyInformation(
-    parentNationalId: string,
-    auth: Auth,
-  ): Promise<NationalRegistryPerson[]> {
-    const nationalRegistryApi = this.nationalRegistryApiWithAuth(auth)
-    const childrenNationalIds = await nationalRegistryApi
-      .einstaklingarGetForsja({
-        id: parentNationalId,
-      })
-      .catch(this.handle404)
+  async getOtherCustodyParents(
+    parentUser: User,
+    childId: string,
+  ): Promise<string[]> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi
+        .withMiddleware(new AuthMiddleware(parentUser))
+        .einstaklingarGetForsjaForeldriRaw({
+          id: parentUser.nationalId,
+          barn: childId,
+        }),
+    )
+    return response || []
+  }
 
-    if (!childrenNationalIds) {
-      return []
-    }
-
-    const parentAFamily = await nationalRegistryApi.einstaklingarGetFjolskylda({
-      id: parentNationalId,
-    })
-    return await Promise.all(
-      childrenNationalIds.map(async (childNationalId) => {
-        const child = await nationalRegistryApi.einstaklingarGetEinstaklingur({
-          id: childNationalId,
-        })
-
-        const parents = await nationalRegistryApi.einstaklingarGetForsjaForeldri(
-          { id: parentNationalId, barn: child.kennitala },
-        )
-
-        const parentBNationalId = parents.find((id) => id !== parentNationalId)
-        const parentB = parentBNationalId
-          ? await this.getNationalRegistryPerson(parentBNationalId, auth)
-          : undefined
-
-        const livesWithApplicant = parentAFamily.einstaklingar?.some(
-          (person) => person.kennitala === child.kennitala,
-        )
-        const livesWithParentB =
-          parentB &&
-          parentAFamily.einstaklingar?.some(
-            (person) => person.kennitala === parentB.nationalId,
-          )
-
-        return {
-          nationalId: child.kennitala,
-          fullName: child.nafn,
-          age: kennitala.info(child.kennitala).age,
-          genderCode: child.kynkodi,
-          livesWithApplicant,
-          livesWithBothParents: livesWithParentB && livesWithApplicant,
-          otherParent: parentB,
-        }
+  async getCohabitationInfo(
+    nationalId: string,
+  ): Promise<CohabitationDto | null> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetHjuskapurRaw({
+        id: nationalId,
       }),
     )
+    return formatCohabitationDto(response)
   }
 
-  async getSpouse(user: User, nationalId: string): Promise<Spouse | undefined> {
-    const spouse = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetHjuskapur({ id: nationalId })
-      .catch(this.handle400)
-      .catch(this.handle404)
-
-    return (
-      spouse && {
-        nationalId: spouse.kennitalaMaka,
-        name: spouse.nafnMaka,
-        maritalStatus: spouse.hjuskaparkodi,
-      }
+  async getResidenceHistory(
+    nationalId: string,
+  ): Promise<ResidenceHistoryEntryDto[]> {
+    const residenceHistory = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetBusetaRaw({ id: nationalId }),
     )
+    return (residenceHistory || []).map(formatResidenceHistoryEntryDto)
   }
 
-  async getFamily(user: User, nationalId: string): Promise<FamilyMemberInfo[]> {
-    const family = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
-      .catch(this.handle404)
+  async getFamily(nationalId: string): Promise<FamilyDto | null> {
+    const family = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetFjolskyldumedlimirRaw({
+        id: nationalId,
+      }),
+    )
+    return formatFamilyDto(family)
+  }
 
-    return (family?.einstaklingar || []).map((member) => ({
-      nationalId: member.kennitala,
-      fullName: member.fulltNafn ?? '',
-      genderCode: member.kynkodi.toString(),
-      address: {
-        streetName: member.adsetur?.heiti ?? '',
-        postalCode: member.adsetur?.postnumer ?? '',
-        city: member.adsetur?.stadur ?? '',
-        municipalityCode: null,
+  async getBirthplace(nationalId: string): Promise<BirthplaceDto | null> {
+    const birthplace = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetFaedingarstadurRaw({ id: nationalId }),
+    )
+    return formatBirthplaceDto(birthplace)
+  }
+
+  async getCitizenship(nationalId: string): Promise<CitizenshipDto | null> {
+    const citizenship = await this.handleLegacyMissingData(
+      this.individualApi.einstaklingarGetRikisfangRaw({ id: nationalId }),
+    )
+    return formatCitizenshipDto(citizenship)
+  }
+
+  private async handleLegacyMissingData<T>(
+    promise: Promise<ApiResponse<T>>,
+  ): Promise<T | null> {
+    return promise.then(
+      (response) => {
+        if (LEGACY_IGNORED_STATUSES.includes(response.raw.status)) {
+          return null
+        }
+        return response.value()
       },
-    }))
-  }
-
-  async getBirthplace(
-    user: User,
-    nationalId: string,
-  ): Promise<Birthplace | undefined> {
-    const birthplace = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetFaedingarstadur({ id: nationalId })
-      .catch(this.handle400)
-      .catch(this.handle404)
-
-    return (
-      birthplace && {
-        dateOfBirth: birthplace.faedingardagur,
-        location: birthplace.stadur,
-        municipalityCode: birthplace.sveitarfelagsnumer,
-      }
+      (error) => {
+        if (
+          error instanceof FetchError &&
+          LEGACY_IGNORED_STATUSES.includes(error.status)
+        ) {
+          return null
+        }
+        throw error
+      },
     )
   }
 
-  async getCitizenship(
-    user: User,
-    nationalId: string,
-  ): Promise<Citizenship | undefined> {
-    const citizenship = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetRikisfang({ id: nationalId })
-      .catch(this.handle400)
-      .catch(this.handle404)
+  private async handleModernMissingData<T>(
+    promise: Promise<ApiResponse<T>>,
+  ): Promise<T | null> {
+    const response = await promise
+    if (response.raw.status === MODERN_IGNORED_STATUS) {
+      return null
+    }
+    return response.value()
+  }
 
-    return (
-      citizenship && {
-        code: citizenship.kodi,
-        name: citizenship.land,
-      }
+  withManualAuth(auth: Auth): NationalRegistryClientService {
+    return new NationalRegistryClientService(
+      this.individualApi.withMiddleware(new AuthMiddleware(auth)),
     )
   }
 }

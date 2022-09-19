@@ -1,5 +1,5 @@
-import { defineTemplateApi } from '@island.is/application/types'
-
-export const ChildrenResidentChangeNationalRegistryApi = defineTemplateApi({
-  action: 'nationalRegistry',
-})
+export {
+  NationalRegistryUserApi,
+  ChildrenCustodyInformationApi,
+  UserProfileApi,
+} from '@island.is/application/types'
