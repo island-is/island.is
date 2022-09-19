@@ -169,6 +169,7 @@ export class GenericFirearmLicenseApi
     let error: PkPassVerificationError | undefined
 
     if (result.error) {
+      this.logger.debug('just some change')
       let data = ''
 
       try {
