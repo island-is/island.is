@@ -344,7 +344,6 @@ export class SmartSolutionsApi {
       return null
     }
 
-    this.logger.debug(JSON.stringify(json))
     const response = json as UpsertPkPassResponse
 
     if (response) {
