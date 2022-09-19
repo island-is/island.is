@@ -116,17 +116,18 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     applicationTypeTitle: {
       id: 'pl.application:applicationType.title',
-      defaultMessage:
-        'Tegund umsóknar',
-      description:
-        'Type of application',
+      defaultMessage: 'Tegund umsóknar',
+      description: 'Type of application',
+    },
+    applicationParentalLeaveDescription: {
+      id: 'pl.application:applicationParentalLeave.description',
+      defaultMessage: 'Vinsamlegast veldu tegund umsóknar',
+      description: 'Vinsamlegast veldu tegund umsóknar',
     },
     applicationParentalLeaveTitle: {
       id: 'pl.application:applicationParentalLeave.title',
-      defaultMessage:
-        'Fæðingarorlof - almenn umsókn',
-      description:
-        'Parental Leave - general application',
+      defaultMessage: 'Fæðingarorlof - almenn umsókn',
+      description: 'Parental Leave - general application',
     },
     applicationParentalLeaveSubTitle: {
       id: 'pl.application:applicationParentalLeave.subtitle',
@@ -137,10 +138,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     applicationParentalGrantUnemployedTitle: {
       id: 'pl.application:applicationParentalGrantUnemployed.title',
-      defaultMessage:
-        'Fæðingarstyrkur - utan vinnumarkaðar',
-      description:
-        'Parental Leave - general application',
+      defaultMessage: 'Fæðingarstyrkur - utan vinnumarkaðar',
+      description: 'Parental Leave - general application',
     },
     applicationParentalGrantUnemployedSubTitle: {
       id: 'pl.application:applicationParentalGrantUnemployed.subtitle',
@@ -151,10 +150,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     applicationParentalGrantStudentTitle: {
       id: 'pl.application:applicationParentalGrantStudent.title',
-      defaultMessage:
-        'Fæðingarstyrkur – námsmenn',
-      description:
-        'Parental Grant - students',
+      defaultMessage: 'Fæðingarstyrkur – námsmenn',
+      description: 'Parental Grant - students',
     },
     applicationParentalGrantStudentSubTitle: {
       id: 'pl.application:applicationParentalGrantStudent.subtitle',

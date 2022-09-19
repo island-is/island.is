@@ -34,7 +34,6 @@ import {
 } from './parentalLeaveUtils'
 import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
-import { ConnectableObservable } from 'rxjs'
 
 const EMPLOYER = 'employer'
 const FILEUPLOAD = 'fileUpload'
@@ -87,7 +86,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const isSelfEmployed = getValueViaPath(
       application.answers,
       'employer.isSelfEmployed',
-    )  
+    )
     const applicationType = getValueViaPath(
       application.answers,
       'leaveType.applicationType',
@@ -103,7 +102,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   // TODO: should we add validation for otherParent's email?
-  [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
+  [OTHER_PARENT]: (newAnswer: unknown) => {
     const otherParentObj = newAnswer as OtherParentObj
 
     const buildError = (message: StaticText, path: string) =>

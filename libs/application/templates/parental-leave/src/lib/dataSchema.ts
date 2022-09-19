@@ -2,7 +2,16 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES, MANUAL, SPOUSE, TransferRightsOption, PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE } from '../constants'
+import {
+  NO,
+  YES,
+  MANUAL,
+  SPOUSE,
+  TransferRightsOption,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+} from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
