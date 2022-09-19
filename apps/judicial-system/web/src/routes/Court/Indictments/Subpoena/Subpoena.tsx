@@ -47,7 +47,7 @@ const Subpoena: React.FC = () => {
     handleCourtDateChange,
     courtDateHasChanged,
   } = useCourtArrangements(workingCase)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendToServer, sendNotification } = useCase()
 
   const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
     setAndSendToServer(
@@ -136,6 +136,7 @@ const Subpoena: React.FC = () => {
         <Modal
           title={formatMessage(strings.modalTitle)}
           onPrimaryButtonClick={() => {
+            sendNotification(workingCase.id, NotificationType.COURT_DATE)
             router.push(
               `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
             )
