@@ -259,7 +259,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   isSearchable: true,
                   dataTestId: `pension-fund`,
                   placeholder:
-                    parentalLeaveFormMessages.share.asyncSelectSearchableHint,
+                    parentalLeaveFormMessages.shared.asyncSelectSearchableHint,
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
