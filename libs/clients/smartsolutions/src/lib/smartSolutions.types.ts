@@ -47,7 +47,9 @@ export interface PassTemplateDTO {
 }
 
 export interface UpsertPkPassResponse {
-  data: Pass
+  data: {
+    upsertPass: Pass
+  }
   message?: string
   status?: number
 }

@@ -242,9 +242,7 @@ export class LicenseServiceService {
     }
 
     if (!pkpassUrl) {
-      throw new Error(
-        `Unable to get pkpass url for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to get pkpass url for ${licenseType} for user`)
     }
     return { pkpassUrl }
   }
@@ -268,7 +266,7 @@ export class LicenseServiceService {
     }
     if (!pkpassQRCode) {
       throw new Error(
-        `Unable to get pkpass qr code for ${licenseType} for nationalId ${user.nationalId}`,
+        `Unable to get pkpass qr code for ${licenseType} for user`,
       )
     }
 
@@ -311,9 +309,7 @@ export class LicenseServiceService {
     }
 
     if (!verification) {
-      throw new Error(
-        `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
     }
     return verification
   }

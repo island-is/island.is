@@ -79,10 +79,14 @@ export class GenericFirearmLicenseApi
 
     const payload = parseFirearmLicensePayload(licenseData)
 
+    const pkpassStatus = payload
+      ? GenericUserLicensePkPassStatus.Available
+      : GenericUserLicensePkPassStatus.NotAvailable
+
     return {
       status: GenericUserLicenseStatus.HasLicense,
       payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
+      pkpassStatus,
     }
   }
   async getLicenseDetail(
@@ -107,7 +111,6 @@ export class GenericFirearmLicenseApi
     if (!inputValues) return null
     //Fetch template from api?
     const payload: PassDataInput = {
-      passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: image
         ? {
@@ -139,7 +142,6 @@ export class GenericFirearmLicenseApi
     if (!inputValues) return null
     //Fetch template from api?
     const payload: PassDataInput = {
-      passTemplateId: 'dfb706c1-3a78-4518-bf25-cebbf0a93132',
       inputFieldValues: inputValues,
       thumbnail: image
         ? {

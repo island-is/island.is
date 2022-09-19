@@ -287,7 +287,10 @@ export class SmartSolutionsApi {
     const body = {
       query: createPkPassMutation,
       variables: {
-        inputData: payload,
+        inputData: {
+          passTemplateId: this.config.passTemplateId,
+          ...payload,
+        },
       },
     }
 
@@ -341,6 +344,7 @@ export class SmartSolutionsApi {
       return null
     }
 
+    this.logger.debug(JSON.stringify(json))
     const response = json as UpsertPkPassResponse
 
     if (response) {
@@ -382,8 +386,8 @@ export class SmartSolutionsApi {
 
     const response = await this.upsertPkPass(payload)
 
-    if (response?.data) {
-      return response?.data
+    if (response?.data?.upsertPass) {
+      return response?.data?.upsertPass
     }
 
     this.logger.warn(
@@ -403,7 +407,6 @@ export class SmartSolutionsApi {
     nationalId: string,
   ): Promise<string | null> {
     const pkPass = await this.generatePkPass(payload, nationalId)
-
     return pkPass?.distributionQRCode ?? null
   }
 
