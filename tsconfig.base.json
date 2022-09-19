@@ -209,6 +209,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-license-duplicate": [
+        "libs/application/templates/driving-license-duplicate/src/index.ts"
+      ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
       ],
@@ -329,6 +332,9 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/clients/firearm-license": [
+        "libs/clients/firearm-license/src/index.ts"
+      ],
       "@island.is/clients/fishing-license": [
         "libs/clients/fishing-license/src/index.ts"
       ],
@@ -365,6 +371,9 @@
       ],
       "@island.is/clients/rsk/procuring": [
         "libs/clients/rsk/procuring/src/index.ts"
+      ],
+      "@island.is/clients/smartsolutions": [
+        "libs/clients/smartsolutions/src/index.ts"
       ],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/user-profile": [
