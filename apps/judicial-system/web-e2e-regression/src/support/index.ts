@@ -31,22 +31,10 @@ declare global {
   namespace Cypress {
     interface Chainable {
       /**
-       * Custom command to stub responses from the API
-       * @example cy.stubAPIResponses()
-       */
-      stubAPIResponses(): Chainable<Element>
-
-      /**
        * Custom command to get by test-id
        * @example cy.getByTestid('some-testid')
        */
       getByTestid(selector: string): Chainable<JQuery<Element>>
-
-      /**
-       * Custom command to set the csfr token. This authenticates a user
-       * @example cy.login()
-       */
-      login(userRole?: UserRole): Chainable<Element>
 
       /**
        * Custom command to click outside a selected element
