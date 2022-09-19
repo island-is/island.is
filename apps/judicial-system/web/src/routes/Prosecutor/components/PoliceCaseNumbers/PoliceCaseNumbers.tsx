@@ -4,13 +4,14 @@ import { useIntl } from 'react-intl'
 import { Box, Icon, Tag } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { policeCaseNumber as m } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
 interface Props {
   workingCase: Case
