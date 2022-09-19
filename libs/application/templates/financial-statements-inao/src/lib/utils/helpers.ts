@@ -10,9 +10,6 @@ export const getTotal = (values: Record<string, string>, key: string) => {
   }
   const total = Object.entries(values[key])
     .filter(([k, v]) => k !== TOTAL && !isNaN(Number(v)))
-    .map((foo) => {
-      return foo
-    })
     .map(([_k, v]) => Number(v))
     .reduce((prev, current) => {
       return (prev += current)
@@ -36,10 +33,6 @@ export const possibleOperatingYears = () => {
       return { label: yearsFromNow, value: yearsFromNow }
     })
   return operationYears
-}
-
-export const allowFakeCondition = (result = YES) => (answers: FormValue) => {
-  return getValueViaPath(answers, 'fakeData.options') === result
 }
 
 export const getCurrentUserType = (

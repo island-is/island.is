@@ -31,7 +31,7 @@ export const KeyNumbersCapital = () => {
 
   useEffect(() => {
     getTotalCapital()
-  }, [])
+  }, [getTotalCapital])
 
   return (
     <GridContainer>

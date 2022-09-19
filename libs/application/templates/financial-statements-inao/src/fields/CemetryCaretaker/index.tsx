@@ -135,7 +135,7 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
 
   useEffect(() => {
     if (fields.length === 0) handleAddCaretaker()
-  }, [fields])
+  }, [fields, handleAddCaretaker])
 
   return (
     <GridContainer>

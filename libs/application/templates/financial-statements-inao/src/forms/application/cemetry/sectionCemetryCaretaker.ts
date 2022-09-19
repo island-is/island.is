@@ -23,7 +23,7 @@ export const sectionCemetryCaretaker = buildSection({
     if (userType !== USERTYPE.CEMETRY) {
       return false
     }
-    const applicationAnswers = <FinancialStatementsInao>answers
+    const applicationAnswers = answers as FinancialStatementsInao
     const currentAssets = applicationAnswers.cemetryAsset?.current
     const totalIncome = applicationAnswers.operatingCost?.total
     const longTermDebt = applicationAnswers.cemetryLiability?.longTerm

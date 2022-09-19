@@ -14,10 +14,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { FileValueLine, ValueLine } from '../Shared'
 import { formatCurrency } from '../../lib/utils/helpers'
-import {
-  columnStyle,
-  starterColumnStyle,
-} from '../Shared/styles/overviewStyles.css'
+import { starterColumnStyle } from '../Shared/styles/overviewStyles.css'
 
 export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()

@@ -61,12 +61,6 @@ export const getApplication = (allowFakeData = false): Form => {
                 title: '',
                 subTitle: '',
               }),
-              buildDataProviderItem({
-                id: 'clientTypes',
-                type: 'ClientTypesProvider',
-                title: '',
-                subTitle: '',
-              }),
             ],
           }),
         ],
@@ -90,7 +84,7 @@ export const getApplication = (allowFakeData = false): Form => {
             title: m.upload,
             condition: (answers, externalData) => {
               const userType = getCurrentUserType(answers, externalData)
-              const applicationAnswers = <FinancialStatementsInao>answers
+              const applicationAnswers = answers as FinancialStatementsInao
               const currentAssets = applicationAnswers.cemetryAsset?.current
               const isCemetry = userType === USERTYPE.CEMETRY
               const totalIncome = isCemetry
