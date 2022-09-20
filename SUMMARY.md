@@ -165,7 +165,6 @@
   - [Driving License](libs/clients/driving-license-book/README.md)
   - [Finance](libs/clients/finance/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
-  - [Clients Fiskistofa](libs/clients/fiskistofa/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
