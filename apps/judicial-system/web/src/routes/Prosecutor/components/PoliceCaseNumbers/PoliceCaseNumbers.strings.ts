@@ -32,4 +32,10 @@ export const policeCaseNumber = defineMessages({
     description:
       'Notaður sem aria label á takkana fyrir loke númer á sakbornings skrefi í öllum málstegundum.',
   },
+  noPoliceCaseNumbersAssignedMessage: {
+    id:
+      'judicial.system.core:police_case_number.no_police_case_numbers_assigned_message',
+    defaultMessage: 'Ekkert LÖKE-málsnúmer hefur verið skráð',
+    description: 'Notaður sem texti þegar ekkert LÖKE-málsnúmer er skráð.',
+  },
 })

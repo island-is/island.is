@@ -5,8 +5,6 @@ import {
   buildCheckboxField,
   buildSection,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildSubmitField,
   buildTextField,
   buildRadioField,
@@ -26,6 +24,7 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
+import { dataCollectionSection } from './sharedSections/dataCollectionSection'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -63,45 +62,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         ],
       }),
       ...(allowFakeData ? [fakeDataSection] : []),
-      buildSection({
-        id: 'externalData',
-        title: m.dataCollectionTitle,
-        children: [
-          buildExternalDataProvider({
-            id: 'spouseApproveExternalData',
-            title: m.dataCollectionTitle,
-            subTitle: m.dataCollectionSubtitle,
-            description: m.dataCollectionDescription,
-            checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'birthCertificate',
-                type: '',
-                title: m.dataCollectionBirthCertificateTitle,
-                subTitle: m.dataCollectionBirthCertificateDescription,
-              }),
-              buildDataProviderItem({
-                id: 'maritalStatus',
-                type: 'NationalRegistryMaritalStatusProvider',
-                title: m.dataCollectionMaritalStatusTitle,
-                subTitle: m.dataCollectionMaritalStatusDescription,
-              }),
-            ],
-          }),
-        ],
-      }),
+      dataCollectionSection,
       buildSection({
         id: 'marriageSides',
         title: m.informationSectionTitle,
@@ -116,7 +77,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                 children: [
                   buildDescriptionField({
                     id: 'header1',
-                    title: m.informationWitness1,
+                    title: m.informationSpouse1,
                     titleVariant: 'h4',
                   }),
                   buildTextField({
@@ -170,7 +131,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                   }),
                   buildDescriptionField({
                     id: 'header2',
-                    title: m.informationWitness2,
+                    title: m.informationSpouse2,
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
