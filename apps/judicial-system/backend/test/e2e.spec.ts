@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
@@ -8,6 +9,7 @@ import { INestApplication, Type } from '@nestjs/common'
 
 import { testServer } from '@island.is/infra-nest-server'
 import { IntlService } from '@island.is/cms-translations'
+import { getQueueServiceToken } from '@island.is/message-queue'
 import {
   CaseState,
   CaseTransition,
@@ -85,17 +87,21 @@ beforeAll(async () => {
   app = await testServer({
     appModule: AppModule,
     override: (builder) =>
-      builder.overrideProvider(IntlService).useValue({
-        useIntl: () =>
-          Promise.resolve({
-            formatMessage: (descriptor: MessageDescriptor | string) => {
-              if (typeof descriptor === 'string') {
-                return descriptor
-              }
-              return descriptor.defaultMessage
-            },
-          }),
-      }),
+      builder
+        .overrideProvider(IntlService)
+        .useValue({
+          useIntl: () =>
+            Promise.resolve({
+              formatMessage: (descriptor: MessageDescriptor | string) => {
+                if (typeof descriptor === 'string') {
+                  return descriptor
+                }
+                return descriptor.defaultMessage
+              },
+            }),
+        })
+        .overrideProvider(getQueueServiceToken('message-queue'))
+        .useValue({ add: () => uuid() }),
   })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
