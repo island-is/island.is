@@ -24,6 +24,7 @@ export enum ApplicationTypes {
   EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
+  MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   OPERATING_LCENSE = 'OperatingLicense',
@@ -129,6 +130,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
     translation: 'mc.application',
+  },
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: {
+    slug: 'hjonavigsla',
+    translation: 'mac.application',
   },
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',

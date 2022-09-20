@@ -1,8 +1,7 @@
 import isNumber from 'lodash/isNumber'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import {
   Query,
   VehiclesCurrentOwnerInfo,
@@ -31,7 +30,6 @@ import {
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
 import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -45,6 +43,122 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import AxleTable from '../../components/DetailTable/AxleTable'
+
+export const GET_USERS_VEHICLE_DETAIL = gql`
+  query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
+    vehiclesDetail(input: $input) {
+      mainInfo {
+        model
+        subModel
+        regno
+        year
+        co2
+        weightedCo2
+        co2Wltp
+        weightedCo2Wltp
+        cubicCapacity
+        trailerWithBrakesWeight
+        trailerWithoutBrakesWeight
+      }
+      basicInfo {
+        model
+        regno
+        subModel
+        permno
+        verno
+        year
+        country
+        preregDateYear
+        formerCountry
+        importStatus
+      }
+      registrationInfo {
+        firstRegistrationDate
+        preRegistrationDate
+        newRegistrationDate
+        vehicleGroup
+        color
+        reggroup
+        reggroupName
+        passengers
+        useGroup
+        driversPassengers
+        standingPassengers
+        plateLocation
+        specialName
+        plateStatus
+      }
+      currentOwnerInfo {
+        owner
+        nationalId
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      inspectionInfo {
+        type
+        date
+        result
+        nextInspectionDate
+        lastInspectionDate
+        insuranceStatus
+        mortages
+        carTax
+        inspectionFine
+      }
+      technicalInfo {
+        engine
+        totalWeight
+        cubicCapacity
+        capacityWeight
+        length
+        vehicleWeight
+        width
+        trailerWithoutBrakesWeight
+        horsepower
+        trailerWithBrakesWeight
+        carryingCapacity
+        axleTotalWeight
+        axles {
+          axleMaxWeight
+          wheelAxle
+        }
+        tyres {
+          axle1
+          axle2
+          axle3
+          axle4
+          axle5
+        }
+      }
+      ownersInfo {
+        name
+        address
+        dateOfPurchase
+      }
+      coOwners {
+        nationalId
+        owner
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      operators {
+        nationalId
+        name
+        address
+        postalcode
+        city
+        startDate
+        endDate
+      }
+      downloadServiceURL
+    }
+  }
+`
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -309,6 +423,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           title={technicalArr.header.title}
           mt
         />
+      )}
+      {technicalInfo?.axles && technicalInfo.tyres && (
+        <AxleTable axles={technicalInfo?.axles} tyres={technicalInfo?.tyres} />
       )}
 
       {operators &&

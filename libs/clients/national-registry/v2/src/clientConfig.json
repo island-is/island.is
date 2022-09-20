@@ -935,6 +935,9 @@
               }
             }
           },
+          "204": {
+            "description": "List of all the children the individual has custody of."
+          },
           "401": {
             "description": "Authorization information is missing or invalid.",
             "content": {

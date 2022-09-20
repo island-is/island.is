@@ -28,6 +28,12 @@ export class NationalRegistryApi {
   private readonly clientUser: string
   private readonly clientPassword: string
 
+  /**
+   * This caused a GQL api server crash when the WSDL request was hanging due to
+   * Þjóðskrá loosing electricity and their services went down.
+   * To prevent this causing a restart loop in our kubernetes environment we have
+   * added a http request timeout of 10 sec.
+   */
   static async instantiateClass(config: NationalRegistryConfig) {
     return new NationalRegistryApi(
       await SoapClient.generateClient(config.baseSoapUrl, config.host),

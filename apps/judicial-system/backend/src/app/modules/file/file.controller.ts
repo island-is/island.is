@@ -52,7 +52,7 @@ export class FileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -68,7 +68,7 @@ export class FileController {
   }
 
   @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -127,7 +127,7 @@ export class FileController {
     CaseNotCompletedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
