@@ -460,7 +460,7 @@ export class CaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload the ruling for case ${theCase.id} to court`,
+          `Failed to deliver the ruling for case ${theCase.id} to court`,
           { reason },
         )
 
@@ -535,7 +535,7 @@ export class CaseService {
       .catch((reason) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload the court record for case ${theCase.id} to court`,
+          `Failed to deliver the court record for case ${theCase.id} to court`,
           { reason },
         )
 
@@ -569,7 +569,7 @@ export class CaseService {
             .then((response) => response.success)
             .catch((reason) => {
               this.logger.error(
-                `Failed to upload file ${caseFile.id} of case ${theCase.id} to court`,
+                `Failed to deliver file ${caseFile.id} of case ${theCase.id} to court`,
                 { reason },
               )
 
@@ -585,8 +585,9 @@ export class CaseService {
         return success
       })
       .catch((reason) => {
+        // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload case files of case ${theCase.id} to court`,
+          `Failed to deliver case files of case ${theCase.id} to court`,
           { reason },
         )
 
@@ -594,25 +595,70 @@ export class CaseService {
       })
   }
 
-  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
-    const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-      (ids, defendant) =>
-        !defendant.noNationalId && defendant.nationalId
-          ? [...ids, defendant.nationalId]
-          : ids,
-      [],
-    )
+  private async getIndictmentCourtRecordAsString(
+    theCase: Case,
+  ): Promise<string> {
+    return this.fileService
+      .getAllCaseFiles(theCase.id)
+      .then((caseFiles) =>
+        caseFiles.find(
+          (caseFile) => caseFile.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+      .then(async (caseFile) => {
+        if (!caseFile) {
+          throw new Error(
+            `Failed to find the court record for case ${theCase.id} in the database`,
+          )
+        }
 
-    return this.policeService.updatePoliceCase(
-      theCase.id,
-      theCase.type,
-      theCase.state,
-      pdf,
-      theCase.policeCaseNumbers,
-      defendantNationalIds,
-      theCase.conclusion,
-    )
+        if (!caseFile.key) {
+          throw new Error(
+            `Missing AWS S3 key for the court record of case ${theCase.id}`,
+          )
+        }
+
+        return this.awsS3Service
+          .getObject(caseFile.key)
+          .then((buffer) => buffer.toString('binary'))
+      })
+  }
+
+  private getCourtRecordAsString(theCase: Case) {
+    return isIndictmentCase(theCase.type)
+      ? this.getIndictmentCourtRecordAsString(theCase)
+      : getCourtRecordPdfAsString(theCase, this.formatMessage)
+  }
+
+  private async deliverCaseToPolice(theCase: Case): Promise<boolean> {
+    return this.getCourtRecordAsString(theCase)
+      .then(async (courtRecord) => {
+        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+          (ids, defendant) =>
+            !defendant.noNationalId && defendant.nationalId
+              ? [...ids, defendant.nationalId]
+              : ids,
+          [],
+        )
+
+        return this.policeService.updatePoliceCase(
+          theCase.id,
+          theCase.type,
+          theCase.state,
+          courtRecord,
+          theCase.policeCaseNumbers,
+          defendantNationalIds,
+          theCase.conclusion,
+        )
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
+          reason,
+        })
+
+        return false
+      })
   }
 
   private async createCase(
@@ -1101,13 +1147,14 @@ export class CaseService {
 
   private async uploadIndictmentProsecutorPdfsToCourt(
     theCase: Case,
+    user: TUser,
   ): Promise<void> {
     return
   }
 
   uploadProsecutorDocumentsToCourt(theCase: Case, user: TUser): Promise<void> {
     return isIndictmentCase(theCase.type)
-      ? this.upploadRequestPdfToCourt(theCase, user)
+      ? this.uploadIndictmentProsecutorPdfsToCourt(theCase, user)
       : this.upploadRequestPdfToCourt(theCase, user)
   }
 
@@ -1223,7 +1270,7 @@ export class CaseService {
   }
 
   async deliver(theCase: Case): Promise<DeliverResponse> {
-    this.refreshFormatMessage()
+    await this.refreshFormatMessage()
 
     const rulingDeliveredToCourt = await this.deliverRulingToCourt(theCase)
 
@@ -1237,10 +1284,9 @@ export class CaseService {
         (await this.deliverCaseFilesToCourt(theCase)))
 
     const caseDeliveredToPolice =
-      !isIndictmentCase(theCase.type) &&
+      theCase.origin === CaseOrigin.LOKE &&
       (Boolean(theCase.rulingModifiedHistory) || // no relevant changes
-        (theCase.origin === CaseOrigin.LOKE &&
-          (await this.deliverCaseToPolice(theCase))))
+        (await this.deliverCaseToPolice(theCase)))
 
     if (
       !isIndictmentCase(theCase.type) &&

@@ -254,7 +254,6 @@ describe('InternalCaseController - Deliver', () => {
 
     describe('deliver case to police', () => {
       const caseId = uuid()
-      const caseOrigin = CaseOrigin.LOKE
       const caseType = CaseType.CUSTODY
       const caseState = CaseState.ACCEPTED
       const policeCaseNumbers = [uuid()]
@@ -262,7 +261,7 @@ describe('InternalCaseController - Deliver', () => {
       const caseConclusion = 'test conclusion'
       const theCase = {
         id: caseId,
-        origin: caseOrigin,
+        origin: CaseOrigin.LOKE,
         type: caseType,
         state: caseState,
         policeCaseNumbers,
@@ -308,13 +307,23 @@ describe('InternalCaseController - Deliver', () => {
 
   describe('deliver S case', () => {
     const caseId = uuid()
+    const caseType = CaseType.THEFT
+    const caseState = CaseState.ACCEPTED
+    const policeCaseNumbers = [uuid()]
+    const defendantNationalId = uuid()
     const courtId = uuid()
     const courtCaseNumber = uuid()
+    const caseConclusion = 'test conclusion'
     const theCase = {
       id: caseId,
-      type: CaseType.THEFT,
+      origin: CaseOrigin.LOKE,
+      type: caseType,
+      state: caseState,
       courtId,
       courtCaseNumber,
+      policeCaseNumbers,
+      defendants: [{ nationalId: defendantNationalId }],
+      conclusion: caseConclusion,
     } as Case
     const rulingType = uuid()
     const rulingKey = uuid()
@@ -347,8 +356,11 @@ describe('InternalCaseController - Deliver', () => {
       mockGetObject
         .mockResolvedValueOnce(rulingPdf)
         .mockResolvedValueOnce(courtRecordPdf)
+        .mockResolvedValueOnce(courtRecordPdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValue(uuid())
+      const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
+      mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
     })
@@ -419,6 +431,38 @@ describe('InternalCaseController - Deliver', () => {
     describe('no case files delivered', () => {
       it('should return a failure response', async () => {
         expect(then.result.caseFilesDeliveredToCourt).toEqual(false)
+      })
+    })
+
+    describe('deliver case to police', () => {
+      it('should get all case files', async () => {
+        expect(mockFileService.getAllCaseFiles).toHaveBeenNthCalledWith(
+          3,
+          caseId,
+        )
+      })
+
+      it('should get the court record from S3', async () => {
+        expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
+          3,
+          courtRecordKey,
+        )
+      })
+
+      it('should update the plice case', async () => {
+        expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
+          caseId,
+          caseType,
+          caseState,
+          'test court record',
+          policeCaseNumbers,
+          [defendantNationalId],
+          caseConclusion,
+        )
+      })
+
+      it('should return a success response', async () => {
+        expect(then.result.caseDeliveredToPolice).toEqual(true)
       })
     })
   })
