@@ -622,13 +622,11 @@ export const AflamarkCalculator = ({
                 ))}
               </tr>
 
-              {/* TODO: add server value */}
               <tr>
                 <td>{n('aaetladAflamark', 'Áætlað aflamark')}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (
-                      // TODO: add value to schema when backend sends this
                       category?.allocatedCatchQuota
                     ) : (
                       <input
