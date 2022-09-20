@@ -33,7 +33,7 @@ export class FiskistofaApi {
     private clientConfig: ConfigType<typeof FiskistofaClientConfig>,
   ) {}
 
-  async initialize(ignoreCache: boolean = false) {
+  async initialize(ignoreCache = false) {
     if (this.stadaSkipsApi && this.skipApi && !ignoreCache) {
       return
     }

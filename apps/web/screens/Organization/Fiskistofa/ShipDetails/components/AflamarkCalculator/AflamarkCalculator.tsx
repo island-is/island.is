@@ -274,7 +274,7 @@ export const AflamarkCalculator = ({
     if (state.context.quotaData) {
       setQuotaChange(
         state.context.quotaData.reduce((acc, val) => {
-          let formattedVal = {}
+          const formattedVal = {}
           for (const key of Object.keys(val)) {
             if (key === 'quotaShare') {
               formattedVal[key] = sevenFractionDigitNumberFormatter.format(

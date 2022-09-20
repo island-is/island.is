@@ -74,7 +74,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
       shipNumber = Number(nr)
     }
     const value = TAB_OPTIONS.find((o) => o === router?.query?.tab)
-    let selectedTab = value ?? TAB_OPTIONS[0]
+    const selectedTab = value ?? TAB_OPTIONS[0]
     return { shipNumber, selectedTab }
   }, [router?.query])
 

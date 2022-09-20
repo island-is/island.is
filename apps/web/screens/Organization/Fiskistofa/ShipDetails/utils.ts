@@ -42,7 +42,7 @@ export interface TimePeriodOption {
 export const generateTimePeriodOptions = () => {
   const timePeriods: TimePeriodOption[] = []
 
-  let currentYear = getCurrentYear()
+  const currentYear = getCurrentYear()
 
   for (let year = 2000; year < currentYear; year += 1) {
     const yearString = String(year)
