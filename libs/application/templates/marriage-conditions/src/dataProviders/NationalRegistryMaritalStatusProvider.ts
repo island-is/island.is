@@ -8,6 +8,7 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
 import { maritalStatuses } from '../lib/constants'
+import { m } from '../lib/messages'
 
 export interface MaritalStatusProvider {
   maritalStatus: string
@@ -100,7 +101,7 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
       })
     } else {
       return Promise.reject({
-        reason: `Applicant marital status ${maritalStatus} not applicable`,
+        reason: m.errorDataProviderMaritalStatus,
       })
     }
   }
