@@ -33,6 +33,7 @@ import {
   isProcessingStepValidIndictments,
   isReceptionAndAssignmentStepValid,
   isSubpoenaStepValid,
+  isprosecutorAndDefenderStepValid,
 } from '../../validate'
 import {
   INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
@@ -492,10 +493,22 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          name: formatMessage(
+            sections.indictmentsCourtSection.prosecutorAndDefender,
+          ),
           href:
             isReceptionAndAssignmentStepValid(workingCase) &&
             isSubpoenaStepValid(workingCase)
+              ? `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`
+              : undefined,
+        },
+        {
+          type: 'SUB_SECTION',
+          name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+          href:
+            isReceptionAndAssignmentStepValid(workingCase) &&
+            isSubpoenaStepValid(workingCase) &&
+            isprosecutorAndDefenderStepValid(workingCase)
               ? `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`
               : undefined,
         },
