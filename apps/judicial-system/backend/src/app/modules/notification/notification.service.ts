@@ -31,6 +31,7 @@ import {
   User,
   isInvestigationCase,
   isIndictmentCase,
+  CaseState,
 } from '@island.is/judicial-system/types'
 import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
@@ -436,7 +437,6 @@ export class NotificationService {
       )
     }
 
-    // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
       where: {
         caseId: theCase.id,
@@ -449,15 +449,13 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    // TODO: Check state instead of court case number
-    if (theCase.courtCaseNumber) {
+    if (theCase.state === CaseState.RECEIVED) {
       // No need to wait
       this.uploadRequestPdfToCourt(theCase, user)
     }
 
     if (notification) {
-      // TODO: Check state instead of court case number
-      if (theCase.courtCaseNumber) {
+      if (theCase.state === CaseState.RECEIVED) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
