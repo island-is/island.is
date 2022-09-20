@@ -336,7 +336,6 @@ export const DeilistofnaCalculator = ({
               </tr>
               <tr>
                 <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
-                {/* TODO: keep track of difference from initial aflamark to what it is now */}
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
@@ -392,7 +391,6 @@ export const DeilistofnaCalculator = ({
                 {state.context.data.catchQuotaCategories.map((category) => {
                   return (
                     <td key={category.name}>
-                      {/* TODO: keep track of difference from initial afli to what it is now */}
                       {category.id === 0 ? (
                         getFieldDifference(category, 'catch')
                       ) : (
