@@ -3,7 +3,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export { IdentityApi } from '@island.is/application/types'
+import { IdentityApi as IdsApi } from '@island.is/application/types'
 const FISKISTOFA_NATIONAL_ID = '6608922069'
 
 export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configure(
@@ -18,4 +18,8 @@ export const DepartmentOfFisheriesPaymentCatalogApi = PaymentCatalogApi.configur
 export const ShipRegistryApi = defineTemplateApi({
   action: 'getShips',
   externalDataId: 'directoryOfFisheries',
+})
+
+export const IdentityApi = IdsApi.configure({
+  externalDataId: 'identityRegistry',
 })

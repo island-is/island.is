@@ -6,13 +6,13 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-import { IdentityType } from './identity.type'
-import { Identity } from './models'
+import { IdentityType } from './types/identityType'
+import { Identity } from './types/identity'
 
 type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 
 @Injectable()
-export class IdentityService {
+export class IdentityClientService {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
     private rskCompanyInfoService: RskCompanyInfoService,

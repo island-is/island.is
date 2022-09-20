@@ -1,4 +1,4 @@
-import { IdentityType } from '../identity.type'
+import { IdentityType } from './identityType'
 import { Address } from './address'
 
 export interface Identity {

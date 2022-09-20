@@ -1,10 +1,10 @@
 {
   "root": "libs/clients/identity",
   "sourceRoot": "libs/clients/identity/src",
+  "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/identity/**/*.ts"]
       }

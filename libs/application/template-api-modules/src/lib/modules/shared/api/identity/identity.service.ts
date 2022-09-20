@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { IdentityService } from '@island.is/clients-identity'
-
-export const MAX_OUT_OF_DATE_MONTHS = 6
+import { Identity, IdentityClientService } from '@island.is/clients/identity'
 
 @Injectable()
-export class IdentityApiService extends BaseTemplateApiService {
-  constructor(private readonly identityService: IdentityService) {
-    super('IdentityApi')
+export class IdentityService extends BaseTemplateApiService {
+  constructor(private readonly identityService: IdentityClientService) {
+    super('Identity')
   }
 
-  async identity({ auth }: TemplateApiModuleActionProps) {
+  async identity({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Identity | null> {
     return this.identityService.getIdentity(auth.nationalId)
   }
 }
