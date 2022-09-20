@@ -185,9 +185,7 @@ export class FiskistofaApi {
   }
 
   async getSingleShip(params: V1SkipSkipnumerGetRequest) {
-    console.log('PARAMS', params)
     const data = await this.skipApi?.v1SkipSkipnumerGet(params)
-    console.log('DATA', data)
     return {
       shipNumber: data?.skipNumer,
       name: data?.heiti ?? '',
