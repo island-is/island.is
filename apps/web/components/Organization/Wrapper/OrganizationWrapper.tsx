@@ -52,6 +52,7 @@ import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme/LandkjorstjornFooter'
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { SidebarShipSearchInput } from '@island.is/shared/connected'
 import * as styles from './OrganizationWrapper.css'
@@ -105,6 +106,10 @@ export const footerEnabled = [
 
   'fiskistofa',
   'directorate-of-fisheries',
+
+  'landskjorstjorn',
+
+  'hsn',
 ]
 
 export const getThemeConfig = (
@@ -274,6 +279,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
         <FiskistofaFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'landskjorstjorn':
+      OrganizationFooterComponent = (
+        <LandskjorstjornFooter footerItems={organization.footerItems} />
       )
       break
   }

@@ -3,26 +3,25 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
+  FormContext,
   FormFooter,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import CourtArrangements, {
+  SelectSubpoenaType,
   useCourtArrangements,
-} from '@island.is/judicial-system-web/src/components/CourtArrangements'
+} from '@island.is/judicial-system-web/src/components'
 import {
   IndictmentsCourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
-import SelectSubpoenaType from '@island.is/judicial-system-web/src/components/SelectSubpoenaType/SelectSubpoenaType'
 import {
   NotificationType,
   SubpoenaType,
@@ -48,7 +47,7 @@ const Subpoena: React.FC = () => {
     handleCourtDateChange,
     courtDateHasChanged,
   } = useCourtArrangements(workingCase)
-  const { setAndSendToServer } = useCase()
+  const { setAndSendToServer, sendNotification } = useCase()
 
   const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
     setAndSendToServer(
@@ -78,7 +77,7 @@ const Subpoena: React.FC = () => {
 
     if (hasSentNotification && !courtDateHasChanged) {
       router.push(
-        `${constants.CASES_ROUTE}`, // TODO: Add correct route
+        `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
       )
     } else {
       setModalVisible(true)
@@ -137,12 +136,15 @@ const Subpoena: React.FC = () => {
         <Modal
           title={formatMessage(strings.modalTitle)}
           onPrimaryButtonClick={() => {
+            sendNotification(workingCase.id, NotificationType.COURT_DATE)
             router.push(
-              `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
             )
           }}
           onSecondaryButtonClick={() => {
-            router.push(`${constants.CASES_ROUTE}`)
+            router.push(
+              `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+            )
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(core.continue)}

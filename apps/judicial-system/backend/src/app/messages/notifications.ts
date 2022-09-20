@@ -252,6 +252,29 @@ export const notifications = {
         'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskurðar',
     },
   }),
+  caseCompleted: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_completed.subject',
+      defaultMessage: 'Dómur í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill í pósti til hagaðila vegna staðfests dóms',
+    },
+    prosecutorBody: {
+      id:
+        'judicial.system.backend:notifications.case_completed.prosecutor_body',
+      defaultMessage:
+        'Dómari hefur staðfestur dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
+    },
+    defenderBody: {
+      id: 'judicial.system.backend:notifications.case_completed.defender_body',
+      defaultMessage:
+        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
+      description:
+        'Notaður sem texti í pósti til verjanda vegna staðfests dóms',
+    },
+  }),
   prisonCourtDateEmail: defineMessages({
     isolationTextV2: {
       id:
