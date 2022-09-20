@@ -34,6 +34,10 @@ export class FinancialStatementsInaoService {
     return this.dataverseClient.getClientFinancialLimit(clientType, year)
   }
 
+  async getConfig() {
+    return this.dataverseClient.getConfig()
+  }
+
   async submitPersonalElectionFinancialStatement(
     nationalId: string,
     actorNationalId: string | undefined,
