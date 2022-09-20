@@ -66,3 +66,15 @@ export const generateTimePeriodOptions = () => {
 }
 
 export const numberFormatter = new Intl.NumberFormat('de-DE')
+export const sevenFractionDigitNumberFormatter = new Intl.NumberFormat(
+  'de-DE',
+  { minimumFractionDigits: 7 },
+)
+
+const replaceAll = (str: string, substr: string, replacement: string) => {
+  return str.split(substr).join(replacement)
+}
+
+export const formattedNumberStringToNumber = (numberString: string) => {
+  return Number(replaceAll(replaceAll(numberString, '.', ''), ',', '.'))
+}
