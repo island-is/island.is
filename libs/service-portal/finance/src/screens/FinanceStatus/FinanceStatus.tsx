@@ -110,7 +110,9 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
         tagVariant="red"
         tag="500"
         title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetch)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.finance).toLowerCase(),
+        })}
       />
     )
   }

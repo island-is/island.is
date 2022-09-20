@@ -27,7 +27,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         tagVariant="red"
         tag="500"
         title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(m.errorFetch)}
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.licenses).toLowerCase(),
+        })}
       />
     )
   }

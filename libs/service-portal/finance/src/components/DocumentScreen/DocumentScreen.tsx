@@ -127,7 +127,9 @@ const DocumentScreen: FC<Props> = ({
         tagVariant="red"
         tag="500"
         title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetch)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.documents).toLowerCase(),
+        })}
       />
     )
   }

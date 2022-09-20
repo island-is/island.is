@@ -76,7 +76,9 @@ const Overview: ServicePortalModuleComponent = () => {
         tagVariant="red"
         tag="500"
         title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(m.error)}
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.applications).toLowerCase(),
+        })}
       />
     )
   }

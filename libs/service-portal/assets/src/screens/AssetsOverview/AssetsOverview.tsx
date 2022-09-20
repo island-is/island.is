@@ -86,9 +86,8 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         tagVariant="red"
         tag="500"
         title={formatMessage(m.somethingWrong)}
-        children={formatMessage({
-          id: 'sp.assets:error-message',
-          defaultMessage: 'Ekki tókst að sækja upplýsingar úr fasteignaskrá.',
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.realEstate).toLowerCase(),
         })}
       />
     )

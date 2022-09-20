@@ -218,7 +218,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         tagVariant="red"
         tag="500"
         title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetch)}
+        children={formatMessage(m.errorFetchModule, {
+          module: formatMessage(m.vehicles).toLowerCase(),
+        })}
       />
     )
   }

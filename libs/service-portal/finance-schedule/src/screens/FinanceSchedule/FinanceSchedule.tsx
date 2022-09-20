@@ -75,9 +75,8 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
         tagVariant="red"
         tag="500"
         title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage({
-          id: 'sp.finance-schedule:could-not-fetch-data',
-          defaultMessage: 'Ekki tókst að sækja gögn',
+        children={formatMessage(coreMessage.errorFetchModule, {
+          module: formatMessage(coreMessage.finance).toLowerCase(),
         })}
       />
     )
