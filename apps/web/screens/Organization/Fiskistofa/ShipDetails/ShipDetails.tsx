@@ -1,41 +1,60 @@
+import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 import {
   Box,
   Breadcrumbs,
-  Text,
   GridContainer,
   Inline,
+  Link,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   GetNamespaceQuery,
+  Query,
   QueryGetNamespaceArgs,
+  QueryGetOrganizationPageArgs,
+  QueryGetSingleShipArgs,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+} from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { Locale } from 'locale'
-import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
 import { AflamarkCalculator } from './components/AflamarkCalculator'
 import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
+import {
+  getThemeConfig,
+  OrganizationFooter,
+  OrganizationHeader,
+} from '@island.is/web/components'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { GET_SINGLE_SHIP } from './queries'
+import { SidebarShipSearchInput } from '@island.is/shared/connected'
 
-const TAB_OPTIONS = [
-  { label: 'Reiknivél aflamarks', value: 'aflamark' },
-  { label: 'Reiknivél deilistofna', value: 'deilistofn' },
-] as const
+import * as styles from './ShipDetails.css'
+
+const TAB_OPTIONS = ['aflamarks', 'deilistofna'] as const
 
 interface ShipDetailsProps {
   locale: Locale
   namespace: Record<string, string>
+  organizationPage: Query['getOrganizationPage']
+  ship: Query['getSingleShip']
 }
 
-const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
+const ShipDetails: Screen<ShipDetailsProps> = ({
+  locale,
+  namespace,
+  organizationPage,
+  ship,
+}) => {
   const router = useRouter()
 
   const n = useNamespace(namespace)
-  const [selectedTab, setSelectedTab] = useState<typeof TAB_OPTIONS[number]>(
-    TAB_OPTIONS[0],
-  )
 
   const breadcrumbItems = [
     {
@@ -48,71 +67,130 @@ const ShipDetails: Screen<ShipDetailsProps> = ({ locale, namespace }) => {
     },
   ]
 
-  const shipNumber = useMemo(() => {
+  const { shipNumber, selectedTab } = useMemo(() => {
+    let shipNumber = null
     const nr = router?.query?.nr
     if (nr && typeof nr === 'string' && !isNaN(Number(nr))) {
-      return Number(nr)
+      shipNumber = Number(nr)
     }
-    return null
-  }, [])
+    const value = TAB_OPTIONS.find((o) => o === router?.query?.tab)
+    let selectedTab = value ?? TAB_OPTIONS[0]
+    return { shipNumber, selectedTab }
+  }, [router?.query])
 
   return (
     <>
+      <OrganizationHeader organizationPage={organizationPage} />
       <GridContainer>
-        <Breadcrumbs items={breadcrumbItems} />
-        <Box marginTop={3} marginBottom={3}>
+        <Box marginTop={6} marginBottom={6}>
+          <Breadcrumbs items={breadcrumbItems} />
+        </Box>
+
+        <Box marginBottom={3}>
+          <Stack space={1}>
+            <Text variant="h1">{ship.name}</Text>
+            <Box className={styles.shipNumber}>
+              <Text fontWeight="semiBold" color="white">
+                {shipNumber}
+              </Text>
+            </Box>
+          </Stack>
+        </Box>
+
+        <Box className={styles.searchBox} marginBottom={6}>
+          <SidebarShipSearchInput {...namespace} label="" />
+        </Box>
+
+        <Box>
           <Inline alignY="center" space={5}>
             {TAB_OPTIONS.map((tab) => {
-              const isSelected = selectedTab.value === tab.value
+              const isSelected = selectedTab === tab
               return (
-                <Box
-                  cursor="pointer"
-                  onClick={() => setSelectedTab(tab)}
-                  key={tab.value}
+                <Link
+                  shallow={true}
+                  href={{
+                    pathname: router.pathname,
+                    query: {
+                      nr: shipNumber,
+                      tab: tab,
+                    },
+                  }}
+                  underline="normal"
+                  key={tab}
+                  underlineVisibility={isSelected ? 'always' : undefined}
+                  color={isSelected ? 'blue400' : undefined}
                 >
-                  <Text
-                    fontWeight={isSelected ? 'semiBold' : undefined}
-                    color={isSelected ? 'blue400' : undefined}
-                  >
-                    {n(tab.value, tab.label)}
-                  </Text>
-                </Box>
+                  {n(tab, `Reiknivél ${tab}`)}
+                </Link>
               )
             })}
           </Inline>
         </Box>
       </GridContainer>
 
-      {selectedTab.value === 'aflamark' && shipNumber && (
-        <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
-      )}
-      {selectedTab.value === 'deilistofn' && shipNumber && (
-        <DeilistofnaCalculator shipNumber={shipNumber} namespace={namespace} />
-      )}
+      <Box className={styles.container}>
+        {selectedTab === 'aflamarks' && shipNumber && (
+          <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
+        )}
+        {selectedTab === 'deilistofna' && shipNumber && (
+          <DeilistofnaCalculator
+            shipNumber={shipNumber}
+            namespace={namespace}
+          />
+        )}
+      </Box>
+      <OrganizationFooter organizations={[organizationPage.organization]} />
     </>
   )
 }
 
-ShipDetails.getInitialProps = async ({ locale, apolloClient }) => {
-  const response = await apolloClient.query<
-    GetNamespaceQuery,
-    QueryGetNamespaceArgs
-  >({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        lang: locale,
-        namespace: 'Fiskistofa - Ship details',
+ShipDetails.getInitialProps = async ({ locale, apolloClient, query }) => {
+  const [
+    namspaceResponse,
+    organizationPageResponse,
+    shipResponse,
+  ] = await Promise.all([
+    apolloClient.query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          lang: locale,
+          namespace: 'Fiskistofa - Ship details',
+        },
       },
-    },
-  })
+    }),
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: 'fiskistofa',
+          lang: locale,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetSingleShipArgs>({
+      query: GET_SINGLE_SHIP,
+      variables: {
+        input: { shipNumber: Number(query.nr) },
+      },
+    }),
+  ])
 
-  const namespaceString = response?.data?.getNamespace?.fields || '{}'
+  if (!organizationPageResponse?.data?.getOrganizationPage) {
+    throw new CustomNextError(404, 'Organization page not found')
+  }
+
+  const namespaceString = namspaceResponse?.data?.getNamespace?.fields || '{}'
   const namespace = JSON.parse(namespaceString)
+
+  const organizationPage = organizationPageResponse.data.getOrganizationPage
 
   return {
     locale: locale as Locale,
     namespace,
+    organizationPage: organizationPageResponse.data.getOrganizationPage,
+    ship: shipResponse?.data?.getSingleShip,
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 

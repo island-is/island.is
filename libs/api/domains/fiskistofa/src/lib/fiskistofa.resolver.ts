@@ -5,6 +5,7 @@ import { GetQuotaTypesForTimePeriodInput } from './dto/getQuotaTypesForTimePerio
 import { GetShipsInput } from './dto/getShips.input'
 import { GetShipStatusForCalendarYearInput } from './dto/getShipStatusForCalendarYear.input'
 import { GetShipStatusForTimePeriodInput } from './dto/getShipStatusForTimePeriod.input'
+import { GetSingleShipInput } from './dto/getSingleShip.input'
 import { UpdateShipQuotaStatusForTimePeriodInput } from './dto/updateShipQuotaStatusForTimePeriod.input'
 import { UpdateShipStatusForCalendarYearInput } from './dto/updateShipStatusForCalendarYear.input'
 import { UpdateShipStatusForTimePeriodInput } from './dto/updateShipStatusForTimePeriod.input'
@@ -16,6 +17,7 @@ import {
   ExtendedShipStatusInformationUpdate,
   ShipStatusInformation,
 } from './models/shipStatusInformation'
+import { SingleShip } from './models/singleShip'
 
 const cacheTime = process.env.CACHE_TIME || 300
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
@@ -88,5 +90,11 @@ export class FiskistofaResolver {
   @Query(() => [ShipBasicInfo])
   getShips(@Args('input') input: GetShipsInput) {
     return this.fiskistofaClientService.getShips(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => SingleShip)
+  getSingleShip(@Args('input') input: GetSingleShipInput) {
+    return this.fiskistofaClientService.getSingleShip(input)
   }
 }

@@ -39,6 +39,7 @@ export const tableContainer = style({
   borderRadius: '8px',
   borderCollapse: 'separate',
   overflowX: 'scroll',
+  backgroundColor: 'white',
 
   position: 'relative',
   tableLayout: 'fixed',

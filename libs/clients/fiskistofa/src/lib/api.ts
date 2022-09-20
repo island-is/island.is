@@ -7,6 +7,7 @@ import {
   SkipApi,
   StadaSkipsApi,
   V1SkipHeitiHeitiGetRequest,
+  V1SkipSkipnumerGetRequest,
   V1StadaskipsKvotategundirAlmanaksarArGetRequest,
   V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
@@ -181,5 +182,21 @@ export class FiskistofaApi {
       shippingClass: ship?.utgerd ?? '',
       homePort: ship?.heimahofn ?? '',
     }))
+  }
+
+  async getSingleShip(params: V1SkipSkipnumerGetRequest) {
+    console.log('PARAMS', params)
+    const data = await this.skipApi?.v1SkipSkipnumerGet(params)
+    console.log('DATA', data)
+    return {
+      shipNumber: data?.skipNumer,
+      name: data?.heiti ?? '',
+      ownerName: data?.eigandiHeiti ?? '',
+      ownerSsn: data?.eigandiKennitala ?? '',
+      operatorName: data?.rekstraradiliHeiti ?? '',
+      operatorSsn: data?.rekstraradiliKennitala ?? '',
+      operatingCategory: data?.utgerdarflokkurHeiti ?? '',
+      grossTons: data?.bruttotonn,
+    }
   }
 }

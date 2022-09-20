@@ -91,6 +91,8 @@ export const AflamarkCalculator = ({
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
 
+  const prevChangesRef = useRef<Changes | null>(null)
+
   const [state, send] = useMachine(machine)
 
   const quotaStateChangeMetadata = useRef({
@@ -242,6 +244,7 @@ export const AflamarkCalculator = ({
     if (!validateChanges()) {
       return
     }
+    prevChangesRef.current = changes
     const changeValues = Object.values(changes)
     send({
       type: 'UPDATE_GENERAL_DATA',
@@ -300,7 +303,7 @@ export const AflamarkCalculator = ({
   )
 
   return (
-    <Box margin={6}>
+    <Box>
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -351,7 +354,12 @@ export const AflamarkCalculator = ({
             <Button
               onClick={calculate}
               size="small"
-              disabled={loading || Object.values(changes).length === 0}
+              disabled={
+                loading ||
+                Object.values(changes).length === 0 ||
+                JSON.stringify(changes) ===
+                  JSON.stringify(prevChangesRef.current)
+              }
             >
               {n('calculate', 'Reikna')}
             </Button>

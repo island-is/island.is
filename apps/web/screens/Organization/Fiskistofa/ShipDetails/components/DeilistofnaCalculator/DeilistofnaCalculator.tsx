@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMachine } from '@xstate/react'
 import cn from 'classnames'
 import {
@@ -52,6 +52,7 @@ export const DeilistofnaCalculator = ({
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
   const n = useNamespace(namespace)
+  const prevChangesRef = useRef<Changes | null>(null)
 
   const [state, send] = useMachine(machine)
 
@@ -134,6 +135,7 @@ export const DeilistofnaCalculator = ({
     if (!validateChanges()) {
       return
     }
+    prevChangesRef.current = changes
     const changeValues = Object.values(changes)
     send({
       type: 'UPDATE_DATA',
@@ -179,7 +181,7 @@ export const DeilistofnaCalculator = ({
   )
 
   return (
-    <Box margin={6}>
+    <Box>
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -230,7 +232,12 @@ export const DeilistofnaCalculator = ({
             <Button
               onClick={calculate}
               size="small"
-              disabled={loading || Object.values(changes).length === 0}
+              disabled={
+                loading ||
+                Object.values(changes).length === 0 ||
+                JSON.stringify(changes) ===
+                  JSON.stringify(prevChangesRef.current)
+              }
             >
               {n('calculate', 'Reikna')}
             </Button>
