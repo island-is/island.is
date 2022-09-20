@@ -86,7 +86,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
           <Breadcrumbs items={breadcrumbItems} />
         </Box>
 
-        <Box marginBottom={3}>
+        <Box marginBottom={4}>
           <Stack space={1}>
             <Text variant="h1">{ship.name}</Text>
             <Box className={styles.shipNumber}>
@@ -97,7 +97,7 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
           </Stack>
         </Box>
 
-        <Box className={styles.searchBox} marginBottom={6}>
+        <Box className={styles.searchBox} marginBottom={4}>
           <SidebarShipSearchInput {...namespace} label="" />
         </Box>
 
