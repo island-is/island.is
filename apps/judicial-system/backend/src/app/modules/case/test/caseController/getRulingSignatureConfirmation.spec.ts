@@ -106,13 +106,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(then.result).toEqual({ documentSigned: true })
-    })
-
-    it('should upload to s3', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
-    })
-
-    it('should put case completed message on queue', () => {
       expect(mockQueueService.add).toHaveBeenCalledWith({
         type: MessageType.CASE_COMPLETED,
         caseId,
@@ -213,18 +207,13 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should not update database', () => {
-      expect(mockCaseModel.update).not.toHaveBeenCalled()
-    })
-
-    it('should not put addCompleded case on queue', () => {
-      expect(mockQueueService.add).not.toHaveBeenCalled()
-    })
-
-    it('should return that the document was not signed', () => {
+    it('should fail and return that the document was not signed', () => {
       expect(then.result.documentSigned).toBe(false)
       expect(then.result.message).toBeTruthy()
       expect(then.result.code).toBeUndefined()
+
+      expect(mockCaseModel.update).not.toHaveBeenCalled()
+      expect(mockQueueService.add).not.toHaveBeenCalled()
     })
   })
 })
