@@ -776,7 +776,7 @@ export const Review: FC<ReviewScreenProps> = ({
               </>
             )}
 
-            {personalUseAsMuchAsPossible === NO && (
+            {personalUseAsMuchAsPossible === NO && usePersonalAllowance === YES && (
               <>
                 <Label marginTop={2} marginBottom={2}>
                   {formatMessage(
@@ -848,7 +848,7 @@ export const Review: FC<ReviewScreenProps> = ({
       {isPrimaryParent && hasSelectedOtherParent && (
         <ReviewGroup
           isEditable={editable}
-          editAction={() => goToScreen?.('usePersonalAllowanceFromSpouse')}
+          editAction={() => goToScreen?.('personalAllowanceFromSpouse')}
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
