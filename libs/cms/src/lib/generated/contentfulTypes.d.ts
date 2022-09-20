@@ -1284,6 +1284,9 @@ export interface ILifeEventPageFields {
   /** intro */
   intro?: string | undefined
 
+  /** short intro */
+  shortIntro?: string | undefined
+
   /** image */
   image?: Asset | undefined
 
@@ -1298,6 +1301,9 @@ export interface ILifeEventPageFields {
 
   /** category */
   category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1321,7 +1327,7 @@ export interface ILifeEventPageListSliceFields {
   /** Title */
   title?: string | undefined
 
-  /** Life Event Page List */
+  /** List */
   lifeEventPageList?: ILifeEventPage[] | undefined
 }
 
@@ -1586,6 +1592,9 @@ export interface IMailingListSignupFields {
 
   /** Signup URL */
   signupUrl: string
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface IMailingListSignup extends Entry<IMailingListSignupFields> {
@@ -2219,6 +2228,7 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | ILifeEventPageListSlice
         | IBigBulletList
         | IContactUs
         | IDistricts
@@ -2229,6 +2239,7 @@ export interface IOrganizationSubpageFields {
         | IMultipleStatistics
         | IOneColumnText
         | IOverviewLinks
+        | ISliceConnectedComponent
         | ITabSection
         | ITeamList
         | ITellUsAStory
