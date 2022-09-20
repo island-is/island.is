@@ -5,7 +5,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
-import { QueueModule } from '@island.is/message-queue'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
@@ -39,22 +38,9 @@ jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 
-const config = caseModuleConfig()
-
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
-      QueueModule.register({
-        queue: {
-          name: config.sqs.queueName,
-          queueName: config.sqs.queueName,
-          deadLetterQueue: { queueName: config.sqs.deadLetterQueueName },
-        },
-        client: {
-          endpoint: config.sqs.endpoint,
-          region: config.sqs.region,
-        },
-      }),
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
@@ -85,6 +71,14 @@ export const createTestingCaseModule = async () => {
           useIntl: async () => ({ formatMessage: () => 'test' }), // mock properly
         },
       },
+      {
+        provide: LOGGER_PROVIDER,
+        useValue: {
+          debug: jest.fn(),
+          info: jest.fn(),
+          error: jest.fn(),
+        },
+      },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Case),
@@ -106,12 +100,6 @@ export const createTestingCaseModule = async () => {
       if (typeof token === 'function') {
         return mock()
       }
-    })
-    .overrideProvider(LOGGER_PROVIDER)
-    .useValue({
-      debug: jest.fn(),
-      info: jest.fn(),
-      error: jest.fn(),
     })
     .compile()
 

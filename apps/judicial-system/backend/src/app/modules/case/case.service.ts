@@ -22,8 +22,7 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { MessageType } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { EmailService } from '@island.is/email-service'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
@@ -183,9 +182,8 @@ export class CaseService {
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly policeService: PoliceService,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @InjectQueue(caseModuleConfig().sqs.queueName)
-    private queueService: QueueService,
   ) {}
 
   private formatMessage: FormatMessage = () => {
@@ -993,7 +991,10 @@ export class CaseService {
   }
 
   async addCompletedCaseToQueue(caseId: string): Promise<string> {
-    return this.queueService.add({ type: MessageType.CASE_COMPLETED, caseId })
+    return this.messageService.postMessageToQueue({
+      type: MessageType.CASE_COMPLETED,
+      caseId,
+    })
   }
 
   async getRulingSignatureConfirmation(
