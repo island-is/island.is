@@ -39,9 +39,11 @@ export const SidebarShipSearchInput = ({
 
   return (
     <Box>
-      <Box margin={1}>
-        <Text variant="eyebrow">{label}</Text>
-      </Box>
+      {label && (
+        <Box margin={1}>
+          <Text variant="eyebrow">{label}</Text>
+        </Box>
+      )}
       <AsyncSearchInput
         rootProps={{}}
         buttonProps={{ onClick: search }}

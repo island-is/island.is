@@ -169,3 +169,18 @@ export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
     }
   }
 `
+
+export const GET_SINGLE_SHIP = gql`
+  query GetSingleShip($input: GetSingleShipInput!) {
+    getSingleShip(input: $input) {
+      shipNumber
+      name
+      ownerName
+      ownerSsn
+      operatorName
+      operatorSsn
+      operatingCategory
+      grossTons
+    }
+  }
+`

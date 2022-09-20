@@ -8,8 +8,10 @@ import {
   GetShipStatusForTimePeriodInput,
   UpdateShipStatusForTimePeriodInput,
   UpdateShipQuotaStatusForTimePeriodInput,
+  GetSingleShipInput,
 } from '@island.is/api/domains/fiskistofa'
 import {
+  V1SkipSkipnumerGetRequest,
   V1StadaskipsKvotategundirAlmanaksarArGetRequest,
   V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest,
   V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest,
@@ -130,5 +132,12 @@ export class FiskistofaClientService {
       heiti: input.shipName,
     }
     return this.wrapper((api) => api.getShips(params))
+  }
+
+  async getSingleShip(input: GetSingleShipInput) {
+    const params: V1SkipSkipnumerGetRequest = {
+      skipnumer: input.shipNumber,
+    }
+    return this.wrapper((api) => api.getSingleShip(params))
   }
 }

@@ -138,7 +138,9 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+export const OrganizationHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
