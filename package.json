@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
-    "node": "^14.17",
+    "node": "^18.8.0",
     "yarn": "^3.2"
   },
   "repository": {
