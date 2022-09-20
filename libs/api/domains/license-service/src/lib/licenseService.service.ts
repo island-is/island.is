@@ -303,11 +303,7 @@ export class LicenseServiceService {
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(
-        code,
-        date,
-        passTemplateId,
-      )
+      verification = await licenseService.verifyPkPass(data, passTemplateId)
     } else {
       throw new Error(`${licenseType} not supported`)
     }

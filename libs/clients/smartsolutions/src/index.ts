@@ -1,4 +1,5 @@
 export { SmartSolutionsClientModule } from './lib/smartsolutionsApi.module'
+export { SmartSolutionsClientConfig } from './lib/smartsolutionsApi.config'
 export {
   SmartSolutionsApi,
   SmartSolutionsConfig,
