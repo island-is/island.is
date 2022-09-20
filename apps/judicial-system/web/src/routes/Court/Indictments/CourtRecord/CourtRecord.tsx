@@ -54,8 +54,6 @@ const CourtRecord: React.FC = () => {
   } = useS3Upload(workingCase)
 
   const handleNextButtonClick = async () => {
-    // TODO: Send notification
-
     const transitionSuccessful = await transitionCase(
       workingCase,
       CaseTransition.ACCEPT,
