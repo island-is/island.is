@@ -36,7 +36,6 @@ export class FiskistofaResolver {
     return this.fiskistofaClientService.getShipStatusForTimePeriod(input)
   }
 
-  @Directive(cacheControlDirective())
   @Mutation(() => ExtendedShipStatusInformationUpdate)
   updateShipStatusForTimePeriod(
     @Args('input') input: UpdateShipStatusForTimePeriodInput,
@@ -44,7 +43,6 @@ export class FiskistofaResolver {
     return this.fiskistofaClientService.updateShipStatusForTimePeriod(input)
   }
 
-  @Directive(cacheControlDirective())
   @Mutation(() => QuotaStatus)
   updateShipQuotaStatusForTimePeriod(
     @Args('input') input: UpdateShipQuotaStatusForTimePeriodInput,
@@ -62,7 +60,6 @@ export class FiskistofaResolver {
     return this.fiskistofaClientService.getShipStatusForCalendarYear(input)
   }
 
-  @Directive(cacheControlDirective())
   @Mutation(() => ShipStatusInformation)
   updateShipStatusForCalendarYear(
     @Args('input') input: UpdateShipStatusForCalendarYearInput,
