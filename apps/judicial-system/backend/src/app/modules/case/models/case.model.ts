@@ -905,4 +905,12 @@ export class Case extends Model {
   })
   @ApiProperty({ enum: SubpoenaType })
   subpoenaType?: SubpoenaType
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  defendantWaivesRightToCounsel!: boolean
 }

@@ -1,16 +1,17 @@
 import React, { useContext, useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Icon, Tag } from '@island.is/island-ui/core'
+import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { policeCaseNumber as m } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   MultipleValueList,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+
+import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
 interface Props {
   workingCase: Case
@@ -109,30 +110,38 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
         hasError={hasError}
         errorMessage={validate([[undefined, ['empty']]]).errorMessage}
       >
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          data-testid="policeCaseNumbers-list"
-        >
-          {clientPoliceNumbers.map((policeCaseNumber, index) => (
-            <Box
-              key={`${policeCaseNumber}-${index}`}
-              paddingRight={1}
-              paddingBottom={1}
-            >
-              <Tag
-                variant="darkerBlue"
-                onClick={onRemove(policeCaseNumber)}
-                aria-label={formatMessage(m.removeNumber, { policeCaseNumber })}
+        {clientPoliceNumbers.length === 0 ? (
+          <Text color="dark400" dataTestId="noPoliceCaseNumbersAssignedMessage">
+            {formatMessage(m.noPoliceCaseNumbersAssignedMessage)}
+          </Text>
+        ) : (
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            data-testid="policeCaseNumbers-list"
+          >
+            {clientPoliceNumbers.map((policeCaseNumber, index) => (
+              <Box
+                key={`${policeCaseNumber}-${index}`}
+                paddingRight={1}
+                paddingBottom={1}
               >
-                <Box display="flex" alignItems="center">
-                  <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
-                  <Icon icon="close" size="small" />
-                </Box>
-              </Tag>
-            </Box>
-          ))}
-        </Box>
+                <Tag
+                  variant="darkerBlue"
+                  onClick={onRemove(policeCaseNumber)}
+                  aria-label={formatMessage(m.removeNumber, {
+                    policeCaseNumber,
+                  })}
+                >
+                  <Box display="flex" alignItems="center">
+                    <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
+                    <Icon icon="close" size="small" />
+                  </Box>
+                </Tag>
+              </Box>
+            ))}
+          </Box>
+        )}
       </MultipleValueList>
     </>
   )

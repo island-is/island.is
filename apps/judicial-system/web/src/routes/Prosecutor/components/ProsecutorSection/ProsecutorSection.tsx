@@ -1,21 +1,23 @@
 import React, { useContext } from 'react'
 
-import { User } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import ProsecutorSectionHeading from './ProsecutorSectionHeading'
-import ProsecutorSelection from './ProsecutorSelection'
 import { Box } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  ProsecutorSelection,
+} from '@island.is/judicial-system-web/src/components'
+
+import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
 const ProsecutorSection: React.FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendToServer } = useCase()
 
-  const handleProsecutorChange = (prosecutor: User) => {
+  const handleProsecutorChange = (prosecutorId: string) => {
     setAndSendToServer(
       [
         {
-          prosecutorId: prosecutor.id,
+          prosecutorId: prosecutorId,
           force: true,
         },
       ],
