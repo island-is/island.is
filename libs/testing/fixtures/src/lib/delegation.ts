@@ -1,6 +1,7 @@
 import * as faker from 'faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
+import { Model } from 'sequelize'
 
 import {
   ApiScopeGroup,
@@ -9,8 +10,7 @@ import {
   Domain,
   Translation,
 } from '@island.is/auth-api-lib'
-import { createNationalId } from '@island.is/testing/fixtures'
-import { Model } from 'sequelize'
+import { createNationalId } from './nationalId'
 
 export interface CreateDelegationOptions {
   fromNationalId: string

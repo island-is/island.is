@@ -15,6 +15,7 @@ import { AuthDelegationType } from '@island.is/auth-nest-tools'
 import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
+  createDelegation,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { AuthScope } from '@island.is/auth/scopes'
@@ -24,7 +25,7 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   expectMatchingObject,
   getRequestMethod,

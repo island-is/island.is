@@ -1,5 +1,6 @@
-import { DelegationDTO } from '@island.is/auth-api-lib'
+import faker from 'faker'
 import request, { CallbackHandler } from 'supertest'
+import { DelegationDTO } from '@island.is/auth-api-lib'
 
 export const getRequestMethod = (
   server: request.SuperTest<request.Test>,
@@ -39,3 +40,19 @@ export const sortDelegations = (delegations: DelegationDTO[]) => {
     return a.id === b.id ? 0 : a.id! < b.id! ? -1 : 1
   })
 }
+
+export type NameIdTuple = [name: string, id: string]
+
+export const getFakeNationalId = () =>
+  faker.helpers.replaceSymbolWithNumber('##########')
+
+export const getFakeName = () =>
+  faker.fake('{{name.firstName}} {{name.lastName}}')
+
+export const getFakePerson = (): NameIdTuple => [
+  getFakeName(),
+  getFakeNationalId(),
+]
+
+export const generateItemFromCnt = <T>(cnt: number, objFn: () => T) =>
+  Array.from(Array(cnt).keys()).map(() => objFn())

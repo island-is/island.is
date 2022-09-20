@@ -12,11 +12,12 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
+  createDelegation,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { createClient, createDelegation } from '../../../../test/fixtures'
+import { createClient } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -24,7 +25,13 @@ import {
   setupWithoutPermission,
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
-import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
+import {
+  expectMatchingObject,
+  getRequestMethod,
+  getFakePerson,
+  getFakeNationalId,
+  generateItemFromCnt,
+} from '../../../../test/utils'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -34,6 +41,7 @@ import {
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { ResponseSimple } from '@island.is/clients/rsk/procuring'
+import subDays from 'date-fns/subDays'
 
 const today = new Date('2021-11-12')
 const client = createClient({
@@ -43,8 +51,9 @@ const client = createClient({
   supportsProcuringHolders: true,
   supportsPersonalRepresentatives: true,
 })
+const userSocialSecurityNumber = '1122334455'
 const user = createCurrentUser({
-  nationalId: '1122334455',
+  nationalId: userSocialSecurityNumber,
   scope: [AuthScope.actorDelegations, Scopes[0].name],
   client: client.clientId,
 })
@@ -62,6 +71,7 @@ describe('ActorDelegationsController', () => {
     let delegationModel: typeof Delegation
     let apiScopeModel: typeof ApiScope
     let clientModel: typeof Client
+    let nationalRegistryApi: NationalRegistryClientService
 
     beforeAll(async () => {
       // TestApp setup with auth and database
@@ -80,6 +90,7 @@ describe('ActorDelegationsController', () => {
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
       apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
       clientModel = app.get<typeof Client>(getModelToken(Client))
+      nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
     beforeEach(() => {
@@ -108,8 +119,33 @@ describe('ActorDelegationsController', () => {
     })
 
     describe('GET /actor/delegations', () => {
+      let nationalRegistryApiSpy: jest.SpyInstance
       const path = '/v1/actor/delegations'
       const query = '?direction=incoming'
+      const deceasedNationalIds = generateItemFromCnt(3, getFakeNationalId)
+
+      beforeAll(async () => {
+        const persons = generateItemFromCnt(10, getFakePerson)
+
+        const nationalRegistryUsers = [
+          nationalRegistryUser,
+          ...persons.map(([name, nationalId]) =>
+            createNationalRegistryUser({ name, nationalId }),
+          ),
+        ]
+
+        nationalRegistryApiSpy = jest
+          .spyOn(nationalRegistryApi, 'getIndividual')
+          .mockImplementation((id) => {
+            if (deceasedNationalIds.includes(id)) {
+              return Promise.resolve(null)
+            }
+
+            const user = nationalRegistryUsers.find((u) => u?.nationalId === id)
+
+            return Promise.resolve(user ?? null)
+          })
+      })
 
       it('should return only valid delegations', async () => {
         // Arrange
@@ -202,6 +238,67 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
         expectMatchingObject(res.body[0], expectedModel)
+      })
+
+      it('should return custom delegations and not deceased delegations, when the delegationTypes filter is custom type', async () => {
+        // Arrange
+        const models = await delegationModel.bulkCreate(
+          [
+            createDelegation({
+              fromNationalId: nationalRegistryUser.nationalId,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name],
+              today,
+            }),
+            createDelegation({
+              fromNationalId: deceasedNationalIds[0],
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name],
+              today,
+            }),
+            createDelegation({
+              fromNationalId: deceasedNationalIds[1],
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name],
+              today,
+            }),
+          ],
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+
+        // We expect the first model to be returned, but not the second or third since they are tied to a deceased person
+        const expectedModel = models[0].toDTO()
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
+
+        // Verify
+        const expectedModifyedModels = (
+          await delegationModel.findAll({
+            where: {
+              fromNationalId: deceasedNationalIds[0],
+            },
+            include: [
+              {
+                model: DelegationScope,
+                as: 'delegationScopes',
+              },
+            ],
+          })
+        )?.map((delegation) => delegation.toDTO())
+
+        expect(expectedModifyedModels?.[0].scopes?.[0].validTo).toEqual(
+          subDays(today, 1),
+        )
       })
 
       it('should return delegations when the delegationTypes filter is empty', async () => {
