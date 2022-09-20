@@ -9,7 +9,7 @@ WORKDIR /build
 # Adding and installing packages
 ADD package.json yarn.lock ./
 RUN yarn set version berry
-RUN CI=true yarn install --frozen-lockfile
+RUN CI=true yarn install --immutable
 
 FROM deps as src
 # image with the source code
@@ -20,7 +20,7 @@ ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=4096 --no-experimental-fetch"
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
