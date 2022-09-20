@@ -1,4 +1,4 @@
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import { ApiScope, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
@@ -14,6 +14,21 @@ import {
 } from '@island.is/testing/nest'
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
+import { getModelToken } from '@nestjs/sequelize'
+import { createApiScope } from './fixtures'
+
+type Scopes = {
+  [key: string]: {
+    name: string
+  }
+}
+
+export const defaultScopes: Scopes = {
+  // Test user has access to this scope
+  testUserHasAccess: {
+    name: '@identityserver.api/authentication',
+  },
+}
 
 class MockNationalRegistryClientService
   implements Partial<NationalRegistryClientService> {
@@ -28,10 +43,12 @@ class MockUserProfile {
 
 interface SetupOptions {
   user: User
+  scopes?: Scopes
 }
 
 export const setupWithAuth = async ({
   user,
+  scopes = defaultScopes,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer({
@@ -64,6 +81,14 @@ export const setupWithAuth = async ({
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
   })
+
+  const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+  await apiScopeModel.bulkCreate(
+    Object.values(scopes)
+      .map((scope) => scope)
+      .map((scope) => createApiScope(scope)),
+  )
 
   return app
 }

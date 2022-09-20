@@ -12,12 +12,11 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
-  createDelegation,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { createClient } from '../../../../test/fixtures'
+import { createClient, createDelegation } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
