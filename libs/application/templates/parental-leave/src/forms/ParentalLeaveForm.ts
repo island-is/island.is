@@ -350,7 +350,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   condition: (answers) =>
                     (answers as {
                       personalAllowance: { useAsMuchAsPossible: string }
-                    })?.personalAllowance?.useAsMuchAsPossible === NO && getApplicationAnswers(answers).usePersonalAllowance === YES,
+                    })?.personalAllowance?.useAsMuchAsPossible === NO &&
+                    getApplicationAnswers(answers).usePersonalAllowance === YES,
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
@@ -365,10 +366,14 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'usePersonalAllowanceFromSpouse',
-                  title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
+                  title:
+                    parentalLeaveFormMessages.personalAllowance.useFromSpouse,
                   condition: (answers, externalData) => {
-                    const selectedChild = getSelectedChild(answers, externalData)
-    
+                    const selectedChild = getSelectedChild(
+                      answers,
+                      externalData,
+                    )
+
                     return (
                       selectedChild?.parentalRelation ===
                         ParentalRelations.primary && allowOtherParent(answers)
@@ -390,8 +395,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   component: 'SpouseUseAsMuchAsPossible',
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
                   condition: (answers) =>
-                  answers.usePersonalAllowanceFromSpouse === YES &&
-                  allowOtherParent(answers),
+                    answers.usePersonalAllowanceFromSpouse === YES &&
+                    allowOtherParent(answers),
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
@@ -408,7 +413,10 @@ export const ParentalLeaveForm: Form = buildForm({
                       personalAllowanceFromSpouse: {
                         useAsMuchAsPossible: string
                       }
-                    })?.personalAllowanceFromSpouse?.useAsMuchAsPossible === NO && getApplicationAnswers(answers).usePersonalAllowanceFromSpouse === YES,
+                    })?.personalAllowanceFromSpouse?.useAsMuchAsPossible ===
+                      NO &&
+                    getApplicationAnswers(answers)
+                      .usePersonalAllowanceFromSpouse === YES,
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
