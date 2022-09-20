@@ -22,6 +22,7 @@ import {
   HideableText,
   PdfButton,
   CourtDocuments,
+  FormContext,
 } from '@island.is/judicial-system-web/src/components'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -46,7 +47,6 @@ import {
   core,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'

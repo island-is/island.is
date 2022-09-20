@@ -12,7 +12,6 @@ import { User } from '@island.is/auth-nest-tools'
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
-  CONFIG_PROVIDER,
   GenericLicenseClient,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
@@ -20,7 +19,7 @@ import {
   PkPassVerification,
   PkPassVerificationError,
 } from '../../licenceService.type'
-import { Config } from '../../licenseService.module'
+import { DriversLicenseConfig } from '../../licenseService.module'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 
@@ -54,8 +53,8 @@ export class GenericDrivingLicenseApi
   private pkpassClient: PkPassClient
 
   constructor(
-    @Inject(CONFIG_PROVIDER) private config: Config,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private config: DriversLicenseConfig,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client

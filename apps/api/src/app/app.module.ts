@@ -218,19 +218,27 @@ const autoSchemaFile = environment.production
       arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
-      xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
-        path: environment.drivingLicense.v1.xroadPath!,
-        secret: environment.drivingLicense.secret!,
+      firearmLicense: {
+        apiKey: environment.firearmLicense.pkPassApiKey!,
+        apiUrl: environment.smartSolutionsApiUrl!,
+        passTemplateId: environment.firearmLicense
+          .firearmLicensePassTemplateId!,
       },
-      pkpass: {
-        apiKey: environment.pkpass.apiKey!,
-        apiUrl: environment.pkpass.apiUrl!,
-        secretKey: environment.pkpass.secretKey!,
-        cacheKey: environment.pkpass.cacheKey!,
-        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
-        authRetries: environment.pkpass.authRetries!,
+      driversLicense: {
+        xroad: {
+          baseUrl: environment.xroad.baseUrl!,
+          clientId: environment.xroad.clientId!,
+          path: environment.drivingLicense.v1.xroadPath!,
+          secret: environment.drivingLicense.secret!,
+        },
+        pkpass: {
+          apiKey: environment.pkpass.apiKey!,
+          apiUrl: environment.pkpass.apiUrl!,
+          secretKey: environment.pkpass.secretKey!,
+          cacheKey: environment.pkpass.cacheKey!,
+          cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
+          authRetries: environment.pkpass.authRetries!,
+        },
       },
     }),
     PaymentScheduleModule.register({

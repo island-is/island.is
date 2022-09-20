@@ -18,6 +18,7 @@ import {
   GenericLicenseUserdataExternal,
   PkPassVerification,
   GenericUserLicensePkPassStatus,
+  PassTemplates,
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
@@ -241,9 +242,7 @@ export class LicenseServiceService {
     }
 
     if (!pkpassUrl) {
-      throw new Error(
-        `Unable to get pkpass url for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to get pkpass url for ${licenseType} for user`)
     }
     return { pkpassUrl }
   }
@@ -267,7 +266,7 @@ export class LicenseServiceService {
     }
     if (!pkpassQRCode) {
       throw new Error(
-        `Unable to get pkpass qr code for ${licenseType} for nationalId ${user.nationalId}`,
+        `Unable to get pkpass qr code for ${licenseType} for user`,
       )
     }
 
@@ -277,12 +276,26 @@ export class LicenseServiceService {
   async verifyPkPass(
     user: User,
     locale: Locale,
-    licenseType: GenericLicenseType,
-    code: string,
-    date: string,
-    passTemplateId: string,
+    data: string,
   ): Promise<PkPassVerification> {
     let verification: PkPassVerification | null = null
+
+    if (!data) {
+      throw new Error(`Missing input data`)
+    }
+
+    const { passTemplateId } = JSON.parse(data)
+
+    let licenseType
+    if (!passTemplateId) {
+      licenseType = GenericLicenseType.DriversLicense
+    } else {
+      if (passTemplateId in PassTemplates) {
+        licenseType = PassTemplates[passTemplateId]
+      } else {
+        throw new Error(`Invalid pass template Id: ${passTemplateId}`)
+      }
+    }
 
     const licenseService = await this.genericLicenseFactory(
       licenseType,
@@ -300,9 +313,7 @@ export class LicenseServiceService {
     }
 
     if (!verification) {
-      throw new Error(
-        `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
-      )
+      throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
     }
     return verification
   }

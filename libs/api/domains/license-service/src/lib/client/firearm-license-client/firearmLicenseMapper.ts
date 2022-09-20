@@ -11,7 +11,6 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import isAfter from 'date-fns/isAfter'
 
 const formatDateString = (dateTime: string) =>
   dateTime ? format(new Date(dateTime), 'dd.MM.yyyy') : ''
@@ -24,30 +23,40 @@ export const parseFirearmLicensePayload = (
   if (!licenseInfo) return null
 
   const data: Array<GenericLicenseDataField> = [
+    licenseInfo.name && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Nafn einstaklings',
+      value: licenseInfo.name,
+    },
+    licenseInfo.ssn && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Kennitala',
+      value: licenseInfo.ssn,
+    },
+    licenseInfo.expirationDate && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Gildistími',
+      value: formatDateString(licenseInfo.expirationDate) ?? '',
+    },
+    licenseInfo.issueDate && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Útgáfudagur',
+      value: formatDateString(licenseInfo.issueDate) ?? '',
+    },
     licenseInfo.licenseNumber && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Númer skírteinis',
       value: licenseInfo.licenseNumber,
     },
-    licenseInfo.name && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Fullt nafn',
-      value: licenseInfo.name,
-    },
-    licenseInfo.issueDate && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Útgáfudagur',
-      value: licenseInfo.issueDate ?? '',
-    },
-    licenseInfo.expirationDate && {
-      type: GenericLicenseDataFieldType.Value,
-      label: 'Gildir til',
-      value: licenseInfo.expirationDate ?? '',
-    },
     licenseInfo.collectorLicenseExpirationDate && {
       type: GenericLicenseDataFieldType.Value,
       label: 'Gildistími safnaraskírteinis',
-      value: licenseInfo.collectorLicenseExpirationDate ?? '',
+      value: formatDateString(licenseInfo.collectorLicenseExpirationDate) ?? '',
+    },
+    licenseInfo.address && {
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Heimilisfang',
+      value: licenseInfo.address,
     },
     licenseInfo.qualifications && {
       type: GenericLicenseDataFieldType.Group,
@@ -56,25 +65,13 @@ export const parseFirearmLicensePayload = (
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
         label: categories?.[`Flokkur ${qualification}`] ?? '',
-        description: categories?.[`Flokkur ${qualification}`] ?? '',
       })),
     },
-    properties?.properties && {
+    properties && {
       type: GenericLicenseDataFieldType.Group,
       label: 'Skotvopn í eigu leyfishafa',
-      hideFromServicePortal: true,
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
-        fields: parseProperties(property)?.filter(
-          (Boolean as unknown) as ExcludesFalse,
-        ),
-      })),
-    },
-    properties?.properties && {
-      type: GenericLicenseDataFieldType.Table,
-      label: 'Skotvopn í eigu leyfishafa',
-      fields: (properties.properties ?? []).map((property) => ({
-        type: GenericLicenseDataFieldType.Value,
         fields: parseProperties(property)?.filter(
           (Boolean as unknown) as ExcludesFalse,
         ),
@@ -85,12 +82,6 @@ export const parseFirearmLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(licenseData),
-    metadata: {
-      expired: licenseInfo.expirationDate
-        ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
-        : null,
-      licenseNumber: licenseInfo.licenseNumber ?? '',
-    },
   }
 }
 
@@ -156,8 +147,8 @@ export const createPkPassDataInput = (
 
     const splitArray = address.split(',')
     return {
-      address: splitArray[0].trim(),
-      zip: splitArray[1].trim(),
+      address: splitArray[0] ? splitArray[0].trim() : '',
+      zip: splitArray[1] ? splitArray[1].trim() : '',
     }
   }
 

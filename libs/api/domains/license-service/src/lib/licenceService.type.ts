@@ -16,6 +16,10 @@ export enum GenericLicenseProviderId {
 }
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 
+export const PassTemplates: Record<string, GenericLicenseType> = {
+  'dfb706c1-3a78-4518-bf25-cebbf0a93132': GenericLicenseType.FirearmLicense,
+}
+
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
   HasLicense = 'HasLicense',
@@ -169,6 +173,11 @@ export type PkPassVerification = {
   valid: boolean
   data?: string
   error?: PkPassVerificationError
+}
+
+export type PkPassVerificationInputData = {
+  code: string
+  date: string
 }
 
 /**
