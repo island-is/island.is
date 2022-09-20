@@ -1,0 +1,29 @@
+{
+  "root": "libs/application/templates/driving-license-duplicate",
+  "sourceRoot": "libs/application/templates/driving-license-duplicate/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/driving-license-duplicate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-license-duplicate/src/lib/messages.ts"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/driving-license-duplicate/codegen.yml"
+      }
+    }
+  },
+  "tags": []
+}

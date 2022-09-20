@@ -9,7 +9,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useNamespace } from '@island.is/web/hooks'
 import {
   getThemeConfig,
   SliceMachine,
@@ -64,15 +64,26 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice, index) => (
-        <SliceMachine
-          key={slice.id}
-          slice={slice}
-          namespace={namespace}
-          slug={organizationPage.slug}
-          marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
-        />
-      ))}
+      mainContent={organizationPage.slices.map((slice, index) => {
+        const digitalIcelandDetailPageLinkType: LinkType =
+          'digitalicelandservicesdetailpage'
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={organizationPage.slug}
+            marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
+            params={{
+              anchorPageLinkType:
+                organizationPage.theme === 'digital_iceland'
+                  ? digitalIcelandDetailPageLinkType
+                  : undefined,
+            }}
+            renderedOnOrganizationSubpage={false}
+          />
+        )
+      })}
       sidebarContent={
         WITH_SEARCH.includes(organizationPage.slug) && (
           <SearchBox
