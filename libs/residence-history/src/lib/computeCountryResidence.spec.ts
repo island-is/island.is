@@ -1,9 +1,7 @@
 import { computeCountryResidence } from './computeCountryResidence'
 import { DAY } from './constants'
 
-jest
-  .useFakeTimers('modern')
-  .setSystemTime(new Date('2021-09-18T00:00:00').getTime())
+jest.useFakeTimers().setSystemTime(new Date('2021-09-18T00:00:00').getTime())
 
 const d = new Date().getTime()
 

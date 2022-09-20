@@ -133,7 +133,7 @@ function getExportDeclarations(
 }
 
 const getExports = (modulePath: string): ExportDefinition[] => {
-  const ast = parse(readFileSync(modulePath, 'utf-8'), {
+  const ast: any = parse(readFileSync(modulePath, 'utf-8'), {
     sourceType: 'module',
     plugins: ['jsx', 'typescript'],
   })
