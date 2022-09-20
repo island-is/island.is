@@ -12,7 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { generateTimePeriodOptions, TimePeriodOption } from '../../utils'
+import {
+  formattedNumberStringToNumber,
+  generateTimePeriodOptions,
+  sevenFractionDigitNumberFormatter,
+  TimePeriodOption,
+} from '../../utils'
 import { machine } from './machine'
 import { numberFormatter } from '../../utils'
 
@@ -136,13 +141,16 @@ export const AflamarkCalculator = ({
 
     setQuotaChange((prev) => ({
       ...prev,
-      [categoryId]: { ...prev?.[categoryId], [fieldName]: value },
+      [categoryId]: {
+        ...prev?.[categoryId],
+        [fieldName]: value,
+      },
     }))
 
     clearTimeout(quotaStateChangeMetadata.current.timerId)
 
     quotaStateChangeMetadata.current.timerId = setTimeout(() => {
-      if (isNaN(Number(value)) && value) {
+      if (value && isNaN(formattedNumberStringToNumber(value))) {
         setQuotaChangeErrors((prev) => ({
           ...prev,
           [categoryId]: { ...prev?.[categoryId], [fieldName]: true },
@@ -159,7 +167,7 @@ export const AflamarkCalculator = ({
             timePeriod: selectedTimePeriod.value,
             change: {
               id: categoryId,
-              [fieldName]: Number(value),
+              [fieldName]: formattedNumberStringToNumber(value),
             },
           },
         },
@@ -266,7 +274,17 @@ export const AflamarkCalculator = ({
     if (state.context.quotaData) {
       setQuotaChange(
         state.context.quotaData.reduce((acc, val) => {
-          acc[val.id] = { ...val }
+          let formattedVal = {}
+          for (const key of Object.keys(val)) {
+            if (key === 'quotaShare') {
+              formattedVal[key] = sevenFractionDigitNumberFormatter.format(
+                val[key],
+              )
+            } else {
+              formattedVal[key] = numberFormatter.format(val[key])
+            }
+          }
+          acc[val.id] = { ...formattedVal }
           return acc
         }, {}),
       )
