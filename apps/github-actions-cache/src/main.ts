@@ -13,7 +13,7 @@ monkeyPatchServerLogging()
 
 const app = express.default()
 
-app.use(express.json())
+app.use(express.json() as express.RequestHandler)
 
 app.get('/health', healthCheck)
 app.get('/liveness', livenessCheck)

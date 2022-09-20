@@ -52,7 +52,7 @@ const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser()
 
 beforeAll(() => {
-  jest.useFakeTimers('modern').setSystemTime(today.getTime())
+  jest.useFakeTimers().setSystemTime(today.getTime())
 })
 
 describe('ActorDelegationsController', () => {

@@ -11535,6 +11535,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express@npm:^4.17.14":
+  version: 4.17.14
+  resolution: "@types/express@npm:4.17.14"
+  dependencies:
+    "@types/body-parser": "*"
+    "@types/express-serve-static-core": ^4.17.18
+    "@types/qs": "*"
+    "@types/serve-static": "*"
+  checksum: 15c1af46d02de834e4a225eccaa9d85c0370fdbb3ed4e1bc2d323d24872309961542b993ae236335aeb3e278630224a6ea002078d39e651d78a3b0356b1eaa79
+  languageName: node
+  linkType: hard
+
 "@types/faker@npm:5.5.3":
   version: 5.5.3
   resolution: "@types/faker@npm:5.5.3"
@@ -11644,18 +11656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/http-proxy-middleware@npm:0.19.3":
-  version: 0.19.3
-  resolution: "@types/http-proxy-middleware@npm:0.19.3"
-  dependencies:
-    "@types/connect": "*"
-    "@types/http-proxy": "*"
-    "@types/node": "*"
-  checksum: 51000558db0aad31947fd60b6ba6cbd05782e09c17ded63bf9de2574200695885b362d23cf16cb796797d5779c1e3b32792bbef69386dd2a9ce688f7856cd8ec
-  languageName: node
-  linkType: hard
-
-"@types/http-proxy@npm:*, @types/http-proxy@npm:^1.17.8":
+"@types/http-proxy@npm:^1.17.8":
   version: 1.17.9
   resolution: "@types/http-proxy@npm:1.17.9"
   dependencies:
@@ -25081,19 +25082,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy-middleware@npm:0.19.1":
-  version: 0.19.1
-  resolution: "http-proxy-middleware@npm:0.19.1"
-  dependencies:
-    http-proxy: ^1.17.0
-    is-glob: ^4.0.0
-    lodash: ^4.17.11
-    micromatch: ^3.1.10
-  checksum: 64df0438417a613bb22b3689d9652a1b7a56f10b145a463f95f4e8a9b9a351f2c63bc5fd3a9cd710baec224897733b6f299cb7f974ea82769b2a4f1e074764ac
-  languageName: node
-  linkType: hard
-
-"http-proxy-middleware@npm:^2.0.3":
+"http-proxy-middleware@npm:^2.0.3, http-proxy-middleware@npm:^2.0.6":
   version: 2.0.6
   resolution: "http-proxy-middleware@npm:2.0.6"
   dependencies:
@@ -25111,7 +25100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-proxy@npm:^1.17.0, http-proxy@npm:^1.18.1":
+"http-proxy@npm:^1.18.1":
   version: 1.18.1
   resolution: "http-proxy@npm:1.18.1"
   dependencies:
@@ -26789,12 +26778,11 @@ __metadata:
     "@types/cross-spawn": 6.0.2
     "@types/crypto-js": 4.0.1
     "@types/escape-html": 1.0.0
-    "@types/express": 4.17.13
+    "@types/express": ^4.17.14
     "@types/faker": 5.5.3
     "@types/folder-hash": 3.3.0
     "@types/graphql": ^14.5.0
     "@types/http-cache-semantics": 4.0.1
-    "@types/http-proxy-middleware": 0.19.3
     "@types/identicon.js": 2.3.0
     "@types/imap-simple": 4.2.5
     "@types/is-url": 1.2.28
@@ -26925,7 +26913,7 @@ __metadata:
     handlebars: 4.7.7
     hot-shots: 9.0.0
     http-cache-semantics: 4.1.0
-    http-proxy-middleware: 0.19.1
+    http-proxy-middleware: ^2.0.6
     hypher: 0.2.5
     identicon.js: 2.3.3
     imap-simple: 5.1.0
