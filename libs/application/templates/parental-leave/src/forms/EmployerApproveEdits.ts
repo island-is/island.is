@@ -64,6 +64,11 @@ export const EmployerApproveEdits: Form = buildForm({
                     showDescription: false,
                   },
                 ),
+                buildCustomField({
+                  id: 'unionAndPensionInfo',
+                  title: '',
+                  component: 'EmployerApprovalExtraInformation',
+                }),
                 buildDescriptionField({
                   id: 'final',
                   title: otherParentApprovalFormMessages.warning,
