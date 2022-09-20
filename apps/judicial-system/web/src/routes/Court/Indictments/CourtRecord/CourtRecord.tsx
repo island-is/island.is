@@ -54,8 +54,6 @@ const CourtRecord: React.FC = () => {
   } = useS3Upload(workingCase)
 
   const handleNextButtonClick = async () => {
-    // TODO: Send notification
-
     const transitionSuccessful = await transitionCase(
       workingCase,
       CaseTransition.ACCEPT,
@@ -119,7 +117,7 @@ const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`} // TODO: Add previous url when it is ready
+          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!allFilesUploaded}
           nextIsLoading={isLoadingWorkingCase}
