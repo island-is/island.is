@@ -129,15 +129,17 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
       </GridContainer>
 
       <Box className={styles.container}>
-        {selectedTab === 'aflamarks' && shipNumber && (
-          <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
-        )}
-        {selectedTab === 'deilistofna' && shipNumber && (
-          <DeilistofnaCalculator
-            shipNumber={shipNumber}
-            namespace={namespace}
-          />
-        )}
+        <GridContainer>
+          {selectedTab === 'aflamarks' && shipNumber && (
+            <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
+          )}
+          {selectedTab === 'deilistofna' && shipNumber && (
+            <DeilistofnaCalculator
+              shipNumber={shipNumber}
+              namespace={namespace}
+            />
+          )}
+        </GridContainer>
       </Box>
       <OrganizationFooter organizations={[organizationPage.organization]} />
     </>
