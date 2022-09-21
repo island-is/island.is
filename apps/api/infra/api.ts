@@ -113,11 +113,6 @@ export const serviceSetup = (services: {
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
-      SMART_SOLUTIONS_API_URL: {
-        dev: 'https://smartpages-api-dev.smartsolutions.is/graphql',
-        staging: 'https://smartpages-api-dev.smartsolutions.is/graphql',
-        prod: 'https://smartpages-api.smartsolutions.is/graphql',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
