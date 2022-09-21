@@ -1048,13 +1048,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
+   isRecivingUnemploymentBenefitsTitle: {
+      id: 'pl.application:employer.isRecivingUnemploymentBenefits',
+      defaultMessage: 'Ertu á atvinnuleysisbótum?',
+      description: 'Are you receiving unemployment benefits?',
+    },
   }),
 
   selfEmployed: defineMessages({
     title: {
       id: 'pl.application:selfEmployed.title',
-      defaultMessage: 'Ertu sjálfstætt starfandi?',
-      description: 'Are you self employed?',
+      defaultMessage: 'Vinnuveitandi',
+      description: 'Employer',
     },
     description: {
       id: 'pl.application:selfEmployed.description',
