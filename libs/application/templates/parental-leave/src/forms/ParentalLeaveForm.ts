@@ -455,6 +455,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   return parentalLeaveFormMessages.selfEmployed.attachmentTitle
                 }
 
+                // to be added later when we check for student, father without mother and permament fostercare
                 // const isStudent = answers.answers as {}
 
                 // if (isStudent) {
@@ -488,6 +489,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     .attachmentDescription
                 }
 
+                // to be added later when we check for student, father without mother and permament fostercare
                 // const isStudent = answers.answers as {}
 
                 // if (isStudent) {
