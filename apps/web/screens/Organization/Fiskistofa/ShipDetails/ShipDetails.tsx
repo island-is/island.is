@@ -86,69 +86,82 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
           <Breadcrumbs items={breadcrumbItems} />
         </Box>
 
-        <Box marginBottom={4}>
-          <Stack space={1}>
-            <Text variant="h1">{ship.name}</Text>
-            <Box className={styles.shipNumber}>
-              <Text fontWeight="semiBold" color="white">
-                {shipNumber}
-              </Text>
-            </Box>
-          </Stack>
-        </Box>
+        {ship?.name && (
+          <Box marginBottom={4}>
+            <Stack space={1}>
+              <Text variant="h1">{ship.name}</Text>
+              <Box className={styles.shipNumber}>
+                <Text fontWeight="semiBold" color="white">
+                  {shipNumber}
+                </Text>
+              </Box>
+            </Stack>
+          </Box>
+        )}
+
+        {!ship?.name && !ship?.shipNumber && (
+          <Box marginBottom={4}>
+            <Text>{n('shipNotFound', 'Skip fannst ekki')}</Text>
+          </Box>
+        )}
 
         <Box className={styles.searchBox} marginBottom={4}>
           <SidebarShipSearchInput {...namespace} label="" />
         </Box>
 
-        <Box>
-          <Inline alignY="center" space={5}>
-            {TAB_OPTIONS.map((tab) => {
-              const isSelected = selectedTab === tab
-              return (
-                <Link
-                  shallow={true}
-                  href={{
-                    pathname: router.pathname,
-                    query: {
-                      nr: shipNumber,
-                      tab: tab,
-                    },
-                  }}
-                  underline="normal"
-                  key={tab}
-                  underlineVisibility={isSelected ? 'always' : undefined}
-                  color={isSelected ? 'blue400' : undefined}
-                >
-                  {n(
-                    tab,
-                    selectedTab === 'catchQuota'
-                      ? 'Reiknivél aflamarks'
-                      : 'Reiknivél deilistofna',
-                  )}
-                </Link>
-              )
-            })}
-          </Inline>
-        </Box>
+        {ship?.shipNumber && (
+          <Box>
+            <Inline alignY="center" space={5}>
+              {TAB_OPTIONS.map((tab) => {
+                const isSelected = selectedTab === tab
+                return (
+                  <Link
+                    shallow={true}
+                    href={{
+                      pathname: router.pathname,
+                      query: {
+                        nr: shipNumber,
+                        tab: tab,
+                      },
+                    }}
+                    underline="normal"
+                    key={tab}
+                    underlineVisibility={isSelected ? 'always' : undefined}
+                    color={isSelected ? 'blue400' : undefined}
+                  >
+                    {n(
+                      tab,
+                      selectedTab === 'catchQuota'
+                        ? 'Reiknivél aflamarks'
+                        : 'Reiknivél deilistofna',
+                    )}
+                  </Link>
+                )
+              })}
+            </Inline>
+          </Box>
+        )}
       </GridContainer>
 
-      <Box className={styles.container}>
-        <GridContainer>
-          {selectedTab === 'catchQuota' && shipNumber && (
-            <CatchQuotaCalculator
-              shipNumber={shipNumber}
-              namespace={namespace}
-            />
-          )}
-          {selectedTab === 'straddlingStock' && shipNumber && (
-            <StraddlingStockCalculator
-              shipNumber={shipNumber}
-              namespace={namespace}
-            />
-          )}
-        </GridContainer>
-      </Box>
+      {ship && (
+        <Box className={styles.container}>
+          <GridContainer>
+            {selectedTab === 'catchQuota' && ship?.shipNumber && shipNumber && (
+              <CatchQuotaCalculator
+                shipNumber={shipNumber}
+                namespace={namespace}
+              />
+            )}
+            {selectedTab === 'straddlingStock' && ship && shipNumber && (
+              <StraddlingStockCalculator
+                shipNumber={shipNumber}
+                namespace={namespace}
+              />
+            )}
+          </GridContainer>
+        </Box>
+      )}
+
       <OrganizationFooter organizations={[organizationPage.organization]} />
     </>
   )
