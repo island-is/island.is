@@ -24,6 +24,7 @@ interface ShipSearchProps {
   shippingCompany?: string
   shippingClass?: string
   homePort?: string
+  shipSearchInputLabel?: string
 }
 
 export const ShipSearch = ({
@@ -38,6 +39,7 @@ export const ShipSearch = ({
   shippingCompany = 'Útgerð',
   shippingClass = 'Útgerðarflokkur',
   homePort = 'Heimahöfn',
+  shipSearchInputLabel = 'Skipaskrárnúmer eða nafn skips',
 }: ShipSearchProps) => {
   const [nameInput, setNameInput] = useState('')
   const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
@@ -88,8 +90,8 @@ export const ShipSearch = ({
   return (
     <Box>
       <Input
-        name="skipaskrarnumer-eda-nafn-skips"
-        label="Skipaskrárnúmer eða nafn skips"
+        name="ship-search"
+        label={shipSearchInputLabel}
         value={nameInput}
         onChange={(ev) => setNameInput(ev.target.value)}
         hasError={inputError.length > 0}
