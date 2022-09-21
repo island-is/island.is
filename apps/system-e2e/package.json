@@ -1,0 +1,13 @@
+{
+  "name": "tmp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "1.25.2"
+  },
+  "scripts": {},
+  "volta": {
+    "node": "16.17.0"
+  }
+}

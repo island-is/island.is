@@ -155,7 +155,7 @@
           "yarn start api",
           "yarn dev services-user-profile",
           "yarn start application-system-api",
-          "yarn start application-system-form",
+//          "yarn start application-system-form",
           "scripts/run-soffia-proxy.sh",
           "scripts/run-xroad-proxy.sh"
         ],
