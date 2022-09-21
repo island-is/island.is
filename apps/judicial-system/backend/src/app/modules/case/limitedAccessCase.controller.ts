@@ -59,7 +59,8 @@ export class LimitedAccessCaseController {
   })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
-    console.log(theCase)
+    console.log('BBB', theCase.caseFiles)
+
     return theCase
   }
 

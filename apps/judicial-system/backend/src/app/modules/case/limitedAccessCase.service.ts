@@ -56,7 +56,7 @@ export class LimitedAccessCaseService {
       attributes,
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: CaseFile },
+        { model: CaseFile, as: 'caseFiles' },
         { model: Institution, as: 'court' },
         {
           model: User,
