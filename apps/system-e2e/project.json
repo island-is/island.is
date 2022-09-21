@@ -16,8 +16,7 @@
         "outputPath": "dist/apps/system-e2e"
       },
       "configurations": {
-        "production": {
-        }
+        "production": {}
       }
     },
     "lint": {

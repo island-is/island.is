@@ -78,7 +78,7 @@ test.describe('Air discount scheme', () => {
         },
       )
       .toBeGreaterThan(4)
-    let myRightsRegion = page.locator('role=region[name="Mín réttindi"]')
+    const myRightsRegion = page.locator('role=region[name="Mín réttindi"]')
     await expect(myRightsRegion).toBeVisible()
     await expect(myRightsRegion).toContainText(
       data((op) => op.response.data.discounts[0].user.name),
