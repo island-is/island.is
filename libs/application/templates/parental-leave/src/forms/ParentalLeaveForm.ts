@@ -403,11 +403,53 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
-            buildCustomField({
-              component: 'SelfEmployed',
-              id: 'employer.isSelfEmployed',
-              title: parentalLeaveFormMessages.selfEmployed.title,
-              description: parentalLeaveFormMessages.selfEmployed.description,
+            buildMultiField({
+              id: 'employer.isSelfEmployed.benefits',
+              title: '',
+              children: [
+                buildCustomField({
+                  component: 'SelfEmployed',
+                  id: 'employer.isSelfEmployed',
+                  title: parentalLeaveFormMessages.selfEmployed.title,
+                  description: parentalLeaveFormMessages.selfEmployed.description,
+                }),
+                buildRadioField({
+                  id: 'employer.isRecivingUnemploymentBenefits',
+                  title: parentalLeaveFormMessages.employer.isRecivingUnemploymentBenefitsTitle,
+                  description: '',
+                  width: 'half',
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
+                  condition: (answers) =>
+                    (answers as {
+                      employer: {
+                        isSelfEmployed: string
+                      }
+                    })?.employer?.isSelfEmployed === NO,
+                }),
+                buildAsyncSelectField({
+                  id: 'employer.unemploymentBenefits',
+                  title: '',
+                  description: '',
+                  loadOptions: async ({ apolloClient }) => {
+                    return []
+                  },
+                  condition: (answers) =>
+                    (answers as {
+                      employer: {
+                        isRecivingUnemploymentBenefits: string
+                      }
+                    })?.employer?.isRecivingUnemploymentBenefits === YES,
+                })
+              ],
             }),
             buildMultiField({
               id: 'employer.information',
