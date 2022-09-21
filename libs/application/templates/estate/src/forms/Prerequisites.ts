@@ -47,8 +47,12 @@ export const Prerequisites: Form = buildForm({
                   label: EstateTypes.officialEstate,
                   tooltip: 'Sjá nánar linkur hér',
                 },
+                {
+                  value: 'Búsetuleyfi',
+                  label: 'Búsetuleyfi',
+                  tooltip: 'Sjá nánar linkur hér',
+                },
                 //{ value: 'Einkaskipti', label: 'Einkaskipti', tooltip: 'Sjá nánar linkur hér' },
-                //{ value: 'Búsetuleyfi', label: 'Búsetuleyfi', tooltip: 'Sjá nánar linkur hér' },
               ],
             }),
             buildSubmitField({

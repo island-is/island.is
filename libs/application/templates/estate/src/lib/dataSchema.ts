@@ -74,6 +74,7 @@ export const estateSchema = z.object({
   selectedEstate: z.enum([
     EstateTypes.officialEstate,
     EstateTypes.noPropertyEstate,
+    EstateTypes.residencePermit,
   ]),
   // is: innbú
   inventory: z.string().optional(),

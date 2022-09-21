@@ -93,6 +93,16 @@ const EstateTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
             },
+            {
+              id: Roles.APPLICANT_RESIDENCE_PERMIT,
+              formLoader: () =>
+                import('../forms/ResidencePermit/form').then((module) =>
+                  Promise.resolve(module.form),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              write: 'all',
+              delete: true,
+            },
           ],
         },
         on: {
@@ -125,6 +135,14 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.APPLICANT_RESIDENCE_PERMIT,
+              formLoader: () =>
+                import('../forms/ResidencePermit/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
           ],
         },
         type: 'final' as const,
@@ -142,6 +160,10 @@ const EstateTemplate: ApplicationTemplate<
         application.answers.selectedEstate === EstateTypes.noPropertyEstate
       ) {
         return Roles.APPLICANT_NO_PROPERTY
+      } else if (
+        application.answers.selectedEstate === EstateTypes.residencePermit
+      ) {
+        return Roles.APPLICANT_RESIDENCE_PERMIT
       } else return Roles.APPLICANT
     }
   },
