@@ -22,6 +22,7 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
+  isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -39,6 +40,8 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 
+import { defenderCaseOverview as m } from './CaseOverview.strings'
+
 export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
@@ -49,19 +52,17 @@ export const CaseOverview: React.FC = () => {
   const titleForCase = (theCase: Case) => {
     if (theCase.state === CaseState.REJECTED) {
       return isInvestigationCase(theCase.type)
-        ? formatMessage(defenderCaseOverview.title.investigationCaseRejected)
-        : formatMessage(defenderCaseOverview.title.restrictionCaseRejected)
+        ? formatMessage(m.title.investigationCaseRejected)
+        : formatMessage(m.title.restrictionCaseRejected)
     }
 
     if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(defenderCaseOverview.title.caseDismissed)
+      return formatMessage(m.title.caseDismissed)
     }
 
     if (theCase.state === CaseState.ACCEPTED) {
       if (isInvestigationCase(theCase.type)) {
-        return formatMessage(
-          defenderCaseOverview.title.investigationCaseAccepted,
-        )
+        return formatMessage(m.title.investigationCaseAccepted)
       }
 
       const caseType =
@@ -70,20 +71,17 @@ export const CaseOverview: React.FC = () => {
           : theCase.type
 
       if (theCase.isValidToDateInThePast) {
-        return formatMessage(
-          defenderCaseOverview.title.restrictionCaseExpired,
-          { caseType },
-        )
+        return formatMessage(m.title.restrictionCaseExpired, { caseType })
       }
 
-      return formatMessage(defenderCaseOverview.title.restrictionCaseActive, {
+      return formatMessage(m.title.restrictionCaseActive, {
         caseType,
       })
     }
 
     return isInvestigationCase(theCase.type)
       ? ''
-      : formatMessage(defenderCaseOverview.title.restrictionCaseScheduled, {
+      : formatMessage(m.title.restrictionCaseScheduled, {
           caseType: theCase.type,
           isExtended: Boolean(theCase.parentCase),
         })
@@ -112,54 +110,50 @@ export const CaseOverview: React.FC = () => {
                   {titleForCase(workingCase)}
                 </Text>
               </Box>
-              {completedCaseStates.includes(workingCase.state) && (
-                <Box>
-                  <Text variant="h5">
-                    {formatMessage(defenderCaseOverview.rulingDate, {
-                      courtEndTime: `${formatDate(
-                        workingCase.courtEndTime,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.courtEndTime,
-                        TIME_FORMAT,
-                      )}`,
-                    })}
-                  </Text>
-                </Box>
-              )}
-            </Box>
-            {completedCaseStates.includes(workingCase.state) && (
-              <Box display="flex" flexDirection="column">
-                <RestrictionTags workingCase={workingCase} />
-              </Box>
-            )}
-          </Box>
-          {completedCaseStates.includes(workingCase.state) &&
-            isRestrictionCase(workingCase.type) &&
-            workingCase.state === CaseState.ACCEPTED && (
-              <CaseDates workingCase={workingCase} />
-            )}
-        </Box>
-        {completedCaseStates.includes(workingCase.state) &&
-          workingCase.caseModifiedExplanation && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="info"
-                title={formatMessage(
-                  defenderCaseOverview.modifiedDatesHeading,
-                  {
-                    caseType: workingCase.type,
-                  },
+              {completedCaseStates.includes(workingCase.state) &&
+                !isIndictmentCase(workingCase.type) && (
+                  <>
+                    <Box>
+                      <Text variant="h5">
+                        {formatMessage(m.rulingDate, {
+                          courtEndTime: `${formatDate(
+                            workingCase.courtEndTime,
+                            'PPP',
+                          )} kl. ${formatDate(
+                            workingCase.courtEndTime,
+                            TIME_FORMAT,
+                          )}`,
+                        })}
+                      </Text>
+                    </Box>
+                    <Box display="flex" flexDirection="column">
+                      <RestrictionTags workingCase={workingCase} />
+                    </Box>
+                    {isRestrictionCase(workingCase.type) &&
+                      workingCase.state === CaseState.ACCEPTED && (
+                        <CaseDates workingCase={workingCase} />
+                      )}
+                    {workingCase.caseModifiedExplanation && (
+                      <Box marginBottom={5}>
+                        <AlertMessage
+                          type="info"
+                          title={formatMessage(m.modifiedDatesHeading, {
+                            caseType: workingCase.type,
+                          })}
+                          message={
+                            <MarkdownWrapper
+                              markdown={workingCase.caseModifiedExplanation}
+                              textProps={{ variant: 'small' }}
+                            />
+                          }
+                        />
+                      </Box>
+                    )}
+                  </>
                 )}
-                message={
-                  <MarkdownWrapper
-                    markdown={workingCase.caseModifiedExplanation}
-                    textProps={{ variant: 'small' }}
-                  />
-                }
-              />
             </Box>
-          )}
+          </Box>
+        </Box>
         <Box marginBottom={6}>
           <InfoCard
             data={[
@@ -233,7 +227,7 @@ export const CaseOverview: React.FC = () => {
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
                 <Text as="h3" variant="h3">
-                  {formatMessage(defenderCaseOverview.conclusionHeading)}
+                  {formatMessage(m.conclusionHeading)}
                 </Text>
               </Box>
               <Box marginBottom={3}>
@@ -249,7 +243,7 @@ export const CaseOverview: React.FC = () => {
         )}
         <Box marginBottom={10}>
           <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(defenderCaseOverview.documentHeading)}
+            {formatMessage(m.documentHeading)}
           </Text>
           <Box marginBottom={2}>
             <Stack space={2} dividers>

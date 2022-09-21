@@ -1,4 +1,5 @@
 export type { autofillFunc, autofillEntry } from './useCase'
+export type { TUploadFile } from './useS3Upload'
 export { default as useCase } from './useCase'
 export { default as useFileList } from './useFileList'
 export { default as useInstitution } from './useInstitution'

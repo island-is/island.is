@@ -16,7 +16,6 @@ import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  DEFENDER_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
@@ -32,7 +31,11 @@ import {
   isInvestigationCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  caseTypes,
+  formatDate,
+  formatDefenderRoute,
+} from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
 import {
@@ -387,7 +390,7 @@ export class NotificationService {
       this.formatMessage,
       theCase.type,
       theCase.policeCaseNumbers,
-      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+      formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
     )
 
@@ -644,7 +647,7 @@ export class NotificationService {
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
       this.formatMessage,
       theCase.defenderNationalId &&
-        `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
     )
@@ -788,7 +791,11 @@ export class NotificationService {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
             defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-            linkStart: `<a href="${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}">`,
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
             linkEnd: '</a>',
           })
         : this.formatMessage(notifications.signedRuling.defenderBodyV2, {
@@ -796,7 +803,11 @@ export class NotificationService {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
             defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-            linkStart: `<a href="${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}">`,
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
             linkEnd: '</a>',
             signedVerdictAvailableInS3: await this.awsS3Service.objectExists(
               `generated/${theCase.id}/ruling.pdf`,

@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-interface TUploadFile extends UploadFile {
+export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
 }
 

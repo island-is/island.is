@@ -8,6 +8,10 @@ const LimitedAccessCaseQuery = gql`
       type
       state
       policeCaseNumbers
+      caseFiles {
+        id
+        name
+      }
       defendants {
         id
         noNationalId

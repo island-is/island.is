@@ -10,6 +10,7 @@ import { Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { CaseFile } from '../file'
 
 const attributes: (keyof Case)[] = [
   'id',
@@ -55,6 +56,7 @@ export class LimitedAccessCaseService {
       attributes,
       include: [
         { model: Defendant, as: 'defendants' },
+        { model: CaseFile },
         { model: Institution, as: 'court' },
         {
           model: User,
@@ -89,6 +91,7 @@ export class LimitedAccessCaseService {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
+        // caseFiles: { [Op.not]: null },
       },
     })
 
