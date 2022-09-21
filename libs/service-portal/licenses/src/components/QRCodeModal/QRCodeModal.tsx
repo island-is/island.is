@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import * as styles from './QRCodeModal.css'
-import { Box, ModalBase, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, ModalBase, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'

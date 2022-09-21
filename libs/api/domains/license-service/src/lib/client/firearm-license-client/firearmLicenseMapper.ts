@@ -65,10 +65,22 @@ export const parseFirearmLicensePayload = (
         type: GenericLicenseDataFieldType.Category,
         name: qualification,
         label: categories?.[`Flokkur ${qualification}`] ?? '',
+        description: categories?.[`Flokkur ${qualification}`] ?? '',
       })),
     },
     properties && {
       type: GenericLicenseDataFieldType.Group,
+      hideFromServicePortal: true,
+      label: 'Skotvopn í eigu leyfishafa',
+      fields: (properties.properties ?? []).map((property) => ({
+        type: GenericLicenseDataFieldType.Category,
+        fields: parseProperties(property)?.filter(
+          (Boolean as unknown) as ExcludesFalse,
+        ),
+      })),
+    },
+    properties && {
+      type: GenericLicenseDataFieldType.Table,
       label: 'Skotvopn í eigu leyfishafa',
       fields: (properties.properties ?? []).map((property) => ({
         type: GenericLicenseDataFieldType.Category,
@@ -82,6 +94,10 @@ export const parseFirearmLicensePayload = (
   return {
     data,
     rawData: JSON.stringify(licenseData),
+    metadata: {
+      licenseNumber: licenseData.licenseInfo?.licenseNumber?.toString() ?? '',
+      expired: false,
+    },
   }
 }
 
