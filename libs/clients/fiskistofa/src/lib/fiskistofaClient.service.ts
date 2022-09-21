@@ -32,6 +32,7 @@ export class FiskistofaClientService {
       this.api.initialize()
       return callback(this.api)
     } catch (error) {
+      // If we are unauthorized, then we want to re-initialize the api by getting a new access token and then calling the callback again
       if (error instanceof FetchError) {
         if (error.status === 401) {
           this.api.initialize(true)
