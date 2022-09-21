@@ -344,4 +344,9 @@ export class UpdateCaseDto {
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly defendantWaivesRightToCounsel?: boolean
 }
