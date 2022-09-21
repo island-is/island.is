@@ -114,7 +114,7 @@ export const aliasMutation = (
 export const mockName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const mockAddress = faker.address.streetAddress()
 
-export const mockCase = (type: CaseType) => {
+export const mockCase = (type: CaseType): Case => {
   const caseId = faker.datatype.uuid()
   return {
     id: caseId,
@@ -137,6 +137,7 @@ export const mockCase = (type: CaseType) => {
         address: mockAddress,
       },
     ],
+    defendantWaivesRightToCounsel: false,
   }
 }
 

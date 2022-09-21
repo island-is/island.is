@@ -155,6 +155,7 @@ const CaseQuery = gql`
       origin
       seenByDefender
       subpoenaType
+      defendantWaivesRightToCounsel
     }
   }
 `
