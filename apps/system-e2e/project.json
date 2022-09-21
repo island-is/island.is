@@ -12,7 +12,12 @@
           "esbuild --bundle $(find apps/system-e2e -name '*.ts') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node --external:@playwright/test",
           "cp apps/system-e2e/package.json dist/apps/system-e2e/"
         ],
-        "parallel": false
+        "parallel": false,
+        "outputPath": "dist/apps/system-e2e"
+      },
+      "configurations": {
+        "production": {
+        }
       }
     },
     "lint": {
