@@ -160,9 +160,9 @@ const renderConnectedComponent = (slice) => {
       }
       break
     case 'Fiskistofa/ShipSearch':
-      return <ShipSearch />
+      return <ShipSearch {...data} />
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput />
+      return <SidebarShipSearchInput {...data} />
     default:
       break
   }

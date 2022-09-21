@@ -16,12 +16,28 @@ interface ShipSearchProps {
   shipDetailsHref?: string
   searchStringIsTooShort?: string
   resultsFound?: string
+  search?: string
+  noResultsFound?: string
+  errorOccuredWhileFetchingShips?: string
+  shipNumber?: string
+  shipName?: string
+  shippingCompany?: string
+  shippingClass?: string
+  homePort?: string
 }
 
 export const ShipSearch = ({
   shipDetailsHref = '/s/fiskistofa/skip',
   searchStringIsTooShort = 'Leitarstrengur þarf að vera a.m.k. 2 stafir',
   resultsFound = 'Fjöldi skipa:',
+  search = 'Leita',
+  noResultsFound = ' Engar niðurstöður fundust',
+  errorOccuredWhileFetchingShips = 'Villa kom upp við að leita eftir skipi',
+  shipNumber = 'Skipnr.',
+  shipName = 'Nafn',
+  shippingCompany = 'Útgerð',
+  shippingClass = 'Útgerðarflokkur',
+  homePort = 'Heimahöfn',
 }: ShipSearchProps) => {
   const [nameInput, setNameInput] = useState('')
   const [nameInputDuringLastSearch, setNameInputDuringLastSearch] = useState('')
@@ -91,7 +107,7 @@ export const ShipSearch = ({
           }
           onClick={() => handleShipSearch(nameInput)}
         >
-          Leita
+          {search}
         </Button>
       </Box>
 
@@ -106,13 +122,13 @@ export const ShipSearch = ({
       </Box>
       {ships.length === 0 && called && !loading && !error && (
         <Box display="flex" justifyContent="center">
-          <Text>Engar niðurstöður fundust</Text>
+          <Text>{noResultsFound}</Text>
         </Box>
       )}
 
       {error && (
         <Box display="flex" justifyContent="center">
-          <Text>Villa kom upp við að leita eftir skipi</Text>
+          <Text>{errorOccuredWhileFetchingShips}</Text>
         </Box>
       )}
 
@@ -124,11 +140,11 @@ export const ShipSearch = ({
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>Skipnr.</T.HeadData>
-                <T.HeadData>Nafn</T.HeadData>
-                <T.HeadData>Útgerðarflokkur</T.HeadData>
-                <T.HeadData>Útgerð</T.HeadData>
-                <T.HeadData>Heimahöfn</T.HeadData>
+                <T.HeadData>{shipNumber}</T.HeadData>
+                <T.HeadData>{shipName}</T.HeadData>
+                <T.HeadData>{shippingCompany}</T.HeadData>
+                <T.HeadData>{shippingClass}</T.HeadData>
+                <T.HeadData>{homePort}</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>
