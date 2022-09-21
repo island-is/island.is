@@ -22,6 +22,7 @@ import {
   mapShipStatusForCalendarYear,
   mapQuotaType,
 } from './utils'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class FiskistofaApi {
@@ -185,16 +186,34 @@ export class FiskistofaApi {
   }
 
   async getSingleShip(params: V1SkipSkipnumerGetRequest) {
-    const data = await this.skipApi?.v1SkipSkipnumerGet(params)
-    return {
-      shipNumber: data?.skipNumer,
-      name: data?.heiti ?? '',
-      ownerName: data?.eigandiHeiti ?? '',
-      ownerSsn: data?.eigandiKennitala ?? '',
-      operatorName: data?.rekstraradiliHeiti ?? '',
-      operatorSsn: data?.rekstraradiliKennitala ?? '',
-      operatingCategory: data?.utgerdarflokkurHeiti ?? '',
-      grossTons: data?.bruttotonn,
+    try {
+      const data = await this.skipApi?.v1SkipSkipnumerGet(params)
+      return {
+        shipNumber: data?.skipNumer,
+        name: data?.heiti ?? '',
+        ownerName: data?.eigandiHeiti ?? '',
+        ownerSsn: data?.eigandiKennitala ?? '',
+        operatorName: data?.rekstraradiliHeiti ?? '',
+        operatorSsn: data?.rekstraradiliKennitala ?? '',
+        operatingCategory: data?.utgerdarflokkurHeiti ?? '',
+        grossTons: data?.bruttotonn,
+      }
+    } catch (error) {
+      if (error instanceof FetchError) {
+        if (error.status === 404) {
+          return {
+            shipNumber: undefined,
+            name: '',
+            ownerName: '',
+            ownerSsn: '',
+            operatorName: '',
+            operatorSsn: '',
+            operatingCategory: '',
+            grossTons: undefined,
+          }
+        }
+      }
+      throw error
     }
   }
 }
