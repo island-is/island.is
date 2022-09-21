@@ -8,7 +8,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ABOUTIDS } from '../../lib/constants'
-// import * as styles from './styles.css'
 import { useQuery } from '@apollo/client'
 import getAvailableElections from '../../graphql'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -52,8 +51,8 @@ export const AvailableElections = () => {
         id={ABOUTIDS.selectElection}
         name={ABOUTIDS.selectElection}
         backgroundColor="blue"
-        label={formatMessage(m.selectElection)}
-        placeholder={formatMessage(m.selectElection)}
+        label={formatMessage(m.election)}
+        placeholder={formatMessage(m.pickElectionType)}
         error={errors && getErrorViaPath(errors, ABOUTIDS.selectElection)}
         options={getOptions()}
       />

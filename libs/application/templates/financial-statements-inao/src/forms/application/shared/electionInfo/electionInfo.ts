@@ -11,11 +11,6 @@ import { m } from '../../../../lib/messages'
 import { ABOUTIDS, GREATER, LESS, USERTYPE } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
 
-type Foo = {
-  name: string
-  value: string
-}
-
 export const electionInfoSection = buildSection({
   id: 'electionInfo',
   title: m.election,
