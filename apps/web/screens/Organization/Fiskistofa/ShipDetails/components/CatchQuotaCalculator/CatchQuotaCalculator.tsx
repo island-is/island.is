@@ -10,13 +10,20 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { ExtendedCatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import {
+  formattedNumberStringToNumber,
+  generateTimePeriodOptions,
+  sevenFractionDigitNumberFormatter,
+  TimePeriodOption,
+} from '../../utils'
 import { machine } from './machine'
-import { getYearOptions, YearOption } from '../../utils'
-import { CatchQuotaCategory } from '@island.is/web/graphql/schema'
 import { numberFormatter } from '../../utils'
 
-import * as styles from './DeilistofnaCalculator.css'
+import * as styles from './CatchQuotaCalculator.css'
+
+const QUOTA_CHANGE_DEBOUNCE_TIME = 1000
 
 const emptyValue = { value: -1, label: '' }
 
@@ -38,27 +45,135 @@ type ChangeErrors = Record<
   }
 >
 
-interface DeilistofnaCalculatorProps {
-  namespace: Record<string, string>
-  shipNumber: number
+type QuotaChanges = Record<
+  number,
+  {
+    id: number
+    nextYearFromQuota?: string | undefined
+    nextYearQuota?: string | undefined
+    quotaShare?: string | undefined
+    allocatedCatchQuota?: string | undefined
+  }
+>
+
+type QuotaChangeErrors = Record<
+  number,
+  {
+    id: number
+    nextYearFromQuota?: boolean
+    nextYearQuota?: boolean
+    quotaShare?: boolean
+    allocatedCatchQuota?: boolean
+  }
+>
+
+interface QuotaStateChangeMetadata {
+  lastChangeTimestamp: number
+  lastChangeCategoryId: number
+  lastChangeFieldName:
+    | 'nextYearFromQuota'
+    | 'nextYearQuota'
+    | 'quotaShare'
+    | 'allocatedCatchQuota'
+  lastChangeFieldValue: string
+  timerId: number | null
 }
 
-export const DeilistofnaCalculator = ({
-  namespace,
+interface CatchQuotaCalculatorProps {
+  shipNumber: number
+  namespace: Record<string, string>
+}
+
+export const CatchQuotaCalculator = ({
   shipNumber,
-}: DeilistofnaCalculatorProps) => {
-  const yearOptions = useMemo(() => getYearOptions(), [])
-  const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
+  namespace,
+}: CatchQuotaCalculatorProps) => {
+  const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
+  const n = useNamespace(namespace)
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState(
+    timePeriodOptions[0],
+  )
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
-  const n = useNamespace(namespace)
+
   const prevChangesRef = useRef<Changes | null>(null)
 
   const [state, send] = useMachine(machine)
 
+  const quotaStateChangeMetadata = useRef({
+    lastChangeTimestamp: 0,
+    lastChangeCategoryId: -1,
+    lastChangeFieldName: '',
+    lastChangeFieldValue: '',
+    timerId: null,
+  })
+  const [quotaChange, setQuotaChange] = useState<QuotaChanges>({})
+  const [quotaChangeErrors, setQuotaChangeErrors] = useState<QuotaChangeErrors>(
+    {},
+  )
+
   useEffect(() => {
     reset()
-  }, [shipNumber, selectedYear.value])
+  }, [shipNumber, selectedTimePeriod.value])
+
+  const updateQuota = (
+    categoryId: number,
+    fieldName: QuotaStateChangeMetadata['lastChangeFieldName'],
+    value: string,
+  ) => {
+    const timestamp = Date.now()
+
+    // Only allow a single field to be changed at a time (unless it's the same field)
+    if (
+      quotaStateChangeMetadata.current.lastChangeTimestamp +
+        QUOTA_CHANGE_DEBOUNCE_TIME >=
+        timestamp &&
+      categoryId !== quotaStateChangeMetadata.current.lastChangeCategoryId &&
+      quotaStateChangeMetadata.current.lastChangeFieldName !== fieldName
+    ) {
+      return
+    }
+
+    quotaStateChangeMetadata.current.lastChangeCategoryId = categoryId
+    quotaStateChangeMetadata.current.lastChangeFieldName = fieldName
+    quotaStateChangeMetadata.current.lastChangeFieldValue = value
+    quotaStateChangeMetadata.current.lastChangeTimestamp = timestamp
+
+    setQuotaChange((prev) => ({
+      ...prev,
+      [categoryId]: {
+        ...prev?.[categoryId],
+        [fieldName]: value,
+      },
+    }))
+
+    clearTimeout(quotaStateChangeMetadata.current.timerId)
+
+    quotaStateChangeMetadata.current.timerId = setTimeout(() => {
+      if (value && isNaN(formattedNumberStringToNumber(value))) {
+        setQuotaChangeErrors((prev) => ({
+          ...prev,
+          [categoryId]: { ...prev?.[categoryId], [fieldName]: true },
+        }))
+        return
+      }
+      setQuotaChangeErrors({})
+
+      send({
+        type: 'UPDATE_QUOTA_DATA',
+        variables: {
+          input: {
+            shipNumber,
+            timePeriod: selectedTimePeriod.value,
+            change: {
+              id: categoryId,
+              [fieldName]: formattedNumberStringToNumber(value),
+            },
+          },
+        },
+      })
+    }, QUOTA_CHANGE_DEBOUNCE_TIME)
+  }
 
   const reset = () => {
     send({
@@ -66,12 +181,14 @@ export const DeilistofnaCalculator = ({
       variables: {
         input: {
           shipNumber,
-          year: selectedYear.value,
+          timePeriod: selectedTimePeriod.value,
         },
       },
     })
     setChanges({})
     setChangeErrors({})
+    setQuotaChange({})
+    setQuotaChangeErrors({})
   }
 
   const validateChanges = () => {
@@ -138,11 +255,11 @@ export const DeilistofnaCalculator = ({
     prevChangesRef.current = changes
     const changeValues = Object.values(changes)
     send({
-      type: 'UPDATE_DATA',
+      type: 'UPDATE_GENERAL_DATA',
       variables: {
         input: {
           shipNumber,
-          year: selectedYear.value,
+          timePeriod: selectedTimePeriod.value,
           changes: changeValues.map((change) => ({
             ...change,
             catchChange: Number(change?.catchChange ?? 0),
@@ -153,11 +270,34 @@ export const DeilistofnaCalculator = ({
     })
   }
 
+  useEffect(() => {
+    if (state.context.quotaData) {
+      setQuotaChange(
+        state.context.quotaData.reduce((acc, val) => {
+          const formattedVal = {}
+          for (const key of Object.keys(val)) {
+            if (key === 'quotaShare') {
+              formattedVal[key] = sevenFractionDigitNumberFormatter.format(
+                val[key],
+              )
+            } else {
+              formattedVal[key] = numberFormatter.format(val[key])
+            }
+          }
+          acc[val.id] = { ...formattedVal }
+          return acc
+        }, {}),
+      )
+    }
+  }, [state.context.quotaData])
+
   const loading =
-    state.matches('getting data') || state.matches('updating data')
+    state.matches('getting data') ||
+    state.matches('updating general data') ||
+    state.matches('updating quota data')
 
   const getFieldDifference = (
-    category: CatchQuotaCategory,
+    category: ExtendedCatchQuotaCategory,
     fieldName: string,
   ) => {
     const current = state.context.data?.catchQuotaCategories?.find(
@@ -192,12 +332,12 @@ export const DeilistofnaCalculator = ({
             <Select
               disabled={loading}
               size="sm"
-              label={n('year', 'Ár')}
-              name="year-select"
-              options={yearOptions}
-              value={selectedYear}
-              onChange={(newYear) => {
-                setSelectedYear(newYear as YearOption)
+              label={n('timeperiod', 'Tímabil')}
+              name="time-period-select"
+              options={timePeriodOptions}
+              value={selectedTimePeriod}
+              onChange={(newTimePeriod) => {
+                setSelectedTimePeriod(newTimePeriod as TimePeriodOption)
               }}
             />
           </Box>
@@ -219,7 +359,7 @@ export const DeilistofnaCalculator = ({
           </Box>
         </Inline>
 
-        <Box marginTop={[3, 3, 0]}>
+        <Box marginTop={[3, 3, 0]} marginBottom={3}>
           <Inline alignY="center" space={3} flexWrap="nowrap">
             <Button
               onClick={reset}
@@ -246,8 +386,9 @@ export const DeilistofnaCalculator = ({
       </Box>
 
       <Text variant="small">
-        {n('calendarYear', 'Almanaksárið')} 01.01.{selectedYear.label} - 31.12.
-        {selectedYear.label}
+        {n('fishingTimePeriod', 'Fiskveiðiárið')} 01.09.
+        {selectedTimePeriod.startYear} - 31.08.
+        {selectedTimePeriod.endYear}
       </Text>
 
       <Box className={styles.tagContainer}>
@@ -284,9 +425,7 @@ export const DeilistofnaCalculator = ({
       <Box className={styles.minHeightBox} width="full" textAlign="center">
         {loading && <LoadingDots />}
         {state.matches('error') && (
-          <Text>
-            {n('deilistofnaError', 'Villa kom upp við að sækja gögn')}
-          </Text>
+          <Text>{n('aflamarkError', 'Villa kom upp við að sækja gögn')}</Text>
         )}
       </Box>
 
@@ -468,6 +607,141 @@ export const DeilistofnaCalculator = ({
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {numberFormatter.format(category.unused)}
+                  </td>
+                ))}
+              </tr>
+
+              <tr>
+                <td className={styles.visualSeparationLine}>
+                  {n('heildaraflamark', 'Heildaraflamark')}
+                </td>
+                {state.context.quotaData.map((category) => (
+                  <td className={styles.visualSeparationLine} key={category.id}>
+                    {numberFormatter.format(category.totalCatchQuota)}
+                  </td>
+                ))}
+              </tr>
+
+              <tr>
+                <td>{n('aaetladAflamark', 'Áætlað aflamark')}</td>
+                {state.context.quotaData.map((category) => (
+                  <td key={category.id}>
+                    {category.id === 0 ? (
+                      category?.allocatedCatchQuota
+                    ) : (
+                      <input
+                        className={cn({
+                          [styles.error]:
+                            quotaChangeErrors?.[category.id]
+                              ?.allocatedCatchQuota,
+                        })}
+                        disabled={loading}
+                        type="text"
+                        value={
+                          quotaChange[category.id]?.allocatedCatchQuota ??
+                          category?.allocatedCatchQuota
+                        }
+                        onChange={(ev) => {
+                          updateQuota(
+                            category.id,
+                            'allocatedCatchQuota',
+                            ev.target.value,
+                          )
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              <tr>
+                <td>{n('hlutdeild', 'Hlutdeild')}</td>
+                {state.context.quotaData.map((category) => (
+                  <td key={category.id}>
+                    {category.id === 0 ? (
+                      category.quotaShare
+                    ) : (
+                      <input
+                        className={cn({
+                          [styles.error]:
+                            quotaChangeErrors?.[category.id]?.quotaShare,
+                        })}
+                        disabled={loading}
+                        type="text"
+                        value={
+                          quotaChange[category.id]?.quotaShare ??
+                          category?.quotaShare
+                        }
+                        onChange={(ev) => {
+                          updateQuota(
+                            category.id,
+                            'quotaShare',
+                            ev.target.value,
+                          )
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              <tr>
+                <td>{n('aNaestaArKvoti', 'Á næsta ár kvóti')}</td>
+
+                {state.context.quotaData.map((category) => (
+                  <td key={category.id}>
+                    {category.id === 0 ? (
+                      category.nextYearQuota
+                    ) : (
+                      <input
+                        className={cn({
+                          [styles.error]:
+                            quotaChangeErrors?.[category.id]?.nextYearQuota,
+                        })}
+                        disabled={loading}
+                        value={
+                          quotaChange[category.id]?.nextYearQuota ??
+                          category?.nextYearQuota
+                        }
+                        onChange={(ev) => {
+                          updateQuota(
+                            category.id,
+                            'nextYearQuota',
+                            ev.target.value,
+                          )
+                        }}
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+
+              <tr>
+                <td>{n('afNaestaArKvoti', 'Af næsta ári kvóti')}</td>
+                {state.context.quotaData.map((category) => (
+                  <td key={category.id}>
+                    {category.id === 0 ? (
+                      category.nextYearFromQuota
+                    ) : (
+                      <input
+                        className={cn({
+                          [styles.error]:
+                            quotaChangeErrors?.[category.id]?.nextYearFromQuota,
+                        })}
+                        disabled={loading}
+                        value={
+                          quotaChange[category.id]?.nextYearFromQuota ??
+                          category?.nextYearFromQuota
+                        }
+                        onChange={(ev) => {
+                          updateQuota(
+                            category.id,
+                            'nextYearFromQuota',
+                            ev.target.value,
+                          )
+                        }}
+                      />
+                    )}
                   </td>
                 ))}
               </tr>

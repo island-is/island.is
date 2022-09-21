@@ -24,8 +24,8 @@ import {
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { Locale } from 'locale'
-import { AflamarkCalculator } from './components/AflamarkCalculator'
-import { DeilistofnaCalculator } from './components/DeilistofnaCalculator'
+import { CatchQuotaCalculator } from './components/CatchQuotaCalculator'
+import { StraddlingStockCalculator } from './components/StraddlingStockCalculator'
 import {
   getThemeConfig,
   OrganizationFooter,
@@ -37,7 +37,7 @@ import { SidebarShipSearchInput } from '@island.is/shared/connected'
 
 import * as styles from './ShipDetails.css'
 
-const TAB_OPTIONS = ['aflamarks', 'deilistofna'] as const
+const TAB_OPTIONS = ['catchQuota', 'straddlingStock'] as const
 
 interface ShipDetailsProps {
   locale: Locale
@@ -120,7 +120,12 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
                   underlineVisibility={isSelected ? 'always' : undefined}
                   color={isSelected ? 'blue400' : undefined}
                 >
-                  {n(tab, `Reiknivél ${tab}`)}
+                  {n(
+                    tab,
+                    selectedTab === 'catchQuota'
+                      ? 'Reiknivél aflamarks'
+                      : 'Reiknivél deilistofna',
+                  )}
                 </Link>
               )
             })}
@@ -130,11 +135,14 @@ const ShipDetails: Screen<ShipDetailsProps> = ({
 
       <Box className={styles.container}>
         <GridContainer>
-          {selectedTab === 'aflamarks' && shipNumber && (
-            <AflamarkCalculator shipNumber={shipNumber} namespace={namespace} />
+          {selectedTab === 'catchQuota' && shipNumber && (
+            <CatchQuotaCalculator
+              shipNumber={shipNumber}
+              namespace={namespace}
+            />
           )}
-          {selectedTab === 'deilistofna' && shipNumber && (
-            <DeilistofnaCalculator
+          {selectedTab === 'straddlingStock' && shipNumber && (
+            <StraddlingStockCalculator
               shipNumber={shipNumber}
               namespace={namespace}
             />
