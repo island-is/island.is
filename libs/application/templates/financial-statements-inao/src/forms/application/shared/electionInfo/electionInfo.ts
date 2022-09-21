@@ -4,10 +4,17 @@ import {
   buildSection,
   buildSelectField,
   buildRadioField,
+  getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { GREATER, LESS, USERTYPE } from '../../../../lib/constants'
+import { ABOUTIDS, GREATER, LESS, USERTYPE } from '../../../../lib/constants'
 import { getCurrentUserType } from '../../../../lib/utils/helpers'
+
+type Foo = {
+  name: string
+  value: string
+}
 
 export const electionInfoSection = buildSection({
   id: 'electionInfo',
@@ -20,21 +27,11 @@ export const electionInfoSection = buildSection({
       title: m.election,
       description: m.fillOutAppopriate,
       children: [
-        buildSelectField({
-          id: 'election.selectElection',
+        buildCustomField({
+          id: 'election.availableElectionField',
           title: m.election,
-          width: 'half',
-          placeholder: m.pickElectionType,
-          options: [
-            {
-              label: m.presidentalElection,
-              value: 'Forsetakosningar',
-            },
-            {
-              label: m.parliamentaryElection,
-              value: 'Alþingiskosningar',
-            },
-          ],
+          childInputIds: [ABOUTIDS.selectElection],
+          component: 'AvailableElections',
         }),
         buildDescriptionField({
           id: 'election.electionDescription',

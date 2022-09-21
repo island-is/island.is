@@ -108,6 +108,7 @@ export const CEMETRYCARETAKER = {
 export const ABOUTIDS = {
   operatingYear: 'conditionalAbout.operatingYear',
   applicationType: 'conditionalAbout.applicationType',
+  selectElection: 'election.selectElection',
 }
 
 export const OPERATINGCOST = {
