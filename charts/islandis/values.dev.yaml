@@ -271,7 +271,6 @@ api:
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SMART_SOLUTIONS_API_URL: 'https://smartpages-api-dev.smartsolutions.is/graphql'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '30000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
