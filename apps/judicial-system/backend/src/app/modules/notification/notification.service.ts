@@ -56,6 +56,7 @@ import {
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderAssignedEmailNotification,
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { Case } from '../case'
@@ -1156,6 +1157,33 @@ export class NotificationService {
     }
   }
 
+  private async sendDefenderAssignedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    if (!theCase.defenderNationalId || !theCase.defenderEmail) {
+      return Promise.resolve({ notificationSent: false })
+    }
+
+    const { subject, body } = formatDefenderAssignedEmailNotification(
+      this.formatMessage,
+      theCase,
+      `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`,
+    )
+
+    const recipient = await this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.DEFENDER_ASSIGNED,
+      [recipient],
+    )
+  }
+
   /* API */
 
   async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
@@ -1191,6 +1219,8 @@ export class NotificationService {
         return this.sendModifiedNotifications(theCase, user)
       case NotificationType.REVOKED:
         return this.sendRevokedNotifications(theCase)
+      case NotificationType.DEFENDER_ASSIGNED:
+        return this.sendDefenderAssignedNotifications(theCase)
     }
   }
 }
