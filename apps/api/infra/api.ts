@@ -137,6 +137,11 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
+      SMART_SOLUTIONS_API_URL: {
+        dev: 'https://smartpages-api-dev.smartsolutions.is/graphql',
+        staging: 'https://smartpages-api-dev.smartsolutions.is/graphql',
+        prod: 'https://smartpages-api.smartsolutions.is/graphql',
+      },
     })
 
     .secrets({
