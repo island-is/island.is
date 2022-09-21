@@ -90,48 +90,6 @@ export const icHearingArrangements = {
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
       },
-      nameLabel: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.name_label',
-        defaultMessage: 'Nafn {defenderType}',
-        description:
-          'Notaður sem titill í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      namePlaceholder: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.name_placeholder',
-        defaultMessage: 'Fullt nafn',
-        description:
-          'Notaður sem skýritexti í "Nafn verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      emailLabel: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.email_label',
-        defaultMessage: 'Netfang {defenderType}',
-        description:
-          'Notaður sem titill í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      emailPlaceholder: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.email_placeholder',
-        defaultMessage: 'Netfang',
-        description:
-          'Notaður sem skýritexti í "Netfang verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      phoneNumberLabel: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_label',
-        defaultMessage: 'Símanúmer {defenderType}',
-        description:
-          'Notaður sem titill í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
-      phoneNumberPlaceholder: {
-        id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.phone_number_placeholder',
-        defaultMessage: 'Símanúmer',
-        description:
-          'Notaður sem skýritexti í "Símanúmer verjanda/talsmanns" textaboxi á fyrirtöku skrefi í rannsóknarheimildum.',
-      },
     }),
   },
   continueButton: defineMessages({

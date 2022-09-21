@@ -103,7 +103,7 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
