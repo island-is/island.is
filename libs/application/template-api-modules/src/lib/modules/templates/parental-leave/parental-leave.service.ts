@@ -450,7 +450,7 @@ export class ParentalLeaveService {
         )
       }
 
-      return { status: 'ok', id: '4rr4rerwerwerwerwerwer' }
+      return response
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
