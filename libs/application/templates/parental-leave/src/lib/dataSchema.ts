@@ -68,6 +68,8 @@ export const dataSchema = z.object({
       { params: errorMessages.phoneNumber },
     )
     .optional(),
+  isRecivingUnemploymentBenefits: z.enum([YES, NO]),
+  unemploymentBenefits: z.string(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z

@@ -411,11 +411,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   component: 'SelfEmployed',
                   id: 'employer.isSelfEmployed',
                   title: parentalLeaveFormMessages.selfEmployed.title,
-                  description: parentalLeaveFormMessages.selfEmployed.description,
+                  description:
+                    parentalLeaveFormMessages.selfEmployed.description,
                 }),
                 buildRadioField({
-                  id: 'employer.isRecivingUnemploymentBenefits',
-                  title: parentalLeaveFormMessages.employer.isRecivingUnemploymentBenefitsTitle,
+                  id: 'isRecivingUnemploymentBenefits',
+                  title:
+                    parentalLeaveFormMessages.employer
+                      .isRecivingUnemploymentBenefitsTitle,
                   description: '',
                   width: 'half',
                   options: [
@@ -436,19 +439,17 @@ export const ParentalLeaveForm: Form = buildForm({
                     })?.employer?.isSelfEmployed === NO,
                 }),
                 buildAsyncSelectField({
-                  id: 'employer.unemploymentBenefits',
+                  id: 'unemploymentBenefits',
                   title: '',
                   description: '',
                   loadOptions: async ({ apolloClient }) => {
-                    return []
+                    return [{ label: 'test', value: 'test' }]
                   },
                   condition: (answers) =>
                     (answers as {
-                      employer: {
-                        isRecivingUnemploymentBenefits: string
-                      }
-                    })?.employer?.isRecivingUnemploymentBenefits === YES,
-                })
+                      isRecivingUnemploymentBenefits: string
+                    })?.isRecivingUnemploymentBenefits === YES,
+                }),
               ],
             }),
             buildMultiField({
