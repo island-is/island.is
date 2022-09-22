@@ -278,8 +278,16 @@ export class FileService {
   ): AttachmentMetaData[] {
     const keys: AttachmentMetaData[] = []
     for (const [key, value] of Object.entries(attachments)) {
-      const { key: sourceKey, bucket } = AmazonS3URI(value)
-      keys.push({ key, s3key: sourceKey, bucket, value })
+      try {
+        const { key: sourceKey, bucket } = AmazonS3URI(value)
+        keys.push({ key, s3key: sourceKey, bucket, value })
+      } catch (error) {
+        this.logger.error(
+          `Could not parse attachment metadata for value ${value}`,
+          error,
+        )
+        continue
+      }
     }
 
     return keys

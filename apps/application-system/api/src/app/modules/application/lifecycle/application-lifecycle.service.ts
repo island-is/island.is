@@ -66,15 +66,23 @@ export class ApplicationLifeCycleService {
 
   private async pruneAttachments() {
     for (const prune of this.processingApplications) {
-      const result = await this.fileService.deleteAttachmentsForApplication(
-        prune.application,
-      )
-      if (!result.success) {
-        prune.pruned = false
-        prune.failedAttachments = {
-          ...prune.failedAttachments,
-          ...result.failed,
+      try {
+        const result = await this.fileService.deleteAttachmentsForApplication(
+          prune.application,
+        )
+        if (!result.success) {
+          prune.pruned = false
+          prune.failedAttachments = {
+            ...prune.failedAttachments,
+            ...result.failed,
+          }
         }
+      } catch (error) {
+        prune.pruned = false
+        this.logger.error(
+          `Application attachment prune error on id ${prune.application.id}`,
+          error,
+        )
       }
     }
   }
