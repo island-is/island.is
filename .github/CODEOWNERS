@@ -73,6 +73,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 /libs/application/templates/operating-license/                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/operating-license/                 @island-is/juni
+/libs/application/templates/driving-license-duplicate/                                              @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/         @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -110,6 +112,8 @@
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                              @island-is/hugsmidjan
+/libs/clients/firearm-license/                                                                      @island-is/hugsmidjan
+/libs/clients/smartsolutions/                                                                       @island-is/hugsmidjan
 /libs/clients/islykill/                                                                             @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan

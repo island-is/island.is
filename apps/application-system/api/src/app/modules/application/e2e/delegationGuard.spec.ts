@@ -119,13 +119,6 @@ describe('Application system API delegation guard', () => {
       },
     },
     {
-      method: 'GET',
-      endpoint: `/users/${nationalId}/applications`,
-      send: {
-        dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
-      },
-    },
-    {
       method: 'PUT',
       endpoint: `/applications/${uuid.uuid()}/attachments`,
       send: {
