@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@playwright/test": "1.24.0"
+    "@playwright/test": "1.24.0",
+    "playwright-tesults-reporter": "1.0.1"
   },
   "scripts": {},
   "volta": {
