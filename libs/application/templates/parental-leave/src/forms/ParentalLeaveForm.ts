@@ -439,7 +439,7 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'fileUpload',
-          title: 'File upload',
+          title: parentalLeaveFormMessages.attachmentScreen.genericTitle,
           children: [
             buildMultiField({
               id: 'fileUpload.attachment',
@@ -451,7 +451,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   })?.employer?.isSelfEmployed === YES
 
-                if (!isSelfEmployed) {
+                if (isSelfEmployed) {
                   return parentalLeaveFormMessages.selfEmployed.attachmentTitle
                 }
 
@@ -459,22 +459,22 @@ export const ParentalLeaveForm: Form = buildForm({
                 // const isStudent = answers.answers as {}
 
                 // if (isStudent) {
-                //   return parentalLeaveFormMessages.attachement.studentTitle
+                //   return parentalLeaveFormMessages.attachmentScreen.studentTitle
                 // }
 
                 // const isFatherWithoutMother = answers.answers as {}
 
                 // if (isFatherWithoutMother) {
-                //   return parentalLeaveFormMessages.attachement.fatherWithoutMotherTitle
+                //   return parentalLeaveFormMessages.attachmentScreen.fatherWithoutMotherTitle
                 // }
 
                 // const isPermanentFosterCare = answers.answers as {}
 
                 // if (isPermanentFosterCare) {
-                //   return parentalLeaveFormMessages.attachement.permanentFostercareTitle
+                //   return parentalLeaveFormMessages.attachmentScreen.permanentFostercareTitle
                 // }
 
-                return parentalLeaveFormMessages.attachement.genericTitle
+                return parentalLeaveFormMessages.attachmentScreen.genericTitle
               },
               description: (answers) => {
                 const isSelfEmployed =
@@ -484,7 +484,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   })?.employer?.isSelfEmployed === YES
 
-                if (!isSelfEmployed) {
+                if (isSelfEmployed) {
                   return parentalLeaveFormMessages.selfEmployed
                     .attachmentDescription
                 }
@@ -493,22 +493,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 // const isStudent = answers.answers as {}
 
                 // if (isStudent) {
-                // return parentalLeaveFormMessages.attachement.studentDescription
+                // return parentalLeaveFormMessages.attachmentScreen.studentDescription
                 // }
 
                 // const isFatherWithoutMother = answers.answers as {}
 
                 // if (isFatherWithoutMother) {
-                // return parentalLeaveFormMessages.attachement.fatherWithoutMotherDescription
+                // return parentalLeaveFormMessages.attachmentScreen.fatherWithoutMotherDescription
                 // }
 
                 // const isPermanentFosterCare = answers.answers as {}
 
                 // if (isPermanentFosterCare) {
-                // return parentalLeaveFormMessages.attachement.permanentFostercareDescription
+                // return parentalLeaveFormMessages.attachmentScreen.permanentFostercareDescription
                 // }
 
-                return parentalLeaveFormMessages.attachement.genericDescription
+                return parentalLeaveFormMessages.attachmentScreen
+                  .genericDescription
               },
               children: [
                 buildFileUploadField({
