@@ -12,6 +12,11 @@ ADD package.json yarn.lock ./
 RUN CI=true yarn install --frozen-lockfile
 
 FROM deps as src
+
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
+
 # image with the source code
 ADD . .
 
@@ -120,9 +125,11 @@ ENV APP_DIST_HOME=${APP_DIST_HOME}
 RUN mkdir -p /${APP_DIST_HOME} \
   && chown pwuser:pwuser /${APP_DIST_HOME}
 
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
+RUN chown -R pwuser:pwuser /tmp
+RUN apt-get update && apt-get install -y vim
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
 RUN yarn install
+COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]

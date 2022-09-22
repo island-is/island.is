@@ -5,7 +5,14 @@
   "license": "MIT",
   "dependencies": {
     "@playwright/test": "1.24.0",
-    "playwright-tesults-reporter": "1.0.1"
+    "playwright-tesults-reporter": "1.0.1",
+    "imap-simple": "5.1.0",
+    "nodemailer": "6.7.2",
+    "@formatjs/intl": "1.8.1",
+    "mailparser": "3.5.0",
+    "axios": "0.21.4",
+    "@aws-sdk/client-ses": "3.145.0",
+    "react-intl": "5.13.1"
   },
   "scripts": {},
   "volta": {
