@@ -32,10 +32,10 @@ const config: PlaywrightTestConfig = {
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [
-        // [
-        //   'playwright-tesults-reporter',
-        //   { 'tesults-target': process.env.TESULTS_TOKEN },
-        // ],
+        [
+          'playwright-tesults-reporter',
+          { 'tesults-target': process.env.TESULTS_TOKEN },
+        ],
         ['html'],
       ]
     : 'html',
