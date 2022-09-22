@@ -26941,7 +26941,6 @@ __metadata:
     next-cookies: 2.0.3
     next-secure-headers: 2.1.0
     node-fetch: 2.6.7
-    node-gyp: ^9.1.0
     nodemailer: 6.7.2
     nx: 13.10.3
     oidc-client-ts: 2.0.3
@@ -32044,7 +32043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^9.1.0, node-gyp@npm:latest":
+"node-gyp@npm:latest":
   version: 9.1.0
   resolution: "node-gyp@npm:9.1.0"
   dependencies:
