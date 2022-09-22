@@ -105,7 +105,7 @@ USER runner
 
 CMD [ "jest", "main.spec.js" ]
 
-FROM DOCKER_IMAGE_REGISTRY/cypress-io/cypress/base:18.6.0 as cypress-base
+FROM $DOCKER_IMAGE_REGISTRY/cypress-io/cypress/base:18.6.0 as cypress-base
 
 USER root
 RUN id
