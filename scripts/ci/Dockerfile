@@ -108,8 +108,6 @@ CMD [ "jest", "main.spec.js" ]
 FROM mcr.microsoft.com/playwright:v1.24.0-focal as cypress-base
 
 
-RUN groupadd runners && useradd runner --gid runners
-
 
 FROM cypress-base as output-cypress
 
@@ -120,15 +118,13 @@ WORKDIR ${APP_DIST_HOME}
 ENV APP_DIST_HOME=${APP_DIST_HOME}
 
 RUN mkdir -p /${APP_DIST_HOME} \
-  && chown runner:runners /${APP_DIST_HOME}
+  && chown pwuser:pwuser /${APP_DIST_HOME}
 
-COPY --chown=runner:runners --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
-COPY --chown=runner:runners ${APP_HOME}/package.json .
+COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} /${APP_DIST_HOME}/
+COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
 RUN yarn install
-COPY --chown=runner:runners ${APP_HOME}/entrypoint.sh .
-USER runner
-
-RUN ls -al /${APP_DIST_HOME}
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
 FROM cypress-base as output-local
@@ -139,9 +135,8 @@ ARG APP_HOME
 RUN mkdir -p /out \
   && chown node:node /out
 
-COPY --chown=runner:runners ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
-USER runner
+USER pwuser
 
-RUN ls -al /${APP_DIST_HOME}
 ENTRYPOINT ["./entrypoint.sh"]
