@@ -104,7 +104,7 @@ describe('NotificationService - sendDefenderAssignedNotifications', () => {
           address: mockConfig.email.replyToEmail,
         },
         attachments: undefined,
-        subject: 'Gögn úr máli S-123/2022',
+        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
         html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli <a href="${mockConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">S-123/2022</a>. Gögn málsins eru aðgengileg í Réttarvörslugátt með rafrænum skilríkjum.`,
       })

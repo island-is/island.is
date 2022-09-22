@@ -530,7 +530,7 @@ export const notifications = {
     subject: {
       id:
         'judicial.system.backend:notifications.defender_assigned_email.subject',
-      defaultMessage: 'Gögn úr máli {courtCaseNumber}',
+      defaultMessage: '{court} - aðgangur að málsgögnum',
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },

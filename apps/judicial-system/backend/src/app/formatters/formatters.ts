@@ -661,11 +661,11 @@ export function formatDefenderAssignedEmailNotification(
   overviewUrl: string,
 ): SubjectAndBody {
   const subject = formatMessage(notifications.defenderAssignedEmail.subject, {
-    courtCaseNumber: theCase.courtCaseNumber ?? '',
+    court: capitalize(theCase.court?.name ?? ''),
   })
 
   const body = formatMessage(notifications.defenderAssignedEmail.body, {
-    courtCaseNumber: theCase.courtCaseNumber ?? '',
+    courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
