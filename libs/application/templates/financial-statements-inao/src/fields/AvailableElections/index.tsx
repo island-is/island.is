@@ -56,7 +56,11 @@ export const AvailableElections = () => {
 
   const { data, loading, error } = useQuery(getAvailableElections)
 
-  if (error) {
+  if (loading) {
+    return <SkeletonLoader height={70} width="100%" borderRadius="large" />
+  }
+
+  if (error || data?.financialStatementsInaoElections?.length <= 0) {
     return (
       <ContentBlock>
         <AlertMessage
@@ -68,10 +72,6 @@ export const AvailableElections = () => {
     )
   }
 
-  if (loading) {
-    return <SkeletonLoader height={70} width="100%" borderRadius="large" />
-  }
-
   const financialStatementsInaoElections: FinancialStatementsInaoElection[] =
     data.financialStatementsInaoElections
 
@@ -79,7 +79,7 @@ export const AvailableElections = () => {
     return { label: option.name, value: option.electionId }
   })
 
-  const defaultElections = options?.[0]?.value
+  const defaultElections = options[0].value
 
   const getDefaultElectionName = () => {
     const selectedElectionId =
