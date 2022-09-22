@@ -36,13 +36,12 @@ export class LimitedAccessCaseResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
-    console.log('CCC', await backendApi.getLimitedAccessCase(input.id))
-    return backendApi.getLimitedAccessCase(input.id)
-    // return this.auditTrailService.audit(
-    //   user.id,
-    //   AuditedAction.GET_CASE,
-    //   backendApi.getLimitedAccessCase(input.id),
-    //   input.id,
-    // )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CASE,
+      backendApi.getLimitedAccessCase(input.id),
+      input.id,
+    )
   }
 }

@@ -35,7 +35,6 @@ export class RolesGuard implements CanActivate {
 
     // Deny if no rule matches the user's role
     if (!rule) {
-      console.log('USER', rule)
       return false
     }
 

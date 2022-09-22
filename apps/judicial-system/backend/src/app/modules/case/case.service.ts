@@ -156,6 +156,7 @@ const includes: Includeable[] = [
   },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+  { model: CaseFile, as: 'caseFiles' },
 ]
 
 const defendantsOrder: OrderItem = [
