@@ -22,7 +22,7 @@ export async function session(
   if (
     cognitoSessionValidation
       .url()
-      .startsWith('https://cognito.shared.devland.is')
+      .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
     await cognitoLogin(page, getCognitoCredentials(), home)
