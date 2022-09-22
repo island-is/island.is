@@ -139,7 +139,7 @@ const CompanyInfo: FC = () => {
                       },
                       {
                         text: `${partner.website}`,
-                        href: partner.website,
+                        href: partner.website as string | undefined,
                       },
                     ].filter(Boolean)}
                   />

@@ -236,7 +236,7 @@ describe('Enhanced Fetch against https server', () => {
     await expect(response.text()).resolves.toBe('{"result":"success"}')
   })
 
-  xit('should support client certificate', async () => {
+  it('should support client certificate', async () => {
     // Arrange
     const fetch = createEnhancedFetch({
       name: 'test',
