@@ -43,6 +43,9 @@ describe('NotificationService - sendDefenderAssignedNotifications', () => {
     mockConfig = notificationConfig
     mockNotificationModel = notificationModel
 
+    const mockFindAll = mockNotificationModel.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
+
     givenWhenThen = async (
       caseId: string,
       user: User,
@@ -190,6 +193,44 @@ describe('NotificationService - sendDefenderAssignedNotifications', () => {
     it('should return notification was sent', () => {
       expect(then.result).toEqual(
         expect.objectContaining({ notificationSent: true }),
+      )
+    })
+  })
+
+  describe('only send notification once to defender', () => {
+    const notification: SendNotificationDto = {
+      type: NotificationType.DEFENDER_ASSIGNED,
+    }
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      defenderEmail: 'recipient@gmail.com',
+      defenderNationalId: '1234567890',
+      defenderName: 'Sibbi',
+    } as Case
+    const user = {} as User
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockNotificationModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({} as Notification)
+      const mockFindAll = mockNotificationModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce([
+        {
+          caseId,
+          type: notification.type,
+          recipients: theCase.defenderEmail,
+        } as Notification,
+      ])
+
+      then = await givenWhenThen(caseId, user, theCase, notification)
+    })
+
+    it('should return notification was not sent', () => {
+      expect(mockNotificationModel.create).not.toHaveBeenCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+      expect(then.result).toEqual(
+        expect.objectContaining({ notificationSent: false }),
       )
     })
   })

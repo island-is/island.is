@@ -1160,7 +1160,19 @@ export class NotificationService {
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (!theCase.defenderNationalId || !theCase.defenderEmail) {
+    const defenderEmail = theCase.defenderEmail
+    if (!theCase.defenderNationalId || !defenderEmail) {
+      return Promise.resolve({ notificationSent: false })
+    }
+
+    const pastNotifications = await this.notificationModel.findAll({
+      where: { caseId: theCase.id, type: NotificationType.DEFENDER_ASSIGNED },
+    })
+    const hasSentNotificationBefore = pastNotifications.some(({ recipients }) =>
+      recipients?.includes(defenderEmail),
+    )
+
+    if (hasSentNotificationBefore) {
       return Promise.resolve({ notificationSent: false })
     }
 
@@ -1174,7 +1186,7 @@ export class NotificationService {
       subject,
       body,
       theCase.defenderName,
-      theCase.defenderEmail,
+      defenderEmail,
     )
 
     return this.recordNotification(
