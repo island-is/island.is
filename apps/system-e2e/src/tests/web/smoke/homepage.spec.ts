@@ -4,7 +4,7 @@ import { session } from '../../../support/session'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe.only('Front page', () => {
+test.describe('Front page', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session(
