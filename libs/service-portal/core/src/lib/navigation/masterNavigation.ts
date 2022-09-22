@@ -332,6 +332,21 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.accessControlDescription,
       },
+      // Aðgangsstýring
+      {
+        name: m.accessControl,
+        path: ServicePortalPath.AccessControlDelegations,
+        icon: {
+          icon: 'lockClosed',
+        },
+        description: m.accessControlDescription,
+        children: [
+          {
+            name: m.accessControlDelegations,
+            path: ServicePortalPath.AccessControlDelegations,
+          },
+        ],
+      },
     ],
   },
 ]

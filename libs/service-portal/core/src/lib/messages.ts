@@ -522,6 +522,10 @@ export const m = defineMessages({
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
+  accessControlDelegations: {
+    id: 'service.portal:access-control-delegations',
+    defaultMessage: 'Umboð',
+  },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
     defaultMessage: 'Umboðsveiting og yfirlit yfir umboð sem þú hefur gefið',
