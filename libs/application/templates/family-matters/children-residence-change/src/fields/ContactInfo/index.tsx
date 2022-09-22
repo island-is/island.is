@@ -39,7 +39,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
   const counterPartyPhoneError = errors?.counterParty?.presentationPhone
   const applicant = nationalRegistry.data
   const selectedChildren = getSelectedChildrenFromExternalData(
-    applicant.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   return (
@@ -70,7 +70,7 @@ const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
         />
       </Box>
       <Text marginTop={5} variant="h4">
-        {selectedChildren[0].otherParent.fullName}
+        {selectedChildren[0]?.otherParent?.fullName}
       </Text>
       <Box marginTop={2}>
         <InfoBanner>

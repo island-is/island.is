@@ -1,3 +1,5 @@
+import { IdentityModule } from './identity/identity.module'
+import { IdentityService } from './identity/identity.service'
 import { NationalRegistryModule } from './national-registry/national-registry.module'
 import { NationalRegistryService } from './national-registry/national-registry.service'
 import { PaymentCatalogModule } from './payment-catalog/payment-catalog.module'
@@ -9,10 +11,12 @@ export const modules = [
   NationalRegistryModule,
   PaymentCatalogModule,
   UserProfileModule,
+  IdentityModule,
 ]
 
 export const services = [
   NationalRegistryService,
   PaymentCatalogService,
   UserProfileService,
+  IdentityService,
 ]

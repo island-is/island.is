@@ -20,10 +20,11 @@ const TransferOverview = ({ application }: Props) => {
   const applicant = externalData.nationalRegistry.data
   const childResidenceInfo = childrenResidenceInfo(
     applicant,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   const children = getSelectedChildrenFromExternalData(
-    applicant.children,
+    externalData.childrenCustodyInformation.data,
     answers.selectedChildren,
   )
   return (
@@ -43,10 +44,10 @@ const TransferOverview = ({ application }: Props) => {
           {formatMessage(contract.labels.currentResidence)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.current.parentName}
+          {childResidenceInfo?.current?.parentName}
         </Text>
         <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.current.address)}
+          {formatAddress(childResidenceInfo?.current?.address)}
         </Text>
       </Box>
       <Box marginTop={4}>
@@ -54,10 +55,10 @@ const TransferOverview = ({ application }: Props) => {
           {formatMessage(contract.labels.newResidence)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.future.parentName}
+          {childResidenceInfo?.future?.parentName}
         </Text>
         <Text fontWeight="light">
-          {formatAddress(childResidenceInfo.future.address)}
+          {formatAddress(childResidenceInfo?.future?.address)}
         </Text>
       </Box>
     </>

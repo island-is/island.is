@@ -18,6 +18,7 @@ import { AuthDelegationType } from '../types/schema'
 import {
   DepartmentOfFisheriesPaymentCatalogApi,
   ShipRegistryApi,
+  IdentityApi,
 } from '../dataProviders'
 
 const pruneAtMidnight = () => {
@@ -79,6 +80,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 DepartmentOfFisheriesPaymentCatalogApi,
                 ShipRegistryApi,
+                IdentityApi,
               ],
               write: 'all',
             },
