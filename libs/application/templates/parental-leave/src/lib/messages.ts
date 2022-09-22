@@ -1048,7 +1048,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },
-   isRecivingUnemploymentBenefitsTitle: {
+    isRecivingUnemploymentBenefitsTitle: {
       id: 'pl.application:employer.isRecivingUnemploymentBenefits',
       defaultMessage: 'Ertu á atvinnuleysisbótum?',
       description: 'Are you receiving unemployment benefits?',
