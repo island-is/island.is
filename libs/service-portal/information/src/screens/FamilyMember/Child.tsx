@@ -10,7 +10,6 @@ const ChildGuardianshipQuery = gql`
     $input: GetChildGuardianshipInput!
   ) {
     nationalRegistryUserV2ChildGuardianship(input: $input) {
-      nationalId
       legalDomicileParent
       residenceParent
     }

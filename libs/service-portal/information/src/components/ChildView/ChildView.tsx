@@ -3,7 +3,7 @@ import { defineMessage, FormattedMessage } from 'react-intl'
 
 import {
   NationalRegistryChild,
-  NationalRegistryChildGuardianship,
+  NationalRegistryXRoadChildGuardianship,
 } from '@island.is/api/schema'
 import * as styles from './ChildView.css'
 
@@ -62,7 +62,7 @@ interface Props {
   loading?: boolean
   isChild?: boolean
   hasDetails?: boolean
-  guardianship?: NationalRegistryChildGuardianship | null
+  guardianship?: NationalRegistryXRoadChildGuardianship | null
 }
 
 const ChildView: FC<Props> = ({
@@ -115,7 +115,6 @@ const ChildView: FC<Props> = ({
       />
     )
 
-  console.log('guardianship?.legalDomicileParent', guardianship)
   return (
     <Box className={styles.pageWrapper}>
       {loading ? (
@@ -392,48 +391,48 @@ const ChildView: FC<Props> = ({
               <Box printHidden>
                 <Divider />
               </Box>
-              {(guardianship || loading) && (
+              {guardianship && !loading && (
                 <>
-                  {guardianship?.legalDomicileParent && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:legal-domicile-parent',
-                          defaultMessage: 'Lögheimilsforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                        loading={loading}
-                      />
-                      <Divider />
-                    </>
-                  )}
-                  {guardianship?.residenceParent && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:residence-parent',
-                          defaultMessage: 'Búsetuforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                        loading={loading}
-                      />
-                      <Divider />
-                    </>
-                  )}
+                  {guardianship?.legalDomicileParent &&
+                    guardianship.legalDomicileParent.length > 0 && (
+                      <>
+                        <TwoColumnUserInfoLine
+                          label={formatMessage({
+                            id: 'sp.family:legal-domicile-parent',
+                            defaultMessage: 'Lögheimilsforeldri',
+                          })}
+                          firstValue={livingArrangment(
+                            guardianship?.legalDomicileParent ?? [],
+                            person?.parent1 ?? '',
+                          )}
+                          secondValue={livingArrangment(
+                            guardianship?.legalDomicileParent ?? [],
+                            person?.parent2 ?? '',
+                          )}
+                        />
+                        <Divider />
+                      </>
+                    )}
+                  {guardianship?.residenceParent &&
+                    guardianship.residenceParent.length > 0 && (
+                      <>
+                        <TwoColumnUserInfoLine
+                          label={formatMessage({
+                            id: 'sp.family:residence-parent',
+                            defaultMessage: 'Búsetuforeldri',
+                          })}
+                          firstValue={livingArrangment(
+                            guardianship?.residenceParent ?? [],
+                            person?.parent1 ?? '',
+                          )}
+                          secondValue={livingArrangment(
+                            guardianship?.residenceParent ?? [],
+                            person?.parent2 ?? '',
+                          )}
+                        />
+                        <Divider />
+                      </>
+                    )}
                 </>
               )}
             </>

@@ -8,7 +8,7 @@ import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
-import { NationalRegistryChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
+import { NationalRegistryXRoadChildGuardianship } from '../models/nationalRegistryChildGuardianship.model'
 import { NationalRegistryBirthplace } from '../models/nationalRegistryBirthplace.model'
 import { NationalRegistryCitizenship } from '../models/nationalRegistryCitizenship.model'
 
@@ -43,21 +43,33 @@ export class NationalRegistryXRoadService {
 
   async getNationalRegistryChildGuardianship(
     user: User,
-    nationalId: string,
-  ): Promise<NationalRegistryChildGuardianship | undefined> {
+    childNationalId: string,
+  ): Promise<NationalRegistryXRoadChildGuardianship | null> {
+    const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
+      user,
+    )
+
+    const isChildOfUser = childrenNationalIds.some(
+      (childId) => childId === childNationalId,
+    )
+
+    if (!isChildOfUser) {
+      return null
+    }
+
     const residenceParent = await this.nationalRegistryApi.getChildResidenceParent(
       user,
-      nationalId,
+      childNationalId,
     )
-    const domicileParent = await this.nationalRegistryApi.getChildDomicileParent(
+    const legalDomicileParent = await this.nationalRegistryApi.getChildDomicileParent(
       user,
-      nationalId,
+      childNationalId,
     )
 
     return {
-      nationalId,
-      legalDomicileParent: domicileParent,
-      residenceParent: residenceParent,
+      childNationalId,
+      legalDomicileParent,
+      residenceParent,
     }
   }
 

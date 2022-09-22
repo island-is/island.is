@@ -1,9 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class NationalRegistryChildGuardianship {
+export class NationalRegistryXRoadChildGuardianship {
   @Field(() => ID)
-  nationalId!: string
+  childNationalId!: string
 
   @Field(() => [String], { nullable: true })
   legalDomicileParent?: Array<string> | undefined
