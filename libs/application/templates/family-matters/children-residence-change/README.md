@@ -35,7 +35,7 @@ Prerequisites
 
 ### Test user
 
-For testing on dev and staging use the Gervimaður Evrópa login: 0102719
+For testing on local, dev and staging use the Gervimaður Evrópa login: 0102719
 
 ## Code owners and maintainers
 

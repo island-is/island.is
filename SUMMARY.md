@@ -166,6 +166,7 @@
   - [Finance](libs/clients/finance/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
+  - [Identity](libs/clients/identity/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)

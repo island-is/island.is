@@ -113,6 +113,7 @@
     "clients-financial-statements-inao": "libs/clients/financial-statements-inao",
     "clients-fishing-license": "libs/clients/fishing-license",
     "clients-health-insurance-v2": "libs/clients/health-insurance-v2",
+    "clients-identity": "libs/clients/identity",
     "clients-islykill": "libs/clients/islykill",
     "clients-middlewares": "libs/clients/middlewares",
     "clients-mms": "libs/clients/mms",
