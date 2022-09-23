@@ -57,7 +57,7 @@ import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -299,8 +299,9 @@ export class CaseService {
 
         await this.courtService.createDocument(
           theCase.id,
-          theCase.courtId ?? '',
-          theCase.courtCaseNumber ?? '',
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.CASE_DOCUMENTS,
           'Rannsóknargögn',
           'Rannsóknargögn.pdf',
           'application/pdf',
@@ -447,8 +448,9 @@ export class CaseService {
           .then((buffer) =>
             this.courtService.createDocument(
               theCase.id,
-              theCase.courtId ?? '',
-              theCase.courtCaseNumber ?? '',
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
               title,
               caseFile.name.replace(/^.+\./, `${title}.`),
               caseFile.type,
@@ -522,8 +524,9 @@ export class CaseService {
           .then((buffer) =>
             this.courtService.createDocument(
               theCase.id,
-              theCase.courtId ?? '',
-              theCase.courtCaseNumber ?? '',
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
               title,
               caseFile.name.replace(/^.+\./, `${title}.`),
               caseFile.type,
@@ -1162,7 +1165,7 @@ export class CaseService {
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
-      theCase.courtId ?? '',
+      theCase.courtId,
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),

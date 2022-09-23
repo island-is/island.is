@@ -12,8 +12,14 @@ import {
 import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
+export enum CourtDocumentFolder {
+  REQUEST_DOCUMENTS = 'Krafa og greinargerð',
+  CASE_DOCUMENTS = 'Gögn málsins',
+  COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+}
+
 type SubTypes = { [c in CaseType]: string | [string, string] }
-//
+
 // Maps case types to sub types in the court system
 export const subTypes: SubTypes = {
   CHILD_PROTECTION_LAWS: 'Barnaverndarlög',
@@ -86,7 +92,7 @@ export class CourtService {
     contentType: string,
     content: Buffer,
   ): Promise<string> {
-    return this.courtClientService.uploadStream(courtId ?? '', {
+    return this.courtClientService.uploadStream(courtId, {
       value: content,
       options: { filename: fileName, contentType },
     })
@@ -231,27 +237,32 @@ export class CourtService {
 
   async createDocument(
     caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
+    courtId = '',
+    courtCaseNumber = '',
+    caseFolder: CourtDocumentFolder,
     subject: string,
     fileName: string,
     fileType: string,
     content: Buffer,
     user?: User,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content)
+    return this.courtClientService
+      .uploadStream(courtId, {
+        value: content,
+        options: { filename: fileName, contentType: fileType },
+      })
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
           subject,
           fileName,
           streamID: streamId,
-          caseFolder: 'Gögn málsins',
+          caseFolder,
         }),
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          'Failed to create a court document',
+          'Failed to create a document at court',
           {
             caseId,
             actor: user?.name ?? 'RVG',
@@ -261,6 +272,7 @@ export class CourtService {
             subject: this.mask(subject),
             fileName: this.mask(fileName),
             fileType,
+            caseFolder,
           },
           reason,
         )
@@ -272,7 +284,7 @@ export class CourtService {
   async createCourtCase(
     user: User,
     caseId: string,
-    courtId: string,
+    courtId = '',
     type: CaseType,
     policeCaseNumbers: string[],
     isExtension: boolean,

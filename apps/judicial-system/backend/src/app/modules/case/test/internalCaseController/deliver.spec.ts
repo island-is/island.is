@@ -8,17 +8,17 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { createTestingCaseModule } from '../createTestingCaseModule'
 import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from '../../../../formatters'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtService } from '../../../court'
+import { CourtDocumentFolder, CourtService } from '../../../court'
 import { PoliceService } from '../../../police'
 import { CaseFile, FileService } from '../../../file'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/courtRecordPdf')
 
@@ -383,6 +383,7 @@ describe('InternalCaseController - Deliver', () => {
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
           `test.${rulingSuffix}`,
           rulingType,
@@ -416,6 +417,7 @@ describe('InternalCaseController - Deliver', () => {
           caseId,
           courtId,
           courtCaseNumber,
+          CourtDocumentFolder.COURT_DOCUMENTS,
           'test',
           `test.${suffix}`,
           courtRecordType,
