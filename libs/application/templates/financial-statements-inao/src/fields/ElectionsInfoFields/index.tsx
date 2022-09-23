@@ -1,11 +1,5 @@
-import React, { Fragment, ReactText, useReducer } from 'react'
-import {
-  AlertMessage,
-  Box,
-  ContentBlock,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import React, { Fragment, ReactText, useCallback, useReducer } from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ABOUTIDS, UPDATE_ELECTION_ACTION } from '../../lib/constants'
@@ -64,7 +58,7 @@ export const ElectionsInfoFields = ({
     })
   }
 
-  const getDefaultElection = () => {
+  const getDefaultElection = useCallback(() => {
     const selectedElectionId =
       values?.election?.selectElection || defaultElections
 
@@ -74,7 +68,7 @@ export const ElectionsInfoFields = ({
     getElectionInfo(currentElection?.value)
 
     return currentElection?.label || ''
-  }
+  }, [])
 
   return (
     <Fragment>

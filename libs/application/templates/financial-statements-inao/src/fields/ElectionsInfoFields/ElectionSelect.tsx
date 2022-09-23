@@ -39,7 +39,7 @@ export const ElectionSelect = ({
 
   useEffect(() => {
     getDefaultElection()
-  }, [])
+  }, [getDefaultElection])
 
   if (loading) {
     return <SkeletonLoader height={70} width="100%" borderRadius="large" />

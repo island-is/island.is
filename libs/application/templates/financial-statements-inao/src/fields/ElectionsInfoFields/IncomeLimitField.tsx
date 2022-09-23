@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import {
   AlertMessage,
   ContentBlock,
@@ -25,7 +25,7 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
     if (year) {
       getLimit()
     }
-  }, [year])
+  }, [year, getLimit])
 
   if (loading) {
     return (
@@ -50,24 +50,22 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   }
 
   return (
-    <Fragment>
-      <RadioController
-        id={ABOUTIDS.incomeLimit}
-        options={[
-          {
-            label: `${formatMessage(m.lessThanLimit)} ${formatNumber(
-              limit,
-            )} ${formatMessage(m.crowns)}`,
-            value: LESS,
-          },
-          {
-            label: `${formatMessage(m.moreThanLimit)} ${formatNumber(
-              limit,
-            )} ${formatMessage(m.crowns)}`,
-            value: GREATER,
-          },
-        ]}
-      />
-    </Fragment>
+    <RadioController
+      id={ABOUTIDS.incomeLimit}
+      options={[
+        {
+          label: `${formatMessage(m.lessThanLimit)} ${formatNumber(
+            limit,
+          )} ${formatMessage(m.crowns)}`,
+          value: LESS,
+        },
+        {
+          label: `${formatMessage(m.moreThanLimit)} ${formatNumber(
+            limit,
+          )} ${formatMessage(m.crowns)}`,
+          value: GREATER,
+        },
+      ]}
+    />
   )
 }
