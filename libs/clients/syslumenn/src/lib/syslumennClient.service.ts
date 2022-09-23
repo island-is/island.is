@@ -13,6 +13,7 @@ import {
   AssetName,
   EstateRegistrant,
   EstateRelations,
+  EstateInfo,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -24,6 +25,7 @@ import {
   constructUploadDataObject,
   mapAssetName,
   mapEstateRegistrant,
+  mapEstateInfo,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -33,6 +35,7 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
+  UpplysingarUrDanarbuiSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -385,5 +388,16 @@ export class SyslumennService {
       },
     })
     return res
+  }
+
+  async getEstateInfo(nationalId: string): Promise<EstateInfo[]> {
+    const { id, api } = await this.createApi()
+    const res = await api.upplysingarUrDanarbuiPost({
+      fyrirspurn: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res.yfirlit?.map(mapEstateInfo) ?? []
   }
 }
