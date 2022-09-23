@@ -86,18 +86,6 @@ export class CourtService {
     private readonly eventService: EventService,
   ) {}
 
-  private uploadStream(
-    courtId: string,
-    fileName: string,
-    contentType: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.courtClientService.uploadStream(courtId, {
-      value: content,
-      options: { filename: fileName, contentType },
-    })
-  }
-
   private mask(value: string): string {
     const valueIsFileName = value.split('.').pop() !== value
     const fileNameEnding = valueIsFileName ? value.split('.').pop() : ''
@@ -113,86 +101,6 @@ export class CourtService {
     return `${firstLetterInValue}${mask}${lastLetterInValueWithoutFileExtension}${
       valueIsFileName ? `.${fileNameEnding}` : ''
     }`
-  }
-
-  async createCourtRecord(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createThingbok(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court record',
-          {
-            caseId,
-            actor: 'RVG',
-            institution: 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
-
-        throw reason
-      })
-  }
-
-  async createRuling(
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-    user?: User,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Dómar, úrskurðir og Þingbók',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court ruling',
-          {
-            caseId,
-            actor: user?.name ?? 'RVG',
-            institution: user?.institution?.name ?? 'RVG',
-            courtId,
-            courtCaseNumber,
-            fileName: this.mask(fileName),
-          },
-          reason,
-        )
-
-        throw reason
-      })
   }
 
   async createDocument(

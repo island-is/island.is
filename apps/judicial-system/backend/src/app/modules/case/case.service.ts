@@ -228,16 +228,21 @@ export class CaseService {
       writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
     }
 
+    const fileName = formatCourtUploadRulingTitle(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      Boolean(theCase.rulingDate),
+    )
+
     try {
-      await this.courtService.createRuling(
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        formatCourtUploadRulingTitle(
-          this.formatMessage,
-          theCase.courtCaseNumber,
-          Boolean(theCase.rulingDate),
-        ),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         buffer,
         user,
       )
@@ -261,13 +266,18 @@ export class CaseService {
         writeFile(`${theCase.id}-court-record.pdf`, pdf)
       }
 
-      await this.courtService.createCourtRecord(
+      const fileName = this.formatMessage(courtUpload.courtRecord, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      })
+
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.courtRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        }),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         pdf,
       )
 
