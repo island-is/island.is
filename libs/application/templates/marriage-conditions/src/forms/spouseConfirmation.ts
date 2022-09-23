@@ -26,6 +26,7 @@ import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
+import format from 'date-fns/format'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -47,6 +48,11 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
               values: {
                 applicantsName: (application.answers.applicant as Individual)
                   ?.person.name,
+                // application was created the day spouse1 completed payment
+                applicationDate: format(
+                  new Date(application.externalData.createCharge.date),
+                  'dd. MMMM, yyyy',
+                ).toLocaleLowerCase(),
               },
             }),
             children: [
@@ -250,7 +256,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     condition: (answers) => {
                       return (
                         (answers.personalInfo as PersonalInfo)
-                          ?.maritalStatus === maritalStatuses['6']
+                          ?.maritalStatus === maritalStatuses['5']
                       )
                     },
                   }),
