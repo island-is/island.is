@@ -5,8 +5,14 @@ import {
 } from './propertyUnitsOfUse.model'
 import { PropertyOwnersModel } from './propertyOwners.model'
 import { LandModel } from './Land.model'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Extensions, Field, ObjectType } from '@nestjs/graphql'
 
+@Extensions({
+  filterFields: {
+    condition: () => true,
+    fields: ['land', 'propertyNumber'],
+  },
+})
 @ObjectType()
 export class PropertyDetail {
   @Field(() => UnitsOfUseModel, { nullable: true })
