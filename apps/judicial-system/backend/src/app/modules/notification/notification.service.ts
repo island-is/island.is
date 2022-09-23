@@ -60,7 +60,7 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { Case } from '../case'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -272,16 +272,21 @@ export class NotificationService {
         this.formatMessage,
       )
 
-      await this.courtService.createRequest(
-        user,
+      const fileName = this.formatMessage(courtUpload.requestFileName, {
+        caseType: caseTypes[theCase.type],
+        date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
+      })
+
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.requestFileName, {
-          caseType: caseTypes[theCase.type],
-          date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
-        }),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.REQUEST_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         requestPdf,
+        user,
       )
     } catch (error) {
       this.logger.error(

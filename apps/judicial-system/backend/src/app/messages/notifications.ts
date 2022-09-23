@@ -206,13 +206,6 @@ export const notifications = {
       description:
         'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskurðar',
     },
-    rulingAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.ruling_attachment',
-      defaultMessage: 'Úrskurður {courtCaseNumber}.pdf',
-      description:
-        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskurðar',
-    },
     courtRecordAttachment: {
       id:
         'judicial.system.backend:notifications.signed_ruling.court_record_attachment',
