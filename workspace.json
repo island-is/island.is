@@ -185,6 +185,7 @@
     "judicial-system-types": "libs/judicial-system/types",
     "judicial-system-web": "apps/judicial-system/web",
     "judicial-system-web-e2e": "apps/judicial-system/web-e2e",
+    "judicial-system-web-e2e-regression": "apps/judicial-system/web-e2e-regression",
     "judicial-system-xrd-api": "apps/judicial-system/xrd-api",
     "localization": "libs/localization",
     "logging": "libs/logging",
