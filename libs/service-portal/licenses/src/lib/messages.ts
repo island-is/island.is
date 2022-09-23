@@ -80,10 +80,6 @@ export const m = defineMessages({
     id: 'sp.license:error-fetch-driving-license',
     defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
   },
-  errorFetch: {
-    id: 'sp.license:error-fetch',
-    defaultMessage: 'Tókst ekki að sækja skírteini, eitthvað fór úrskeiðis',
-  },
   errorNoData: {
     id: 'sp.license:no-data-found',
     defaultMessage: 'Engin gögn fundust',

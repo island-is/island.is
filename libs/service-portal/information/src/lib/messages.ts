@@ -126,10 +126,6 @@ export const spmm = defineMessages({
     id: 'sp.family:child-registration-send',
     defaultMessage: 'Senda tilkynningu',
   },
-  error: {
-    id: 'sp.family:error',
-    defaultMessage: 'Tókst ekki að sækja upplýsingar, eitthvað fór úrskeiðis',
-  },
 })
 
 export const mCompany = defineMessages({
