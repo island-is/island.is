@@ -248,6 +248,7 @@
     "recharts": "2.0.9",
     "redoc": "2.0.0-rc.48",
     "reflect-metadata": "0.1.13",
+    "regenerator-runtime": "0.13.7",
     "remark-parse": "9.0.0",
     "rosetta": "1.0.0",
     "rxjs": "^7.0.0",

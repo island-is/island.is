@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/transport-authority/order-vehicle-registration-certificate",
+  "sourceRoot": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/order-vehicle-registration-certificate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/order-vehicle-registration-certificate"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

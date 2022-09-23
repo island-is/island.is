@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/transport-authority/digital-tachograph-drivers-card",
+  "sourceRoot": "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/digital-tachograph-drivers-card/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/digital-tachograph-drivers-card"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/digital-tachograph-drivers-card/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

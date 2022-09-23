@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/transport-authority/order-vehicle-license-plate",
+  "sourceRoot": "libs/application/templates/transport-authority/order-vehicle-license-plate/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/order-vehicle-license-plate/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/order-vehicle-license-plate"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-license-plate/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

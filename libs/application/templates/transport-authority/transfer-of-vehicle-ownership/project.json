@@ -1,0 +1,27 @@
+{
+  "root": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership",
+  "sourceRoot": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/application/templates/transport-authority/transfer-of-vehicle-ownership"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/transport-authority/transfer-of-vehicle-ownership/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

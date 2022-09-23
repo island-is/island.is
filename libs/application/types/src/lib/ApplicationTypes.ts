@@ -29,6 +29,17 @@ export enum ApplicationTypes {
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   OPERATING_LCENSE = 'OperatingLicense',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
+  DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
+  DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
+  DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
+  TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
+  ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
+  ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
+  ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
+  REGISTER_CO_OWNER_OF_VEHICLE = 'RegisterCoOwnerOfVehicle',
+  DEREGISTER_CO_OWNER_OF_VEHICLE = 'DeregisterCoOwnerOfVehicle',
+  REGISTER_OPERATOR_OF_VEHICLE = 'RegisterOperatorOfVehicle',
+  DEREGISTER_OPERATOR_OF_VEHICLE = 'DeregisterOperatorOfVehicle',
 }
 
 export const ApplicationConfigurations = {
@@ -151,5 +162,49 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_LICENSE_DUPLICATE]: {
     slug: 'samrit',
     translation: 'dld.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_DRIVERS_CARD]: {
+    slug: 'okuritakort-okumannskort',
+    translation: 'tadc.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_COMPANY_CARD]: {
+    slug: 'okuritakort-fyrirtaekjakort',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.DIGITAL_TACHOGRAPH_WORKSHOP_CARD]: {
+    slug: 'okuritakort-verkstaediskort',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP]: {
+    slug: 'eigendaskipti-okutaekis',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.ANONYMITY_IN_VEHICLE_REGISTRY]: {
+    slug: 'nafnleynd-i-okutaekjaskra',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
+    slug: 'panta-skraningarskirteini',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
+    slug: 'panta-skraningarmerki',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.REGISTER_CO_OWNER_OF_VEHICLE]: {
+    slug: 'skra-medeigandi-okutaekis',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.DEREGISTER_CO_OWNER_OF_VEHICLE]: {
+    slug: 'afskra-medeigandi-okutaekis',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.REGISTER_OPERATOR_OF_VEHICLE]: {
+    slug: 'skra-umradamadur-okutaekis',
+    translation: 'todox.application',
+  },
+  [ApplicationTypes.DEREGISTER_OPERATOR_OF_VEHICLE]: {
+    slug: 'afskra-umradamadur-okutaekis',
+    translation: 'todox.application',
   },
 }
