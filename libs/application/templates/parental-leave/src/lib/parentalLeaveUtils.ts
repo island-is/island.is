@@ -405,6 +405,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
+  const isRecivingUnemploymentBenefits = getValueViaPath(
+    answers,
+    'isRecivingUnemploymentBenefits',
+  ) as YesOrNo
+
+  const unemploymentBenefits = getValueViaPath(
+    answers,
+    'unemploymentBenefits',
+  ) as string
+
   const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
@@ -557,6 +567,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     periods,
     rawPeriods,
     firstPeriodStart,
+    isRecivingUnemploymentBenefits,
+    unemploymentBenefits
   }
 }
 
