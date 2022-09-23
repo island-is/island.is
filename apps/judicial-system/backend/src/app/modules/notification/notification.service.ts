@@ -31,6 +31,7 @@ import {
   User,
   isInvestigationCase,
   isIndictmentCase,
+  CaseState,
 } from '@island.is/judicial-system/types'
 import { caseTypes, formatDate } from '@island.is/judicial-system/formatters'
 
@@ -58,7 +59,7 @@ import {
 } from '../../formatters'
 import { courtUpload, notifications } from '../../messages'
 import { Case } from '../case'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { AwsS3Service } from '../aws-s3'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
@@ -270,16 +271,21 @@ export class NotificationService {
         this.formatMessage,
       )
 
-      await this.courtService.createRequest(
-        user,
+      const fileName = this.formatMessage(courtUpload.requestFileName, {
+        caseType: caseTypes[theCase.type],
+        date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
+      })
+
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.requestFileName, {
-          caseType: caseTypes[theCase.type],
-          date: `-${format(nowFactory(), 'yyyy-MM-dd')}`,
-        }),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.REQUEST_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         requestPdf,
+        user,
       )
     } catch (error) {
       this.logger.error(
@@ -436,7 +442,6 @@ export class NotificationService {
       )
     }
 
-    // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
       where: {
         caseId: theCase.id,
@@ -449,15 +454,13 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    // TODO: Check state instead of court case number
-    if (theCase.courtCaseNumber) {
+    if (theCase.state === CaseState.RECEIVED) {
       // No need to wait
       this.uploadRequestPdfToCourt(theCase, user)
     }
 
     if (notification) {
-      // TODO: Check state instead of court case number
-      if (theCase.courtCaseNumber) {
+      if (theCase.state === CaseState.RECEIVED) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
