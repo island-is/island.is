@@ -429,10 +429,10 @@ export class CaseService {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
       .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf))
-      .catch(() => {
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { caseId: theCase.id },
+      .catch((reason) => {
+        this.logger.error(
+          `Faild to deliver the ruling for case ${theCase.id} to court`,
+          { reason },
         )
 
         return false
