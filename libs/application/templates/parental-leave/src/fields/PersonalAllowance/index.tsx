@@ -51,13 +51,16 @@ export const PersonalAllowance: FC<FieldBaseProps> = ({
             },
           ],
           onSelect: (s: string) => {
-            const allowance = id === 'usePersonalAllowance' ? 'personalAllowance' : 'personalAllowanceFromSpouse';
-            
+            const allowance =
+              id === 'usePersonalAllowance'
+                ? 'personalAllowance'
+                : 'personalAllowanceFromSpouse'
+
             if (s === NO) {
-              // useAsMuchAsPossible set to YES so the user can go forward, because if user first selects  
-              // YES in usePersonalAllowance then NO without selecting in useAsMuchAsPossible, 
-              // the user cannot go forward but doesn't see the error message from useAsMuchAsPossible. 
-              setValue(allowance + '.useAsMuchAsPossible', YES);
+              // useAsMuchAsPossible set to YES so the user can go forward, because if user first selects
+              // YES in usePersonalAllowance then NO without selecting in useAsMuchAsPossible,
+              // the user cannot go forward but doesn't see the error message from useAsMuchAsPossible.
+              setValue(allowance + '.useAsMuchAsPossible', YES)
             }
           },
         }}
