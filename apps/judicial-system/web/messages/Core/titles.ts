@@ -1,4 +1,4 @@
-import { defineMessage } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const titles = {
   prosecutor: {
@@ -108,17 +108,24 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Dómskjöl skjá hjá saksóknara í ákærum',
       }),
+      overview: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.overview',
+        defaultMessage: 'Yfirlit ákæru - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Yfirlit ákæru skjá hjá saksóknara í ákærum',
+      }),
     },
   },
   court: {
-    investigationCases: {
+    shared: {
       receptionAndAssignment: defineMessage({
-        id:
-          'judicial.system.core:titles.court.investigation_cases.reception_and_assignment',
+        id: 'judicial.system.core:titles.court.shared.reception_and_assignment',
         defaultMessage: 'Móttaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í rannsóknarheimildum',
+          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í öllum málategundum',
       }),
+    },
+    investigationCases: {
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.investigation_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
@@ -153,13 +160,6 @@ export const titles = {
       }),
     },
     restrictionCases: {
-      receptionAndAssignment: defineMessage({
-        id:
-          'judicial.system.core:titles.court.restriction_cases.reception_and_assignment',
-        defaultMessage: 'Móttaka - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í gæslu- og farbannsmálum',
-      }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
@@ -192,6 +192,33 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
     },
+    indictments: defineMessages({
+      overview: {
+        id: 'judicial.system.core:titles.court.indictments.overview',
+        defaultMessage: 'Yfirlit ákæru - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í ákærum',
+      },
+      subpoena: {
+        id: 'judicial.system.core:titles.court.indictments.subpoena',
+        defaultMessage: 'Fyrirkall - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
+      },
+      prosecutorAndDefender: {
+        id:
+          'judicial.system.core:titles.court.indictments.prosecutor_and_defender',
+        defaultMessage: 'Málflytjendur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',
+      },
+      courtRecord: {
+        id: 'judicial.system.core:titles.court.indictments.court_record',
+        defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Þingbók og dómur úrskurðar skjá hjá dómstólum í ákærum',
+      },
+    }),
   },
   defender: {
     caseOverview: defineMessage({

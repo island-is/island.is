@@ -14,6 +14,11 @@ import {
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
 import { getSpouseNationalId } from './utils'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import {
+  getApplicationFeatureFlags,
+  MarriageCondtionsFeatureFlags,
+} from './getApplicationFeatureFlags'
 
 const pruneAfter = (time: number) => {
   return {
@@ -47,14 +52,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/application').then((val) =>
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                return import('../forms/application').then((val) =>
                   Promise.resolve(
                     val.getApplication({
-                      allowFakeData: process.env.NODE_ENV === 'development',
+                      allowFakeData:
+                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
                     }),
                   ),
-                ),
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -121,10 +131,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
-              formLoader: () =>
-                import('../forms/spouseConfirmation').then((val) =>
-                  Promise.resolve(val.spouseConfirmation),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                return import('../forms/spouseConfirmation').then((val) =>
+                  Promise.resolve(
+                    val.spouseConfirmation({
+                      allowFakeData:
+                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                    }),
+                  ),
+                )
+              },
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],

@@ -8,7 +8,7 @@ export enum AppealDecisionRole {
 export enum Sections {
   PROSECUTOR = 0,
   JUDGE = 1,
-  // We skip 2 because that step has the ruling, i.e. the SignedVerdictPage, which has no subsections.
+  CASE_CLOSED = 2,
   EXTENSION = 3,
   JUDGE_EXTENSION = 4,
 }
@@ -35,6 +35,17 @@ export enum IndictmentsProsecutorSubsections {
   DEFENDANT = 0,
   PROCESSING = 1,
   CASE_FILES = 2,
+  OVERVIEW = 3,
+}
+
+export enum IndictmentsCourtSubsections {
+  JUDGE_OVERVIEW = 0,
+  RECEPTION_AND_ASSIGNMENT = 1,
+  SUBPEONA = 2,
+  PROSECUTOR_AND_DEFENDER = 3,
+  RULING = 4,
+  COURT_RECORD = 5,
+  CONFIRMATION = 6,
 }
 
 export type ReactSelectOption = {

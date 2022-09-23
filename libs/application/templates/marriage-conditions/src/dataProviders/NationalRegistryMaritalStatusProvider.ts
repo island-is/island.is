@@ -7,13 +7,13 @@ import {
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { MarriageConditionsFakeData, YES } from '../types'
-import { genderedMaritalStatuses } from '../lib/constants'
+import { maritalStatuses } from '../lib/constants'
+import { m } from '../lib/messages'
 
 export interface MaritalStatusProvider {
   maritalStatus: string
 }
 const ALLOWED_MARITAL_STATUSES = ['1', '5', '4']
-const ALLOWED_GENDER_CODE = ['1', '2', '7']
 export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
   type = 'NationalRegistryMaritalStatusProvider'
 
@@ -27,7 +27,6 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     const query = `
     query NationalRegistryUserQuery {
       nationalRegistryUserV2 {
-        genderCode
         spouse {
           name
           nationalId
@@ -53,14 +52,12 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
         }
         const nationalRegistryUser: NationalRegistryPerson =
           response.data.nationalRegistryUser
-
         const maritalStatus: string =
-          nationalRegistryUser.spouse?.maritalStatus || ''
-        const genderCode = nationalRegistryUser.genderCode || ''
+          nationalRegistryUser.spouse?.maritalStatus || '1'
 
-        if (this.allowedCodes(maritalStatus, genderCode)) {
+        if (this.allowedCodes(maritalStatus)) {
           return Promise.resolve({
-            maritalStatus: this.formatMaritalStatus(maritalStatus, genderCode),
+            maritalStatus: this.formatMaritalStatus(maritalStatus),
           })
         }
         return Promise.reject({
@@ -88,27 +85,23 @@ export class NationalRegistryMaritalStatusProvider extends BasicDataProvider {
     return { date: new Date(), status: 'success', data: result }
   }
 
-  private formatMaritalStatus(maritalCode: string, genderCode: string): string {
-    return genderedMaritalStatuses[maritalCode][genderCode]
+  private formatMaritalStatus(maritalCode: string): string {
+    return maritalStatuses[maritalCode]
   }
 
-  private allowedCodes(maritalCode: string, genderCode: string): boolean {
-    return (
-      ALLOWED_MARITAL_STATUSES.includes(maritalCode) &&
-      ALLOWED_GENDER_CODE.includes(genderCode)
-    )
+  private allowedCodes(maritalCode: string): boolean {
+    return ALLOWED_MARITAL_STATUSES.includes(maritalCode)
   }
 
   private handleFakeData(fakeData?: MarriageConditionsFakeData) {
     const maritalStatus: string = fakeData?.maritalStatus || ''
-    const genderCode = fakeData?.genderCode || ''
-    if (this.allowedCodes(maritalStatus, genderCode)) {
+    if (this.allowedCodes(maritalStatus)) {
       return Promise.resolve({
-        maritalStatus: this.formatMaritalStatus(maritalStatus, genderCode),
+        maritalStatus: this.formatMaritalStatus(maritalStatus),
       })
     } else {
       return Promise.reject({
-        reason: `Applicant marital status ${maritalStatus} not applicable`,
+        reason: m.errorDataProviderMaritalStatus,
       })
     }
   }
