@@ -11,9 +11,11 @@ import * as v2 from '../v2'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
+  QualitySignature,
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { ApiOkuskirteiniKennitalaGetqualitysignatureGetRequest } from '../../gen/fetch/v1/apis/OkuskirteiniApi'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -33,7 +35,6 @@ export class DrivingLicenseApi {
       return null
     }
     const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
-
     if (skirteini.athugasemdir) {
       const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
         apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
@@ -309,6 +310,28 @@ export class DrivingLicenseApi {
       kennitala: params.nationalId,
     })
 
+    return {
+      data: image,
+    }
+  }
+
+  async getHasQualitySignature(params: {
+    nationalId: string
+  }): Promise<boolean> {
+    const result = await this.v1.apiOkuskirteiniKennitalaHasqualitysignatureGet(
+      {
+        kennitala: params.nationalId,
+      },
+    )
+    return result > 0
+  }
+
+  async getQualitySignature(params: {
+    nationalId: string
+  }): Promise<QualitySignature | null> {
+    const image = await this.v1.apiOkuskirteiniKennitalaGetqualitysignatureGet({
+      kennitala: params.nationalId,
+    })
     return {
       data: image,
     }

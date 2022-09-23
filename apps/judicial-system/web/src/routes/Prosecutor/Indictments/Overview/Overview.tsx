@@ -3,9 +3,9 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
 
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   FormContentContainer,
+  FormContext,
   FormFooter,
   InfoCardActiveIndictment,
   Modal,
@@ -103,7 +103,7 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.INDICTMENTS_CASE_FILES_ROUTE}
+          previousUrl={`${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}

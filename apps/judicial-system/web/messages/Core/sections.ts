@@ -239,6 +239,20 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
+    prosecutorAndDefender: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.prosecutor_and_defender',
+      defaultMessage: 'Málflytjendur',
+      description:
+        'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    courtRecord: {
+      id:
+        'judicial.system.core:sections.indictments_court_section.court_record',
+      defaultMessage: 'Þingbók og dómur',
+      description:
+        'Notaður sem texti fyrir Þingbók og dómur skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
   }),
   extensionSection: defineMessages({
     title: {

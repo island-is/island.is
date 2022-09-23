@@ -205,6 +205,19 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
       },
+      prosecutorAndDefender: {
+        id:
+          'judicial.system.core:titles.court.indictments.prosecutor_and_defender',
+        defaultMessage: 'Málflytjendur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',
+      },
+      courtRecord: {
+        id: 'judicial.system.core:titles.court.indictments.court_record',
+        defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Þingbók og dómur úrskurðar skjá hjá dómstólum í ákærum',
+      },
     }),
   },
   defender: {
