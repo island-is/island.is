@@ -17,7 +17,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
-  CriminalRecordValidationApi,
+  CriminalRecordApi,
 } from '../dataProviders'
 
 const CriminalRecordSchema = z.object({
@@ -73,7 +73,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                CriminalRecordValidationApi,
+                CriminalRecordApi,
               ],
             },
           ],

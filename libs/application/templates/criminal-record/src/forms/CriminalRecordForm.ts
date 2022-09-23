@@ -13,7 +13,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
-  CriminalRecordValidationApi,
+  CriminalRecordApi,
 } from '../dataProviders'
 
 export const CriminalRecordForm: Form = buildForm({
@@ -43,7 +43,7 @@ export const CriminalRecordForm: Form = buildForm({
               subTitle: m.userProfileInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: CriminalRecordValidationApi,
+              provider: CriminalRecordApi,
               title: m.criminalRecordInformationTitle,
               subTitle: m.criminalRecordInformationSubTitle,
             }),

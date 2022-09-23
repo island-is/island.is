@@ -49,6 +49,8 @@ import { PassportService } from './passport/passport.service'
 import { OperatingLicenseService } from './operating-license/operatingLicense.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
+import { NoDebtCertificateModule } from './no-debt-certificate/no-debt-certificate.module'
+import { NoDebtCertificateService } from './no-debt-certificate/no-debt-certificate.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -79,6 +81,7 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
+  NoDebtCertificateModule,
 ]
 
 export const services = [
@@ -109,4 +112,5 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  NoDebtCertificateService,
 ]

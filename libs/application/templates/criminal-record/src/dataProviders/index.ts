@@ -17,7 +17,7 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-export const CriminalRecordValidationApi = defineTemplateApi({
+export const CriminalRecordApi = defineTemplateApi({
   action: 'validateCriminalRecord',
   externalDataId: 'validateCriminalRecord',
 })

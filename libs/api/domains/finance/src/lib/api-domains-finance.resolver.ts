@@ -219,18 +219,4 @@ export class FinanceResolver {
       user,
     )
   }
-
-  @Query(() => DebtLessCertificateModel)
-  @Audit()
-  @Scopes(ApiScope.financeOverview, ApiScope.internal)
-  async getDebtLessCertificate(
-    @CurrentUser() user: User,
-    @Args('input') language: string,
-  ) {
-    return this.financeService.getDebtLessCertificate(
-      user.nationalId,
-      language,
-      user,
-    )
-  }
 }

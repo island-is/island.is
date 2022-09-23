@@ -11,6 +11,11 @@ import {
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  NoDebtCertificateApi,
+} from '../dataProviders'
 
 const NoDebtCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -63,6 +68,11 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                NoDebtCertificateApi,
+              ],
             },
           ],
         },
