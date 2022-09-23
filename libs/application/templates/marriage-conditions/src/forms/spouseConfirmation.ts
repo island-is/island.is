@@ -9,6 +9,7 @@ import {
   buildTextField,
   buildRadioField,
   buildSubSection,
+  buildExternalDataProvider,
 } from '@island.is/application/core'
 import { YES, MarriageTermination, maritalStatuses } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -24,7 +25,7 @@ import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { removeCountryCode } from '../lib/utils'
 import { fakeDataSection } from './fakeDataSection'
-import { dataCollectionSection } from './sharedSections/dataCollectionSection'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -62,7 +63,20 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
         ],
       }),
       ...(allowFakeData ? [fakeDataSection] : []),
-      dataCollectionSection,
+      buildSection({
+        id: 'externalData',
+        title: m.dataCollectionTitle,
+        children: [
+          buildExternalDataProvider({
+            id: 'spouseApproveExternalData',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            description: m.dataCollectionDescription,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: dataCollection,
+          }),
+        ],
+      }),
       buildSection({
         id: 'marriageSides',
         title: m.informationSectionTitle,
