@@ -1,4 +1,3 @@
-import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
 import * as kennitala from 'kennitala'
@@ -12,7 +11,7 @@ import {
   Button,
   Select,
 } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AccessCard } from '../AccessCard'
@@ -49,6 +48,21 @@ function Accesses(): JSX.Element {
   const authDelegations = ((data || {}).authDelegations ||
     []) as AuthCustomDelegation[]
 
+  const systemOptions = [
+    {
+      label: formatMessage(m.allSystems),
+      value: 'all',
+    },
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+  ]
+
   return (
     <Box>
       <GridRow>
@@ -58,6 +72,19 @@ function Accesses(): JSX.Element {
             justifyContent="flexStart"
             flexDirection={['column', 'row']}
           >
+            <Box>
+              <Select
+                label={formatMessage(m.accessControl)}
+                name="system"
+                noOptionsMessage="Enginn valmöguleiki"
+                defaultValue={systemOptions[0]}
+                options={systemOptions}
+                onChange={() => {
+                  // TODO filter cards by system
+                }}
+                placeholder={formatMessage(m.chooseSystem)}
+              />
+            </Box>
             <Box marginLeft={[0, 2]} marginTop={[2, 0]}>
               <Button
                 onClick={() =>

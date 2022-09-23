@@ -78,7 +78,7 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
 
   const tabs = [
     {
-      label: 'Umboð frá mér',
+      label: formatMessage(m.delegationsFromMe),
       content: (
         <Box marginTop={8}>
           <IntroHeader
@@ -94,7 +94,7 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
       ),
     },
     {
-      label: 'Umboð til mín',
+      label: formatMessage(m.delegationsToMe),
       content: (
         <Box marginTop={8}>
           <IntroHeader

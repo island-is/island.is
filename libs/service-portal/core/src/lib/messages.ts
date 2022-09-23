@@ -523,8 +523,24 @@ export const m = defineMessages({
     defaultMessage: 'Aðgangsstýring',
   },
   accessControlDelegations: {
-    id: 'service.portal:access-control-delegations',
+    id: 'sp.access-control-delegations:delegations',
     defaultMessage: 'Umboð',
+  },
+  delegationsToMe: {
+    id: 'sp.access-control-delegations:to-me',
+    defaultMessage: 'Umboð til mín',
+  },
+  delegationsFromMe: {
+    id: 'sp.access-control-delegations:from-Message',
+    defaultMessage: 'Umboð frá mér',
+  },
+  chooseSystem: {
+    id: 'sp.access-control-delegations:choose-system',
+    defaultMessage: 'Veldu kerfi',
+  },
+  allSystems: {
+    id: 'sp.access-control-delegations:all-systems',
+    defaultMessage: 'Öll kerfi',
   },
   accessControlDescription: {
     id: 'service.portal:accessControl-description',
