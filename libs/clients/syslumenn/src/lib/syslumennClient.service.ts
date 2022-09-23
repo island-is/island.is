@@ -25,7 +25,7 @@ import {
   mapAssetName,
   mapEstateRegistrant,
 } from './syslumennClient.utils'
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable, Inject, NotFoundException } from '@nestjs/common'
 import {
   SyslumennApi,
   SvarSkeyti,
@@ -324,7 +324,7 @@ export class SyslumennService {
     })
 
     if (res.length == 0) {
-      throw new Error()
+      throw new NotFoundException()
     }
     return {
       propertyNumber: propertyNumber,
