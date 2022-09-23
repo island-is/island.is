@@ -2,6 +2,7 @@ export enum ApiScope {
   assets = '@island.is/assets',
   education = '@island.is/education',
   educationLicense = '@island.is/education-license',
+  fishingLicense = '@island.is/fishing-license',
   financeOverview = '@island.is/finance:overview',
   financeSalary = '@island.is/finance/salary',
   financeSchedule = '@island.is/finance/schedule:read',

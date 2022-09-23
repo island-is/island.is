@@ -45,8 +45,8 @@ export const sectionDelivery = buildSection({
             },
           }) => {
             return (data as DistrictCommissionerAgencies[]).map(
-              ({ id, name, place, address }) => ({
-                value: id,
+              ({ name, place, address }) => ({
+                value: `${name}, ${place}`,
                 label: `${name}, ${place}`,
                 tooltip: `${address}`,
               }),

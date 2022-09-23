@@ -23,6 +23,7 @@ import {
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -893,4 +894,23 @@ export class Case extends Model {
   })
   @ApiProperty()
   seenByDefender?: Date
+
+  /**********
+   * A indictment subpeona type. Either ARREST_SUMMONS or ABSENCE_SUMMONS
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SubpoenaType),
+  })
+  @ApiProperty({ enum: SubpoenaType })
+  subpoenaType?: SubpoenaType
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  defendantWaivesRightToCounsel!: boolean
 }

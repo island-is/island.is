@@ -106,7 +106,7 @@ export const messages = defineMessages({
     id: 'sp.vehicles:country',
     defaultMessage: 'Framleiðsluland',
   },
-  preRegYear: {
+  productYear: {
     id: 'sp.vehicles:pre-reg-year',
     defaultMessage: 'Framleiðsluár',
   },
@@ -500,5 +500,9 @@ export const messages = defineMessages({
   vehicleHistoryReport: {
     id: 'sp.vehicles:vehicle-history-report',
     defaultMessage: 'Ferilskýrsla',
+  },
+  vehicleNameSecret: {
+    id: 'sp.vehicles:vehicle-name-secret',
+    defaultMessage: 'Nafnleynd í ökutækjaskrá',
   },
 })

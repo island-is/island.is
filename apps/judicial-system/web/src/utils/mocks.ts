@@ -114,14 +114,14 @@ export const mockProsecutorQuery = [
   },
 ]
 
-export const makeRestrictionCase = (): Case => {
+export const mockCase = (caseType: CaseType): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
     origin: CaseOrigin.RVG,
-    type: CaseType.CUSTODY,
+    type: caseType,
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [
       {
@@ -135,5 +135,6 @@ export const makeRestrictionCase = (): Case => {
         address: 'Batcave 1337',
       },
     ],
+    defendantWaivesRightToCounsel: false,
   }
 }

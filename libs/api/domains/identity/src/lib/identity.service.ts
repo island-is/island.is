@@ -68,6 +68,11 @@ export class IdentityService {
       type: IdentityType.Company,
       name: company.name,
       nationalId: company.nationalId,
+      address: company.companyInfo?.address && {
+        streetAddress: company.companyInfo.address.streetAddress,
+        postalCode: company.companyInfo.address.postalCode,
+        city: company.companyInfo.address.locality,
+      },
     }
   }
 

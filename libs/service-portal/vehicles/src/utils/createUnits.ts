@@ -14,6 +14,8 @@ import {
 } from '@island.is/api/schema'
 
 import { displayWithUnit } from './displayWithUnit'
+import isValid from 'date-fns/isValid/index.js'
+type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 const basicInfoArray = (
   data: VehiclesBasicInfo,
@@ -23,47 +25,47 @@ const basicInfoArray = (
     header: { title: formatMessage(messages.baseInfoTitle) },
     rows: chunk(
       [
-        {
+        data.model && {
           title: formatMessage(messages.type),
-          value: data.model || '',
+          value: data.model,
         },
-        {
+        data.regno && {
           title: formatMessage(messages.regno),
-          value: data.regno || '',
+          value: data.regno,
         },
-        {
+        data.subModel && {
           title: formatMessage(messages.subType),
-          value: data.subModel || '',
+          value: data.subModel,
         },
-        {
+        data.permno && {
           title: formatMessage(messages.permno),
-          value: data.permno || '',
+          value: data.permno,
         },
-        {
+        data.verno && {
           title: formatMessage(messages.verno),
-          value: data.verno || '',
+          value: data.verno,
         },
-        {
+        data.year?.toString() && {
           title: formatMessage(messages.year),
-          value: data.year?.toString() || '',
+          value: data.year?.toString(),
         },
-        {
+        data.country && {
           title: formatMessage(messages.country),
-          value: data.country || '',
+          value: data.country,
         },
-        {
-          title: formatMessage(messages.preRegYear),
-          value: data.preregDateYear || '',
+        data.preregDateYear && {
+          title: formatMessage(messages.productYear),
+          value: data.preregDateYear,
         },
-        {
+        data.formerCountry && {
           title: formatMessage(messages.preCountry),
-          value: data.formerCountry || '',
+          value: data.formerCountry,
         },
-        {
+        data.importStatus && {
           title: formatMessage(messages.importStatus),
-          value: data.importStatus || '',
+          value: data.importStatus,
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -79,15 +81,15 @@ const coOwnerInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.owner && {
           title: formatMessage(messages.name),
-          value: data.owner || '',
+          value: data.owner,
         },
-        {
+        data.nationalId && {
           title: formatMessage(messages.nationalId),
           value: data.nationalId ? formatNationalId(data.nationalId) : '',
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -105,9 +107,7 @@ const feeInfoArray = (
       [
         {
           title: formatMessage(messages.mortages),
-          value: isNumber(data?.mortages)
-            ? amountFormat(Number(data.mortages))
-            : '',
+          value: isNumber(data?.mortages) && data?.mortages > 0 ? 'Já' : 'Nei',
         },
         {
           title: formatMessage(messages.insured),
@@ -130,7 +130,7 @@ const feeInfoArray = (
             ? amountFormat(Number(data.carTax))
             : '',
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -146,25 +146,27 @@ const inspectionInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.type && {
           title: formatMessage(messages.inspectionType),
-          value: data.type || '',
+          value: data.type,
         },
-        {
+        data.result && {
           title: formatMessage(messages.result),
-          value: data.result || '',
+          value: data.result,
         },
-        {
+        data.date && {
           title: formatMessage(messages.date),
-          value: data.date ? new Date(data.date).toLocaleDateString() : '',
+          value: isValid(new Date(data.date))
+            ? new Date(data.date).toLocaleDateString()
+            : '',
         },
-        {
+        data.nextInspectionDate && {
           title: formatMessage(messages.nextInspection),
-          value: data.nextInspectionDate
+          value: isValid(new Date(data.nextInspectionDate))
             ? new Date(data.nextInspectionDate).toLocaleDateString()
             : '',
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -180,21 +182,21 @@ const operatorInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.name && {
           title: formatMessage(messages.name),
-          value: data.name || '',
+          value: data.name,
         },
-        {
+        data.nationalId && {
           title: formatMessage(messages.nationalId),
-          value: data.nationalId ? formatNationalId(data.nationalId) : '',
+          value: formatNationalId(data.nationalId),
         },
-        {
+        data.startDate && {
           title: formatMessage(messages.dateFrom),
-          value: data.startDate
+          value: isValid(new Date(data.startDate))
             ? new Date(data.startDate).toLocaleDateString()
             : '',
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -210,21 +212,21 @@ const ownerInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.owner && {
           title: formatMessage(messages.owner),
-          value: data.owner || '',
+          value: data.owner,
         },
-        {
+        data.nationalId && {
           title: formatMessage(messages.nationalId),
-          value: data.nationalId ? formatNationalId(data.nationalId) : '',
+          value: formatNationalId(data.nationalId),
         },
-        {
+        data.dateOfPurchase && {
           title: formatMessage(messages.purchaseDate),
-          value: data.dateOfPurchase
+          value: isValid(new Date(data.dateOfPurchase))
             ? new Date(data.dateOfPurchase).toLocaleDateString()
             : '',
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -240,43 +242,43 @@ const registrationInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.firstRegistrationDate && {
           title: formatMessage(messages.firstReg),
-          value: data.firstRegistrationDate
+          value: isValid(new Date(data.firstRegistrationDate))
             ? new Date(data.firstRegistrationDate).toLocaleDateString()
             : '',
         },
-        {
+        data.preRegistrationDate && {
           title: formatMessage(messages.preReg),
-          value: data.preRegistrationDate
+          value: isValid(new Date(data.preRegistrationDate))
             ? new Date(data.preRegistrationDate).toLocaleDateString()
             : '',
         },
-        {
+        data.newRegistrationDate && {
           title: formatMessage(messages.newReg),
-          value: data.newRegistrationDate
+          value: isValid(new Date(data.newRegistrationDate))
             ? new Date(data.newRegistrationDate).toLocaleDateString()
             : '',
         },
-        {
+        data.vehicleGroup && {
           title: formatMessage(messages.vehGroup),
-          value: data.vehicleGroup || '',
+          value: data.vehicleGroup,
         },
-        {
+        data.specialName && {
           title: formatMessage(messages.specialName),
-          value: data.specialName || '',
+          value: data.specialName,
         },
-        {
+        data.reggroupName && {
           title: formatMessage(messages.regType),
-          value: data.reggroupName || '',
+          value: data.reggroupName,
         },
-        {
+        data.passengers?.toString() && {
           title: formatMessage(messages.passengers),
-          value: data.passengers?.toString() || '',
+          value: data.passengers?.toString(),
         },
-        {
+        data.color && {
           title: formatMessage(messages.color),
-          value: data.color || '',
+          value: data.color,
         },
         {
           title: formatMessage(messages.driversPassengers),
@@ -284,23 +286,23 @@ const registrationInfoArray = (
             ? formatMessage(messages.yes)
             : formatMessage(messages.no),
         },
-        {
+        data.plateStatus && {
           title: formatMessage(messages.plateStatus),
-          value: data.plateStatus || '',
+          value: data.plateStatus,
         },
-        {
+        data.useGroup && {
           title: formatMessage(messages.useGroup),
-          value: data.useGroup || '',
+          value: data.useGroup,
         },
-        {
+        data.plateLocation && {
           title: formatMessage(messages.plateLocation),
-          value: data.plateLocation || '',
+          value: data.plateLocation,
         },
-        {
+        data.standingPassengers?.toString() && {
           title: formatMessage(messages.standingPassengers),
-          value: data.standingPassengers?.toString() || '',
+          value: data.standingPassengers?.toString(),
         },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }
@@ -316,63 +318,59 @@ const technicalInfoArray = (
     },
     rows: chunk(
       [
-        {
+        data.engine && {
           title: formatMessage(messages.engineType),
-          value: data.engine || '',
+          value: data.engine,
         },
-        {
+        data.vehicleWeight?.toString() && {
           title: formatMessage(messages.vehicleWeight),
           value: displayWithUnit(data.vehicleWeight?.toString(), 'kg'),
         },
-        {
+        data.cubicCapacity?.toString() && {
           title: formatMessage(messages.capacity),
           value: displayWithUnit(data.cubicCapacity?.toString(), 'cc'),
         },
-        {
+        data.capacityWeight?.toString() && {
           title: formatMessage(messages.capacityWeight),
           value: data.capacityWeight
             ? displayWithUnit(data.capacityWeight?.toString(), 'kg')
             : '',
         },
-        {
+        data.length?.toString() && {
           title: formatMessage(messages.length),
           value: displayWithUnit(data.length?.toString(), 'mm'),
         },
-        {
+        data.totalWeight?.toString() && {
           title: formatMessage(messages.totalWeight),
           value: displayWithUnit(data.totalWeight?.toString(), 'kg'),
         },
-        {
+        data.width?.toString() && {
           title: formatMessage(messages.width),
           value: displayWithUnit(data.width?.toString(), 'mm'),
         },
-        {
+        data.trailerWithoutBrakesWeight?.toString() && {
           title: formatMessage(messages.trailerWithoutBrakes),
           value: displayWithUnit(
             data.trailerWithoutBrakesWeight?.toString(),
             'kg',
           ),
         },
-        {
+        data.horsepower?.toString() && {
           title: formatMessage(messages.horsePower),
           value: displayWithUnit(data.horsepower?.toString(), 'hö'),
         },
-        {
+        data.trailerWithBrakesWeight?.toString() && {
           title: formatMessage(messages.trailerWithBrakes),
           value: displayWithUnit(
             data.trailerWithBrakesWeight?.toString(),
             'kg',
           ),
         },
-        {
+        data.carryingCapacity?.toString() && {
           title: formatMessage(messages.carryingCapacity),
           value: displayWithUnit(data.carryingCapacity?.toString(), 'kg'),
         },
-        {
-          title: formatMessage(messages.axleTotalWeight),
-          value: displayWithUnit(data.axleTotalWeight?.toString(), 'kg'),
-        },
-      ],
+      ].filter((Boolean as unknown) as ExcludesFalse),
       2,
     ),
   }

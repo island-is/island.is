@@ -153,6 +153,8 @@ export const UpdateCaseMutation = gql`
       caseResentExplanation
       origin
       seenByDefender
+      subpoenaType
+      defendantWaivesRightToCounsel
     }
   }
 `
