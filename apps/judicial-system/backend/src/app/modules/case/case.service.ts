@@ -57,7 +57,7 @@ import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { PoliceService } from '../police'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -228,16 +228,21 @@ export class CaseService {
       writeFile(`${theCase.id}-ruling-signed.pdf`, buffer)
     }
 
+    const fileName = formatCourtUploadRulingTitle(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      Boolean(theCase.rulingModifiedHistory),
+    )
+
     try {
-      await this.courtService.createRuling(
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        formatCourtUploadRulingTitle(
-          this.formatMessage,
-          theCase.courtCaseNumber,
-          Boolean(theCase.rulingModifiedHistory),
-        ),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         buffer,
         user,
       )
@@ -261,13 +266,18 @@ export class CaseService {
         writeFile(`${theCase.id}-court-record.pdf`, pdf)
       }
 
-      await this.courtService.createCourtRecord(
+      const fileName = this.formatMessage(courtUpload.courtRecord, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      })
+
+      await this.courtService.createDocument(
         theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.courtRecord, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        }),
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.COURT_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
         pdf,
       )
 
@@ -299,8 +309,9 @@ export class CaseService {
 
         await this.courtService.createDocument(
           theCase.id,
-          theCase.courtId ?? '',
-          theCase.courtCaseNumber ?? '',
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.CASE_DOCUMENTS,
           'Rannsóknargögn',
           'Rannsóknargögn.pdf',
           'application/pdf',
@@ -404,8 +415,9 @@ export class CaseService {
           .then((buffer) =>
             this.courtService.createDocument(
               theCase.id,
-              theCase.courtId ?? '',
-              theCase.courtCaseNumber ?? '',
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
               title,
               caseFile.name.replace(/^.+\./, `${title}.`),
               caseFile.type,
@@ -477,8 +489,9 @@ export class CaseService {
           .then((buffer) =>
             this.courtService.createDocument(
               theCase.id,
-              theCase.courtId ?? '',
-              theCase.courtCaseNumber ?? '',
+              theCase.courtId,
+              theCase.courtCaseNumber,
+              CourtDocumentFolder.COURT_DOCUMENTS,
               title,
               caseFile.name.replace(/^.+\./, `${title}.`),
               caseFile.type,
@@ -1077,19 +1090,24 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.getRequestPdf(theCase)
-      .then((pdf) =>
-        this.courtService.createRequest(
-          user,
+      .then((pdf) => {
+        const fileName = this.formatMessage(courtUpload.requestFileName, {
+          caseType: caseTypes[theCase.type],
+          date: '',
+        })
+
+        return this.courtService.createDocument(
           theCase.id,
-          theCase.courtId ?? '',
-          theCase.courtCaseNumber ?? '',
-          this.formatMessage(courtUpload.requestFileName, {
-            caseType: caseTypes[theCase.type],
-            date: '',
-          }),
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.REQUEST_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
           pdf,
-        ),
-      )
+          user,
+        )
+      })
       .then(() => {
         return
       })
@@ -1109,7 +1127,10 @@ export class CaseService {
     return
   }
 
-  uploadProsecutorDocumentsToCourt(theCase: Case, user: TUser): Promise<void> {
+  async uploadProsecutorDocumentsToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     return isIndictmentCase(theCase.type)
       ? this.uploadIndictmentProsecutorPdfsToCourt(theCase, user)
       : this.upploadRequestPdfToCourt(theCase, user)
@@ -1119,7 +1140,7 @@ export class CaseService {
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
-      theCase.courtId ?? '',
+      theCase.courtId,
       theCase.type,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
