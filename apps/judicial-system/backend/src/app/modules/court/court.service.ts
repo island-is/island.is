@@ -115,46 +115,6 @@ export class CourtService {
     }`
   }
 
-  async createRequest(
-    user: User,
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    fileName: string,
-    content: Buffer,
-  ): Promise<string> {
-    return this.uploadStream(
-      courtId,
-      `${fileName}.pdf`,
-      'application/pdf',
-      content,
-    )
-      .then((streamId) =>
-        this.courtClientService.createDocument(courtId, {
-          caseNumber: courtCaseNumber,
-          subject: fileName,
-          fileName: `${fileName}.pdf`,
-          streamID: streamId,
-          caseFolder: 'Krafa og greinargerð',
-        }),
-      )
-      .catch((reason) => {
-        this.eventService.postErrorEvent(
-          'Failed to create a court request',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-          },
-          reason,
-        )
-
-        throw reason
-      })
-  }
-
   async createCourtRecord(
     caseId: string,
     courtId: string,

@@ -1123,19 +1123,24 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.getRequestPdf(theCase)
-      .then((pdf) =>
-        this.courtService.createRequest(
-          user,
+      .then((pdf) => {
+        const fileName = this.formatMessage(courtUpload.requestFileName, {
+          caseType: caseTypes[theCase.type],
+          date: '',
+        })
+
+        return this.courtService.createDocument(
           theCase.id,
-          theCase.courtId ?? '',
-          theCase.courtCaseNumber ?? '',
-          this.formatMessage(courtUpload.requestFileName, {
-            caseType: caseTypes[theCase.type],
-            date: '',
-          }),
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.REQUEST_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
           pdf,
-        ),
-      )
+          user,
+        )
+      })
       .then(() => {
         return
       })
@@ -1155,7 +1160,10 @@ export class CaseService {
     return
   }
 
-  uploadProsecutorDocumentsToCourt(theCase: Case, user: TUser): Promise<void> {
+  async uploadProsecutorDocumentsToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     return isIndictmentCase(theCase.type)
       ? this.uploadIndictmentProsecutorPdfsToCourt(theCase, user)
       : this.upploadRequestPdfToCourt(theCase, user)
