@@ -54,7 +54,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'employer.isSelfEmployed',
     )
 
-    if (obj.isSelfEmployed === '') {
+    if (obj.isSelfEmployed === '' || !obj.isSelfEmployed) {
       return buildError(coreErrorMessages.defaultError, 'isSelfEmployed')
     }
 
