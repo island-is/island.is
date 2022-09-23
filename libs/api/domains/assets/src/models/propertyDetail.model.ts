@@ -5,12 +5,32 @@ import {
 } from './propertyUnitsOfUse.model'
 import { PropertyOwnersModel } from './propertyOwners.model'
 import { LandModel } from './Land.model'
-import { Extensions, Field, ObjectType } from '@nestjs/graphql'
+import {
+  Extensions,
+  Field,
+  MiddlewareContext,
+  ObjectType,
+} from '@nestjs/graphql'
+import { GraphQLContext } from '@island.is/auth-nest-tools'
 
+const isLoggedIn = ({ context }: MiddlewareContext): boolean => {
+  const ctx = context as GraphQLContext
+  const user = ctx.req.user
+  if (!user) return false
+  return !!user.nationalId
+}
 @Extensions({
   filterFields: {
-    condition: () => true,
-    fields: ['land', 'propertyNumber'],
+    condition: isLoggedIn,
+    fields: [
+      'unitsOfUse',
+      'registeredOwners',
+      'appraisal',
+      'defaultAddress',
+      'land',
+      'propertyNumber',
+      'nonexistingField',
+    ],
   },
 })
 @ObjectType()
