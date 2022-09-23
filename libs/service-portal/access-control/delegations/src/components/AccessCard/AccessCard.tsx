@@ -1,43 +1,47 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 
 import {
   Box,
   Text,
   Stack,
-  ArrowLink,
   Tag,
   Inline,
   Icon,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { coreMessages } from '@island.is/application/core'
 
-interface PropTypes {
+interface AccessCardProps {
   title: string
   group: string
-  description: string
   href: string
   tags: string[]
   validTo: string
+  /**
+   * Whether the card is editable or not, i.e. user can view/edit/renew delegation or only renew
+   */
+  editable?: boolean
 }
 
-function AccessCard({
+const AccessCard = ({
   title,
   group,
-  description,
   href,
   tags,
   validTo,
-}: PropTypes) {
+  editable = true,
+}: AccessCardProps) => {
   useNamespaces('sp.settings-access-control')
   const { formatMessage } = useLocale()
+  const history = useHistory()
 
   return (
     <Box
       paddingY={[2, 3, 4]}
       paddingX={[2, 3, 4]}
-      border="standard"
+      border={editable ? 'standard' : 'disabled'}
       borderRadius="large"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
@@ -45,14 +49,18 @@ function AccessCard({
           <Text variant="eyebrow" color="purple400">
             {group}
           </Text>
-          <Text variant="h3" as="h3" color="dark400">
+          <Text variant="h3" as="h3" color={editable ? 'dark400' : 'dark300'}>
             {title}
           </Text>
-          <Text fontWeight="light">{description}</Text>
         </Stack>
         <Inline space="smallGutter">
-          <Icon size="small" icon="time" color="blue400" type="outline" />
-          <Text variant="small">
+          <Icon
+            size="small"
+            icon="time"
+            color={editable ? 'blue400' : 'dark300'}
+            type="outline"
+          />
+          <Text variant="small" color={editable ? 'dark400' : 'dark300'}>
             {validTo
               ? format(new Date(validTo), 'dd.MM.yyyy')
               : formatMessage({
@@ -63,22 +71,59 @@ function AccessCard({
         </Inline>
       </Box>
       <Box marginTop={2}>
-        <Box display="flex" justifyContent="spaceBetween">
+        <Box display="flex" justifyContent="spaceBetween" alignItems="flexEnd">
           <Inline alignY="bottom" space={1}>
             {tags.map((tag, index) => (
-              <Tag disabled key={index}>
+              <Tag
+                disabled
+                key={index}
+                variant={editable ? 'blue' : 'disabled'}
+              >
                 {tag}
               </Tag>
             ))}
           </Inline>
-          <Link to={href}>
-            <ArrowLink>
-              {formatMessage({
-                id: 'sp.settings-access-control:home-view-access',
-                defaultMessage: 'Skoða aðgang',
-              })}
-            </ArrowLink>
-          </Link>
+          <Box display="flex" alignItems="center">
+            <Button
+              variant="text"
+              icon="trash"
+              iconType="outline"
+              size="small"
+              colorScheme="destructive"
+              onClick={() => {
+                // TODO delete delegation
+                console.log('TODO delete delegation')
+              }}
+            >
+              {formatMessage(coreMessages.buttonDestroy)}
+            </Button>
+            <Box marginLeft={3}>
+              {editable ? (
+                <Button
+                  icon="pencil"
+                  iconType="outline"
+                  size="small"
+                  variant="utility"
+                  onClick={() => history.push(href)}
+                >
+                  {formatMessage(coreMessages.buttonEdit)}
+                </Button>
+              ) : (
+                <Button
+                  icon="reload"
+                  iconType="outline"
+                  size="small"
+                  variant="utility"
+                  onClick={() => {
+                    // TODO handle delegation renewal
+                    console.log('TODO handle delegation renewal')
+                  }}
+                >
+                  {formatMessage(coreMessages.buttonRenew)}
+                </Button>
+              )}
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>

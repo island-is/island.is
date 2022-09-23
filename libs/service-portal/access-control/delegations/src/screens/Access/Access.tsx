@@ -394,6 +394,7 @@ const Access: FC = () => {
                         ...apiScopes,
                       ]
                     : apiScopes
+
                   return (
                     <AccessItem
                       apiScopes={accessItems}

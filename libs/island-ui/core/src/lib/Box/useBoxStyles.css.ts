@@ -110,6 +110,9 @@ export const transition = styleVariants(
 )
 
 export const border = styleVariants({
+  disabled: {
+    border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.dark100}`,
+  },
   standard: {
     border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.standard}`,
   },

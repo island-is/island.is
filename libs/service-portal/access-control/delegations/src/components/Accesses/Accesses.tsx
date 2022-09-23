@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
 import { useLocation, useHistory } from 'react-router-dom'
-import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -51,7 +50,10 @@ function Accesses(): JSX.Element {
 
   const systemOptions = [
     {
-      label: formatMessage(m.allSystems),
+      label: formatMessage({
+        id: 'sp.access-control-delegations:all-systems',
+        defaultMessage: 'Öll kerfi',
+      }),
       value: 'all',
     },
     {
@@ -84,7 +86,10 @@ function Accesses(): JSX.Element {
                 onChange={() => {
                   // TODO filter cards by system
                 }}
-                placeholder={formatMessage(m.chooseSystem)}
+                placeholder={formatMessage({
+                  id: 'sp.access-control-delegations:choose-system',
+                  defaultMessage: 'Veldu kerfi',
+                })}
               />
             </div>
             <Button
@@ -96,7 +101,10 @@ function Accesses(): JSX.Element {
               icon="add"
               iconType="outline"
             >
-              {formatMessage(m.newDelegation)}
+              {formatMessage({
+                id: 'sp.access-control-delegations:new-delegation',
+                defaultMessage: 'Nýtt umboð',
+              })}
             </Button>
           </Box>
         </GridColumn>
@@ -111,10 +119,11 @@ function Accesses(): JSX.Element {
                     key={delegation.id}
                     title={delegation.to.name}
                     validTo={delegation.validTo}
-                    description={kennitala.format(delegation.to.nationalId)}
                     tags={delegation.scopes.map((scope) => scope.displayName)}
                     href={`${pathname}/${delegation.id}`}
                     group="Ísland.is"
+                    // TODO add conditional if card is editable
+                    editable
                   />
                 ) : undefined,
               )

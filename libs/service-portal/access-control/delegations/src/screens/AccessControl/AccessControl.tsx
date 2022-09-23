@@ -2,7 +2,6 @@ import { Box, Text, Tabs } from '@island.is/island-ui/core'
 import {
   AccessDenied,
   IntroHeader,
-  m,
   NoDataScreen,
   ServicePortalModuleComponent,
   ServicePortalPath,
@@ -86,7 +85,11 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
       <Box marginTop={8}>
         <IntroHeader
           title={headerTitle}
-          intro={formatMessage(m.delegationsHeaderIntro)}
+          intro={formatMessage({
+            id: 'sp.access-control-delegations:header-intro',
+            defaultMessage:
+              'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
+          })}
         />
         <Accesses />
       </Box>
@@ -99,8 +102,26 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
         <Tabs
           label="This is used as the aria-label as well"
           tabs={[
-            creatTab(m.delegationsFromMe, m.delegationsFromMeTitle),
-            creatTab(m.delegationsToMe, m.delegationsToMeTitle),
+            creatTab(
+              {
+                id: 'sp.access-control-delegations:from-me',
+                defaultMessage: 'Umboð frá mér',
+              },
+              {
+                id: 'sp.access-control-delegations:from-me-title',
+                defaultMessage: 'Umboð sem ég hef veitt',
+              },
+            ),
+            creatTab(
+              {
+                id: 'sp.access-control-delegations:to-me',
+                defaultMessage: 'Umboð til mín',
+              },
+              {
+                id: 'sp.access-control-delegations:to-me-title',
+                defaultMessage: 'Umboð sem ég hef fengið',
+              },
+            ),
           ]}
           contentBackground="white"
         />

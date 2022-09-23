@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import cs from 'classnames'
 
@@ -94,7 +94,6 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   return (
     <>
       {apiScopes.map((item, index) => {
-        const isLastItem = index === apiScopes.length - 1
         const isFirstItem = index === 0
 
         const existingScope = isApiScopeGroup(item)
@@ -118,8 +117,8 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
 
         const defaultDate = add(new Date(), { years: 1 })
         return (
-          <>
-            <GridRow key={index}>
+          <div key={index}>
+            <GridRow>
               <GridColumn
                 span={['12/12', '12/12', '3/12']}
                 className={styles.item}
@@ -205,7 +204,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
             <Box paddingY={1} paddingLeft={isFirstItem ? 0 : [3, 3, 0]}>
               <Divider />
             </Box>
-          </>
+          </div>
         )
       })}
     </>
