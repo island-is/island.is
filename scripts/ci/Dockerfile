@@ -128,6 +128,7 @@ RUN mkdir -p /${APP_DIST_HOME} \
 RUN chown -R pwuser:pwuser /tmp
 RUN apt-get update && apt-get install -y vim
 RUN apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
+RUN apt-get -y install awscli zip
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
 RUN yarn install
