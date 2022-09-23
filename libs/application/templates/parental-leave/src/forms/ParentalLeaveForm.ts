@@ -513,7 +513,7 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               children: [
                 buildFileUploadField({
-                  id: 'fileUpload.attachment.file',
+                  id: 'fileUpload.file',
                   title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
