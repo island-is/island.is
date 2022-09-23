@@ -4,6 +4,7 @@ const LimitedAccessCaseQuery = gql`
   query LimitedAccessCaseQuery($input: CaseQueryInput!) {
     limitedAccessCase(input: $input) {
       id
+      created
       origin
       type
       state
@@ -11,6 +12,7 @@ const LimitedAccessCaseQuery = gql`
       caseFiles {
         id
         name
+        category
       }
       defendants {
         id

@@ -92,7 +92,7 @@ export const CaseOverview: React.FC = () => {
       workingCase={workingCase}
       activeSection={
         completedCaseStates.includes(workingCase.state)
-          ? 2
+          ? Sections.CASE_CLOSED
           : workingCase.parentCase
           ? Sections.JUDGE_EXTENSION
           : Sections.JUDGE

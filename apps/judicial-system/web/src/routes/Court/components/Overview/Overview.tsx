@@ -43,13 +43,14 @@ const Overview = () => {
   const { formatMessage } = useIntl()
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
-
+  const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
+  console.log(isDefender)
   return (
     <PageLayout
       workingCase={workingCase}
       activeSection={caseIsClosed ? Sections.CASE_CLOSED : Sections.JUDGE}
       activeSubSection={
-        caseIsClosed ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
+        isDefender ? undefined : IndictmentsCourtSubsections.JUDGE_OVERVIEW
       }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
@@ -70,14 +71,17 @@ const Overview = () => {
             <SectionHeading title={formatMessage(m.caseFilesTitle)} />
             {workingCase.caseFiles
               .filter((f: TUploadFile) => {
-                if (
-                  !caseIsClosed &&
-                  (f.category === CaseFileCategory.RULING ||
-                    f.category === CaseFileCategory.COURT_RECORD)
-                ) {
-                  return false
-                } else {
+                if (caseIsClosed) {
                   return true
+                } else {
+                  if (
+                    f.category === CaseFileCategory.RULING ||
+                    f.category === CaseFileCategory.COURT_RECORD
+                  ) {
+                    return false
+                  } else {
+                    return true
+                  }
                 }
               })
               .map((file) => {
@@ -99,7 +103,7 @@ const Overview = () => {
           </Box>
         )}
       </FormContentContainer>
-      {!caseIsClosed && (
+      {!caseIsClosed && !isDefender && (
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={`${constants.CASES_ROUTE}`}
