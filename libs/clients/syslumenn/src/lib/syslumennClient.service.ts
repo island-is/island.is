@@ -323,22 +323,21 @@ export class SyslumennService {
       },
     })
 
-    if (res.length > 0) {
-      return {
-        propertyNumber: propertyNumber,
-        defaultAddress: {
-          display: res[0].heiti,
-        },
-        unitsOfUse: {
-          unitsOfUse: [
-            {
-              explanation: res[0].notkun,
-            },
-          ],
-        },
-      }
-    } else {
+    if (res.length == 0) {
       throw new Error()
+    }
+    return {
+      propertyNumber: propertyNumber,
+      defaultAddress: {
+        display: res[0].heiti,
+      },
+      unitsOfUse: {
+        unitsOfUse: [
+          {
+            explanation: res[0].notkun,
+          },
+        ],
+      },
     }
   }
 
