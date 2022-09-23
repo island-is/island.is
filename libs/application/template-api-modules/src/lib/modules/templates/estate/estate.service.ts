@@ -39,7 +39,11 @@ export class EstateTemplateService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    //TODO: hook up to client once API endpoint is available
+    // TODO: hook up to client once API endpoint is ready
+    //      1. Delete const estate
+    //      2. uncomment the following line
+    //      const estate = await this.syslumennService.getEstateInfo(application.applicant);
+
     const estate: EstateData = {
       assets: [
         {
