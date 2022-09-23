@@ -47,6 +47,7 @@ export const getCurrentUserType = (
     externalData,
     'getUserType.data.value',
   )
+
   return fakeUserType ? fakeUserType : currentUserType
 }
 

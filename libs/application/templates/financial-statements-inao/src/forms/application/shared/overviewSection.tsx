@@ -7,7 +7,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { GREATER, USERTYPE, LESS } from '../../../lib/constants'
+import { GREATER, USERTYPE, LESS, ABOUTIDS } from '../../../lib/constants'
 import { m } from '../../../lib/messages'
 import { getCurrentUserType } from '../../../lib/utils/helpers'
 
@@ -42,7 +42,7 @@ export const overviewSection = buildSection({
             ? m.overviewDescription
             : `${m.electionStatement.defaultMessage} ${getValueViaPath(
                 application.answers,
-                'election.selectElection',
+                ABOUTIDS.electionName,
               )}`
         } else {
           return m.review
