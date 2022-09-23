@@ -13,6 +13,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
+import { MessageDescriptor } from 'react-intl'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsListQuery {
@@ -76,47 +77,31 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
     return <AccessDenied userInfo={userInfo} client={client} />
   }
 
-  const tabs = [
-    {
-      label: formatMessage(m.delegationsFromMe),
-      content: (
-        <Box marginTop={8}>
-          <IntroHeader
-            title={m.accessControl}
-            intro={formatMessage({
-              id: 'sp.settings-access-control:home-intro',
-              defaultMessage:
-                'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-            })}
-          />
-          <Accesses />
-        </Box>
-      ),
-    },
-    {
-      label: formatMessage(m.delegationsToMe),
-      content: (
-        <Box marginTop={8}>
-          <IntroHeader
-            title={m.accessControl}
-            intro={formatMessage({
-              id: 'sp.settings-access-control:home-intro',
-              defaultMessage:
-                'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-            })}
-          />
-          <Accesses />
-        </Box>
-      ),
-    },
-  ]
+  const creatTab = (
+    label: MessageDescriptor,
+    headerTitle: MessageDescriptor,
+  ) => ({
+    label: formatMessage(label),
+    content: (
+      <Box marginTop={8}>
+        <IntroHeader
+          title={headerTitle}
+          intro={formatMessage(m.delegationsHeaderIntro)}
+        />
+        <Accesses />
+      </Box>
+    ),
+  })
 
   return (
     <Box>
       {!loading && data && data?.authDelegations?.length > 0 && (
         <Tabs
           label="This is used as the aria-label as well"
-          tabs={tabs}
+          tabs={[
+            creatTab(m.delegationsFromMe, m.delegationsFromMeTitle),
+            creatTab(m.delegationsToMe, m.delegationsToMeTitle),
+          ]}
           contentBackground="white"
         />
       )}

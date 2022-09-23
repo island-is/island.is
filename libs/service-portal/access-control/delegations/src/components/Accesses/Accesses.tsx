@@ -15,6 +15,7 @@ import { m, ServicePortalPath } from '@island.is/service-portal/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AccessCard } from '../AccessCard'
+import * as styles from './Accesses.css'
 
 export const AuthDelegationsQuery = gql`
   query AuthDelegationsQuery {
@@ -69,12 +70,13 @@ function Accesses(): JSX.Element {
         <GridColumn paddingBottom={4} span="12/12">
           <Box
             display="flex"
-            justifyContent="flexStart"
-            flexDirection={['column', 'row']}
+            justifyContent="spaceBetween"
+            alignItems="flexEnd"
           >
-            <Box>
+            <div className={styles.selectContainer}>
               <Select
                 label={formatMessage(m.accessControl)}
+                size="xs"
                 name="system"
                 noOptionsMessage="Enginn valmöguleiki"
                 defaultValue={systemOptions[0]}
@@ -84,23 +86,18 @@ function Accesses(): JSX.Element {
                 }}
                 placeholder={formatMessage(m.chooseSystem)}
               />
-            </Box>
-            <Box marginLeft={[0, 2]} marginTop={[2, 0]}>
-              <Button
-                onClick={() =>
-                  history.push(ServicePortalPath.AccessControlDelegationsGrant)
-                }
-                variant="utility"
-                size="small"
-                icon="receipt"
-                iconType="outline"
-              >
-                {formatMessage({
-                  id: 'sp.settings-access-control:home-grant-access',
-                  defaultMessage: 'Veita umboð',
-                })}
-              </Button>
-            </Box>
+            </div>
+            <Button
+              onClick={() =>
+                history.push(ServicePortalPath.AccessControlDelegationsGrant)
+              }
+              variant="utility"
+              size="small"
+              icon="add"
+              iconType="outline"
+            >
+              {formatMessage(m.newDelegation)}
+            </Button>
           </Box>
         </GridColumn>
         <GridColumn paddingBottom={4} span="12/12">

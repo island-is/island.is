@@ -531,8 +531,25 @@ export const m = defineMessages({
     defaultMessage: 'Umboð til mín',
   },
   delegationsFromMe: {
-    id: 'sp.access-control-delegations:from-Message',
+    id: 'sp.access-control-delegations:from-me',
     defaultMessage: 'Umboð frá mér',
+  },
+  delegationsFromMeTitle: {
+    id: 'sp.access-control-delegations:from-me-title',
+    defaultMessage: 'Umboð sem ég hef veitt',
+  },
+  delegationsToMeTitle: {
+    id: 'sp.access-control-delegations:to-me-title',
+    defaultMessage: 'Umboð sem ég hef fengið',
+  },
+  delegationsHeaderIntro: {
+    id: 'sp.access-control-delegations:header-intro',
+    defaultMessage:
+      'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
+  },
+  newDelegation: {
+    id: 'sp.access-control-delegations:new-delegation',
+    defaultMessage: 'Nýtt umboð',
   },
   chooseSystem: {
     id: 'sp.access-control-delegations:choose-system',
