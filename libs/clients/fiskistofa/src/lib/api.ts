@@ -23,8 +23,9 @@ import {
   mapQuotaType,
 } from './utils'
 import { FetchError } from '@island.is/clients/middlewares'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 
-@Injectable()
+@Injectable({ scope: LazyDuringDevScope })
 export class FiskistofaApi {
   private stadaSkipsApi: StadaSkipsApi | null = null
   private skipApi: SkipApi | null = null
