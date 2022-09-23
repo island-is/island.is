@@ -1152,9 +1152,7 @@ export class NotificationService {
       )
     }
 
-    return {
-      notificationSent: false,
-    }
+    return { notificationSent: false }
   }
 
   private async sendDefenderAssignedNotifications(
