@@ -4,12 +4,12 @@ import { BadRequestException, NotFoundException } from '@nestjs/common'
 
 import { CaseFileState, User } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../court'
-import { Case } from '../../case'
+import { createTestingFileModule } from './createTestingFileModule'
 import { AwsS3Service } from '../../aws-s3'
+import { CourtDocumentFolder, CourtService } from '../../court'
+import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
 import { UploadFileToCourtResponse } from '../models/uploadFileToCourt.response'
-import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {
   result: UploadFileToCourtResponse
@@ -136,6 +136,7 @@ describe('FileController - Upload case file to court', () => {
         caseId,
         courtId,
         courtCaseNumber,
+        CourtDocumentFolder.CASE_DOCUMENTS,
         fileName,
         fileName,
         fileType,

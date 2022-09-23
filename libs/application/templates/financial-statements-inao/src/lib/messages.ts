@@ -690,6 +690,16 @@ export const m = defineMessages({
     defaultMessage: 'hefur verið skilað þann',
     description: 'Second part of audit received message',
   },
+  fetchErrorTitle: {
+    id: 'fsn.application:fetchErrorMsg',
+    defaultMessage: 'Eitthvað fór úrskeiðiðs',
+    description: 'Error msg title when fetching data fails',
+  },
+  fetchErrorMsg: {
+    id: 'fsn.application:fetchError',
+    defaultMessage: 'Ekki tókst að sækja gögn, reyndur aftur seinna',
+    description: 'Error msg when fetching data fails',
+  },
 })
 
 export default m
