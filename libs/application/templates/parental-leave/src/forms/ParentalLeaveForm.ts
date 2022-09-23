@@ -438,13 +438,23 @@ export const ParentalLeaveForm: Form = buildForm({
                       }
                     })?.employer?.isSelfEmployed === NO,
                 }),
-                buildAsyncSelectField({
+                buildSelectField({
                   id: 'unemploymentBenefits',
-                  title: '',
-                  description: '',
-                  loadOptions: async ({ apolloClient }) => {
-                    return [{ label: 'test', value: 'test' }]
-                  },
+                  title: 'Hvaðan ertu að þyggja bætur?',
+                  options: [
+                    {
+                      label: 'Vinnumálastofnun (atvinnuleysisbætur)',
+                      value: 'Vinnumálastofnun (atvinnuleysisbætur)',
+                    },
+                    {
+                      label: 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+                      value: 'Stéttarfélagi (dagpeningar/veikindaréttur)',
+                    },
+                    {
+                      label: 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+                      value: 'Sjúkratryggingar Íslands (sjúkradagpeningar)',
+                    },
+                  ],
                   condition: (answers) =>
                     (answers as {
                       isRecivingUnemploymentBenefits: string
