@@ -36,7 +36,7 @@ const config: PlaywrightTestConfig = {
           'playwright-tesults-reporter',
           { 'tesults-target': process.env.TESULTS_TOKEN },
         ],
-        ['html'],
+        ['html', { open: 'never' }],
       ]
     : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

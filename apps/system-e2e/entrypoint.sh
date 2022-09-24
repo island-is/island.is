@@ -8,6 +8,6 @@ export PATH=./node_modules/.bin:$PATH
 playwright test -c src "$@"
 TEST_EXIT_CODE=$?
 set -e
-zip -r -0 test-results playwright-report
+zip -r -0 test-results playwright-report src/test-results
 aws s3 cp test-results.zip $TEST_RESULTS_S3
 exit $TEST_EXIT_CODE
