@@ -1,8 +1,10 @@
 import gql from 'graphql-tag'
 
 export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
-  query GetShipStatusForTimePeriod($input: GetShipStatusForTimePeriodInput!) {
-    getShipStatusForTimePeriod(input: $input) {
+  query FiskistofaGetShipStatusForTimePeriod(
+    $input: FiskistofaGetShipStatusForTimePeriodInput!
+  ) {
+    fiskistofaGetShipStatusForTimePeriod(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -37,10 +39,10 @@ export const GET_SHIP_STATUS_FOR_TIME_PERIOD = gql`
 `
 
 export const UPDATE_SHIP_STATUS_FOR_TIME_PERIOD = gql`
-  mutation UpdateShipStatusForTimePeriod(
-    $input: UpdateShipStatusForTimePeriodInput!
+  query FiskistofaUpdateShipStatusForTimePeriod(
+    $input: FiskistofaUpdateShipStatusForTimePeriodInput!
   ) {
-    updateShipStatusForTimePeriod(input: $input) {
+    fiskistofaUpdateShipStatusForTimePeriod(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -68,10 +70,10 @@ export const UPDATE_SHIP_STATUS_FOR_TIME_PERIOD = gql`
 `
 
 export const UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD = gql`
-  mutation UpdateShipQuotaStatusForTimePeriod(
-    $input: UpdateShipQuotaStatusForTimePeriodInput!
+  query FiskistofaUpdateShipQuotaStatusForTimePeriod(
+    $input: FiskistofaUpdateShipQuotaStatusForTimePeriodInput!
   ) {
-    updateShipQuotaStatusForTimePeriod(input: $input) {
+    fiskistofaUpdateShipQuotaStatusForTimePeriod(input: $input) {
       nextYearCatchQuota
       nextYearQuota
       nextYearFromQuota
@@ -89,10 +91,10 @@ export const UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD = gql`
 `
 
 export const GET_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
-  query GetShipStatusForCalendarYear(
-    $input: GetShipStatusForCalendarYearInput!
+  query FiskistofaGetShipStatusForCalendarYear(
+    $input: FiskistofaGetShipStatusForCalendarYearInput!
   ) {
-    getShipStatusForCalendarYear(input: $input) {
+    fiskistofaGetShipStatusForCalendarYear(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -120,10 +122,10 @@ export const GET_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
 `
 
 export const UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
-  mutation UpdateShipStatusForCalendarYear(
-    $input: UpdateShipStatusForCalendarYearInput!
+  query FiskistofaUpdateShipStatusForCalendarYear(
+    $input: FiskistofaUpdateShipStatusForCalendarYearInput!
   ) {
-    updateShipStatusForCalendarYear(input: $input) {
+    fiskistofaUpdateShipStatusForCalendarYear(input: $input) {
       shipInformation {
         id
         shipNumber
@@ -151,8 +153,10 @@ export const UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR = gql`
 `
 
 export const GET_QUOTA_TYPES_FOR_TIME_PERIOD = gql`
-  query GetQuotaTypesForTimePeriod($input: GetQuotaTypesForTimePeriodInput!) {
-    getQuotaTypesForTimePeriod(input: $input) {
+  query FiskistofaGetQuotaTypesForTimePeriod(
+    $input: FiskistofaGetQuotaTypesForTimePeriodInput!
+  ) {
+    fiskistofaGetQuotaTypesForTimePeriod(input: $input) {
       id
       name
     }
@@ -160,10 +164,10 @@ export const GET_QUOTA_TYPES_FOR_TIME_PERIOD = gql`
 `
 
 export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
-  query GetQuotaTypesForCalendarYear(
-    $input: GetQuotaTypesForCalendarYearInput!
+  query FiskistofaGetQuotaTypesForCalendarYear(
+    $input: FiskistofaGetQuotaTypesForCalendarYearInput!
   ) {
-    getQuotaTypesForCalendarYear(input: $input) {
+    fiskistofaGetQuotaTypesForCalendarYear(input: $input) {
       id
       name
     }
@@ -171,8 +175,8 @@ export const GET_QUOTA_TYPES_FOR_CALENDAR_YEAR = gql`
 `
 
 export const GET_SINGLE_SHIP = gql`
-  query GetSingleShip($input: GetSingleShipInput!) {
-    getSingleShip(input: $input) {
+  query FiskistofaGetSingleShip($input: FiskistofaGetSingleShipInput!) {
+    fiskistofaGetSingleShip(input: $input) {
       shipNumber
       name
       ownerName

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetQuotaTypesForCalendarYearInput {
+export class FiskistofaGetQuotaTypesForCalendarYearInput {
   @Field()
   year!: string
 }

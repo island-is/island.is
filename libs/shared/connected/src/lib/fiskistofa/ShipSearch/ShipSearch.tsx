@@ -52,7 +52,7 @@ export const ShipSearch = ({
   }
 
   const [loadShips, { data, error, loading, called }] = useLazyQuery<
-    { getShips: ShipBasicInfo[] },
+    { fiskistofaGetShips: ShipBasicInfo[] },
     QueryGetShipsArgs
   >(GET_SHIPS_QUERY)
 
@@ -63,7 +63,7 @@ export const ShipSearch = ({
     }
   }, [router?.query?.name])
 
-  const ships = data?.getShips ?? ([] as ShipBasicInfo[])
+  const ships = data?.fiskistofaGetShips ?? ([] as ShipBasicInfo[])
 
   const handleShipSearch = (nameInput: string) => {
     const nameInputIsNumber = !isNaN(Number(nameInput)) && nameInput.length > 0

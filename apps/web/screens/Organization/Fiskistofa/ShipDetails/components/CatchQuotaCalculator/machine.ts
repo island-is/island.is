@@ -4,12 +4,12 @@ import {
   CatchQuotaCategory,
   ExtendedCatchQuotaCategory,
   ExtendedShipStatusInformation,
-  MutationUpdateShipStatusForTimePeriodArgs,
+  QueryUpdateShipStatusForTimePeriodArgs,
   QueryGetShipStatusForTimePeriodArgs,
   QuotaType,
   Ship,
   ShipStatusInformation,
-  MutationUpdateShipQuotaStatusForTimePeriodArgs,
+  QueryUpdateShipQuotaStatusForTimePeriodArgs,
   QuotaStatus,
 } from '@island.is/web/graphql/schema'
 import { createMachine, assign } from 'xstate'
@@ -77,12 +77,12 @@ type GET_DATA_EVENT = {
 
 type UPDATE_GENERAL_DATA_EVENT = {
   type: 'UPDATE_GENERAL_DATA'
-  variables: MutationUpdateShipStatusForTimePeriodArgs
+  variables: QueryUpdateShipStatusForTimePeriodArgs
 }
 
 type UPDATE_QUOTA_DATA_EVENT = {
   type: 'UPDATE_QUOTA_DATA'
-  variables: MutationUpdateShipQuotaStatusForTimePeriodArgs
+  variables: QueryUpdateShipQuotaStatusForTimePeriodArgs
 }
 
 type ADD_CATEGORY_EVENT = {
@@ -116,7 +116,7 @@ type State =
 
 export const machine = createMachine<Context, Event, State>(
   {
-    id: 'Deilistofna Calculator',
+    id: 'Catch Quota Calculator',
     context: {
       data: null,
       initialData: null,
@@ -286,21 +286,21 @@ export const machine = createMachine<Context, Event, State>(
       getData: async (context, event: GET_DATA_EVENT) => {
         const [
           {
-            data: { getShipStatusForTimePeriod },
+            data: { fiskistofaGetShipStatusForTimePeriod },
           },
           {
-            data: { getQuotaTypesForTimePeriod },
+            data: { fiskistofaGetQuotaTypesForTimePeriod },
           },
         ] = await Promise.all([
           context.apolloClient.query<{
-            getShipStatusForTimePeriod: ExtendedShipStatusInformation
+            fiskistofaGetShipStatusForTimePeriod: ExtendedShipStatusInformation
           }>({
             query: GET_SHIP_STATUS_FOR_TIME_PERIOD,
             variables: event.variables,
             fetchPolicy: 'no-cache',
           }),
           context.apolloClient.query<{
-            getQuotaTypesForTimePeriod: QuotaType[]
+            fiskistofaGetQuotaTypesForTimePeriod: QuotaType[]
           }>({
             query: GET_QUOTA_TYPES_FOR_TIME_PERIOD,
             variables: {
@@ -311,14 +311,16 @@ export const machine = createMachine<Context, Event, State>(
           }),
         ])
 
-        orderCategories(getShipStatusForTimePeriod.catchQuotaCategories)
+        orderCategories(
+          fiskistofaGetShipStatusForTimePeriod.catchQuotaCategories,
+        )
 
-        const categoryIds = getShipStatusForTimePeriod.catchQuotaCategories.map(
+        const categoryIds = fiskistofaGetShipStatusForTimePeriod.catchQuotaCategories.map(
           (c) => c.id,
         )
 
         // Remove all quota types that are already in the category list
-        const quotaTypes = getQuotaTypesForTimePeriod.filter(
+        const quotaTypes = fiskistofaGetQuotaTypesForTimePeriod.filter(
           (qt) => !categoryIds.includes(qt.id),
         )
         // Order the types in ascending name order
@@ -326,7 +328,7 @@ export const machine = createMachine<Context, Event, State>(
 
         const quotaData = []
 
-        for (const category of getShipStatusForTimePeriod.catchQuotaCategories) {
+        for (const category of fiskistofaGetShipStatusForTimePeriod.catchQuotaCategories) {
           quotaData.push({
             id: category.id,
             totalCatchQuota: category.totalCatchQuota,
@@ -338,8 +340,8 @@ export const machine = createMachine<Context, Event, State>(
         }
 
         return {
-          data: getShipStatusForTimePeriod,
-          initialData: getShipStatusForTimePeriod,
+          data: fiskistofaGetShipStatusForTimePeriod,
+          initialData: fiskistofaGetShipStatusForTimePeriod,
           quotaTypes,
           selectedQuotaTypes: [],
           quotaData,
@@ -347,9 +349,9 @@ export const machine = createMachine<Context, Event, State>(
       },
       updateGeneralData: async (context, event: UPDATE_GENERAL_DATA_EVENT) => {
         const {
-          data: { updateShipStatusForTimePeriod },
+          data: { fiskistofaUpdateShipStatusForTimePeriod },
         } = await context.apolloClient.query<{
-          updateShipStatusForTimePeriod: ShipStatusInformation
+          fiskistofaUpdateShipStatusForTimePeriod: ShipStatusInformation
         }>({
           query: UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
           variables: event.variables,
@@ -358,7 +360,7 @@ export const machine = createMachine<Context, Event, State>(
         const categories: ContextData['catchQuotaCategories'] = []
         // We want to keep the ordering of the categories the user has added
         for (const category of context.data.catchQuotaCategories) {
-          const categoryFromServer = updateShipStatusForTimePeriod.catchQuotaCategories.find(
+          const categoryFromServer = fiskistofaUpdateShipStatusForTimePeriod.catchQuotaCategories.find(
             (c) => c.id === category.id,
           )
           if (categoryFromServer) {
@@ -371,19 +373,19 @@ export const machine = createMachine<Context, Event, State>(
           }
         }
         orderCategories(categories)
-        updateShipStatusForTimePeriod.catchQuotaCategories = categories
+        fiskistofaUpdateShipStatusForTimePeriod.catchQuotaCategories = categories
         return {
-          data: updateShipStatusForTimePeriod,
-          updatedData: updateShipStatusForTimePeriod,
+          data: fiskistofaUpdateShipStatusForTimePeriod,
+          updatedData: fiskistofaUpdateShipStatusForTimePeriod,
         }
       },
       updateQuotaData: async (context, event: UPDATE_QUOTA_DATA_EVENT) => {
         const {
-          data: { updateShipQuotaStatusForTimePeriod },
-        } = await context.apolloClient.mutate<{
-          updateShipQuotaStatusForTimePeriod: QuotaStatus
+          data: { fiskistofaUpdateShipQuotaStatusForTimePeriod },
+        } = await context.apolloClient.query<{
+          fiskistofaUpdateShipQuotaStatusForTimePeriod: QuotaStatus
         }>({
-          mutation: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
+          query: UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
           variables: event.variables,
         })
 
@@ -391,7 +393,7 @@ export const machine = createMachine<Context, Event, State>(
           ...context.data,
         }
 
-        const serverQuotaData = updateShipQuotaStatusForTimePeriod
+        const serverQuotaData = fiskistofaUpdateShipQuotaStatusForTimePeriod
 
         data.catchQuotaCategories = data.catchQuotaCategories.map(
           (category) => {

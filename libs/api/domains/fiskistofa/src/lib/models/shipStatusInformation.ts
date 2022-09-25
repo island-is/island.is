@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-class Ship {
+class FiskistofaShip {
   @Field()
   id!: string
 
@@ -16,7 +16,7 @@ class Ship {
 }
 
 @ObjectType()
-class CatchQuotaCategory {
+class FiskistofaCatchQuotaCategory {
   @Field({ nullable: true })
   id?: number
   @Field()
@@ -48,7 +48,7 @@ class CatchQuotaCategory {
 }
 
 @ObjectType()
-class ExtendedCatchQuotaCategory extends CatchQuotaCategory {
+class FiskistofaExtendedCatchQuotaCategory extends FiskistofaCatchQuotaCategory {
   @Field({ nullable: true })
   totalCatchQuota?: number
   @Field({ nullable: true })
@@ -66,28 +66,28 @@ class ExtendedCatchQuotaCategory extends CatchQuotaCategory {
 }
 
 @ObjectType()
-export class ShipStatusInformation {
-  @Field(() => Ship, { nullable: true })
-  shipInformation?: Ship
+export class FiskistofaShipStatusInformation {
+  @Field(() => FiskistofaShip, { nullable: true })
+  shipInformation?: FiskistofaShip
 
-  @Field(() => [CatchQuotaCategory], { nullable: true })
-  catchQuotaCategories?: CatchQuotaCategory[]
+  @Field(() => [FiskistofaCatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: FiskistofaCatchQuotaCategory[]
 }
 
 @ObjectType()
-export class ExtendedShipStatusInformation {
-  @Field(() => Ship, { nullable: true })
-  shipInformation?: Ship
+export class FiskistofaExtendedShipStatusInformation {
+  @Field(() => FiskistofaShip, { nullable: true })
+  shipInformation?: FiskistofaShip
 
-  @Field(() => [ExtendedCatchQuotaCategory], { nullable: true })
-  catchQuotaCategories?: ExtendedCatchQuotaCategory[]
+  @Field(() => [FiskistofaExtendedCatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: FiskistofaExtendedCatchQuotaCategory[]
 }
 
 @ObjectType()
-export class ExtendedShipStatusInformationUpdate {
-  @Field(() => Ship, { nullable: true })
-  shipInformation?: Ship
+export class FiskistofaExtendedShipStatusInformationUpdate {
+  @Field(() => FiskistofaShip, { nullable: true })
+  shipInformation?: FiskistofaShip
 
-  @Field(() => [CatchQuotaCategory], { nullable: true })
-  catchQuotaCategories?: CatchQuotaCategory[]
+  @Field(() => [FiskistofaCatchQuotaCategory], { nullable: true })
+  catchQuotaCategories?: FiskistofaCatchQuotaCategory[]
 }

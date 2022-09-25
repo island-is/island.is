@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetSingleShipInput {
+export class FiskistofaGetSingleShipInput {
   @Field()
   shipNumber!: number
 }

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class ShipBasicInfo {
+export class FiskistofaShipBasicInfo {
   @Field()
   /** Skipaskránúmer */
   id?: number
