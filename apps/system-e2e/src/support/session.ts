@@ -25,7 +25,7 @@ export async function session(
       .startsWith('https://cognito.shared.devland.is/')
   ) {
     await page.goto(homeUrl)
-    await cognitoLogin(page, getCognitoCredentials(), home)
+    await cognitoLogin(page, getCognitoCredentials(), home, urls.authUrl)
   } else {
     console.log(`Cognito session exists`)
   }

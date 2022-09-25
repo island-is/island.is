@@ -71,6 +71,7 @@ export const cognitoLogin = async (
   page: Page,
   { username, password }: CognitoCreds,
   home: string,
+  authUrl: string,
 ) => {
   const cognito = page.locator('form[name="cognitoSignInForm"]:visible')
   await cognito.locator('input[id="signInFormUsername"]:visible').type(username)
@@ -81,7 +82,7 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
-  await page.waitForURL(`${home}**`)
+  await page.waitForURL(new RegExp(`${home}|${authUrl}`))
 }
 export const idsLogin = async (
   page: Page,
@@ -95,6 +96,8 @@ export const idsLogin = async (
   const btn = page.locator('button[id="submitPhoneNumber"]')
   await expect(btn).toBeEnabled()
   await btn.click()
-  await page.waitForURL(`${home}**`)
+  await page.waitForURL(new RegExp(`${home}`), {
+    waitUntil: 'domcontentloaded',
+  })
 }
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
