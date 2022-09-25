@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetQuotaTypesForTimePeriodInput {
+export class FiskistofaGetQuotaTypesForTimePeriodInput {
   @Field()
   timePeriod!: string
 }

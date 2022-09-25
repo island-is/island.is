@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import {
-  GetShipsInput,
-  GetQuotaTypesForCalendarYearInput,
-  GetQuotaTypesForTimePeriodInput,
-  UpdateShipStatusForCalendarYearInput,
-  GetShipStatusForCalendarYearInput,
-  GetShipStatusForTimePeriodInput,
-  UpdateShipStatusForTimePeriodInput,
-  UpdateShipQuotaStatusForTimePeriodInput,
-  GetSingleShipInput,
+  FiskistofaGetShipsInput,
+  FiskistofaGetQuotaTypesForCalendarYearInput,
+  FiskistofaGetQuotaTypesForTimePeriodInput,
+  FiskistofaUpdateShipStatusForCalendarYearInput,
+  FiskistofaGetShipStatusForCalendarYearInput,
+  FiskistofaGetShipStatusForTimePeriodInput,
+  FiskistofaUpdateShipStatusForTimePeriodInput,
+  FiskistofaUpdateShipQuotaStatusForTimePeriodInput,
+  FiskistofaGetSingleShipInput,
 } from '@island.is/api/domains/fiskistofa'
 import {
   V1SkipSkipnumerGetRequest,
@@ -44,7 +44,7 @@ export class FiskistofaClientService {
   }
 
   async updateShipStatusForTimePeriod(
-    input: UpdateShipStatusForTimePeriodInput,
+    input: FiskistofaUpdateShipStatusForTimePeriodInput,
   ) {
     const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarBreyttPostRequest = {
       skipnumer: input.shipNumber,
@@ -63,7 +63,7 @@ export class FiskistofaClientService {
   }
 
   async updateShipQuotaStatusForTimePeriod(
-    input: UpdateShipQuotaStatusForTimePeriodInput,
+    input: FiskistofaUpdateShipQuotaStatusForTimePeriodInput,
   ) {
     const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarKvotiBreyttPostRequest = {
       aflamarkSkipsKvotaParams: {
@@ -79,7 +79,9 @@ export class FiskistofaClientService {
     return this.wrapper((api) => api.updateShipQuotaStatusForTimePeriod(params))
   }
 
-  async getShipStatusForTimePeriod(input: GetShipStatusForTimePeriodInput) {
+  async getShipStatusForTimePeriod(
+    input: FiskistofaGetShipStatusForTimePeriodInput,
+  ) {
     const params: V1StadaskipsSkipnumerFiskveidiarFiskveidiarGetRequest = {
       skipnumer: input.shipNumber,
       fiskveidiar: input.timePeriod,
@@ -87,7 +89,9 @@ export class FiskistofaClientService {
     return this.wrapper((api) => api.getShipStatusForTimePeriod(params))
   }
 
-  async getShipStatusForCalendarYear(input: GetShipStatusForCalendarYearInput) {
+  async getShipStatusForCalendarYear(
+    input: FiskistofaGetShipStatusForCalendarYearInput,
+  ) {
     const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarGetRequest = {
       ar: input.year,
       skipnumer: input.shipNumber,
@@ -96,7 +100,7 @@ export class FiskistofaClientService {
   }
 
   async updateShipStatusForCalendarYear(
-    input: UpdateShipStatusForCalendarYearInput,
+    input: FiskistofaUpdateShipStatusForCalendarYearInput,
   ) {
     const params: V1StadaskipsSkipnumerAlmanaksarArDeilistofnarBreyttPostRequest = {
       ar: input.year,
@@ -114,28 +118,32 @@ export class FiskistofaClientService {
     return this.wrapper((api) => api.updateShipStatusForCalendarYear(params))
   }
 
-  async getQuotaTypesForTimePeriod(input: GetQuotaTypesForTimePeriodInput) {
+  async getQuotaTypesForTimePeriod(
+    input: FiskistofaGetQuotaTypesForTimePeriodInput,
+  ) {
     const params: V1StadaskipsKvotategundirFiskveidiarFiskveidiarGetRequest = {
       fiskveidiar: input.timePeriod,
     }
     return this.wrapper((api) => api.getQuotaTypesForTimePeriod(params))
   }
 
-  async getQuotaTypesForCalendarYear(input: GetQuotaTypesForCalendarYearInput) {
+  async getQuotaTypesForCalendarYear(
+    input: FiskistofaGetQuotaTypesForCalendarYearInput,
+  ) {
     const params: V1StadaskipsKvotategundirAlmanaksarArGetRequest = {
       ar: input.year,
     }
     return this.wrapper((api) => api.getQuotaTypesForCalendarYear(params))
   }
 
-  async getShips(input: GetShipsInput) {
+  async getShips(input: FiskistofaGetShipsInput) {
     const params = {
       heiti: input.shipName,
     }
     return this.wrapper((api) => api.getShips(params))
   }
 
-  async getSingleShip(input: GetSingleShipInput) {
+  async getSingleShip(input: FiskistofaGetSingleShipInput) {
     const params: V1SkipSkipnumerGetRequest = {
       skipnumer: input.shipNumber,
     }

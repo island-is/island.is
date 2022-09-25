@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class QuotaStatus {
+export class FiskistofaQuotaStatus {
   @Field({ nullable: true })
   nextYearCatchQuota?: number
 

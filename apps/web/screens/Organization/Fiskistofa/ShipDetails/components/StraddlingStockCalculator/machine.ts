@@ -2,7 +2,7 @@ import { ApolloClient } from '@apollo/client'
 import initApollo from '@island.is/web/graphql/client'
 import {
   CatchQuotaCategory,
-  MutationUpdateShipStatusForCalendarYearArgs,
+  QueryUpdateShipStatusForCalendarYearArgs,
   QueryGetShipStatusForCalendarYearArgs,
   QuotaType,
   Ship,
@@ -58,7 +58,7 @@ type GET_DATA_EVENT = {
 
 type UPDATE_DATA_EVENT = {
   type: 'UPDATE_DATA'
-  variables: MutationUpdateShipStatusForCalendarYearArgs
+  variables: QueryUpdateShipStatusForCalendarYearArgs
 }
 
 type ADD_CATEGORY_EVENT = {
@@ -90,7 +90,7 @@ type State =
 
 export const machine = createMachine<Context, Event, State>(
   {
-    id: 'Deilistofna Calculator',
+    id: 'Straddling Stock Calculator',
     context: {
       data: null,
       initialData: null,
@@ -239,21 +239,21 @@ export const machine = createMachine<Context, Event, State>(
       getData: async (context, event: GET_DATA_EVENT) => {
         const [
           {
-            data: { getShipStatusForCalendarYear },
+            data: { fiskistofaGetShipStatusForCalendarYear },
           },
           {
-            data: { getQuotaTypesForCalendarYear },
+            data: { fiskistofaGetQuotaTypesForCalendarYear },
           },
         ] = await Promise.all([
           context.apolloClient.query<{
-            getShipStatusForCalendarYear: ShipStatusInformation
+            fiskistofaGetShipStatusForCalendarYear: ShipStatusInformation
           }>({
             query: GET_SHIP_STATUS_FOR_CALENDAR_YEAR,
             variables: event.variables,
             fetchPolicy: 'no-cache',
           }),
           context.apolloClient.query<{
-            getQuotaTypesForCalendarYear: QuotaType[]
+            fiskistofaGetQuotaTypesForCalendarYear: QuotaType[]
           }>({
             query: GET_QUOTA_TYPES_FOR_CALENDAR_YEAR,
             variables: {
@@ -264,31 +264,33 @@ export const machine = createMachine<Context, Event, State>(
           }),
         ])
 
-        orderCategories(getShipStatusForCalendarYear.catchQuotaCategories)
+        orderCategories(
+          fiskistofaGetShipStatusForCalendarYear.catchQuotaCategories,
+        )
 
-        const categoryIds = getShipStatusForCalendarYear.catchQuotaCategories.map(
+        const categoryIds = fiskistofaGetShipStatusForCalendarYear.catchQuotaCategories.map(
           (c) => c.id,
         )
 
         // Remove all quota types that are already in the category list
-        const quotaTypes = getQuotaTypesForCalendarYear.filter(
+        const quotaTypes = fiskistofaGetQuotaTypesForCalendarYear.filter(
           (qt) => !categoryIds.includes(qt.id),
         )
         // Order the types in ascending name order
         quotaTypes.sort((a, b) => a.name.localeCompare(b.name))
 
         return {
-          data: getShipStatusForCalendarYear,
-          initialData: getShipStatusForCalendarYear,
+          data: fiskistofaGetShipStatusForCalendarYear,
+          initialData: fiskistofaGetShipStatusForCalendarYear,
           quotaTypes,
           selectedQuotaTypes: [],
         }
       },
       updateData: async (context, event: UPDATE_DATA_EVENT) => {
         const {
-          data: { updateShipStatusForCalendarYear },
+          data: { fiskistofaUpdateShipStatusForCalendarYear },
         } = await context.apolloClient.query<{
-          updateShipStatusForCalendarYear: ShipStatusInformation
+          fiskistofaUpdateShipStatusForCalendarYear: ShipStatusInformation
         }>({
           query: UPDATE_SHIP_STATUS_FOR_CALENDAR_YEAR,
           variables: event.variables,
@@ -299,7 +301,7 @@ export const machine = createMachine<Context, Event, State>(
 
         // We want to keep the ordering of the categories the user has added
         for (const category of context.data.catchQuotaCategories) {
-          const categoryFromServer = updateShipStatusForCalendarYear.catchQuotaCategories.find(
+          const categoryFromServer = fiskistofaUpdateShipStatusForCalendarYear.catchQuotaCategories.find(
             (c) => c.id === category.id,
           )
           if (categoryFromServer) {
@@ -314,11 +316,11 @@ export const machine = createMachine<Context, Event, State>(
 
         orderCategories(categories)
 
-        updateShipStatusForCalendarYear.catchQuotaCategories = categories
+        fiskistofaUpdateShipStatusForCalendarYear.catchQuotaCategories = categories
 
         return {
-          data: updateShipStatusForCalendarYear,
-          updatedData: updateShipStatusForCalendarYear,
+          data: fiskistofaUpdateShipStatusForCalendarYear,
+          updatedData: fiskistofaUpdateShipStatusForCalendarYear,
         }
       },
     },

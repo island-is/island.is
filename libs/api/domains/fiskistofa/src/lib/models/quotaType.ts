@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class QuotaType {
+export class FiskistofaQuotaType {
   @Field()
   id?: number
 

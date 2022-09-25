@@ -212,7 +212,7 @@ ShipDetails.getInitialProps = async ({ locale, apolloClient, query }) => {
     locale: locale as Locale,
     namespace,
     organizationPage: organizationPageResponse.data.getOrganizationPage,
-    ship: shipResponse?.data?.getSingleShip,
+    ship: shipResponse?.data?.fiskistofaGetSingleShip,
     ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
