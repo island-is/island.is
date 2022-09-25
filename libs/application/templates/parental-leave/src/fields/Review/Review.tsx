@@ -776,31 +776,32 @@ export const Review: FC<ReviewScreenProps> = ({
               </>
             )}
 
-            {personalUseAsMuchAsPossible === NO && (
-              <>
-                <Label marginTop={2} marginBottom={2}>
-                  {formatMessage(
-                    parentalLeaveFormMessages.personalAllowance.manual,
-                  )}
-                </Label>
+            {personalUseAsMuchAsPossible === NO &&
+              usePersonalAllowance === YES && (
+                <>
+                  <Label marginTop={2} marginBottom={2}>
+                    {formatMessage(
+                      parentalLeaveFormMessages.personalAllowance.manual,
+                    )}
+                  </Label>
 
-                <InputController
-                  id="personalAllowance.usage"
-                  name="personalAllowance.usage"
-                  suffix="%"
-                  placeholder="0%"
-                  type="number"
-                  defaultValue={personalUsage}
-                  onChange={(e) =>
-                    setStateful((prev) => ({
-                      ...prev,
-                      personalUsage: e.target.value?.replace('%', ''),
-                    }))
-                  }
-                  error={hasError('personalAllowance.usage')}
-                />
-              </>
-            )}
+                  <InputController
+                    id="personalAllowance.usage"
+                    name="personalAllowance.usage"
+                    suffix="%"
+                    placeholder="0%"
+                    type="number"
+                    defaultValue={personalUsage}
+                    onChange={(e) =>
+                      setStateful((prev) => ({
+                        ...prev,
+                        personalUsage: e.target.value?.replace('%', ''),
+                      }))
+                    }
+                    error={hasError('personalAllowance.usage')}
+                  />
+                </>
+              )}
           </>
         }
         triggerValidation
@@ -848,7 +849,7 @@ export const Review: FC<ReviewScreenProps> = ({
       {isPrimaryParent && hasSelectedOtherParent && (
         <ReviewGroup
           isEditable={editable}
-          editAction={() => goToScreen?.('usePersonalAllowanceFromSpouse')}
+          editAction={() => goToScreen?.('personalAllowanceFromSpouse')}
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

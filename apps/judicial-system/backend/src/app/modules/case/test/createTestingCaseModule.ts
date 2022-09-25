@@ -10,6 +10,7 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
+import { MessageService } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
@@ -30,6 +31,7 @@ import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/email-service')
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
@@ -53,6 +55,7 @@ export const createTestingCaseModule = async () => {
       LimitedAccessCaseController,
     ],
     providers: [
+      MessageService,
       CourtService,
       PoliceService,
       UserService,
@@ -103,6 +106,8 @@ export const createTestingCaseModule = async () => {
     })
     .compile()
 
+  const messageService = caseModule.get<MessageService>(MessageService)
+
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
@@ -146,6 +151,7 @@ export const createTestingCaseModule = async () => {
   )
 
   return {
+    messageService,
     courtService,
     policeService,
     userService,
