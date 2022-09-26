@@ -10916,7 +10916,7 @@ axios-ntlm@^1.2.0:
     axios "^0.21.3"
     dev-null "^0.1.1"
 
-axios@0.21.4, axios@0.26.0, axios@0.26.1, axios@^0.19.0, axios@^0.19.1, axios@^0.19.2, axios@^0.21.0, axios@^0.21.1, axios@^0.21.3:
+axios@0.21.4, axios@0.26.0, axios@0.26.1, axios@^0.19.1, axios@^0.19.2, axios@^0.21.0, axios@^0.21.1, axios@^0.21.3, axios@^0.27.1:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.4.tgz#c67b90dc0568e5c1cf2b0b858c43ba28e2eda575"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
