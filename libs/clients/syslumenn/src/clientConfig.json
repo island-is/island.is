@@ -2156,9 +2156,9 @@
     },
     "EignirDanarbus": {
       "type": "object",
-      "required": ["tegundAngalgs", "eignarhlutfall"],
+      "required": ["tegundAndlags", "eignarhlutfall"],
       "properties": {
-        "tegundAngalgs": {
+        "tegundAndlags": {
           "$ref": "#/definitions/TegundAndlags"
         },
         "fastanumer": {
