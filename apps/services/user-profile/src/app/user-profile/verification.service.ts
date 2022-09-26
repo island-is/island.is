@@ -348,29 +348,4 @@ export class VerificationService {
       where: { nationalId },
     })
   }
-
-  async isPhoneNumberVerified(
-    createUserProfileDto: CreateUserProfileDto,
-  ): Promise<boolean> {
-    const { nationalId, mobilePhoneNumber } = createUserProfileDto
-    const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
-    })
-    if (!verification) return false
-    return (
-      verification.confirmed &&
-      verification.mobilePhoneNumber === mobilePhoneNumber
-    )
-  }
-
-  async isEmailVerified(
-    createUserProfileDto: CreateUserProfileDto,
-  ): Promise<boolean> {
-    const { nationalId, email } = createUserProfileDto
-    const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
-    })
-    if (!verification) return false
-    return verification.confirmed && verification.email === email
-  }
 }
