@@ -23,7 +23,7 @@ const PSignTemplate: ApplicationTemplate<
   name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
-  allowedDelegations: [AuthDelegationType.LegalGuardian],
+  allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

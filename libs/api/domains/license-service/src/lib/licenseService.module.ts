@@ -20,6 +20,7 @@ import {
 } from '@island.is/clients/smartsolutions'
 import {
   CONFIG_PROVIDER,
+  CONFIG_PROVIDER_V2,
   GenericLicenseClient,
   GenericLicenseMetadata,
   GenericLicenseProviderId,
@@ -49,10 +50,15 @@ export interface DriversLicenseConfig {
   }
   pkpass: PkPassConfig
 }
-export interface Config {
+export interface LicenseServiceConfig {
   firearmLicense: PkPassConfig
   driversLicense: DriversLicenseConfig
 }
+
+export type LicenseServiceConfigV2 = Omit<
+  LicenseServiceConfig,
+  'driversLicense'
+>
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -95,7 +101,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
 
 @Module({})
 export class LicenseServiceModule {
-  static register(config: Config): DynamicModule {
+  static register(config: LicenseServiceConfig): DynamicModule {
     return {
       module: LicenseServiceModule,
       imports: [
@@ -114,6 +120,10 @@ export class LicenseServiceModule {
         {
           provide: CONFIG_PROVIDER,
           useValue: config,
+        },
+        {
+          provide: CONFIG_PROVIDER_V2,
+          useValue: config as LicenseServiceConfigV2,
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
