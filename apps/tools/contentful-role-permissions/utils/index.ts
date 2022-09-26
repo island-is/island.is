@@ -64,38 +64,31 @@ export const getTagNameToTagIdMap = (tags: TagProps[]) => {
 const policiesAreEditable = (
   role: RoleProps,
   contentType: ContentTypeProps,
-  tagId: string,
 ) => {
-  return false
-  // const policies = []
-  // applyEntryEditPolicies(policies, contentType, tagId, false)
-  // return policies.every((p1) =>
-  //   role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
-  // )
+  const policies = []
+  applySingleEntryAllowAllPolicy(policies, contentType.sys.id)
+  return policies.every((p1) =>
+    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  )
 }
 
 const policiesAreReadOnlyEntries = (
   role: RoleProps,
   contentType: ContentTypeProps,
-  tagId: string,
 ) => {
-  return false
-  // const policies = []
-  // applyEntryGlobalReadPolicies(policies, contentType)
-  // const p1 = policies[1]
+  const policies = []
+  applySingleEntryGlobalReadPolicy(policies, contentType.sys.id)
 
-  // // TODO: fix the read only indicator on load
-  // return (
-  //   role.policies.find((p2) => {
-  //     return JSON.stringify(p1) === JSON.stringify(p2)
-  //   }) !== undefined
-  // )
+  return (
+    role.policies.find((p) => {
+      return JSON.stringify(policies[0]) === JSON.stringify(p)
+    }) !== undefined
+  )
 }
 
 export const extractInitialCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
-  tagsMap: Map<string, string>,
 ): CheckboxState => {
   return roles.reduce(
     (roleAccumulator, role) => ({
@@ -103,11 +96,7 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
       [role.name]: contentTypes.reduce(
         (contentTypeAccumulator, contentType) => ({
           ...contentTypeAccumulator,
-          [contentType.name]: policiesAreEditable(
-            role,
-            contentType,
-            tagsMap.get(slugify(role.name)),
-          ),
+          [contentType.name]: policiesAreEditable(role, contentType),
         }),
         {},
       ),
@@ -119,7 +108,6 @@ export const extractInitialCheckboxStateFromRolesAndContentTypes = (
 export const extractInitialReadonlyCheckboxStateFromRolesAndContentTypes = (
   roles: RoleProps[],
   contentTypes: ContentTypeProps[],
-  tagsMap: Map<string, string>,
 ): CheckboxState => {
   return roles.reduce(
     (roleAccumulator, role) => ({
@@ -127,11 +115,7 @@ export const extractInitialReadonlyCheckboxStateFromRolesAndContentTypes = (
       [role.name]: contentTypes.reduce(
         (contentTypeAccumulator, contentType) => ({
           ...contentTypeAccumulator,
-          [contentType.name]: policiesAreReadOnlyEntries(
-            role,
-            contentType,
-            tagsMap[slugify(role.name)],
-          ),
+          [contentType.name]: policiesAreReadOnlyEntries(role, contentType),
         }),
         {},
       ),
@@ -217,24 +201,49 @@ export const applyAssetPolicies = (
   })
 }
 
+const applySingleEntryGlobalReadPolicy = (
+  policies: Role['policies'],
+  contentTypeId: string,
+) => {
+  policies.push({
+    actions: ['read'],
+    effect: 'allow',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        {
+          equals: [{ doc: 'sys.contentType.sys.id' }, contentTypeId],
+        },
+      ],
+    },
+  })
+}
+
 export const applyEntryGlobalReadPolicies = (
   policies: Role['policies'],
   contentTypeIds: Set<string>,
 ) => {
   for (const id of contentTypeIds) {
-    policies.push({
-      actions: ['read'],
-      effect: 'allow',
-      constraint: {
-        and: [
-          { equals: [{ doc: 'sys.type' }, 'Entry'] },
-          {
-            equals: [{ doc: 'sys.contentType.sys.id' }, id],
-          },
-        ],
-      },
-    })
+    applySingleEntryGlobalReadPolicy(policies, id)
   }
+}
+
+const applySingleEntryAllowAllPolicy = (
+  policies: Role['policies'],
+  contentTypeId: string,
+) => {
+  policies.push({
+    actions: 'all',
+    effect: 'allow',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        {
+          equals: [{ doc: 'sys.contentType.sys.id' }, contentTypeId],
+        },
+      ],
+    },
+  })
 }
 
 export const applyEntryEditPolicies = (
@@ -247,18 +256,7 @@ export const applyEntryEditPolicies = (
 
   for (const id of scopedEditableContentTypeIds) {
     allContentTypeIds.add(id)
-    policies.push({
-      actions: 'all',
-      effect: 'allow',
-      constraint: {
-        and: [
-          { equals: [{ doc: 'sys.type' }, 'Entry'] },
-          {
-            equals: [{ doc: 'sys.contentType.sys.id' }, id],
-          },
-        ],
-      },
-    })
+    applySingleEntryAllowAllPolicy(policies, id)
   }
 
   for (const id of globallyReadableContentTypeIds) {
