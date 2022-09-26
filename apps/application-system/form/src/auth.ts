@@ -41,6 +41,7 @@ if (userMocked) {
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
+      ApiScope.noDebtCertificate,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

@@ -32,7 +32,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
   featureFlag: Features.operatingLicense,
-  allowedDelegations: [AuthDelegationType.ProcurationHolder],
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
