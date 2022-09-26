@@ -16,6 +16,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  DEFENDER_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
   SIGNED_VERDICT_OVERVIEW_ROUTE,
