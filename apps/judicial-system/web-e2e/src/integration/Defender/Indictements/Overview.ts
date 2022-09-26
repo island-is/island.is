@@ -43,7 +43,7 @@ describe('Indictment case overview for defenders', () => {
       cy.get('[data-testid="PDFButton"]').should('have.length', 3)
     })
 
-    it.only('should display relevant data', () => {
+    it('should display relevant data', () => {
       cy.getByTestid('infoCard').contains(
         `${theCase.defendants![0].name}, kt. ${
           theCase.defendants![0].nationalId
