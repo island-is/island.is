@@ -123,7 +123,7 @@
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                              @island-is/sendiradid
-/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid
+/libs/application/templates/institution-collaboration/                                              @island-is/sendiradid @island-is/fuglar
 /libs/application/templates/login-service/                                                          @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                     @island-is/sendiradid
 /libs/clients/payment-schedule/                                                                     @island-is/sendiradid
