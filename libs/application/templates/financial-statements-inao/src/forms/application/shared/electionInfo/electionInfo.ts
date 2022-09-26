@@ -1,10 +1,6 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildSelectField,
-  buildRadioField,
-  getValueViaPath,
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'

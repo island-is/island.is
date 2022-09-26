@@ -41,7 +41,8 @@ export const ElectionsInfoFields = ({
 
   const getElectionInfo = (selectedElectionId: ReactText | undefined) => {
     const currentElectionInfo = financialStatementsInaoElections?.find(
-      (elections: any) => elections.electionId === selectedElectionId,
+      (elections: FinancialStatementsInaoElection) =>
+        elections.electionId === selectedElectionId,
     )
     const electionYear = new Date(
       currentElectionInfo?.electionDate,
