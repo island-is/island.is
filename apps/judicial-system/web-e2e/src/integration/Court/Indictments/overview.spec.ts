@@ -14,12 +14,13 @@ import {
 
 describe(`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/:id`, () => {
   const caseData = mockCase(CaseType.TAX_VIOLATION)
-  const prosecutor = makeProsecutor()
+  const prosecutor = makeProsecutor('Assigned Prosecutor')
+  const creatingProsecutor = makeProsecutor('Creating Prosecutor')
 
   beforeEach(() => {
     const caseDataAddition: Case = {
       ...caseData,
-      creatingProsecutor: prosecutor,
+      creatingProsecutor: creatingProsecutor,
       prosecutor: prosecutor,
       state: CaseState.RECEIVED,
       caseFiles: [makeCaseFile(caseData.id, 'test.pdf')],
