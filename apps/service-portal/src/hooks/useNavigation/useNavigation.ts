@@ -52,7 +52,7 @@ const filterNavigationTree = (
   // Hides item from navigation
 
   if (routeItem?.navHide) {
-    item.navHide = routeItem?.navHide
+    item.navHide = routeItem.navHide
   }
 
   item.navHide = item.navHide || hideDynamicPath
