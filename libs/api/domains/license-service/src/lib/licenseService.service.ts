@@ -22,10 +22,8 @@ import {
 } from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
-import {
-  AVAILABLE_LICENSES,
-  LicenseServiceConfigV2,
-} from './licenseService.module'
+import { AVAILABLE_LICENSES } from './licenseService.module'
+import type { LicenseServiceConfigV2 } from './licenseService.module'
 
 const CACHE_KEY = 'licenseService'
 
